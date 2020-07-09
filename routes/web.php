@@ -1,0 +1,63 @@
+<?php
+
+use App\Http\Controllers\Auth\ConfirmPasswordController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\InvitationController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\VerificationController;
+use App\Http\Controllers\Castle\MasterInvitationController;
+use App\Http\Controllers\Castle\MastersController;
+use App\Http\Controllers\Castle\ResponseMasterInvitationController;
+use App\Http\Controllers\Castle\RevokeMasterAccessController;
+use App\Http\Controllers\Castle\UsersController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProfileChangePasswordController;
+use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Route;
+
+//region Authentication and Registration Routes
+Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('login', [LoginController::class, 'login']);
+Route::any('logout', [LoginController::class, 'logout'])->name('logout');
+Route::post('password/confirm', [ConfirmPasswordController::class, 'confirm']);
+Route::get('password/confirm', [ConfirmPasswordController::class, 'showConfirmForm'])->name('password.confirm');
+Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
+Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::get('email/verify', [VerificationController::class, 'show'])->name('verification.notice');
+Route::get('email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->name('verification.verify');
+Route::post('email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
+Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('register', [RegisterController::class, 'register']);
+Route::get('register/{token}', [InvitationController::class, 'invite'])->name('register.with-invitation');
+Route::post('register/{token}', [InvitationController::class, 'register']);
+//endregion
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    //region Castle
+    Route::post('castle/masters/invite/response', ResponseMasterInvitationController::class)->name('castle.masters.invite.response');
+
+    Route::prefix('castle/')->middleware('castle')->name('castle.')->group(function () {
+        Route::get('dashboard', function () {
+            return view('home');
+        })->name('dashboard');
+
+        Route::get('users', [UsersController::class, 'index'])->name('users.index');
+        Route::get('users/{user}', [UsersController::class, 'show'])->name('users.show');
+        Route::get('masters', [MastersController::class, 'index'])->name('masters.index');
+        Route::get('masters/invite', [MasterInvitationController::class, 'form'])->name('masters.invite');
+        Route::post('masters/invite', [MasterInvitationController::class, 'invite']);
+        Route::patch('masters/{master}/revoke', RevokeMasterAccessController::class)->name('masters.revoke');
+    });
+    //endregion
+
+    Route::get('/', HomeController::class)->name('home');
+
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/change-password', ProfileChangePasswordController::class)->name('profile.change-password');
+});
+
