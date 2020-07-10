@@ -1,14 +1,12 @@
 @extends('layouts.app')
 
 @section('app.content')
-    <div class="bg-gray-800 pb-32">
+    <div class="pb-32">
         <x-nav.main/>
-
+        
         <livewire:notifications/>
 
         <x-alerts/>
-
-        @yield('header')
 
     </div>
     <main class="-mt-32">

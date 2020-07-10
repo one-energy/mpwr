@@ -13,6 +13,14 @@ use App\Http\Controllers\Castle\ResponseMasterInvitationController;
 use App\Http\Controllers\Castle\RevokeMasterAccessController;
 use App\Http\Controllers\Castle\UsersController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ScoreboardController;
+use App\Http\Controllers\TrainingController;
+use App\Http\Controllers\TrainingSettingController;
+use App\Http\Controllers\TrainingSettingBestPracticesController;
+use App\Http\Controllers\TrainingSettingBestPracticesWhatToSayController;
+use App\Http\Controllers\IncentivesController;
+use App\Http\Controllers\NumberTrackingController;
 use App\Http\Controllers\ProfileChangePasswordController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -59,5 +67,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/change-password', ProfileChangePasswordController::class)->name('profile.change-password');
+
+    Route::resource('/customers', CustomerController::class);
+    Route::get('/scoreboard', ScoreboardController::class)->name('scoreboard');
+    Route::get('/trainings', [TrainingController::class, 'index'])->name('trainings.index');
+    Route::get('/trainings/setting', [TrainingSettingController::class, 'index'])->name('settings.index');
+    Route::get('/trainings/setting/best-practices', [TrainingSettingBestPracticesController::class ,'index'])->name('best-practices.index');
+    Route::get('/trainings/setting/best-practices/what-to-say', [TrainingSettingBestPracticesWhatToSayController::class, 'index'])->name('what-to-say.index');
+    Route::get('/incentives', IncentivesController::class)->name('incentives');
+    Route::get('/number-tracking', [NumberTrackingController::class, 'index'])->name('number-tracking.index');
 });
 

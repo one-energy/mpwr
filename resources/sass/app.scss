@@ -3,3 +3,57 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.bg-green-base {
+    --bg-opacity: 1;
+    background-color: #46A049;
+    background-color: rgba(70, 160, 73, var(--bg-opacity));
+}
+
+.bg-green-base:hover {
+    --bg-opacity: 1;
+    background-color: #46A049;
+    background-color: rgba(70, 160, 73, var(--bg-opacity));
+}
+
+.bg-green-light {
+    --bg-opacity: 1;
+    background-color:#e0f8dd;
+    background-color: rgba(224, 248, 221, var(--bg-opacity));
+}
+
+.bg-green-light:hover {
+    --bg-opacity: 1;
+    background-color:#e0f8dd;
+    background-color: rgba(224, 248, 221, var(--bg-opacity));
+}
+
+.border-green-base {
+    --border-opacity: 1;
+    border-color: #46A049;
+    border-color: rgba(70, 160, 73, var(--border-opacity));
+}
+
+.text-green-base {
+    --text-opacity: 1;
+    color:#46A049;
+    color: rgba(70, 160, 73, var(--text-opacity));
+}
+
+.text-green-light {
+    --text-opacity: 1;
+    color:#e0f8dd;
+    color: rgba(224, 248, 221, var(--text-opacity));
+}
+
+.text-green-dark {
+    --text-opacity: 1;
+    color:#006400;
+    color: rgba(0, 100, 0, var(--text-opacity));
+}
+
+.text-green-dark:hover {
+    --text-opacity: 1;
+    color:#006400;
+    color: rgba(0, 100, 0, var(--text-opacity));
+}
