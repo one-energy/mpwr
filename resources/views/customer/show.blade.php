@@ -8,8 +8,8 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <form>
                 <div>
-                    <div class="mt-6 grid grid-cols-1 row-gap-6 col-gap-4 sm:grid-cols-6">
-                    <div class="sm:col-span-3">
+                    <div class="mt-6 grid sm:grid-cols-2 row-gap-6 col-gap-4 md:grid-cols-6">
+                    <div class="md:col-span-3 sm:cols-span-2">
                         <label for="home_owner" class="block text-sm font-medium leading-5 text-gray-700">
                         Home Owner
                         </label>
@@ -23,7 +23,7 @@
                         </div>
                     </div>
             
-                    <div class="sm:col-span-3">
+                    <div class="md:col-span-3 sm:cols-span-2">
                         <label for="system_size" class="block text-sm font-medium leading-5 text-gray-700">
                         System Size
                         </label>
@@ -33,7 +33,7 @@
                         </div>
                     </div>
 
-                    <div class="sm:col-span-3">
+                    <div class="md:col-span-3 sm:cols-span-2">
                         <label for="redline" class="block text-sm font-medium leading-5 text-gray-700">
                         Redline
                         </label>
@@ -43,7 +43,7 @@
                         </div>
                     </div>
 
-                    <div class="sm:col-span-3">
+                    <div class="md:col-span-3 sm:cols-span-2">
                         <label for="adders" class="block text-sm font-medium leading-5 text-gray-700">
                         Adders
                         </label>
@@ -53,7 +53,7 @@
                         </div>
                     </div>
 
-                    <div class="sm:col-span-3">
+                    <div class="md:col-span-3 sm:cols-span-2">
                         <label for="gross_ppw" class="block text-sm font-medium leading-5 text-gray-700">
                         Gross PPW
                         </label>
@@ -63,7 +63,7 @@
                         </div>
                     </div>
 
-                    <div class="sm:col-span-3">
+                    <div class="md:col-span-3 sm:cols-span-2">
                         <label for="setter" class="block text-sm font-medium leading-5 text-gray-700">
                         Setter
                         </label>
@@ -73,7 +73,7 @@
                         </div>
                     </div>
 
-                    <div class="sm:col-span-3">
+                    <div class="md:col-span-3 sm:cols-span-2">
                         <label for="setter_fee" class="block text-sm font-medium leading-5 text-gray-700">
                         Setter Fee
                         </label>
@@ -93,7 +93,7 @@
                         </div>
                     </div>
 
-                    <div class="sm:col-span-2">
+                    <div class="sm:col-span-1">
                         <label for="financing" class="block text-sm font-medium leading-5 text-gray-700">
                         Your Commission
                         </label>

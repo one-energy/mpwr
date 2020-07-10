@@ -158,8 +158,25 @@
                         @lang('Users')
                     </x-nav.link-mobile>
                 @else
-                    <x-nav.link-mobile :href="route('home')" :active="is_active('home')">
+                    <x-nav.link-mobile :href="route('home')" class="mt-1"
+                                :active="is_active('home')">
                         @lang('Dashboard')
+                    </x-nav.link-mobile>
+                    <x-nav.link-mobile :href="('scoreboard')" class="mt-1"
+                                :active="is_active('scoreboard')">
+                        @lang('Scoreboard')
+                    </x-nav.link-mobile>
+                    <x-nav.link-mobile :href="route('trainings.index')" class="mt-1"
+                                :active="is_active('trainings.*')">
+                        @lang('Training')
+                    </x-nav.link-mobile>
+                    <x-nav.link-mobile :href="route('incentives')" class="mt-1"
+                                :active="is_active('incentives')">
+                        @lang('Incentives')
+                    </x-nav.link-mobile>
+                    <x-nav.link-mobile :href="route('number-tracking.index')" class="mt-1"
+                                :active="is_active('number-tracking.*')">
+                        @lang('Number Tracker')
                     </x-nav.link-mobile>
                 @endif
             </div>

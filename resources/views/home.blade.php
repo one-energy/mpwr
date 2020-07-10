@@ -82,7 +82,7 @@
             </div>
         
             <!-- Personal Data -->
-            <div class="px-4 py-5 sm:p-6">
+            <div class="px-4 py-5 sm:p-6 hidden md:block">
                 <div class="flex justify-between">
                 <div class="flex justify-start">
                     <a href="#" class="flex-shrink-0 group block focus:outline-none">

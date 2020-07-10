@@ -2,12 +2,12 @@
   <div>
     <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
       <div class="px-4 py-5 sm:px-6">
-        <div class="flex justify-between">
-          <div class="flex justify-start">
+        <div class="md:flex justify-between">
+          <div class="md:flex justify-start">
             <h3 class="text-lg text-gray-900">Training</h3>
           </div>
-          <div class="flex justify-end">
-            <div class="pt-2 relative mx-auto text-gray-600">
+          <div class="flex md:justify-end sm:justify-start">
+            <div class="pt-2 relative md:mx-auto sm:mx-0 text-gray-600">
               <input class="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
                 type="search" name="search" placeholder="Search for Training">
               <button type="submit" class="absolute right-0 top-0 mt-5 mr-4">
@@ -24,10 +24,10 @@
         </div>
 
         <div class="mt-3">
-          <div class="grid grid-cols-2 row-gap-4 col-gap-4">
+          <div class="grid md:grid-cols-2 sm:grid-cols-1 md:row-gap-4 sm:row-gap-0 col-gap-4">
             <div class="col-span-1">
               <a href="{{route('settings.index')}}">
-                <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 border-2 p-4 rounded-lg">
+                <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
                   <div class="col-span-9">
                     Setting
                   </div>
@@ -44,7 +44,7 @@
             </div>
 
             <div class="col-span-1">
-              <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 border-2 p-4 rounded-lg">
+              <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
                 <div class="col-span-9">
                   Closing
                 </div>
@@ -60,7 +60,7 @@
             </div>
 
             <div class="col-span-1">
-              <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 border-2 p-4 rounded-lg">
+              <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
                 <div class="col-span-9">
                   Misc.
                 </div>
@@ -76,7 +76,7 @@
             </div>
 
             <div class="col-span-1">
-              <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 border-2 p-4 rounded-lg">
+              <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
                 <div class="col-span-9">
                   FAQ
                 </div>
@@ -92,7 +92,7 @@
             </div>
 
             <div class="col-span-1">
-              <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 border-2 p-4 rounded-lg">
+              <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 border-b-2 p-4 md:rounded-lg">
                 <div class="col-span-9">
                   Life
                 </div>

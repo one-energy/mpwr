@@ -8,6 +8,7 @@ class ScoreboardController extends Controller
     {
         $showOptions = [
             'Leaderboards', 
+            'Records'
         ];
         $data = [
             ['id' => 1,  'representative' => 'Maren Decker',     'set_closes' => 6, 'office' => 'Fresno'],

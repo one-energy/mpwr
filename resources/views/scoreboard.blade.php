@@ -30,7 +30,7 @@
                 <div class="align-middle inline-block min-w-full overflow-hidden">
                   <table class="min-w-full">
                     <thead>
-                      <tr>
+                      <tr class="sm:border-gray-200 border-b-2">
                         <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
                           Rank
                         </th>
@@ -47,7 +47,7 @@
                     </thead>
                     <tbody>
                       @foreach ($data as $row)
-                        <tr class="border-gray-200 border-2 rounded-lg">
+                        <tr class="md:border-gray-200 md:border-2 rounded-lg">
                           <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
                             <span class="px-2 inline-flex rounded-full bg-green-base text-white">
                               {{{ $row['id'] }}}
@@ -82,7 +82,7 @@
                 <div class="align-middle inline-block min-w-full overflow-hidden">
                   <table class="min-w-full">
                     <thead>
-                      <tr>
+                      <tr class="sm:border-gray-200 border-b-2">
                         <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
                           Rank
                         </th>
@@ -99,7 +99,7 @@
                     </thead>
                     <tbody>
                       @foreach ($data as $row)
-                        <tr class="border-gray-200 border-2 rounded-lg">
+                        <tr class="md:border-gray-200 md:border-2 rounded-lg">
                           <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
                             <span class="px-2 inline-flex rounded-full bg-green-base text-white">
                               {{{ $row['id'] }}}
@@ -134,7 +134,7 @@
                 <div class="align-middle inline-block min-w-full overflow-hidden">
                   <table class="min-w-full">
                     <thead>
-                      <tr>
+                      <tr class="sm:border-gray-200 border-b-2">
                         <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
                           Rank
                         </th>
@@ -151,7 +151,7 @@
                     </thead>
                     <tbody>
                       @foreach ($data as $row)
-                        <tr class="border-gray-200 border-2 rounded-lg">
+                        <tr class="md:border-gray-200 md:border-2 rounded-lg">
                           <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
                             <span class="px-2 inline-flex rounded-full bg-green-base text-white">
                               {{{ $row['id'] }}}
