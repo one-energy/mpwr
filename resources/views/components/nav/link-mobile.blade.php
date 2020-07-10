@@ -2,10 +2,10 @@
 
 @php
     $active = $active ?? false;
-    $class = 'block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700';
+    $class = 'text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 block pl-3 pr-4 py-2 border-l-4 text-base font-medium focus:outline-none transition duration-150 ease-in-out';
 
     if($active) {
-        $class = 'block px-3 py-2 rounded-md text-base font-medium text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700';
+        $class = 'border-green-base text-green-base bg-green-base focus:text-green-base focus:bg-green-base focus:border-green-base block pl-3 pr-4 py-2 border-l-4 text-base font-medium focus:outline-none transition duration-150 ease-in-out';
     }
 @endphp
 

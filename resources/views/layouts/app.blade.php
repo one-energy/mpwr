@@ -12,7 +12,7 @@
     <livewire:styles/>
 </head>
 
-<body class="antialiased bg-gray-100" x-data="{}">
+<body class="antialiased bg-white" x-data="{}">
 @yield('app.content')
 
 <livewire:scripts/>
