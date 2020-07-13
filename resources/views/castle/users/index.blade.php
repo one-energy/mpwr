@@ -1,3 +1,3 @@
 <x-app.auth :title="__('Users')" :header="__('Users')">
-    <livewire:castle.users/>
+    <livewire:users/>
 </x-app.auth>

@@ -55,6 +55,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('users/register', [UsersController::class, 'form'])->name('users.form');
         Route::post('users/register', [UsersController::class, 'register'])->name('users.register');
+        Route::get('users/edit/{user}', [UsersController::class, 'show'])->name('users.edit');
 
         Route::get('users', [UsersController::class, 'index'])->name('users.index');
         Route::get('users/{user}', [UsersController::class, 'show'])->name('users.show');

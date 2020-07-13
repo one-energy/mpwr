@@ -53,5 +53,4 @@ class InvitationController extends Controller
         return redirect()->route('home')
             ->with('message', __('Welcome to ') . config('app.name'));
     }
-
 }

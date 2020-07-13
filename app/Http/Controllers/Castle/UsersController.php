@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Castle;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
 use App\Models\Invitation;
 use App\Models\User;
 use App\Notifications\MasterExistingUserInvitation;
 use App\Notifications\MasterInvitation;
 use App\Rules\Castle\MasterEmailUnique;
 use App\Rules\Castle\MasterEmailYourSelf;
-use Ramsey\Uuid\Uuid;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Ramsey\Uuid\Uuid;
 
 class UsersController extends Controller
 {
@@ -45,7 +45,7 @@ class UsersController extends Controller
 
         $user = $this->findUser($data['email']);
 
-        $invitation = new Invitation();
+        $invitation          = new Invitation();
         $invitation->email   = $data['email'];
         $invitation->token   = Uuid::uuid4();
         $invitation->master  = false;

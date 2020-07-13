@@ -10,7 +10,7 @@ class HomeController extends Controller
     {
         $sortOptions = [
             'Active', 
-            'Inactive'
+            'Inactive',
         ];
 
         $customers = Customer::CUSTOMERS;
