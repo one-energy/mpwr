@@ -9,8 +9,6 @@
         <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
             <x-card>
                 <x-form :route="route('register.with-invitation', $invitation)">
-                    <x-input class="mt-6" :label="__('Name')" name="name"></x-input>
-
                     <x-input class="mt-6" :label="__('E-mail Address')" name="email" :value="$email" disabled></x-input>
 
                     <x-input class="mt-6" :label="__('E-mail Address Confirmation')"
