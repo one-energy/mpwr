@@ -36,12 +36,16 @@ class InvitationController extends Controller
         $data['email'] = $invitation->email;
 
         Validator::make($data, [
-            'email'    => ['confirmed'],
-            'password' => ['required', 'string', 'min:8', 'max:128'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name'  => ['required', 'string', 'max:255'],
+            'email'      => ['confirmed'],
+            'password'   => ['required', 'string', 'min:8', 'max:128'],
         ])->validate();
 
         $user = User::where('email', $data['email'])->firstOrFail();
             
+        $user->first_name        = $data['first_name'];
+        $user->last_name         = $data['last_name'];
         $user->email_verified_at = now();
         $user->password          = bcrypt($data['password']);
         $user->save();
