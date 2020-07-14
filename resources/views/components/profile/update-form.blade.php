@@ -13,7 +13,9 @@
             </div>
             <div class="mt-5 md:mt-0 md:col-span-2">
                 <div class="px-4 sm:px-0">
-                    <x-input :label="__('Name')" name="name" autofocus :value="user()->name"/>
+                    <x-input :label="__('First Name')" name="first_name" autofocus :value="user()->first_name"/>
+                    <x-input :label="__('Last Name')" name="last_name" autofocus :value="user()->last_name"/>
+
                     <x-input :label="__('Email')" name="email" class="mt-6" :value="user()->email"/>
 
                     <div class="mt-6">
