@@ -17,13 +17,15 @@ class UpdateProfileTest extends FeatureTest
         $this->actingAs($user);
 
         $this->put(route('profile.update'), [
-            'name'  => 'Joe Doe',
+            'first_name'  => 'Joe',
+            'last_name' => 'Doe',
             'email' => 'joe@doe.com',
         ]);
 
         $user->refresh();
 
-        $this->assertEquals('Joe Doe', $user->name);
+        $this->assertEquals('Joe', $user->first_name);
+        $this->assertEquals('Doe', $user->last_name);
         $this->assertEquals('joe@doe.com', $user->email);
     }
 
@@ -40,7 +42,7 @@ class UpdateProfileTest extends FeatureTest
 
         $this->put(route('profile.update'), [])
             ->assertSessionHasErrors([
-                'name' => __('validation.required', ['attribute' => 'name']),
+                'first_name' => __('validation.required', ['attribute' => 'first_name']),
             ]);
     }
 
@@ -53,9 +55,9 @@ class UpdateProfileTest extends FeatureTest
 
         $this->actingAs($user);
 
-        $this->put(route('profile.update'), ['name' => '12'])
+        $this->put(route('profile.update'), ['first_name' => '12'])
             ->assertSessionHasErrors([
-                'name' => __('validation.min.string', ['attribute' => 'name', 'min' => 3]),
+                'first_name' => __('validation.min.string', ['attribute' => 'first_name', 'min' => 3]),
             ]);
     }
 
@@ -111,7 +113,7 @@ class UpdateProfileTest extends FeatureTest
 
         $this->actingAs($user)
             ->put(route('profile.update'), [
-                'name'  => 'Testing',
+                'first_name'  => 'Testing',
                 'email' => 'joe@doe.com',
             ])
             ->assertSessionHasNoErrors();

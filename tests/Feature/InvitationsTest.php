@@ -40,13 +40,15 @@ class InvitationsTest extends FeatureTest
         $invitation = (new InvitationBuilder)->isAMaster()->withEmail('joe-smith@email.com')->save()->get();
 
         $this->post(route('register.with-invitation', $invitation), [
-            'name'               => 'Joe',
+            'first_name'               => 'Joe',
+            'last_name' => 'Doe',
             'email_confirmation' => 'joe-smith@email.com',
             'password'           => '14253647',
         ])->assertSessionHasNoErrors();
 
         $this->assertDatabaseHas('users', [
-            'name'  => 'Joe',
+            'first_name'  => 'Joe',
+            'last_name' => 'Doe',
             'email' => 'joe-smith@email.com',
         ]);
 
@@ -67,7 +69,7 @@ class InvitationsTest extends FeatureTest
 
         $this->post(route('register.with-invitation', $invitation), [])
             ->assertSessionHasErrors([
-                'name' => __('validation.required', ['attribute' => 'name']),
+                'first_name' => __('validation.required', ['attribute' => 'first_name']),
             ]);
     }
 
@@ -77,9 +79,9 @@ class InvitationsTest extends FeatureTest
         $invitation = (new InvitationBuilder)->isAMaster()->withEmail('joe-smith@email.com')->save()->get();
 
         $this->post(route('register.with-invitation', $invitation), [
-            'name' => '12',
+            'first_name' => '12',
         ])->assertSessionHasErrors([
-            'name' => __('validation.min.string', ['attribute' => 'name', 'min' => 3]),
+            'first_name' => __('validation.min.string', ['attribute' => 'first_name', 'min' => 3]),
         ]);
     }
 
@@ -89,9 +91,9 @@ class InvitationsTest extends FeatureTest
         $invitation = (new InvitationBuilder)->isAMaster()->withEmail('joe-smith@email.com')->save()->get();
 
         $this->post(route('register.with-invitation', $invitation), [
-            'name' => str_repeat('*', 256),
+            'first_name' => str_repeat('*', 256),
         ])->assertSessionHasErrors([
-            'name' => __('validation.max.string', ['attribute' => 'name', 'max' => 255]),
+            'first_name' => __('validation.max.string', ['attribute' => 'first_name', 'max' => 255]),
         ]);
     }
 

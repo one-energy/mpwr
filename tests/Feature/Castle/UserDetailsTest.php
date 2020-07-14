@@ -33,13 +33,15 @@ class UserDetailsTest extends FeatureTest
         $this->actingAs($master)
             ->get(route('castle.users.show', $master->id))
             ->assertViewIs('castle.users.show')
-            ->assertSee($master->name)
+            ->assertSee($master->first_name)
+            ->assertSee($master->last_name)
             ->assertSee($master->email);
 
         $this->actingAs($master)
             ->get(route('castle.users.show', $nonMaster->id))
             ->assertViewIs('castle.users.show')
-            ->assertSee($nonMaster->name)
+            ->assertSee($nonMaster->first_name)
+            ->assertSee($nonMaster->last_name)
             ->assertSee($nonMaster->email);
     }
 

@@ -25,12 +25,12 @@ class UsersController extends Controller
         return view('castle.users.show', compact('user'));
     }
 
-    public function form()
+    public function create()
     {
         return view('castle.users.register');
     }
 
-    public function register()
+    public function store()
     {
         $data = Validator::make(request()->all(), [
             'first_name' => ['nullable', 'string', 'max:255'],
@@ -56,7 +56,7 @@ class UsersController extends Controller
 
         $user ? $user->notify(new MasterExistingUserInvitation) : $invitation->notify(new MasterInvitation);
 
-        return back()->with('message', __('The invitation was sent to ') . "<span class='font-bold'>{$data['email']}</span>");
+        return back()->with('message', __("The invitation was sent to {$data['email']}"));
     }
 
     /**
