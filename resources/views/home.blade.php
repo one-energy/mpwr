@@ -19,8 +19,8 @@
                 $239,459
                 </div>
                 <div class="flex font-semibold text-xs text-green-base">
-                <svg xmlns="http://www.w3.org/2000/svg" transform='rotate(-45)' width="24" height="24" viewBox="0 0 24 24">
-                    <symbol id="arrow" viewBox="0 0 25 25">
+                <svg xmlns="http://www.w3.org/2000/svg" transform='rotate(-45)' width="20" height="20" viewBox="0 0 20 20">
+                    <symbol id="arrow" viewBox="0 0 24 24">
                     <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current" />
                     </symbol>
                     <use xlink:href="#arrow" width="12" height="12" y="6" x="6" />
@@ -30,11 +30,29 @@
                 </span>
                 </div>
         
-                <!-- Chart -->
-                <div id="chart" style="height: 300px;"></div>
+                <!-- Area Chart -->
+                <div id="chart_div"></div>
+
+                <ul class="flex border-b">
+                    <li class="-mb-px mr-4">
+                        <a class="bg-white inline-block border-b-2 border-green-base py-2 px-4 text-green-base font-semibold" href="#">W</a>
+                    </li>
+                    <li class="mr-4">
+                        <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">M</a>
+                    </li>
+                    <li class="mr-4">
+                        <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">S</a>
+                    </li>
+                    <li class="mr-4">
+                        <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">Y</a>
+                    </li>
+                    <li class="mr-4">
+                        <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">All</a>
+                    </li>
+                </ul>
         
                 <!-- Customers List -->
-                <div class="flex justify-between mt-6">
+                <div class="flex justify-between mt-12">
                 <div class="flex justify-start">
                     <h3 class="text-lg text-gray-900">Customers</h3>
                     <a href="{{route('customers.create')}}" class="ml-6">
@@ -47,16 +65,30 @@
                     </svg>
                     </a>
                     </div>
-                <div class="flex justify-end">
+                <div class="flex justify-end" x-data="{ sortOptions: false }">
                     <label for="sort_by" class="block text-xs font-medium leading-5 text-gray-700 mt-1">
                     Sort by:
                     </label>
-                    <div class="ml-2">
-                    <select form="sortBy" name="sort_by" id="sort_by" class="form-select block w-full pl-2 pr-10 py-1 text-sm leading-6 rounded-full bg-green-base text-white focus:outline-none focus:shadow-outline-green focus:border-green-300 sm:text-sm sm:leading-5 " onchange="this.form.submit()">
-                        @foreach($sortOptions as $sortOption)
-                            <option {{request()->get('sort_by') == $sortOption ? 'selected' : '' }} value="{{$sortOption}}">{{$sortOption}}</option>
-                        @endforeach
-                    </select>
+                    <div class="relative inline-block text-left ml-2">
+                        <div>
+                            <span class="rounded-md shadow-sm">
+                            <button x-on:click="sortOptions = !sortOptions" type="button" class="inline-flex justify-center w-full rounded-full border border-gray-300 px-4 py-1 rounded-full bg-green-base text-white text-sm leading-5 font-medium hover:bg-green-dark focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-50 active:text-gray-800 transition ease-in-out duration-150" id="options-menu" aria-haspopup="true" aria-expanded="true">
+                                Active
+                                <svg class="-mr-1 ml-2 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                </svg>
+                            </button>
+                            </span>
+                        </div>
+                        <div x-show="sortOptions" x-on:click.away="sortOptions = false" class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg">
+                            <div class="rounded-md bg-white shadow-xs">
+                            <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                                <button x-on:click="sortOptions = false" class="block w-full text-left px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900" role="menuitem">
+                                    Inactive
+                                </button>
+                            </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 </div>
@@ -155,9 +187,87 @@
                     22%
                     </div>
                 </div>
+
+                <!-- Funnel Chart -->
+                <div class="flex justify-between border-gray-200 border-2 m-1 p-2 rounded-lg">
+                  <div id="barchart_values"></div>
+                </div>
                 </div>
             </div>
             </div>
         </div>
     </div>
 </x-app.auth>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+  google.charts.load("current", {packages:["corechart", "bar"]});
+  google.charts.setOnLoadCallback(drawAreaChart);
+  google.charts.setOnLoadCallback(drawFunnelChart);
+
+  function drawAreaChart() {
+    var data = google.visualization.arrayToDataTable
+        ([['Week', 'Sales', {'type': 'string', 'role': 'style'}],
+          [1, 3, null],
+          [2, 24.5, null],
+          [3, 2, null],
+          [4, 3, null],
+          [5, 14.5, null],
+          [6, 6.5, null],
+          [7, 9, null],
+          [8, 12, null],
+          [9, 55, null],
+          [10, 34, null],
+          [11, 46, 'point { size: 3; shape-type: circle; fill-color: #46A049; }']
+    ]);
+
+    var options = {
+      legend: 'none',
+      colors: ['#46A049'],
+      pointSize: 1,
+      vAxis: { gridlines: { count: 0 }, textPosition: 'none', baselineColor: '#FFFFFF' },
+      hAxis: { gridlines: { count: 0 }, textPosition: 'none' },
+      chartArea:{left:0,top:0,width:"99%",height:"100%"}
+    };
+
+    var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+    chart.draw(data, options);
+  }
+
+  function drawFunnelChart() {
+      var data = google.visualization.arrayToDataTable([
+        ["Type",   "#",  { role: "style" }],
+        ["Doors",  2000, "color: #46A049"],
+        ["Hours",  250,  "color: #7de8a6"],
+        ["Sets",   125,  "color: #006400"],
+        ["Sits",   85,   "color: #B5B5B5"],
+        ["Closes", 22,   "color: #FF6E5D"]
+        // ["Type", "Invisible", { role: "style" }, "Data", { role: "style" }],
+        // ["Doors", -1000, "color: #46A049", 1000, "color: #46A049"],
+        // ["Hours", -125, "color: #7de8a6", 125, "color: #7de8a6"],
+        // ["Sets", -62.5, "color: #006400", 62.5, "color: #006400"],
+        // ["Sits", -42.5, "color: #B5B5B5", 42.5, "color: #B5B5B5"],
+        // ["Closes", -11, "color: #FF6E5D", 11, "color: #FF6E5D"]
+      ]);
+
+      var view = new google.visualization.DataView(data);
+      view.setColumns([0, 1,
+                       { calc: "stringify",
+                         sourceColumn: 0,
+                         type: "string",
+                         role: "annotation" },
+                       2]);
+
+      var options = {
+        // tooltip: { trigger: 'selection'},
+        bar: {groupWidth: "95%"},
+        legend: { position: 'top' },
+        vAxis: { gridlines: { count: 0 }, textPosition: 'none' },
+        hAxis: { gridlines: { count: 0 }, textPosition: 'none', baselineColor: '#FFFFFF' },
+        chartArea:{left:0,top:0,width:"100%",height:"100%"},
+        isStacked: true
+      };
+      var chart = new google.visualization.BarChart(document.getElementById("barchart_values"));
+      chart.draw(view, options);
+  }
+</script>
