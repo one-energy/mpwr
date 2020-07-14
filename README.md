@@ -1,4 +1,4 @@
-## Dental Front Flare
+## One Energy
 
 | QA | Stage | Production  |
 |---|---|---|
@@ -111,7 +111,6 @@ eslint --ext .js,.vue resources/js --fix
 #### Summary of set up ####
 
 * Clone this repository
-* Clone Sandbot's repository
 * Run `docker-compose` to the environment up and running
 
 #### Dependencies ####
