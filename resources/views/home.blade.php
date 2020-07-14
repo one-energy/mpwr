@@ -31,7 +31,7 @@
                 </div>
         
                 <!-- Area Chart -->
-                <div id="chart_div"></div>
+                <div id="chart_div" class="max-w-full"></div>
 
                 <ul class="flex border-b">
                     <li class="-mb-px mr-4">
@@ -190,7 +190,7 @@
 
                 <!-- Funnel Chart -->
                 <div class="flex justify-between border-gray-200 border-2 m-1 p-2 rounded-lg">
-                  <div id="barchart_values"></div>
+                  <div id="barchart_values" class="max-w-full min-w-full"></div>
                 </div>
                 </div>
             </div>
@@ -201,7 +201,7 @@
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
-  google.charts.load("current", {packages:["corechart", "bar"]});
+  google.charts.load("visualization", "1", {packages:["corechart", "bar"]});
   google.charts.setOnLoadCallback(drawAreaChart);
   google.charts.setOnLoadCallback(drawFunnelChart);
 
@@ -227,7 +227,7 @@
       pointSize: 1,
       vAxis: { gridlines: { count: 0 }, textPosition: 'none', baselineColor: '#FFFFFF' },
       hAxis: { gridlines: { count: 0 }, textPosition: 'none' },
-      chartArea:{left:0,top:0,width:"99%",height:"100%"}
+      chartArea:{left:0, top:0, width:"99%", height:"100%"}
     };
 
     var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
@@ -264,10 +264,15 @@
         legend: { position: 'top' },
         vAxis: { gridlines: { count: 0 }, textPosition: 'none' },
         hAxis: { gridlines: { count: 0 }, textPosition: 'none', baselineColor: '#FFFFFF' },
-        chartArea:{left:0,top:0,width:"100%",height:"100%"},
+        chartArea:{left:0, top:0, width:"100%", height:"100%"},
         isStacked: true
       };
       var chart = new google.visualization.BarChart(document.getElementById("barchart_values"));
       chart.draw(view, options);
   }
+
+  $(window).resize(function(){
+    drawAreaChart();
+    drawFunnelChart();
+});
 </script>
