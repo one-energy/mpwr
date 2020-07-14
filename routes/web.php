@@ -53,11 +53,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
             return view('home');
         })->name('dashboard');
 
-        Route::get('users/register', [UsersController::class, 'form'])->name('users.form');
-        Route::post('users/register', [UsersController::class, 'register'])->name('users.register');
-
+        Route::get('users/create', [UsersController::class, 'create'])->name('users.create');
+        Route::post('users/create', [UsersController::class, 'store'])->name('users.store');
         Route::get('users', [UsersController::class, 'index'])->name('users.index');
         Route::get('users/{user}', [UsersController::class, 'show'])->name('users.show');
+        
         Route::get('masters', [MastersController::class, 'index'])->name('masters.index');
         Route::get('masters/invite', [MasterInvitationController::class, 'form'])->name('masters.invite');
         Route::post('masters/invite', [MasterInvitationController::class, 'invite']);

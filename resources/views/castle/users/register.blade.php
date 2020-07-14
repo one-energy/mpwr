@@ -1,8 +1,4 @@
-
 <x-app.auth :title="__('New User')">
-
-    
-
     <div>
         <div class="max-w-6xl mx-auto py-5 sm:px-6 lg:px-8">
             <a href="{{route('castle.users.index')}}" class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
@@ -10,14 +6,12 @@
             </a>
         </div>
 
-        @if (session('message'))
-            <div class="mb-4">
-                {{ session('message') }}
-            </div>
+        @if ($message = session('message'))
+            <x-alert class="mb-4" :title="__('Success')" :description="$message"></x-alert>
         @endif
 
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <x-form :route="route('castle.users.register')">
+            <x-form :route="route('castle.users.store')">
                 <div>
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                         <div class="md:col-span-3 col-span-2">

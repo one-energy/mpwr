@@ -6,29 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 class UpdateUsersTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('name');
-            $table->string('first_name')->after('id');
-            $table->string('last_name')->after('first_name');
-            $table->string('role')->after('password');
-            $table->string('office')->after('role');
-            $table->decimal('pay', 8, 2)->after('office');
+            $table->string('first_name')->after('id')->nullable();
+            $table->string('last_name')->after('first_name')->nullable();
+            $table->string('role')->after('password')->nullable();
+            $table->string('office')->after('role')->nullable();
+            $table->decimal('pay', 8, 2)->after('office')->nullable();
             $table->softDeletes('deleted_at', 0);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {

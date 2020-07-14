@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Castle;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
 use App\Models\Invitation;
 use App\Models\User;
 use App\Notifications\MasterExistingUserInvitation;
 use App\Notifications\MasterInvitation;
 use App\Rules\Castle\MasterEmailUnique;
 use App\Rules\Castle\MasterEmailYourSelf;
-use Ramsey\Uuid\Uuid;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Ramsey\Uuid\Uuid;
 
 class UsersController extends Controller
 {
@@ -25,12 +25,12 @@ class UsersController extends Controller
         return view('castle.users.show', compact('user'));
     }
 
-    public function form()
+    public function create()
     {
         return view('castle.users.register');
     }
 
-    public function register()
+    public function store()
     {
         $data = Validator::make(request()->all(), [
             'first_name' => ['nullable', 'string', 'max:255'],
@@ -45,7 +45,7 @@ class UsersController extends Controller
 
         $user = $this->findUser($data['email']);
 
-        $invitation = new Invitation();
+        $invitation          = new Invitation();
         $invitation->email   = $data['email'];
         $invitation->token   = Uuid::uuid4();
         $invitation->master  = false;
@@ -56,7 +56,7 @@ class UsersController extends Controller
 
         $user ? $user->notify(new MasterExistingUserInvitation) : $invitation->notify(new MasterInvitation);
 
-        return back()->with('message', __('The invitation was sent to ') . "<span class='font-bold'>{$data['email']}</span>");
+        return back()->with('message', __("The invitation was sent to {$data['email']}"));
     }
 
     /**
