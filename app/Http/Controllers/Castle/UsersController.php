@@ -59,6 +59,16 @@ class UsersController extends Controller
         return back()->with('message', __("The invitation was sent to {$data['email']}"));
     }
 
+    public function edit(User $user)
+    {
+        return view('castle.users.edit', compact($user));
+    }
+
+    public function update()
+    {
+        
+    }
+
     /**
      * @param $email
      * @return User|null
