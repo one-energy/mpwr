@@ -22,7 +22,7 @@
             </div>
           </div>
         </div>
-        <div class="text-gray-600"><a href="/training" class="underline">Setting</a> / <a href="/training/setting" class="underline">Best Practices</a></div>
+        <div class="text-gray-600 mt-6 md:mt-3"><a href="/trainings" class="underline">Setting</a> / <a href="/trainings/setting" class="underline">Best Practices</a></div>
 
         <div class="mt-3">
           <div class="grid md:grid-cols-2 sm:grid-cols-1 md:row-gap-4 sm:row-gap-0 col-gap-4">
@@ -43,7 +43,7 @@
             </div>
 
             <div class="col-span-1">
-              <a href="{{route('what-to-say.index')}}">
+              <a href="{{route('trainings.settings.best-practices.what-to-say.index')}}">
                 <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
                   <div class="col-span-9">
                     What to say
