@@ -2,7 +2,7 @@
     <div>
         <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
             <div class="md:flex">
-            <div class="px-4 py-5 sm:px-6 sm:w-full md:w-2/3 overflow-auto">
+            <div class="px-4 py-5 sm:px-6 sm:w-full md:w-2/3 overflow-y-auto">
                 <div class="flex justify-between">
                 <h3 class="text-lg text-gray-900">Projected Income</h3>
                 <a href="#">
@@ -93,23 +93,32 @@
                 </div>
                 </div>
                 <div class="mt-6">
-                @foreach ($customers as $customer)
-                <a href="{{route('customers.show', $customer['id'])}}">
+                @forelse ($customers as $customer)
+                <a href="{{route('customers.show', $customer->id)}}">
                     <div class="flex justify-between grid md:grid-cols-9 grid-cols-4 row-gap-1 col-gap-4 border-gray-200 border-2 m-1 p-2 rounded-lg">
-                        <div class="text-xs md:col-span-7 col-span-6">
-                        {{{ $customer['name'] }}}
+                        <div class="md:col-span-7 col-span-6">
+                        {{{ $customer->name }}}
                         </div>
                         <div class="md:col-span-2 col-span-1 row-span-2">
-                        <div class="bg-green-base text-white rounded-md py-1 px-2 text-center">
-                            $ {{{ $customer['price'] }}}
+                        <div class="bg-green-base text-white rounded-md py-1 text-center">
+                            $ {{{ $customer->comission }}}
                         </div>
                         </div>
-                        <div class="text-xs text-gray-700 col-span-7">
-                        {{{ $customer['kw'] }}}kW
+                        <div class="text-xs text-gray-600 col-span-7">
+                        {{{ $customer->system_size }}}kW
                         </div>
                     </div>
                 </a>
-                @endforeach
+                @empty
+                <div class="h-96 ">
+                    <div class="flex align-middle justify-center">
+                        <div class="text-gray-700 text-sm text-center">
+                            <x-svg.draw.empty></x-svg.draw.empty>
+                            No data yet.
+                        </div>
+                    </div>
+                </div>
+                @endforelse
                 </div>
             </div>
         

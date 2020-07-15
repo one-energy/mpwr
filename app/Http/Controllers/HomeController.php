@@ -8,7 +8,7 @@ class HomeController extends Controller
 {
     public function __invoke()
     {
-        $customers = Customer::CUSTOMERS;
+        $customers = Customer::query()->get();
 
         return view('home',compact('customers'));
     }
