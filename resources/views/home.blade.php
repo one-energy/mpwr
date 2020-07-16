@@ -105,7 +105,7 @@
                         </div>
                         </div>
                         <div class="text-xs text-gray-600 col-span-7">
-                        {{{ $customer->system_size }}}kW
+                        {{{ $customer->gross_ppw }}}kW
                         </div>
                     </div>
                 </a>
