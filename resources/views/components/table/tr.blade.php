@@ -1,5 +1,5 @@
 @props(['loop'])
 
-<tr class="{{ $loop->odd ? 'bg-white' : 'bg-gray-50' }}">
+<tr class="border-gray-200 border-2 rounded-lg">
     {{ $slot }}
 </tr>

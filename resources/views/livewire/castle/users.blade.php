@@ -1,54 +1,68 @@
 <div>
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="md:flex">
+            <div class="px-4 py-5 sm:px-6 md:w-1/3 overflow-hidden">
+                <div class="flex justify-start pb-4">
+                    <h3 class="text-lg text-gray-900">Users</h3>
+                </div>
 
-    <x-search :search="$search">
-        <x-select name="teams" class="w-full sm:w-auto" wire:model="team">
-            <option value="0" selected>@lang('All teams')</option>
-            @foreach ($teams as $item)
-                <option value="{{ $item->id }}">{{ $item->name }}</option>
-            @endforeach
-        </x-select>
+                <x-filters :keywords="$keywords"></x-filters>
+            </div>
 
-        <x-button :href="route('castle.users.create')" color="indigo" class="mt-4 sm:mt-0">
-        @lang('Create a new User')
-    </x-button>
-    </x-search>
-
-
-    <x-table :pagination="$users->links()">
-        <x-slot name="header">
-            <tr>
-                <x-table.th-searchable by="first_name" :sortedBy="$sortBy" :direction="$sortDirection">
-                    @lang('Name')
-                </x-table.th-searchable>
-                <x-table.th-searchable by="email" :sortedBy="$sortBy" :direction="$sortDirection">
-                    @lang('Email')
-                </x-table.th-searchable>
-                @if($team)
-                    <x-table.th-searchable by="role" :sortedBy="$sortBy" :direction="$sortDirection">
-                        @lang('Role')
-                    </x-table.th-searchable>
-                @endif
-                <x-table.th></x-table.th>
-            </tr>
-        </x-slot>
-        <x-slot name="body">
-            @foreach($users as $user)
-                <x-table.tr :loop="$loop">
-                    <x-table.td>{{ $user->first_name }}</x-table.td>
-                    <x-table.td>{{ $user->email }}</x-table.td>
-                    @if($team)
-                    <x-table.td>
-                        <span class="px-2 py-px tracking-wide text-gray-700 lowercase bg-gray-200 rounded-full">{{ $user->role }}</span>
-                    </x-table.td>
-                    @endif
-                    <x-table.td>
-                        <x-link class="text-sm" :href="route('castle.users.show', $user->id)">View</x-link>
-                        <x-link class="text-sm">Impersonate</x-link>
-                        <x-link class="text-sm">Delete</x-link>
-                    </x-table.td>
-                </x-table.tr>
-            @endforeach
-        </x-slot>
-    </x-table>
-
+            <div class="px-4 py-5 sm:px-6 w-2/3">
+                <div>
+                    <x-button :href="route('castle.users.create')" color="indigo" class="mt-4 sm:mt-0">
+                        @lang('Create a new User')
+                    </x-button>
+                    
+                    <div class="mt-3">
+                        <div class="flex flex-col">
+                            <div class="">
+                                <div class="align-middle inline-block min-w-full">
+                                    <x-table :pagination="$users->links()">
+                                        <x-slot name="header">
+                                            <tr>
+                                                <x-table.th by="first_name" :sortedBy="$sortBy" :direction="$sortDirection">
+                                                    @lang('Name')
+                                                </x-table.th>
+                                                <x-table.th by="email" :sortedBy="$sortBy" :direction="$sortDirection">
+                                                    @lang('Email')
+                                                </x-table.th>
+                                                <x-table.th by="role" :sortedBy="$sortBy" :direction="$sortDirection">
+                                                    @lang('Role')
+                                                </x-table.th>
+                                                <x-table.th by="role" :sortedBy="$sortBy" :direction="$sortDirection">
+                                                    @lang('Office')
+                                                </x-table.th>
+                                                <x-table.th by="role" :sortedBy="$sortBy" :direction="$sortDirection">
+                                                    @lang('Pay')
+                                                </x-table.th>
+                                                <x-table.th></x-table.th>
+                                            </tr>
+                                        </x-slot>
+                                        <x-slot name="body">
+                                            @foreach($users as $user)
+                                                <x-table.tr :loop="$loop">
+                                                    <x-table.td>{{ $user->first_name . ' ' . $user->last_name }}</x-table.td>
+                                                    <x-table.td>{{ $user->email }}</x-table.td>
+                                                    <x-table.td>{{ $user->role }}</x-table.td>
+                                                    <x-table.td>{{ $user->office }}</x-table.td>
+                                                    <x-table.td>{{ $user->pay }}</x-table.td>
+                                                    <x-table.td>
+                                                        <x-link class="text-sm" :href="route('castle.users.edit', $user->id)">
+                                                            Edit
+                                                        </x-link>
+                                                    </x-table.td>
+                                                </x-table.tr>
+                                            @endforeach
+                                        </x-slot>
+                                    </x-table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
