@@ -87,6 +87,17 @@ class UsersController extends Controller
         return redirect(route('castle.users.index'));
     }
 
+    public function destroy($id)
+    {
+        User::query()->findOrFail($id)->delete();
+
+        alert()
+            ->withTitle(__('User has been deleted!'))
+            ->send();
+
+        return redirect(route('castle.users.index'));
+    }
+
     /**
      * @param $email
      * @return User|null

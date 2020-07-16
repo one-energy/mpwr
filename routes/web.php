@@ -58,6 +58,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('users', [UsersController::class, 'index'])->name('users.index');
         Route::get('users/{user}/edit', [UsersController::class, 'edit'])->name('users.edit');
         Route::put('users/{user}', [UsersController::class, 'update'])->name('users.update');
+        Route::delete('users/{user}', [UsersController::class, 'destroy'])->name('users.destroy');
         
         Route::get('masters', [MastersController::class, 'index'])->name('masters.index');
         Route::get('masters/invite', [MasterInvitationController::class, 'form'])->name('masters.invite');
