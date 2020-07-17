@@ -26,6 +26,7 @@ class CreateCustomersTable extends Migration
             $table->decimal('comission')->nullable();
             $table->decimal('setter_fee', 8, 2)->nullable();
             $table->string('setter')->nullable();
+            $table->boolean('is_active')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

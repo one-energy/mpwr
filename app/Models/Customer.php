@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property float $gross_ppw
  * @property float $comission
  * @property float $setter_fee
+ * @property boolean $is_active
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Carbon $deleted_at
@@ -24,6 +25,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Customer extends Model
 {
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
     const CUSTOMERS = [
         ['id' => 1, 'name' => 'Donna Walker',   'price' => 4200, 'kw' => 6.2],
         ['id' => 2, 'name' => 'Chris Williams', 'price' => 4200, 'kw' => 6.2]
