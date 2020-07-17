@@ -7,29 +7,21 @@
             <h3 class="text-lg text-gray-900">Scoring</h3>
           </div>
           <div class="flex justify-end" x-data="{ showOptions: false }">
-            <label for="show_option" class="block text-xs font-medium leading-5 text-gray-700 mt-1">
+            <label for="show_option" class="block text-xs font-medium leading-5 text-gray-700 mt-2">
               Show:
             </label>
             <div class="relative inline-block text-left ml-2">
-              <div>
-                <span class="rounded-md shadow-sm">
-                  <button x-on:click="showOptions = !showOptions" type="button" class="inline-flex justify-center w-full rounded-full border border-gray-300 px-4 py-1 rounded-full bg-green-base text-white text-sm leading-5 font-medium hover:bg-green-dark focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-50 active:text-gray-800 transition ease-in-out duration-150" id="options-menu" aria-haspopup="true" aria-expanded="true">
-                    Leaderboards
-                    <svg class="-mr-1 ml-2 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                    </svg>
-                  </button>
-                </span>
-              </div>
-              <div x-show="showOptions" x-on:click.away="showOptions = false" class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg">
-                <div class="rounded-md bg-white shadow-xs">
-                  <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                      <button x-on:click="showOptions = false" class="block w-full text-left px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900" role="menuitem">
-                        Records
-                      </button>
-                  </div>
-                </div>
-              </div>
+              <select id="show_option"
+                      name="show_option"
+                      onchange="this.form.submit()"
+                      class="form-select block w-full transition duration-150 ease-in-out text-gray-500 text-lg py-1 rounded-lg">
+                  @foreach($filterTypes as $type)
+                      <option value="{{$type['index']}}"
+                          @if(request('show_option') == $type['index']) selected @endif>
+                          {{$type['value']}}
+                      </option>
+                  @endforeach
+              </select>
             </div>
           </div>
         </div>
