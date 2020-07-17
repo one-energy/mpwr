@@ -31,7 +31,7 @@
                 </div>
         
                 <!-- Area Chart -->
-                <div id="chart_div" class="max-w-full"></div>
+                <div id="area_chart" class="max-w-full"></div>
 
                 <ul class="flex border-b">
                     <li class="-mb-px mr-4">
@@ -190,7 +190,7 @@
 
                 <!-- Funnel Chart -->
                 <div class="flex justify-between border-gray-200 border-2 m-1 p-2 rounded-lg">
-                  <div id="barchart_values" class="max-w-full min-w-full"></div>
+                  <div id="bar_chart" class="max-w-full min-w-full"></div>
                 </div>
                 </div>
             </div>
@@ -230,7 +230,7 @@
       chartArea:{left:0, top:0, width:"99%", height:"100%"}
     };
 
-    var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+    var chart = new google.visualization.AreaChart(document.getElementById('area_chart'));
     chart.draw(data, options);
   }
 
@@ -267,7 +267,7 @@
         chartArea:{left:0, top:0, width:"100%", height:"100%"},
         isStacked: true
       };
-      var chart = new google.visualization.BarChart(document.getElementById("barchart_values"));
+      var chart = new google.visualization.BarChart(document.getElementById("bar_chart"));
       chart.draw(view, options);
   }
 
