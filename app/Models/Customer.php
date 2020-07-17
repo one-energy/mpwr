@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int $id
- * @property string $name
+ * @property string $first_name
+ * @property string $last_name
  * @property string $setter
  * @property string $pay
  * @property float $system_size
@@ -27,10 +28,5 @@ class Customer extends Model
 {
     protected $casts = [
         'is_active' => 'boolean',
-    ];
-
-    const CUSTOMERS = [
-        ['id' => 1, 'name' => 'Donna Walker',   'price' => 4200, 'kw' => 6.2],
-        ['id' => 2, 'name' => 'Chris Williams', 'price' => 4200, 'kw' => 6.2]
     ];
 }
