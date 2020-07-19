@@ -89,12 +89,12 @@
                 <div class="mt-6">
                     @forelse ($customers as $customer)
                     <a href="{{route('customers.show', $customer->id)}}">
-                        <div class="flex justify-between grid md:grid-cols-9 grid-cols-4 row-gap-1 col-gap-4 border-gray-200 border-2 m-1 p-2 rounded-lg">
+                        <div class="flex justify-between grid md:grid-cols-9 grid-cols-4 row-gap-1 col-gap-4 hover:bg-gray-50 border-gray-200 border-2 m-1 p-2 rounded-lg">
                             <div class="md:col-span-7 col-span-6">
                                 {{$customer->first_name }} {{ $customer->last_name }}
                             </div>
                             <div class="md:col-span-2 col-span-1 row-span-2">
-                            <div class="bg-green-base text-white rounded-md py-1 text-center">
+                            <div class="bg-green-base text-white rounded-md py-1 px-1 text-center">
                                 $ {{ $customer->comission }}
                             </div>
                             </div>
@@ -204,24 +204,18 @@
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
-  google.charts.load("visualization", "1", {packages:["corechart", "bar"]});
+  google.charts.load("current", {'packages':["corechart", "bar"]});
   google.charts.setOnLoadCallback(drawAreaChart);
   google.charts.setOnLoadCallback(drawFunnelChart);
 
   function drawAreaChart() {
-    var data = google.visualization.arrayToDataTable
-        ([['Week', 'Sales', {'type': 'string', 'role': 'style'}],
-          [1, 3, null],
-          [2, 24.5, null],
-          [3, 2, null],
-          [4, 3, null],
-          [5, 14.5, null],
-          [6, 6.5, null],
-          [7, 9, null],
-          [8, 12, null],
-          [9, 55, null],
-          [10, 34, null],
-          [11, 46, 'point { size: 3; shape-type: circle; fill-color: #46A049; }']
+    var data = google.visualization.arrayToDataTable([
+        ['Week', 'Income'],
+        @php
+            foreach($customers as $customer) {
+                echo "['".$customer->created_at."', ".$customer->comission."],";
+            }
+        @endphp
     ]);
 
     var options = {
@@ -274,8 +268,4 @@
       chart.draw(view, options);
   }
 
-  $(window).resize(function(){
-    drawAreaChart();
-    drawFunnelChart();
-});
 </script>
