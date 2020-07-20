@@ -37,9 +37,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'master'            => 'boolean',
     ];
 
-    public function teams()
+    public function regions()
     {
-        return $this->belongsToMany(Team::class)->withPivot('role')->withTimestamps();
+        return $this->belongsToMany(Region::class)->withPivot('role')->withTimestamps();
     }
 
     public function invitations()
