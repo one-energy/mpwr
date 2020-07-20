@@ -2,6 +2,7 @@
 
 use App\Models\Team;
 use App\Models\User;
+use App\Models\Region;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -33,7 +34,9 @@ class UsersTableSeeder extends Seeder
         }
 
         $this->createDevsquadTeam();
-        $this->createTestTeam();
+        for ($i=0; $i < 5; $i++) { 
+            $this->createTestRegion();    
+        }
     }
 
     public function createDevsquadTeam()
@@ -45,9 +48,8 @@ class UsersTableSeeder extends Seeder
             'master' => true,
         ]);
 
-        $devsquad = factory(Team::class)->create([
+        $devsquad = factory(Region::class)->create([
             'owner_id' => $owner->id,
-            'name'     => 'DevSquad',
         ]);
         $devsquad->users()->attach($owner, ['role' => User::OWNER]);
 
@@ -62,30 +64,27 @@ class UsersTableSeeder extends Seeder
             $member = factory(User::class)->create();
             $devsquad->users()->attach($member, ['role' => User::MEMBER]);
         }
+
         for ($i = 0; $i < 50; $i++) {
             $master = factory(User::class)->create(['master' => true]);
             $devsquad->users()->attach($master, ['role' => User::MEMBER]);
         }
     }
 
-    public function createTestTeam()
+    public function createTestRegion()
     {
         $testOwner = factory(User::class)->create([
-            'first_name'   => 'Test',
-            'last_name' => 'User',
-            'email'  => 'test@user.com',
             'master' => false,
         ]);
-
-        $testTeam = factory(Team::class)->create([
+    
+        $testRegion = factory(Region::class)->create([
             'owner_id' => $testOwner->id,
-            'name'     => 'Test Team',
         ]);
-        $testTeam->users()->attach($testOwner, ['role' => User::OWNER]);
+        $testRegion->users()->attach($testOwner, ['role' => User::OWNER]);
 
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $member = factory(User::class)->create();
-            $testTeam->users()->attach($member, ['role' => User::MEMBER]);
+            $testRegion->users()->attach($member, ['role' => User::MEMBER]);
         }
     }
 }
