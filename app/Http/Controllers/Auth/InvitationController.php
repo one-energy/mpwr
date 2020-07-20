@@ -36,12 +36,19 @@ class InvitationController extends Controller
         $data['email'] = $invitation->email;
 
         Validator::make($data, [
-            'name'     => ['required', 'string', 'min:3', 'max:255'],
-            'email'    => ['unique:users', 'confirmed'],
-            'password' => ['required', 'string', 'min:8', 'max:128'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name'  => ['required', 'string', 'max:255'],
+            'email'      => ['confirmed'],
+            'password'   => ['required', 'string', 'min:8', 'max:128'],
         ])->validate();
 
-        $user = $this->createUser($data, $invitation);
+        $user = User::where('email', $data['email'])->firstOrFail();
+            
+        $user->first_name        = $data['first_name'];
+        $user->last_name         = $data['last_name'];
+        $user->email_verified_at = now();
+        $user->password          = bcrypt($data['password']);
+        $user->save();
 
         $invitation->delete();
 
@@ -49,18 +56,5 @@ class InvitationController extends Controller
 
         return redirect()->route('home')
             ->with('message', __('Welcome to ') . config('app.name'));
-    }
-
-    private function createUser(array $data, Invitation $invitation): User
-    {
-        $user                    = new User();
-        $user->name              = $data['name'];
-        $user->email             = $data['email'];
-        $user->password          = bcrypt($data['password']);
-        $user->email_verified_at = now();
-        $user->master            = $invitation->master;
-        $user->save();
-
-        return $user;
     }
 }

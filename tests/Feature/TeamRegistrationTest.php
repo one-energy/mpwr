@@ -36,7 +36,7 @@ class TeamRegistrationTest extends FeatureTest
         ]);
 
         $this->assertDatabaseHas('users', [
-            'name'  => 'Joe Doe',
+            'first_name'  => 'Joe Doe',
             'email' => 'joe@doe.com',
         ]);
 

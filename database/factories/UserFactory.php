@@ -23,12 +23,16 @@ $photos = collect([
 /** @var Factory $factory */
 $factory->define(User::class, function (Faker $faker) use ($photos) {
     return [
-        'name'              => $faker->name,
+        'first_name'        => $faker->firstName,
+        'last_name'         => $faker->lastName,
         'email'             => $faker->unique()->safeEmail,
         'email_verified_at' => now(),
         'password'          => bcrypt('secret'),
         'timezone'          => $faker->timezone,
         'photo_url'         => Storage::disk('public')->url('profiles/' . $photos->random()),
         'remember_token'    => Str::random(10),
+        'role'              => User::MEMBER,
+        'office'            => $faker->city,
+        'pay'               => rand(10, 100)
     ];
 });
