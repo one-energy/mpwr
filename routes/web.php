@@ -81,5 +81,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/trainings/setting/best-practices/what-to-say', [TrainingSettingBestPracticesWhatToSayController::class, 'index'])->name('what-to-say.index');
     Route::get('/incentives', IncentivesController::class)->name('incentives');
     Route::get('/number-tracking', [NumberTrackingController::class, 'index'])->name('number-tracking.index');
+    Route::get('/number-tracking/create', [NumberTrackingController::class, 'create'])->name('number-tracking.create');
 });
 
