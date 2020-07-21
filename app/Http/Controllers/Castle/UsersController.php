@@ -9,6 +9,7 @@ use App\Notifications\MasterExistingUserInvitation;
 use App\Notifications\MasterInvitation;
 use App\Rules\Castle\MasterEmailUnique;
 use App\Rules\Castle\MasterEmailYourSelf;
+use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
@@ -89,7 +90,14 @@ class UsersController extends Controller
 
     public function destroy($id)
     {
-        User::query()->findOrFail($id)->delete();
+        if($id == auth()->user()->id) {
+            alert()
+                ->withTitle(__('You cannot delete yourself!'))
+                ->send();
+            return back();
+        }
+
+        User::destroy($id);
 
         alert()
             ->withTitle(__('User has been deleted!'))
