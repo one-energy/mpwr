@@ -16,7 +16,8 @@ class HomeController extends Controller
             ['index' => 'is_inactive', 'value' => 'Inactive'],
         ];
 
-        if (!empty(request('sort_by'))) {
+        if (!empty(request('sort_by')))
+        {
             if($request->input('sort_by') == "is_active")
             {
                 $query
