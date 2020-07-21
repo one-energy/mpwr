@@ -8,13 +8,8 @@ class HomeController extends Controller
 {
     public function __invoke()
     {
-        $sortOptions = [
-            'Active', 
-            'Inactive',
-        ];
-
         $customers = Customer::CUSTOMERS;
 
-        return view('home',compact('sortOptions', 'customers'));
+        return view('home',compact('customers'));
     }
 }

@@ -6,16 +6,30 @@
           <div class="flex justify-start">
             <h3 class="text-lg text-gray-900">Scoring</h3>
           </div>
-          <div class="flex justify-end">
+          <div class="flex justify-end" x-data="{ showOptions: false }">
             <label for="show_option" class="block text-xs font-medium leading-5 text-gray-700 mt-1">
               Show:
             </label>
-            <div class="ml-2">
-              <select form="showOption" name="show_option" id="show_option" class="form-select block w-full pl-2 pr-10 py-1 text-sm leading-6 rounded-full bg-green-base text-white focus:outline-none focus:shadow-outline-green focus:border-green-300 sm:text-sm sm:leading-5 " onchange="this.form.submit()">
-                @foreach($showOptions as $showOption)
-                    <option {{request()->get('show_option') == $showOption ? 'selected' : '' }} value="{{$showOption}}">{{$showOption}}</option>
-                @endforeach
-            </select>
+            <div class="relative inline-block text-left ml-2">
+              <div>
+                <span class="rounded-md shadow-sm">
+                  <button x-on:click="showOptions = !showOptions" type="button" class="inline-flex justify-center w-full rounded-full border border-gray-300 px-4 py-1 rounded-full bg-green-base text-white text-sm leading-5 font-medium hover:bg-green-dark focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-50 active:text-gray-800 transition ease-in-out duration-150" id="options-menu" aria-haspopup="true" aria-expanded="true">
+                    Leaderboards
+                    <svg class="-mr-1 ml-2 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                  </button>
+                </span>
+              </div>
+              <div x-show="showOptions" x-on:click.away="showOptions = false" class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg">
+                <div class="rounded-md bg-white shadow-xs">
+                  <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                      <button x-on:click="showOptions = false" class="block w-full text-left px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900" role="menuitem">
+                        Records
+                      </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -70,6 +84,24 @@
               </div>
             </div>
           </div>
+          <ul class="flex border-b">
+            <li class="-mb-px mr-4">
+                <a class="bg-white inline-block border-b-2 border-green-base py-2 px-4 text-green-base font-semibold" href="#">W</a>
+            </li>
+            <li class="mr-4">
+                <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">M</a>
+            </li>
+            <li class="mr-4">
+                <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">S</a>
+            </li>
+            <li class="mr-4">
+                <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">Y</a>
+            </li>
+            <li class="mr-4">
+                <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">All</a>
+            </li>
+        </ul>
+
         </div>
 
         <div class="mt-6">
@@ -122,6 +154,24 @@
               </div>
             </div>
           </div>
+          <ul class="flex border-b">
+            <li class="-mb-px mr-4">
+                <a class="bg-white inline-block border-b-2 border-green-base py-2 px-4 text-green-base font-semibold" href="#">W</a>
+            </li>
+            <li class="mr-4">
+                <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">M</a>
+            </li>
+            <li class="mr-4">
+                <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">S</a>
+            </li>
+            <li class="mr-4">
+                <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">Y</a>
+            </li>
+            <li class="mr-4">
+                <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">All</a>
+            </li>
+        </ul>
+
         </div>
 
         <div class="mt-6">
@@ -174,6 +224,24 @@
               </div>
             </div>
           </div>
+          <ul class="flex border-b">
+            <li class="-mb-px mr-4">
+                <a class="bg-white inline-block border-b-2 border-green-base py-2 px-4 text-green-base font-semibold" href="#">W</a>
+            </li>
+            <li class="mr-4">
+                <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">M</a>
+            </li>
+            <li class="mr-4">
+                <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">S</a>
+            </li>
+            <li class="mr-4">
+                <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">Y</a>
+            </li>
+            <li class="mr-4">
+                <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">All</a>
+            </li>
+        </ul>
+
         </div>
 
       </div>
