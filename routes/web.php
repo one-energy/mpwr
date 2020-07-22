@@ -82,5 +82,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/incentives', IncentivesController::class)->name('incentives');
     Route::get('/number-tracking', [NumberTrackingController::class, 'index'])->name('number-tracking.index');
     Route::get('/number-tracking/create', [NumberTrackingController::class, 'create'])->name('number-tracking.create');
+    Route::post('/number-tracking/create', [NumberTrackingController::class, 'store'])->name('number-tracking.store');
 });
 

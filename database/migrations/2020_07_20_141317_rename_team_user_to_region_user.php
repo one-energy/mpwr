@@ -9,9 +9,9 @@ class RenameTeamUserToRegionUser extends Migration
     public function up()
     {
         Schema::rename('team_user', 'region_user');
-        Schema::table('team_user', function (Blueprint $table) {
-            $table->renameColumn('region_id', 'team_id');
-            $table->foreign('team_id')->references('id')->on('regions');
+        Schema::table('region_user', function (Blueprint $table) {
+            $table->renameColumn('team_id', 'region_id');
+            $table->foreign('region_id')->references('id')->on('regions');
             $table->foreign('user_id')->references('id')->on('users');
         });
     }

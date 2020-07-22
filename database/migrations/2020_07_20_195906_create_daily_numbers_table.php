@@ -12,12 +12,12 @@ class CreateDailyNumbersTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
             $table->date('date');
-            $table->integer('doors');
-            $table->decimal('hours', 2, 2)->nullable();
-            $table->integer('sets');
-            $table->integer('sits');
-            $table->integer('set_closes');
-            $table->integer('closes');
+            $table->integer('doors')->nullable();
+            $table->decimal('hours', 4, 2)->nullable();
+            $table->integer('sets')->nullable();
+            $table->integer('sits')->nullable();
+            $table->integer('set_closes')->nullable();
+            $table->integer('closes')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
