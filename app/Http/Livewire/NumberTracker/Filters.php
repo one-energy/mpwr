@@ -2,15 +2,14 @@
 
 namespace App\Http\Livewire\NumberTracker;
 
-use Livewire\Component;
 use App\Models\Region;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Livewire\Component;
 
 class Filters extends Component
 {
-
     public $date = '';
 
     public $regionSelected = '';
@@ -49,7 +48,7 @@ class Filters extends Component
                 })
                 ->orderBy($this->sortBy())
                 ->get(),
-            'regions' => Region::all()
+            'regions' => Region::all(),
         ]);
-    }   
+    }
 }

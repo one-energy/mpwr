@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\DailyNumber;
+use Illuminate\Http\Request;
 
 class NumberTrackingController extends Controller
 {
@@ -45,9 +45,9 @@ class NumberTrackingController extends Controller
 
             foreach ($data['numbers'] as $userId => $numbers) {
                 if (!empty(array_filter($numbers))) {
-                    $num = new DailyNumber();
+                    $num          = new DailyNumber();
                     $num->user_id = $userId;
-                    $num->date = date('Y-m-d', strtotime($date));
+                    $num->date    = date('Y-m-d', strtotime($date));
                     $num->forceFill($numbers);
                     $num->save();
                 }
@@ -57,12 +57,12 @@ class NumberTrackingController extends Controller
                 ->withTitle(__('Daily Numbers saved!'))
                 ->send();
         } else {
-
             alert()
                 ->withTitle(__('Nothing was saved :('))
                 ->withColor('red')
                 ->send();
         }
+
         return back();
     }
 }
