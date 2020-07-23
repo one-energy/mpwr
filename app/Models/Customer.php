@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property float $financing
  * @property float $adders
  * @property float $gross_ppw
- * @property float $comission
+ * @property float $commission
  * @property float $setter_fee
  * @property boolean $is_active
  * @property Carbon $created_at

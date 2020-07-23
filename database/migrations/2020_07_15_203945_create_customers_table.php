@@ -24,7 +24,7 @@ class CreateCustomersTable extends Migration
             $table->decimal('financing', 8, 2)->nullable();
             $table->decimal('adders')->nullable();
             $table->decimal('gross_ppw')->nullable();
-            $table->decimal('comission')->nullable();
+            $table->decimal('commission')->nullable();
             $table->decimal('setter_fee', 8, 2)->nullable();
             $table->string('setter')->nullable();
             $table->boolean('is_active')->nullable();

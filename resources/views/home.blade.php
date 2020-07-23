@@ -15,20 +15,6 @@
                     </svg>
                 </a>
                 </div>
-                <div class="font-bold text-lg">
-                    $239,459
-                </div>
-                <div class="flex font-semibold text-xs text-green-base">
-                <svg xmlns="http://www.w3.org/2000/svg" transform='rotate(-45)' width="20" height="20" viewBox="0 0 20 20">
-                    <symbol id="arrow" viewBox="0 0 24 24">
-                    <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current" />
-                    </symbol>
-                    <use xlink:href="#arrow" width="12" height="12" y="6" x="6" />
-                </svg>
-                <span>
-                    $132,421 (50.23%)
-                </span>
-                </div>
         
                 <!-- Area Chart -->
                 @livewire('area-chart')
@@ -76,8 +62,8 @@
                                 {{ $customer->first_name }} {{ $customer->last_name }}
                             </div>
                             <div class="md:col-span-2 col-span-1 row-span-2">
-                            <div class="bg-green-base text-white rounded-md py-1 px-1 text-center">
-                                $ {{ $customer->comission }}
+                            <div class="@if($customer->is_active != 1) bg-red-500 @else bg-green-base @endif text-white rounded-md py-1 px-1 text-center">
+                                $ {{ $customer->commission }}
                             </div>
                             </div>
                             <div class="text-xs text-gray-600 col-span-7">
