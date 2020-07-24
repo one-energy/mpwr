@@ -22,7 +22,7 @@
             </div>
           </div>
         </div>
-        <div class="text-gray-600"><a href="/training" class="underline">Setting</a> / <a href="/training/setting" class="underline">Best Practices</a> / <a href="/training/setting/best-practices" class="underline">What to say</a></div>
+        <div class="text-gray-600 mt-6 md:mt-3"><a href="/trainings" class="underline">Setting</a> / <a href="/trainings/setting" class="underline">Best Practices</a> / <a href="/trainings/setting/best-practices" class="underline">What to say</a></div>
 
         <div class="mt-3">
           <div class="md:flex">

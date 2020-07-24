@@ -198,10 +198,10 @@
                     </div>
                 </div>
                 
-                <div class="px-4 py-5 sm:p-6 w-2/3">
+                <div class="px-4 py-5 sm:p-6 md:w-2/3">
                     <div class="overflow-y-auto">
-                        <div class="flex justify-between mt-12">
-                            <div class="w-full grid md:grid-cols-4 sm:grid-cols-2 md:col-gap-4 sm:col-gap-1 row-gap-2">
+                        <div class="flex justify-between md:mt-12 mt-6">
+                            <div class="w-full grid md:grid-cols-4 grid-cols-2 md:col-gap-4 col-gap-1 row-gap-2">
                                 <div class="col-span-1 bg-green-light rounded-lg p-3">
                                     <div class="text-xs text-green-base font-semibold uppercase">D.P.S</div>
                                     <div class="text-xl text-green-base font-bold">14.6</div>
@@ -226,7 +226,7 @@
                         </div>
 
                         <div class="flex justify-between mt-3">
-                            <div class="w-full grid md:grid-cols-6 sm:grid-cols-3 md:col-gap-4 sm:col-gap-1 row-gap-2">
+                            <div class="w-full grid md:grid-cols-6 grid-cols-3 md:col-gap-4 col-gap-1 row-gap-2">
                                 <div class="col-span-1 border-2 border-green-base bg-green-light rounded-lg p-3">
                                     <div class="text-xs font-semibold uppercase">Doors</div>
                                     <div class="text-xl font-bold">1752</div>
@@ -360,7 +360,7 @@
                                     <div class="align-middle inline-block min-w-full overflow-hidden">
                                         <table class="min-w-full">
                                         <thead>
-                                            <tr>
+                                            <tr class="sm:border-gray-200 border-b-2">
                                             <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
                                                 Team Member
                                             </th>
@@ -386,26 +386,26 @@
                                         </thead>
                                         <tbody>
                                             @foreach ($trackingInformation as $row)
-                                            <tr class="border-gray-200 border-2 rounded-lg">
-                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+                                            <tr>
+                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 md:border-b md:border-gray-200">
                                                 {{{ $row['team_member'] }}}
                                                 </td>
-                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
+                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
                                                 {{{ $row['doors'] }}}
                                                 </td>
-                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
+                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
                                                 {{{ $row['hours'] }}}
                                                 </td>
-                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
+                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
                                                 {{{ $row['sets'] }}}
                                                 </td>
-                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
+                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
                                                 {{{ $row['sits'] }}}
                                                 </td>
-                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
+                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
                                                 {{{ $row['set_closes'] }}}
                                                 </td>
-                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
+                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
                                                 {{{ $row['closes'] }}}
                                                 </td>
                                             </tr>

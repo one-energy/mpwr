@@ -5,7 +5,6 @@ namespace App\Http\Livewire\NumberTracker;
 use App\Models\Region;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Filters extends Component
@@ -33,20 +32,29 @@ class Filters extends Component
 
     public function render()
     {
+        $this->dateSelected = ($this->dateSelected == "") ? date('Y-m-d', time()) : $this->dateSelected;
+
         return view('livewire.number-tracker.filters',[
             'users' => User::query()
-                ->when($this->regionSelected !== '', function(Builder $query) {
+                ->when($this->regionSelected, function(Builder $query) {
                     $query->whereHas('regions', function(Builder $query) {
                         $query->whereId($this->regionSelected);
-                    })
-                    ->addSelect(['role' => DB::table('region_user')
-                        ->whereRaw('user_id = users.id')
-                        ->where('region_id', $this->regionSelected)
-                        ->select(['role'])
-                        ->limit(1),
-                    ]);
+                    });
+                })
+                ->leftJoin('daily_numbers', function($join) {
+                    $join->on('daily_numbers.user_id', '=', 'users.id')
+                        ->where('daily_numbers.date', '=', $this->dateSelected);
                 })
                 ->orderBy($this->sortBy())
+                ->select(
+                    'users.*', 
+                    'daily_numbers.doors', 
+                    'daily_numbers.hours', 
+                    'daily_numbers.sets', 
+                    'daily_numbers.sits', 
+                    'daily_numbers.set_closes', 
+                    'daily_numbers.closes'
+                )
                 ->get(),
             'regions' => Region::all(),
         ]);

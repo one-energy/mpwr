@@ -92,14 +92,13 @@
                         type="button"
                         class="inline-flex w-full justify-left py-2 px-4 mb-2 bg-white rounded-lg border-gray-200 border-2 top-0 left-0 text-sm leading-5 font-medium focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out"
                         wire:click="setRegion({{ $region->id }})"
+                        :class="{
+                                    'border-green-400': {{ $regionSelected }} == {{ $region->id }}
+                            }"
                     >
                         {{ $region->name }}
                     </button>
                 @endforeach
-
-                <h1>Data => {{ $dateSelected }}</h1>
-                <h1>Region => {{ $regionSelected }}</h1>
-                <h1>Users => {{ count($users) }}</h1>
 
                 <div class="mt-6">
                     <button type="submit" class="inline-flex w-full justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-base hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
@@ -112,7 +111,106 @@
                 
                 <div class="mt-6">
                     <div class="align-middle inline-block min-w-full overflow-hidden">
-                        <table class="min-w-full">
+
+                    <div class="flex justify-between mt-3">
+                            <div class="w-full grid md:grid-cols-6 sm:grid-cols-3 md:col-gap-4 sm:col-gap-1 row-gap-2">
+                                <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
+                                    <div class="text-xs font-semibold uppercase">Doors</div>
+                                    <div class="text-xl font-bold">1752</div>
+                                    <div class="flex font-semibold text-xs text-green-base">
+                                        <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(-45)" width="20" height="20" viewBox="0 0 20 20">
+                                            <symbol id="arrow" viewBox="0 0 24 24">
+                                            <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current"></path>
+                                            </symbol>
+                                            <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
+                                        </svg>
+                                        <span>
+                                            +500
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
+                                    <div class="text-xs text-gray-900 font-semibold uppercase">Hours</div>
+                                    <div class="text-xl text-gray-900 font-bold">153</div>
+                                    <div class="flex font-semibold text-xs text-green-base">
+                                        <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(-45)" width="20" height="20" viewBox="0 0 20 20">
+                                            <symbol id="arrow" viewBox="0 0 24 24">
+                                            <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current"></path>
+                                            </symbol>
+                                            <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
+                                        </svg>
+                                        <span>
+                                            +500
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
+                                    <div class="text-xs text-gray-900 font-semibold uppercase">Sets</div>
+                                    <div class="text-xl text-gray-900 font-bold">113</div>
+                                    <div class="flex font-semibold text-xs text-green-base">
+                                        <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(-45)" width="20" height="20" viewBox="0 0 20 20">
+                                            <symbol id="arrow" viewBox="0 0 24 24">
+                                            <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current"></path>
+                                            </symbol>
+                                            <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
+                                        </svg>
+                                        <span>
+                                            +500
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
+                                    <div class="text-xs text-gray-900 font-semibold uppercase">Sits</div>
+                                    <div class="text-xl text-gray-900 font-bold">68</div>
+                                    <div class="flex font-semibold text-xs text-green-base">
+                                        <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(-45)" width="20" height="20" viewBox="0 0 20 20">
+                                            <symbol id="arrow" viewBox="0 0 24 24">
+                                            <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current"></path>
+                                            </symbol>
+                                            <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
+                                        </svg>
+                                        <span>
+                                            +500
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
+                                    <div class="text-xs text-gray-900 font-semibold uppercase">Set closes</div>
+                                    <div class="text-xl text-gray-900 font-bold">6</div>
+                                    <div class="flex font-semibold text-xs text-green-base">
+                                        <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(-45)" width="20" height="20" viewBox="0 0 20 20">
+                                            <symbol id="arrow" viewBox="0 0 24 24">
+                                            <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current"></path>
+                                            </symbol>
+                                            <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
+                                        </svg>
+                                        <span>
+                                            +500
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
+                                    <div class="text-xs text-gray-900 font-semibold uppercase">Closes</div>
+                                    <div class="text-xl text-gray-900 font-bold">5</div>
+                                    <div class="flex font-semibold text-xs text-green-base">
+                                        <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(-45)" width="20" height="20" viewBox="0 0 20 20">
+                                            <symbol id="arrow" viewBox="0 0 24 24">
+                                            <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current"></path>
+                                            </symbol>
+                                            <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
+                                        </svg>
+                                        <span>
+                                            +500
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div wire:loading>
+                            Loading...
+                        </div>
+                        <table class="min-w-full" wire:loading.remove>
                         <thead>
                             <tr>
                             <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
@@ -145,22 +243,59 @@
                                     {{ $user->first_name . ' ' . $user->last_name }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 w-35">
-                                    <input type="number" min="0" name="numbers[{{ $user->id }}][doors]" class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5">
+                                    <input 
+                                        type="number" 
+                                        min="0" 
+                                        name="numbers[{{ $user->id }}][doors]" 
+                                        class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                        value="{{ $user->doors }}"
+                                    >
                                 </td>
                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-                                    <input type="number" min="0" step="any" name="numbers[{{ $user->id }}][hours]" class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5">
+                                    <input 
+                                        type="number" 
+                                        min="0" 
+                                        step="any" 
+                                        name="numbers[{{ $user->id }}][hours]" 
+                                        class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                        value="{{ $user->hours }}"
+                                    >
                                 </td>
                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-                                    <input type="number" name="numbers[{{ $user->id }}][sets]" class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5">
+                                    <input 
+                                        type="number" 
+                                        min="0"
+                                        name="numbers[{{ $user->id }}][sets]" 
+                                        class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                        value="{{ $user->sets }}"
+                                    >
                                 </td>
                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-                                    <input type="number" name="numbers[{{ $user->id }}][sits]" class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5">
+                                    <input 
+                                        type="number" 
+                                        min="0"
+                                        name="numbers[{{ $user->id }}][sits]" 
+                                        class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                        value="{{ $user->sits }}"
+                                    >
                                 </td>
                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-                                    <input type="number" name="numbers[{{ $user->id }}][set_closes]" class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5">
+                                    <input 
+                                        type="number" 
+                                        min="0"
+                                        name="numbers[{{ $user->id }}][set_closes]" 
+                                        class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                        value="{{ $user->set_closes }}"
+                                    >
                                 </td>
                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-                                    <input type="number" name="numbers[{{ $user->id }}][closes]" class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5">
+                                    <input 
+                                        type="number" 
+                                        
+                                        name="numbers[{{ $user->id }}][closes]" 
+                                        class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                        value="{{ $user->closes }}"
+                                    >
                                 </td>
                             </tr>
                             @endforeach
