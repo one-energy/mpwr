@@ -12,6 +12,7 @@ use App\Rules\Castle\MasterEmailYourSelf;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
+use Illuminate\Validation\Rule;
 
 class UsersController extends Controller
 {
@@ -61,12 +62,29 @@ class UsersController extends Controller
 
     public function edit(User $user)
     {
-        return view('castle.users.edit', compact($user));
+        return view('castle.users.edit', compact('user'));
     }
 
-    public function update()
+    public function update($id)
     {
-        
+        $data = Validator::make(request()->all(), [
+            'first_name'  => ['required', 'string', 'min:3', 'max:255'],
+            'last_name'   => ['required', 'string', 'min:3', 'max:255'],
+            'role'        => ['nullable', 'string', 'max:255'],
+            'office'      => ['nullable', 'string', 'max:255'],
+            'pay'         => ['nullable', 'numeric'],
+            'email'       => ['required', 'email', 'min:2', 'max:128', Rule::unique('users')->ignore($id)],
+        ])->validate();
+
+        $user = User::find($id);
+        $user->forceFill($data);
+        $user->save();
+
+        alert()
+            ->withTitle(__('User has been updated!'))
+            ->send();
+
+        return redirect(route('castle.users.index'));
     }
 
     /**
