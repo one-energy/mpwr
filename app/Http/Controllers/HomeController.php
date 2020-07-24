@@ -17,12 +17,10 @@ class HomeController extends Controller
         ];
 
         if (!empty(request('sort_by'))) {
-            if($request->input('sort_by') == "is_active")
-            {
+            if ($request->input('sort_by') == "is_active") {
                 $query
                 ->orderBy('is_active', 'DESC');
-            }elseif($request->input('sort_by') == "is_inactive")
-            {
+            } elseif ($request->input('sort_by') == "is_inactive") {
                 $query
                 ->orderBy('is_active', 'ASC');
             }
