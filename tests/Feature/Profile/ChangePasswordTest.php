@@ -20,7 +20,7 @@ class ChangePasswordTest extends FeatureTest
         $this->actingAs($user);
 
         $this
-            ->get(route('profile'))
+            ->get(route('profile.show'))
             ->assertSuccessful();
 
         $this

@@ -35,25 +35,25 @@
                   </thead>
                   <tbody>
                     @foreach ($data as $row)
-                      <tr class="md:border-gray-200 md:border-2 md:rounded-lg">
-                        <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+                      <tr>
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 md:border-b md:border-gray-200">
                           <span class="px-2 inline-flex rounded-full bg-green-base text-white">
                             {{{ $row['number_installs'] }}}
                           </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
                           {{{ $row['incentive'] }}}
                         </td>
-                        <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
                           {{{ $row['installs_achieved'] }}}
                         </td>
-                        <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
                           {{{ $row['installs_needed'] }}}
                         </td>
-                        <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
                           {{{ $row['kw_achieved'] }}}
                         </td>
-                        <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
+                        <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
                           {{{ $row['kw_needed'] }}}
                         </td>
                       </tr>
