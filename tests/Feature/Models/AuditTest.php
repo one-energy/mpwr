@@ -8,11 +8,13 @@ use Tests\TestCase;
 
 class AuditTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->user = factory(User::class)->create();
+        $this->actingAs($this->user);
+    }
+    
     public function testExample()
     {
         $response = $this->get('/');
