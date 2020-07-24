@@ -29,6 +29,12 @@ class CreateCustomersTable extends Migration
             $table->string('setter')->nullable();
             $table->boolean('is_active')->nullable();
 
+            $table->unsignedBigInteger('opened_by_id');
+            $table->foreign('opened_by_id')
+                    ->references('id')
+                    ->on('users')
+                    ->onDelete('cascade');
+
             $table->timestamps();
             $table->softDeletes();
         });
