@@ -6,6 +6,10 @@ class ScoreboardController extends Controller
 {
     public function __invoke()
     {
+        $showOptions = [
+            'Leaderboards', 
+            'Records',
+        ];
         $data = [
             ['id' => 1,  'representative' => 'Maren Decker',     'set_closes' => 6, 'office' => 'Fresno'],
             ['id' => 2,  'representative' => 'Braden Harris',    'set_closes' => 5, 'office' => 'Fresno'],
@@ -19,6 +23,6 @@ class ScoreboardController extends Controller
             ['id' => 10, 'representative' => 'Brock Cloward',    'set_closes' => 2, 'office' => 'Stockton'],
         ];
 
-        return view('scoreboard',compact('data'));
+        return view('scoreboard',compact('showOptions', 'data'));
     }
 }
