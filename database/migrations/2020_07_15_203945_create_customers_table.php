@@ -19,9 +19,9 @@ class CreateCustomersTable extends Migration
             $table->string('last_name');
             $table->decimal('system_size', 8, 2)->nullable();
             $table->decimal('redline', 8, 2)->nullable();
-            $table->decimal('bill', 8, 2)->nullable();
+            $table->string('bill');
             $table->string('pay')->nullable();
-            $table->decimal('financing', 8, 2)->nullable();
+            $table->string('financing');
             $table->decimal('adders')->nullable();
             $table->decimal('gross_ppw')->nullable();
             $table->decimal('commission')->nullable();
