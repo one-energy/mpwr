@@ -6,7 +6,8 @@
             </a>
         </div>
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <form>
+            <form action="{{route('customers.store')}}" method="POST">
+                @csrf
                 <div>
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                     <div class="md:col-span-3 col-span-2">
@@ -32,13 +33,20 @@
                         Bill
                         </label>
                         <div class="mt-1 rounded-md shadow-sm">
-                        <select id="bill" class="form-select block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5">
-                            <option></option>
-                            <option>$100</option>
-                            <option>$200</option>
-                            <option>$300</option>
+                        <select id="bill" class="@error('bill') border-red-300 text-red-900 placeholder-red-300 focus:border-red-300 focus:shadow-outline-red @enderror form-select block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5">
+                            @if (old('bill') == '')
+                                <option selected></option>
+                            @endif
+                            @foreach($bills as $bill)
+                            <option value="{{ $bill }}" {{ old('bill') == $bill ? 'selected' : '' }}>
+                                    {{ $bill }}
+                                </option>
+                            @endforeach
                         </select>
                         </div>
+                        @error('bill')
+                            <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
             
                     <div class="md:col-span-2 col-span-1">
@@ -56,10 +64,14 @@
                         </label>
                         <div class="mt-1 rounded-md shadow-sm">
                         <select id="financing" class="form-select block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5">
-                            <option></option>
-                            <option>$100</option>
-                            <option>$200</option>
-                            <option>$300</option>
+                            @if (old('financing') == '')
+                                <option selected></option>
+                            @endif
+                            @foreach($financings as $financing)
+                            <option value="{{ $financing }}" {{ old('financing') == $financing ? 'selected' : '' }}>
+                                    {{ $financing }}
+                                </option>
+                            @endforeach
                         </select>
                         </div>
                     </div>
