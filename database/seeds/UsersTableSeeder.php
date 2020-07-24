@@ -39,7 +39,8 @@ class UsersTableSeeder extends Seeder
     public function createDevsquadTeam()
     {
         $owner = factory(User::class)->create([
-            'name'   => 'DevSquad Master User',
+            'first_name'   => 'DevSquad Master',
+            'last_name'  => 'User',
             'email'  => 'team@devsquad.com',
             'master' => true,
         ]);
@@ -51,7 +52,8 @@ class UsersTableSeeder extends Seeder
         $devsquad->users()->attach($owner, ['role' => User::OWNER]);
 
         $member = factory(User::class)->create([
-            'name'  => 'DevSquad User',
+            'first_name'  => 'DevSquad',
+            'last_name' => 'User',
             'email' => 'user@devsquad.com',
         ]);
         $devsquad->users()->attach($member, ['role' => User::MEMBER]);
@@ -69,7 +71,8 @@ class UsersTableSeeder extends Seeder
     public function createTestTeam()
     {
         $testOwner = factory(User::class)->create([
-            'name'   => 'Test User',
+            'first_name'   => 'Test',
+            'last_name' => 'User',
             'email'  => 'test@user.com',
             'master' => false,
         ]);

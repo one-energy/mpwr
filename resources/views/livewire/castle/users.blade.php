@@ -1,7 +1,6 @@
 <div>
 
     <x-search :search="$search">
-
         <x-select name="teams" class="w-full sm:w-auto" wire:model="team">
             <option value="0" selected>@lang('All teams')</option>
             @foreach ($teams as $item)
@@ -9,12 +8,16 @@
             @endforeach
         </x-select>
 
+        <x-button :href="route('castle.users.create')" color="indigo" class="mt-4 sm:mt-0">
+        @lang('Create a new User')
+    </x-button>
     </x-search>
+
 
     <x-table :pagination="$users->links()">
         <x-slot name="header">
             <tr>
-                <x-table.th-searchable by="name" :sortedBy="$sortBy" :direction="$sortDirection">
+                <x-table.th-searchable by="first_name" :sortedBy="$sortBy" :direction="$sortDirection">
                     @lang('Name')
                 </x-table.th-searchable>
                 <x-table.th-searchable by="email" :sortedBy="$sortBy" :direction="$sortDirection">
@@ -31,7 +34,7 @@
         <x-slot name="body">
             @foreach($users as $user)
                 <x-table.tr :loop="$loop">
-                    <x-table.td>{{ $user->name }}</x-table.td>
+                    <x-table.td>{{ $user->first_name }}</x-table.td>
                     <x-table.td>{{ $user->email }}</x-table.td>
                     @if($team)
                     <x-table.td>
