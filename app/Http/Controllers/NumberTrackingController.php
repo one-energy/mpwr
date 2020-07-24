@@ -48,7 +48,7 @@ class NumberTrackingController extends Controller
                     DailyNumber::updateOrCreate(
                         [
                             'user_id' => $userId,
-                            'date' => $date
+                            'date'    => $date,
                         ],
                         $numbers
                     );

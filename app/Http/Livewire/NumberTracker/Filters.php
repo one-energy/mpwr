@@ -4,9 +4,7 @@ namespace App\Http\Livewire\NumberTracker;
 
 use App\Models\Region;
 use App\Models\User;
-use App\Models\DailyNumber;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Filters extends Component
@@ -35,6 +33,7 @@ class Filters extends Component
     public function render()
     {
         $this->dateSelected = ($this->dateSelected == "") ? date('Y-m-d', time()) : $this->dateSelected;
+
         return view('livewire.number-tracker.filters',[
             'users' => User::query()
                 ->when($this->regionSelected, function(Builder $query) {
