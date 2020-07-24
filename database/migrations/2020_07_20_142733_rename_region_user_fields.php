@@ -9,8 +9,7 @@ class RenameRegionUserFields extends Migration
     public function up()
     {
         Schema::table('region_user', function (Blueprint $table) {
-            $table->renameColumn('team_id', 'region_id');
-            $table->foreign('region_id')->references('id')->on('regions');
+
         });
     }
 

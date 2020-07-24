@@ -6,16 +6,22 @@
           <div class="flex justify-start">
             <h3 class="text-lg text-gray-900">Scoring</h3>
           </div>
-          <div class="flex justify-end">
-            <label for="show_option" class="block text-xs font-medium leading-5 text-gray-700 mt-1">
+          <div class="flex justify-end" x-data="{ showOptions: false }">
+            <label for="show_option" class="block text-xs font-medium leading-5 text-gray-700 mt-2">
               Show:
             </label>
-            <div class="ml-2">
-              <select form="showOption" name="show_option" id="show_option" class="form-select block w-full pl-2 pr-10 py-1 text-sm leading-6 rounded-full bg-green-base text-white focus:outline-none focus:shadow-outline-green focus:border-green-300 sm:text-sm sm:leading-5 " onchange="this.form.submit()">
-                @foreach($showOptions as $showOption)
-                    <option {{request()->get('show_option') == $showOption ? 'selected' : '' }} value="{{$showOption}}">{{$showOption}}</option>
-                @endforeach
-            </select>
+            <div class="relative inline-block text-left ml-2">
+              <select id="show_option"
+                      name="show_option"
+                      onchange="this.form.submit()"
+                      class="form-select block w-full transition duration-150 ease-in-out text-gray-500 text-lg py-1 rounded-lg">
+                  @foreach($filterTypes as $type)
+                      <option value="{{$type['index']}}"
+                          @if(request('show_option') == $type['index']) selected @endif>
+                          {{$type['value']}}
+                      </option>
+                  @endforeach
+              </select>
             </div>
           </div>
         </div>
@@ -47,19 +53,19 @@
                     </thead>
                     <tbody>
                       @foreach ($data as $row)
-                        <tr class="md:border-gray-200 md:border-2 rounded-lg">
-                          <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+                        <tr>
+                          <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 md:border-b md:border-gray-200">
                             <span class="px-2 inline-flex rounded-full bg-green-base text-white">
                               {{{ $row['id'] }}}
                             </span>
                           </td>
-                          <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
+                          <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
                             {{{ $row['representative'] }}}
                           </td>
-                          <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
+                          <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
                             {{{ $row['set_closes'] }}}
                           </td>
-                          <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
+                          <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
                             {{{ $row['office'] }}}
                           </td>
                         </tr>
@@ -99,19 +105,19 @@
                     </thead>
                     <tbody>
                       @foreach ($data as $row)
-                        <tr class="md:border-gray-200 md:border-2 rounded-lg">
-                          <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+                        <tr>
+                          <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 md:border-b md:border-gray-200">
                             <span class="px-2 inline-flex rounded-full bg-green-base text-white">
                               {{{ $row['id'] }}}
                             </span>
                           </td>
-                          <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
+                          <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
                             {{{ $row['representative'] }}}
                           </td>
-                          <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
+                          <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
                             {{{ $row['set_closes'] }}}
                           </td>
-                          <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
+                          <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
                             {{{ $row['office'] }}}
                           </td>
                         </tr>
@@ -151,19 +157,19 @@
                     </thead>
                     <tbody>
                       @foreach ($data as $row)
-                        <tr class="md:border-gray-200 md:border-2 rounded-lg">
-                          <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+                        <tr>
+                          <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 md:border-b md:border-gray-200">
                             <span class="px-2 inline-flex rounded-full bg-green-base text-white">
                               {{{ $row['id'] }}}
                             </span>
                           </td>
-                          <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
+                          <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
                             {{{ $row['representative'] }}}
                           </td>
-                          <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
+                          <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
                             {{{ $row['set_closes'] }}}
                           </td>
-                          <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
+                          <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
                             {{{ $row['office'] }}}
                           </td>
                         </tr>

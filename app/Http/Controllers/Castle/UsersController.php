@@ -11,8 +11,8 @@ use App\Rules\Castle\MasterEmailUnique;
 use App\Rules\Castle\MasterEmailYourSelf;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Ramsey\Uuid\Uuid;
 use Illuminate\Validation\Rule;
+use Ramsey\Uuid\Uuid;
 
 class UsersController extends Controller
 {

@@ -111,18 +111,126 @@
                     </div>
                 </div>
 
-                <div class="px-4 py-5 sm:p-6 w-2/3">
-                    <div class="flex justify-between border-gray-200 border-2 p-4 mt-12 rounded-lg">
-                        <div class="flex justify-start">
-                            <label for="show_option" class="block text-xs font-medium leading-5 text-gray-700 mt-1">
-                                Show:
-                            </label>
-                            <div class="ml-2">
-                                <select form="showOption" name="show_option" id="show_option" class="form-select block w-full pl-2 pr-10 py-1 text-sm leading-6 rounded-md bg-white text-gray-900 focus:outline-none focus:shadow-outline-green focus:border-green-300 sm:text-sm sm:leading-5 " onchange="this.form.submit()">
-                                    @foreach($showOptions as $showOption)
-                                        <option {{request()->get('show_option') == $showOption ? 'selected' : '' }} value="{{$showOption}}">{{$showOption}}</option>
-                                    @endforeach
-                                </select>
+                
+                <div class="px-4 py-5 sm:p-6 md:w-2/3">
+                    <div class="overflow-y-auto">
+                        <div class="flex justify-between md:mt-12 mt-6">
+                            <div class="w-full grid md:grid-cols-4 grid-cols-2 md:col-gap-4 col-gap-1 row-gap-2">
+                                <div class="col-span-1 bg-green-light rounded-lg p-3">
+                                    <div class="text-xs text-green-base font-semibold uppercase">D.P.S</div>
+                                    <div class="text-xl text-green-base font-bold">14.6</div>
+                                </div>
+                                <div class="col-span-1 bg-green-light rounded-lg p-3">
+                                    <div class="text-xs text-green-base font-semibold uppercase">H.P. Set</div>
+                                    <div class="text-xl text-green-base font-bold">1.52</div>
+                                </div>
+                                <div class="col-span-1 bg-green-light rounded-lg p-3">
+                                    <div class="text-xs text-green-base font-semibold uppercase">Sit Ratio</div>
+                                    <div class="text-xl text-green-base font-bold">0.52</div>
+                                </div>
+                                <div class="col-span-1 bg-green-light rounded-lg p-3">
+                                    <div class="text-xs text-green-base font-semibold uppercase">Close Ratio</div>
+                                    <div class="text-xl text-green-base font-bold">0.15</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-start mt-6">
+                            <h2 class="text-lg text-gray-900">Total Overviews</h2>
+                        </div>
+
+                        <div class="flex justify-between mt-3">
+                            <div class="w-full grid md:grid-cols-6 grid-cols-3 md:col-gap-4 col-gap-1 row-gap-2">
+                                <div class="col-span-1 border-2 border-green-base bg-green-light rounded-lg p-3">
+                                    <div class="text-xs font-semibold uppercase">Doors</div>
+                                    <div class="text-xl font-bold">1752</div>
+                                    <div class="flex font-semibold text-xs text-green-base">
+                                        <svg xmlns="http://www.w3.org/2000/svg" transform='rotate(-45)' width="20" height="20" viewBox="0 0 20 20">
+                                            <symbol id="arrow" viewBox="0 0 24 24">
+                                            <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current" />
+                                            </symbol>
+                                            <use xlink:href="#arrow" width="8" height="8" y="6" x="6" />
+                                        </svg>
+                                        <span>
+                                            +500
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
+                                    <div class="text-xs text-gray-900 font-semibold uppercase">Hours</div>
+                                    <div class="text-xl text-gray-900 font-bold">153</div>
+                                    <div class="flex font-semibold text-xs text-green-base">
+                                        <svg xmlns="http://www.w3.org/2000/svg" transform='rotate(-45)' width="20" height="20" viewBox="0 0 20 20">
+                                            <symbol id="arrow" viewBox="0 0 24 24">
+                                            <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current" />
+                                            </symbol>
+                                            <use xlink:href="#arrow" width="8" height="8" y="6" x="6" />
+                                        </svg>
+                                        <span>
+                                            +500
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
+                                    <div class="text-xs text-gray-900 font-semibold uppercase">Sets</div>
+                                    <div class="text-xl text-gray-900 font-bold">113</div>
+                                    <div class="flex font-semibold text-xs text-green-base">
+                                        <svg xmlns="http://www.w3.org/2000/svg" transform='rotate(-45)' width="20" height="20" viewBox="0 0 20 20">
+                                            <symbol id="arrow" viewBox="0 0 24 24">
+                                            <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current" />
+                                            </symbol>
+                                            <use xlink:href="#arrow" width="8" height="8" y="6" x="6" />
+                                        </svg>
+                                        <span>
+                                            +500
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
+                                    <div class="text-xs text-gray-900 font-semibold uppercase">Sits</div>
+                                    <div class="text-xl text-gray-900 font-bold">68</div>
+                                    <div class="flex font-semibold text-xs text-green-base">
+                                        <svg xmlns="http://www.w3.org/2000/svg" transform='rotate(-45)' width="20" height="20" viewBox="0 0 20 20">
+                                            <symbol id="arrow" viewBox="0 0 24 24">
+                                            <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current" />
+                                            </symbol>
+                                            <use xlink:href="#arrow" width="8" height="8" y="6" x="6" />
+                                        </svg>
+                                        <span>
+                                            +500
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
+                                    <div class="text-xs text-gray-900 font-semibold uppercase">Set closes</div>
+                                    <div class="text-xl text-gray-900 font-bold">6</div>
+                                    <div class="flex font-semibold text-xs text-green-base">
+                                        <svg xmlns="http://www.w3.org/2000/svg" transform='rotate(-45)' width="20" height="20" viewBox="0 0 20 20">
+                                            <symbol id="arrow" viewBox="0 0 24 24">
+                                            <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current" />
+                                            </symbol>
+                                            <use xlink:href="#arrow" width="8" height="8" y="6" x="6" />
+                                        </svg>
+                                        <span>
+                                            +500
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
+                                    <div class="text-xs text-gray-900 font-semibold uppercase">Closes</div>
+                                    <div class="text-xl text-gray-900 font-bold">5</div>
+                                    <div class="flex font-semibold text-xs text-green-base">
+                                        <svg xmlns="http://www.w3.org/2000/svg" transform='rotate(-45)' width="20" height="20" viewBox="0 0 20 20">
+                                            <symbol id="arrow" viewBox="0 0 24 24">
+                                            <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current" />
+                                            </symbol>
+                                            <use xlink:href="#arrow" width="8" height="8" y="6" x="6" />
+                                        </svg>
+                                        <span>
+                                            +500
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -139,63 +247,74 @@
                                 </svg>
                             </a>
                         </div>
-                    </div>
-                    <div class="mt-6">
-                        <div class="align-middle inline-block min-w-full overflow-hidden">
-                            <table class="min-w-full">
-                            <thead>
-                                <tr>
-                                <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
-                                    Team Member
-                                </th>
-                                <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
-                                    Doors
-                                </th>
-                                <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
-                                    Hours
-                                </th>
-                                <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
-                                    Sets
-                                </th>
-                                <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
-                                    Sits
-                                </th>
-                                <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
-                                    Set Closes
-                                </th>
-                                <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
-                                    Closes
-                                </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($trackingInformation as $row)
-                                <tr class="border-gray-200 border-2 rounded-lg">
-                                    <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-                                    {{{ $row['team_member'] }}}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
-                                    {{{ $row['doors'] }}}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
-                                    {{{ $row['hours'] }}}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
-                                    {{{ $row['sets'] }}}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
-                                    {{{ $row['sits'] }}}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
-                                    {{{ $row['set_closes'] }}}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800">
-                                    {{{ $row['closes'] }}}
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                            </table>
+
+                        <div id="chart_div"></div>
+                        
+                        <div class="flex justify-start mt-6">
+                            <h2 class="text-lg text-gray-900">Top 5 Performing Members</h2>
+                        </div>
+
+                        <div class="mt-3">
+                            <div class="flex flex-col">
+                                <div class="sm:overflow-x-auto md:overflow-x-hidden">
+                                    <div class="align-middle inline-block min-w-full overflow-hidden">
+                                        <table class="min-w-full">
+                                        <thead>
+                                            <tr class="sm:border-gray-200 border-b-2">
+                                            <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
+                                                Team Member
+                                            </th>
+                                            <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
+                                                Doors
+                                            </th>
+                                            <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
+                                                Hours
+                                            </th>
+                                            <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
+                                                Sets
+                                            </th>
+                                            <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
+                                                Sits
+                                            </th>
+                                            <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
+                                                Set Closes
+                                            </th>
+                                            <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
+                                                Closes
+                                            </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($trackingInformation as $row)
+                                            <tr>
+                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 md:border-b md:border-gray-200">
+                                                {{{ $row['team_member'] }}}
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
+                                                {{{ $row['doors'] }}}
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
+                                                {{{ $row['hours'] }}}
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
+                                                {{{ $row['sets'] }}}
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
+                                                {{{ $row['sits'] }}}
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
+                                                {{{ $row['set_closes'] }}}
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
+                                                {{{ $row['closes'] }}}
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

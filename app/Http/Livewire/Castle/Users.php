@@ -3,7 +3,6 @@
 namespace App\Http\Livewire\Castle;
 
 use App\Models\Region;
-use App\Models\Team;
 use App\Models\User;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
@@ -54,7 +53,7 @@ class Users extends Component
     {
         $this->keywords = [];
 
-        $this->filters = [];
+        $this->filters  = [];
     }
 
     public function clearSearch()

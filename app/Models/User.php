@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -45,6 +46,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function invitations()
     {
         return $this->hasMany(Invitation::class);
+    }
+
+    public function daily_numbers()
+    {
+        return $this->hasMany(DailyNumber::class);
     }
 
     public function changePassword($new)
