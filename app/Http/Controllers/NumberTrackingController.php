@@ -44,17 +44,20 @@ class NumberTrackingController extends Controller
             $date = ($data['date']) ?? date('Y-m-d', time()); 
 
             foreach ($data['numbers'] as $userId => $numbers) {
-                if (!empty(array_filter($numbers))) {
+                $filteredNumbers = array_filter($numbers, function ($element) {
+                    return ($element >= 0 && !is_null($element)); 
+                });
+
+                if (!empty($filteredNumbers)) {
                     DailyNumber::updateOrCreate(
                         [
                             'user_id' => $userId,
                             'date'    => $date,
                         ],
-                        $numbers
+                        $filteredNumbers
                     );
                 }
             }
-
             alert()
                 ->withTitle(__('Daily Numbers saved!'))
                 ->send();
