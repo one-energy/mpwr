@@ -92,14 +92,13 @@
                         type="button"
                         class="inline-flex w-full justify-left py-2 px-4 mb-2 bg-white rounded-lg border-gray-200 border-2 top-0 left-0 text-sm leading-5 font-medium focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out"
                         wire:click="setRegion({{ $region->id }})"
+                        :class="{
+                                    'border-green-400': {{ $regionSelected }} == {{ $region->id }}
+                            }"
                     >
                         {{ $region->name }}
                     </button>
                 @endforeach
-
-                <h1>Date => {{ $dateSelected }}</h1>
-                <h1>Region => {{ $regionSelected }}</h1>
-                
 
                 <div class="mt-6">
                     <button type="submit" class="inline-flex w-full justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-base hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
@@ -112,7 +111,10 @@
                 
                 <div class="mt-6">
                     <div class="align-middle inline-block min-w-full overflow-hidden">
-                        <table class="min-w-full">
+                        <div wire:loading>
+                            Loading...
+                        </div>
+                        <table class="min-w-full" wire:loading.remove>
                         <thead>
                             <tr>
                             <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
