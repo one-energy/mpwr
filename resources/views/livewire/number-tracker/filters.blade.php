@@ -97,9 +97,9 @@
                     </button>
                 @endforeach
 
-                <h1>Data => {{ $dateSelected }}</h1>
+                <h1>Date => {{ $dateSelected }}</h1>
                 <h1>Region => {{ $regionSelected }}</h1>
-                <h1>Users => {{ count($users) }}</h1>
+                
 
                 <div class="mt-6">
                     <button type="submit" class="inline-flex w-full justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-base hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
@@ -145,22 +145,55 @@
                                     {{ $user->first_name . ' ' . $user->last_name }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 w-35">
-                                    <input type="number" min="0" name="numbers[{{ $user->id }}][doors]" class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5">
+                                    <input 
+                                        type="number" 
+                                        min="0" 
+                                        name="numbers[{{ $user->id }}][doors]" 
+                                        class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                        value="{{ $user->doors }}"
+                                    >
                                 </td>
                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-                                    <input type="number" min="0" step="any" name="numbers[{{ $user->id }}][hours]" class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5">
+                                    <input 
+                                        type="number" 
+                                        min="0" 
+                                        step="any" 
+                                        name="numbers[{{ $user->id }}][hours]" 
+                                        class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                        value="{{ $user->hours }}"
+                                    >
                                 </td>
                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-                                    <input type="number" name="numbers[{{ $user->id }}][sets]" class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5">
+                                    <input 
+                                        type="number" 
+                                        name="numbers[{{ $user->id }}][sets]" 
+                                        class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                        value="{{ $user->sets }}"
+                                    >
                                 </td>
                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-                                    <input type="number" name="numbers[{{ $user->id }}][sits]" class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5">
+                                    <input 
+                                        type="number" 
+                                        name="numbers[{{ $user->id }}][sits]" 
+                                        class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                        value="{{ $user->sits }}"
+                                    >
                                 </td>
                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-                                    <input type="number" name="numbers[{{ $user->id }}][set_closes]" class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5">
+                                    <input 
+                                        type="number" 
+                                        name="numbers[{{ $user->id }}][set_closes]" 
+                                        class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                        value="{{ $user->set_closes }}"
+                                    >
                                 </td>
                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-                                    <input type="number" name="numbers[{{ $user->id }}][closes]" class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5">
+                                    <input 
+                                        type="number" 
+                                        name="numbers[{{ $user->id }}][closes]" 
+                                        class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                        value="{{ $user->closes }}"
+                                    >
                                 </td>
                             </tr>
                             @endforeach

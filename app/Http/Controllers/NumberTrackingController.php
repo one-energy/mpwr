@@ -45,11 +45,13 @@ class NumberTrackingController extends Controller
 
             foreach ($data['numbers'] as $userId => $numbers) {
                 if (!empty(array_filter($numbers))) {
-                    $num          = new DailyNumber();
-                    $num->user_id = $userId;
-                    $num->date    = date('Y-m-d', strtotime($date));
-                    $num->forceFill($numbers);
-                    $num->save();
+                    DailyNumber::updateOrCreate(
+                        [
+                            'user_id' => $userId,
+                            'date' => $date
+                        ],
+                        $numbers
+                    );
                 }
             }
 
