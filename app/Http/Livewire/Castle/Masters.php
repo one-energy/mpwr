@@ -12,7 +12,7 @@ class Masters extends Component
 
     public function sortBy()
     {
-        return 'name';
+        return 'first_name';
     }
 
     public function render()
