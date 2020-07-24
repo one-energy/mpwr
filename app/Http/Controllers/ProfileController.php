@@ -20,8 +20,9 @@ class ProfileController extends Controller
     public function update()
     {
         $data = Validator::make(request()->all(), [
-            'name'  => ['required', 'min:3', 'max:255'],
-            'email' => ['required', 'email', 'min:2', 'max:128', Rule::unique('users')->ignore(user()->id)],
+            'first_name'  => ['required', 'min:3', 'max:255'],
+            'last_name'   => ['required', 'min:3', 'max:255'],
+            'email'       => ['required', 'email', 'min:2', 'max:128', Rule::unique('users')->ignore(user()->id)],
         ])->validate();
 
         user()

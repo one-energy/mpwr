@@ -51,8 +51,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('castle/')->middleware('castle')->name('castle.')->group(function () {
         Route::get('dashboard', HomeController::class)->name('dashboard');
 
+        Route::get('users/create', [UsersController::class, 'create'])->name('users.create');
+        Route::post('users/create', [UsersController::class, 'store'])->name('users.store');
         Route::get('users', [UsersController::class, 'index'])->name('users.index');
-        Route::get('users/{user}', [UsersController::class, 'show'])->name('users.show');
+        Route::get('users/{user}/edit', [UsersController::class, 'edit'])->name('users.edit');
+        Route::put('users/{user}', [UsersController::class, 'update'])->name('users.update');
+        Route::delete('users/{user}', [UsersController::class, 'destroy'])->name('users.destroy');
+        
         Route::get('masters', [MastersController::class, 'index'])->name('masters.index');
         Route::get('masters/invite', [MasterInvitationController::class, 'form'])->name('masters.invite');
         Route::post('masters/invite', [MasterInvitationController::class, 'invite']);
@@ -63,6 +68,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/', HomeController::class)->name('home');
 
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::get('/profile/show-profile-information', [ProfileController::class, 'index'])->name('profile.show-profile-information');
     Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('/profile/show', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/change-password', ProfileChangePasswordController::class)->name('profile.change-password');
@@ -75,5 +81,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/trainings/setting/best-practices/what-to-say', [TrainingSettingBestPracticesWhatToSayController::class, 'index'])->name('trainings.settings.best-practices.what-to-say.index');
     Route::get('/incentives', IncentivesController::class)->name('incentives');
     Route::get('/number-tracking', [NumberTrackingController::class, 'index'])->name('number-tracking.index');
+    Route::get('/number-tracking/create', [NumberTrackingController::class, 'create'])->name('number-tracking.create');
+    Route::post('/number-tracking/create', [NumberTrackingController::class, 'store'])->name('number-tracking.store');
 });
 

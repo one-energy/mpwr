@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DailyNumber;
 use Illuminate\Http\Request;
 
 class NumberTrackingController extends Controller
@@ -22,5 +23,45 @@ class NumberTrackingController extends Controller
         ];
 
         return view('number-tracking',compact('trackingInformation'));
+    }
+
+    public function create()
+    {
+        return view('number-tracking.create');
+    }
+
+    public function store()
+    {
+        $data = request()->all();
+
+        if (!empty($data['numbers'])) {
+            $date = ($data['date']) ?? date('Y-m-d', time()); 
+
+            foreach ($data['numbers'] as $userId => $numbers) {
+                $filteredNumbers = array_filter($numbers, function ($element) {
+                    return ($element >= 0 && !is_null($element)); 
+                });
+
+                if (!empty($filteredNumbers)) {
+                    DailyNumber::updateOrCreate(
+                        [
+                            'user_id' => $userId,
+                            'date'    => $date,
+                        ],
+                        $filteredNumbers
+                    );
+                }
+            }
+            alert()
+                ->withTitle(__('Daily Numbers saved!'))
+                ->send();
+        } else {
+            alert()
+                ->withTitle(__('Nothing was saved :('))
+                ->withColor('red')
+                ->send();
+        }
+
+        return back();
     }
 }

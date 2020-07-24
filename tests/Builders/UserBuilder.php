@@ -24,7 +24,8 @@ class UserBuilder
     {
         $this->faker = $this->makeFaker('en_US');
         $this->user  = (new User)->forceFill(array_merge([
-            'name'              => $this->faker->name,
+            'first_name'        => $this->faker->firstName,
+            'last_name'         => $this->faker->lastName,
             'email'             => $this->faker->email,
             'password'          => bcrypt('secret'),
             'email_verified_at' => now(),
@@ -49,7 +50,8 @@ class UserBuilder
             for ($i = 0; $i < $this->amount; $i++) {
                 $user = (new self($this->user->makeHidden('id')->toArray()))
                     ->withEmail($this->faker->email)
-                    ->withName($this->faker->name)
+                    ->withFirstName($this->faker->firstName)
+                    ->withLastName($this->faker->lastName)
                     ->save()->get();
 
                 if ($this->team) {
@@ -132,9 +134,16 @@ class UserBuilder
         return $this;
     }
 
-    public function withName(string $name)
+    public function withFirstName(string $first_name)
     {
-        $this->user->name = $name;
+        $this->user->first_name = $first_name;
+
+        return $this;
+    }
+
+    public function withLastName(string $last_name)
+    {
+        $this->user->last_name = $last_name;
 
         return $this;
     }

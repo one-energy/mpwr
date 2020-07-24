@@ -5,7 +5,7 @@
     <x-table :pagination="$masters->links()">
         <x-slot name="header">
             <tr>
-                <x-table.th-searchable by="name" :sortedBy="$sortBy" :direction="$sortDirection">
+                <x-table.th-searchable by="first_name" :sortedBy="$sortBy" :direction="$sortDirection">
                     @lang('Name')
                 </x-table.th-searchable>
                 <x-table.th-searchable by="email" :sortedBy="$sortBy" :direction="$sortDirection">
@@ -17,7 +17,7 @@
         <x-slot name="body">
             @foreach($masters as $master)
                 <x-table.tr :loop="$loop">
-                    <x-table.td>{{ $master->name }}</x-table.td>
+                    <x-table.td>{{ $master->first_name }}</x-table.td>
                     <x-table.td>{{ $master->email }}</x-table.td>
                     <x-table.td class="flex space-x-3">
                         <x-link class="text-sm">Edit</x-link>

@@ -69,3 +69,13 @@
     color:#006400;
     color: rgba(0, 100, 0, var(--text-opacity));
 }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
