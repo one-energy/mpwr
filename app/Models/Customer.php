@@ -29,4 +29,26 @@ class Customer extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    const BILLS = [
+        'Domestic',
+        'CARE',
+        'FERA'
+    ];
+
+    const FINANCINGS = [
+        'Purchase',
+        'PPA',
+        'PACE'
+    ];
+
+    public function userOpenedBy()
+    {
+        return $this->belongsTo(User::class, 'opened_by_id');
+    }
+
+    public function getOpenedByAttribute()
+    {
+        return User::find($this->opened_by_id);
+    }
 }
