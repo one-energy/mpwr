@@ -29,7 +29,9 @@ class CustomerTest extends TestCase
                  ->assertViewIs('home')
                  ->assertViewHas('customers');
 
-        $this->assertEquals($customers->sortBy('name')->pluck('id')->toArray(), $response->viewData('customers')->pluck('id')->toArray());
+        foreach ($customers as $customer) {
+            $response->assertSee($customer->first_name);
+        }
     }
 
     /** @test */
@@ -40,12 +42,12 @@ class CustomerTest extends TestCase
 
         $response = $this->get('/?sort_by=is_active');
 
-        foreach ($activeCustomers as $customers) {
-            $response->assertSee($customers->first_name);
+        foreach ($activeCustomers as $activeCustomer) {
+            $response->assertSee($activeCustomer->first_name);
         }
 
-        foreach ($inactiveCustomers as $customers) {
-            $response->assertDontSee($customers->first_name);
+        foreach ($inactiveCustomers as $inactiveCustomer) {
+            $response->assertDontSee($inactiveCustomer->first_name);
         }
     }
 
@@ -57,12 +59,12 @@ class CustomerTest extends TestCase
 
         $response = $this->get('/?sort_by=is_inactive');
 
-        foreach ($activeCustomers as $customers) {
-            $response->assertDontSee($customers->first_name);
+        foreach ($activeCustomers as $activeCustomer) {
+            $response->assertDontSee($activeCustomer->first_name);
         }
 
-        foreach ($inactiveCustomers as $customers) {
-            $response->assertSee($customers->first_name);
+        foreach ($inactiveCustomers as $inactiveCustomer) {
+            $response->assertSee($inactiveCustomer->first_name);
         }
     }
 }

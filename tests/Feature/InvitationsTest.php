@@ -40,16 +40,16 @@ class InvitationsTest extends FeatureTest
         $invitation = (new InvitationBuilder)->isAMaster()->withEmail('joe-smith@email.com')->save()->get();
 
         $this->post(route('register.with-invitation', $invitation), [
-            'first_name'               => 'Joe',
-            'last_name' => 'Doe',
+            'first_name'         => 'Joe',
+            'last_name'          => 'Doe',
             'email_confirmation' => 'joe-smith@email.com',
             'password'           => '14253647',
         ])->assertSessionHasNoErrors();
 
         $this->assertDatabaseHas('users', [
-            'first_name'  => 'Joe',
-            'last_name' => 'Doe',
-            'email' => 'joe-smith@email.com',
+            'first_name' => 'Joe',
+            'last_name'  => 'Doe',
+            'email'      => 'joe-smith@email.com',
         ]);
 
         /** @var User $user */
@@ -63,18 +63,19 @@ class InvitationsTest extends FeatureTest
     //region Validations
 
     /** @test */
-    public function name_is_required()
+    public function first_and_last__name_are_required()
     {
         $invitation = (new InvitationBuilder)->isAMaster()->withEmail('joe-smith@email.com')->save()->get();
 
         $this->post(route('register.with-invitation', $invitation), [])
             ->assertSessionHasErrors([
                 'first_name' => __('validation.required', ['attribute' => 'first_name']),
+                'last_name'  => __('validation.required', ['attribute' => 'last_name']),
             ]);
     }
 
     /** @test */
-    public function name_should_have_a_min_of_3_characters()
+    public function first_name_should_have_a_min_of_3_characters()
     {
         $invitation = (new InvitationBuilder)->isAMaster()->withEmail('joe-smith@email.com')->save()->get();
 
@@ -86,7 +87,7 @@ class InvitationsTest extends FeatureTest
     }
 
     /** @test */
-    public function name_should_have_a_max_of_255_characters()
+    public function first_name_should_have_a_max_of_255_characters()
     {
         $invitation = (new InvitationBuilder)->isAMaster()->withEmail('joe-smith@email.com')->save()->get();
 

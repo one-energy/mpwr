@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Castle;
 
-use Tests\Builders\TeamBuilder;
+use Tests\Builders\RegionBuilder;
 use Tests\Builders\UserBuilder;
 use Tests\Feature\FeatureTest;
 
@@ -14,13 +14,13 @@ class UserDetailsTest extends FeatureTest
         $nonMaster = (new UserBuilder)->save()->get();
 
         $this->actingAs($nonMaster)
-            ->get(route('castle.users.show', $nonMaster->id))
+            ->get(route('castle.users.edit', $nonMaster->id))
             ->assertForbidden();
 
         $master = (new UserBuilder)->asMaster()->save()->get();
 
         $this->actingAs($master)
-            ->get(route('castle.users.show', $master->id))
+            ->get(route('castle.users.edit', $master->id))
             ->assertSuccessful();
     }
 
@@ -31,31 +31,31 @@ class UserDetailsTest extends FeatureTest
         $nonMaster = (new UserBuilder)->save()->get();
 
         $this->actingAs($master)
-            ->get(route('castle.users.show', $master->id))
-            ->assertViewIs('castle.users.show')
+            ->get(route('castle.users.edit', $master->id))
+            ->assertViewIs('castle.users.edit')
             ->assertSee($master->first_name)
             ->assertSee($master->last_name)
             ->assertSee($master->email);
 
         $this->actingAs($master)
-            ->get(route('castle.users.show', $nonMaster->id))
-            ->assertViewIs('castle.users.show')
+            ->get(route('castle.users.edit', $nonMaster->id))
+            ->assertViewIs('castle.users.edit')
             ->assertSee($nonMaster->first_name)
             ->assertSee($nonMaster->last_name)
             ->assertSee($nonMaster->email);
     }
 
     /** @test */
-    public function it_should_show_the_teams_a_user_is_on()
+    public function it_should_show_the_regions_a_user_is_on()
     {
         $master = (new UserBuilder)->asMaster()->save()->get();
-        $team1  = (new TeamBuilder)->withOwner($master)->save()->get();
-        $team2  = (new TeamBuilder)->withOwner($master)->save()->get();
+        $region1  = (new RegionBuilder)->withOwner($master)->save()->get();
+        $region2  = (new RegionBuilder)->withOwner($master)->save()->get();
 
         $this->actingAs($master)
-            ->get(route('castle.users.show', $master->id))
-            ->assertViewIs('castle.users.show')
-            ->assertSee($team1->name)
-            ->assertSee($team2->name);
+            ->get(route('castle.users.edit', $master->id))
+            ->assertViewIs('castle.users.edit')
+            ->assertSee($region1->name)
+            ->assertSee($region2->name);
     }
 }

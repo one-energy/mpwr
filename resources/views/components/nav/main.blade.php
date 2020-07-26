@@ -89,7 +89,7 @@
                                 <div class="py-1 rounded-md bg-white shadow-xs">
 
                                     <span class="block px-4 pt-2 text-sm text-gray-600">
-                                        {{ user()->name }}
+                                        {{ user()->first_name }}
                                     </span>
                                     <span class="block px-4 pb-2 pt-0.5 text-xs text-gray-500">
                                         {{ user()->email }}
@@ -129,7 +129,7 @@
                                 </div>
                                 <div class="ml-3">
                                     <div class="text-base font-medium leading-none text-white">
-                                        {{ user()->name }}
+                                        {{ user()->first_name }}
                                     </div>
                                     <div class="mt-1 text-sm font-medium leading-none text-gray-400">
                                         {{ user()->email }}

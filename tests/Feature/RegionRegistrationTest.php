@@ -7,16 +7,17 @@ use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\Notification;
 use Tests\Builders\UserBuilder;
 
-class TeamRegistrationTest extends FeatureTest
+class RegionRegistrationTest extends FeatureTest
 {
     //region Happy Path
 
     /** @test */
-    public function it_should_create_a_team_with_an_owner()
+    public function it_should_create_a_region_with_an_owner()
     {
         $this->post(route('register'), [
-            'team'               => 'Team 1',
-            'name'               => 'Joe Doe',
+            'region'             => 'Region 1',
+            'first_name'         => 'Joe',
+            'last_name'          => 'Doe',
             'email'              => 'joe@doe.com',
             'email_confirmation' => 'joe@doe.com',
             'password'           => '12345678',
@@ -30,18 +31,19 @@ class TeamRegistrationTest extends FeatureTest
 
         $this->assertTrue(user()->is($user));
 
-        $this->assertDatabaseHas('teams', [
-            'name'     => 'Team 1',
+        $this->assertDatabaseHas('regions', [
+            'name'     => 'Region 1',
             'owner_id' => $user->id,
         ]);
 
         $this->assertDatabaseHas('users', [
-            'first_name'  => 'Joe Doe',
-            'email' => 'joe@doe.com',
+            'first_name' => 'Joe',
+            'last_name'  => 'Doe',
+            'email'      => 'joe@doe.com',
         ]);
 
-        $this->assertDatabaseHas('team_user', [
-            'team_id' => 1,
+        $this->assertDatabaseHas('region_user', [
+            'region_id' => 1,
             'user_id' => 1,
             'role'    => 'owner',
         ]);
@@ -55,8 +57,9 @@ class TeamRegistrationTest extends FeatureTest
         Notification::fake();
 
         $this->post(route('register'), [
-            'team'               => 'Team 1',
-            'name'               => 'Joe Doe',
+            'region'               => 'Region 1',
+            'first_name'         => 'Joe',
+            'last_name'          => 'Doe',
             'email'              => 'joe@doe.com',
             'email_confirmation' => 'joe@doe.com',
             'password'           => '12345678',
@@ -87,58 +90,85 @@ class TeamRegistrationTest extends FeatureTest
 
     //region Validations
     /** @test */
-    public function team_should_be_required()
+    public function region_should_be_required()
     {
         $this->post(route('register'), [])
             ->assertSessionHasErrors([
-                'team' => __('validation.required', ['attribute' => 'team']),
+                'region' => __('validation.required', ['attribute' => 'region']),
             ]);
     }
 
     /** @test */
-    public function team_should_have_a_min_of_3_characters()
+    public function region_should_have_a_min_of_3_characters()
     {
-        $this->post(route('register'), ['team' => '12'])
+        $this->post(route('register'), ['region' => '12'])
             ->assertSessionHasErrors([
-                'team' => __('validation.min.string', ['attribute' => 'team', 'min' => 3]),
+                'region' => __('validation.min.string', ['attribute' => 'region', 'min' => 3]),
             ]);
     }
 
     /** @test */
-    public function team_should_have_a_max_of_255_characters()
+    public function region_should_have_a_max_of_255_characters()
     {
-        $this->post(route('register'), ['team' => str_repeat('*', 256)])
+        $this->post(route('register'), ['region' => str_repeat('*', 256)])
             ->assertSessionHasErrors([
-                'team' => __('validation.max.string', ['attribute' => 'team', 'max' => 255]),
+                'region' => __('validation.max.string', ['attribute' => 'region', 'max' => 255]),
             ]);
     }
 
     /** @test */
-    public function name_should_be_required()
+    public function first_name_should_be_required()
     {
         $this->post(route('register'), [])
             ->assertSessionHasErrors([
-                'name' => __('validation.required', ['attribute' => 'name']),
+                'first_name' => __('validation.required', ['attribute' => 'first_name']),
             ]);
     }
 
     /** @test */
-    public function name_should_have_a_min_of_3_characters()
+    public function last_name_should_be_required()
     {
-        $this->post(route('register'), ['name' => '12'])
+        $this->post(route('register'), [])
             ->assertSessionHasErrors([
-                'name' => __('validation.min.string', ['attribute' => 'name', 'min' => 3]),
+                'last_name' => __('validation.required', ['attribute' => 'last_name']),
             ]);
     }
 
     /** @test */
-    public function name_should_have_a_max_of_255_characters()
+    public function first_name_should_have_a_min_of_3_characters()
     {
-        $this->post(route('register'), ['name' => str_repeat('*', 256)])
+        $this->post(route('register'), ['first_name' => '12'])
             ->assertSessionHasErrors([
-                'name' => __('validation.max.string', ['attribute' => 'name', 'max' => 255]),
+                'first_name' => __('validation.min.string', ['attribute' => 'first_name', 'min' => 3]),
             ]);
     }
+
+    /** @test */
+    public function last_name_should_have_a_min_of_3_characters()
+    {
+        $this->post(route('register'), ['last_name' => '12'])
+            ->assertSessionHasErrors([
+                'last_name' => __('validation.min.string', ['attribute' => 'last_name', 'min' => 3]),
+            ]);
+    }
+
+    /** @test */
+    public function first_name_should_have_a_max_of_255_characters()
+    {
+        $this->post(route('register'), ['first_name' => str_repeat('*', 256)])
+            ->assertSessionHasErrors([
+                'first_name' => __('validation.max.string', ['attribute' => 'first_name', 'max' => 255]),
+            ]);
+    }
+
+     /** @test */
+     public function last_name_should_have_a_max_of_255_characters()
+     {
+         $this->post(route('register'), ['last_name' => str_repeat('*', 256)])
+             ->assertSessionHasErrors([
+                 'last_name' => __('validation.max.string', ['attribute' => 'last_name', 'max' => 255]),
+             ]);
+     }
 
     /** @test */
     public function email_should_be_required()

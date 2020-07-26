@@ -32,7 +32,7 @@ class UpdateProfileTest extends FeatureTest
     //region Validations
 
     /** @test */
-    public function name_should_be_required()
+    public function first_name_should_be_required()
     {
         $user = (new UserBuilder())
             ->save()
@@ -47,7 +47,22 @@ class UpdateProfileTest extends FeatureTest
     }
 
     /** @test */
-    public function name_should_have_a_min_of_3_characters()
+    public function last_name_should_be_required()
+    {
+        $user = (new UserBuilder())
+            ->save()
+            ->get();
+
+        $this->actingAs($user);
+
+        $this->put(route('profile.update'), [])
+            ->assertSessionHasErrors([
+                'last_name' => __('validation.required', ['attribute' => 'last_name']),
+            ]);
+    }
+
+    /** @test */
+    public function first_name_should_have_a_min_of_3_characters()
     {
         $user = (new UserBuilder())
             ->save()
@@ -61,8 +76,23 @@ class UpdateProfileTest extends FeatureTest
             ]);
     }
 
+     /** @test */
+     public function last_name_should_have_a_min_of_3_characters()
+     {
+         $user = (new UserBuilder())
+             ->save()
+             ->get();
+ 
+         $this->actingAs($user);
+ 
+         $this->put(route('profile.update'), ['last_name' => '12'])
+             ->assertSessionHasErrors([
+                 'last_name' => __('validation.min.string', ['attribute' => 'last_name', 'min' => 3]),
+             ]);
+     }
+
     /** @test */
-    public function name_should_have_a_max_of_255_characters()
+    public function first_name_should_have_a_max_of_255_characters()
     {
         $user = (new UserBuilder())
             ->save()
@@ -70,9 +100,24 @@ class UpdateProfileTest extends FeatureTest
 
         $this->actingAs($user);
 
-        $this->put(route('profile.update'), ['name' => str_repeat('*', 256)])
+        $this->put(route('profile.update'), ['first_name' => str_repeat('*', 256)])
             ->assertSessionHasErrors([
-                'name' => __('validation.max.string', ['attribute' => 'name', 'max' => 255]),
+                'first_name' => __('validation.max.string', ['attribute' => 'first_name', 'max' => 255]),
+            ]);
+    }
+
+    /** @test */
+    public function last_name_should_have_a_max_of_255_characters()
+    {
+        $user = (new UserBuilder())
+            ->save()
+            ->get();
+
+        $this->actingAs($user);
+
+        $this->put(route('profile.update'), ['last_name' => str_repeat('*', 256)])
+            ->assertSessionHasErrors([
+                'last_name' => __('validation.max.string', ['attribute' => 'last_name', 'max' => 255]),
             ]);
     }
 
@@ -113,8 +158,9 @@ class UpdateProfileTest extends FeatureTest
 
         $this->actingAs($user)
             ->put(route('profile.update'), [
-                'first_name'  => 'Testing',
-                'email' => 'joe@doe.com',
+                'first_name' => 'Testing',
+                'last_name'  => 'Smith',
+                'email'      => 'joe@doe.com',
             ])
             ->assertSessionHasNoErrors();
     }
