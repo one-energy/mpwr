@@ -101,74 +101,83 @@ class RegionRegistrationTest extends FeatureTest
     /** @test */
     public function region_should_have_a_min_of_3_characters()
     {
-        $this->post(route('register'), ['region' => '12'])
-            ->assertSessionHasErrors([
-                'region' => __('validation.min.string', ['attribute' => 'region', 'min' => 3]),
-            ]);
+        $data = [
+            'region' => '12',
+        ];
+        
+        $response = $this->post(route('register'), $data);
+    
+        $response->assertSessionHasErrors(
+        [
+            'region',
+        ]);
     }
 
     /** @test */
     public function region_should_have_a_max_of_255_characters()
     {
-        $this->post(route('register'), ['region' => str_repeat('*', 256)])
-            ->assertSessionHasErrors([
-                'region' => __('validation.max.string', ['attribute' => 'region', 'max' => 255]),
-            ]);
+        $data = [
+            'region' => str_repeat('*', 256),
+        ];
+        
+        $response = $this->post(route('register'), $data);
+    
+        $response->assertSessionHasErrors(
+        [
+            'region',
+        ]);
     }
 
     /** @test */
-    public function first_name_should_be_required()
+    public function first_and_last_name_should_be_required()
     {
-        $this->post(route('register'), [])
-            ->assertSessionHasErrors([
-                'first_name' => __('validation.required', ['attribute' => 'first_name']),
-            ]);
+        $data = [
+            'first_name' => '',
+            'last_name'  => '',
+        ];
+        
+        $response = $this->post(route('register'), $data);
+    
+        $response->assertSessionHasErrors(
+        [
+            'first_name',
+            'last_name',
+        ]);
     }
 
     /** @test */
-    public function last_name_should_be_required()
+    public function first_and_last_name_should_have_a_min_of_3_characters()
     {
-        $this->post(route('register'), [])
-            ->assertSessionHasErrors([
-                'last_name' => __('validation.required', ['attribute' => 'last_name']),
-            ]);
+        $data = [
+            'first_name' => '12',
+            'last_name'  => '12',
+        ];
+        
+        $response = $this->post(route('register'), $data);
+    
+        $response->assertSessionHasErrors(
+        [
+            'first_name',
+            'last_name',
+        ]);
     }
 
     /** @test */
-    public function first_name_should_have_a_min_of_3_characters()
+    public function first_and_last_name_should_have_a_max_of_255_characters()
     {
-        $this->post(route('register'), ['first_name' => '12'])
-            ->assertSessionHasErrors([
-                'first_name' => __('validation.min.string', ['attribute' => 'first_name', 'min' => 3]),
-            ]);
+        $data = [
+            'first_name' => str_repeat('*', 256),
+            'last_name'  => str_repeat('*', 256),
+        ];
+        
+        $response = $this->post(route('register'), $data);
+    
+        $response->assertSessionHasErrors(
+        [
+            'first_name',
+            'last_name',
+        ]);
     }
-
-    /** @test */
-    public function last_name_should_have_a_min_of_3_characters()
-    {
-        $this->post(route('register'), ['last_name' => '12'])
-            ->assertSessionHasErrors([
-                'last_name' => __('validation.min.string', ['attribute' => 'last_name', 'min' => 3]),
-            ]);
-    }
-
-    /** @test */
-    public function first_name_should_have_a_max_of_255_characters()
-    {
-        $this->post(route('register'), ['first_name' => str_repeat('*', 256)])
-            ->assertSessionHasErrors([
-                'first_name' => __('validation.max.string', ['attribute' => 'first_name', 'max' => 255]),
-            ]);
-    }
-
-     /** @test */
-     public function last_name_should_have_a_max_of_255_characters()
-     {
-         $this->post(route('register'), ['last_name' => str_repeat('*', 256)])
-             ->assertSessionHasErrors([
-                 'last_name' => __('validation.max.string', ['attribute' => 'last_name', 'max' => 255]),
-             ]);
-     }
 
     /** @test */
     public function email_should_be_required()
