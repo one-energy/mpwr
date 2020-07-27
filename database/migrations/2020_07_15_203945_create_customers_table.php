@@ -22,7 +22,7 @@ class CreateCustomersTable extends Migration
             $table->string('bill');
             $table->string('pay')->nullable();
             $table->string('financing');
-            $table->decimal('adders')->nullable();
+            $table->decimal('adders', 8, 2)->nullable();
             $table->decimal('gross_ppw')->nullable();
             $table->decimal('comission')->nullable();
             $table->decimal('setter_fee', 8, 2)->nullable();

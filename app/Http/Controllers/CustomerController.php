@@ -14,15 +14,15 @@ class CustomerController extends Controller
 
     public function create()
     {
-        $bill         = Customer::BILLS;
-        $financing    = Customer::FINANCINGS;
-        $opened_by_id = Auth::user()->id;
+        $bills      = Customer::BILLS;
+        $financings = Customer::FINANCINGS;
+        $openedById = Auth::user()->id;
 
         return view('customer.create', 
             [
-                'bill'         => $bill,
-                'financing'    => $financing,
-                'opened_by_id' => $opened_by_id,
+                'bills'      => $bills,
+                'financings' => $financings,
+                'openedById' => $openedById,
             ] 
         );
     }
@@ -61,7 +61,7 @@ class CustomerController extends Controller
 
         $customer->save();
 
-        return redirect(route('home'))->with('message', 'Home Owner created!');
+        return redirect(route('customers.show', $customer))->with('message', 'Home Owner created!');
     }
 
     public function show(int $customer)
