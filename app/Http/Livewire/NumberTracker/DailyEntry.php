@@ -15,9 +15,14 @@ class DailyEntry extends Component
 
     public $dateSelected = '';
 
+    public function mount()
+    {
+        $this->dateSelected = date('Y-m-d', time());
+    }
+
     public function setDate()
     {
-        $this->dateSelected = $this->date;
+        $this->dateSelected = date('Y-m-d', strtotime($this->date));
     }
 
     public function setRegion($id)
@@ -32,8 +37,6 @@ class DailyEntry extends Component
 
     public function render()
     {
-        $this->dateSelected = ($this->dateSelected == "") ? date('Y-m-d', time()) : $this->dateSelected;
-
         return view('livewire.number-tracker.daily-entry',[
             'users' => User::query()
                 ->when($this->regionSelected, function(Builder $query) {
