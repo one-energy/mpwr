@@ -89,7 +89,14 @@ class UsersController extends Controller
 
     public function destroy($id)
     {
-        User::query()->findOrFail($id)->delete();
+        if($id == auth()->user()->id) {
+            alert()
+                ->withTitle(__('You cannot delete yourself!'))
+                ->send();
+            return back();
+        }
+
+        User::destroy($id);
 
         alert()
             ->withTitle(__('User has been deleted!'))

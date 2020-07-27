@@ -86,12 +86,6 @@ class UpdateProfileTest extends FeatureTest
 
         $this->actingAs($user);
 
-<<<<<<< HEAD
-        $this->put(route('profile.update'), ['first_name' => str_repeat('*', 256)])
-            ->assertSessionHasErrors([
-                'first_name' => __('validation.max.string', ['attribute' => 'first_name', 'max' => 255]),
-            ]);
-=======
         $data = [
             'first_name' => str_repeat('*', 256),
             'last_name'  => str_repeat('*', 256),
@@ -104,7 +98,6 @@ class UpdateProfileTest extends FeatureTest
             'first_name',
             'last_name',
         ]);
->>>>>>> 32b457fefb37cea66babbf18d1cf735ab5c12491
     }
 
     /** @test */

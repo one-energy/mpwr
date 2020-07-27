@@ -53,8 +53,8 @@ class UserDetailsTest extends FeatureTest
         $region2  = (new RegionBuilder)->withOwner($master)->save()->get();
 
         $this->actingAs($master)
-            ->get(route('castle.users.edit', $master->id))
-            ->assertViewIs('castle.users.edit')
+            ->get(route('castle.users.show', $master->id))
+            ->assertViewIs('castle.users.show')
             ->assertSee($region1->name)
             ->assertSee($region2->name);
     }
