@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -13,7 +12,7 @@ use Illuminate\Support\Facades\Hash;
 
 /**
  * @property int $id
- * @property string $first_name
+ * @property string $name
  * @property string $email
  * @property Carbon $email_verified_at
  * @property string $password
@@ -27,7 +26,6 @@ use Illuminate\Support\Facades\Hash;
 class User extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable;
-    use SoftDeletes;
 
     const OWNER  = 'owner';
     const MEMBER = 'member';
@@ -45,11 +43,6 @@ class User extends Authenticatable implements MustVerifyEmail
     public function invitations()
     {
         return $this->hasMany(Invitation::class);
-    }
-
-    public function daily_numbers()
-    {
-        return $this->hasMany(DailyNumber::class);
     }
 
     public function changePassword($new)

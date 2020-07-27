@@ -32,20 +32,19 @@ class RegisterController extends Controller
 
     protected function create(array $data)
     {
-        $user                 = new User();
-        $user->first_name     = $data['first_name'];
-        $user->last_name      = $data['last_name'];
-        $user->email          = $data['email'];
-        $user->password       = bcrypt($data['password']);
+        $user             = new User();
+        $user->first_name = $data['first_name'];
+        $user->last_name  = $data['last_name'];
+        $user->email      = $data['email'];
+        $user->password   = bcrypt($data['password']);
         $user->save();
 
-        $team           = new Region();
-        $team->name     = $data['region'];
-        $team->owner_id = $user->id;
-        $team->save();
+        $region           = new Region();
+        $region->name     = $data['region'];
+        $region->owner_id = $user->id;
+        $region->save();
 
-        $team->users()->attach($user, ['role' => 'owner']);
-
+        $region->users()->attach($user, ['role' => 'owner']);
 
         return $user;
     }

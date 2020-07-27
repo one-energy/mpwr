@@ -49,9 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('castle/masters/invite/response', ResponseMasterInvitationController::class)->name('castle.masters.invite.response');
 
     Route::prefix('castle/')->middleware('castle')->name('castle.')->group(function () {
-        Route::get('dashboard', function () {
-            return view('home');
-        })->name('dashboard');
+        Route::get('dashboard', HomeController::class)->name('dashboard');
 
         Route::get('users/create', [UsersController::class, 'create'])->name('users.create');
         Route::post('users/create', [UsersController::class, 'store'])->name('users.store');

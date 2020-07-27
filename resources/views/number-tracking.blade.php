@@ -138,7 +138,7 @@
                                 <div class="border-b bg-grey-lightest border-gray-200">
                                     <header class="flex justify-between items-center py-2 cursor-pointer select-none">
                                         <span class="text-gray-700 font-thin text-sm">
-                                            Member Team
+                                            Member Region
                                         </span>
                                         <div class="flex">
                                             <div class="rounded-full border border border-gray-200 w-4 h-4 flex items-center justify-center bg-gray-200 text-gray-700 text-xs">
@@ -362,7 +362,7 @@
                                         <thead>
                                             <tr class="sm:border-gray-200 border-b-2">
                                             <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
-                                                Team Member
+                                                Region Member
                                             </th>
                                             <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
                                                 Doors
@@ -388,7 +388,7 @@
                                             @foreach ($trackingInformation as $row)
                                             <tr>
                                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 md:border-b md:border-gray-200">
-                                                {{{ $row['team_member'] }}}
+                                                {{{ $row['region_member'] }}}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
                                                 {{{ $row['doors'] }}}

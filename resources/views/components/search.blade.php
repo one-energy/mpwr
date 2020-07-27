@@ -30,7 +30,7 @@
     </div>
 
     <div class="relative mt-4 rounded-md shadow-sm sm:mt-1">
-        <input disabled id="price" class="block w-full pl-4 pr-5 form-input sm:text-sm sm:leading-5"
+        <input disabled id="perPage" class="block w-full pl-4 pr-5 form-input sm:text-sm sm:leading-5"
                placeholder="Records per page"/>
         <div class="absolute inset-y-0 right-0 flex items-center w-full">
             <select wire:model="perPage" aria-label="PerPage"

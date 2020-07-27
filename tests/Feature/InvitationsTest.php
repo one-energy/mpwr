@@ -39,16 +39,16 @@ class InvitationsTest extends FeatureTest
         $invitation = (new InvitationBuilder)->isAMaster()->withEmail('joe-smith@email.com')->save()->get();
 
         $this->post(route('register.with-invitation', $invitation), [
-            'first_name'               => 'Joe',
-            'last_name' => 'Doe',
+            'first_name'         => 'Joe',
+            'last_name'          => 'Doe',
             'email_confirmation' => 'joe-smith@email.com',
             'password'           => '14253647',
         ])->assertSessionHasNoErrors();
 
         $this->assertDatabaseHas('users', [
-            'first_name'  => 'Joe',
-            'last_name' => 'Doe',
-            'email' => 'joe-smith@email.com',
+            'first_name' => 'Joe',
+            'last_name'  => 'Doe',
+            'email'      => 'joe-smith@email.com',
         ]);
 
         /** @var User $user */
@@ -62,37 +62,71 @@ class InvitationsTest extends FeatureTest
     //region Validations
 
     /** @test */
+<<<<<<< HEAD
     public function first_name_is_required()
+=======
+    public function first_and_last_name_are_required()
+>>>>>>> 32b457fefb37cea66babbf18d1cf735ab5c12491
     {
         $invitation = (new InvitationBuilder)->isAMaster()->withEmail('joe-smith@email.com')->save()->get();
 
-        $this->post(route('register.with-invitation', $invitation), [])
-            ->assertSessionHasErrors([
-                'first_name' => __('validation.required', ['attribute' => 'first_name']),
-            ]);
-    }
+        $data = [
+            'first_name' => '',
+            'last_name'  => '',
+        ];
 
-    /** @test */
-    public function first_name_should_have_a_min_of_3_characters()
-    {
-        $invitation = (new InvitationBuilder)->isAMaster()->withEmail('joe-smith@email.com')->save()->get();
+        $response = $this->post(route('register.with-invitation', $invitation), $data);
 
-        $this->post(route('register.with-invitation', $invitation), [
-            'first_name' => '12',
-        ])->assertSessionHasErrors([
-            'first_name' => __('validation.min.string', ['attribute' => 'first_name', 'min' => 3]),
+        $response->assertSessionHasErrors(
+        [
+            'first_name',
+            'last_name',
         ]);
     }
 
     /** @test */
-    public function first_name_should_have_a_max_of_255_characters()
+<<<<<<< HEAD
+    public function first_name_should_have_a_min_of_3_characters()
+=======
+    public function first_and_last_name_should_have_a_min_of_3_characters()
+>>>>>>> 32b457fefb37cea66babbf18d1cf735ab5c12491
     {
         $invitation = (new InvitationBuilder)->isAMaster()->withEmail('joe-smith@email.com')->save()->get();
 
-        $this->post(route('register.with-invitation', $invitation), [
+        $data = [
+            'first_name' => '12',
+            'last_name'  => '12',
+        ];
+
+        $response = $this->post(route('register.with-invitation', $invitation), $data);
+
+        $response->assertSessionHasErrors(
+        [
+            'first_name',
+            'last_name',
+        ]);
+    }
+
+    /** @test */
+<<<<<<< HEAD
+    public function first_name_should_have_a_max_of_255_characters()
+=======
+    public function first_and_last_name_should_have_a_max_of_255_characters()
+>>>>>>> 32b457fefb37cea66babbf18d1cf735ab5c12491
+    {
+        $invitation = (new InvitationBuilder)->isAMaster()->withEmail('joe-smith@email.com')->save()->get();
+
+        $data = [
             'first_name' => str_repeat('*', 256),
-        ])->assertSessionHasErrors([
-            'first_name' => __('validation.max.string', ['attribute' => 'first_name', 'max' => 255]),
+            'last_name'  => str_repeat('*', 256),
+        ];
+
+        $response = $this->post(route('register.with-invitation', $invitation), $data);
+
+        $response->assertSessionHasErrors(
+        [
+            'first_name',
+            'last_name',
         ]);
     }
 

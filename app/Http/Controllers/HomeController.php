@@ -14,6 +14,7 @@ class HomeController extends Controller
         $sortTypes = [
             ['index' => 'is_active',   'value' => 'Active'],
             ['index' => 'is_inactive', 'value' => 'Inactive'],
+            ['index' => 'all',         'value' => 'All'],
         ];
 
         if (!empty(request('sort_by'))) {
@@ -22,7 +23,7 @@ class HomeController extends Controller
                 ->orderBy('is_active', 'DESC');
             } elseif ($request->input('sort_by') == "is_inactive") {
                 $query
-                ->orderBy('is_active', 'ASC');
+                ->where('is_active', '')->orWhere('is_active', null)->orWhere('is_active', 0);
             }
         }
 

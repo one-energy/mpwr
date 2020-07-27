@@ -36,8 +36,8 @@ class InvitationController extends Controller
         $data['email'] = $invitation->email;
 
         Validator::make($data, [
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name'  => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'min:3', 'max:255'],
+            'last_name'  => ['required', 'string', 'min:3', 'max:255'],
             'email'      => ['confirmed'],
             'password'   => ['required', 'string', 'min:8', 'max:128'],
         ])->validate();

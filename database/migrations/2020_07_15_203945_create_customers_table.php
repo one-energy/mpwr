@@ -19,15 +19,21 @@ class CreateCustomersTable extends Migration
             $table->string('last_name');
             $table->decimal('system_size', 8, 2)->nullable();
             $table->decimal('redline', 8, 2)->nullable();
-            $table->decimal('bill', 8, 2)->nullable();
+            $table->string('bill');
             $table->string('pay')->nullable();
-            $table->decimal('financing', 8, 2)->nullable();
+            $table->string('financing');
             $table->decimal('adders')->nullable();
             $table->decimal('gross_ppw')->nullable();
-            $table->decimal('comission')->nullable();
+            $table->decimal('commission')->nullable();
             $table->decimal('setter_fee', 8, 2)->nullable();
             $table->string('setter')->nullable();
             $table->boolean('is_active')->nullable();
+
+            $table->unsignedBigInteger('opened_by_id');
+            $table->foreign('opened_by_id')
+                    ->references('id')
+                    ->on('users')
+                    ->onDelete('cascade');
 
             $table->timestamps();
             $table->softDeletes();

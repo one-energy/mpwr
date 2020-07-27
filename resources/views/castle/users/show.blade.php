@@ -1,4 +1,4 @@
-<x-app.auth :title="$user->name" :header="$user->name">
+<x-app.auth :title="$user->first_name" :header="$user->first_name">
     <div class="bg-white flex flex-col pb-16 rounded-lg shadow px-8 mb-8">
         <div class="my-8">
             <x-link :href="route('castle.users.index')" color="indigo" class="flex self-center">

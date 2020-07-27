@@ -14,13 +14,13 @@ class UserDetailsTest extends FeatureTest
         $nonMaster = (new UserBuilder)->save()->get();
 
         $this->actingAs($nonMaster)
-            ->get(route('castle.users.show', $nonMaster->id))
+            ->get(route('castle.users.edit', $nonMaster->id))
             ->assertForbidden();
 
         $master = (new UserBuilder)->asMaster()->save()->get();
 
         $this->actingAs($master)
-            ->get(route('castle.users.show', $master->id))
+            ->get(route('castle.users.edit', $master->id))
             ->assertSuccessful();
     }
 
@@ -31,15 +31,15 @@ class UserDetailsTest extends FeatureTest
         $nonMaster = (new UserBuilder)->save()->get();
 
         $this->actingAs($master)
-            ->get(route('castle.users.show', $master->id))
-            ->assertViewIs('castle.users.show')
+            ->get(route('castle.users.edit', $master->id))
+            ->assertViewIs('castle.users.edit')
             ->assertSee($master->first_name)
             ->assertSee($master->last_name)
             ->assertSee($master->email);
 
         $this->actingAs($master)
-            ->get(route('castle.users.show', $nonMaster->id))
-            ->assertViewIs('castle.users.show')
+            ->get(route('castle.users.edit', $nonMaster->id))
+            ->assertViewIs('castle.users.edit')
             ->assertSee($nonMaster->first_name)
             ->assertSee($nonMaster->last_name)
             ->assertSee($nonMaster->email);
@@ -53,8 +53,8 @@ class UserDetailsTest extends FeatureTest
         $region2  = (new RegionBuilder)->withOwner($master)->save()->get();
 
         $this->actingAs($master)
-            ->get(route('castle.users.show', $master->id))
-            ->assertViewIs('castle.users.show')
+            ->get(route('castle.users.edit', $master->id))
+            ->assertViewIs('castle.users.edit')
             ->assertSee($region1->name)
             ->assertSee($region2->name);
     }

@@ -43,7 +43,7 @@ class MasterUserListTest extends FeatureTest
     }
 
     /** @test */
-    public function it_should_be_able_to_search_for_an_user_by_name()
+    public function it_should_be_able_to_search_for_an_user_by_last_name()
     {
         $master = (new UserBuilder)->asMaster()->save()->get();
         $joe    = (new UserBuilder)->withFirstName('Joe')->withLastName('Doe')->asMaster()->save()->get();
@@ -54,9 +54,9 @@ class MasterUserListTest extends FeatureTest
 
         Livewire::test(Masters::class)
             ->set('search', 'Doe')
-            ->assertSee($joe->last_name)
-            ->assertSee($jane->last_name)
-            ->assertDontSee($alpha->last_name);
+            ->assertSee($joe->first_name)
+            ->assertSee($jane->first_name)
+            ->assertDontSee($alpha->first_name);
 
         Livewire::test(Masters::class)
             ->set('search', 'alph')
