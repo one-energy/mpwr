@@ -10,11 +10,15 @@ class CustomerController extends Controller
 {
     public function index()
     {
-        return view('customer.index');
+        $this->authorize('viewList', Customer::class);
+
+        return redirect()->route('home');
     }
 
     public function create()
     {
+        $this->authorize('create', Customer::class);
+
         $bills      = Customer::BILLS;
         $financings = Customer::FINANCINGS;
         $openedById = Auth::user()->id;
@@ -74,7 +78,7 @@ class CustomerController extends Controller
 
         $customer->save();
 
-        return redirect(route('customers.show', $customer))->with('message', 'Home Owner created!');
+        return redirect(route('customers.show', $customer->id))->with('message', 'Home Owner created!');
     }
 
     public function calculateCommission($epc, $pay, $setterFee, $systemSize, $adders)
@@ -84,7 +88,19 @@ class CustomerController extends Controller
 
     public function show(int $customer)
     {
-        return view('customer.show', compact('customer'));
+        $this->authorize('view', Customer::class);
+
+        $bills      = Customer::BILLS;
+        $financings = Customer::FINANCINGS;
+        $users      = User::get();
+
+        return view('customer.show', 
+        [
+            'customer'   => $customer,
+            'bills'      => $bills,
+            'financings' => $financings,
+            'users'      => $users,
+        ]);
     }
 
     public function update(Customer $customer)
@@ -94,6 +110,8 @@ class CustomerController extends Controller
 
     public function destroy(Customer $customer)
     {
+        $this->authorize('delete', Customer::class);
+
         return redirect(route('customers.index'))->with('message', 'Home Owner deleted!');
     }
 }

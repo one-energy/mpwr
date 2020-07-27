@@ -43,6 +43,17 @@
                             Update User
                         </button>
                     </span>
+
+                    <span class="ml-3 inline-flex rounded-md shadow-sm">
+                        <a href="{{route('castle.users.destroy', $user->id)}}" 
+                            class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out"
+                            onclick="event.preventDefault();
+                                    document.getElementById('delete-form').submit();"
+                        >
+                            Delete User
+                        </a>
+                    </span>
+
                     <span class="ml-3 inline-flex rounded-md shadow-sm">
                         <a href="{{route('castle.users.index')}}" class="py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-gray-800 hover:bg-gray-300 focus:outline-none focus:border-gray-300 focus:shadow-outline-gray transition duration-150 ease-in-out">
                             Cancel
@@ -53,4 +64,5 @@
             </x-form>
         </div>
     </div>
+    <x-form :route="route('castle.users.destroy', $user->id)" id="delete-form" delete></x-form>
 </x-app.auth>

@@ -9,12 +9,11 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property string $name
  * @property int $owner_id
- * @property string $photo_url
  * @property Carbon $created_at
  * @property Carbon $deleted_at
  * @property-read User $owner
  */
-class Team extends Model
+class Region extends Model
 {
     public function owner()
     {

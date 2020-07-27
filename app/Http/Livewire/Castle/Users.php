@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire\Castle;
 
-use App\Models\Team;
+use App\Models\Region;
 use App\Models\User;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +21,7 @@ class Users extends Component
 
     public $sortDirection = 'asc';
 
-    public $team = null;
+    public $region = null;
 
     public $keyword = '';
 
@@ -52,7 +52,7 @@ class Users extends Component
     public function clearFilters()
     {
         $this->keywords = [];
-        $this->filters = [];
+        $this->filters  = [];
     }
 
     public function clearSearch()
@@ -101,12 +101,12 @@ class Users extends Component
     }
 
     public $updatesQueryString = [
-        'team' => ['except' => '0'],
+        'region' => ['except' => '0'],
     ];
 
     public function checkQueryString()
     {
-        $this->team = request()->team;
+        $this->region = request()->region;
     }
 
     public function sortBy()
@@ -141,7 +141,7 @@ class Users extends Component
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage),
 
-            'teams' => Team::orderBy('name')->cursor()->remember()->all(),
+            'regions' => Region::orderBy('name')->cursor()->remember()->all(),
         ]);
     }
 }

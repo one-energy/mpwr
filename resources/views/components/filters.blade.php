@@ -48,7 +48,7 @@
             <div class="border-b bg-grey-lightest border-gray-200">
                 <header class="flex justify-between items-center py-2 cursor-pointer select-none">
                     <span class="text-gray-700 font-thin text-sm">
-                        Member Team
+                        Member Region
                     </span>
                     <div class="flex">
                         <div class="rounded-full border border border-gray-200 w-4 h-4 flex items-center justify-center bg-gray-200 text-gray-700 text-xs">

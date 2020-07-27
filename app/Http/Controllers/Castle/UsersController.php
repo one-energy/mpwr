@@ -11,8 +11,8 @@ use App\Rules\Castle\MasterEmailUnique;
 use App\Rules\Castle\MasterEmailYourSelf;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Ramsey\Uuid\Uuid;
 use Illuminate\Validation\Rule;
+use Ramsey\Uuid\Uuid;
 
 class UsersController extends Controller
 {
@@ -34,8 +34,8 @@ class UsersController extends Controller
     public function store()
     {
         $data = Validator::make(request()->all(), [
-            'first_name' => ['nullable', 'string', 'max:255'],
-            'last_name'  => ['nullable', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name'  => ['required', 'string', 'max:255'],
             'role'       => ['nullable', 'string', 'max:255'],
             'office'     => ['nullable', 'string', 'max:255'],
             'pay'        => ['nullable', 'numeric'],
@@ -82,6 +82,24 @@ class UsersController extends Controller
 
         alert()
             ->withTitle(__('User has been updated!'))
+            ->send();
+
+        return redirect(route('castle.users.index'));
+    }
+
+    public function destroy($id)
+    {
+        if($id == auth()->user()->id) {
+            alert()
+                ->withTitle(__('You cannot delete yourself!'))
+                ->send();
+            return back();
+        }
+
+        User::destroy($id);
+
+        alert()
+            ->withTitle(__('User has been deleted!'))
             ->send();
 
         return redirect(route('castle.users.index'));

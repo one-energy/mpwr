@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Hash;
 
 /**
  * @property int $id
- * @property string $first_name
+ * @property string $name
  * @property string $email
  * @property Carbon $email_verified_at
  * @property string $password
@@ -30,14 +30,29 @@ class User extends Authenticatable implements MustVerifyEmail
     const OWNER  = 'owner';
     const MEMBER = 'member';
 
+    const ROLES = [
+        'Admin',
+        'Region Manager',
+        'Office Manager',
+        'Sales Rep',
+        'Setter'
+    ];
+
+    const TOPLEVEL_ROLES = [
+        'Admin',
+        'Region Manager',
+        'Office Manager',
+        'Sales Rep'
+    ];
+
     protected $casts = [
         'email_verified_at' => 'datetime',
         'master'            => 'boolean',
     ];
 
-    public function teams()
+    public function regions()
     {
-        return $this->belongsToMany(Team::class)->withPivot('role')->withTimestamps();
+        return $this->belongsToMany(Region::class)->withPivot('role')->withTimestamps();
     }
 
     public function invitations()
@@ -78,15 +93,20 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $query->when($search, function (Builder $query) use ($search) {
             $query->where(
-                DB::raw('lower(name)'),
+                DB::raw('lower(first_name)'),
                 'like',
                 '%' . strtolower($search) . '%'
             )
-                ->orWhere(
-                    DB::raw('lower(email)'),
-                    'like',
-                    '%' . strtolower($search) . '%'
-                );
+            ->orWhere(
+                DB::raw('lower(last_name)'),
+                'like',
+                '%' . strtolower($search) . '%'
+            )
+            ->orWhere(
+                DB::raw('lower(email)'),
+                'like',
+                '%' . strtolower($search) . '%'
+            );
         });
     }
 }

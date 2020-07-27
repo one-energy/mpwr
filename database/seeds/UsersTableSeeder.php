@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Team;
+use App\Models\Region;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
@@ -33,59 +33,57 @@ class UsersTableSeeder extends Seeder
         }
 
         $this->createDevsquadTeam();
-        $this->createTestTeam();
+        for ($i=0; $i < 5; $i++) { 
+            $this->createTestRegion();    
+        }
     }
 
     public function createDevsquadTeam()
     {
         $owner = factory(User::class)->create([
-            'first_name'   => 'DevSquad Master',
+            'first_name' => 'DevSquad Master',
             'last_name'  => 'User',
-            'email'  => 'team@devsquad.com',
-            'master' => true,
+            'email'      => 'team@devsquad.com',
+            'master'     => true,
         ]);
 
-        $devsquad = factory(Team::class)->create([
+        $devsquad = factory(Region::class)->create([
             'owner_id' => $owner->id,
-            'name'     => 'DevSquad',
         ]);
-        $devsquad->users()->attach($owner, ['role' => User::OWNER]);
+        $devsquad->users()->attach($owner, ['role' => array_rand(User::TOPLEVEL_ROLES)]);
 
         $member = factory(User::class)->create([
-            'first_name'  => 'DevSquad',
-            'last_name' => 'User',
-            'email' => 'user@devsquad.com',
+            'first_name' => 'DevSquad',
+            'last_name'  => 'User',
+            'email'      => 'user@devsquad.com',
         ]);
-        $devsquad->users()->attach($member, ['role' => User::MEMBER]);
+        $devsquad->users()->attach($member, ['role' => array_rand(User::ROLES)]);
 
         for ($i = 0; $i < 50; $i++) {
             $member = factory(User::class)->create();
-            $devsquad->users()->attach($member, ['role' => User::MEMBER]);
+            $devsquad->users()->attach($member, ['role' => array_rand(User::ROLES)]);
         }
+
         for ($i = 0; $i < 50; $i++) {
             $master = factory(User::class)->create(['master' => true]);
-            $devsquad->users()->attach($master, ['role' => User::MEMBER]);
+            $devsquad->users()->attach($master, ['role' => array_rand(User::ROLES)]);
         }
     }
 
-    public function createTestTeam()
+    public function createTestRegion()
     {
         $testOwner = factory(User::class)->create([
-            'first_name'   => 'Test',
-            'last_name' => 'User',
-            'email'  => 'test@user.com',
             'master' => false,
         ]);
-
-        $testTeam = factory(Team::class)->create([
+    
+        $testRegion = factory(Region::class)->create([
             'owner_id' => $testOwner->id,
-            'name'     => 'Test Team',
         ]);
-        $testTeam->users()->attach($testOwner, ['role' => User::OWNER]);
+        $testRegion->users()->attach($testOwner, ['role' => array_rand(User::TOPLEVEL_ROLES)]);
 
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $member = factory(User::class)->create();
-            $testTeam->users()->attach($member, ['role' => User::MEMBER]);
+            $testRegion->users()->attach($member, ['role' => array_rand(User::ROLES)]);
         }
     }
 }

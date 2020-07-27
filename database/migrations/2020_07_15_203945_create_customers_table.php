@@ -28,7 +28,7 @@ class CreateCustomersTable extends Migration
             $table->decimal('setter_fee', 8, 2)->nullable();
             $table->boolean('is_active')->default(1);
 
-            $table->unsignedBigInteger('setter_id');
+            $table->unsignedBigInteger('setter_id')->nullable();;
             $table->foreign('setter_id')
                     ->references('id')
                     ->on('users')
