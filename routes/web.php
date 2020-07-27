@@ -49,9 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('castle/masters/invite/response', ResponseMasterInvitationController::class)->name('castle.masters.invite.response');
 
     Route::prefix('castle/')->middleware('castle')->name('castle.')->group(function () {
-        Route::get('dashboard', function () {
-            return view('home');
-        })->name('dashboard');
+        Route::get('dashboard', HomeController::class)->name('dashboard');
 
         Route::get('users/create', [UsersController::class, 'create'])->name('users.create');
         Route::post('users/create', [UsersController::class, 'store'])->name('users.store');
@@ -59,6 +57,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('users/{user}/edit', [UsersController::class, 'edit'])->name('users.edit');
         Route::put('users/{user}', [UsersController::class, 'update'])->name('users.update');
         Route::delete('users/{user}', [UsersController::class, 'destroy'])->name('users.destroy');
+        Route::get('users/{user}', [UsersController::class, 'show'])->name('users.show');
         
         Route::get('masters', [MastersController::class, 'index'])->name('masters.index');
         Route::get('masters/invite', [MasterInvitationController::class, 'form'])->name('masters.invite');
@@ -69,16 +68,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/', HomeController::class)->name('home');
 
-    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::get('/profile/show-profile-information', [ProfileController::class, 'index'])->name('profile.show-profile-information');
+    Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
+    Route::put('/profile/show', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/change-password', ProfileChangePasswordController::class)->name('profile.change-password');
 
     Route::resource('/customers', CustomerController::class);
     Route::get('/scoreboard', ScoreboardController::class)->name('scoreboard');
     Route::get('/trainings', [TrainingController::class, 'index'])->name('trainings.index');
-    Route::get('/trainings/setting', [TrainingSettingController::class, 'index'])->name('settings.index');
-    Route::get('/trainings/setting/best-practices', [TrainingSettingBestPracticesController::class ,'index'])->name('best-practices.index');
-    Route::get('/trainings/setting/best-practices/what-to-say', [TrainingSettingBestPracticesWhatToSayController::class, 'index'])->name('what-to-say.index');
+    Route::get('/trainings/setting', [TrainingSettingController::class, 'index'])->name('trainings.settings.index');
+    Route::get('/trainings/setting/best-practices', [TrainingSettingBestPracticesController::class ,'index'])->name('trainings.settings.best-practices.index');
+    Route::get('/trainings/setting/best-practices/what-to-say', [TrainingSettingBestPracticesWhatToSayController::class, 'index'])->name('trainings.settings.best-practices.what-to-say.index');
     Route::get('/incentives', IncentivesController::class)->name('incentives');
     Route::get('/number-tracking', [NumberTrackingController::class, 'index'])->name('number-tracking.index');
     Route::get('/number-tracking/create', [NumberTrackingController::class, 'create'])->name('number-tracking.create');

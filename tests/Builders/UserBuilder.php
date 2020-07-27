@@ -3,7 +3,7 @@
 
 namespace Tests\Builders;
 
-use App\Models\Team;
+use App\Models\Region;
 use App\Models\User;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Collection;
@@ -18,7 +18,7 @@ class UserBuilder
 
     private Collection $items;
 
-    private ?Team $team = null;
+    private ?Region $region = null;
 
     public function __construct($attributes = [])
     {
@@ -38,11 +38,11 @@ class UserBuilder
         if ($this->amount == 1) {
             $this->user->save();
 
-            if ($this->team) {
-                $this->team->owner_id = $this->user->id;
-                $this->team->save();
+            if ($this->region) {
+                $this->region->owner_id = $this->user->id;
+                $this->region->save();
 
-                $this->team->users()->attach($this->user->id, ['role' => User::OWNER]);
+                $this->region->users()->attach($this->user->id, ['role' => User::OWNER]);
             }
         }
 
@@ -54,8 +54,8 @@ class UserBuilder
                     ->withLastName($this->faker->lastName)
                     ->save()->get();
 
-                if ($this->team) {
-                    $this->team->users()->attach($user, ['role' => $i == 0 ? User::OWNER : User::MEMBER]);
+                if ($this->region) {
+                    $this->region->users()->attach($user, ['role' => $i == 0 ? User::OWNER : User::MEMBER]);
                 }
 
                 $this->items->push($user);
@@ -148,9 +148,9 @@ class UserBuilder
         return $this;
     }
 
-    public function withATeam()
+    public function withARegion()
     {
-        $this->team = factory(Team::class)->make();
+        $this->region = factory(Region::class)->make();
 
         return $this;
     }

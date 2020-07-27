@@ -17,7 +17,7 @@
         <x-slot name="body">
             @foreach($masters as $master)
                 <x-table.tr :loop="$loop">
-                    <x-table.td>{{ $master->first_name }}</x-table.td>
+                    <x-table.td>{{ $master->first_name . ' ' . $master->last_name }}</x-table.td>
                     <x-table.td>{{ $master->email }}</x-table.td>
                     <x-table.td class="flex space-x-3">
                         <x-link class="text-sm">Edit</x-link>

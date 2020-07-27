@@ -1,8 +1,7 @@
 <?php
 
-use App\Models\Team;
-use App\Models\User;
 use App\Models\Region;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -33,19 +32,19 @@ class UsersTableSeeder extends Seeder
             );
         }
 
-        $this->createDevsquadTeam();
+        $this->createDevsquadRegion();
         for ($i=0; $i < 5; $i++) { 
             $this->createTestRegion();    
         }
     }
 
-    public function createDevsquadTeam()
+    public function createDevsquadRegion()
     {
         $owner = factory(User::class)->create([
-            'first_name'   => 'DevSquad Master',
+            'first_name' => 'DevSquad Master',
             'last_name'  => 'User',
-            'email'  => 'team@devsquad.com',
-            'master' => true,
+            'email'      => 'region@devsquad.com',
+            'master'     => true,
         ]);
 
         $devsquad = factory(Region::class)->create([
@@ -54,9 +53,9 @@ class UsersTableSeeder extends Seeder
         $devsquad->users()->attach($owner, ['role' => User::OWNER]);
 
         $member = factory(User::class)->create([
-            'first_name'  => 'DevSquad',
-            'last_name' => 'User',
-            'email' => 'user@devsquad.com',
+            'first_name' => 'DevSquad',
+            'last_name'  => 'User',
+            'email'      => 'user@devsquad.com',
         ]);
         $devsquad->users()->attach($member, ['role' => User::MEMBER]);
 

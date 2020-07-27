@@ -1,4 +1,4 @@
-<x-app.auth :title="$user->name" :header="$user->name">
+<x-app.auth :title="$user->first_name" :header="$user->first_name">
     <div class="bg-white flex flex-col pb-16 rounded-lg shadow px-8 mb-8">
         <div class="my-8">
             <x-link :href="route('castle.users.index')" color="indigo" class="flex self-center">
@@ -10,6 +10,10 @@
                  src="{{ $user->photo_url }}"
                  alt=""/>
             <div class="tracking-wide">
+            <div class="mb-2 flex flex-col sm:flex-row">
+                    <div class="font-medium sm:mr-2">Name:</div>
+                    {{ $user->first_name . ' ' . $user->last_name }}
+                </div>
                 <div class="mb-2 flex flex-col sm:flex-row">
                     <div class="font-medium sm:mr-2">Email Address:</div>
                     <a :href="`mailto:{{ $user->email }}`"
@@ -25,26 +29,23 @@
 
     <div class="bg-white px-4 py-5 border-b border-gray-300 sm:px-6 rounded-t-lg shadow">
         <div class="text-lg font-medium">
-            Teams
+            Regions
         </div>
     </div>
     <div class="bg-white shadow overflow-hidden rounded-b-lg">
-        @foreach($user->teams as $team)
+        @foreach($user->regions as $region)
             <div class="border-b border-gray-200 last:border-none hover:bg-gray-50">
                 <div class="px-4 py-4 sm:px-6">
                     <div class="flex items-center justify-between">
                         <div class="flex flex-row items-center">
-                            <img class="inline-block w-10 h-10 rounded-full mr-4"
-                                 src="{{ $team->photo_url }}"
-                                 alt=""/>
                             <div class="font-medium text-indigo-600">
-                                {{ $team->name }}
+                                {{ $region->name }}
                             </div>
                         </div>
                         <div class="ml-2 flex-shrink-0 flex">
                             <span
-                                class="px-2 inline-flex text-xs font-semibold rounded-full {{ $team->pivot->role === 'owner' ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-200 text-gray-600' }}">
-                                {{ Str::ucfirst($team->pivot->role) }}
+                                class="px-2 inline-flex text-xs font-semibold rounded-full {{ $region->pivot->role === 'owner' ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-200 text-gray-600' }}">
+                                {{ Str::ucfirst($region->pivot->role) }}
                             </span>
                         </div>
                     </div>
@@ -81,7 +82,7 @@
                                       clip-rule="evenodd"/>
                             </svg>
                             <span>
-                                Joined: {{ $team->pivot->created_at->format('F dS, Y') }}
+                                Joined: {{ $region->pivot->created_at->format('F dS, Y') }}
                             </span>
                         </div>
                     </div>

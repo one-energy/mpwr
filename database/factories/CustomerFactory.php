@@ -1,25 +1,29 @@
 <?php
 
 
+use App\Models\User;
 use App\Models\Customer;
 use Faker\Generator as Faker;
-use Illuminate\Database\Eloquent\Factory;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+// use Illuminate\Database\Eloquent\Factory;
 
 /** @var Factory $factory */
 $factory->define(Customer::class, function (Faker $faker) {
     return [
-        'name'        => $faker->name,
-        'system_size' => $faker->randomFloat(),
-        'redline'     => $faker->randomFloat(),
-        'bill'        => $faker->randomFloat(),
-        'pay'         => $faker->text,
-        'financing'   => $faker->randomFloat(),
-        'adders'      => $faker->randomFloat(),
-        'gross_ppw'   => $faker->randomFloat(),
-        'comission'   => $faker->randomFloat(),
-        'setter_fee'  => $faker->randomFloat(),
-        'setter'      => $faker->name
+        'first_name'   => $faker->firstName,
+        'last_name'    => $faker->lastName,
+        'system_size'  => $faker->randomFloat(2, 1, 100),
+        'redline'      => $faker->randomFloat(2, 1, 100),
+        'bill'         => $faker->word,
+        'pay'          => $faker->sentence(3),
+        'financing'    => $faker->word,
+        'adders'       => $faker->randomFloat(2, 1, 100),
+        'gross_ppw'    => $faker->randomFloat(2, 1, 100),
+        'commission'   => $faker->randomFloat(2, 1, 100),
+        'setter_fee'   => $faker->randomFloat(2, 1, 100),
+        'setter'       => $faker->name,
+        'is_active'    => $faker->boolean(),
+        'opened_by_id' => function () {
+            return factory(User::class)->create()->id;
+        }
     ];
 });
