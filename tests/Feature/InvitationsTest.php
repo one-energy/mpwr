@@ -33,7 +33,6 @@ class InvitationsTest extends FeatureTest
     }
 
     //endregion
-
     /** @test */
     public function registering_with_an_invitation()
     {
@@ -63,7 +62,7 @@ class InvitationsTest extends FeatureTest
     //region Validations
 
     /** @test */
-    public function name_is_required()
+    public function first_name_is_required()
     {
         $invitation = (new InvitationBuilder)->isAMaster()->withEmail('joe-smith@email.com')->save()->get();
 
@@ -74,7 +73,7 @@ class InvitationsTest extends FeatureTest
     }
 
     /** @test */
-    public function name_should_have_a_min_of_3_characters()
+    public function first_name_should_have_a_min_of_3_characters()
     {
         $invitation = (new InvitationBuilder)->isAMaster()->withEmail('joe-smith@email.com')->save()->get();
 
@@ -86,7 +85,7 @@ class InvitationsTest extends FeatureTest
     }
 
     /** @test */
-    public function name_should_have_a_max_of_255_characters()
+    public function first_name_should_have_a_max_of_255_characters()
     {
         $invitation = (new InvitationBuilder)->isAMaster()->withEmail('joe-smith@email.com')->save()->get();
 

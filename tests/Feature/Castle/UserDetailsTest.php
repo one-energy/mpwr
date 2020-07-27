@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Castle;
 
-use Tests\Builders\TeamBuilder;
+use Tests\Builders\RegionBuilder;
 use Tests\Builders\UserBuilder;
 use Tests\Feature\FeatureTest;
 
@@ -46,16 +46,16 @@ class UserDetailsTest extends FeatureTest
     }
 
     /** @test */
-    public function it_should_show_the_teams_a_user_is_on()
+    public function it_should_show_the_regions_a_user_is_on()
     {
         $master = (new UserBuilder)->asMaster()->save()->get();
-        $team1  = (new TeamBuilder)->withOwner($master)->save()->get();
-        $team2  = (new TeamBuilder)->withOwner($master)->save()->get();
+        $region1  = (new RegionBuilder)->withOwner($master)->save()->get();
+        $region2  = (new RegionBuilder)->withOwner($master)->save()->get();
 
         $this->actingAs($master)
             ->get(route('castle.users.show', $master->id))
             ->assertViewIs('castle.users.show')
-            ->assertSee($team1->name)
-            ->assertSee($team2->name);
+            ->assertSee($region1->name)
+            ->assertSee($region2->name);
     }
 }

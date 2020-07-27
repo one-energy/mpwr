@@ -85,15 +85,20 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $query->when($search, function (Builder $query) use ($search) {
             $query->where(
-                DB::raw('lower(name)'),
+                DB::raw('lower(first_name)'),
                 'like',
                 '%' . strtolower($search) . '%'
             )
-                ->orWhere(
-                    DB::raw('lower(email)'),
-                    'like',
-                    '%' . strtolower($search) . '%'
-                );
+            ->orWhere(
+                DB::raw('lower(last_name)'),
+                'like',
+                '%' . strtolower($search) . '%'
+            )
+            ->orWhere(
+                DB::raw('lower(email)'),
+                'like',
+                '%' . strtolower($search) . '%'
+            );
         });
     }
 }

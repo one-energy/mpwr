@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\Team;
+use App\Models\Region;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Validator;
@@ -22,23 +22,25 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'team'     => ['required', 'string', 'min:3', 'max:255'],
-            'name'     => ['required', 'string', 'min:3', 'max:255'],
-            'email'    => ['required', 'string', 'email', 'max:128', 'unique:users', 'confirmed'],
-            'password' => ['required', 'string', 'min:8', 'max:128'],
+            'region'         => ['required', 'string', 'min:3', 'max:255'],
+            'first_name'     => ['required', 'string', 'min:3', 'max:255'],
+            'last_name'      => ['required', 'string', 'min:3', 'max:255'],
+            'email'          => ['required', 'string', 'email', 'max:128', 'unique:users', 'confirmed'],
+            'password'       => ['required', 'string', 'min:8', 'max:128'],
         ]);
     }
 
     protected function create(array $data)
     {
-        $user           = new User();
-        $user->name     = $data['name'];
-        $user->email    = $data['email'];
-        $user->password = bcrypt($data['password']);
+        $user                 = new User();
+        $user->first_name     = $data['first_name'];
+        $user->last_name      = $data['last_name'];
+        $user->email          = $data['email'];
+        $user->password       = bcrypt($data['password']);
         $user->save();
 
-        $team           = new Team();
-        $team->name     = $data['team'];
+        $team           = new Region();
+        $team->name     = $data['region'];
         $team->owner_id = $user->id;
         $team->save();
 

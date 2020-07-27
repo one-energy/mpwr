@@ -39,7 +39,7 @@ class NumberTrackingController extends Controller
 
             foreach ($data['numbers'] as $userId => $numbers) {
                 $filteredNumbers = array_filter($numbers, function ($element) {
-                    return ($element >= 0 && !is_null($element)); 
+                    return ($element >= 0 && !is_null($element));
                 });
 
                 if (!empty($filteredNumbers)) {
