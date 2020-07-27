@@ -37,7 +37,7 @@
                     </div>
             
                     <div class="md:col-span-2 col-span-1">
-                        <x-input label="Pay" name="pay"></x-input>
+                        <x-input-currency label="Pay" name="pay"></x-input>
                     </div>
 
                     <div class="col-span-1">
@@ -58,11 +58,20 @@
                     </div>
             
                     <div class="md:col-span-3 col-span-2">
-                        <x-input-currency label="Gross PPW" name="gross_ppw"></x-input>
+                        <x-input-currency label="EPC" name="epc"></x-input>
                     </div>
             
                     <div class="md:col-span-3 col-span-2">
-                        <x-input label="Setter" name="setter"></x-input>
+                        <x-select label="Setter" name="setter_id">
+                            @if (old('setter_id') == '')
+                                <option selected></option>
+                            @endif
+                            @foreach($users as $setter)
+                                <option value="{{ $setter->id }}" {{ old('setter_id') == $setter->id ? 'selected' : '' }}>
+                                    {{ $setter->first_name }} {{ $setter->last_name }}
+                                </option>
+                            @endforeach
+                        </x-select>
                     </div>
             
                     <div class="md:col-span-3 col-span-2">

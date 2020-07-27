@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
@@ -17,12 +18,14 @@ class CustomerController extends Controller
         $bills      = Customer::BILLS;
         $financings = Customer::FINANCINGS;
         $openedById = Auth::user()->id;
+        $users      = User::get();
 
         return view('customer.create', 
             [
                 'bills'      => $bills,
                 'financings' => $financings,
                 'openedById' => $openedById,
+                'users'      => $users
             ] 
         );
     }
@@ -32,15 +35,15 @@ class CustomerController extends Controller
         $validated = $this->validate(
             request(),
             [
-                'first_name'   => 'required',
-                'last_name'    => 'required',
+                'first_name'   => 'required|string|min:3|max:255',
+                'last_name'    => 'required|string|min:3|max:255',
                 'bill'         => 'required',
                 'financing'    => 'required',
                 'system_size'  => 'nullable',
                 'pay'          => 'nullable',
                 'adders'       => 'nullable',
-                'gross_ppw'    => 'nullable',
-                'setter'       => 'nullable',
+                'epc'          => 'nullable',
+                'setter_id'    => 'nullable',
                 'setter_fee'   => 'nullable',
                 'opened_by_id' => 'required',
             ]
@@ -54,14 +57,29 @@ class CustomerController extends Controller
         $customer->system_size  = $validated['system_size'];
         $customer->pay          = $validated['pay'];
         $customer->adders       = $validated['adders'];
-        $customer->gross_ppw    = $validated['gross_ppw'];
-        $customer->setter       = $validated['setter'];
+        $customer->epc          = $validated['epc'];
+        $customer->setter_id    = $validated['setter_id'];
         $customer->setter_fee   = $validated['setter_fee'];
         $customer->opened_by_id = $validated['opened_by_id'];
+
+        $epc        = $customer->epc;
+        $pay        = $customer->pay;
+        $setterFee  = $customer->setter_fee;
+        $systemSize = $customer->system_size;
+        $adders     = $customer->adders;
+
+        $commission = $this->calculateCommission($epc, $pay, $setterFee, $systemSize, $adders);
+
+        $customer->commission = $commission;
 
         $customer->save();
 
         return redirect(route('customers.show', $customer))->with('message', 'Home Owner created!');
+    }
+
+    public function calculateCommission($epc, $pay, $setterFee, $systemSize, $adders)
+    {
+        return (($epc - ( $pay + $setterFee )) * $systemSize) - $adders;
     }
 
     public function show(int $customer)

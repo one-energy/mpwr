@@ -17,7 +17,7 @@ $factory->define(Customer::class, function (Faker $faker) {
         'pay'         => $faker->text,
         'financing'   => $faker->word,
         'adders'      => $faker->randomFloat(),
-        'gross_ppw'   => $faker->randomFloat(),
+        'epc'         => $faker->randomFloat(),
         'comission'   => $faker->randomFloat(),
         'setter_fee'  => $faker->randomFloat(),
         'setter'      => $faker->name

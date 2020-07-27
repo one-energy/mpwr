@@ -99,7 +99,7 @@
                             </div>
                             </div>
                             <div class="text-xs text-gray-600 col-span-7">
-                                {{ $customer->gross_ppw }}kW
+                                {{ $customer->epc }}kW
                             </div>
                         </div>
                     </a>

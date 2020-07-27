@@ -54,11 +54,11 @@
                     </div>
 
                     <div class="md:col-span-3 sm:cols-span-2">
-                        <label for="gross_ppw" class="block text-sm font-medium leading-5 text-gray-700">
-                        Gross PPW
+                        <label for="epc" class="block text-sm font-medium leading-5 text-gray-700">
+                        EPC
                         </label>
                         <div class="mt-1 rounded-md shadow-sm">
-                        <input id="gross_ppw" class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                        <input id="epc" class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                         value="$4.00" />
                         </div>
                     </div>
