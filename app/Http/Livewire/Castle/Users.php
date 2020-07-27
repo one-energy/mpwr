@@ -21,7 +21,7 @@ class Users extends Component
 
     public $sortDirection = 'asc';
 
-    public $team = null;
+    public $region = null;
 
     public $keyword = '';
 
@@ -101,12 +101,12 @@ class Users extends Component
     }
 
     public $updatesQueryString = [
-        'team' => ['except' => '0'],
+        'region' => ['except' => '0'],
     ];
 
     public function checkQueryString()
     {
-        $this->team = request()->team;
+        $this->region = request()->region;
     }
 
     public function sortBy()

@@ -14,17 +14,16 @@ class HomeController extends Controller
         $sortTypes = [
             ['index' => 'is_active',   'value' => 'Active'],
             ['index' => 'is_inactive', 'value' => 'Inactive'],
+            ['index' => 'all',         'value' => 'All'],
         ];
 
         if (!empty(request('sort_by'))) {
-            if($request->input('sort_by') == "is_active")
-            {
+            if ($request->input('sort_by') == "is_active") {
                 $query
                 ->orderBy('is_active', 'DESC');
-            }elseif($request->input('sort_by') == "is_inactive")
-            {
+            } elseif ($request->input('sort_by') == "is_inactive") {
                 $query
-                ->orderBy('is_active', 'ASC');
+                ->where('is_active', '')->orWhere('is_active', null)->orWhere('is_active', 0);
             }
         }
 

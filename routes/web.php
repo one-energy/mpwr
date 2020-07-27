@@ -49,9 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('castle/masters/invite/response', ResponseMasterInvitationController::class)->name('castle.masters.invite.response');
 
     Route::prefix('castle/')->middleware('castle')->name('castle.')->group(function () {
-        Route::get('dashboard', function () {
-            return view('home');
-        })->name('dashboard');
+        Route::get('dashboard', HomeController::class)->name('dashboard');
 
         Route::get('users/create', [UsersController::class, 'create'])->name('users.create');
         Route::post('users/create', [UsersController::class, 'store'])->name('users.store');
@@ -59,6 +57,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('users/{user}/edit', [UsersController::class, 'edit'])->name('users.edit');
         Route::put('users/{user}', [UsersController::class, 'update'])->name('users.update');
         Route::delete('users/{user}', [UsersController::class, 'destroy'])->name('users.destroy');
+        Route::get('users/{user}', [UsersController::class, 'show'])->name('users.show');
         
         Route::get('masters', [MastersController::class, 'index'])->name('masters.index');
         Route::get('masters/invite', [MasterInvitationController::class, 'form'])->name('masters.invite');

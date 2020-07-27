@@ -34,8 +34,8 @@ class UsersController extends Controller
     public function store()
     {
         $data = Validator::make(request()->all(), [
-            'first_name' => ['nullable', 'string', 'max:255'],
-            'last_name'  => ['nullable', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name'  => ['required', 'string', 'max:255'],
             'role'       => ['nullable', 'string', 'max:255'],
             'office'     => ['nullable', 'string', 'max:255'],
             'pay'        => ['nullable', 'numeric'],
@@ -89,7 +89,14 @@ class UsersController extends Controller
 
     public function destroy($id)
     {
-        User::query()->findOrFail($id)->delete();
+        if($id == auth()->user()->id) {
+            alert()
+                ->withTitle(__('You cannot delete yourself!'))
+                ->send();
+            return back();
+        }
+
+        User::destroy($id);
 
         alert()
             ->withTitle(__('User has been deleted!'))

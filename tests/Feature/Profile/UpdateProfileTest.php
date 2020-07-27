@@ -32,7 +32,7 @@ class UpdateProfileTest extends FeatureTest
     //region Validations
 
     /** @test */
-    public function name_should_be_required()
+    public function first_and_last_name_should_be_required()
     {
         $user = (new UserBuilder())
             ->save()
@@ -40,14 +40,22 @@ class UpdateProfileTest extends FeatureTest
 
         $this->actingAs($user);
 
-        $this->put(route('profile.update'), [])
-            ->assertSessionHasErrors([
-                'first_name' => __('validation.required', ['attribute' => 'first_name']),
-            ]);
+        $data = [
+            'first_name' => '',
+            'last_name'  => '',
+        ];
+        
+        $response = $this->put(route('profile.update'), $data);
+    
+        $response->assertSessionHasErrors(
+        [
+            'first_name',
+            'last_name',
+        ]);
     }
 
     /** @test */
-    public function name_should_have_a_min_of_3_characters()
+    public function first_and_last_name_should_have_a_min_of_3_characters()
     {
         $user = (new UserBuilder())
             ->save()
@@ -55,14 +63,22 @@ class UpdateProfileTest extends FeatureTest
 
         $this->actingAs($user);
 
-        $this->put(route('profile.update'), ['first_name' => '12'])
-            ->assertSessionHasErrors([
-                'first_name' => __('validation.min.string', ['attribute' => 'first_name', 'min' => 3]),
-            ]);
+        $data = [
+            'first_name' => '12',
+            'last_name'  => '12',
+        ];
+        
+        $response = $this->put(route('profile.update'), $data);
+    
+        $response->assertSessionHasErrors(
+        [
+            'first_name',
+            'last_name',
+        ]);
     }
 
     /** @test */
-    public function name_should_have_a_max_of_255_characters()
+    public function first_and_last_name_should_have_a_max_of_255_characters()
     {
         $user = (new UserBuilder())
             ->save()
@@ -70,10 +86,18 @@ class UpdateProfileTest extends FeatureTest
 
         $this->actingAs($user);
 
-        $this->put(route('profile.update'), ['name' => str_repeat('*', 256)])
-            ->assertSessionHasErrors([
-                'name' => __('validation.max.string', ['attribute' => 'name', 'max' => 255]),
-            ]);
+        $data = [
+            'first_name' => str_repeat('*', 256),
+            'last_name'  => str_repeat('*', 256),
+        ];
+        
+        $response = $this->put(route('profile.update'), $data);
+    
+        $response->assertSessionHasErrors(
+        [
+            'first_name',
+            'last_name',
+        ]);
     }
 
     /** @test */
@@ -113,8 +137,9 @@ class UpdateProfileTest extends FeatureTest
 
         $this->actingAs($user)
             ->put(route('profile.update'), [
-                'first_name'  => 'Testing',
-                'email' => 'joe@doe.com',
+                'first_name' => 'Testing',
+                'last_name'  => 'Smith',
+                'email'      => 'joe@doe.com',
             ])
             ->assertSessionHasNoErrors();
     }

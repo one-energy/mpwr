@@ -114,8 +114,4 @@
       var chart = new google.visualization.BarChart(document.getElementById("barchart_values"));
       chart.draw(view, options);
   }
-
-  $(window).resize(function(){
-    drawFunnelChart();
-});
 </script>

@@ -14,6 +14,7 @@ class CreateInvitationsTable extends Migration
             $table->string('token');
             $table->string('email', 128);
             $table->boolean('master')->default(false);
+            
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
