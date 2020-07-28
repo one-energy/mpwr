@@ -86,7 +86,7 @@
         
             <!-- Personal Data -->
             <div class="hidden md:block">
-                @include('components\profile\show-profile-information')
+                @include('components.profile.show-profile-information')
             </div>
             </div>
         </div>
