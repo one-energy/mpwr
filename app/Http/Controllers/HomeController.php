@@ -14,9 +14,9 @@ class HomeController extends Controller
         $query = Customer::query();
 
         $sortTypes = [
+            ['index' => 'all',         'value' => 'All'],
             ['index' => 'is_active',   'value' => 'Active'],
             ['index' => 'is_inactive', 'value' => 'Inactive'],
-            ['index' => 'all',         'value' => 'All'],
         ];
 
         if (!empty(request('sort_by'))) {

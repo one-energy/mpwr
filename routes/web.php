@@ -75,6 +75,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/profile/change-password', ProfileChangePasswordController::class)->name('profile.change-password');
 
     Route::resource('/customers', CustomerController::class);
+    Route::put('/customers/{customer}/active', [CustomerController::class, 'Active'])->name('customers.active');
     Route::get('/scoreboard', ScoreboardController::class)->name('scoreboard');
     Route::get('/trainings', [TrainingController::class, 'index'])->name('trainings.index');
     Route::get('/trainings/setting', [TrainingSettingController::class, 'index'])->name('trainings.settings.index');

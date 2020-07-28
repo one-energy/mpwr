@@ -56,7 +56,7 @@
                 </div>
                 <div class="mt-6">
                     @forelse ($customers as $customer)
-                    <a href="{{route('customers.show', $customer->id)}}">
+                    <a href="{{ route('customers.show', $customer->id) }}">
                         <div class="flex justify-between grid md:grid-cols-9 grid-cols-4 row-gap-1 col-gap-4 hover:bg-gray-50 border-gray-200 border-2 m-1 p-2 rounded-lg">
                             <div class="md:col-span-7 col-span-6">
                                 {{ $customer->first_name }} {{ $customer->last_name }}
