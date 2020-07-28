@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Customer;
 use App\Models\User;
 use Tests\TestCase;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CustomerTest extends TestCase
@@ -92,11 +93,23 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_store_a_new_customer()
     {
+        $user = factory(User::class)->create();
         $data = [
-            'first_name' => 'First Name',
-            'last_name'  => 'Last Name',
-            'bill'       => 'Bill',
-            'financing'  => 'Financing'
+            'first_name'    => 'First Name',
+            'last_name'     => 'Last Name',
+            'bill'          => 'Bill',
+            'financing'     => 'Financing',
+            'opened_by_id'  => $user->id,
+            'system_size'   => '',
+            'pay'           => '',
+            'adders'        => '',
+            'epc'           => '',
+            'setter_id'     => '',
+            'setter_fee'    => '',
+            'commission'    => '0',
+            "created_at"    => Carbon::now()->timestamp,
+            "updated_at"    => Carbon::now()->timestamp,
+            'is_active'     => true
         ];
 
         $response = $this->post(route('customers.store'), $data);
@@ -105,9 +118,7 @@ class CustomerTest extends TestCase
 
         $response->assertStatus(302)
             ->assertSessionHas('message', 'Home Owner created!')
-            ->assertRedirect(route('customers.show', ['customer' => $created]));
-
-        $this->assertDatabaseHas('customers', $created->toArray());
+            ->assertRedirect(route('customers.show', $created->id));
     }
 
     /** @test */
@@ -118,7 +129,7 @@ class CustomerTest extends TestCase
             'last_name'    => '',
             'bill'         => '',
             'financing'    => '',
-            'opened_by_id' => ''
+            'opened_by_id' => '',
         ];
 
         $response = $this->post(route('customers.store'), $data);
@@ -128,7 +139,7 @@ class CustomerTest extends TestCase
             'last_name',
             'bill',
             'financing',
-            'opened_by_id'
+            'opened_by_id',
         ]);
     }
 }

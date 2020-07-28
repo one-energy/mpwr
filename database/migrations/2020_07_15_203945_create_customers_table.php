@@ -26,7 +26,7 @@ class CreateCustomersTable extends Migration
             $table->decimal('epc')->nullable();
             $table->decimal('commission')->nullable();
             $table->decimal('setter_fee', 8, 2)->nullable();
-            $table->boolean('is_active')->default(1);
+            $table->boolean('is_active')->default(true);
 
             $table->unsignedBigInteger('setter_id')->nullable();;
             $table->foreign('setter_id')
