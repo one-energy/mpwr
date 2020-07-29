@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\Builders\InvitationBuilder;
+use Tests\Builders\UserBuilder;
 
 class InvitationsTest extends FeatureTest
 {
@@ -33,17 +34,20 @@ class InvitationsTest extends FeatureTest
     }
 
     //endregion
+
     /** @test */
     public function registering_with_an_invitation()
     {
+        (new UserBuilder)->withEmail('joe-smith@email.com')->save()->get();
         $invitation = (new InvitationBuilder)->isAMaster()->withEmail('joe-smith@email.com')->save()->get();
 
-        $this->post(route('register.with-invitation', $invitation), [
+        $this->postJson(route('register.with-invitation', $invitation), [
             'first_name'         => 'Joe',
             'last_name'          => 'Doe',
             'email_confirmation' => 'joe-smith@email.com',
             'password'           => '14253647',
-        ])->assertSessionHasNoErrors();
+        ])
+            ->assertSessionHasNoErrors();
 
         $this->assertDatabaseHas('users', [
             'first_name' => 'Joe',
@@ -54,8 +58,8 @@ class InvitationsTest extends FeatureTest
         /** @var User $user */
         $user = User::query()->latest()->first();
 
-        $this->assertTrue($user->isMaster());
-        $this->assertNotNull($user->email_verified_at);
+        $this->assertTrue($user->isMaster(), 'Is Master');
+        $this->assertNotNull($user->email_verified_at, 'Email Verified At');
         $this->assertAuthenticatedAs($user);
     }
 
@@ -74,10 +78,10 @@ class InvitationsTest extends FeatureTest
         $response = $this->post(route('register.with-invitation', $invitation), $data);
 
         $response->assertSessionHasErrors(
-        [
-            'first_name',
-            'last_name',
-        ]);
+            [
+                'first_name',
+                'last_name',
+            ]);
     }
 
     /** @test */
@@ -93,10 +97,10 @@ class InvitationsTest extends FeatureTest
         $response = $this->post(route('register.with-invitation', $invitation), $data);
 
         $response->assertSessionHasErrors(
-        [
-            'first_name',
-            'last_name',
-        ]);
+            [
+                'first_name',
+                'last_name',
+            ]);
     }
 
     /** @test */
@@ -112,10 +116,10 @@ class InvitationsTest extends FeatureTest
         $response = $this->post(route('register.with-invitation', $invitation), $data);
 
         $response->assertSessionHasErrors(
-        [
-            'first_name',
-            'last_name',
-        ]);
+            [
+                'first_name',
+                'last_name',
+            ]);
     }
 
     /** @test */

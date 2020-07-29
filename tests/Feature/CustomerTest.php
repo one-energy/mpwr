@@ -25,7 +25,7 @@ class CustomerTest extends TestCase
     public function it_should_list_all_customers_on_dashboard()
     {
         $customers = factory(Customer::class, 5)->create();
-        
+
         $response = $this->get('/');
 
         $response->assertStatus(200)

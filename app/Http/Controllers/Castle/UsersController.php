@@ -89,10 +89,11 @@ class UsersController extends Controller
 
     public function destroy($id)
     {
-        if($id == auth()->user()->id) {
+        if ($id == auth()->user()->id) {
             alert()
                 ->withTitle(__('You cannot delete yourself!'))
                 ->send();
+
             return back();
         }
 
