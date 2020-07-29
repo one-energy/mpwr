@@ -41,8 +41,14 @@ class AreaChart extends Component
 
         $userId = Auth::user()->id;
 
-        $currentQuery = Customer::query()->where('opened_by_id', $userId);
-        $pastQuery    = Customer::query()->where('opened_by_id', $userId);
+        $currentQuery = Customer::query()->where([
+            ['opened_by_id', $userId],
+            ['is_active', true]
+        ]);
+        $pastQuery = Customer::query()->where([
+            ['opened_by_id', $userId],
+            ['is_active', true]
+        ]);
 
         if ($period === "w") {
             $pastQuery    = $pastQuery->whereBetween('created_at', [Carbon::now()->subWeek()->startOfWeek(), Carbon::now()->subWeek()->endOfWeek()]);
