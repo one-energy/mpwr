@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\Hash;
 
 /**
  * @property int $id
- * @property string $name
+ * @property string $first_name
+ * @property string $last_name
  * @property string $email
  * @property Carbon $email_verified_at
  * @property string $password

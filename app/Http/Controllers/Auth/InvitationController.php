@@ -42,11 +42,13 @@ class InvitationController extends Controller
             'password'   => ['required', 'string', 'min:8', 'max:128'],
         ])->validate();
 
-        $user = User::where('email', $data['email'])->firstOrFail();
-            
+        /** @var User $user */
+        $user = User::query()->where('email', $data['email'])->firstOrFail();
+
         $user->first_name        = $data['first_name'];
         $user->last_name         = $data['last_name'];
         $user->email_verified_at = now();
+        $user->master            = $invitation->master;
         $user->password          = bcrypt($data['password']);
         $user->save();
 

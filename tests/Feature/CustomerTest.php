@@ -4,8 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\Customer;
 use App\Models\User;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class CustomerTest extends TestCase
 {
@@ -22,12 +22,12 @@ class CustomerTest extends TestCase
     public function it_should_list_all_customers_on_dashboard()
     {
         $customers = factory(Customer::class, 5)->create();
-        
+
         $response = $this->get('/');
 
         $response->assertStatus(200)
-                 ->assertViewIs('home')
-                 ->assertViewHas('customers');
+            ->assertViewIs('home')
+            ->assertViewHas('customers');
 
         foreach ($customers as $customer) {
             $response->assertSee($customer->first_name);
