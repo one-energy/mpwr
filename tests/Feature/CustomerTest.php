@@ -4,9 +4,9 @@ namespace Tests\Feature;
 
 use App\Models\Customer;
 use App\Models\User;
-use Tests\TestCase;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class CustomerTest extends TestCase
 {
@@ -25,7 +25,7 @@ class CustomerTest extends TestCase
     public function it_should_list_all_customers_on_dashboard()
     {
         $customers = factory(Customer::class, 5)->create();
-        
+
         $response = $this->get('/');
 
         $response->assertStatus(200)
@@ -40,8 +40,8 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_filter_by_active_customers()
     {
-        $activeCustomers   = factory(Customer::class, 3)->create(['is_active' => 1]);
-        $inactiveCustomers = factory(Customer::class, 3)->create(['is_active' => 0]);
+        $activeCustomers   = factory(Customer::class, 3)->create(['is_active' => true]);
+        $inactiveCustomers = factory(Customer::class, 3)->create(['is_active' => false]);
 
         $response = $this->get('/?sort_by=is_active');
 
@@ -57,8 +57,8 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_filter_by_inactive_customers()
     {
-        $activeCustomers   = factory(Customer::class, 3)->create(['is_active' => 1]);
-        $inactiveCustomers = factory(Customer::class, 3)->create(['is_active' => 0]);
+        $activeCustomers   = factory(Customer::class, 3)->create(['is_active' => true]);
+        $inactiveCustomers = factory(Customer::class, 3)->create(['is_active' => false]);
 
         $response = $this->get('/?sort_by=is_inactive');
 
@@ -140,6 +140,80 @@ class CustomerTest extends TestCase
             'bill',
             'financing',
             'opened_by_id',
+        ]);
+    }
+
+    /** @test */
+    public function it_should_show_the_edit_form_for_top_level_roles()
+    {
+        $customer = factory(Customer::class)->create();
+
+        $response = $this->get('customers/'. $customer->id);
+        
+        $response->assertStatus(200)
+            ->assertViewIs('customer.show');
+    }
+
+    /** @test */
+    public function it_should_block_the_edit_form_for_non_top_level_roles()
+    {
+        $this->actingAs(factory(User::class)->create(['role' => 'Setter']));
+        
+        $customer = factory(Customer::class)->create();
+
+        $response = $this->get('customers/'. $customer->id);
+
+        $response->assertStatus(403);
+    }
+
+    /** @test */
+    public function it_should_update_a_customer()
+    {
+        $customer       = factory(Customer::class)->create(['redline' => 30.5]);
+        $data           = $customer->toArray();
+        $updateCustomer = array_merge($data, ['redline' => 24.7]);
+
+        $response = $this->put(route('customers.update', $customer->id), $updateCustomer);
+            
+        $response->assertStatus(302)
+            ->assertSessionHas('message', 'Home Owner updated!');
+
+        $this->assertDatabaseHas('customers',
+        [
+            'id'      => $customer->id,
+            'redline' => 24.7
+        ]);
+    }
+
+    /** @test */
+    public function it_should_inactivate_a_customer()
+    {
+        $customer = factory(Customer::class)->create(['is_active' => true]);
+
+        $response = $this->put(route('customers.active', $customer->id), $customer);
+
+        $response->assertStatus(302)
+            ->assertSessionHas('message', 'Home Owner set as canceled!');
+
+        $this->assertDatabaseHas('customers', [
+            'id' => $customer->id,
+            'is_active' => false
+        ]);
+    }
+
+    /** @test */
+    public function it_should_activate_a_customer()
+    {
+        $customer = factory(Customer::class)->create(['is_active' => false]);
+
+        $response = $this->put(route('customers.active', $customer->id), $customer);
+
+        $response->assertStatus(302)
+            ->assertSessionHas('message', 'Home Owner set as active!');
+
+        $this->assertDatabaseHas('customers', [
+            'id' => $customer->id,
+            'is_active' => true
         ]);
     }
 }

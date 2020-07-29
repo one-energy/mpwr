@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -14,26 +15,23 @@ class HomeController extends Controller
         $query = Customer::query();
 
         $sortTypes = [
-            ['index' => 'all',         'value' => 'All'],
-            ['index' => 'is_active',   'value' => 'Active'],
+            ['index' => 'all', 'value' => 'All'],
+            ['index' => 'is_active', 'value' => 'Active'],
             ['index' => 'is_inactive', 'value' => 'Inactive'],
         ];
 
-        if (!empty(request('sort_by'))) {
-            if ($request->input('sort_by') == "is_active") {
-                $query
-                ->where('is_active', 1);
-            } elseif ($request->input('sort_by') == "is_inactive") {
-                $query
-                ->where('is_active', '')->orWhere('is_active', null)->orWhere('is_active', 0);
-            }
-        }
+        $query
+            ->when(request()->has('sort_by') && request()->sort_by == 'is_active', function (Builder $query) {
+                $query->where('is_active', true);
+            })
+            ->when(request()->has('sort_by') && request()->sort_by == 'is_inactive', function (Builder $query) {
+                $query->where('is_active', false);
+            })
+            ->orderByDesc('is_active');
 
-        return view('home',
-            [
-                'customers' => $query->get(),
-                'sortTypes' => $sortTypes,
-            ]
-        );
+        return view('home', [
+            'customers' => $query->get(),
+            'sortTypes' => $sortTypes,
+        ]);
     }
 }
