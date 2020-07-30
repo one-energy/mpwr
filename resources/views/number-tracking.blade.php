@@ -1,4 +1,3 @@
-
 <x-app.auth :title="__('Number Tracking')">
     <div>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -358,60 +357,46 @@
                             <div class="flex flex-col">
                                 <div class="sm:overflow-x-auto md:overflow-x-hidden">
                                     <div class="align-middle inline-block min-w-full overflow-hidden">
-                                        <table class="min-w-full">
-                                        <thead>
-                                            <tr class="sm:border-gray-200 border-b-2">
-                                            <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
-                                                Region Member
-                                            </th>
-                                            <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
-                                                Doors
-                                            </th>
-                                            <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
-                                                Hours
-                                            </th>
-                                            <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
-                                                Sets
-                                            </th>
-                                            <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
-                                                Sits
-                                            </th>
-                                            <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
-                                                Set Closes
-                                            </th>
-                                            <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
-                                                Closes
-                                            </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($trackingInformation as $row)
-                                            <tr>
-                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 md:border-b md:border-gray-200">
-                                                {{{ $row['region_member'] }}}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
-                                                {{{ $row['doors'] }}}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
-                                                {{{ $row['hours'] }}}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
-                                                {{{ $row['sets'] }}}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
-                                                {{{ $row['sits'] }}}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
-                                                {{{ $row['set_closes'] }}}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
-                                                {{{ $row['closes'] }}}
-                                                </td>
-                                            </tr>
-                                            @endforeach
-                                        </tbody>
-                                        </table>
+                                        <x-table>
+                                            <x-slot name="header">
+                                                <x-table.th-tr>
+                                                    <x-table.th by="region_number">
+                                                        @lang('Region Member')
+                                                    </x-table.th>
+                                                    <x-table.th by="doors">
+                                                        @lang('Doors')
+                                                    </x-table.th>
+                                                    <x-table.th by="hours">
+                                                        @lang('Hours')
+                                                    </x-table.th>
+                                                    <x-table.th by="sets">
+                                                        @lang('Sets')
+                                                    </x-table.th>
+                                                    <x-table.th by="sits">
+                                                        @lang('Sits')
+                                                    </x-table.th>
+                                                    <x-table.th by="set_closes">
+                                                        @lang('Set Closes')
+                                                    </x-table.th>
+                                                    <x-table.th by="closes">
+                                                        @lang('Closes')
+                                                    </x-table.th>
+                                                </x-table.th-tr>
+                                            </x-slot>
+                                            <x-slot name="body">
+                                                @foreach($trackingInformation as $row)
+                                                    <x-table.tr :loop="$loop">
+                                                        <x-table.td>{{{ $row['region_member'] }}}</x-table.td>
+                                                        <x-table.td>{{{ $row['doors'] }}}</x-table.td>
+                                                        <x-table.td>{{{ $row['hours'] }}}</x-table.td>
+                                                        <x-table.td>{{{ $row['sets'] }}}</x-table.td>
+                                                        <x-table.td>{{{ $row['sits'] }}}</x-table.td>
+                                                        <x-table.td>{{{ $row['set_closes'] }}}</x-table.td>
+                                                        <x-table.td>{{{ $row['closes'] }}}</x-table.td>
+                                                    </x-table.tr>
+                                                @endforeach
+                                            </x-slot>
+                                        </x-table>
                                     </div>
                                 </div>
                             </div>

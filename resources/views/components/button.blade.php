@@ -1,7 +1,7 @@
 @props(['type', 'color', 'href'])
 
 @php
-    $color = $color ?? 'blue';
+    $color = $color ?? 'green';
     $href = $href ?? null;
 @endphp
 

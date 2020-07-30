@@ -46,7 +46,7 @@
 
                     <span class="ml-3 inline-flex rounded-md shadow-sm">
                         <a href="{{route('castle.users.destroy', $user->id)}}" 
-                            class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out"
+                            class="inline-flex justify-center py-2 px-4 border-2 border-red-500 text-sm leading-5 font-medium rounded-md text-red-500 hover:text-red-600 hover:border-red-600 focus:outline-none focus:border-red-500 focus:shadow-outline-red active:bg-red-50 transition duration-150 ease-in-out"
                             onclick="event.preventDefault();
                                     document.getElementById('delete-form').submit();"
                         >

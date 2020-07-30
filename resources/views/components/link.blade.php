@@ -3,17 +3,25 @@
 @php
     $href  = $href ?? null;
     $type  = $type ?? null;
-    $color  = $color ?? 'green';
+    $color = $color ?? 'green';
 @endphp
 
 @if($type ?? false)
     <button type="{{ $type }}"
-        {{ $attributes->merge(['class' => "font-medium @if($color == 'green') text-green-base hover:text-green-dark @else text-{$color}-600 hover:text-{$color}-500 @endif focus:outline-none focus:underline transition ease-in-out duration-150"]) }}>
+    @if($color == 'green')
+        {{ $attributes->merge(['class' => "font-medium text-green-base hover:text-green-dark focus:outline-none focus:underline transition ease-in-out duration-150"]) }}>
+    @else
+        {{ $attributes->merge(['class' => "font-medium text-{$color}-600 hover:text-{$color}-500 focus:outline-none focus:underline transition ease-in-out duration-150"]) }}>
+    @endif
         {!! $slot !!}
     </button>
 @else
     <a href="{{ $href }}"
-        {{ $attributes->merge(['class' => "font-medium @if($color == 'green') text-green-base hover:text-green-dark @else text-{$color}-600 hover:text-{$color}-500 @endif focus:outline-none focus:underline transition ease-in-out duration-150"]) }}>
-       {!! $slot !!}
+    @if($color == 'green')
+        {{ $attributes->merge(['class' => "font-medium text-green-base hover:text-green-dark focus:outline-none focus:underline transition ease-in-out duration-150"]) }}>
+    @else
+        {{ $attributes->merge(['class' => "font-medium text-{$color}-600 hover:text-{$color}-500 focus:outline-none focus:underline transition ease-in-out duration-150"]) }}>
+    @endif
+        {!! $slot !!}
     </a>
 @endif

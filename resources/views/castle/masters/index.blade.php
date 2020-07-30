@@ -1,4 +1,4 @@
-<x-app.auth :title="__('Profile Teste')">
+<x-app.auth :title="__('Masters')">
     
     <x-slot name="headerSlot">
         <x-header :text="__('Castle Masters')" class="sm:flex justify-between">

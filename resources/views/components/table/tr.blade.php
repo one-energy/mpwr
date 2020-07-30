@@ -1,5 +1,5 @@
 @props(['loop'])
 
-<tr class="border-gray-200 border-2 rounded-lg">
+<tr>
     {{ $slot }}
 </tr>
