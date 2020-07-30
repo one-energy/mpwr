@@ -148,7 +148,18 @@ class CustomerController extends Controller
         $customer->is_active = !request('active');
         $customer->save();
 
-        return redirect(route('customers.show', $customer))->with('message', $customer->is_active == true ? 'Home Owner set as active!' : 'Home Owner set as canceled!');
+        if($customer->is_active == true)
+        {
+            alert()
+            ->withTitle(__('Home Owner set as active!'))
+            ->send();
+        }else{
+            alert()
+            ->withTitle(__('Home Owner set as canceled!'))
+            ->send();
+        }
+
+        return redirect(route('customers.show', $customer));
     }
 
     public function destroy(Customer $customer)
