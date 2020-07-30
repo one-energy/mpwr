@@ -82,9 +82,9 @@
                 <div class="mt-8 border-t border-gray-200 pt-5">
                 <div class="flex justify-start">
                     <span class="inline-flex rounded-md shadow-sm">
-                        <x-button type="submit" color="gray" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
-                            {{ __('Add Home Owner') }}
-                        </x-button>
+                        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
+                            Add Home Owner
+                        </button>
                         </span>
                     <span class="ml-3 inline-flex rounded-md shadow-sm">
                         <a href="{{route('home')}}" class="py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-gray-800 hover:bg-gray-300 focus:outline-none focus:border-gray-300 focus:shadow-outline-gray transition duration-150 ease-in-out">
