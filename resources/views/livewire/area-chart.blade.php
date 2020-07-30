@@ -27,16 +27,16 @@
             <li @click="openTab = 'w'" class="-mb-px mr-4">
                 <a :class="openTab === 'w' ? active : inactive" class="bg-white inline-block py-2 px-4 font-semibold cursor-pointer" wire:click.prevent="setPeriod('w')">W</a>
             </li>
-            <li  @click="openTab = 'm'" class="-mb-px mr-4">
+            <li @click="openTab = 'm'" class="-mb-px mr-4">
                 <a :class="openTab === 'm' ? active : inactive" class="bg-white inline-block py-2 px-4 font-semibold cursor-pointer" wire:click.prevent="setPeriod('m')">M</a>
             </li>
-            <li  @click="openTab = 's'" class="-mb-px mr-4">
+            <li @click="openTab = 's'" class="-mb-px mr-4">
                 <a :class="openTab === 's' ? active : inactive" class="bg-white inline-block py-2 px-4 font-semibold cursor-pointer" wire:click.prevent="setPeriod('s')">S</a>
             </li>
-            <li  @click="openTab = 'y'" class="-mb-px mr-4">
+            <li @click="openTab = 'y'" class="-mb-px mr-4">
                 <a :class="openTab === 'y' ? active : inactive" class="bg-white inline-block py-2 px-4 font-semibold cursor-pointer" wire:click.prevent="setPeriod('y')">Y</a>
             </li>
-            <li  @click="openTab = 'all'" class="-mb-px mr-4">
+            <li @click="openTab = 'all'" class="-mb-px mr-4">
                 <a :class="openTab === 'all' ? active : inactive" class="bg-white inline-block py-2 px-4 font-semibold cursor-pointer" wire:click.prevent="setPeriod('all')">All</a>
             </li>
             <li>

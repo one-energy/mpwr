@@ -20,7 +20,7 @@
 
                 </div>
                 <x-slot name="footer">
-                    <x-button type="submit" color="indigo">
+                    <x-button type="submit" color="green">
                         {{ __('Save') }}
                     </x-button>
                 </x-slot>

@@ -77,9 +77,9 @@
                     <div class="mt-8 border-t border-gray-200 pt-5">
                     <div class="flex justify-start">
                         <span class="inline-flex rounded-md shadow-sm">
-                            <x-button type="submit" color="gray" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
-                                {{ __('Update') }}
-                            </x-button>
+                            <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
+                                Update
+                            <button>
                         </span>
                         <span class="ml-3 inline-flex rounded-md shadow-sm">
                             @if($customer->is_active == true)
@@ -145,7 +145,7 @@
                                 @endif
                             </span>
                             <span class="mt-3 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto">
-                                <button @click="openModal = false" type="button" class="inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-base leading-6 font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline transition ease-in-out duration-150 sm:text-sm sm:leading-5">
+                                <button @click="openModal = false" type="button" class="inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-base leading-6 font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:border-green-300 focus:shadow-outline transition ease-in-out duration-150 sm:text-sm sm:leading-5">
                                     Cancel
                                 </button>
                             </span>
