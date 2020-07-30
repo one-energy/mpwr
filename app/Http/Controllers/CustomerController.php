@@ -136,7 +136,11 @@ class CustomerController extends Controller
 
         $customer->save();
 
-        return redirect(route('customers.show', $customer))->with('message', 'Home Owner updated!');
+        alert()
+            ->withTitle(__('Home Owner updated!'))
+            ->send();
+
+        return redirect(route('customers.show', $customer->id));
     }
 
     public function active(Customer $customer)
