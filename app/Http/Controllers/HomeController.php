@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
     public function __invoke(Request $request)
     {
-        $query = Customer::query();
+        $userId = Auth::user()->id;
+
+        $query = Customer::query()->where('opened_by_id', $userId);
 
         $sortTypes = [
             ['index' => 'all', 'value' => 'All'],
