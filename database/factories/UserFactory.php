@@ -31,7 +31,7 @@ $factory->define(User::class, function (Faker $faker) use ($photos) {
         'timezone'          => $faker->timezone,
         'photo_url'         => Storage::disk('public')->url('profiles/' . $photos->random()),
         'remember_token'    => Str::random(10),
-        'role'              => User::MEMBER,
+        'role'              => $faker->randomElement(User::ROLES),
         'office'            => $faker->city,
         'pay'               => rand(10, 100)
     ];

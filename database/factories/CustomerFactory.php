@@ -14,14 +14,16 @@ $factory->define(Customer::class, function (Faker $faker) {
         'system_size'  => $faker->randomFloat(2, 1, 100),
         'redline'      => $faker->randomFloat(2, 1, 100),
         'bill'         => $faker->word,
-        'pay'          => $faker->sentence(3),
+        'pay'          => $faker->randomFloat(2, 1, 100),
         'financing'    => $faker->word,
         'adders'       => $faker->randomFloat(2, 1, 100),
-        'gross_ppw'    => $faker->randomFloat(2, 1, 100),
+        'epc'          => $faker->randomFloat(2, 1, 100),
         'commission'   => $faker->randomFloat(2, 1, 100),
         'setter_fee'   => $faker->randomFloat(2, 1, 100),
-        'setter'       => $faker->name,
         'is_active'    => $faker->boolean(),
+        'setter_id'    => function () {
+            return factory(User::class)->create()->id;
+        },
         'opened_by_id' => function () {
             return factory(User::class)->create()->id;
         }

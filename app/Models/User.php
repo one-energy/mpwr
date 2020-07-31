@@ -31,6 +31,21 @@ class User extends Authenticatable implements MustVerifyEmail
     const OWNER  = 'owner';
     const MEMBER = 'member';
 
+    const ROLES = [
+        'Admin',
+        'Region Manager',
+        'Office Manager',
+        'Sales Rep',
+        'Setter'
+    ];
+
+    const TOPLEVEL_ROLES = [
+        'Admin',
+        'Region Manager',
+        'Office Manager',
+        'Sales Rep'
+    ];
+
     protected $casts = [
         'email_verified_at' => 'datetime',
         'master'            => 'boolean',

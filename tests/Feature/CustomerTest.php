@@ -4,8 +4,9 @@ namespace Tests\Feature;
 
 use App\Models\Customer;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CustomerTest extends TestCase
 {
@@ -14,7 +15,9 @@ class CustomerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = factory(User::class)->create();
+
+        $this->user = factory(User::class)->create(['role' => 'Admin']);
+
         $this->actingAs($this->user);
     }
 
@@ -66,5 +69,77 @@ class CustomerTest extends TestCase
         foreach ($inactiveCustomers as $inactiveCustomer) {
             $response->assertSee($inactiveCustomer->first_name);
         }
+    }
+
+    /** @test */
+    public function it_should_block_the_create_form_for_non_top_level_roles()
+    {
+        $this->actingAs(factory(User::class)->create(['role' => 'Setter']));
+
+        $response = $this->get('customers/create');
+
+        $response->assertStatus(403);
+    }
+
+     /** @test */
+     public function it_should_show_the_create_form_for_top_level_roles()
+     {
+        $response = $this->get('customers/create');
+        
+        $response->assertStatus(200)
+            ->assertViewIs('customer.create');
+     }
+
+    /** @test */
+    public function it_should_store_a_new_customer()
+    {
+        $user = factory(User::class)->create();
+        $data = [
+            'first_name'    => 'First Name',
+            'last_name'     => 'Last Name',
+            'bill'          => 'Bill',
+            'financing'     => 'Financing',
+            'opened_by_id'  => $user->id,
+            'system_size'   => '',
+            'pay'           => '',
+            'adders'        => '',
+            'epc'           => '',
+            'setter_id'     => '',
+            'setter_fee'    => '',
+            'commission'    => '0',
+            "created_at"    => Carbon::now()->timestamp,
+            "updated_at"    => Carbon::now()->timestamp,
+            'is_active'     => true
+        ];
+
+        $response = $this->post(route('customers.store'), $data);
+
+        $created = Customer::where('first_name', $data['first_name'])->first();
+
+        $response->assertStatus(302)
+            ->assertSessionHas('message', 'Home Owner created!')
+            ->assertRedirect(route('customers.show', $created->id));
+    }
+
+    /** @test */
+    public function it_should_require_some_fields_to_store_a_new_customer()
+    {
+        $data = [
+            'first_name'   => '',
+            'last_name'    => '',
+            'bill'         => '',
+            'financing'    => '',
+            'opened_by_id' => '',
+        ];
+
+        $response = $this->post(route('customers.store'), $data);
+        $response->assertSessionHasErrors(
+        [
+            'first_name',
+            'last_name',
+            'bill',
+            'financing',
+            'opened_by_id',
+        ]);
     }
 }

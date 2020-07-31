@@ -1,5 +1,10 @@
 <x-app.auth :title="__('Edit Home Owner')">
     <div>
+        @if (session('message'))
+            <x-alert class="mb-4">
+                {{ session('message') }}
+            </x-alert>
+        @endif
         <div class="max-w-6xl mx-auto py-5 sm:px-6 lg:px-8">
             <a href="{{route('home')}}" class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
                 < Edit Home Owner
@@ -54,11 +59,11 @@
                     </div>
 
                     <div class="md:col-span-3 sm:cols-span-2">
-                        <label for="gross_ppw" class="block text-sm font-medium leading-5 text-gray-700">
-                        Gross PPW
+                        <label for="epc" class="block text-sm font-medium leading-5 text-gray-700">
+                        EPC
                         </label>
                         <div class="mt-1 rounded-md shadow-sm">
-                        <input id="gross_ppw" class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                        <input id="epc" class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                         value="$4.00" />
                         </div>
                     </div>

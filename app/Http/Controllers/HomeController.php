@@ -10,12 +10,14 @@ class HomeController extends Controller
 {
     public function __invoke(Request $request)
     {
+        $this->authorize('viewList', Customer::class);
+
         $query = Customer::query();
 
         $sortTypes = [
+            ['index' => 'all', 'value' => 'All'],
             ['index' => 'is_active', 'value' => 'Active'],
             ['index' => 'is_inactive', 'value' => 'Inactive'],
-            ['index' => 'all', 'value' => 'All'],
         ];
 
         $query
