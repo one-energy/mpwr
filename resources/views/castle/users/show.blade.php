@@ -1,7 +1,7 @@
 <x-app.auth :title="$user->first_name" :header="$user->first_name">
     <div class="bg-white flex flex-col pb-16 rounded-lg shadow px-8 mb-8">
         <div class="my-8">
-            <x-link :href="route('castle.users.index')" color="indigo" class="flex self-center">
+            <x-link :href="route('castle.users.index')" color="green" class="flex self-center">
                 <x-svg.chevron-left class="w-6 -ml-2"/> @lang('Users')
             </x-link>
         </div>
@@ -17,7 +17,7 @@
                 <div class="mb-2 flex flex-col sm:flex-row">
                     <div class="font-medium sm:mr-2">Email Address:</div>
                     <a :href="`mailto:{{ $user->email }}`"
-                       class="text-blue-500 underline">{{ $user->email }}</a>
+                       class="text-green-base underline">{{ $user->email }}</a>
                 </div>
                 <div class="flex flex-col sm:flex-row">
                     <div class="font-medium sm:mr-2">Joined:</div>
@@ -38,13 +38,13 @@
                 <div class="px-4 py-4 sm:px-6">
                     <div class="flex items-center justify-between">
                         <div class="flex flex-row items-center">
-                            <div class="font-medium text-indigo-600">
+                            <div class="font-medium text-green-base">
                                 {{ $region->name }}
                             </div>
                         </div>
                         <div class="ml-2 flex-shrink-0 flex">
                             <span
-                                class="px-2 inline-flex text-xs font-semibold rounded-full {{ $region->pivot->role === 'owner' ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-200 text-gray-600' }}">
+                                class="px-2 inline-flex text-xs font-semibold rounded-full {{ $region->pivot->role === 'owner' ? 'bg-green-100 text-green-base' : 'bg-gray-200 text-gray-600' }}">
                                 {{ Str::ucfirst($region->pivot->role) }}
                             </span>
                         </div>

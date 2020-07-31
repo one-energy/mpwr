@@ -27,7 +27,7 @@
                     </div>
                     <x-slot name="footer">
                         <x-link :href="route('castle.masters.index')" color="gray" class="text-sm mr-4">Cancel</x-link>
-                        <x-button type="submit" color="indigo">
+                        <x-button type="submit" color="green">
                             {{ __('Invite') }}
                         </x-button>
                     </x-slot>

@@ -15,7 +15,7 @@
                     <x-table.td>{{ $invite->created_at->diffForHumans() }}</x-table.td>
                     <x-table.td class="text-right">
 
-                        <x-button color="blue" class="text-sm mr-8" :x-copy="$invite->path()" @click="
+                        <x-button color="green" class="text-sm mr-8" :x-copy="$invite->path()" @click="
                             Utils.copyText($event.target);
                             alert('Copied to the clipboard');
                         ">

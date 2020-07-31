@@ -10,56 +10,42 @@
           <div class="flex flex-col">
             <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
               <div class="align-middle inline-block min-w-full overflow-hidden">
-                <table class="min-w-full">
-                  <thead>
-                    <tr class="sm:border-gray-200 border-b-2">
-                      <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
-                        # of Installs
-                      </th>
-                      <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
-                        Incentive
-                      </th>
-                      <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
-                        % Achieved (Installs)
-                      </th>
-                      <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
-                        Needed (Installs)
-                      </th>
-                      <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
-                        % Achieved (kW's)
-                      </th>
-                      <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
-                        Needed (kW's)
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @foreach ($data as $row)
-                      <tr>
-                        <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 md:border-b md:border-gray-200">
-                          <span class="px-2 inline-flex rounded-full bg-green-base text-white">
-                            {{{ $row['number_installs'] }}}
-                          </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
-                          {{{ $row['incentive'] }}}
-                        </td>
-                        <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
-                          {{{ $row['installs_achieved'] }}}
-                        </td>
-                        <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
-                          {{{ $row['installs_needed'] }}}
-                        </td>
-                        <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
-                          {{{ $row['kw_achieved'] }}}
-                        </td>
-                        <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
-                          {{{ $row['kw_needed'] }}}
-                        </td>
-                      </tr>
+                <x-table>
+                  <x-slot name="header">
+                    <x-table.th-tr>
+                      <x-table.th by="number_installs">
+                          @lang('# of Installs')
+                      </x-table.th>
+                      <x-table.th by="incentives">
+                          @lang('Incentive')
+                      </x-table.th>
+                      <x-table.th by="installs_achieved">
+                          @lang('% Achieved (Installs)')
+                      </x-table.th>
+                      <x-table.th by="installs_needed">
+                          @lang('Needed (Installs)')
+                      </x-table.th>
+                      <x-table.th by="kw_achievied">
+                          @lang('% Achieved (kW\'s)')
+                      </x-table.th>
+                      <x-table.th by="kw_needed">
+                          @lang('Needed (kW\'s)')
+                      </x-table.th>
+                    </x-table.th-tr>
+                  </x-slot>
+                  <x-slot name="body">
+                    @foreach($data as $row)
+                        <x-table.tr :loop="$loop">
+                            <x-table.td>{{{ $row['number_installs'] }}}</x-table.td>
+                            <x-table.td>{{{ $row['incentive'] }}}</x-table.td>
+                            <x-table.td>{{{ $row['installs_achieved'] }}}</x-table.td>
+                            <x-table.td>{{{ $row['installs_needed'] }}}</x-table.td>
+                            <x-table.td>{{{ $row['kw_achieved'] }}}</x-table.td>
+                            <x-table.td>{{{ $row['kw_needed'] }}}</x-table.td>
+                        </x-table.tr>                  
                     @endforeach
-                  </tbody>
-                </table>
+                  </x-slot>
+                </x-table>
               </div>
             </div>
           </div>

@@ -25,7 +25,7 @@
 
                     <div class="mt-6">
                         <span class="block w-full rounded-md shadow-sm">
-                            <x-button class="w-full flex" type="submit" color="indigo">
+                            <x-button class="w-full flex" type="submit" color="green">
                                Reset Password
                             </x-button>
                         </span>
