@@ -10,8 +10,6 @@ class HomeController extends Controller
 {
     public function __invoke(Request $request)
     {
-        $this->authorize('viewList', Customer::class);
-
         $query = Customer::query();
 
         $sortTypes = [
