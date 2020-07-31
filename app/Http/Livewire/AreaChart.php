@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use App\Models\Customer;
 use Carbon\Carbon;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 
 class AreaChart extends Component
 {
@@ -38,8 +39,16 @@ class AreaChart extends Component
     {
         $this->period = $period;
 
-        $currentQuery = Customer::query();
-        $pastQuery    = Customer::query();
+        $userId = Auth::user()->id;
+
+        $currentQuery = Customer::query()->where([
+            ['opened_by_id', $userId],
+            ['is_active', true]
+        ]);
+        $pastQuery = Customer::query()->where([
+            ['opened_by_id', $userId],
+            ['is_active', true]
+        ]);
 
         if ($period === "w") {
             $pastQuery    = $pastQuery->whereBetween('created_at', [Carbon::now()->subWeek()->startOfWeek(), Carbon::now()->subWeek()->endOfWeek()]);
