@@ -90,26 +90,80 @@ class CustomerController extends Controller
         return (($epc - ( $pay + $setterFee )) * $systemSize) - $adders;
     }
 
-    public function show(int $customer)
+    public function show(Customer $customer)
     {
         $this->authorize('view', Customer::class);
 
-        $bills      = Customer::BILLS;
-        $financings = Customer::FINANCINGS;
-        $users      = User::get();
+        $users = User::get();
 
         return view('customer.show', 
         [
             'customer'   => $customer,
-            'bills'      => $bills,
-            'financings' => $financings,
             'users'      => $users,
         ]);
     }
 
     public function update(Customer $customer)
     {
-        return redirect(route('customers.index'))->with('message', 'Home Owner updated!');
+        $validated = $this->validate(
+            request(),
+            [
+                'first_name'   => 'required|string|min:3|max:255',
+                'last_name'    => 'required|string|min:3|max:255',
+                'system_size'  => 'nullable',
+                'redline'      => 'nullable',
+                'adders'       => 'nullable',
+                'epc'          => 'nullable',
+                'setter_id'    => 'nullable',
+                'setter_fee'   => 'nullable',
+            ]
+        );
+
+        $customer->first_name   = $validated['first_name'];
+        $customer->last_name    = $validated['last_name'];
+        $customer->system_size  = $validated['system_size'];
+        $customer->redline      = $validated['redline'];
+        $customer->adders       = $validated['adders'];
+        $customer->epc          = $validated['epc'];
+        $customer->setter_id    = $validated['setter_id'];
+        $customer->setter_fee   = $validated['setter_fee'];
+
+        $epc        = $customer->epc;
+        $pay        = $customer->pay;
+        $setterFee  = $customer->setter_fee;
+        $systemSize = $customer->system_size;
+        $adders     = $customer->adders;
+
+        $commission = $this->calculateCommission($epc, $pay, $setterFee, $systemSize, $adders);
+
+        $customer->commission = $commission;
+
+        $customer->save();
+
+        alert()
+            ->withTitle(__('Home Owner updated!'))
+            ->send();
+
+        return redirect(route('customers.show', $customer->id));
+    }
+
+    public function active(Customer $customer)
+    {
+        $customer->is_active = !request('active');
+        $customer->save();
+
+        if($customer->is_active == true)
+        {
+            alert()
+            ->withTitle(__('Home Owner set as active!'))
+            ->send();
+        }else{
+            alert()
+            ->withTitle(__('Home Owner set as canceled!'))
+            ->send();
+        }
+
+        return redirect(route('customers.show', $customer));
     }
 
     public function destroy(Customer $customer)
