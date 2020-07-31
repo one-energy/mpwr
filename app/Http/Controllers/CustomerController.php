@@ -78,7 +78,11 @@ class CustomerController extends Controller
 
         $customer->save();
 
-        return redirect(route('customers.show', $customer->id))->with('message', 'Home Owner created!');
+        alert()
+            ->withTitle(__('Home Owner created!'))
+            ->send();
+
+        return redirect(route('customers.show', $customer->id));
     }
 
     public function calculateCommission($epc, $pay, $setterFee, $systemSize, $adders)
