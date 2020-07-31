@@ -9,7 +9,7 @@
             <x-form :route="route('customers.store')" post>
                 @csrf
                 <div>
-                    <input type="hidden" value="{{ $openedById }}"" name="opened_by_id">
+                    <input type="hidden" value="{{ $openedById }}" name="opened_by_id">
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                     <div class="md:col-span-3 col-span-2">
                         <x-input label="First Name" name="first_name"></x-input>

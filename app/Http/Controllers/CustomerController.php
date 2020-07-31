@@ -78,7 +78,11 @@ class CustomerController extends Controller
 
         $customer->save();
 
-        return redirect(route('customers.show', $customer->id))->with('message', 'Home Owner created!');
+        alert()
+            ->withTitle(__('Home Owner created!'))
+            ->send();
+
+        return redirect(route('customers.show', $customer->id));
     }
 
     public function calculateCommission($epc, $pay, $setterFee, $systemSize, $adders)
@@ -136,7 +140,11 @@ class CustomerController extends Controller
 
         $customer->save();
 
-        return redirect(route('customers.show', $customer))->with('message', 'Home Owner updated!');
+        alert()
+            ->withTitle(__('Home Owner updated!'))
+            ->send();
+
+        return redirect(route('customers.show', $customer->id));
     }
 
     public function active(Customer $customer)
@@ -144,7 +152,18 @@ class CustomerController extends Controller
         $customer->is_active = !request('active');
         $customer->save();
 
-        return redirect(route('customers.show', $customer))->with('message', $customer->is_active == true ? 'Home Owner set as active!' : 'Home Owner set as canceled!');
+        if($customer->is_active == true)
+        {
+            alert()
+            ->withTitle(__('Home Owner set as active!'))
+            ->send();
+        }else{
+            alert()
+            ->withTitle(__('Home Owner set as canceled!'))
+            ->send();
+        }
+
+        return redirect(route('customers.show', $customer));
     }
 
     public function destroy(Customer $customer)

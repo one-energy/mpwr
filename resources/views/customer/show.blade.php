@@ -1,6 +1,6 @@
 <x-app.auth :title="__('Edit Home Owner')">
     <div>
-        <div x-data="{openModal: false}">
+        <div x-data="{openModal: false, loading: false}">
             <div class="max-w-6xl mx-auto py-5 sm:px-6 lg:px-8">
                 <a href="{{route('home')}}" class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
                     < Edit Home Owner
@@ -83,13 +83,15 @@
                         </span>
                         <span class="ml-3 inline-flex rounded-md shadow-sm">
                             @if($customer->is_active == true)
-                                <a href="#" @click="openModal = true" class="py-2 px-4 border-2 border-red-500 rounded-md text-sm leading-5 font-medium rounded-md text-red-500 hover:text-red-600 hover:border-red-600 focus:outline-none focus:border-red-500 focus:shadow-outline-red active:bg-red-50 transition duration-150 ease-in-out">
+                                <a href="#" x-on:click="openModal = true; loading = true" x-show="!openModal" class="py-2 px-4 border-2 border-red-500 rounded-md text-sm leading-5 font-medium rounded-md text-red-500 hover:text-red-600 hover:border-red-600 focus:outline-none focus:border-red-500 focus:shadow-outline-red active:bg-red-50 transition duration-150 ease-in-out">
                                     Set as Canceled
                                 </a>
+                                <span x-show="loading" class="text-gray-400 ml-3 mt-2">Inacticating ...</span>
                             @else
-                                <a href="#" @click="openModal = true" class="py-2 px-4 border-2 border-green-base rounded-md text-sm leading-5 font-medium rounded-md text-green-base hover:text-green-dark hover:border-green-dark focus:outline-none focus:border-green-500 focus:shadow-outline-red active:bg-green-50 transition duration-150 ease-in-out">
+                                <a href="#" x-on:click="openModal = true; loading = true" x-show="!openModal" class="py-2 px-4 border-2 border-green-base rounded-md text-sm leading-5 font-medium rounded-md text-green-base hover:text-green-dark hover:border-green-dark focus:outline-none focus:border-green-500 focus:shadow-outline-red active:bg-green-50 transition duration-150 ease-in-out">
                                     Set as Active
                                 </a>
+                                <span x-show="loading" class="text-gray-400 ml-3 mt-2">Activating ...</span>
                             @endif
                         </span>
                     </div>
@@ -135,17 +137,17 @@
                         <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                             <span class="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto">
                                 @if($customer->is_active == true)
-                                <button @click="openModal = false" type="submit" class="inline-flex justify-center py-2 px-4 border-2 border-red-500 rounded-md text-sm leading-5 font-medium rounded-md text-red-500 hover:text-red-600 hover:border-red-600 focus:outline-none focus:border-red-500 focus:shadow-outline-red active:bg-red-50 transition duration-150 ease-in-out">
+                                <button x-on:click="openModal = false" type="submit" class="inline-flex justify-center py-2 px-4 border-2 border-red-500 rounded-md text-sm leading-5 font-medium rounded-md text-red-500 hover:text-red-600 hover:border-red-600 focus:outline-none focus:border-red-500 focus:shadow-outline-red active:bg-red-50 transition duration-150 ease-in-out">
                                     {{ __('Set as Canceled') }}
                                 </button>
                                 @else
-                                <button @click="openModal = false" type="submit" class="inline-flex justify-center py-2 px-4 border-2 border-green-base rounded-md text-sm leading-5 font-medium rounded-md text-green-base hover:text-green-dark hover:border-green-dark focus:outline-none focus:border-green-500 focus:shadow-outline-red active:bg-green-50 transition duration-150 ease-in-out">
+                                <button x-on:click="openModal = false" type="submit" class="inline-flex justify-center py-2 px-4 border-2 border-green-base rounded-md text-sm leading-5 font-medium rounded-md text-green-base hover:text-green-dark hover:border-green-dark focus:outline-none focus:border-green-500 focus:shadow-outline-red active:bg-green-50 transition duration-150 ease-in-out">
                                     {{ __('Set as Active') }}
                                 </button>
                                 @endif
                             </span>
                             <span class="mt-3 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto">
-                                <button @click="openModal = false" type="button" class="inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-base leading-6 font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:border-green-300 focus:shadow-outline transition ease-in-out duration-150 sm:text-sm sm:leading-5">
+                                <button x-on:click="openModal = false" type="button" class="inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-base leading-6 font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline transition ease-in-out duration-150 sm:text-sm sm:leading-5">
                                     Cancel
                                 </button>
                             </span>
@@ -154,34 +156,10 @@
                 </div>
             </div>
         </div>
-        @if (session()->has('message'))
-            <div class="fixed inset-0 flex items-center justify-center px-4 py-6 pointer-events-none sm:p-6 sm:items-start mt-14 z-50">
-                <div x-data="{show: true}" @click.away="show = false" class="max-w-md w-full bg-white shadow rounded-lg pointer-events-auto">
-                    <div class="rounded-lg shadow-xs overflow-hidden" x-show="show" x-transition:enter="transform ease-out duration-300 transition" x-transition:enter-start="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2" x-transition:enter-end="translate-y-0 opacity-100 sm:translate-x-0" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-                    <div class="p-4">
-                        <div class="flex items-start">
-                        <div class="flex-shrink-0">
-                            <svg class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                        </div>
-                        <div class="ml-3 w-0 flex-1 pt-0.5">
-                            <p class="text-sm leading-5 font-medium text-gray-900">
-                                {{session('message')}}
-                            </p>
-                        </div>
-                        <div class="ml-4 flex-shrink-0 flex">
-                            <button @click="show = false;" class="inline-flex text-gray-400 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150">
-                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                                </svg>
-                            </button>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                </div> 
-            </div>
+        @if (session('message'))
+            <x-alert class="mb-4">
+                {{ session('message') }}
+            </x-alert>
         @endif
     </div>
 </x-app.auth>
