@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Models\Region;
 use Faker\Generator as Faker;
 

@@ -1,4 +1,4 @@
-## One Energy
+## Dental Front Flare
 
 | QA | Stage | Production  |
 |---|---|---|
@@ -111,6 +111,7 @@ eslint --ext .js,.vue resources/js --fix
 #### Summary of set up ####
 
 * Clone this repository
+* Clone Sandbot's repository
 * Run `docker-compose` to the environment up and running
 
 #### Dependencies ####
@@ -163,8 +164,8 @@ for d in * ; do sudo hostess add $d.local 127.0.0.1 ; done
 ```
 
 ___
-[master]: https://app.chipperci.com/projects/a81507e4-3f2d-416f-a71b-8cf54913cb11/status/master
-[develop]: https://app.chipperci.com/projects/a81507e4-3f2d-416f-a71b-8cf54913cb11/status/develop
+[master]: https://app.chipperci.com/projects/23c7db80-64a0-4c0d-ad3c-0b274a888129/status/master
+[develop]: https://app.chipperci.com/projects/23c7db80-64a0-4c0d-ad3c-0b274a888129/status/develop
 [flare]: https://flareapp.io/
 [laravel-envoyer]: https://envoyer.io
 [mailtrap]: https://mailtrap.io
