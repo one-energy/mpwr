@@ -10,7 +10,6 @@ use App\Notifications\MasterInvitation;
 use App\Rules\Castle\MasterEmailUnique;
 use App\Rules\Castle\MasterEmailYourSelf;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Ramsey\Uuid\Uuid;
 
