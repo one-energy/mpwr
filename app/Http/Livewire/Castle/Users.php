@@ -52,6 +52,7 @@ class Users extends Component
     public function clearFilters()
     {
         $this->keywords = [];
+
         $this->filters  = [];
     }
 

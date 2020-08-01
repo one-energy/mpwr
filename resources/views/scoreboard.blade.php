@@ -70,24 +70,6 @@
               </div>
             </div>
           </div>
-          <ul class="flex border-b">
-            <li class="-mb-px mr-4">
-                <a class="bg-white inline-block border-b-2 border-green-base py-2 px-4 text-green-base font-semibold" href="#">W</a>
-            </li>
-            <li class="mr-4">
-                <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">M</a>
-            </li>
-            <li class="mr-4">
-                <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">S</a>
-            </li>
-            <li class="mr-4">
-                <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">Y</a>
-            </li>
-            <li class="mr-4">
-                <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">All</a>
-            </li>
-        </ul>
-
         </div>
 
         <div class="mt-6">
@@ -134,24 +116,6 @@
               </div>
             </div>
           </div>
-          <ul class="flex border-b">
-            <li class="-mb-px mr-4">
-                <a class="bg-white inline-block border-b-2 border-green-base py-2 px-4 text-green-base font-semibold" href="#">W</a>
-            </li>
-            <li class="mr-4">
-                <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">M</a>
-            </li>
-            <li class="mr-4">
-                <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">S</a>
-            </li>
-            <li class="mr-4">
-                <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">Y</a>
-            </li>
-            <li class="mr-4">
-                <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">All</a>
-            </li>
-        </ul>
-
         </div>
 
         <div class="mt-6">
@@ -198,24 +162,6 @@
               </div>
             </div>
           </div>
-          <ul class="flex border-b">
-            <li class="-mb-px mr-4">
-                <a class="bg-white inline-block border-b-2 border-green-base py-2 px-4 text-green-base font-semibold" href="#">W</a>
-            </li>
-            <li class="mr-4">
-                <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">M</a>
-            </li>
-            <li class="mr-4">
-                <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">S</a>
-            </li>
-            <li class="mr-4">
-                <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">Y</a>
-            </li>
-            <li class="mr-4">
-                <a class="bg-white inline-block py-2 px-4 text-gray-900 hover:text-gray-800 font-semibold" href="#">All</a>
-            </li>
-        </ul>
-
         </div>
 
       </div>
