@@ -9,15 +9,17 @@ class ManageIncentivesController extends Controller
 {
     public function index()
     {
+        $this->authorize('viewList', Incentive::class);
+
         $incentives = Incentive::query()->get();
 
-        return view('castle.incentives.index', [
-            'incentives' => $incentives,
-        ]);
+        return view('castle.incentives.index', compact('incentives'));
     }
 
     public function create()
     {
+        $this->authorize('create', Incentive::class);
+
         return view('castle.incentives.create');
     }
 
@@ -49,11 +51,13 @@ class ManageIncentivesController extends Controller
             ->withTitle(__('Incentive created!'))
             ->send();
 
-        return redirect(route('castle.incentives.edit', $incentive));
+        return redirect(route('castle.settings.incentives.edit', $incentive));
     }
 
     public function edit(Incentive $incentive)
     {
+        $this->authorize('view', Incentive::class);
+
         return view('castle.incentives.edit', compact('incentive'));
     }
 
@@ -89,6 +93,8 @@ class ManageIncentivesController extends Controller
 
     public function destroy($id)
     {
+        $this->authorize('delete', Incentive::class);
+        
         Incentive::destroy($id);
 
         alert()
