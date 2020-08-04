@@ -56,6 +56,11 @@
                         </form>
                     </div>
                     <div class="mt-6">
+                        <div class="flex items-center justify-end py-2">
+                            <div class="flex items-center px-3"><span class="rounded-full h-2 w-2 bg-green-base"></span><span class="text-xs ml-1">Active Customers</span></div>
+                            <div class="flex items-center px-3"><span class="rounded-full h-2 w-2 bg-gray-700"></span><span class="text-xs ml-1">Prospective Customers</span></div>
+                            <div class="flex items-center px-3"><span class="rounded-full h-2 w-2 bg-red-500"></span><span class="text-xs ml-1">Inactive Customers</span></div>
+                        </div>
                         @forelse ($customers as $customer)
                             <a href="{{route('customers.show', $customer->id)}}">
                                 <div
@@ -65,12 +70,12 @@
                                     </div>
                                     <div class="col-span-1 row-span-2 md:col-span-2">
                                         <div
-                                            class="@if($customer->is_active != 1) bg-red-500 @else bg-green-base @endif text-white rounded-md py-1 px-1 text-center">
-                                            $ {{ $customer->commission }}
+                                            class="@if($customer->is_active && $customer->panel_sold) bg-green-base @elseif($customer->is_active == false) bg-red-500 @else bg-gray-700 @endif text-white rounded-md py-1 px-1 text-center">
+                                            $ {{ number_format($customer->commission) }}
                                         </div>
                                     </div>
                                     <div class="col-span-7 text-xs text-gray-600">
-                                        {{ $customer->epc }}kW
+                                        {{ number_format($customer->epc) }}kW
                                     </div>
                                 </div>
                             </a>
@@ -95,81 +100,3 @@
         </div>
     </div>
 </x-app.auth>
-
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<script type="text/javascript">
-  google.charts.load("visualization", "1", {packages:["corechart", "bar"]});
-  google.charts.setOnLoadCallback(drawAreaChart);
-  google.charts.setOnLoadCallback(drawFunnelChart);
-
-  function drawAreaChart() {
-    var data = google.visualization.arrayToDataTable
-        ([['Week', 'Sales', {'type': 'string', 'role': 'style'}],
-          [1, 3, null],
-          [2, 24.5, null],
-          [3, 2, null],
-          [4, 3, null],
-          [5, 14.5, null],
-          [6, 6.5, null],
-          [7, 9, null],
-          [8, 12, null],
-          [9, 55, null],
-          [10, 34, null],
-          [11, 46, 'point { size: 3; shape-type: circle; fill-color: #46A049; }']
-    ]);
-
-    var options = {
-      legend: 'none',
-      colors: ['#46A049'],
-      pointSize: 1,
-      vAxis: { gridlines: { count: 0 }, textPosition: 'none', baselineColor: '#FFFFFF' },
-      hAxis: { gridlines: { count: 0 }, textPosition: 'none' },
-      chartArea:{left:0, top:0, width:"99%", height:"100%"}
-    };
-
-    var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
-    chart.draw(data, options);
-  }
-
-  function drawFunnelChart() {
-      var data = google.visualization.arrayToDataTable([
-        ["Type",   "#",  { role: "style" }],
-        ["Doors",  2000, "color: #46A049"],
-        ["Hours",  250,  "color: #7de8a6"],
-        ["Sets",   125,  "color: #006400"],
-        ["Sits",   85,   "color: #B5B5B5"],
-        ["Closes", 22,   "color: #FF6E5D"]
-        // ["Type", "Invisible", { role: "style" }, "Data", { role: "style" }],
-        // ["Doors", -1000, "color: #46A049", 1000, "color: #46A049"],
-        // ["Hours", -125, "color: #7de8a6", 125, "color: #7de8a6"],
-        // ["Sets", -62.5, "color: #006400", 62.5, "color: #006400"],
-        // ["Sits", -42.5, "color: #B5B5B5", 42.5, "color: #B5B5B5"],
-        // ["Closes", -11, "color: #FF6E5D", 11, "color: #FF6E5D"]
-      ]);
-
-      var view = new google.visualization.DataView(data);
-      view.setColumns([0, 1,
-                       { calc: "stringify",
-                         sourceColumn: 0,
-                         type: "string",
-                         role: "annotation" },
-                       2]);
-
-      var options = {
-        // tooltip: { trigger: 'selection'},
-        bar: {groupWidth: "95%"},
-        legend: { position: 'top' },
-        vAxis: { gridlines: { count: 0 }, textPosition: 'none' },
-        hAxis: { gridlines: { count: 0 }, textPosition: 'none', baselineColor: '#FFFFFF' },
-        chartArea:{left:0, top:0, width:"100%", height:"100%"},
-        isStacked: true
-      };
-      var chart = new google.visualization.BarChart(document.getElementById("barchart_values"));
-      chart.draw(view, options);
-  }
-
-  $(window).resize(function(){
-    drawAreaChart();
-    drawFunnelChart();
-});
-</script>

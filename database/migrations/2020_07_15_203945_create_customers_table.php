@@ -6,11 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateCustomersTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('customers', function (Blueprint $table) {
@@ -26,6 +21,7 @@ class CreateCustomersTable extends Migration
             $table->decimal('epc')->nullable();
             $table->decimal('commission')->nullable();
             $table->decimal('setter_fee', 8, 2)->nullable();
+            $table->boolean('panel_sold')->default(false);
             $table->boolean('is_active')->default(true);
 
             $table->unsignedBigInteger('setter_id')->nullable();;
@@ -45,11 +41,6 @@ class CreateCustomersTable extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('customers');

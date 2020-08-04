@@ -116,6 +116,7 @@ class CustomerController extends Controller
                 'epc'          => 'nullable',
                 'setter_id'    => 'nullable',
                 'setter_fee'   => 'nullable',
+                'panel_sold'   => 'nullable',
             ]
         );
 
@@ -127,6 +128,7 @@ class CustomerController extends Controller
         $customer->epc          = $validated['epc'];
         $customer->setter_id    = $validated['setter_id'];
         $customer->setter_fee   = $validated['setter_fee'];
+        $customer->panel_sold   = $validated['panel_sold'];
 
         $epc        = $customer->epc;
         $pay        = $customer->pay;

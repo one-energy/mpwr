@@ -12,6 +12,7 @@ use App\Http\Controllers\Castle\MastersController;
 use App\Http\Controllers\Castle\ResponseMasterInvitationController;
 use App\Http\Controllers\Castle\RevokeMasterAccessController;
 use App\Http\Controllers\Castle\UsersController;
+use App\Http\Controllers\Castle\ManageIncentivesController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ScoreboardController;
@@ -63,6 +64,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('masters/invite', [MasterInvitationController::class, 'form'])->name('masters.invite');
         Route::post('masters/invite', [MasterInvitationController::class, 'invite']);
         Route::patch('masters/{master}/revoke', RevokeMasterAccessController::class)->name('masters.revoke');
+
+        Route::get('settings/incentives', [ManageIncentivesController::class, 'index'])->name('settings.incentives');
+        Route::get('settings/incentives/create', [ManageIncentivesController::class, 'create'])->name('settings.incentives.create');
+        Route::post('settings/incentives/create', [ManageIncentivesController::class, 'store'])->name('settings.incentives.store');
+        Route::get('settings/incentives/{incentive}/edit', [ManageIncentivesController::class, 'edit'])->name('settings.incentives.edit');
+        Route::put('settings/incentives/{incentive}', [ManageIncentivesController::class, 'update'])->name('settings.incentives.update');
+        Route::delete('settings/incentives/{incentive}', [ManageIncentivesController::class, 'destroy'])->name('settings.incentives.destroy');
     });
     //endregion
 
