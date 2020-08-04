@@ -23,6 +23,10 @@ class ProfileController extends Controller
             'first_name'  => ['required', 'min:3', 'max:255'],
             'last_name'   => ['required', 'min:3', 'max:255'],
             'email'       => ['required', 'email', 'min:2', 'max:128', Rule::unique('users')->ignore(user()->id)],
+            'photo_url'   => ['required'],
+        ],
+        [
+            'photo_url.required' => 'The photo field is required.',
         ])->validate();
 
         user()
