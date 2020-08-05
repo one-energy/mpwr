@@ -23,6 +23,7 @@ use App\Http\Controllers\IncentivesController;
 use App\Http\Controllers\NumberTrackingController;
 use App\Http\Controllers\ProfileChangePasswordController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProfilePhotoUploadController;
 use Illuminate\Support\Facades\Route;
 
 //region Authentication and Registration Routes
@@ -72,6 +73,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile/show-profile-information', [ProfileController::class, 'index'])->name('profile.show-profile-information');
     Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('/profile/show', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/photo-upload', ProfilePhotoUploadController::class)->name('profile.photo-upload');
     Route::put('/profile/change-password', ProfileChangePasswordController::class)->name('profile.change-password');
 
     Route::resource('/customers', CustomerController::class);
