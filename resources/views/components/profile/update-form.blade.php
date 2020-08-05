@@ -39,7 +39,6 @@
                                     <img class="rounded-full w-16"
                                         x-show="photoUrl"
                                         :src="photoUrl"
-                                        src="{{ user()->photo_url }}"
                                         alt=""/>
                                 </div>
                                 
@@ -76,11 +75,9 @@
 
 <script>
     function pasteImage() {
+        var url = <?php echo json_encode(user()->photo_url); ?>;
         return {
-            photoUrl: null,
-            clear() {
-                this.photoUrl = null;
-            },
+            photoUrl: url,
             convertImage(event) {
                 let self = this;
                 if (event.target.files && event.target.files[0]) {
