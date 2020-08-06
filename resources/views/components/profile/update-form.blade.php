@@ -76,7 +76,7 @@
 </div>
 <script>
     function pasteImage() {
-
+        
         var url = <?php echo json_encode(user()->photo_url); ?>;
 
         return {
