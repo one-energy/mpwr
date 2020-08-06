@@ -2,9 +2,9 @@
     <div>
         <div x-data="{openModal: false, loading: false}">
             <div class="max-w-6xl mx-auto py-5 sm:px-6 lg:px-8">
-                <a href="{{route('home')}}" class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
-                    < Edit Home Owner
-                </a>
+                <x-link :href="route('home')" color="gray" class="inline-flex items-center border-b-2 border-green-base hover:border-green-500 text-sm font-medium leading-5">
+                    <x-svg.chevron-left class="w-6 -ml-2"/> @lang('Dashboard')
+                </x-link>
             </div>
             <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
                 <x-form :route="route('customers.update', $customer->id)" put>
