@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ProfilePhotoUploadController extends Controller
 {
-    public function __invoke()
+    public function __invoke(User $user)
     {
         $user = user();
         $url      = '';
