@@ -26,9 +26,9 @@
                             </label>
                             <div class="mt-2 flex items-center">
                                 <div
-                                    class="flex items-center justify-center w-20 h-20 rounded-full border border-gray-300 @error('photo_url') border-red-300 @enderror">
+                                    class="flex items-center justify-center w-20 h-20 rounded-full border border-gray-300 @error('photo') border-red-300 @enderror">
                                     <svg class="mx-auto h-12 w-12 text-gray-400"
-                                         @if ($errors->has('photo_url')) stroke="#e02424" @else stroke="currentColor"
+                                         @if ($errors->has('photo')) stroke="#e02424" @else stroke="currentColor"
                                          @endif fill="none"
                                          viewBox="0 0 48 48"
                                          x-show="!photoUrl">
@@ -42,17 +42,19 @@
                                         alt=""/>
                                 </div>
                                 
-                                <input type="file" name="photo_url" id="photo_url" accept="image/png, image/jpeg"
-                                        class="hidden" @change="convertImage(event)">
+                                <input type="file" name="photo" id="photo" accept="image/png, image/jpeg"
+                                        class="hidden" x-on:change="convertImage(event)">
+
+                                <x-input name="photo_url" label="" class="hidden"></x-input>
 
                                 <span class="ml-5 rounded-md shadow-sm">
-                                    <label for="photo_url"
+                                    <label for="photo"
                                             class="py-2 px-3 border border-gray-300 rounded-md text-sm leading-4 font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:border-green-300 focus:shadow-outline-green active:bg-gray-50 active:text-gray-800 transition duration-150 ease-in-out cursor-pointer">
                                         Change
                                     </label >
                                 </span>
                             </div>
-                            @error('photo_url')
+                            @error('photo')
                                 <div class="inset-y-0 right-0 pr-3 flex items-center pointer-events-none mt-2">
                                     <x-svg.alert class="h-5 w-5 text-red-500 ml-1"></x-svg.alert>
                                      <p class="text-sm text-red-600 ml-1">
@@ -72,12 +74,16 @@
         </x-card>
     </x-form>
 </div>
-
 <script>
     function pasteImage() {
+
         var url = <?php echo json_encode(user()->photo_url); ?>;
+
         return {
             photoUrl: url,
+            clear() {
+                this.photoUrl = null;
+            },
             convertImage(event) {
                 let self = this;
                 if (event.target.files && event.target.files[0]) {
@@ -90,23 +96,33 @@
                     reader.readAsDataURL(event.target.files[0]); // convert to base64 string
                 }
 
-                const fileInput = document.getElementById('photo_url');
+                const fileInput = document.getElementById('photo');
 
                 var file     = fileInput.files[0];
                 let formData = new FormData();
-                formData.append('photo_url', file);
+                formData.append('photo', file);
                 formData.append('_token', '{{ csrf_token() }}');
-                axios.post("{{ route('profile.photo-upload') }}",
-                    formData,
-                    {
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
+                axios.post("{{ route('profile.photo-upload') }}", formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
                     }
-                ).then(res => {
+                }).then(res => {
                     const {url} = res.data;
+                    document.getElementById('photo_url').value = url;
                 });
             },
+            changeUrl(data) {
+                this.photoUrl = data;
+            }
         };
     }
+    window.addEventListener('paste', function (e) {
+        if (!e.clipboardData.files || !e.clipboardData.files.length) {
+            return;
+        }
+        const fileInput = document.getElementById('photo');
+        fileInput.files = e.clipboardData.files;
+        fileInput.dispatchEvent(new Event('change'));
+    }, false);
 </script>
