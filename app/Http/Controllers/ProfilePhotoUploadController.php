@@ -7,16 +7,15 @@ use Illuminate\Support\Facades\Storage;
 
 class ProfilePhotoUploadController extends Controller
 {
-    public function __invoke()
+    public function __invoke(User $user)
     {
         $url      = '';
-        $file     = request()->file('photo_url');
+        $file     = request()->file('photo');
         if (!$file) {
             return response()->json(['url' => null]);
         }
-
-        $fileName = "{user()->id}_.png";
-        $uploaded = Storage::disk('public')->putFileAs('profile-avatar', $file, $fileName);
+        $fileName = "{user()->id}_" . time() .'.png';
+        $uploaded = Storage::disk('public')->putFileAs('profiles', $file, $fileName);
 
         if ($uploaded) {
             $path = str_replace('storage', 'public', user()->photo_url);
@@ -25,7 +24,6 @@ class ProfilePhotoUploadController extends Controller
             }
             $url = Storage::disk('public')->url($uploaded);
         }
-
         return response()->json(['url' => $url]);
     }
 }
