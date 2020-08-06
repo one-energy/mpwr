@@ -23,7 +23,16 @@
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
-                            <x-input :label="__('Role')" name="role" :value="$user->role"/>
+                            <x-select label="Role" name="role">
+                                @if (old('role') == '')
+                                    <option selected></option>
+                                @endif
+                                @foreach($roles as $role)
+                                    <option value="{{ $role }}" {{ old('role', $user->role) == $role ? 'selected' : '' }}>
+                                        {{ $role }}
+                                    </option>
+                                @endforeach
+                            </x-select>
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
@@ -31,7 +40,7 @@
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
-                            <x-input :label="__('Pay')" name="pay" :value="$user->pay"/>
+                            <x-input-currency :label="__('Pay')" name="pay" :value="$user->pay"/>
                         </div>
                 
                     </div>

@@ -11,6 +11,7 @@ use App\Rules\Castle\MasterEmailUnique;
 use App\Rules\Castle\MasterEmailYourSelf;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 
 class UsersController extends Controller
@@ -27,7 +28,11 @@ class UsersController extends Controller
 
     public function create()
     {
-        return view('castle.users.register');
+        $roles = User::ROLES;
+
+        return view('castle.users.register',[
+            'roles' => $roles
+        ]);
     }
 
     public function store()
@@ -61,7 +66,12 @@ class UsersController extends Controller
 
     public function edit(User $user)
     {
-        return view('castle.users.edit', compact('user'));
+        $roles = User::ROLES;
+
+        return view('castle.users.edit', [
+            'user'  => $user,
+            'roles' => $roles
+        ]);
     }
 
     public function update($id)
