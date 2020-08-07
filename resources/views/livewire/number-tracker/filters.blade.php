@@ -207,10 +207,10 @@
                             </div>
                         </div>
 
-                        <div wire:loading>
+                        <div wire:loading class="mt-6">
                             Loading...
                         </div>
-                        <table class="min-w-full" wire:loading.remove>
+                        <table class="min-w-full mt-3" wire:loading.remove>
                         <thead>
                             <tr>
                             <th class="px-6 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
@@ -291,7 +291,7 @@
                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
                                     <input 
                                         type="number" 
-                                        
+                                        min="0"
                                         name="numbers[{{ $user->id }}][closes]" 
                                         class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                                         value="{{ $user->closes }}"

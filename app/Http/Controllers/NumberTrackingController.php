@@ -9,6 +9,12 @@ class NumberTrackingController extends Controller
 {
     public function index(Request $request)
     {
+        $showOptions = [
+            'Daily Total', 
+            'Weekly Total',
+            'Monthly Total',
+            'Statistics',
+        ];
         $trackingInformation = [
             ['region_member' => 'Donna Walker',    'doors' => 100, 'hours' => 9, 'sets' => 8, 'sits' => 2, 'set_closes' => 1, 'closes' => 1],
             ['region_member' => 'Chris Wiliams',   'doors' => 100, 'hours' => 9, 'sets' => 8, 'sits' => 2, 'set_closes' => 1, 'closes' => 1],
@@ -22,7 +28,7 @@ class NumberTrackingController extends Controller
             ['region_member' => 'Donna Walker',    'doors' => 100, 'hours' => 9, 'sets' => 8, 'sits' => 2, 'set_closes' => 1, 'closes' => 1],
         ];
 
-        return view('number-tracking',compact('trackingInformation'));
+        return view('number-tracking',compact('showOptions', 'trackingInformation'));
     }
 
     public function create()
