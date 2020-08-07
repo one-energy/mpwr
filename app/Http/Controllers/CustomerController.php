@@ -111,7 +111,7 @@ class CustomerController extends Controller
                 'first_name'   => 'required|string|min:3|max:255',
                 'last_name'    => 'required|string|min:3|max:255',
                 'system_size'  => 'nullable',
-                'redline'      => 'nullable',
+                'pay'          => 'nullable',
                 'adders'       => 'nullable',
                 'epc'          => 'nullable',
                 'setter_id'    => 'nullable',
@@ -123,7 +123,7 @@ class CustomerController extends Controller
         $customer->first_name   = $validated['first_name'];
         $customer->last_name    = $validated['last_name'];
         $customer->system_size  = $validated['system_size'];
-        $customer->redline      = $validated['redline'];
+        $customer->pay          = $validated['pay'];
         $customer->adders       = $validated['adders'];
         $customer->epc          = $validated['epc'];
         $customer->setter_id    = $validated['setter_id'];

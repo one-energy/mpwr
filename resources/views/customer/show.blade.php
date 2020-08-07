@@ -23,7 +23,7 @@
                         </div>
     
                         <div class="md:col-span-3 sm:cols-span-2">
-                            <x-input-currency label="Redline" name="redline" value="{{ $customer->redline }}"></x-input-currency>
+                            <x-input-currency label="Redline" name="pay" value="{{ $customer->pay }}"></x-input-currency>
                         </div>
     
                         <div class="md:col-span-3 sm:cols-span-2">
@@ -62,7 +62,7 @@
                             </label>
                             <div class="mt-3">
                             <span class="block w-full font-bold transition duration-150 ease-in-out sm:text-sm sm:leading-5">
-                                ${{ $customer->setter_fee }}
+                                ${{ number_format($customer->setter_fee) }}
                             </span>
                             </div>
                         </div>
@@ -73,7 +73,7 @@
                             </label>
                             <div class="mt-3">
                             <span class="block w-full font-bold transition duration-150 ease-in-out sm:text-sm sm:leading-5">
-                                ${{ $customer->commission }}
+                                ${{ number_format($customer->commission) }}
                             </span>
                             </div>
                         </div>

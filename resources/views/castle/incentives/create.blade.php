@@ -15,7 +15,7 @@
                     </div>
 
                     <div class="md:col-span-3 col-span-2">
-                        <x-input label="Incentive Name" name="name" type="number"></x-input>
+                        <x-input label="Incentive Name" name="name"></x-input>
                     </div>
             
                     <div class="md:col-span-3 col-span-1">
