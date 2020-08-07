@@ -106,7 +106,7 @@ class CustomerTest extends TestCase
             'epc'           => '',
             'setter_id'     => '',
             'setter_fee'    => '',
-            'commission'    => '0',
+            'commission'    => '',
             "created_at"    => Carbon::now()->timestamp,
             "updated_at"    => Carbon::now()->timestamp,
             'is_active'     => true
