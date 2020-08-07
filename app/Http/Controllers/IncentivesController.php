@@ -14,7 +14,12 @@ class IncentivesController extends Controller
         $userId        = Auth::user()->id;
         $myInstalls    = Customer::query()->where(['opened_by_id' => $userId, 'panel_sold' => true, 'is_active' => true])->count();
         $systemSizeSum = Customer::query()->where('opened_by_id', $userId)->sum('system_size');
-        $myKws         = $systemSizeSum / $myInstalls;
+        $myKws         = 0;
+        
+        if ($myInstalls)
+        {
+            $myKws = $systemSizeSum / $myInstalls;
+        }
 
         return view('incentives', [
             'incentives' => $incentives,

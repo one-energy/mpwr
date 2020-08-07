@@ -9,8 +9,6 @@ class ManageIncentivesController extends Controller
 {
     public function index()
     {
-        $this->authorize('viewList', Incentive::class);
-
         $incentives = Incentive::query()->get();
 
         return view('castle.incentives.index', compact('incentives'));
@@ -18,8 +16,6 @@ class ManageIncentivesController extends Controller
 
     public function create()
     {
-        $this->authorize('create', Incentive::class);
-
         return view('castle.incentives.create');
     }
 
@@ -56,8 +52,6 @@ class ManageIncentivesController extends Controller
 
     public function edit(Incentive $incentive)
     {
-        $this->authorize('view', Incentive::class);
-
         return view('castle.incentives.edit', compact('incentive'));
     }
 
@@ -93,8 +87,6 @@ class ManageIncentivesController extends Controller
 
     public function destroy($id)
     {
-        $this->authorize('delete', Incentive::class);
-        
         Incentive::destroy($id);
 
         alert()

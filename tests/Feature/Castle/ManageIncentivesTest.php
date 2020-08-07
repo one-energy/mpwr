@@ -7,7 +7,7 @@ use App\Models\User;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class incentiveTest extends TestCase
+class ManageIncentiveTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -15,7 +15,7 @@ class incentiveTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create(['role' => 'Admin']);
+        $this->user = factory(User::class)->create(['master' => true]);
 
         $this->actingAs($this->user);
     }
@@ -39,7 +39,7 @@ class incentiveTest extends TestCase
     /** @test */
     public function it_should_block_the_create_form_for_non_top_level_roles()
     {
-        $this->actingAs(factory(User::class)->create(['role' => 'Setter']));
+        $this->actingAs(factory(User::class)->create(['master' => false]));
 
         $response = $this->get('castle/settings/incentives/create');
 
@@ -61,7 +61,7 @@ class incentiveTest extends TestCase
         $data = [
             'number_installs'   => 48,
             'name'              => 'Incentive',
-            'installs_achevied' => 56,
+            'installs_achieved' => 56,
             'installs_needed'   => 67,
             'kw_achieved'       => 78,
             'kw_needed'         => 100,
@@ -72,8 +72,7 @@ class incentiveTest extends TestCase
         $created = Incentive::where('name', $data['name'])->first();
 
         $response->assertStatus(302)
-            ->assertSessionHas('message', 'Incentive created!')
-            ->assertRedirect(route('settings.incentives.edt', $created->id));
+            ->assertRedirect(route('castle.settings.incentives.edit', $created));
     }
 
     /** @test */
@@ -82,18 +81,18 @@ class incentiveTest extends TestCase
         $data = [
             'number_installs'   => '',
             'name'              => '',
-            'installs_achevied' => '',
+            'installs_achieved' => '',
             'installs_needed'   => '',
             'kw_achieved'       => '',
             'kw_needed'         => '',
         ];
 
-        $response = $this->post(route('castle.settings.incentives..store'), $data);
+        $response = $this->post(route('castle.settings.incentives.store'), $data);
         $response->assertSessionHasErrors(
         [
             'number_installs',
             'name',
-            'installs_achevied',
+            'installs_achieved',
             'installs_needed',
             'kw_achieved',
             'kw_needed',
@@ -105,10 +104,10 @@ class incentiveTest extends TestCase
     {
         $incentive = factory(Incentive::class)->create();
 
-        $response = $this->get('castle/settings/incentives/'. $incentive->id);
+        $response = $this->get('castle/settings/incentives/'. $incentive->id . '/edit');
         
         $response->assertStatus(200)
-            ->assertViewIs('castle.incentives.show');
+            ->assertViewIs('castle.incentives.edit');
     }
 
     /** @test */
@@ -118,22 +117,21 @@ class incentiveTest extends TestCase
         
         $incentive = factory(Incentive::class)->create();
 
-        $response = $this->get('castle/settings/incentives/'. $incentive->id);
+        $response = $this->get('castle/settings/incentives/'. $incentive->id .'/edit');
 
         $response->assertStatus(403);
     }
 
     /** @test */
-    public function it_should_update_a_incentive()
+    public function it_should_update_an_incentive()
     {
         $incentive       = factory(Incentive::class)->create(['name' => 'Incentive']);
         $data            = $incentive->toArray();
-        $updateincentive = array_merge($data, ['name' => 'Incentive Edited']);
+        $updateIncentive = array_merge($data, ['name' => 'Incentive Edited']);
 
-        $response = $this->put(route('castle.settings.incentives.update', $incentive->id), $updateincentive);
+        $response = $this->put(route('castle.settings.incentives.update', $incentive->id), $updateIncentive);
             
-        $response->assertStatus(302)
-            ->assertSessionHas('message', 'Incentive updated!');
+        $response->assertStatus(302);
 
         $this->assertDatabaseHas('incentives',
         [
@@ -143,17 +141,15 @@ class incentiveTest extends TestCase
     }
 
     /** @test */
-    public function it_should_destroy_a_incentive()
+    public function it_should_destroy_an_incentive()
     {
         $incentive = factory(Incentive::class)->create();
 
-        $response = $this->delete(route('castle.settings.incentives.destroy', $incentive->id), $incentive);
+        $response = $this->delete(route('castle.settings.incentives.destroy', $incentive->id));
+        $deleted  = Incentive::where('id', $incentive->id)->get();
 
-        $response->assertStatus(302)
-            ->assertSessionHas('message', 'Incentive deleted!');
+        $response->assertStatus(302);
 
-        $this->assertDatabaseMissing('incentives', [
-            'id' => $incentive->id,
-        ]);
+        $this->assertNotNull($deleted);
     }
 }
