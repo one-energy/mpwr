@@ -168,9 +168,9 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_update_a_customer()
     {
-        $customer       = factory(Customer::class)->create(['redline' => 30.5]);
+        $customer       = factory(Customer::class)->create(['pay' => 30.5]);
         $data           = $customer->toArray();
-        $updateCustomer = array_merge($data, ['redline' => 24.7]);
+        $updateCustomer = array_merge($data, ['pay' => 24.7]);
 
         $response = $this->put(route('customers.update', $customer->id), $updateCustomer);
             
@@ -178,8 +178,8 @@ class CustomerTest extends TestCase
 
         $this->assertDatabaseHas('customers',
         [
-            'id'      => $customer->id,
-            'redline' => 24.7
+            'id'  => $customer->id,
+            'pay' => 24.7
         ]);
     }
 

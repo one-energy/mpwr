@@ -11,8 +11,6 @@ class HomeController extends Controller
 {
     public function __invoke(Request $request)
     {
-        $this->authorize('viewList', Customer::class);
-        
         $userId = Auth::user()->id;
 
         $query = Customer::query()->where('opened_by_id', $userId);

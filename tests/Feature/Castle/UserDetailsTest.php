@@ -2,9 +2,11 @@
 
 namespace Tests\Feature\Castle;
 
+use App\Models\User;
 use Tests\Builders\RegionBuilder;
 use Tests\Builders\UserBuilder;
 use Tests\Feature\FeatureTest;
+use Illuminate\Support\Facades\Hash;
 
 class UserDetailsTest extends FeatureTest
 {
@@ -57,5 +59,23 @@ class UserDetailsTest extends FeatureTest
             ->assertViewIs('castle.users.show')
             ->assertSee($region1->name)
             ->assertSee($region2->name);
+    }
+
+    /** @test */
+    public function it_should_reset_users_password()
+    {
+        $this->withoutExceptionHandling();
+        
+        $master      = factory(User::class)->create(['master' => 1]);
+        $user        = factory(User::class)->create(['password' => '123456789']);
+        $data        = $user->toArray();
+        $newPassword = array_merge($data, [
+            'new_password'              => '123456789',
+            'new_password_confirmation' => '123456789'
+        ]);
+
+        $response = $this->actingAs($master)->put(route('castle.users.reset-password', $user->id), $newPassword);
+
+        $response->assertStatus(302);
     }
 }

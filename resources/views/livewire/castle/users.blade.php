@@ -42,7 +42,7 @@
                                         </x-slot>
                                         <x-slot name="body">
                                             @foreach($users as $user)
-                                                <x-table.tr :loop="$loop">
+                                                <x-table.tr :loop="$loop" onclick="window.location='{{route('castle.users.show', $user->id)}}';" class="hover:bg-gray-50 cursor-pointer">
                                                     <x-table.td>{{ $user->first_name . ' ' . $user->last_name }}</x-table.td>
                                                     <x-table.td>{{ $user->email }}</x-table.td>
                                                     <x-table.td>{{ $user->role }}</x-table.td>
