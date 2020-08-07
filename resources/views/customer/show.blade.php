@@ -27,7 +27,7 @@
                         </div>
     
                         <div class="md:col-span-3 sm:cols-span-2">
-                            <x-input-currency label="Adders" name="adders" value="{{ $customer->adders }}"></x-input-currency>
+                            <x-input label="Adders" name="adders" value="{{ $customer->adders }}" type="number"></x-input>
                         </div>
     
                         <div class="md:col-span-3 sm:cols-span-2">

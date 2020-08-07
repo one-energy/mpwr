@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $setter_id
  * @property string $pay
  * @property float $system_size
- * @property float $redline
  * @property float $bill
  * @property float $financing
  * @property float $adders

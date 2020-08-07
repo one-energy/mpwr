@@ -16,7 +16,7 @@ class CreateCustomersTable extends Migration
             $table->string('bill');
             $table->decimal('pay')->nullable();
             $table->string('financing');
-            $table->decimal('adders')->nullable();
+            $table->integer('adders')->nullable();
             $table->decimal('epc')->nullable();
             $table->decimal('commission')->nullable();
             $table->decimal('setter_fee')->nullable();
