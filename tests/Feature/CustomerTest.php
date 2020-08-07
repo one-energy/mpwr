@@ -117,7 +117,6 @@ class CustomerTest extends TestCase
         $created = Customer::where('first_name', $data['first_name'])->first();
 
         $response->assertStatus(302)
-            ->assertSessionHas('message', 'Home Owner created!')
             ->assertRedirect(route('customers.show', $created->id));
     }
 
@@ -175,8 +174,7 @@ class CustomerTest extends TestCase
 
         $response = $this->put(route('customers.update', $customer->id), $updateCustomer);
             
-        $response->assertStatus(302)
-            ->assertSessionHas('message', 'Home Owner updated!');
+        $response->assertStatus(302);
 
         $this->assertDatabaseHas('customers',
         [
@@ -190,10 +188,9 @@ class CustomerTest extends TestCase
     {
         $customer = factory(Customer::class)->create(['is_active' => true]);
 
-        $response = $this->put(route('customers.active', $customer->id), $customer);
+        $response = $this->put(route('customers.active', $customer));
 
-        $response->assertStatus(302)
-            ->assertSessionHas('message', 'Home Owner set as canceled!');
+        $response->assertStatus(302);
 
         $this->assertDatabaseHas('customers', [
             'id' => $customer->id,
@@ -206,10 +203,9 @@ class CustomerTest extends TestCase
     {
         $customer = factory(Customer::class)->create(['is_active' => false]);
 
-        $response = $this->put(route('customers.active', $customer->id), $customer);
+        $response = $this->put(route('customers.active', $customer));
 
-        $response->assertStatus(302)
-            ->assertSessionHas('message', 'Home Owner set as active!');
+        $response->assertStatus(302);
 
         $this->assertDatabaseHas('customers', [
             'id' => $customer->id,

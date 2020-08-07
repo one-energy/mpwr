@@ -6,26 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateCustomersTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('first_name');
             $table->string('last_name');
-            $table->decimal('system_size', 8, 2)->nullable();
-            $table->decimal('redline', 8, 2)->nullable();
+            $table->decimal('system_size')->nullable();
+            $table->decimal('redline')->nullable();
             $table->string('bill');
-            $table->decimal('pay', 8, 2)->nullable();
+            $table->decimal('pay')->nullable();
             $table->string('financing');
-            $table->decimal('adders', 8, 2)->nullable();
+            $table->decimal('adders')->nullable();
             $table->decimal('epc')->nullable();
             $table->decimal('commission')->nullable();
-            $table->decimal('setter_fee', 8, 2)->nullable();
+            $table->decimal('setter_fee')->nullable();
             $table->boolean('is_active')->default(true);
 
             $table->unsignedBigInteger('setter_id')->nullable();;
@@ -45,11 +40,6 @@ class CreateCustomersTable extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('customers');

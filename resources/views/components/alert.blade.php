@@ -19,7 +19,11 @@
             <div class="p-4">
                 <div class="flex items-start">
                     <div class="flex-shrink-0">
-                        <x-svg.check :class='"h-6 w-6 text-{$color}-500 mr-2"'/>
+                        @if($color == 'green')
+                            <x-svg.check :class='"h-6 w-6 text-green-base mr-2"'/>
+                        @else
+                            <x-svg.check :class='"h-6 w-6 text-{$color}-500 mr-2"'/>
+                        @endif
                     </div>
                     <div class="ml-3 w-0 flex-1 pt-0.5">
                         <p class="text-sm font-medium leading-5 text-gray-900">

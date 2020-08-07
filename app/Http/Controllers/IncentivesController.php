@@ -2,19 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Incentive;
+use App\Models\Customer;
+use Illuminate\Support\Facades\Auth;
+
 class IncentivesController extends Controller
 {
     public function __invoke()
     {
-        $data = [
-            ['number_installs' => 45,  'incentive' => 'Thailand',    'installs_achieved' => 110, 'installs_needed' => 0,  'kw_achieved' => 101, 'kw_needed' => 45],
-            ['number_installs' => 50,  'incentive' => 'Plus 1',      'installs_achieved' => 100, 'installs_needed' => 0,  'kw_achieved' => 90,  'kw_needed' => 45],
-            ['number_installs' => 65,  'incentive' => 'First Class', 'installs_achieved' => 90,  'installs_needed' => 15, 'kw_achieved' => 60,  'kw_needed' => 70],
-            ['number_installs' => 80,  'incentive' => 'Model 3',     'installs_achieved' => 80,  'installs_needed' => 20, 'kw_achieved' => 40,  'kw_needed' => 90],
-            ['number_installs' => 100, 'incentive' => 'Model S',     'installs_achieved' => 70,  'installs_needed' => 25, 'kw_achieved' => 30,  'kw_needed' => 100],
-            ['number_installs' => 150, 'incentive' => 'Model X',     'installs_achieved' => 60,  'installs_needed' => 30, 'kw_achieved' => 20,  'kw_needed' => 120],
-        ];
+        $incentives    = Incentive::query()->orderBy('number_installs')->get();
+        $userId        = Auth::user()->id;
+        $myInstalls    = Customer::query()->where(['opened_by_id' => $userId, 'panel_sold' => true, 'is_active' => true])->count();
+        $systemSizeSum = Customer::query()->where('opened_by_id', $userId)->sum('system_size');
+        $myKws         = 0;
+        
+        if ($myInstalls)
+        {
+            $myKws = $systemSizeSum / $myInstalls;
+        }
 
-        return view('incentives',compact('data'));
+        return view('incentives', [
+            'incentives' => $incentives,
+            'myInstalls' => $myInstalls,
+            'myKws'      => $myKws
+        ]);
     }
 }
