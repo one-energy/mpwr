@@ -17,17 +17,18 @@ class ProfilePhotoUploadController extends Controller
             return response()->json(['url' => null]);
         }
 
-        $fileName = "user-{$user->id}-{$user->first_name}{$user->last_name}.png";
-        $uploaded = Storage::disk('public')->putFileAs('profiles', $file, $fileName);
+        $fileName = "avatar_{$user->id}.png";
+        $disk = config('filesystems.default');
+        $uploaded = Storage::disk($disk)->putFileAs('profiles', $file, $fileName);
 
         if ($uploaded) {
-            $path = str_replace('storage', 'public', $user->photo_url);
+            $path = str_replace('storage', $disk, $user->photo_url);
 
-            if (Storage::disk('public')->exists($path)) {
-                Storage::disk('public')->delete($path);
+            if (Storage::disk($disk)->exists($path)) {
+                Storage::disk($disk)->delete($path);
             }
 
-            $url = Storage::disk('public')->url($uploaded);
+            $url = Storage::disk($disk)->url($uploaded);
         }
 
         return response()->json(['url' => $url]);
