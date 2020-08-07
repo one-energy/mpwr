@@ -19,7 +19,7 @@
                         </div>
                 
                         <div class="md:col-span-3 sm:cols-span-2">
-                            <x-input-size label="System Size" name="system_size" value="{{ $customer->system_size }}"></x-input-size>
+                            <x-input-add-on label="System Size" name="system_size" addOn="kW" value="{{ $customer->system_size }}"></x-input-add-on>
                         </div>
     
                         <div class="md:col-span-3 sm:cols-span-2">
@@ -49,6 +49,11 @@
     
                         <div class="md:col-span-3 sm:cols-span-2">
                             <x-input-currency label="Setter Fee" name="setter_fee" value="{{ $customer->setter_fee }}"></x-input-currency>
+                        </div>
+
+                        <div class="md:col-span-4 sm:cols-span-2 flex items-center justify-between">
+                            <input type="hidden" name="panel_sold" value="0">
+                            <x-checkbox label="Panel Sold" name="panel_sold" :checked="old('panel_sold', $customer->panel_sold)"></x-checkbox>
                         </div>
     
                         <div class="sm:col-span-1">

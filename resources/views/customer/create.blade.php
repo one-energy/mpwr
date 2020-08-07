@@ -20,7 +20,7 @@
                     </div>
             
                     <div class="md:col-span-2 col-span-1">
-                        <x-input-size label="System Size" name="system_size" id="system_size"></x-input>
+                        <x-input-add-on label="System Size" name="system_size" addOn="kW"></x-input>
                     </div>
 
                     <div class="col-span-1">

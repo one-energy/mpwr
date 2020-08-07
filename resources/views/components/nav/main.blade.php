@@ -87,27 +87,29 @@
                                 x-transition:leave-end="transform opacity-0 scale-95"
                                 class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg z-10">
                                 <div class="py-1 rounded-md bg-white shadow-xs">
-
-                                    <span class="block px-4 pt-2 text-sm text-gray-600">
-                                        {{ user()->first_name }}
-                                    </span>
-                                    <span class="block px-4 pb-2 pt-0.5 text-xs text-gray-500">
-                                        {{ user()->email }}
-                                    </span>
-
+                                    <a href="{{ route('profile.show') }}" class="block hover:bg-gray-100">
+                                        <div>
+                                            <span class="block px-4 pt-2 text-sm text-gray-600">
+                                                {{ user()->first_name }}
+                                            </span>
+                                            <span class="block px-4 pb-2 pt-0.5 text-xs text-gray-500">
+                                                {{ user()->email }}
+                                            </span>
+                                        </div>
+                                    </a>
                                     <hr class="my-2">
+                                    
+                                    @if(user()->isMaster())
+                                        <a href="{{ route('castle.users.index') }}"
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            @lang('Users')
+                                        </a>
 
-                                    <a href="{{ route('profile.show') }}"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                        @lang('Profile Settings')
-                                    </a>
-
-                                @if(user()->isMaster())
-                                    <a href="{{ route('castle.users.index') }}"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                        @lang('Users')
-                                    </a>
-                                @endif()
+                                        <a href="{{ route('castle.settings.incentives') }}"
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            @lang('Settings')
+                                        </a>
+                                    @endif()
 
                                     <button type="submit" form="form-sign-out"
                                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">

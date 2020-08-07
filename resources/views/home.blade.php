@@ -56,6 +56,11 @@
                         </form>
                     </div>
                     <div class="mt-6">
+                        <div class="flex items-center justify-end py-2">
+                            <div class="flex items-center px-3"><span class="rounded-full h-2 w-2 bg-green-base"></span><span class="text-xs ml-1">Active Customers</span></div>
+                            <div class="flex items-center px-3"><span class="rounded-full h-2 w-2 bg-gray-700"></span><span class="text-xs ml-1">Prospective Customers</span></div>
+                            <div class="flex items-center px-3"><span class="rounded-full h-2 w-2 bg-red-500"></span><span class="text-xs ml-1">Inactive Customers</span></div>
+                        </div>
                         @forelse ($customers as $customer)
                             <a href="{{route('customers.show', $customer->id)}}">
                                 <div
@@ -65,12 +70,12 @@
                                     </div>
                                     <div class="col-span-1 row-span-2 md:col-span-2">
                                         <div
-                                            class="@if($customer->is_active != 1) bg-red-500 @else bg-green-base @endif text-white rounded-md py-1 px-1 text-center">
-                                            $ {{ $customer->commission }}
+                                            class="@if($customer->is_active && $customer->panel_sold) bg-green-base @elseif($customer->is_active == false) bg-red-500 @else bg-gray-700 @endif text-white rounded-md py-1 px-1 text-center">
+                                            $ {{ number_format($customer->commission) }}
                                         </div>
                                     </div>
                                     <div class="col-span-7 text-xs text-gray-600">
-                                        {{ $customer->epc }}kW
+                                        {{ number_format($customer->epc) }}kW
                                     </div>
                                 </div>
                             </a>

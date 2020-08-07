@@ -5,7 +5,7 @@ namespace App\Policies;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class CustomerPolicy
+class IncentivePolicy
 {
     use HandlesAuthorization;
 
@@ -20,7 +20,11 @@ class CustomerPolicy
 
     public function viewList(User $user)
     {
-        return true;
+        if (in_array($user->role, User::TOPLEVEL_ROLES)) {
+            return true;
+        }
+
+        return false;
     }
 
     public function create(User $user)
