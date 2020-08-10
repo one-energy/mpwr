@@ -5,7 +5,7 @@
 
             <x-table :pagination="$masters->links()">
                 <x-slot name="header">
-                    <tr>
+                    <tr class="sm:border-gray-200 border-b-2">
                         <x-table.th-searchable by="first_name" :sortedBy="$sortBy" :direction="$sortDirection">
                             @lang('Name')
                         </x-table.th-searchable>

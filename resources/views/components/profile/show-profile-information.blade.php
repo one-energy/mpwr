@@ -4,14 +4,14 @@
         <a href="#" class="flex-shrink-0 group block focus:outline-none">
         <div class="flex items-center">
             <div>
-            <img class="inline-block h-16 w-16 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+            <img class="inline-block h-16 w-16 rounded-full" src="{{ user()->photo_url }}" alt="" />
             </div>
             <div class="ml-3">
             <p class="text-sm leading-5 font-medium text-gray-700 group-hover:text-gray-900">
-                Tom Cook
+                {{ user()->first_name }} {{ user()->last_name }}
             </p>
             <p class="text-xs leading-4 font-medium text-gray-500 group-hover:text-gray-700 group-focus:underline transition ease-in-out duration-150">
-                Zone XYZ Sales
+                {{ user()->office }}
             </p>
             </div>
         </div>

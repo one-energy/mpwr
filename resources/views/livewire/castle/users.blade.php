@@ -21,28 +21,28 @@
                                 <div class="align-middle inline-block min-w-full overflow-hidden">
                                     <x-table :pagination="$users->links()">
                                         <x-slot name="header">
-                                            <x-table.th-tr>
-                                                <x-table.th by="first_name" :sortedBy="$sortBy" :direction="$sortDirection">
+                                            <tr class="sm:border-gray-200 border-b-2">
+                                                <x-table.th-searchable by="first_name" :sortedBy="$sortBy" :direction="$sortDirection">
                                                     @lang('Name')
                                                 </x-table.th>
-                                                <x-table.th by="email" :sortedBy="$sortBy" :direction="$sortDirection">
+                                                <x-table.th-searchable by="email" :sortedBy="$sortBy" :direction="$sortDirection">
                                                     @lang('Email')
                                                 </x-table.th>
-                                                <x-table.th by="role" :sortedBy="$sortBy" :direction="$sortDirection">
+                                                <x-table.th-searchable by="role" :sortedBy="$sortBy" :direction="$sortDirection">
                                                     @lang('Role')
                                                 </x-table.th>
-                                                <x-table.th by="role" :sortedBy="$sortBy" :direction="$sortDirection">
+                                                <x-table.th-searchable by="role" :sortedBy="$sortBy" :direction="$sortDirection">
                                                     @lang('Office')
                                                 </x-table.th>
-                                                <x-table.th by="role" :sortedBy="$sortBy" :direction="$sortDirection">
+                                                <x-table.th-searchable by="role" :sortedBy="$sortBy" :direction="$sortDirection">
                                                     @lang('Pay')
                                                 </x-table.th>
                                                 <x-table.th></x-table.th>
-                                            </x-table.th-tr>
+                                            </tr>
                                         </x-slot>
                                         <x-slot name="body">
                                             @foreach($users as $user)
-                                                <x-table.tr :loop="$loop">
+                                                <x-table.tr :loop="$loop" onclick="window.location='{{route('castle.users.show', $user->id)}}';" class="hover:bg-gray-50 cursor-pointer">
                                                     <x-table.td>{{ $user->first_name . ' ' . $user->last_name }}</x-table.td>
                                                     <x-table.td>{{ $user->email }}</x-table.td>
                                                     <x-table.td>{{ $user->role }}</x-table.td>

@@ -75,7 +75,7 @@
                                         id="user-menu" aria-label="User menu" aria-haspopup="true"
                                         x-bind:aria-expanded="open">
                                     <img class="h-8 w-8 rounded-full"
-                                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                        src="{{ user()->photo_url }}"
                                         alt=""/>
                                 </button>
                             </div>
@@ -87,27 +87,29 @@
                                 x-transition:leave-end="transform opacity-0 scale-95"
                                 class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg z-10">
                                 <div class="py-1 rounded-md bg-white shadow-xs">
-
-                                    <span class="block px-4 pt-2 text-sm text-gray-600">
-                                        {{ user()->first_name }}
-                                    </span>
-                                    <span class="block px-4 pb-2 pt-0.5 text-xs text-gray-500">
-                                        {{ user()->email }}
-                                    </span>
-
+                                    <a href="{{ route('profile.show') }}" class="block hover:bg-gray-100">
+                                        <div>
+                                            <span class="block px-4 pt-2 text-sm text-gray-600">
+                                                {{ user()->first_name }}
+                                            </span>
+                                            <span class="block px-4 pb-2 pt-0.5 text-xs text-gray-500">
+                                                {{ user()->email }}
+                                            </span>
+                                        </div>
+                                    </a>
                                     <hr class="my-2">
+                                    
+                                    @if(user()->isMaster())
+                                        <a href="{{ route('castle.users.index') }}"
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            @lang('Users')
+                                        </a>
 
-                                    <a href="{{ route('profile.show') }}"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                        @lang('Profile Settings')
-                                    </a>
-
-                                @if(user()->isMaster())
-                                    <a href="{{ route('castle.users.index') }}"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                        @lang('Users')
-                                    </a>
-                                @endif()
+                                        <a href="{{ route('castle.settings.incentives') }}"
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            @lang('Settings')
+                                        </a>
+                                    @endif()
 
                                     <button type="submit" form="form-sign-out"
                                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
@@ -124,7 +126,7 @@
                             <div class="flex items-center px-5">
                                 <div class="flex-shrink-0">
                                     <img class="h-10 w-10 rounded-full"
-                                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                        src="{{ user()->photo_url }}"
                                         alt=""/>
                                 </div>
                                 <div class="ml-3">

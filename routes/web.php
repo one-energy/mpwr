@@ -12,6 +12,7 @@ use App\Http\Controllers\Castle\MastersController;
 use App\Http\Controllers\Castle\ResponseMasterInvitationController;
 use App\Http\Controllers\Castle\RevokeMasterAccessController;
 use App\Http\Controllers\Castle\UsersController;
+use App\Http\Controllers\Castle\ManageIncentivesController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ScoreboardController;
@@ -23,6 +24,7 @@ use App\Http\Controllers\IncentivesController;
 use App\Http\Controllers\NumberTrackingController;
 use App\Http\Controllers\ProfileChangePasswordController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProfilePhotoUploadController;
 use Illuminate\Support\Facades\Route;
 
 //region Authentication and Registration Routes
@@ -56,6 +58,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('users', [UsersController::class, 'index'])->name('users.index');
         Route::get('users/{user}/edit', [UsersController::class, 'edit'])->name('users.edit');
         Route::put('users/{user}', [UsersController::class, 'update'])->name('users.update');
+        Route::get('users/{user}/reset-password', [UsersController::class, 'requestResetPassword'])->name('users.request-reset-password');
+        Route::put('users/{user}/reset-password', [UsersController::class, 'resetPassword'])->name('users.reset-password');
         Route::delete('users/{user}', [UsersController::class, 'destroy'])->name('users.destroy');
         Route::get('users/{user}', [UsersController::class, 'show'])->name('users.show');
         
@@ -63,6 +67,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('masters/invite', [MasterInvitationController::class, 'form'])->name('masters.invite');
         Route::post('masters/invite', [MasterInvitationController::class, 'invite']);
         Route::patch('masters/{master}/revoke', RevokeMasterAccessController::class)->name('masters.revoke');
+
+        Route::get('settings/incentives', [ManageIncentivesController::class, 'index'])->name('settings.incentives');
+        Route::get('settings/incentives/create', [ManageIncentivesController::class, 'create'])->name('settings.incentives.create');
+        Route::post('settings/incentives/create', [ManageIncentivesController::class, 'store'])->name('settings.incentives.store');
+        Route::get('settings/incentives/{incentive}/edit', [ManageIncentivesController::class, 'edit'])->name('settings.incentives.edit');
+        Route::put('settings/incentives/{incentive}', [ManageIncentivesController::class, 'update'])->name('settings.incentives.update');
+        Route::delete('settings/incentives/{incentive}', [ManageIncentivesController::class, 'destroy'])->name('settings.incentives.destroy');
     });
     //endregion
 
@@ -72,6 +83,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile/show-profile-information', [ProfileController::class, 'index'])->name('profile.show-profile-information');
     Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('/profile/show', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/photo-upload', ProfilePhotoUploadController::class)->name('profile.photo-upload');
     Route::put('/profile/change-password', ProfileChangePasswordController::class)->name('profile.change-password');
 
     Route::resource('/customers', CustomerController::class);

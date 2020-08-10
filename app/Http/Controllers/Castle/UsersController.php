@@ -10,6 +10,7 @@ use App\Notifications\MasterInvitation;
 use App\Rules\Castle\MasterEmailUnique;
 use App\Rules\Castle\MasterEmailYourSelf;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Ramsey\Uuid\Uuid;
 
@@ -27,7 +28,11 @@ class UsersController extends Controller
 
     public function create()
     {
-        return view('castle.users.register');
+        $roles = User::ROLES;
+
+        return view('castle.users.register',[
+            'roles' => $roles
+        ]);
     }
 
     public function store()
@@ -61,7 +66,12 @@ class UsersController extends Controller
 
     public function edit(User $user)
     {
-        return view('castle.users.edit', compact('user'));
+        $roles = User::ROLES;
+
+        return view('castle.users.edit', [
+            'user'  => $user,
+            'roles' => $roles
+        ]);
     }
 
     public function update($id)
@@ -84,6 +94,28 @@ class UsersController extends Controller
             ->send();
 
         return redirect(route('castle.users.index'));
+    }
+
+    public function requestResetPassword(User $user)
+    {
+        return view('castle.users.reset-password', compact('user'));
+    }
+
+    public function resetPassword($id)
+    {
+        $user = User::find($id);
+
+        $data = Validator::make(request()->all(), [
+            'new_password' => ['required', 'string', 'min:8', 'confirmed'],
+        ])->validate();
+
+        $user
+            ->changePassword($data['new_password'])
+            ->save();
+
+        alert()->withTitle(__('Password reset successfully!'))->send();
+
+        return redirect(route('castle.users.edit', compact('user')));
     }
 
     public function destroy($id)

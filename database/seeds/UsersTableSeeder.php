@@ -44,6 +44,7 @@ class UsersTableSeeder extends Seeder
             'first_name' => 'DevSquad Master',
             'last_name'  => 'User',
             'email'      => 'team@devsquad.com',
+            'role'       => 'Admin',
             'master'     => true,
         ]);
 

@@ -2,9 +2,9 @@
     <div>
         <div x-data="{openModal: false, loading: false}">
             <div class="max-w-6xl mx-auto py-5 sm:px-6 lg:px-8">
-                <a href="{{route('home')}}" class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
-                    < Edit Home Owner
-                </a>
+                <x-link :href="route('home')" color="gray" class="inline-flex items-center border-b-2 border-green-base hover:border-green-500 text-sm font-medium leading-5">
+                    <x-svg.chevron-left class="w-6 -ml-2"/> @lang('Dashboard')
+                </x-link>
             </div>
             <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
                 <x-form :route="route('customers.update', $customer->id)" put>
@@ -19,15 +19,15 @@
                         </div>
                 
                         <div class="md:col-span-3 sm:cols-span-2">
-                            <x-input-size label="System Size" name="system_size" value="{{ $customer->system_size }}"></x-input-size>
+                            <x-input-add-on label="System Size" name="system_size" addOn="kW" value="{{ $customer->system_size }}"></x-input-add-on>
                         </div>
     
                         <div class="md:col-span-3 sm:cols-span-2">
-                            <x-input-currency label="Redline" name="redline" value="{{ $customer->redline }}"></x-input-currency>
+                            <x-input-currency label="Redline" name="pay" value="{{ $customer->pay }}"></x-input-currency>
                         </div>
     
                         <div class="md:col-span-3 sm:cols-span-2">
-                            <x-input-currency label="Adders" name="adders" value="{{ $customer->adders }}"></x-input-currency>
+                            <x-input label="Adders" name="adders" value="{{ $customer->adders }}" type="number"></x-input>
                         </div>
     
                         <div class="md:col-span-3 sm:cols-span-2">
@@ -50,6 +50,11 @@
                         <div class="md:col-span-3 sm:cols-span-2">
                             <x-input-currency label="Setter Fee" name="setter_fee" value="{{ $customer->setter_fee }}"></x-input-currency>
                         </div>
+
+                        <div class="md:col-span-4 sm:cols-span-2 flex items-center justify-between">
+                            <input type="hidden" name="panel_sold" value="0">
+                            <x-checkbox label="Panel Sold" name="panel_sold" :checked="old('panel_sold', $customer->panel_sold)"></x-checkbox>
+                        </div>
     
                         <div class="sm:col-span-1">
                             <label class="block text-sm font-medium leading-5 text-gray-700">
@@ -57,7 +62,7 @@
                             </label>
                             <div class="mt-3">
                             <span class="block w-full font-bold transition duration-150 ease-in-out sm:text-sm sm:leading-5">
-                                ${{ $customer->setter_fee }}
+                                ${{ number_format($customer->setter_fee) }}
                             </span>
                             </div>
                         </div>
@@ -68,7 +73,7 @@
                             </label>
                             <div class="mt-3">
                             <span class="block w-full font-bold transition duration-150 ease-in-out sm:text-sm sm:leading-5">
-                                ${{ $customer->commission }}
+                                ${{ number_format($customer->commission) }}
                             </span>
                             </div>
                         </div>

@@ -1,9 +1,9 @@
 <x-app.auth :title="__('New User')">
     <div>
         <div class="max-w-6xl mx-auto py-5 sm:px-6 lg:px-8">
-            <a href="{{route('castle.users.index')}}" class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
-                < User Info
-            </a>
+            <x-link :href="route('castle.users.index')" color="gray" class="inline-flex items-center border-b-2 border-green-base hover:border-green-500 text-sm font-medium leading-5">
+                <x-svg.chevron-left class="w-6 -ml-2"/> @lang('User Info')
+            </x-link>
         </div>
 
         @if ($message = session('message'))
@@ -27,7 +27,16 @@
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
-                            <x-input :label="__('Role')" name="role"/>
+                            <x-select label="Role" name="role">
+                                @if (old('role') == '')
+                                    <option selected></option>
+                                @endif
+                                @foreach($roles as $role)
+                                <option value="{{ $role }}" {{ old('role') == $role ? 'selected' : '' }}>
+                                        {{ $role }}
+                                    </option>
+                                @endforeach
+                            </x-select>
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
@@ -35,7 +44,7 @@
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
-                            <x-input :label="__('Pay')" name="pay"/>
+                            <x-input-currency :label="__('Pay')" name="pay"/>
                         </div>
                 
                     </div>
