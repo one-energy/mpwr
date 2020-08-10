@@ -353,7 +353,7 @@
                             <h2 class="text-lg text-gray-900">Top 5 Performing Members</h2>
                         </div>
 
-                        <div class="mt-3">
+                        <div class="mt-6">
                             <div class="flex flex-col">
                                 <div class="sm:overflow-x-auto md:overflow-x-hidden">
                                     <div class="align-middle inline-block min-w-full overflow-hidden">

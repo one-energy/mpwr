@@ -15,7 +15,7 @@
                         @lang('Create a new User')
                     </x-button>
                     
-                    <div class="mt-3">
+                    <div class="mt-6">
                         <div class="flex flex-col">
                             <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
                                 <div class="align-middle inline-block min-w-full overflow-hidden">
@@ -42,7 +42,7 @@
                                         </x-slot>
                                         <x-slot name="body">
                                             @foreach($users as $user)
-                                                <x-table.tr :loop="$loop" onclick="window.location='{{route('castle.users.show', $user->id)}}';" class="hover:bg-gray-50 cursor-pointer">
+                                                <x-table.tr :loop="$loop" onclick="window.location='{{route('castle.users.show', $user->id)}}';" class="cursor-pointer">
                                                     <x-table.td>{{ $user->first_name . ' ' . $user->last_name }}</x-table.td>
                                                     <x-table.td>{{ $user->email }}</x-table.td>
                                                     <x-table.td>{{ $user->role }}</x-table.td>

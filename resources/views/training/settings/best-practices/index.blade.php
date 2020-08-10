@@ -1,4 +1,4 @@
-<x-app.auth :title="__('Setting')">
+<x-app.auth :title="__('Best Practices')">
   <div>
     <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
       <div class="px-4 py-5 sm:px-6">
@@ -22,15 +22,31 @@
             </div>
           </div>
         </div>
-        <div class="text-gray-600 mt-6 md:mt-3"><a href="/trainings" class="underline">Setting</a></div>
+        <div class="text-gray-600 mt-6 md:mt-3"><a href="/trainings" class="underline">Settings</a> / <a href="/trainings/settings" class="underline">Best Practices</a></div>
 
-        <div class="mt-3">
+        <div class="mt-6">
           <div class="grid md:grid-cols-2 sm:grid-cols-1 md:row-gap-4 sm:row-gap-0 col-gap-4">
-            <div class="col-span-1">
-              <a href="{{route('trainings.settings.best-practices.index')}}">
+            <div class="col-span-1 hover:bg-gray-50">
+              <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
+                <div class="col-span-9">
+                  When on the doors
+                </div>
+                <div class="col-span-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    <symbol id="arrow" viewBox="0 0 25 25">
+                      <path d="M5 3l3.057-3 11.943 12-11.943 12-3.057-3 9-9z" class="text-gray-500 fill-current" />
+                    </symbol>
+                    <use xlink:href="#arrow" width="15" height="15" y="6" x="6" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-span-1 hover:bg-gray-50">
+              <a href="{{route('trainings.settings.best-practices.what-to-say.index')}}">
                 <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
                   <div class="col-span-9">
-                    Best Practices
+                    What to say
                   </div>
                   <div class="col-span-1">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -44,10 +60,10 @@
               </a>
             </div>
 
-            <div class="col-span-1">
+            <div class="col-span-1 hover:bg-gray-50">
               <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
                 <div class="col-span-9">
-                  Mindset
+                  How to say it
                 </div>
                 <div class="col-span-1">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -60,10 +76,10 @@
               </div>
             </div>
 
-            <div class="col-span-1">
+            <div class="col-span-1 hover:bg-gray-50">
               <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
                 <div class="col-span-9">
-                  Work Ethic
+                  What time of the day
                 </div>
                 <div class="col-span-1">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -76,26 +92,10 @@
               </div>
             </div>
 
-            <div class="col-span-1">
-              <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
-                <div class="col-span-9">
-                  FAQ
-                </div>
-                <div class="col-span-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                    <symbol id="arrow" viewBox="0 0 25 25">
-                      <path d="M5 3l3.057-3 11.943 12-11.943 12-3.057-3 9-9z" class="text-gray-500 fill-current" />
-                    </symbol>
-                    <use xlink:href="#arrow" width="15" height="15" y="6" x="6" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-span-1">
+            <div class="col-span-1 hover:bg-gray-50">
               <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 border-b-2 p-4 md:rounded-lg">
                 <div class="col-span-9">
-                  Hours
+                  Misc. Training
                 </div>
                 <div class="col-span-1">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">

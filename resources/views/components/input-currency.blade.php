@@ -1,14 +1,27 @@
-@props(['label', 'name', 'value'])
+@props(['label', 'name', 'value', 'tooltip', 'observation'])
 
 @php
     $class = 'form-input block w-full pl-7 pr-12 sm:text-sm sm:leading-5';
     if( $errors->has($name) ) {
         $class .= 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-300 focus:shadow-outline-red';
     }
+    $tooltip     = $tooltip ?? null;
+    $observation = $observation ?? null;
 @endphp
 
 <div {{ $attributes }}>
-    <label for="{{ $name }}" class="block text-sm font-medium leading-5 text-gray-700">{{ $label }}</label>
+    <div class="flex">
+        <label for="{{ $name }}" class="block text-sm font-medium leading-5 text-gray-700">{{ $label }}</label>
+        @if($tooltip)
+            <x-svg.question-mark class="h-4 w-4 text-gray-600 cursor-pointer ml-1" x-on:mouseenter="tooltipShow = true" x-on:mouseleave="tooltipShow = false" x-on:click="tooltipShow = true"></x-svg.question-mark>
+            <div class="relative">
+                <div x-show="tooltipShow" class="absolute left-1 bottom-1 px-2 py-1 bg-gray-700 text-xs text-white bg-white shadow border-0 block z-50 text-center break-words rounded-md">{{ $tooltip }}</div>
+            </div>
+        @endif
+        @if($observation)
+            <label class="text-sm leading-5 text-gray-500 ml-1">- {{ $observation }}</label>
+        @endif
+    </div>
 
     <div class="mt-1 relative rounded-md shadow-sm">
         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -39,8 +52,5 @@
         {{ $message }}
     </p>
     @enderror
-</div>
-
-
-                          
+</div>               
                           

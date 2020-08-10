@@ -23,9 +23,9 @@
           </div>
         </div>
 
-        <div class="mt-3">
+        <div class="mt-15">
           <div class="grid md:grid-cols-2 sm:grid-cols-1 md:row-gap-4 sm:row-gap-0 col-gap-4">
-            <div class="col-span-1">
+            <div class="col-span-1 hover:bg-gray-50">
               <a href="{{route('trainings.settings.index')}}">
                 <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
                   <div class="col-span-9">
@@ -43,7 +43,7 @@
               </a>
             </div>
 
-            <div class="col-span-1">
+            <div class="col-span-1 hover:bg-gray-50">
               <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
                 <div class="col-span-9">
                   Closing
@@ -59,7 +59,7 @@
               </div>
             </div>
 
-            <div class="col-span-1">
+            <div class="col-span-1 hover:bg-gray-50">
               <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
                 <div class="col-span-9">
                   Misc.
@@ -75,7 +75,7 @@
               </div>
             </div>
 
-            <div class="col-span-1">
+            <div class="col-span-1 hover:bg-gray-50">
               <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
                 <div class="col-span-9">
                   FAQ
@@ -91,7 +91,7 @@
               </div>
             </div>
 
-            <div class="col-span-1">
+            <div class="col-span-1 hover:bg-gray-50">
               <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 border-b-2 p-4 md:rounded-lg">
                 <div class="col-span-9">
                   Life

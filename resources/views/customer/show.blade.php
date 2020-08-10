@@ -1,6 +1,6 @@
 <x-app.auth :title="__('Edit Home Owner')">
     <div>
-        <div x-data="{openModal: false, loading: false}">
+        <div x-data="{openModal: false, loading: false, tooltipShow: false}">
             <div class="max-w-6xl mx-auto py-5 sm:px-6 lg:px-8">
                 <x-link :href="route('home')" color="gray" class="inline-flex items-center border-b-2 border-green-base hover:border-green-500 text-sm font-medium leading-5">
                     <x-svg.chevron-left class="w-6 -ml-2"/> @lang('Dashboard')
@@ -23,15 +23,16 @@
                         </div>
     
                         <div class="md:col-span-3 sm:cols-span-2">
-                            <x-input-currency label="Redline" name="pay" value="{{ $customer->pay }}"></x-input-currency>
+                            <x-input-currency label="Redline" name="pay" value="{{ $customer->pay }}" tooltip="Pay" observation="Pay Rate"></x-input-currency>
                         </div>
-    
+                        
+                              
                         <div class="md:col-span-3 sm:cols-span-2">
                             <x-input label="Adders" name="adders" value="{{ $customer->adders }}" type="number"></x-input>
                         </div>
     
                         <div class="md:col-span-3 sm:cols-span-2">
-                            <x-input-currency label="EPC" name="epc" value="{{ $customer->epc }}"></x-input-currency>
+                            <x-input-currency label="EPC" name="epc" value="{{ $customer->epc }}" observation="Sold Price"></x-input-currency>
                         </div>
     
                         <div class="md:col-span-3 sm:cols-span-2">

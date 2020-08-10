@@ -8,7 +8,6 @@ class ScoreboardController extends Controller
 {
     public function __invoke(Request $request)
     {
-
         $filterTypes = [
             ['index' => 'leaderboards',   'value' => 'Leaderboards'],
             ['index' => 'records',        'value' => 'Records'],
