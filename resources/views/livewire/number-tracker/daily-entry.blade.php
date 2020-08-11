@@ -96,7 +96,7 @@
                                     <button 
                                         type="button"
                                         class="inline-flex w-full justify-left py-2 px-4 mb-2 bg-white rounded-lg border-gray-200 border-2 top-0 left-0 text-sm leading-5 font-medium focus:outline-none 
-                                            @if($regionSelected == $region->id) border-green-base @else focus:border-gray-700 focus:shadow-outline-gray @endif transition duration-150 ease-in-out"
+                                            @if($regionSelected == $region->id) border-green-400 @else focus:border-gray-700 focus:shadow-outline-gray @endif transition duration-150 ease-in-out"
                                         wire:click="setRegion({{ $region->id }})">
                                         {{ $region->name }}
                                     </button>
