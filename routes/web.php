@@ -13,6 +13,7 @@ use App\Http\Controllers\Castle\ResponseMasterInvitationController;
 use App\Http\Controllers\Castle\RevokeMasterAccessController;
 use App\Http\Controllers\Castle\UsersController;
 use App\Http\Controllers\Castle\ManageIncentivesController;
+use App\Http\Controllers\Castle\PermissionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ScoreboardController;
@@ -60,6 +61,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('users/{user}', [UsersController::class, 'update'])->name('users.update');
         Route::delete('users/{user}', [UsersController::class, 'destroy'])->name('users.destroy');
         Route::get('users/{user}', [UsersController::class, 'show'])->name('users.show');
+
+        Route::get('permission', [PermissionController::class, 'index'])->name('permission.index');
         
         Route::get('masters', [MastersController::class, 'index'])->name('masters.index');
         Route::get('masters/invite', [MasterInvitationController::class, 'form'])->name('masters.invite');

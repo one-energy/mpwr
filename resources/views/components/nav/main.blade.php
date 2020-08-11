@@ -23,6 +23,11 @@
                                                 :active="is_active('castle.dashboard')">
                                         @lang('Dashboard')
                                     </x-nav.link>
+
+                                    <x-nav.link :href="route('castle.dashboard')" class="ml-4"
+                                                :active="is_active('castle.permission.*')">
+                                        @lang('Permission')
+                                    </x-nav.link>
     
                                     <x-nav.link :href="route('castle.masters.index')" class="ml-4"
                                                 :active="is_active('castle.masters.*')">
