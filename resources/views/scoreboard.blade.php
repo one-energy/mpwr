@@ -43,8 +43,8 @@
                         <x-table.th by="representative">
                             @lang('Representative')
                         </x-table.th>
-                        <x-table.th by="set_closes">
-                            @lang('Set Closes')
+                        <x-table.th by="hours">
+                            @lang('Hours')
                         </x-table.th>
                         <x-table.th by="office">
                             @lang('Office')
@@ -52,16 +52,16 @@
                       </x-table.th-tr>
                     </x-slot>
                     <x-slot name="body">
-                      @foreach($data as $row)
+                      @foreach($top10Hours as $user)
                           <x-table.tr :loop="$loop">
                               <x-table.td>
                                   <span class="px-2 inline-flex rounded-full bg-green-base text-white">
-                                  {{{ $row['id'] }}}
+                                  {{ $loop->index+1 }}
                                 </span>
                               </x-table.td>
-                              <x-table.td>{{{ $row['representative'] }}}</x-table.td>
-                              <x-table.td>{{{ $row['set_closes'] }}}</x-table.td>
-                              <x-table.td>{{{ $row['office'] }}}</x-table.td>
+                              <x-table.td>{{ $user->first_name }} {{ $user->last_name }}</x-table.td>
+                              <x-table.td>{{ $user->hours }}</x-table.td>
+                              <x-table.td>{{ $user->office }}</x-table.td>
                           </x-table.tr>
                       @endforeach
                     </x-slot>
@@ -89,8 +89,8 @@
                         <x-table.th by="representative">
                             @lang('Representative')
                         </x-table.th>
-                        <x-table.th by="set_closes">
-                            @lang('Set Closes')
+                        <x-table.th by="sets">
+                            @lang('Sets')
                         </x-table.th>
                         <x-table.th by="office">
                             @lang('Office')
@@ -98,16 +98,16 @@
                       </x-table.th-tr>
                     </x-slot>
                     <x-slot name="body">
-                      @foreach($data as $row)
+                      @foreach($top10Sets as $user)
                           <x-table.tr :loop="$loop">
                               <x-table.td>
                                   <span class="px-2 inline-flex rounded-full bg-green-base text-white">
-                                  {{{ $row['id'] }}}
+                                  {{ $loop->index+1 }}
                                 </span>
                               </x-table.td>
-                              <x-table.td>{{{ $row['representative'] }}}</x-table.td>
-                              <x-table.td>{{{ $row['set_closes'] }}}</x-table.td>
-                              <x-table.td>{{{ $row['office'] }}}</x-table.td>
+                              <x-table.td>{{ $user->first_name }} {{ $user->last_name }}</x-table.td>
+                              <x-table.td>{{ $user->sets }}</x-table.td>
+                              <x-table.td>{{ $user->office }}</x-table.td>
                           </x-table.tr>
                       @endforeach
                     </x-slot>
@@ -144,16 +144,16 @@
                       </x-table.th-tr>
                     </x-slot>
                     <x-slot name="body">
-                      @foreach($data as $row)
+                      @foreach($top10SetCloses as $user)
                           <x-table.tr :loop="$loop">
                               <x-table.td>
                                   <span class="px-2 inline-flex rounded-full bg-green-base text-white">
-                                  {{{ $row['id'] }}}
+                                  {{ $loop->index+1 }}
                                 </span>
                               </x-table.td>
-                              <x-table.td>{{{ $row['representative'] }}}</x-table.td>
-                              <x-table.td>{{{ $row['set_closes'] }}}</x-table.td>
-                              <x-table.td>{{{ $row['office'] }}}</x-table.td>
+                              <x-table.td>{{ $user->first_name }} {{ $user->last_name }}</x-table.td>
+                              <x-table.td>{{ $user->set_closes }}</x-table.td>
+                              <x-table.td>{{ $user->office }}</x-table.td>
                           </x-table.tr>
                       @endforeach
                     </x-slot>
