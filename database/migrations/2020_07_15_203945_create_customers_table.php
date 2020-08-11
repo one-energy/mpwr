@@ -18,7 +18,7 @@ class CreateCustomersTable extends Migration
             $table->string('financing');
             $table->integer('adders')->nullable();
             $table->decimal('epc')->nullable();
-            $table->decimal('commission')->nullable();
+            $table->double('commission')->nullable();
             $table->decimal('setter_fee')->nullable();
             $table->boolean('is_active')->default(true);
             $table->boolean('panel_sold')->default(false);

@@ -58,7 +58,7 @@
                     </div>
             
                     <div class="md:col-span-3 col-span-2">
-                        <x-input-currency label="EPC" name="epc"></x-input>
+                        <x-input-currency label="EPC" name="epc" observation="Sold Price"></x-input>
                     </div>
             
                     <div class="md:col-span-3 col-span-2">

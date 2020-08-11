@@ -9,7 +9,6 @@ class ScoreboardController extends Controller
 {
     public function __invoke(Request $request)
     {
-
         $filterTypes = [
             ['index' => 'leaderboards',   'value' => 'Leaderboards'],
             ['index' => 'records',        'value' => 'Records'],
@@ -21,6 +20,7 @@ class ScoreboardController extends Controller
             });
 
         $top10Hours = $query
+            ->sum('daily_numbers.hours')
             ->whereNotNull('daily_numbers.hours')
             ->orderByDesc('daily_numbers.hours')
             ->take(10)
