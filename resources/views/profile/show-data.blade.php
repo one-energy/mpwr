@@ -1,3 +1,3 @@
 <x-app.auth :title="__('Profile')">
-    <x-profile.show-profile-information/>
+    <x-profile.show-modal-profile-information/>
 </x-app.auth>

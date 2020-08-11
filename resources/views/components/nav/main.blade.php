@@ -16,14 +16,19 @@
                             <div class="hidden mr-3 sm:-my-px sm:ml-6 sm:flex">
                                 @if(is_active('castle.*'))
                                     <x-nav.link :href="route('home')" class="flex self-center">
-                                        <x-svg.chevron-left class="w-6 -ml-2"/> @lang('Leave Castle')
+                                        <x-svg.chevron-left class="w-6 -ml-2"/> @lang('Leave Admin')
                                     </x-nav.link>
     
                                     <x-nav.link :href="route('castle.dashboard')" class="ml-4"
                                                 :active="is_active('castle.dashboard')">
                                         @lang('Dashboard')
                                     </x-nav.link>
-    
+
+                                    <x-nav.link :href="route('castle.incentives')" class="ml-4"
+                                                :active="is_active('castle.incentives')">
+                                        @lang('Incentives')
+                                    </x-nav.link>
+
                                     <x-nav.link :href="route('castle.masters.index')" class="ml-4"
                                                 :active="is_active('castle.masters.*')">
                                         @lang('Masters')
@@ -38,7 +43,7 @@
                                                 :active="is_active('home')">
                                         @lang('Dashboard')
                                     </x-nav.link>
-                                    <x-nav.link :href="('scoreboard')" class="ml-8"
+                                    <x-nav.link :href="route('scoreboard')" class="ml-8"
                                                 :active="is_active('scoreboard')">
                                         @lang('Scoreboard')
                                     </x-nav.link>
@@ -87,29 +92,20 @@
                                 x-transition:leave-end="transform opacity-0 scale-95"
                                 class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg z-10">
                                 <div class="py-1 rounded-md bg-white shadow-xs">
-                                    <a href="{{ route('profile.show') }}" class="block hover:bg-gray-100">
-                                        <div>
-                                            <span class="block px-4 pt-2 text-sm text-gray-600">
-                                                {{ user()->first_name }}
-                                            </span>
-                                            <span class="block px-4 pb-2 pt-0.5 text-xs text-gray-500">
-                                                {{ user()->email }}
-                                            </span>
-                                        </div>
-                                    </a>
+                                    <div>
+                                        <span class="block px-4 pt-2 text-sm text-gray-600">
+                                            {{ user()->first_name }}
+                                        </span>
+                                        <span class="block px-4 pb-2 pt-0.5 text-xs text-gray-500">
+                                            {{ user()->email }}
+                                        </span>
+                                    </div>
                                     <hr class="my-2">
                                     
-                                    @if(user()->isMaster())
-                                        <a href="{{ route('castle.users.index') }}"
+                                    <a href="{{ route('profile.show') }}"
                                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                            @lang('Users')
-                                        </a>
-
-                                        <a href="{{ route('castle.settings.incentives') }}"
-                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                            @lang('Settings')
-                                        </a>
-                                    @endif()
+                                        @lang('Your Profile')
+                                    </a>
 
                                     <button type="submit" form="form-sign-out"
                                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
@@ -160,7 +156,7 @@
             <div class="flex items-center justify-between px-4 py-3 sm:px-3">
                 @if(is_active('castle.*'))
                     <x-nav.link-mobile :href="route('home')" class="flex self-center">
-                        <x-svg.chevron-left class="w-6 -ml-2"/> @lang('Leave Castle')
+                        <x-svg.chevron-left class="w-6 -ml-2"/> @lang('Leave Admin')
                     </x-nav.link-mobile>
 
                     <x-nav.link-mobile :href="route('castle.dashboard')" :active="is_active('castle.dashboard')"
@@ -187,7 +183,7 @@
                             <use xlink:href="#dashboard" width="24" height="24" />
                         </svg>
                     </x-nav.link-mobile>
-                    <x-nav.link-mobile :href="('scoreboard')" class="mt-1"
+                    <x-nav.link-mobile :href="route('scoreboard')" class="mt-1"
                                 :active="is_active('scoreboard')">
                             <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                 <symbol id="file" viewBox="0 0 24 24">

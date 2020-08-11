@@ -6,7 +6,7 @@
           <h3 class="text-lg text-gray-900">Incentives</h3>
         </div>
 
-        <div class="mt-3">
+        <div class="mt-6">
           <div class="flex flex-col">
             <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
               <div class="align-middle inline-block min-w-full overflow-hidden">

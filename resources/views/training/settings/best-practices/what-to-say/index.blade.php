@@ -22,9 +22,9 @@
             </div>
           </div>
         </div>
-        <div class="text-gray-600 mt-6 md:mt-3"><a href="/trainings" class="underline">Setting</a> / <a href="/trainings/setting" class="underline">Best Practices</a> / <a href="/trainings/setting/best-practices" class="underline">What to say</a></div>
+        <div class="text-gray-600 mt-6 md:mt-3"><a href="/trainings" class="underline">Settings</a> / <a href="/trainings/settings" class="underline">Best Practices</a> / <a href="/trainings/settings/best-practices" class="underline">What to say</a></div>
 
-        <div class="mt-3">
+        <div>
           <div class="md:flex">
             <div class="py-6 md:w-2/3 sm:w-full">
               <div>
@@ -36,7 +36,7 @@
             </div>
             <div class="px-4 sm:p-6">
               <div class="grid grid-cols-1 md:row-gap-4 sm:row-gap-0 col-gap-4">
-                <div class="col-span-1">
+                <div class="col-span-1 hover:bg-gray-50">
                   <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
                     <div class="col-span-9">
                       What to do if you are in a dump
@@ -52,7 +52,7 @@
                   </div>
                 </div>
       
-                <div class="col-span-1">
+                <div class="col-span-1 hover:bg-gray-50">
                   <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
                     <div class="col-span-9">
                       FAQ
@@ -68,7 +68,7 @@
                   </div>
                 </div>
       
-                <div class="col-span-1">
+                <div class="col-span-1 hover:bg-gray-50">
                   <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
                     <div class="col-span-9">
                       Misc.

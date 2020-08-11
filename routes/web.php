@@ -17,9 +17,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ScoreboardController;
 use App\Http\Controllers\TrainingController;
-use App\Http\Controllers\TrainingSettingController;
-use App\Http\Controllers\TrainingSettingBestPracticesController;
-use App\Http\Controllers\TrainingSettingBestPracticesWhatToSayController;
+use App\Http\Controllers\TrainingSettingsController;
+use App\Http\Controllers\TrainingSettingsBestPracticesController;
+use App\Http\Controllers\TrainingSettingsBestPracticesWhatToSayController;
 use App\Http\Controllers\IncentivesController;
 use App\Http\Controllers\NumberTrackingController;
 use App\Http\Controllers\ProfileChangePasswordController;
@@ -68,12 +68,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('masters/invite', [MasterInvitationController::class, 'invite']);
         Route::patch('masters/{master}/revoke', RevokeMasterAccessController::class)->name('masters.revoke');
 
-        Route::get('settings/incentives', [ManageIncentivesController::class, 'index'])->name('settings.incentives');
-        Route::get('settings/incentives/create', [ManageIncentivesController::class, 'create'])->name('settings.incentives.create');
-        Route::post('settings/incentives/create', [ManageIncentivesController::class, 'store'])->name('settings.incentives.store');
-        Route::get('settings/incentives/{incentive}/edit', [ManageIncentivesController::class, 'edit'])->name('settings.incentives.edit');
-        Route::put('settings/incentives/{incentive}', [ManageIncentivesController::class, 'update'])->name('settings.incentives.update');
-        Route::delete('settings/incentives/{incentive}', [ManageIncentivesController::class, 'destroy'])->name('settings.incentives.destroy');
+        Route::get('incentives', [ManageIncentivesController::class, 'index'])->name('incentives');
+        Route::get('incentives/create', [ManageIncentivesController::class, 'create'])->name('incentives.create');
+        Route::post('incentives/create', [ManageIncentivesController::class, 'store'])->name('incentives.store');
+        Route::get('incentives/{incentive}/edit', [ManageIncentivesController::class, 'edit'])->name('incentives.edit');
+        Route::put('incentives/{incentive}', [ManageIncentivesController::class, 'update'])->name('incentives.update');
+        Route::delete('incentives/{incentive}', [ManageIncentivesController::class, 'destroy'])->name('incentives.destroy');
     });
     //endregion
 
@@ -81,6 +81,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::get('/profile/show-profile-information', [ProfileController::class, 'index'])->name('profile.show-profile-information');
+    Route::get('/profile/{user}/show-modal-profile-information', [ProfileController::class, 'showData'])->name('profile.show-modal-profile-information');
     Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('/profile/show', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/photo-upload', ProfilePhotoUploadController::class)->name('profile.photo-upload');
@@ -90,9 +91,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/customers/{customer}/active', [CustomerController::class, 'Active'])->name('customers.active');
     Route::get('/scoreboard', ScoreboardController::class)->name('scoreboard');
     Route::get('/trainings', [TrainingController::class, 'index'])->name('trainings.index');
-    Route::get('/trainings/setting', [TrainingSettingController::class, 'index'])->name('trainings.settings.index');
-    Route::get('/trainings/setting/best-practices', [TrainingSettingBestPracticesController::class ,'index'])->name('trainings.settings.best-practices.index');
-    Route::get('/trainings/setting/best-practices/what-to-say', [TrainingSettingBestPracticesWhatToSayController::class, 'index'])->name('trainings.settings.best-practices.what-to-say.index');
+    Route::get('/trainings/settings', [TrainingSettingsController::class, 'index'])->name('trainings.settings.index');
+    Route::get('/trainings/settings/best-practices', [TrainingSettingsBestPracticesController::class ,'index'])->name('trainings.settings.best-practices.index');
+    Route::get('/trainings/settings/best-practices/what-to-say', [TrainingSettingsBestPracticesWhatToSayController::class, 'index'])->name('trainings.settings.best-practices.what-to-say.index');
     Route::get('/incentives', IncentivesController::class)->name('incentives');
     Route::get('/number-tracking', [NumberTrackingController::class, 'index'])->name('number-tracking.index');
     Route::get('/number-tracking/create', [NumberTrackingController::class, 'create'])->name('number-tracking.create');

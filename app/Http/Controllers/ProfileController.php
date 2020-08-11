@@ -4,12 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Models\User;
 
 class ProfileController extends Controller
 {
     public function index()
     {
         return view('profile.index');
+    }
+
+    public function showData(User $user)
+    {
+        return view('profile.show-data', compact('user'));
     }
 
     public function show()
