@@ -191,7 +191,7 @@
                         </div>
                     </div>
                     <div class="mt-6">
-                        <x-button :href="route('number-tracking.create')" color="green" class="w-full justify-center py-4 px-4 bg-green-base text-white hover:bg-green-dark leading-5 font-medium rounded-md focus:outline-none focus:border-green-300 focus:shadow-outline-green transition duration-150 ease-in-out">
+                        <x-button :href="route('number-tracking.create')" color="green" class="inline-flex w-full">
                             Update Numbers
                         </x-button>
                     </div>
@@ -355,7 +355,7 @@
 
                         <div class="mt-3">
                             <div class="flex flex-col">
-                                <div class="sm:overflow-x-auto md:overflow-x-hidden">
+                                <div class="overflow-x-auto">
                                     <div class="align-middle inline-block min-w-full overflow-hidden">
                                         <x-table>
                                             <x-slot name="header">

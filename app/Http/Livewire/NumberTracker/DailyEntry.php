@@ -17,7 +17,8 @@ class DailyEntry extends Component
 
     public function mount()
     {
-        $this->dateSelected = date('Y-m-d', time());
+        $this->dateSelected   = date('Y-m-d', time());
+        $this->regionSelected = Region::first()->id;
     }
 
     public function setDate()
