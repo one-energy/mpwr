@@ -179,7 +179,7 @@
             </button>
           </div>
 
-          <x-profile.show-modal-profile-information/>
+        <x-profile.show-modal-profile-information/>
 
         </div>
       </div>
