@@ -118,7 +118,7 @@
                             <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
                                 <div class="text-xs font-semibold uppercase">Doors</div>
                                 <div class="text-xl font-bold">{{$sumDoors}}</div>
-                                <div class="flex font-semibold text-xs text-green-base">
+                                <div class="flex font-semibold text-xs @if($sumDoors >= $lastSumDoors) text-green-base @else text-red-600 @endif">
                                     <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(-45)" width="20" height="20" viewBox="0 0 20 20">
                                         <symbol id="arrow" viewBox="0 0 24 24">
                                         <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current"></path>
@@ -126,14 +126,18 @@
                                         <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
                                     </svg>
                                     <span>
-                                        {{$sumDoors - $lastSumDoors}}
+                                        @if($sumDoors >= $lastSumDoors)
+                                            +{{$sumDoors - $lastSumDoors}}
+                                        @else
+                                            {{$sumDoors - $lastSumDoors}}
+                                        @endif
                                     </span>
                                 </div>
                             </div>
                             <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
                                 <div class="text-xs text-gray-900 font-semibold uppercase">Hours</div>
                                 <div class="text-xl text-gray-900 font-bold">{{$sumHours}}</div>
-                                <div class="flex font-semibold text-xs text-green-base">
+                                <div class="flex font-semibold text-xs @if($sumHours >= $lastSumHours) text-green-base @else text-red-600 @endif">
                                     <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(-45)" width="20" height="20" viewBox="0 0 20 20">
                                         <symbol id="arrow" viewBox="0 0 24 24">
                                         <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current"></path>
@@ -141,14 +145,18 @@
                                         <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
                                     </svg>
                                     <span>
-                                        +500
+                                        @if($sumHours >= $lastSumHours)
+                                            +{{$sumHours - $lastSumHours}}
+                                        @else
+                                            {{$sumHours - $lastSumHours}}
+                                        @endif
                                     </span>
                                 </div>
                             </div>
                             <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
                                 <div class="text-xs text-gray-900 font-semibold uppercase">Sets</div>
                                 <div class="text-xl text-gray-900 font-bold">{{$sumSets}}</div>
-                                <div class="flex font-semibold text-xs text-green-base">
+                                <div class="flex font-semibold text-xs @if($sumSets >= $lastSumSets) text-green-base @else text-red-600 @endif">
                                     <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(-45)" width="20" height="20" viewBox="0 0 20 20">
                                         <symbol id="arrow" viewBox="0 0 24 24">
                                         <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current"></path>
@@ -156,14 +164,18 @@
                                         <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
                                     </svg>
                                     <span>
-                                        +500
+                                        @if($sumSets >= $lastSumSets)
+                                            +{{$sumSets - $lastSumSets}}
+                                        @else
+                                            {{$sumSets - $lastSumSets}}
+                                        @endif
                                     </span>
                                 </div>
                             </div>
                             <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
                                 <div class="text-xs text-gray-900 font-semibold uppercase">Sits</div>
                                 <div class="text-xl text-gray-900 font-bold">{{$sumSits}}</div>
-                                <div class="flex font-semibold text-xs text-green-base">
+                                <div class="flex font-semibold text-xs @if($sumSits >= $lastSumSits) text-green-base @else text-red-600 @endif">
                                     <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(-45)" width="20" height="20" viewBox="0 0 20 20">
                                         <symbol id="arrow" viewBox="0 0 24 24">
                                         <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current"></path>
@@ -171,14 +183,18 @@
                                         <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
                                     </svg>
                                     <span>
-                                        +500
+                                        @if($sumSits >= $lastSumSits)
+                                            +{{$sumSits - $lastSumSits}}
+                                        @else
+                                            {{$sumSits - $lastSumSits}}
+                                        @endif
                                     </span>
                                 </div>
                             </div>
                             <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
                                 <div class="text-xs text-gray-900 font-semibold uppercase">Set closes</div>
                                 <div class="text-xl text-gray-900 font-bold">{{$sumSetCloses}}</div>
-                                <div class="flex font-semibold text-xs text-green-base">
+                                <div class="flex font-semibold text-xs @if($sumSetCloses >= $lastSumSetCloses) text-green-base @else text-red-600 @endif">
                                     <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(-45)" width="20" height="20" viewBox="0 0 20 20">
                                         <symbol id="arrow" viewBox="0 0 24 24">
                                         <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current"></path>
@@ -186,14 +202,18 @@
                                         <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
                                     </svg>
                                     <span>
-                                        +500
+                                        @if($sumSetCloses >= $lastSumSetCloses)
+                                            +{{$sumSetCloses - $lastSumSetCloses}}
+                                        @else
+                                            {{$sumSetCloses - $lastSumSetCloses}}
+                                        @endif
                                     </span>
                                 </div>
                             </div>
                             <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
                                 <div class="text-xs text-gray-900 font-semibold uppercase">Closes</div>
                                 <div class="text-xl text-gray-900 font-bold">{{$sumCloses}}</div>
-                                <div class="flex font-semibold text-xs text-green-base">
+                                <div class="flex font-semibold text-xs @if($sumCloses >= $lastSumCloses) text-green-base @else text-red-600 @endif">
                                     <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(-45)" width="20" height="20" viewBox="0 0 20 20">
                                         <symbol id="arrow" viewBox="0 0 24 24">
                                         <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current"></path>
@@ -201,7 +221,11 @@
                                         <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
                                     </svg>
                                     <span>
-                                        +500
+                                        @if($sumCloses >= $lastSumCloses)
+                                            +{{$sumCloses - $lastSumCloses}}
+                                        @else
+                                            {{$sumCloses - $lastSumCloses}}
+                                        @endif
                                     </span>
                                 </div>
                             </div>

@@ -14,6 +14,7 @@ class DailyEntry extends Component
     public $regionSelected = '';
 
     public $dateSelected = '';
+    public $lastDateSelected = '';
 
     public $users = '';
 
@@ -29,7 +30,8 @@ class DailyEntry extends Component
         $this->regionSelected   = Region::first()->id;
     }
 
-    public function sumEntries() {
+    public function sumEntries() 
+    {
         $this->sumDoors     = 0;
         $this->sumHours     = 0;
         $this->sumSets      = 0;
@@ -46,7 +48,8 @@ class DailyEntry extends Component
         }
     }
 
-    public function sumLastDayEntries() {
+    public function sumLastDayEntries() 
+    {
         $this->lastSumDoors     = 0;
         $this->lastSumHours     = 0;
         $this->lastSumSets      = 0;
