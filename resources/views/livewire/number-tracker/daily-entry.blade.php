@@ -325,7 +325,7 @@
                                                             type="number" 
                                                             min="0" 
                                                             name="numbers[{{ $user->id }}][doors]" 
-                                                            class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 px-1"
+                                                            class="form-input block w-14 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                                                             value="{{ $user->doors }}"/>
                                                     </x-table.td>
                                                     <x-table.td>
@@ -334,7 +334,7 @@
                                                             min="0" 
                                                             step="any" 
                                                             name="numbers[{{ $user->id }}][hours]" 
-                                                            class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                                            class="form-input block w-14 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                                                             value="{{ $user->hours }}"/>
                                                     </x-table.td>
                                                     <x-table.td>
@@ -342,7 +342,7 @@
                                                             type="number" 
                                                             min="0"
                                                             name="numbers[{{ $user->id }}][sets]" 
-                                                            class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                                            class="form-input block w-14 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                                                             value="{{ $user->sets }}"/>
                                                     </x-table.td>
                                                     <x-table.td>
@@ -350,7 +350,7 @@
                                                             type="number" 
                                                             min="0"
                                                             name="numbers[{{ $user->id }}][sits]" 
-                                                            class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                                            class="form-input block w-14 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                                                             value="{{ $user->sits }}"/>
                                                     </x-table.td>
                                                     <x-table.td>
@@ -358,7 +358,7 @@
                                                             type="number" 
                                                             min="0"
                                                             name="numbers[{{ $user->id }}][set_closes]" 
-                                                            class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                                            class="form-input block w-14 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                                                             value="{{ $user->set_closes }}"/>
                                                     </x-table.td>
                                                     <x-table.td>
@@ -366,7 +366,7 @@
                                                             type="number" 
                                                             min="0"
                                                             name="numbers[{{ $user->id }}][closes]" 
-                                                            class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                                            class="form-input block w-14 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                                                             value="{{ $user->closes }}"/>
                                                     </x-table.td>
                                                 </x-table.tr>
