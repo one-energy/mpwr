@@ -117,7 +117,7 @@
                         <div class="w-full grid md:grid-cols-6 grid-cols-3 md:col-gap-4 col-gap-1 row-gap-2">
                             <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
                                 <div class="text-xs font-semibold uppercase">Doors</div>
-                                <div class="text-xl font-bold">1752</div>
+                                <div class="text-xl font-bold">{{$sumDoors}}</div>
                                 <div class="flex font-semibold text-xs text-green-base">
                                     <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(-45)" width="20" height="20" viewBox="0 0 20 20">
                                         <symbol id="arrow" viewBox="0 0 24 24">
@@ -126,13 +126,13 @@
                                         <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
                                     </svg>
                                     <span>
-                                        +500
+                                        {{$sumDoors - $lastSumDoors}}
                                     </span>
                                 </div>
                             </div>
                             <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
                                 <div class="text-xs text-gray-900 font-semibold uppercase">Hours</div>
-                                <div class="text-xl text-gray-900 font-bold">153</div>
+                                <div class="text-xl text-gray-900 font-bold">{{$sumHours}}</div>
                                 <div class="flex font-semibold text-xs text-green-base">
                                     <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(-45)" width="20" height="20" viewBox="0 0 20 20">
                                         <symbol id="arrow" viewBox="0 0 24 24">
@@ -147,7 +147,7 @@
                             </div>
                             <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
                                 <div class="text-xs text-gray-900 font-semibold uppercase">Sets</div>
-                                <div class="text-xl text-gray-900 font-bold">113</div>
+                                <div class="text-xl text-gray-900 font-bold">{{$sumSets}}</div>
                                 <div class="flex font-semibold text-xs text-green-base">
                                     <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(-45)" width="20" height="20" viewBox="0 0 20 20">
                                         <symbol id="arrow" viewBox="0 0 24 24">
@@ -162,7 +162,7 @@
                             </div>
                             <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
                                 <div class="text-xs text-gray-900 font-semibold uppercase">Sits</div>
-                                <div class="text-xl text-gray-900 font-bold">68</div>
+                                <div class="text-xl text-gray-900 font-bold">{{$sumSits}}</div>
                                 <div class="flex font-semibold text-xs text-green-base">
                                     <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(-45)" width="20" height="20" viewBox="0 0 20 20">
                                         <symbol id="arrow" viewBox="0 0 24 24">
@@ -177,7 +177,7 @@
                             </div>
                             <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
                                 <div class="text-xs text-gray-900 font-semibold uppercase">Set closes</div>
-                                <div class="text-xl text-gray-900 font-bold">6</div>
+                                <div class="text-xl text-gray-900 font-bold">{{$sumSetCloses}}</div>
                                 <div class="flex font-semibold text-xs text-green-base">
                                     <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(-45)" width="20" height="20" viewBox="0 0 20 20">
                                         <symbol id="arrow" viewBox="0 0 24 24">
@@ -192,7 +192,7 @@
                             </div>
                             <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
                                 <div class="text-xs text-gray-900 font-semibold uppercase">Closes</div>
-                                <div class="text-xl text-gray-900 font-bold">5</div>
+                                <div class="text-xl text-gray-900 font-bold">{{$sumCloses}}</div>
                                 <div class="flex font-semibold text-xs text-green-base">
                                     <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(-45)" width="20" height="20" viewBox="0 0 20 20">
                                         <symbol id="arrow" viewBox="0 0 24 24">
@@ -253,7 +253,7 @@
                                                             type="number" 
                                                             min="0" 
                                                             name="numbers[{{ $user->id }}][doors]" 
-                                                            class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                                            class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 px-1"
                                                             value="{{ $user->doors }}"/>
                                                     </x-table.td>
                                                     <x-table.td>

@@ -15,10 +15,58 @@ class DailyEntry extends Component
 
     public $dateSelected = '';
 
+    public $users = '';
+
+    public $sumDoors, $sumHours, $sumSets, $sumSits, $sumSetCloses, $sumCloses = 0;
+    public $lastSumDoors, $lastSumHours, $lastSumSets, $lastSumSits, $lastSumSetCloses, $lastSumCloses = 0;
+    
+    protected $listeners = ['dailyNumbersSaved' => 'updateSum'];
+
     public function mount()
     {
         $this->dateSelected   = date('Y-m-d', time());
         $this->regionSelected = Region::first()->id;
+    }
+
+    public function sumEntries() {
+        $this->sumDoors = 0;
+        $this->sumHours = 0;
+        $this->sumSets = 0;
+        $this->sumSits = 0;
+        $this->sumSetCloses = 0;
+        $this->sumCloses = 0;
+        foreach ($this->users as $key => $user) {
+            $this->sumDoors += $user->doors;
+            $this->sumHours += $user->hours;
+            $this->sumSets += $user->sets;
+            $this->sumSits += $user->sits;
+            $this->sumSetCloses += $user->set_closes;
+            $this->sumCloses += $user->closes;
+        }
+    }
+
+    public function getUsers($dateSelected) {
+        return User::query()
+            ->when($this->regionSelected, function(Builder $query) {
+                $query->whereHas('regions', function(Builder $query) {
+                    $query->whereId($this->regionSelected);
+                });
+            })
+            ->leftJoin('daily_numbers', function($join) {
+                $join->on('daily_numbers.user_id', '=', 'users.id')
+                    ->where('daily_numbers.date', '=', $this->dateSelected);
+            })
+            ->orderBy($this->sortBy())
+            ->select(
+                'users.*', 
+                'daily_numbers.doors', 
+                'daily_numbers.hours', 
+                'daily_numbers.sets', 
+                'daily_numbers.sits', 
+                'daily_numbers.set_closes', 
+                'daily_numbers.closes'
+            )
+            ->get();
     }
 
     public function setDate()
@@ -38,28 +86,10 @@ class DailyEntry extends Component
 
     public function render()
     {
+        $this->users = $this->getUsers($this->dateSelected);
+        $this->sumEntries();
         return view('livewire.number-tracker.daily-entry',[
-            'users' => User::query()
-                ->when($this->regionSelected, function(Builder $query) {
-                    $query->whereHas('regions', function(Builder $query) {
-                        $query->whereId($this->regionSelected);
-                    });
-                })
-                ->leftJoin('daily_numbers', function($join) {
-                    $join->on('daily_numbers.user_id', '=', 'users.id')
-                        ->where('daily_numbers.date', '=', $this->dateSelected);
-                })
-                ->orderBy($this->sortBy())
-                ->select(
-                    'users.*', 
-                    'daily_numbers.doors', 
-                    'daily_numbers.hours', 
-                    'daily_numbers.sets', 
-                    'daily_numbers.sits', 
-                    'daily_numbers.set_closes', 
-                    'daily_numbers.closes'
-                )
-                ->get(),
+            // 'users' => $this->users,
             'regions' => Region::all(),
         ]);
     }
