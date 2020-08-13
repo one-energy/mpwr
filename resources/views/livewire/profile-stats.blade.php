@@ -24,40 +24,40 @@
             <div class="col-span-2 text-xs text-gray-900">
                 <div class="flex justify-between grid grid-cols-2 row-gap-1 col-gap-2 border-gray-200 border-2 m-1 p-2 rounded-lg">
                     <div class="col-span-2 text-xs text-gray-900">
-                    DPS RATIO
+                        DPS RATIO
                     </div>
                     <div class="col-span-2 text-xl font-bold text-gray-900">
-                    1.67
+                        {{ number_format($dpsRatio) }}
                     </div>
                 </div>
             </div>
             <div class="col-span-2 text-xs text-gray-900">
                 <div class="flex justify-between grid grid-cols-2 row-gap-1 col-gap-2 border-gray-200 border-2 m-1 p-2 rounded-lg">
                     <div class="col-span-2 text-xs text-gray-900">
-                    HPS RATIO
+                        HPS RATIO
                     </div>
                     <div class="col-span-2 text-xl font-bold text-gray-900">
-                    2.34
+                        {{ number_format($hpsRatio) }}
                     </div>
                 </div>
             </div>
             <div class="col-span-2 text-xs text-gray-900">
                 <div class="flex justify-between grid grid-cols-2 row-gap-1 col-gap-2 border-gray-200 border-2 m-1 p-2 rounded-lg">
                     <div class="col-span-2 text-xs text-gray-900">
-                    SIT RATIO
+                        SIT RATIO
                     </div>
                     <div class="col-span-2 text-xl font-bold text-gray-900">
-                    55%
+                        {{ number_format($sitRatio) }}%
                     </div>
                 </div>
             </div>
             <div class="col-span-2 text-xs text-gray-900">
                 <div class="flex justify-between grid grid-cols-2 row-gap-1 col-gap-2 border-gray-200 border-2 m-1 p-2 rounded-lg">
                     <div class="col-span-2 text-xs text-gray-900">
-                    CLOSE RATIO
+                        CLOSE RATIO
                     </div>
                     <div class="col-span-2 text-xl font-bold text-gray-900">
-                    22%
+                        {{ number_format($closeRatio) }}%
                     </div>
                 </div>
             </div>

@@ -8,61 +8,46 @@ use Livewire\Component;
 
 class ProfileStats extends Component
 {
-    public $user = '';
+    public $user;
 
-    public $totalDoors = '';
+    public $totalDoors;
 
-    public $totalHours = '';
+    public $totalHours;
 
-    public $totalSets = '';
+    public $totalSets;
 
-    public $totalSits = '';
+    public $totalSits;
 
-    public $totalCloses = '';
+    public $totalCloses;
+
+    public $dpsRatio;
+
+    public $hpsRatio;
+
+    public $sitRatio;
+
+    public $closeRatio;
 
     public function mount(int $userId)
     {
-        $this->setUser($userId);
+        $this->user = User::find($userId);
+
+        $query = $this->user->dailyNumbers;
+
+        $this->totalDoors  = $query->sum('doors');
+        $this->totalHours  = $query->sum('hours');
+        $this->totalSets   = $query->sum('sets');
+        $this->totalSits   = $query->sum('sits');
+        $this->totalCloses = $query->sum('set_closes');
+
+        $this->dpsRatio   = $this->totalDoors / $this->totalSets;
+        $this->hpsRatio   = $this->totalHours / $this->totalSets;
+        $this->sitRatio   = $this->totalSits / $this->totalSets;
+        $this->closeRatio = $this->totalCloses / $this->totalSits;
     }
 
     public function render()
     {
         return view('livewire.profile-stats');
-    }
-
-    public function setUser(int $userId)
-    {
-        $this->user = User::find($userId);
-
-        $query = User::query()
-            ->leftJoin('daily_numbers', function($join) {
-                $join->on('daily_numbers.user_id', '=', 'users.id');
-            })
-            ->where('users.id', $userId);
-
-        $this->totalDoors = $query
-            ->select(DB::raw('sum(daily_numbers.doors) as doors'))
-            ->whereNotNull('daily_numbers.doors')
-            ->pluck('doors')->toArray();
-
-        $this->totalHours = $query
-            ->select(DB::raw('sum(daily_numbers.hours) as hours'))
-            ->whereNotNull('daily_numbers.hours')
-            ->pluck('hours')->toArray();
-
-        $this->totalSets = $query
-            ->select(DB::raw('sum(daily_numbers.sets) as sets'))
-            ->whereNotNull('daily_numbers.sets')
-            ->pluck('sets')->toArray();
-
-        $this->totalSits = $query
-            ->select(DB::raw('sum(daily_numbers.sits) as sits'))
-            ->whereNotNull('daily_numbers.sits')
-            ->pluck('sits')->toArray();
-
-        $this->totalCloses = $query
-            ->select(DB::raw('sum(daily_numbers.set_closes) as set_closes'))
-            ->whereNotNull('daily_numbers.set_closes')
-            ->pluck('set_closes')->toArray();
     }
 }

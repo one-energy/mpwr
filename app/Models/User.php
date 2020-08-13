@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class User extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable;
+    use SoftDeletes;
 
     const OWNER  = 'owner';
     const MEMBER = 'member';
@@ -60,6 +61,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function invitations()
     {
         return $this->hasMany(Invitation::class);
+    }
+
+    public function dailyNumbers()
+    {
+        return $this->hasMany(DailyNumber::class);
     }
 
     public function changePassword($new)
