@@ -17,9 +17,7 @@ class DailyEntry extends Component
     public $lastDateSelected;
 
     public $users;
-
-    public $sumDoors, $sumHours, $sumSets, $sumSits, $sumSetCloses, $sumCloses = 0;
-    public $lastSumDoors, $lastSumHours, $lastSumSets, $lastSumSits, $lastSumSetCloses, $lastSumCloses = 0;
+    public $usersLastDayEntries;
     
     protected $listeners = ['dailyNumbersSaved' => 'updateSum'];
 
@@ -28,42 +26,6 @@ class DailyEntry extends Component
         $this->dateSelected     = date('Y-m-d', time());
         $this->lastDateSelected = date('Y-m-d', strtotime($this->dateSelected  . '-1 day'));
         $this->regionSelected   = Region::first()->id;
-    }
-
-    public function sumEntries() 
-    {
-        $this->sumDoors     = 0;
-        $this->sumHours     = 0;
-        $this->sumSets      = 0;
-        $this->sumSits      = 0;
-        $this->sumSetCloses = 0;
-        $this->sumCloses    = 0;
-        foreach ($this->users as $key => $user) {
-            $this->sumDoors     += $user->doors;
-            $this->sumHours     += $user->hours;
-            $this->sumSets      += $user->sets;
-            $this->sumSits      += $user->sits;
-            $this->sumSetCloses += $user->set_closes;
-            $this->sumCloses    += $user->closes;
-        }
-    }
-
-    public function sumLastDayEntries() 
-    {
-        $this->lastSumDoors     = 0;
-        $this->lastSumHours     = 0;
-        $this->lastSumSets      = 0;
-        $this->lastSumSits      = 0;
-        $this->lastSumSetCloses = 0;
-        $this->lastSumCloses    = 0;
-        foreach ($this->usersLastDayEntries as $key => $user) {
-            $this->lastSumDoors     += $user->doors;
-            $this->lastSumHours     += $user->hours;
-            $this->lastSumSets      += $user->sets;
-            $this->lastSumSits      += $user->sits;
-            $this->lastSumSetCloses += $user->set_closes;
-            $this->lastSumCloses    += $user->closes;
-        }
     }
 
     public function getUsers($dateSelected) 
@@ -111,8 +73,7 @@ class DailyEntry extends Component
     {
         $this->users = $this->getUsers($this->dateSelected);
         $this->usersLastDayEntries = $this->getUsers($this->lastDateSelected);
-        $this->sumEntries();
-        $this->sumLastDayEntries();
+        
         return view('livewire.number-tracker.daily-entry',[
             // 'users' => $this->users,
             'regions' => Region::all(),

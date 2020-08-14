@@ -24,6 +24,31 @@ class DailyEntryTest extends FeatureTest
     }
 
     /** @test */
+    public function it_should_show_users_per_date() {
+        $today = date("Y-m-d", time());
+        $yesterday = date("Y-m-d",  strtotime($today  . '-1 day'));
+
+        $regionOne = (new RegionBuilder)->save()->get();
+
+        $userOne = (new UserBuilder)->withRegion($regionOne)->save()->get();
+        $userTwo = (new UserBuilder)->withRegion($regionOne)->save()->get();
+
+        $dailyEntryOne          = (new DailyEntryBuilder)->withUser($userOne->id)->withDate($today)->save()->get();
+        $dailyEntryOneYesterday = (new DailyEntryBuilder)->withUser($userTwo->id)->withDate($yesterday)->save()->get();
+        
+        $dailyEntryTwo          = (new DailyEntryBuilder)->withUser($userOne->id)->withDate($today)->save()->get();
+        $dailyEntryTwoYesterday = (new DailyEntryBuilder)->withUser($userTwo->id)->withDate($yesterday)->save()->get();
+        
+        $livewireTest = Livewire::test(DailyEntry::class)
+            ->set('date', $today)
+            ->call('setDate')
+            ->assertSet('dateSelected', $today)
+            ->assertSee($dailyEntryOne->doors)
+            ->assertDontSee($dailyEntryOneYesterday->doors);
+    
+    }
+
+    /** @test */
     public function it_should_show_users_per_regions() {
 
         //create regions
@@ -43,8 +68,6 @@ class DailyEntryTest extends FeatureTest
         $userEight = (new UserBuilder)->withRegion($regionTwo)->save()->get();
         $userNine = (new UserBuilder)->withRegion($regionTwo)->save()->get();
         $userTen = (new UserBuilder)->withRegion($regionTwo)->save()->get();
-
-        fwrite(STDERR, print_r($userOne->region, TRUE));
 
         //first region 
         Livewire::test(DailyEntry::class)
@@ -72,7 +95,7 @@ class DailyEntryTest extends FeatureTest
             ->assertSee($userSeven->first_name . " " . $userSeven->last_name) 
             ->assertSee($userEight->first_name . " " . $userEight->last_name) 
             ->assertSee($userNine->first_name . " " . $userNine->last_name) 
-            ->assertSee($userTen->first_name . " " . $userTen->last_name); 
+            ->assertSee($userTen->first_name . " " . $userTen->last_name);
         
     }
 
