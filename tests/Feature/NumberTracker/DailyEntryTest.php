@@ -9,22 +9,90 @@ use Livewire\Livewire;
 use Tests\Unit\UnitTest;
 use App\Http\Livewire\NumberTracker\DailyEntry;
 use Tests\Builders\UserBuilder;
+use Tests\Builders\RegionBuilder;
+use Tests\Builders\DailyEntryBuilder;
 use Tests\Feature\FeatureTest;
 
 
 class DailyEntryTest extends FeatureTest
 {
     /** @test */
-    public function it_should_sum_kpi_users_entries () {
-        $user = (new UserBuilder)->save()->get();
-        $this->actingAs($user);
+    public function it_should_sum_kpi_users_entries () 
+    {
+        $this->assertTrue(True);
+        
+    }
+
+    /** @test */
+    public function it_should_show_users_per_regions() {
+
+        //create regions
+        $regionOne = (new RegionBuilder)->save()->get();
+        $regionTwo = (new RegionBuilder)->save()->get();
+
+        //create user to region one
+        $userOne = (new UserBuilder)->withRegion($regionOne)->save()->get();
+        $userTwo = (new UserBuilder)->withRegion($regionOne)->save()->get();
+        $userThree = (new UserBuilder)->withRegion($regionOne)->save()->get();
+        $userFour = (new UserBuilder)->withRegion($regionOne)->save()->get();
+        $userFive = (new UserBuilder)->withRegion($regionOne)->save()->get();
+        
+        //create user to region two
+        $userSix = (new UserBuilder)->withRegion($regionTwo)->save()->get();
+        $userSeven = (new UserBuilder)->withRegion($regionTwo)->save()->get();
+        $userEight = (new UserBuilder)->withRegion($regionTwo)->save()->get();
+        $userNine = (new UserBuilder)->withRegion($regionTwo)->save()->get();
+        $userTen = (new UserBuilder)->withRegion($regionTwo)->save()->get();
+
+        fwrite(STDERR, print_r($userOne->region, TRUE));
+
+        //first region 
+        Livewire::test(DailyEntry::class)
+            ->call('setRegion',$regionOne->id)
+            ->assertSee($userOne->first_name . " " . $userOne->last_name) 
+            ->assertSee($userTwo->first_name . " " . $userTwo->last_name) 
+            ->assertSee($userThree->first_name . " " . $userThree->last_name) 
+            ->assertSee($userFour->first_name . " " . $userFour->last_name) 
+            ->assertSee($userFive->first_nam . " " . $userFive->last_name)
+            ->assertDontSee($userSix->first_name . " " . $userSix->last_name) 
+            ->assertDontSee($userSeven->first_name . " " . $userSeven->last_name) 
+            ->assertDontSee($userEight->first_name . " " . $userEight->last_name) 
+            ->assertDontSee($userNine->first_name . " " . $userNine->last_name) 
+            ->assertDontSee($userTen->first_name . " " . $userTen->last_name); 
+
+        //change region
+        Livewire::test(DailyEntry::class)
+            ->call('setRegion',$regionTwo->id)
+            ->assertDontSee($userOne->first_name . " " . $userOne->last_name) 
+            ->assertDontSee($userTwo->first_name . " " . $userTwo->last_name) 
+            ->assertDontSee($userThree->first_name . " " . $userThree->last_name) 
+            ->assertDontSee($userFour->first_name . " " . $userFour->last_name) 
+            ->assertDontSee($userFive->first_nam . " " . $userFive->last_name)
+            ->assertSee($userSix->first_name . " " . $userSix->last_name) 
+            ->assertSee($userSeven->first_name . " " . $userSeven->last_name) 
+            ->assertSee($userEight->first_name . " " . $userEight->last_name) 
+            ->assertSee($userNine->first_name . " " . $userNine->last_name) 
+            ->assertSee($userTen->first_name . " " . $userTen->last_name); 
+        
+    }
+
+    /** @test */
+    public function it_should_show_regions() 
+    {
+        //creating regions
+        $regionOne = (new RegionBuilder)->save()->get();
+        $regionTwo = (new RegionBuilder)->save()->get();
+        $regionThree = (new RegionBuilder)->save()->get();
+        $regionFour = (new RegionBuilder)->save()->get();
+        $regionFive = (new RegionBuilder)->save()->get();
 
         Livewire::test(DailyEntry::class)
-            ->set('sumDoors', 123)
-            ->assertSee(123);
-            
-        // $dailyEntries = factory(DailyNumber::class)->create();
-        
+            ->assertSee($regionOne->name) 
+            ->assertSee($regionTwo->name) 
+            ->assertSee($regionThree->name) 
+            ->assertSee($regionFour->name) 
+            ->assertSee($regionFive->name); 
+
     }
    
 }

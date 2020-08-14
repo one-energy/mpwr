@@ -154,4 +154,11 @@ class UserBuilder
 
         return $this;
     }
+
+    public function withRegion(Region $region)
+    {
+        $this->region = $region;
+
+        return $this;
+    }
 }

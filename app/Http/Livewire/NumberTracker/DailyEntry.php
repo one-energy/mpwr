@@ -9,14 +9,14 @@ use Livewire\Component;
 
 class DailyEntry extends Component
 {
-    public $date = '';
+    public $date;
 
-    public $regionSelected = '';
+    public $regionSelected;
 
-    public $dateSelected = '';
-    public $lastDateSelected = '';
+    public $dateSelected;
+    public $lastDateSelected;
 
-    public $users = '';
+    public $users;
 
     public $sumDoors, $sumHours, $sumSets, $sumSits, $sumSetCloses, $sumCloses = 0;
     public $lastSumDoors, $lastSumHours, $lastSumSets, $lastSumSits, $lastSumSetCloses, $lastSumCloses = 0;
