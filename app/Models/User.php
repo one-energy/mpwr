@@ -9,7 +9,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
@@ -37,14 +36,14 @@ class User extends Authenticatable implements MustVerifyEmail
         'Region Manager',
         'Office Manager',
         'Sales Rep',
-        'Setter'
+        'Setter',
     ];
 
     const TOPLEVEL_ROLES = [
         'Admin',
         'Region Manager',
         'Office Manager',
-        'Sales Rep'
+        'Sales Rep',
     ];
 
     protected $casts = [

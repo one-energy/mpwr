@@ -29,7 +29,7 @@ class CustomerController extends Controller
                 'bills'      => $bills,
                 'financings' => $financings,
                 'openedById' => $openedById,
-                'users'      => $users
+                'users'      => $users,
             ] 
         );
     }
@@ -154,12 +154,11 @@ class CustomerController extends Controller
         $customer->is_active = !request('active');
         $customer->save();
 
-        if($customer->is_active == true)
-        {
+        if ($customer->is_active == true) {
             alert()
             ->withTitle(__('Home Owner set as active!'))
             ->send();
-        }else{
+        } else {
             alert()
             ->withTitle(__('Home Owner set as canceled!'))
             ->send();

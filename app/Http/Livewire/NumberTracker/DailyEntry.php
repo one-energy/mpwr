@@ -14,9 +14,11 @@ class DailyEntry extends Component
     public $regionSelected;
 
     public $dateSelected;
+
     public $lastDateSelected;
 
     public $users;
+
     public $usersLastDayEntries;
     
     protected $listeners = ['dailyNumbersSaved' => 'updateSum'];
@@ -24,11 +26,11 @@ class DailyEntry extends Component
     public function mount()
     {
         $this->dateSelected     = date('Y-m-d', time());
-        $this->lastDateSelected = date('Y-m-d', strtotime($this->dateSelected  . '-1 day'));
+        $this->lastDateSelected = date('Y-m-d', strtotime($this->dateSelected . '-1 day'));
         $this->regionSelected   = Region::first()->id;
     }
 
-    public function getUsers($dateSelected) 
+    public function getUsers($dateSelected)
     {
         return User::query()
             ->when($this->regionSelected, function(Builder $query) {
@@ -36,7 +38,7 @@ class DailyEntry extends Component
                     $query->whereId($this->regionSelected);
                 });
             })
-            ->leftJoin('daily_numbers', function($join) use ($dateSelected)  {
+            ->leftJoin('daily_numbers', function($join) use ($dateSelected) {
                 $join->on('daily_numbers.user_id', '=', 'users.id')
                     ->where('daily_numbers.date', '=', $dateSelected);
             })
@@ -55,8 +57,8 @@ class DailyEntry extends Component
 
     public function setDate()
     {
-        $this->dateSelected = date('Y-m-d', strtotime($this->date));
-        $this->lastDateSelected = date('Y-m-d', strtotime($this->dateSelected  . '-1 day'));
+        $this->dateSelected     = date('Y-m-d', strtotime($this->date));
+        $this->lastDateSelected = date('Y-m-d', strtotime($this->dateSelected . '-1 day'));
     }
 
     public function setRegion($id)
@@ -71,7 +73,7 @@ class DailyEntry extends Component
 
     public function render()
     {
-        $this->users = $this->getUsers($this->dateSelected);
+        $this->users               = $this->getUsers($this->dateSelected);
         $this->usersLastDayEntries = $this->getUsers($this->lastDateSelected);
         
         return view('livewire.number-tracker.daily-entry',[

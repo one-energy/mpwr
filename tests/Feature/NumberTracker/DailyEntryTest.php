@@ -19,8 +19,40 @@ class DailyEntryTest extends FeatureTest
     /** @test */
     public function it_should_sum_kpi_users_entries () 
     {
-        $this->assertTrue(True);
+        $region = (new RegionBuilder)->save()->get();
+
+        $userOne = (new UserBuilder)->withRegion($region)->save()->get();
+        $userTwo = (new UserBuilder)->withRegion($region)->save()->get();
+        $userThree = (new UserBuilder)->withRegion($region)->save()->get();
+        $userFour = (new UserBuilder)->withRegion($region)->save()->get();
         
+        $dailyEntryOne = (new DailyEntryBuilder)->withUser($userOne->id)->withDate(date("Y-m-d", time()))->save()->get();
+        $dailyEntryTwo = (new DailyEntryBuilder)->withUser($userTwo->id)->withDate(date("Y-m-d", time()))->save()->get();
+        $dailyEntryThree = (new DailyEntryBuilder)->withUser($userThree->id)->withDate(date("Y-m-d", time()))->save()->get();
+        $dailyEntryFour = (new DailyEntryBuilder)->withUser($userFour->id)->withDate(date("Y-m-d", time()))->save()->get();
+        
+        $lastDailyEntryOne = (new DailyEntryBuilder)->withUser($userOne->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
+        $lastDailyEntryTwo = (new DailyEntryBuilder)->withUser($userTwo->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
+        $lastDailyEntryThree = (new DailyEntryBuilder)->withUser($userThree->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
+        $lastDailyEntryFour = (new DailyEntryBuilder)->withUser($userFour->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
+
+        //test if sum its right
+        Livewire::test(DailyEntry::class)
+            ->assertSee( $dailyEntryOne->doors + $dailyEntryTwo->doors + $dailyEntryThree->doors + $dailyEntryFour->doors)
+            ->assertSee( $dailyEntryOne->hours + $dailyEntryTwo->hours + $dailyEntryThree->hours + $dailyEntryFour->hours)
+            ->assertSee( $dailyEntryOne->sets + $dailyEntryTwo->sets + $dailyEntryThree->sets + $dailyEntryFour->sets)
+            ->assertSee( $dailyEntryOne->sits + $dailyEntryTwo->sits + $dailyEntryThree->sits + $dailyEntryFour->sits)
+            ->assertSee( $dailyEntryOne->set_closes + $dailyEntryTwo->set_closes + $dailyEntryThree->set_closes + $dailyEntryFour->set_closes)
+            ->assertSee( $dailyEntryOne->closes + $dailyEntryTwo->closes + $dailyEntryThree->closes + $dailyEntryFour->closes);
+        
+        //test if sum its right
+        Livewire::test(DailyEntry::class)
+            ->assertSee( ($dailyEntryOne->doors + $dailyEntryTwo->doors + $dailyEntryThree->doors + $dailyEntryFour->doors)                     - ($lastDailyEntryOne->doors + $lastDailyEntryTwo->doors + $lastDailyEntryThree->doors + $lastDailyEntryFour->doors))
+            ->assertSee( ($dailyEntryOne->hours + $dailyEntryTwo->hours + $dailyEntryThree->hours + $dailyEntryFour->hours)                     - ($lastDailyEntryOne->hours + $lastDailyEntryTwo->hours + $lastDailyEntryThree->hours + $lastDailyEntryFour->hours))
+            ->assertSee( ($dailyEntryOne->sets + $dailyEntryTwo->sets + $dailyEntryThree->sets + $dailyEntryFour->sets)                         - ($lastDailyEntryOne->sets + $lastDailyEntryTwo->sets + $lastDailyEntryThree->sets + $lastDailyEntryFour->sets))
+            ->assertSee( ($dailyEntryOne->sits + $dailyEntryTwo->sits + $dailyEntryThree->sits + $dailyEntryFour->sits)                         - ($lastDailyEntryOne->sits + $lastDailyEntryTwo->sits + $lastDailyEntryThree->sits + $lastDailyEntryFour->sits))
+            ->assertSee( ($dailyEntryOne->set_closes + $dailyEntryTwo->set_closes + $dailyEntryThree->set_closes + $dailyEntryFour->set_closes) - ($lastDailyEntryOne->set_closes + $lastDailyEntryTwo->set_closes + $lastDailyEntryThree->set_closes + $lastDailyEntryFour->set_closes))
+            ->assertSee( ($dailyEntryOne->closes + $dailyEntryTwo->closes + $dailyEntryThree->closes + $dailyEntryFour->closes)                 - ($lastDailyEntryOne->closes + $lastDailyEntryTwo->closes + $lastDailyEntryThree->closes + $lastDailyEntryFour->closes));
     }
 
     /** @test */
@@ -39,12 +71,16 @@ class DailyEntryTest extends FeatureTest
         $dailyEntryTwo          = (new DailyEntryBuilder)->withUser($userOne->id)->withDate($today)->save()->get();
         $dailyEntryTwoYesterday = (new DailyEntryBuilder)->withUser($userTwo->id)->withDate($yesterday)->save()->get();
         
-        $livewireTest = Livewire::test(DailyEntry::class)
+        Livewire::test(DailyEntry::class)
             ->set('date', $today)
             ->call('setDate')
-            ->assertSet('dateSelected', $today)
-            ->assertSee($dailyEntryOne->doors)
-            ->assertDontSee($dailyEntryOneYesterday->doors);
+            ->assertSet('dateSelected', $today);
+ 
+
+        Livewire::test(DailyEntry::class)
+            ->set('date', $yesterday)
+            ->call('setDate')
+            ->assertSet('dateSelected', $yesterday);
     
     }
 
@@ -56,18 +92,18 @@ class DailyEntryTest extends FeatureTest
         $regionTwo = (new RegionBuilder)->save()->get();
 
         //create user to region one
-        $userOne = (new UserBuilder)->withRegion($regionOne)->save()->get();
-        $userTwo = (new UserBuilder)->withRegion($regionOne)->save()->get();
-        $userThree = (new UserBuilder)->withRegion($regionOne)->save()->get();
-        $userFour = (new UserBuilder)->withRegion($regionOne)->save()->get();
-        $userFive = (new UserBuilder)->withRegion($regionOne)->save()->get();
+        $userOne    = (new UserBuilder)->withRegion($regionOne)->save()->get();
+        $userTwo    = (new UserBuilder)->withRegion($regionOne)->save()->get();
+        $userThree  = (new UserBuilder)->withRegion($regionOne)->save()->get();
+        $userFour   = (new UserBuilder)->withRegion($regionOne)->save()->get();
+        $userFive   = (new UserBuilder)->withRegion($regionOne)->save()->get();
         
         //create user to region two
-        $userSix = (new UserBuilder)->withRegion($regionTwo)->save()->get();
-        $userSeven = (new UserBuilder)->withRegion($regionTwo)->save()->get();
-        $userEight = (new UserBuilder)->withRegion($regionTwo)->save()->get();
-        $userNine = (new UserBuilder)->withRegion($regionTwo)->save()->get();
-        $userTen = (new UserBuilder)->withRegion($regionTwo)->save()->get();
+        $userSix    = (new UserBuilder)->withRegion($regionTwo)->save()->get();
+        $userSeven  = (new UserBuilder)->withRegion($regionTwo)->save()->get();
+        $userEight  = (new UserBuilder)->withRegion($regionTwo)->save()->get();
+        $userNine   = (new UserBuilder)->withRegion($regionTwo)->save()->get();
+        $userTen    = (new UserBuilder)->withRegion($regionTwo)->save()->get();
 
         //first region 
         Livewire::test(DailyEntry::class)
