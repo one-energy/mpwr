@@ -153,5 +153,51 @@ class DailyEntryTest extends FeatureTest
             ->assertSee($regionFive->name); 
 
     }
+
+    /** @test */
+    public function it_should_create_a_daily_number()
+    {
+        $user = (new UserBuilder)->save()->get();
+        $dailyEntry = (new DailyEntryBuilder)->withUser($user->id)->save()->get();
+
+        $this->assertDatabaseHas('daily_numbers', [
+            'id'         => $dailyEntry->id,
+            'date'       => $dailyEntry->date,
+            'user_id'    => $user->id,
+            'doors'      => $dailyEntry->doors,
+            'hours'      => $dailyEntry->hours,
+            'sets'       => $dailyEntry->sets,
+            'sits'       => $dailyEntry->sits,
+            'set_closes' => $dailyEntry->set_closes,
+            'closes'     => $dailyEntry->closes,
+        ]);
+    }
+
+    /** @test */
+    public function it_should_update_a_daily_number()
+    {
+        $user = (new UserBuilder)->save()->get();
+        $dailyEntry = (new DailyEntryBuilder)->withUser($user->id)->save()->get();
+
+        $dailyEntryUpdated = $dailyEntry;
+        $dailyEntryUpdated->doors = rand(0,100);
+        $dailyEntryUpdated->hours = rand(0,100);
+        $dailyEntryUpdated->sets = rand(0,100);
+        $dailyEntryUpdated->sits = rand(0,100);
+        $dailyEntryUpdated->set_closes = rand(0,100);
+        $dailyEntryUpdated->closes = rand(0,100);
+
+        $this->assertDatabaseHas('daily_numbers', [
+            'id'       => $dailyEntryUpdated->id,
+            'date'       => $dailyEntryUpdated->date,
+            'user_id'    => $user->id,
+            'doors'      => $dailyEntryUpdated->doors,
+            'hours'      => $dailyEntryUpdated->hours,
+            'sets'       => $dailyEntryUpdated->sets,
+            'sits'       => $dailyEntryUpdated->sits,
+            'set_closes' => $dailyEntryUpdated->set_closes,
+            'closes'     => $dailyEntryUpdated->closes,
+        ]);
+    }
    
 }
