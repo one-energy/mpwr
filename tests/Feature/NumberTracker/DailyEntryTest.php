@@ -187,6 +187,8 @@ class DailyEntryTest extends FeatureTest
         $dailyEntryUpdated->set_closes = rand(0,100);
         $dailyEntryUpdated->closes = rand(0,100);
 
+        $dailyEntryUpdated->save();
+
         $this->assertDatabaseHas('daily_numbers', [
             'id'       => $dailyEntryUpdated->id,
             'date'       => $dailyEntryUpdated->date,
