@@ -60,8 +60,17 @@ class Scoreboard extends Component
             ->get();
     }
 
+    public function setUser ($userId)
+    {
+        $this->userId = $userId;
+        
+        $this->emit('rerenderUser');
+    }
+
     public function render()
     {
+        $this->mount();
+
         return view('livewire.scoreboard');
     }
 }

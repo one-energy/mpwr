@@ -10,6 +10,8 @@ class ProfileStats extends Component
 {
     public $user;
 
+    public $userId;
+
     public $totalDoors;
 
     public $totalHours;
@@ -28,7 +30,9 @@ class ProfileStats extends Component
 
     public $closeRatio;
 
-    public function mount(int $userId)
+    protected $listeners = ['rerenderUser' => '$refresh'];
+
+    public function mount($userId)
     {
         $this->user = User::find($userId);
 
