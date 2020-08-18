@@ -166,7 +166,7 @@
       </div>
     </div>
 
-    <svg class="absolute hidden left-1/2 top-1/2 w-20"
+    <svg class="fixed hidden left-1/2 top-1/2 w-20"
         wire:loading.class.remove="hidden"
         viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#9fa6b2">
         <g fill="none">
