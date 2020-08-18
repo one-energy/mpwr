@@ -53,7 +53,7 @@
                     </x-slot>
                     <x-slot name="body">
                       @foreach($top10Hours as $user)
-                          <x-table.tr :loop="$loop" x-on:click="openModal = true" wire:click="$set('userId', {{ $user->id }})" class="cursor-pointer">
+                          <x-table.tr :loop="$loop" x-on:click="openModal = true" wire:click="setUser({{ $user->id }})" class="cursor-pointer">
                               <x-table.td>
                                   <span class="px-2 inline-flex rounded-full bg-green-base text-white">
                                   {{ $loop->index+1 }}
@@ -99,7 +99,7 @@
                     </x-slot>
                     <x-slot name="body">
                       @foreach($top10Sets as $user)
-                          <x-table.tr :loop="$loop" x-on:click="openModal = true" wire:click="$set('userId', {{ $user->id }})" class="cursor-pointer">
+                          <x-table.tr :loop="$loop" x-on:click="openModal = true" wire:click="setUser({{ $user->id }})" class="cursor-pointer">
                               <x-table.td>
                                   <span class="px-2 inline-flex rounded-full bg-green-base text-white">
                                   {{ $loop->index+1 }}
@@ -173,15 +173,131 @@
         </div>
         <div x-show="openModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
           <div class="absolute top-0 right-0 pt-4 pr-4">
-            <button type="button" x-on:click="openModal = false; setTimeout(() => open = true, 1000)" wire:click="$srefresh" class="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150" aria-label="Close">
+            <button type="button" x-on:click="openModal = false; setTimeout(() => open = true, 1000)" class="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150" aria-label="Close">
               <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
-          <livewire:profile-stats :userId="$userId" :key="$userId"/>
+          <div class="px-4 py-5 sm:p-6">
+            <div class="flex justify-between">
+            <div class="flex justify-start">
+                <div class="flex items-center">
+                    <div>
+                    <img class="inline-block h-16 w-16 rounded-full" src="{{ $user->photo_url }}" alt="" />
+                    </div>
+                    <div class="ml-3">
+                    <p class="text-sm leading-5 font-medium text-gray-700 group-hover:text-gray-900">
+                        {{ $first_name }} {{ $last_name }}
+                    </p>
+                    <p class="text-xs leading-4 font-medium text-gray-500 group-hover:text-gray-700 group-focus:underline transition ease-in-out duration-150">
+                        {{ $office }}
+                    </p>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div class="mt-6">
+            <div class="flex justify-between grid grid-cols-4 row-gap-1 col-gap-2 m-1 p-2">
+                <div class="col-span-2 text-xs text-gray-900">
+                    <div class="flex justify-between grid grid-cols-2 row-gap-1 col-gap-2 border-gray-200 border-2 m-1 p-2 rounded-lg">
+                        <div class="col-span-2 text-xs text-gray-900">
+                            DPS RATIO
+                        </div>
+                        <div class="col-span-2 text-xl font-bold text-gray-900">
+                            {{ number_format($dpsRatio) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-span-2 text-xs text-gray-900">
+                    <div class="flex justify-between grid grid-cols-2 row-gap-1 col-gap-2 border-gray-200 border-2 m-1 p-2 rounded-lg">
+                        <div class="col-span-2 text-xs text-gray-900">
+                            HPS RATIO
+                        </div>
+                        <div class="col-span-2 text-xl font-bold text-gray-900">
+                            {{ number_format($hpsRatio) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-span-2 text-xs text-gray-900">
+                    <div class="flex justify-between grid grid-cols-2 row-gap-1 col-gap-2 border-gray-200 border-2 m-1 p-2 rounded-lg">
+                        <div class="col-span-2 text-xs text-gray-900">
+                            SIT RATIO
+                        </div>
+                        <div class="col-span-2 text-xl font-bold text-gray-900">
+                            {{ number_format($sitRatio) }}%
+                        </div>
+                    </div>
+                </div>
+                <div class="col-span-2 text-xs text-gray-900">
+                    <div class="flex justify-between grid grid-cols-2 row-gap-1 col-gap-2 border-gray-200 border-2 m-1 p-2 rounded-lg">
+                        <div class="col-span-2 text-xs text-gray-900">
+                            CLOSE RATIO
+                        </div>
+                        <div class="col-span-2 text-xl font-bold text-gray-900">
+                            {{ number_format($closeRatio) }}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Bar Chart -->
+            <div class="flex justify-between border-gray-200 border-2 m-1 p-2 rounded-lg">
+                <div id="bar_chart" class="max-w-full min-w-full"></div>
+            </div>
+            </div>
+          </div>
         </div>
       </div>
     @endif
   </div>
 </div>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+
+    document.addEventListener("livewire:load", function(event) {
+        window.livewire.hook('afterDomUpdate', () => {
+          drawBarChart();
+        });
+    });
+
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawBarChart);
+    
+    function drawBarChart() {
+        var doors  = @this.get('totalDoors');
+        var hours  = @this.get('totalHours');
+        var sets   = @this.get('totalSets');
+        var sits   = @this.get('totalSits');
+        var closes = @this.get('totalCloses');
+
+        var data = google.visualization.arrayToDataTable([
+            ["Type",   "Quantity", { role: "style" }],
+            ["Doors",  doors,      "color: #46A049"],
+            ["Hours",  hours,      "color: #7de8a6"],
+            ["Sets",   sets,       "color: #006400"],
+            ["Sits",   sits,       "color: #B5B5B5"],
+            ["Closes", closes,     "color: #FF6E5D"]
+        ]);
+
+        var view = new google.visualization.DataView(data);
+        view.setColumns([0, 1,
+            { calc: "stringify",
+                sourceColumn: 0,
+                type: "string",
+                role: "annotation" },
+            2]);
+
+        var options = {
+            bar: {groupWidth: "95%"},
+            legend: { position: 'top' },
+            vAxis: { gridlines: { count: 0 }, textPosition: 'none' },
+            hAxis: { gridlines: { count: 0 }, textPosition: 'none', baselineColor: '#FFFFFF' },
+            chartArea:{left:0, top:0, width:"100%", height:"100%"},
+            isStacked: true
+        };
+        var chart = new google.visualization.BarChart(document.getElementById("bar_chart"));
+        chart.draw(view, options);
+  }
+</script>
