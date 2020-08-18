@@ -5,7 +5,6 @@ namespace App\Http\Livewire;
 use Livewire\Component;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 
 class Scoreboard extends Component
 {
@@ -39,24 +38,23 @@ class Scoreboard extends Component
 
     public $closeRatio;
 
-    public $photo_url;
+    public $photoUrl;
     
-    public $first_name;
+    public $firstName;
 
-    public $last_name;
+    public $lastName;
 
     public $office;
 
     public function setUser($userId)
     {
         $this->userId = $userId;
+        $this->user   = User::find($userId);
 
-        $this->user = User::find($userId);
-
-        $this->photo_url  = $this->user->photo_url;
-        $this->first_name = $this->user->first_name;
-        $this->last_name  = $this->user->last_name;
-        $this->office     = $this->user->office;
+        $this->photoUrl  = $this->user->photo_url;
+        $this->firstName = $this->user->first_name;
+        $this->lastName  = $this->user->last_name;
+        $this->office    = $this->user->office;
 
         $query = $this->user->dailyNumbers;
 
