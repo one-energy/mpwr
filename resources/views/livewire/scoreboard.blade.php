@@ -25,7 +25,7 @@
             </div>
           </div>
         </div>
-  
+        
         <div class="mt-6">
           <span class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
             Top 10 Hours
@@ -165,9 +165,28 @@
         </div>
       </div>
     </div>
+
+    <svg class="absolute hidden left-1/2 top-1/2 w-20"
+        wire:loading.class.remove="hidden"
+        viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#9fa6b2">
+        <g fill="none">
+            <g transform="translate(1 1)" stroke-width="2">
+                <circle stroke-opacity=".5" cx="18" cy="18" r="18" />
+                <path d="M36 18c0-9.94-8.06-18-18-18">
+                    <animateTransform
+                        attributeName="transform"
+                        type="rotate"
+                        from="0 18 18"
+                        to="360 18 18"
+                        dur="1s"
+                        repeatCount="indefinite" />
+                </path>
+            </g>
+        </g>
+    </svg>
   
     @if($userId)
-      <div x-cloak x-show="openModal" class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center z-20">
+      <div x-cloak x-show="openModal" wire:loading.remove class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center z-20">
         <div x-show="openModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity">
           <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
         </div>
@@ -245,7 +264,7 @@
             <div class="flex justify-between border-gray-200 border-2 m-1 p-2 rounded-lg">
                 <div id="bar_chart" class="max-w-full min-w-full"></div>
             </div>
-            </div>
+            </div>            
           </div>
         </div>
       </div>
