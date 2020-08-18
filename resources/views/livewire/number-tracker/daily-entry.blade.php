@@ -65,12 +65,6 @@
                                                         </div>
     
                                                         <div class="flex flex-wrap -mx-1">
-                                                            <template x-for="blankday in blankdays">
-                                                                <div 
-                                                                    style="width: 14.28%"
-                                                                    class="text-center border p-1 border-transparent text-sm"	
-                                                                ></div>
-                                                            </template>	
                                                             <template x-for="(date, dateIndex) in no_of_days" :key="dateIndex">	
                                                                 <div style="width: 14.28%" class="px-1 mb-1" wire:click="setDate">
                                                                     <div
@@ -430,17 +424,15 @@
 
                 // find where to start calendar day of week
                 let dayOfWeek = new Date(this.year, this.month).getDay();
-                let blankdaysArray = [];
+                let daysArray = [];
                 for ( var i=1; i <= dayOfWeek; i++) {
-                    blankdaysArray.push(i);
+                    daysArray.push(null);
                 }
 
-                let daysArray = [];
                 for ( var i=1; i <= daysInMonth; i++) {
                     daysArray.push(i);
                 }
 
-                this.blankdays = blankdaysArray;
                 this.no_of_days = daysArray;
             }
         }
