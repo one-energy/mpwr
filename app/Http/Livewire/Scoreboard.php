@@ -63,10 +63,23 @@ class Scoreboard extends Component
         $this->totalSits   = $query->sum('sits');
         $this->totalCloses = $query->sum('set_closes');
 
-        $this->dpsRatio   = $this->totalDoors / $this->totalSets;
-        $this->hpsRatio   = $this->totalHours / $this->totalSets;
-        $this->sitRatio   = $this->totalSits / $this->totalSets;
-        $this->closeRatio = $this->totalCloses / $this->totalSits;
+        if($this->totalSets)
+        {
+            $this->dpsRatio   = ($this->totalDoors / $this->totalSets);
+            $this->hpsRatio   = ($this->totalHours / $this->totalSets);
+            $this->sitRatio   = ($this->totalSits / $this->totalSets);
+        }else{
+            $this->dpsRatio   = 0;
+            $this->hpsRatio   = 0;
+            $this->sitRatio   = 0;
+        }
+
+        if($this->totalSits)
+        {
+            $this->closeRatio = ($this->totalCloses / $this->totalSits);
+        }else{
+            $this->closeRatio = 0;
+        }
     }
 
     public function render()
