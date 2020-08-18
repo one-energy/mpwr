@@ -203,7 +203,7 @@
             <div class="flex justify-start">
                 <div class="flex items-center">
                     <div>
-                    <img class="inline-block h-16 w-16 rounded-full" src="{{ $user->photo_url }}" alt="" />
+                    <img class="inline-block h-16 w-16 rounded-full" src="{{ $photo_url }}" alt="" />
                     </div>
                     <div class="ml-3">
                     <p class="text-sm leading-5 font-medium text-gray-700 group-hover:text-gray-900">

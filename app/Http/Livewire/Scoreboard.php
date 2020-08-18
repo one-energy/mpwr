@@ -39,6 +39,8 @@ class Scoreboard extends Component
 
     public $closeRatio;
 
+    public $photo_url;
+    
     public $first_name;
 
     public $last_name;
@@ -51,6 +53,7 @@ class Scoreboard extends Component
 
         $this->user = User::find($userId);
 
+        $this->photo_url  = $this->user->photo_url;
         $this->first_name = $this->user->first_name;
         $this->last_name  = $this->user->last_name;
         $this->office     = $this->user->office;
