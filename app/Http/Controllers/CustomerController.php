@@ -66,13 +66,7 @@ class CustomerController extends Controller
         $customer->setter_fee   = $validated['setter_fee'];
         $customer->opened_by_id = $validated['opened_by_id'];
 
-        $epc        = $customer->epc;
-        $pay        = $customer->pay;
-        $setterFee  = $customer->setter_fee;
-        $systemSize = $customer->system_size;
-        $adders     = $customer->adders;
-
-        $commission = $this->calculateCommission($epc, $pay, $setterFee, $systemSize, $adders);
+        $commission = $this->calculateCommission($customer);
 
         $customer->commission = $commission;
 
@@ -85,9 +79,9 @@ class CustomerController extends Controller
         return redirect(route('customers.show', $customer->id));
     }
 
-    public function calculateCommission($epc, $pay, $setterFee, $systemSize, $adders)
+    public function calculateCommission($customer)
     {
-        return (($epc - ( $pay + $setterFee )) * $systemSize) - $adders;
+        return (($customer->epc - ( $customer->pay + $customer->setterFee )) * $customer->systemSize) - $customer->adders;
     }
 
     public function show(Customer $customer)
@@ -130,13 +124,7 @@ class CustomerController extends Controller
         $customer->setter_fee   = $validated['setter_fee'];
         $customer->panel_sold   = $validated['panel_sold'];
 
-        $epc        = $customer->epc;
-        $pay        = $customer->pay;
-        $setterFee  = $customer->setter_fee;
-        $systemSize = $customer->system_size;
-        $adders     = $customer->adders;
-
-        $commission = $this->calculateCommission($epc, $pay, $setterFee, $systemSize, $adders);
+        $commission = $this->calculateCommission($customer);
 
         $customer->commission = $commission;
 
@@ -151,7 +139,7 @@ class CustomerController extends Controller
 
     public function active(Customer $customer)
     {
-        $customer->is_active = !request('active');
+        $customer->is_active = !$customer->is_active;
         $customer->save();
 
         if ($customer->is_active == true) {
