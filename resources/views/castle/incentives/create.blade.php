@@ -1,12 +1,12 @@
 <x-app.auth :title="__('New Incentive')">
     <div>
         <div class="max-w-6xl mx-auto py-5 sm:px-6 lg:px-8">
-            <a href="{{ route('castle.settings.incentives') }}" class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
+            <a href="{{ route('castle.incentives') }}" class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
                 < New Incentive
             </a>
         </div>
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <x-form :route="route('castle.settings.incentives.store')" post>
+            <x-form :route="route('castle.incentives.store')" post>
                 @csrf
                 <div>
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
@@ -15,7 +15,7 @@
                     </div>
 
                     <div class="md:col-span-3 col-span-2">
-                        <x-input label="Incentive Name" name="name" type="number"></x-input>
+                        <x-input label="Incentive Name" name="name"></x-input>
                     </div>
             
                     <div class="md:col-span-3 col-span-1">
@@ -43,7 +43,7 @@
                         </button>
                     </span>
                     <span class="ml-3 inline-flex rounded-md shadow-sm">
-                        <a href="{{route('castle.settings.incentives')}}" class="py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-gray-800 hover:bg-gray-300 focus:outline-none focus:border-gray-300 focus:shadow-outline-gray transition duration-150 ease-in-out">
+                        <a href="{{route('castle.incentives')}}" class="py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-gray-800 hover:bg-gray-300 focus:outline-none focus:border-gray-300 focus:shadow-outline-gray transition duration-150 ease-in-out">
                             Cancel
                         </a>
                     </span>

@@ -18,26 +18,29 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $email
  * @property Carbon $email_verified_at
  * @property string $password
+ * @property string $role
  * @property string $timezone
  * @property string $photo_url
  * @property string $remember_token
  * @property string $master
  * @property Carbon $created_at
  * @property Carbon $updated_at
+ * @property Carbon $deleted_at
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable;
+    use SoftDeletes;
 
     const OWNER  = 'owner';
     const MEMBER = 'member';
 
     const ROLES = [
-        'Admin',
-        'Region Manager',
-        'Office Manager',
-        'Sales Rep',
-        'Setter'
+        ['name' => 'Admin', 'description' => 'Allows access to the Admin functionality (Admin Tab)'],
+        ['name' => 'Region Manager', 'description' => ''],
+        ['name' => 'Office Manager', 'description' => 'Allows Update Number Tracker'],
+        ['name' => 'Sales Rep', 'description' => 'Allows Read/Add/Edit/Cancel Customer'],
+        ['name' => 'Setter', 'description' => 'Allows see the dashboard and only read Customer'],
     ];
 
     const TOPLEVEL_ROLES = [

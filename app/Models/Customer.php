@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
@@ -11,7 +12,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $setter_id
  * @property string $pay
  * @property float $system_size
- * @property float $redline
  * @property float $bill
  * @property float $financing
  * @property float $adders
@@ -27,6 +27,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Customer extends Model
 {
+    use SoftDeletes;
+
     protected $casts = [
         'panel_sold' => 'boolean',
         'is_active'  => 'boolean',

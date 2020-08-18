@@ -34,6 +34,12 @@
     border-color: rgba(70, 160, 73, var(--border-opacity));
 }
 
+.border-green-dark:hover {
+    --border-opacity: 1;
+    border-color: #006400;
+    border-color: rgba(0, 100, 0, var(--border-opacity));
+}
+
 .text-green-base {
     --text-opacity: 1;
     color:#46A049;

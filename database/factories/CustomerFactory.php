@@ -13,13 +13,12 @@ $factory->define(Customer::class, function (Faker $faker) {
     $pay        = $faker->randomFloat(2, 1, 100);
     $setterFee  = $faker->randomFloat(2, 1, 100);
     $systemSize = $faker->randomFloat(2, 1, 100);
-    $adders     = $faker->randomFloat(2, 1, 100);
+    $adders     = $faker->randomNumber();
 
     return [
         'first_name'   => $faker->firstName,
         'last_name'    => $faker->lastName,
         'system_size'  => $systemSize,
-        'redline'      => $faker->randomFloat(2, 1, 100),
         'bill'         => $faker->word,
         'pay'          => $pay,
         'financing'    => $faker->word,

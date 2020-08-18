@@ -1,9 +1,9 @@
 <x-app.auth :title="__('New Home Owner')">
     <div>
         <div class="max-w-6xl mx-auto py-5 sm:px-6 lg:px-8">
-            <a href="{{ route('home') }}" class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
-                < New Home Owner
-            </a>
+            <x-link :href="route('home')" color="gray" class="inline-flex items-center border-b-2 border-green-base hover:border-green-500 text-sm font-medium leading-5">
+                <x-svg.chevron-left class="w-6 -ml-2"/> @lang('Dashboard')
+            </x-link>
         </div>
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <x-form :route="route('customers.store')" post>
@@ -54,11 +54,11 @@
                     </div>
             
                     <div class="md:col-span-3 col-span-2">
-                        <x-input-currency label="Adders" name="adders"></x-input>
+                        <x-input label="Adders" name="adders" type="number"></x-input>
                     </div>
             
                     <div class="md:col-span-3 col-span-2">
-                        <x-input-currency label="EPC" name="epc"></x-input>
+                        <x-input-currency label="EPC" name="epc" observation="Sold Price"></x-input>
                     </div>
             
                     <div class="md:col-span-3 col-span-2">

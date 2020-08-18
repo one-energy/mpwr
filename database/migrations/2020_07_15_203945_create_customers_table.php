@@ -13,15 +13,15 @@ class CreateCustomersTable extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->decimal('system_size')->nullable();
-            $table->decimal('redline')->nullable();
             $table->string('bill');
             $table->decimal('pay')->nullable();
             $table->string('financing');
-            $table->decimal('adders')->nullable();
+            $table->integer('adders')->nullable();
             $table->decimal('epc')->nullable();
-            $table->decimal('commission')->nullable();
+            $table->double('commission')->nullable();
             $table->decimal('setter_fee')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->boolean('panel_sold')->default(false);
 
             $table->unsignedBigInteger('setter_id')->nullable();;
             $table->foreign('setter_id')
