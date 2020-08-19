@@ -35,6 +35,13 @@ class PermissionController extends Controller
         $user = User::find($id);
 
         $user->role = $validated['role'];
+
+        if($user->role == 'Admin' || $user->role == 'Owner')
+        {
+            $user->beCastleMaster();
+        }else{
+            $user->revokeMastersAccess();
+        }
         
         $user->save();
 

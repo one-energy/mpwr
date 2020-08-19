@@ -54,7 +54,15 @@ class UsersController extends Controller
         $invitation          = new Invitation();
         $invitation->email   = $data['email'];
         $invitation->token   = Uuid::uuid4();
-        $invitation->master  = false;
+
+        if($data['role'] == 'Admin' || $data['role'] == 'Owner')
+        {
+            $invitation->master  = true;
+        }else{
+            $invitation->master  = false;
+
+        }
+
         $invitation->user_id = optional($user)->id;
         $invitation->save();
 
@@ -88,6 +96,14 @@ class UsersController extends Controller
 
         $user = User::find($id);
         $user->forceFill($data);
+
+        if($data['role'] == 'Admin' || $data['role'] == 'Owner')
+        {
+            $user->beCastleMaster();
+        }else{
+            $user->revokeMastersAccess();
+        }
+
         $user->save();
 
         alert()
