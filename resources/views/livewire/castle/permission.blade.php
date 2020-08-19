@@ -1,7 +1,10 @@
 <div>
     <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
         <div class="px-4 py-5 sm:px-6">
-            <h3 class="text-lg text-gray-900">Manage Permission</h3>
+            <div class="flex justify-between mb-4">
+                <h3 class="text-lg text-gray-900">Manage Permission</h3>
+            </div>
+            <x-search :search="$search"/>
             
             <div class="mt-6">
                 <div class="flex flex-col">

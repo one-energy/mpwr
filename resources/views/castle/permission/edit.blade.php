@@ -42,7 +42,7 @@
                                     @endforeach
                                 </x-slot>
                             </x-table>
-                            <div class="mt-8 pt-2 flex justify-end">
+                            <div class="mt-8 pt-2 flex md:justify-end">
                                 <span class="inline-flex rounded-md shadow-sm">
                                     <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
                                         Save

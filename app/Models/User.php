@@ -36,14 +36,16 @@ class User extends Authenticatable implements MustVerifyEmail
     const MEMBER = 'member';
 
     const ROLES = [
-        ['name' => 'Admin', 'description' => 'Allows access to the Admin functionality (Admin Tab)'],
-        ['name' => 'Region Manager', 'description' => ''],
-        ['name' => 'Office Manager', 'description' => 'Allows Update Number Tracker'],
-        ['name' => 'Sales Rep', 'description' => 'Allows Read/Add/Edit/Cancel Customer'],
-        ['name' => 'Setter', 'description' => 'Allows see the dashboard and only read Customer'],
+        ['name' => 'Owner',          'description' => 'System Owner'],
+        ['name' => 'Admin',          'description' => 'Allows access to the Admin functionality and Manage Users, Incentives and others (Admin Tab)'],
+        ['name' => 'Region Manager', 'description' => 'Allows update all Regon\'s Number Traker'],
+        ['name' => 'Office Manager', 'description' => 'Allows update a Region\'s Number Tracker'],
+        ['name' => 'Sales Rep',      'description' => 'Allows read/add/edit/cancel Customer'],
+        ['name' => 'Setter',         'description' => 'Allows see the dashboard and only read Customer'],
     ];
 
     const TOPLEVEL_ROLES = [
+        'Owner',
         'Admin',
         'Region Manager',
         'Office Manager',
@@ -108,7 +110,17 @@ class User extends Authenticatable implements MustVerifyEmail
                 '%' . strtolower($search) . '%'
             )
             ->orWhere(
+                DB::raw('lower(role)'),
+                'like',
+                '%' . strtolower($search) . '%'
+            )
+            ->orWhere(
                 DB::raw('lower(email)'),
+                'like',
+                '%' . strtolower($search) . '%'
+            )
+            ->orWhere(
+                DB::raw('lower(office)'),
                 'like',
                 '%' . strtolower($search) . '%'
             );

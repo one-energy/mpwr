@@ -357,46 +357,57 @@
                             <div class="flex flex-col">
                                 <div class="sm:overflow-x-auto md:overflow-x-hidden">
                                     <div class="align-middle inline-block min-w-full overflow-hidden">
-                                        <x-table>
-                                            <x-slot name="header">
-                                                <x-table.th-tr>
-                                                    <x-table.th by="region_number">
-                                                        @lang('Region Member')
-                                                    </x-table.th>
-                                                    <x-table.th by="doors">
-                                                        @lang('Doors')
-                                                    </x-table.th>
-                                                    <x-table.th by="hours">
-                                                        @lang('Hours')
-                                                    </x-table.th>
-                                                    <x-table.th by="sets">
-                                                        @lang('Sets')
-                                                    </x-table.th>
-                                                    <x-table.th by="sits">
-                                                        @lang('Sits')
-                                                    </x-table.th>
-                                                    <x-table.th by="set_closes">
-                                                        @lang('Set Closes')
-                                                    </x-table.th>
-                                                    <x-table.th by="closes">
-                                                        @lang('Closes')
-                                                    </x-table.th>
-                                                </x-table.th-tr>
-                                            </x-slot>
-                                            <x-slot name="body">
-                                                @foreach($trackingInformation as $row)
-                                                    <x-table.tr :loop="$loop">
-                                                        <x-table.td>{{{ $row['region_member'] }}}</x-table.td>
-                                                        <x-table.td>{{{ $row['doors'] }}}</x-table.td>
-                                                        <x-table.td>{{{ $row['hours'] }}}</x-table.td>
-                                                        <x-table.td>{{{ $row['sets'] }}}</x-table.td>
-                                                        <x-table.td>{{{ $row['sits'] }}}</x-table.td>
-                                                        <x-table.td>{{{ $row['set_closes'] }}}</x-table.td>
-                                                        <x-table.td>{{{ $row['closes'] }}}</x-table.td>
-                                                    </x-table.tr>
-                                                @endforeach
-                                            </x-slot>
-                                        </x-table>
+                                        @if($trackingInformation)
+                                            <x-table>
+                                                <x-slot name="header">
+                                                    <x-table.th-tr>
+                                                        <x-table.th by="region_number">
+                                                            @lang('Region Member')
+                                                        </x-table.th>
+                                                        <x-table.th by="doors">
+                                                            @lang('Doors')
+                                                        </x-table.th>
+                                                        <x-table.th by="hours">
+                                                            @lang('Hours')
+                                                        </x-table.th>
+                                                        <x-table.th by="sets">
+                                                            @lang('Sets')
+                                                        </x-table.th>
+                                                        <x-table.th by="sits">
+                                                            @lang('Sits')
+                                                        </x-table.th>
+                                                        <x-table.th by="set_closes">
+                                                            @lang('Set Closes')
+                                                        </x-table.th>
+                                                        <x-table.th by="closes">
+                                                            @lang('Closes')
+                                                        </x-table.th>
+                                                    </x-table.th-tr>
+                                                </x-slot>
+                                                <x-slot name="body">
+                                                    @foreach($trackingInformation as $row)
+                                                        <x-table.tr :loop="$loop">
+                                                            <x-table.td>{{{ $row['region_member'] }}}</x-table.td>
+                                                            <x-table.td>{{{ $row['doors'] }}}</x-table.td>
+                                                            <x-table.td>{{{ $row['hours'] }}}</x-table.td>
+                                                            <x-table.td>{{{ $row['sets'] }}}</x-table.td>
+                                                            <x-table.td>{{{ $row['sits'] }}}</x-table.td>
+                                                            <x-table.td>{{{ $row['set_closes'] }}}</x-table.td>
+                                                            <x-table.td>{{{ $row['closes'] }}}</x-table.td>
+                                                        </x-table.tr>
+                                                    @endforeach
+                                                </x-slot>
+                                            </x-table>
+                                        @else
+                                            <div class="h-96 ">
+                                                <div class="flex justify-center align-middle">
+                                                    <div class="text-sm text-center text-gray-700">
+                                                        <x-svg.draw.empty></x-svg.draw.empty>
+                                                        No data yet.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

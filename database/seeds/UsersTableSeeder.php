@@ -51,14 +51,14 @@ class UsersTableSeeder extends Seeder
         $devsquad = factory(Region::class)->create([
             'owner_id' => $owner->id,
         ]);
-        $devsquad->users()->attach($owner, ['role' => array_rand(User::TOPLEVEL_ROLES)]);
+        $devsquad->users()->attach($owner, ['role' => 'Admin']);
 
         $member = factory(User::class)->create([
             'first_name' => 'DevSquad',
             'last_name'  => 'User',
             'email'      => 'user@devsquad.com',
         ]);
-        $devsquad->users()->attach($member, ['role' => array_rand(User::ROLES)]);
+        $devsquad->users()->attach($member, ['role' => 'Setter']);
 
         for ($i = 0; $i < 50; $i++) {
             $member = factory(User::class)->create();
