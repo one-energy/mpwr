@@ -357,7 +357,7 @@
                             <div class="flex flex-col">
                                 <div class="sm:overflow-x-auto md:overflow-x-hidden">
                                     <div class="align-middle inline-block min-w-full overflow-hidden">
-                                        @if($trackingInformation)
+                                        @if(count($trackingInformation))
                                             <x-table>
                                                 <x-slot name="header">
                                                     <x-table.th-tr>

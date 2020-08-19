@@ -42,7 +42,7 @@ class UserBuilder
                 $this->region->owner_id = $this->user->id;
                 $this->region->save();
 
-                $this->region->users()->attach($this->user->id, ['role' => User::OWNER]);
+                $this->region->users()->attach($this->user->id, ['role' => 'Owner']);
             }
         }
 
@@ -55,7 +55,7 @@ class UserBuilder
                     ->save()->get();
 
                 if ($this->region) {
-                    $this->region->users()->attach($user, ['role' => $i == 0 ? User::OWNER : User::MEMBER]);
+                    $this->region->users()->attach($user, ['role' => $i == 0 ? 'Owner' : 'Setter']);
                 }
 
                 $this->items->push($user);

@@ -1,15 +1,15 @@
 <div>
-    <x-table class="mt-6" :pagination="$invitations->links()">
-        <x-slot name="header">
-            <tr>
-                <x-table.th>@lang('Email')</x-table.th>
-                <x-table.th>@lang('Invited At')</x-table.th>
-                <x-table.th></x-table.th>
-            </tr>
-        </x-slot>
+    @if($invitations->count())
+        <x-table class="mt-6" :pagination="$invitations->links()">
+            <x-slot name="header">
+                <tr>
+                    <x-table.th>@lang('Email')</x-table.th>
+                    <x-table.th>@lang('Invited At')</x-table.th>
+                    <x-table.th></x-table.th>
+                </tr>
+            </x-slot>
 
-        <x-slot name="body">
-            @if($invitations)
+            <x-slot name="body">
                 @foreach($invitations as $invite)
                     <x-table.tr :loop="$loop">
                         <x-table.td>{{ $invite->email }}</x-table.td>
@@ -30,16 +30,16 @@
                         </x-table.td>
                     </x-table.tr>
                 @endforeach
-            @else
-                <div class="h-96 ">
-                    <div class="flex justify-center align-middle">
-                        <div class="text-sm text-center text-gray-700">
-                            <x-svg.draw.empty></x-svg.draw.empty>
-                            No data yet.
-                        </div>
-                    </div>
+            </x-slot>
+        </x-table>
+    @else
+        <div class="h-96 ">
+            <div class="flex justify-center align-middle">
+                <div class="text-sm text-center text-gray-700">
+                    <x-svg.draw.empty></x-svg.draw.empty>
+                    No invitations yet.
                 </div>
-            @endif
-        </x-slot>
-    </x-table>
+            </div>
+        </div>
+    @endif
 </div>

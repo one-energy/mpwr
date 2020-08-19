@@ -32,9 +32,6 @@ class User extends Authenticatable implements MustVerifyEmail
     use Notifiable;
     use SoftDeletes;
 
-    const OWNER  = 'owner';
-    const MEMBER = 'member';
-
     const ROLES = [
         ['name' => 'Owner',          'description' => 'System Owner'],
         ['name' => 'Admin',          'description' => 'Allows access to the Admin functionality and Manage Users, Incentives and others (Admin Tab)'],
@@ -65,6 +62,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function invitations()
     {
         return $this->hasMany(Invitation::class);
+    }
+
+    public function dailyNumbers()
+    {
+        return $this->hasMany(DailyNumber::class);
     }
 
     public function changePassword($new)

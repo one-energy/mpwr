@@ -9,15 +9,6 @@ class CustomerPolicy
 {
     use HandlesAuthorization;
 
-    public function before(User $user)
-    {
-        if (in_array($user->role, User::TOPLEVEL_ROLES)) {
-            return true;
-        }
-
-        return false;
-    }
-
     public function viewList(User $user)
     {
         return true;
@@ -34,11 +25,7 @@ class CustomerPolicy
 
     public function view(User $user)
     {
-        if (in_array($user->role, User::TOPLEVEL_ROLES)) {
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     public function update(User $user)

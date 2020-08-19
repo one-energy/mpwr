@@ -31,7 +31,7 @@ class RegionBuilder
 
         $this->region->save();
 
-        $this->region->users()->attach($this->region->owner, ['role' => User::OWNER]);
+        $this->region->users()->attach($this->region->owner, ['role' => array_rand(User::TOPLEVEL_ROLES['name'], 'Owner')]);
 
         return $this;
     }
@@ -53,7 +53,7 @@ class RegionBuilder
         $users = factory(User::class, $qty)->create();
 
         foreach ($users as $user) {
-            $this->region->users()->attach($user, ['role' => User::MEMBER]);
+            $this->region->users()->attach($user, ['role' => array_rand(User::ROLES['name'], 'Setter')]);
         }
 
         return $this;
