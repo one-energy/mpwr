@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Castle;
 
-use App\Models\Incentive;
 use App\Http\Controllers\Controller;
+use App\Models\Incentive;
 
 class ManageIncentivesController extends Controller
 {

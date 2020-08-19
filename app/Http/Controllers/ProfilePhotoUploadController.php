@@ -18,7 +18,7 @@ class ProfilePhotoUploadController extends Controller
         }
 
         $fileName = "avatar_{$user->id}.png";
-        $disk = config('filesystems.default');
+        $disk     = config('filesystems.default');
         $uploaded = Storage::disk($disk)->putFileAs('profiles', $file, $fileName);
 
         if ($uploaded) {

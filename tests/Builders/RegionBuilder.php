@@ -28,9 +28,9 @@ class RegionBuilder
         if (!$this->region->owner_id) {
             $this->region->owner_id = factory(User::class)->create()->id;
         }
-
         $this->region->save();
-
+        
+        
         $this->region->users()->attach($this->region->owner, ['role' => User::OWNER]);
 
         return $this;
