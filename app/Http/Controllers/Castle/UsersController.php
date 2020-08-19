@@ -30,9 +30,8 @@ class UsersController extends Controller
     {
         $roles = User::ROLES;
 
-        return view('castle.users.register',
-        [
-            'roles' => $roles
+        return view('castle.users.register',[
+            'roles' => $roles,
         ]);
     }
 
@@ -79,7 +78,7 @@ class UsersController extends Controller
 
         return view('castle.users.edit', [
             'user'  => $user,
-            'roles' => $roles
+            'roles' => $roles,
         ]);
     }
 

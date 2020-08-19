@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Incentive;
 use App\Models\Customer;
+use App\Models\Incentive;
 use Illuminate\Support\Facades\Auth;
 
 class IncentivesController extends Controller
@@ -16,15 +16,14 @@ class IncentivesController extends Controller
         $systemSizeSum = Customer::query()->where('opened_by_id', $userId)->sum('system_size');
         $myKws         = 0;
         
-        if ($myInstalls)
-        {
+        if ($myInstalls) {
             $myKws = $systemSizeSum / $myInstalls;
         }
 
         return view('incentives', [
             'incentives' => $incentives,
             'myInstalls' => $myInstalls,
-            'myKws'      => $myKws
+            'myKws'      => $myKws,
         ]);
     }
 }

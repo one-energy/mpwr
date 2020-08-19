@@ -37,13 +37,13 @@ class Customer extends Model
     const BILLS = [
         'Domestic',
         'CARE',
-        'FERA'
+        'FERA',
     ];
 
     const FINANCINGS = [
         'Purchase',
         'PPA',
-        'PACE'
+        'PACE',
     ];
 
     public function userOpenedBy()

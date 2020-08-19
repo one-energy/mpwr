@@ -28,7 +28,6 @@ class RegionBuilder
         if (!$this->region->owner_id) {
             $this->region->owner_id = factory(User::class)->create()->id;
         }
-
         $this->region->save();
 
         $this->region->users()->attach($this->region->owner, ['role' => array_rand(User::TOPLEVEL_ROLES['name'], 'Owner')]);
