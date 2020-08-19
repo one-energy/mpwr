@@ -70,7 +70,7 @@
                                                                     <div
                                                                         @click="getDateValue(date); setCurrentDate(date); @this.set('date', getDateValue(date)); @this.call('setDate')"
                                                                         x-text="date"
-                                                                        class="cursor-pointer text-center text-sm leading-none rounded-full leading-loose transition ease-in-out duration-100"
+                                                                        class="cursor-pointer text-center text-sm rounded-full leading-loose transition ease-in-out duration-100"
                                                                         :class="{
                                                                                 'bg-green-base text-white': isToday(date) == true, 
                                                                                 'text-gray-700 hover:bg-green-light': isToday(date) == false 
@@ -343,6 +343,7 @@
                                                         <input
                                                             type="number" 
                                                             min="0" 
+                                                            max="24" 
                                                             step="any" 
                                                             name="numbers[{{ $user->id }}][hours]" 
                                                             class="form-input block w-14 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
