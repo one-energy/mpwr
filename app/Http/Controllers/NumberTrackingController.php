@@ -40,11 +40,7 @@ class NumberTrackingController extends Controller
     public function store()
     {
         $data = request()->all();
-        // $data = Validator::make(request()->all(), [
-        //     'date' => ['required'],
-        //     'numbers.*.hours'  => ['min:0', 'max:24'],
-        // ])->validate();
-
+        
         if (!empty($data['numbers'])) {
             $date = ($data['date']) ? date('Y-m-d', strtotime($data['date'])) : date('Y-m-d', time()); 
 
