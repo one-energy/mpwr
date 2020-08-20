@@ -81,7 +81,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::get('/profile/show-profile-information', [ProfileController::class, 'index'])->name('profile.show-profile-information');
-    Route::get('/profile/{user}/show-modal-profile-information', [ProfileController::class, 'showData'])->name('profile.show-modal-profile-information');
     Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('/profile/show', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/photo-upload', ProfilePhotoUploadController::class)->name('profile.photo-upload');
