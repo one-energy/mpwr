@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DailyNumber;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class NumberTrackingController extends Controller
 {
@@ -39,7 +40,7 @@ class NumberTrackingController extends Controller
     public function store()
     {
         $data = request()->all();
-
+        
         if (!empty($data['numbers'])) {
             $date = ($data['date']) ? date('Y-m-d', strtotime($data['date'])) : date('Y-m-d', time()); 
 
