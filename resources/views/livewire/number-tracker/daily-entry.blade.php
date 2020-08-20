@@ -343,8 +343,7 @@
                                                         <input
                                                             type="number" 
                                                             min="0" 
-                                                            max="24" 
-                                                            oninvalid="this.setCustomValidity('Value must be less than or equal to 24')"
+                                                            max="24"
                                                             step="any" 
                                                             name="numbers[{{ $user->id }}][hours]" 
                                                             class="form-input block w-14 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
