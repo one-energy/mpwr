@@ -60,10 +60,12 @@
                                                 :active="is_active('incentives')">
                                         @lang('Incentives')
                                     </x-nav.link>
-                                    <x-nav.link :href="route('number-tracking.index')" class="ml-8"
-                                                :active="is_active('number-tracking.*')">
-                                        @lang('Number Tracker')
-                                    </x-nav.link>
+                                    @if(user()->role != 'Setter' && user()->role != 'Sales Rep')
+                                        <x-nav.link :href="route('number-tracking.index')" class="ml-8"
+                                                    :active="is_active('number-tracking.*')">
+                                            @lang('Number Tracker')
+                                        </x-nav.link>
+                                    @endif
                                 @endif
                             </div>
                         </div>
@@ -161,7 +163,7 @@
             <div class="flex items-center justify-between px-4 py-3 sm:px-3">
                 @if(is_active('castle.*'))
                     <x-nav.link-mobile :href="route('home')" class="flex self-center">
-                        <x-svg.chevron-left class="w-6 -ml-2"/> </span>
+                        <x-svg.chevron-left class="w-6 -ml-2"/> <span class="text-xs">@lang('Leave Admin')</span>
                     </x-nav.link-mobile>
 
                     <x-nav.link-mobile :href="route('castle.dashboard')" class="mt-1"
@@ -250,15 +252,19 @@
                                     <use xlink:href="#star" width="24" height="24" />
                                 </svg>
                     </x-nav.link-mobile>
-                    <x-nav.link-mobile :href="route('number-tracking.index')" class="mt-1"
-                                :active="is_active('number-tracking.*')">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                    <symbol id="tracking" viewBox="0 0 24 24">
-                                    <path d="M20.585 3.417l-5.194 13.873-1.743-6.939-6.932-1.733 13.869-5.201zm3.415-3.417l-24 9 12 3 3.014 12 8.986-24z"/>
-                                    </symbol>
-                                    <use xlink:href="#tracking" width="24" height="24"/>
-                                </svg>
-                    </x-nav.link-mobile>
+
+                    @if(user()->role != 'Setter' && user()->role != 'Sales Rep')
+                        <x-nav.link-mobile :href="route('number-tracking.index')" class="mt-1"
+                                    :active="is_active('number-tracking.*')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                        <symbol id="tracking" viewBox="0 0 24 24">
+                                        <path d="M20.585 3.417l-5.194 13.873-1.743-6.939-6.932-1.733 13.869-5.201zm3.415-3.417l-24 9 12 3 3.014 12 8.986-24z"/>
+                                        </symbol>
+                                        <use xlink:href="#tracking" width="24" height="24"/>
+                                    </svg>
+                        </x-nav.link-mobile>
+                    @endif
+
                     <x-nav.link-mobile :href="route('profile.index')" class="mt-1"
                                 :active="is_active('profile.*')">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -268,6 +274,10 @@
                                     <use xlink:href="#user" width="24" height="24" />
                                 </svg>
                     </x-nav.link-mobile>
+
+                    @if(user()->isMaster())
+                        <x-nav.castle-icon/>
+                    @endif
                 @endif
             </div>
         </div>
