@@ -19,15 +19,20 @@ class DailyEntry extends Component
 
     public $users;
 
+    public $missingDates = [];
+
     public $usersLastDayEntries;
     
-    protected $listeners = ['dailyNumbersSaved' => 'updateSum'];
+    protected $listeners = [
+        'dailyNumbersSaved' => 'updateSum',
+        'getMissingDates' => 'getMissingDate'
+    ];
 
     public function mount()
     {
         $this->dateSelected     = date('Y-m-d', time());
         $this->lastDateSelected = date('Y-m-d', strtotime($this->dateSelected . '-1 day'));
-        $this->regionSelected   = Region::first()->id;
+        $this->setRegion(Region::first()->id);
     }
 
     public function getUsers($dateSelected)
@@ -55,6 +60,32 @@ class DailyEntry extends Component
             ->get();
     }
 
+    public function getMissingDate($initialDate)
+    {
+        $today = date('Y-m-d');
+        for($actualDate = $initialDate; $actualDate != $today; date('Y-m-d', strtotime($actualDate . '+1 day'))){
+            $isMissingDate = User::query()
+                ->when($this->regionSelected, function(Builder $query) {
+                    $query->whereHas('regions', function(Builder $query) {
+                        $query->whereId($this->regionSelected);
+                    });
+                })
+                ->leftJoin('daily_numbers', function($join) use ($actualDate) {
+                    $join->on('daily_numbers.user_id', '=', 'users.id')
+                         ->where('daily_numbers.date', '=', $actualDate);
+                })
+                ->select('users.*', 'daily_numbers.*')->get(); 
+            dd($isMissingDate[0]);
+            if($isMissingDate){
+                array_push($this->missingDates, '2020-08-02');
+            }
+        }
+
+        array_push($this->missingDates, $initialDate);
+        array_push($this->missingDates, '2020-08-03');
+        array_push($this->missingDates, '2020-08-04');
+    }
+
     public function setDate()
     {
         $this->dateSelected     = date('Y-m-d', strtotime($this->date));
@@ -64,6 +95,7 @@ class DailyEntry extends Component
     public function setRegion($id)
     {
         $this->regionSelected = $id;
+        $this->getMissingDate('2020-08-01');
     }
 
     public function sortBy()

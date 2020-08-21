@@ -70,10 +70,11 @@
                                                                     <div
                                                                         @click="getDateValue(date); setCurrentDate(date); @this.set('date', getDateValue(date)); @this.call('setDate')"
                                                                         x-text="date"
-                                                                        class="cursor-pointer text-center text-sm leading-none rounded-full leading-loose transition ease-in-out duration-100"
+                                                                        class="cursor-pointer text-center text-sm rounded-full leading-loose transition ease-in-out duration-100"
                                                                         :class="{
                                                                                 'bg-green-base text-white': isToday(date) == true, 
-                                                                                'text-gray-700 hover:bg-green-light': isToday(date) == false 
+                                                                                'text-gray-700 hover:bg-green-light': isToday(date) == false,
+                                                                                'border-solid border-2 border-red-600': isMissingDate(date) == true
                                                                             }"	
                                                                     ></div>
                                                                 </div>
@@ -396,13 +397,14 @@
 
 <script>
     const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
+    const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; 
+  
     function app() {
+
         return {
             showDatepicker: true,
             datepickerValue: '',
-
+            missingDates:  [],
             month: '',
             year: '',
             no_of_days: [],
@@ -411,10 +413,20 @@
             currentDate: new Date(),
 
             initDate() {
-                let today = new Date();
+                let today  = new Date();
                 this.month = today.getMonth();
-                this.year = today.getFullYear();
-                this.datepickerValue = new Date(this.year, this.month, today.getDate()).toDateString();
+                this.year  = today.getFullYear();
+                this.datepickerValue = new Date(this.year, this.month, today.getDate()).toDateString();  
+            },
+
+            getMissingDates() {
+                let component = window.livewire.find("daily-entry-tracker");
+                this.missingDates = @this.get('missingDates');
+                debugger;
+                window.livewire.emit('getMissingDates', '2020-08-01');
+                window.livewire.on('responseMissingDate', (missingDates) => {
+                    this.missingDates = missingDates;
+                })
             },
 
             isToday(date) {
@@ -451,7 +463,29 @@
                 }
 
                 this.no_of_days = daysArray;
-            }
+            },
+
+            isMissingDate(date){
+                missingDates = @this.get('missingDates');
+                if(date != null){
+                    date = (date < 10) ? '0' + date.toString() : date.toString();
+                    let month = (this.month < 10) ? '0' + (this.month + 1).toString() : (this.month + 1).toString()
+                    let searchDate = this.year + '-' + month + '-' + date;
+                    let response;
+                    for(let missingDate of missingDates) {
+                        response = missingDate == searchDate
+                        if (response == true){
+                            break;
+                        }
+                    };
+                    return response;
+                }else{
+                    return false;
+                }
+
+            },
         }
     }
+  
 </script>
+
