@@ -5,7 +5,7 @@
     if( $errors->has($name) ) {
         $class .= 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-300 focus:shadow-outline-red';
     }
-    $disabledToUser = $disabledToUser ?? '';
+    $disabledToUser = $disabledToUser ?? null;
 @endphp
 
 <div {{ $attributes }}>
@@ -15,7 +15,7 @@
         <input {{ $attributes->except('class')->merge(['class' => $class]) }}
                name="{{ $name }}" id="{{ $name }}"
                @if($attributes->get('type') != 'password') value="{{ old($name, $value ?? null) }}" @endif
-               @if(user()->role == $disabledToUser) disabled @endif/>
+               @if($disabledToUser && user()->role == $disabledToUser) disabled @endif/>
 
         @error($name)
         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">

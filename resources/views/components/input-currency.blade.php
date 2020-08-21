@@ -7,7 +7,7 @@
     }
     $tooltip        = $tooltip ?? null;
     $observation    = $observation ?? null;
-    $disabledToUser = $disabledToUser ?? '';
+    $disabledToUser = $disabledToUser ?? null;
 @endphp
 
 <div {{ $attributes }}>
@@ -34,7 +34,7 @@
                name="{{ $name }}" id="{{ $name }}"
                type="number"
                value="{{ old($name, $value ?? null) }}"
-               @if(user()->role == $disabledToUser) disabled @endif/>
+               @if($disabledToUser && user()->role == $disabledToUser) disabled @endif/>
         
         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
             <span class="text-gray-500 sm:text-sm sm:leading-5">

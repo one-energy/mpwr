@@ -1,7 +1,7 @@
 @props(['label', 'name', 'value', 'disabledToUser'])
 
 @php
-    $disabledToUser = $disabledToUser ?? '';
+    $disabledToUser = $disabledToUser ?? null;
 @endphp
 
 @if($label ?? false)
@@ -11,7 +11,7 @@
         <div class="relative mt-1 rounded-md shadow-sm">
             <select {{  $attributes->except('class') }}
                 name="{{ $name }}" id="{{ $name }}"class="block w-full transition duration-150 ease-in-out form-select sm:text-sm sm:leading-5"
-                @if(user()->role == $disabledToUser) disabled @endif>
+                @if($disabledToUser && user()->role == $disabledToUser) disabled @endif>
                 {{ $slot }}
             </select>
 
@@ -32,7 +32,7 @@
     <div {{  $attributes->except('wire:model')->merge(['class' => 'rounded-md shadow-sm' ]) }} >
         <select {{ $attributes->except('class') }}
             name="{{ $name }}" id="{{ $name }}" class="block w-full transition duration-150 ease-in-out form-select sm:text-sm sm:leading-5"
-            @if(user()->role == $disabledToUser) disabled @endif>
+            @if($disabledToUser && user()->role == $disabledToUser) disabled @endif>
           {{ $slot }}
         </select>
     </div>
