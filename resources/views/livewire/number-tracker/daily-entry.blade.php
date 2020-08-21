@@ -2,7 +2,7 @@
     <x-form :route="route('number-tracking.store')">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="md:flex">
-                <div class="px-4 py-5 sm:px-6 md:w-1/3">
+                <div class="py-5 md:w-1/3 lg:1/4">
                     <div class="flex-row">
                         <div class="overflow-y-auto">
                             <div class="overflow-hidden">
@@ -70,7 +70,7 @@
                                                                     <div
                                                                         @click="getDateValue(date); setCurrentDate(date); @this.set('date', getDateValue(date)); @this.call('setDate')"
                                                                         x-text="date"
-                                                                        class="cursor-pointer text-center text-sm leading-none rounded-full leading-loose transition ease-in-out duration-100"
+                                                                        class="cursor-pointer text-center text-sm rounded-full leading-loose transition ease-in-out duration-100"
                                                                         :class="{
                                                                                 'bg-green-base text-white': isToday(date) == true, 
                                                                                 'text-gray-700 hover:bg-green-light': isToday(date) == false 
@@ -107,9 +107,9 @@
                     </div>
                 </div>
 
-                <div class="flex flex-wrap justify-center px-4 py-5 sm:p-6 md:w-2/3">
-                    <div class="mt-3">
-                        <div class="w-full grid md:grid-cols-6 grid-cols-3 md:col-gap-4 col-gap-1 row-gap-2">
+                <div class="flex flex-wrap justify-center px-4 py-5 sm:p-6 md:w-2/3 lg:3/4">
+                    <div class="mt-3 w-full xl:px-0 lg:px-24 md:px-0">
+                        <div class="grid xl:grid-cols-6 grid-cols-3 md:col-gap-4 col-gap-1 row-gap-2">
                             <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
                                 <div class="text-xs font-semibold uppercase">Doors</div>
                                 <div class="text-xl font-bold">{{$users->sum('doors')}}</div>
@@ -344,6 +344,9 @@
                                                         <input
                                                             type="number" 
                                                             min="0" 
+                                                            max="24"
+                                                            oninvalid="this.setCustomValidity('Value must be less than or equal 24')" 
+                                                            onchange="this.setCustomValidity('')"
                                                             step="any" 
                                                             name="numbers[{{ $user->id }}][hours]" 
                                                             class="form-input block w-14 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
