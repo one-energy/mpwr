@@ -4,6 +4,7 @@ namespace App\Http\Livewire\NumberTracker;
 
 use App\Models\Region;
 use App\Models\User;
+use App\Models\DailyNumber;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
@@ -60,30 +61,25 @@ class DailyEntry extends Component
             ->get();
     }
 
-    public function getMissingDate($initialDate)
+    public function getMissingDate($initialDate, $regionSelected)
     {
         $today = date('Y-m-d');
-        for($actualDate = $initialDate; $actualDate != $today; date('Y-m-d', strtotime($actualDate . '+1 day'))){
-            $isMissingDate = User::query()
-                ->when($this->regionSelected, function(Builder $query) {
-                    $query->whereHas('regions', function(Builder $query) {
-                        $query->whereId($this->regionSelected);
-                    });
+        for($actualDate = $initialDate; $actualDate != $today; $actualDate = date('Y-m-d', strtotime($actualDate . '+1 day'))){
+            $isMissingDate = DailyNumber::whereDate('date', $actualDate)
+                ->rightJoin('users', function($join)  {
+                    $join->on('users.id', '=', 'daily_numbers.user_id');
                 })
-                ->leftJoin('daily_numbers', function($join) use ($actualDate) {
-                    $join->on('daily_numbers.user_id', '=', 'users.id')
-                         ->where('daily_numbers.date', '=', $actualDate);
+                ->join('region_user', function($join) use ($regionSelected) {
+                    $join->on('region_user.user_id', '=', 'users.id')
+                         ->where('region_user.region_id', '=', $regionSelected);
                 })
-                ->select('users.*', 'daily_numbers.*')->get(); 
-            dd($isMissingDate[0]);
-            if($isMissingDate){
-                array_push($this->missingDates, '2020-08-02');
+                ->select('region_user.region_id')
+                ->count();
+            if($isMissingDate == 0){
+                array_push($this->missingDates, $actualDate);
             }
         }
-
-        array_push($this->missingDates, $initialDate);
-        array_push($this->missingDates, '2020-08-03');
-        array_push($this->missingDates, '2020-08-04');
+        // dd($this->missingDates);
     }
 
     public function setDate()
@@ -95,7 +91,7 @@ class DailyEntry extends Component
     public function setRegion($id)
     {
         $this->regionSelected = $id;
-        $this->getMissingDate('2020-08-01');
+        $this->getMissingDate('2020-08-01', $this->regionSelected);
     }
 
     public function sortBy()
