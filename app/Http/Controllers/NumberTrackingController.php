@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Region;
 use App\Models\DailyNumber;
 use Illuminate\Http\Request;
 
@@ -9,6 +10,8 @@ class NumberTrackingController extends Controller
 {
     public function index(Request $request)
     {
+        $this->authorize('viewList', DailyNumber::class);
+
         $showOptions = [
             'Daily Total', 
             'Weekly Total',
@@ -39,6 +42,8 @@ class NumberTrackingController extends Controller
     public function store()
     {
         $data = request()->all();
+
+        $this->authorize('update', [DailyNumber::class, $data['regionSelected']]);
 
         if (!empty($data['numbers'])) {
             $date = ($data['date']) ? date('Y-m-d', strtotime($data['date'])) : date('Y-m-d', time()); 

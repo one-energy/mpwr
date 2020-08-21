@@ -12,31 +12,31 @@
                     <div>
                         <div class="mt-6 grid sm:grid-cols-2 row-gap-6 col-gap-4 md:grid-cols-6">
                         <div class="md:col-span-3 sm:cols-span-2">
-                            <x-input label="First Name" name="first_name" value="{{ $customer->first_name }}"></x-input>
+                            <x-input label="First Name" name="first_name" value="{{ $customer->first_name }}" :disabledToUser="'Setter'"></x-input>
                         </div>
                         <div class="md:col-span-3 sm:cols-span-2">
-                            <x-input label="Last Name" name="last_name" value="{{ $customer->last_name }}"></x-input>
+                            <x-input label="Last Name" name="last_name" value="{{ $customer->last_name }}" :disabledToUser="'Setter'"></x-input>
                         </div>
                 
                         <div class="md:col-span-3 sm:cols-span-2">
-                            <x-input-add-on label="System Size" name="system_size" addOn="kW" value="{{ $customer->system_size }}"></x-input-add-on>
+                            <x-input-add-on label="System Size" name="system_size" addOn="kW" value="{{ $customer->system_size }}" :disabledToUser="'Setter'"></x-input-add-on>
                         </div>
     
                         <div class="md:col-span-3 sm:cols-span-2">
-                            <x-input-currency label="Redline" name="pay" value="{{ $customer->pay }}" tooltip="Pay" observation="Pay Rate"></x-input-currency>
+                            <x-input-currency label="Redline" name="pay" value="{{ $customer->pay }}" tooltip="Pay" observation="Pay Rate" :disabledToUser="'Setter'"></x-input-currency>
                         </div>
                         
                               
                         <div class="md:col-span-3 sm:cols-span-2">
-                            <x-input label="Adders" name="adders" value="{{ $customer->adders }}" type="number"></x-input>
+                            <x-input label="Adders" name="adders" value="{{ $customer->adders }}" type="number" :disabledToUser="'Setter'"></x-input>
                         </div>
     
                         <div class="md:col-span-3 sm:cols-span-2">
-                            <x-input-currency label="EPC" name="epc" value="{{ $customer->epc }}" observation="Sold Price"></x-input-currency>
+                            <x-input-currency label="EPC" name="epc" value="{{ $customer->epc }}" observation="Sold Price" :disabledToUser="'Setter'"></x-input-currency>
                         </div>
     
                         <div class="md:col-span-3 sm:cols-span-2">
-                            <x-select label="Setter" name="setter_id">
+                            <x-select label="Setter" name="setter_id" :disabledToUser="'Setter'">
                                 @if (old('setter_id') == '')
                                     <option selected></option>
                                 @endif
@@ -49,12 +49,12 @@
                         </div>
     
                         <div class="md:col-span-3 sm:cols-span-2">
-                            <x-input-currency label="Setter Fee" name="setter_fee" value="{{ $customer->setter_fee }}"></x-input-currency>
+                            <x-input-currency label="Setter Fee" name="setter_fee" value="{{ $customer->setter_fee }}" :disabledToUser="'Setter'"></x-input-currency>
                         </div>
 
                         <div class="md:col-span-4 sm:cols-span-2 flex items-center justify-between">
                             <input type="hidden" name="panel_sold" value="0">
-                            <x-checkbox label="Panel Sold" name="panel_sold" :checked="old('panel_sold', $customer->panel_sold)"></x-checkbox>
+                            <x-checkbox label="Panel Sold" name="panel_sold" :checked="old('panel_sold', $customer->panel_sold)" :disabledToUser="'Setter'"></x-checkbox>
                         </div>
     
                         <div class="sm:col-span-1">
@@ -81,26 +81,28 @@
                         </div>
                     </div>
                     <div class="mt-8 border-t border-gray-200 pt-5">
-                    <div class="flex justify-start">
-                        <span class="inline-flex rounded-md shadow-sm">
-                            <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
-                                Update
-                            <button>
-                        </span>
-                        <span class="ml-3 inline-flex rounded-md shadow-sm">
-                            @if($customer->is_active == true)
-                                <a href="#" x-on:click="openModal = true; loading = true" x-show="!openModal" class="py-2 px-4 border-2 border-red-500 rounded-md text-sm leading-5 font-medium rounded-md text-red-500 hover:text-red-600 hover:border-red-600 focus:outline-none focus:border-red-500 focus:shadow-outline-red active:bg-red-50 transition duration-150 ease-in-out">
-                                    Set as Canceled
-                                </a>
-                                <span x-show="loading" class="text-gray-400 ml-3 mt-2">Inacticating ...</span>
-                            @else
-                                <a href="#" x-on:click="openModal = true; loading = true" x-show="!openModal" class="py-2 px-4 border-2 border-green-base rounded-md text-sm leading-5 font-medium rounded-md text-green-base hover:text-green-dark hover:border-green-dark focus:outline-none focus:border-green-500 focus:shadow-outline-red active:bg-green-50 transition duration-150 ease-in-out">
-                                    Set as Active
-                                </a>
-                                <span x-show="loading" class="text-gray-400 ml-3 mt-2">Activating ...</span>
-                            @endif
-                        </span>
-                    </div>
+                        @if(user()->role != 'Setter')
+                            <div class="flex justify-start">
+                                <span class="inline-flex rounded-md shadow-sm">
+                                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
+                                        Update
+                                    <button>
+                                </span>
+                                <span class="ml-3 inline-flex rounded-md shadow-sm">
+                                    @if($customer->is_active == true)
+                                        <a href="#" x-on:click="openModal = true; loading = true" x-show="!openModal" class="py-2 px-4 border-2 border-red-500 rounded-md text-sm leading-5 font-medium rounded-md text-red-500 hover:text-red-600 hover:border-red-600 focus:outline-none focus:border-red-500 focus:shadow-outline-red active:bg-red-50 transition duration-150 ease-in-out">
+                                            Set as Canceled
+                                        </a>
+                                        <span x-show="loading" class="text-gray-400 ml-3 mt-2">Inacticating ...</span>
+                                    @else
+                                        <a href="#" x-on:click="openModal = true; loading = true" x-show="!openModal" class="py-2 px-4 border-2 border-green-base rounded-md text-sm leading-5 font-medium rounded-md text-green-base hover:text-green-dark hover:border-green-dark focus:outline-none focus:border-green-500 focus:shadow-outline-red active:bg-green-50 transition duration-150 ease-in-out">
+                                            Set as Active
+                                        </a>
+                                        <span x-show="loading" class="text-gray-400 ml-3 mt-2">Activating ...</span>
+                                    @endif
+                                </span>
+                            </div>
+                        @endif
                     </div>
                 </x-form>
             </div>

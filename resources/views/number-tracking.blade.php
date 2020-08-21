@@ -191,9 +191,11 @@
                         </div>
                     </div>
                     <div class="mt-6">
-                        <x-button :href="route('number-tracking.create')" color="green" class="inline-flex w-full">
-                            Update Numbers
-                        </x-button>
+                        @if(user()->role != 'Setter' && user()->role != 'Sales Rep')
+                            <x-button :href="route('number-tracking.create')" color="green" class="inline-flex w-full">
+                                Update Numbers
+                            </x-button>
+                        @endif
                     </div>
                 </div>
                 
