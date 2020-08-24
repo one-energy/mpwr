@@ -58,6 +58,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(Region::class)->withPivot('role')->withTimestamps();
     }
 
+    public function offices()
+    {
+        return $this->belongsToMany(Office::class)->withPivot('role')->withTimestamps();
+    }
+
     public function invitations()
     {
         return $this->hasMany(Invitation::class);

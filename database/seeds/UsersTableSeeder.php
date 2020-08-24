@@ -2,6 +2,7 @@
 
 use App\Models\Region;
 use App\Models\User;
+use App\Models\Office;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -35,6 +36,7 @@ class UsersTableSeeder extends Seeder
         $this->createDevsquadTeam();
         for ($i=0; $i < 5; $i++) { 
             $this->createTestRegion();    
+            $this->createTestOffice();    
         }
     }
 
@@ -85,6 +87,33 @@ class UsersTableSeeder extends Seeder
         for ($i = 0; $i < 10; $i++) {
             $member = factory(User::class)->create();
             $testRegion->users()->attach($member, ['role' => array_rand(User::ROLES)]);
+        }
+    }
+
+     public function createTestOffice()
+    {
+       
+        $testOwner = factory(User::class)->create([
+            'master' => false,
+        ]);
+
+        $testOfficeManager = factory(User::class)->create([
+            'master' => false,
+        ]);
+        
+        $region = factory(Region::class)->create([
+            'owner_id' => $testOwner->id,
+        ]);
+    
+        $testOffice = factory(Office::class)->create([
+            'office_manager_id' => $testOfficeManager->id,
+            'region_id' => $region->id,
+        ]);
+        $testOffice->users()->attach($testOwner, ['role' => array_rand(User::TOPLEVEL_ROLES)]);
+
+        for ($i = 0; $i < 10; $i++) {
+            $member = factory(User::class)->create();
+            $testOffice->users()->attach($member, ['role' => array_rand(User::ROLES)]);
         }
     }
 }

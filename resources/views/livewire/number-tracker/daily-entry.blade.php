@@ -2,7 +2,7 @@
     <x-form :route="route('number-tracking.store')">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="md:flex">
-                <div class="px-4 py-5 sm:px-6 md:w-1/3">
+                <div class=" py-5 sm:px-6 md:w-1/3 xl:w-1/4">
                     <div class="flex-row">
                         <div class="overflow-y-auto">
                             <div class="overflow-hidden">
@@ -74,7 +74,7 @@
                                                                         :class="{
                                                                                 'bg-green-base text-white': isToday(date) == true, 
                                                                                 'text-gray-700 hover:bg-green-light': isToday(date) == false,
-                                                                                'border-solid border-2 border-red-600': isMissingDate(date) == true
+                                                                                'text-red-700': isMissingDate(date) == true
                                                                             }"	
                                                                     ></div>
                                                                 </div>
@@ -87,13 +87,16 @@
                                     </div>
                                 </div>
     
-                                @foreach($regions as $region)
+                                @foreach($offices as $key => $office)
                                     <button 
                                         type="button"
-                                        class="inline-flex w-full justify-left py-2 px-4 mb-2 bg-white rounded-lg border-gray-200 border-2 top-0 left-0 text-sm leading-5 font-medium focus:outline-none 
-                                            @if($regionSelected == $region->id) border-green-400 @else focus:border-gray-700 focus:shadow-outline-gray @endif transition duration-150 ease-in-out"
-                                        wire:click="setRegion({{ $region->id }})">
-                                        {{ $region->name }}
+                                        class="flex justify-between w-full justify-left py-2 px-4 mb-2 bg-white rounded-lg border-gray-200 border-2 top-0 left-0 text-sm leading-5 font-medium focus:outline-none 
+                                            @if($officeSelected == $office->id) border-green-400 @else focus:border-gray-700 focus:shadow-outline-gray @endif transition duration-150 ease-in-out"
+                                        wire:click="setOffice({{ $office->id }})">
+                                        {{ $office->name }}
+                                        @if(in_array($office, $missingOffices))
+                                            <div class=" w-2 h-2 rounded-full bg-red-600 "></div>
+                                        @endif
                                     </button>
                                 @endforeach
     
@@ -107,7 +110,7 @@
                     </div>
                 </div>
 
-                <div class="flex flex-wrap justify-center px-4 py-5 sm:p-6 md:w-2/3">
+                <div class="flex flex-wrap justify-center px-4 py-5 sm:p-6 md:w-2/3 xl:w-3/4">
                     <div class="mt-3">
                         <div class="w-full grid md:grid-cols-6 grid-cols-3 md:col-gap-4 col-gap-1 row-gap-2">
                             <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
@@ -344,6 +347,9 @@
                                                         <input
                                                             type="number" 
                                                             min="0" 
+                                                            max="24"
+                                                            oninvalid="this.setCustomValidity('Value must be less than or equal 24')" 
+                                                            onchange="this.setCustomValidity('')"
                                                             step="any" 
                                                             name="numbers[{{ $user->id }}][hours]" 
                                                             class="form-input block w-14 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
