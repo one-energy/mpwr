@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\DailyNumber;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class NumberTrackingController extends Controller
 {

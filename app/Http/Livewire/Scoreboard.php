@@ -2,9 +2,9 @@
 
 namespace App\Http\Livewire;
 
-use Livewire\Component;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Livewire\Component;
 
 class Scoreboard extends Component
 {
@@ -64,21 +64,19 @@ class Scoreboard extends Component
         $this->totalSits   = $query->sum('sits');
         $this->totalCloses = $query->sum('set_closes');
 
-        if($this->totalSets)
-        {
+        if ($this->totalSets) {
             $this->dpsRatio   = ($this->totalDoors / $this->totalSets);
             $this->hpsRatio   = ($this->totalHours / $this->totalSets);
             $this->sitRatio   = ($this->totalSits / $this->totalSets);
-        }else{
+        } else {
             $this->dpsRatio   = 0;
             $this->hpsRatio   = 0;
             $this->sitRatio   = 0;
         }
 
-        if($this->totalSits)
-        {
+        if ($this->totalSits) {
             $this->closeRatio = ($this->totalCloses / $this->totalSits);
-        }else{
+        } else {
             $this->closeRatio = 0;
         }
     }

@@ -2,9 +2,9 @@
 
 namespace App\Http\Livewire\NumberTracker;
 
+use App\Models\DailyNumber;
 use App\Models\Office;
 use App\Models\User;
-use App\Models\DailyNumber;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
@@ -28,7 +28,7 @@ class DailyEntry extends Component
     
     protected $listeners = [
         'dailyNumbersSaved' => 'updateSum',
-        'getMissingDates' => 'getMissingDate'
+        'getMissingDates'   => 'getMissingDate',
     ];
 
     public function mount()
@@ -67,10 +67,11 @@ class DailyEntry extends Component
     public function getMissingDate($initialDate, $officeSelected)
     {
         $missingDates = [];
-        $today = date('Y-m-d');
-        for($actualDate = $initialDate; $actualDate != $today; $actualDate = date('Y-m-d', strtotime($actualDate . '+1 day'))){
+        $initialDate = date($initialDate);
+        $today        = date('Y-m-d');
+        for ($actualDate = $initialDate; $actualDate != $today; $actualDate = date('Y-m-d', strtotime($actualDate . '+1 day'))) {
             $isMissingDate = DailyNumber::whereDate('date', $actualDate)
-                ->rightJoin('users', function($join)  {
+                ->rightJoin('users', function($join) {
                     $join->on('users.id', '=', 'daily_numbers.user_id');
                 })
                 ->join('office_user', function($join) use ($officeSelected) {
@@ -78,7 +79,7 @@ class DailyEntry extends Component
                          ->where('office_user.office_id', '=', $officeSelected);
                 })
                 ->count();
-            if($isMissingDate == 0){
+            if ($isMissingDate == 0) {
                 array_push($missingDates, $actualDate);
             }
         }
@@ -90,9 +91,9 @@ class DailyEntry extends Component
     {
         $offices = Office::all();
         foreach ($offices as $key => $office) {
-            $missingDates = $this->getMissingDate('2020-08-01', $office->id);
+            $missingDates = $this->getMissingDate('Y-m-01', $office->id);
 
-            if(count($missingDates) > 0){
+            if (count($missingDates) > 0) {
                 array_push($this->missingOffices, $office);
             }
         }
@@ -102,13 +103,12 @@ class DailyEntry extends Component
     {
         $this->dateSelected     = date('Y-m-d', strtotime($this->date));
         $this->lastDateSelected = date('Y-m-d', strtotime($this->dateSelected . '-1 day'));
-        
     }
 
     public function setOffice($id)
     {
         $this->officeSelected = $id;
-        $this->missingDates = $this->getMissingDate('2020-08-01', $this->officeSelected);
+        $this->missingDates   = $this->getMissingDate('Y-m-01', $this->officeSelected);
     }
 
     public function sortBy()
@@ -121,6 +121,7 @@ class DailyEntry extends Component
         $this->getMissingOffices();
         $this->users               = $this->getUsers($this->dateSelected);
         $this->usersLastDayEntries = $this->getUsers($this->lastDateSelected);
+
         return view('livewire.number-tracker.daily-entry',[
             // 'users' => $this->users,
             'offices' => Office::all(),
