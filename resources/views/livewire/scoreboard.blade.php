@@ -34,38 +34,49 @@
             <div class="flex flex-col">
               <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
                 <div class="align-middle inline-block min-w-full overflow-hidden">
-                  <x-table>
-                    <x-slot name="header">
-                      <x-table.th-tr>
-                        <x-table.th by="rank">
-                            @lang('Rank')
-                        </x-table.th>
-                        <x-table.th by="representative">
-                            @lang('Representative')
-                        </x-table.th>
-                        <x-table.th by="hours">
-                            @lang('Hours')
-                        </x-table.th>
-                        <x-table.th by="office">
-                            @lang('Office')
-                        </x-table.th>
-                      </x-table.th-tr>
-                    </x-slot>
-                    <x-slot name="body">
-                      @foreach($top10Hours as $user)
-                          <x-table.tr :loop="$loop" x-on:click="openModal = true" wire:click="setUser({{ $user->id }})" class="cursor-pointer">
-                              <x-table.td>
-                                  <span class="px-2 inline-flex rounded-full bg-green-base text-white">
-                                  {{ $loop->index+1 }}
-                                </span>
-                              </x-table.td>
-                              <x-table.td>{{ $user->first_name }} {{ $user->last_name }}</x-table.td>
-                              <x-table.td>{{ $user->hours }}</x-table.td>
-                              <x-table.td>{{ $user->office }}</x-table.td>
-                          </x-table.tr>
-                      @endforeach
-                    </x-slot>
-                  </x-table>
+                  @if($top10Hours->count())
+                    <x-table>
+                      <x-slot name="header">
+                        <x-table.th-tr>
+                          <x-table.th by="rank">
+                              @lang('Rank')
+                          </x-table.th>
+                          <x-table.th by="representative">
+                              @lang('Representative')
+                          </x-table.th>
+                          <x-table.th by="hours">
+                              @lang('Hours')
+                          </x-table.th>
+                          <x-table.th by="office">
+                              @lang('Office')
+                          </x-table.th>
+                        </x-table.th-tr>
+                      </x-slot>
+                      <x-slot name="body">
+                        @foreach($top10Hours as $user)
+                            <x-table.tr :loop="$loop" x-on:click="openModal = true" wire:click="setUser({{ $user->id }})" class="cursor-pointer">
+                                <x-table.td>
+                                    <span class="px-2 inline-flex rounded-full bg-green-base text-white">
+                                    {{ $loop->index+1 }}
+                                  </span>
+                                </x-table.td>
+                                <x-table.td>{{ $user->first_name }} {{ $user->last_name }}</x-table.td>
+                                <x-table.td>{{ $user->hours }}</x-table.td>
+                                <x-table.td>{{ $user->office }}</x-table.td>
+                            </x-table.tr>
+                        @endforeach
+                      </x-slot>
+                    </x-table>
+                  @else
+                    <div class="h-96 ">
+                        <div class="flex justify-center align-middle">
+                            <div class="text-sm text-center text-gray-700">
+                                <x-svg.draw.empty></x-svg.draw.empty>
+                                No data yet.
+                            </div>
+                        </div>
+                    </div>
+                  @endif
                 </div>
               </div>
             </div>
@@ -80,38 +91,49 @@
             <div class="flex flex-col">
               <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
                 <div class="align-middle inline-block min-w-full overflow-hidden">
-                  <x-table>
-                    <x-slot name="header">
-                      <x-table.th-tr>
-                        <x-table.th by="rank">
-                            @lang('Rank')
-                        </x-table.th>
-                        <x-table.th by="representative">
-                            @lang('Representative')
-                        </x-table.th>
-                        <x-table.th by="sets">
-                            @lang('Sets')
-                        </x-table.th>
-                        <x-table.th by="office">
-                            @lang('Office')
-                        </x-table.th>
-                      </x-table.th-tr>
-                    </x-slot>
-                    <x-slot name="body">
-                      @foreach($top10Sets as $user)
-                          <x-table.tr :loop="$loop" x-on:click="openModal = true" wire:click="setUser({{ $user->id }})" class="cursor-pointer">
-                              <x-table.td>
-                                  <span class="px-2 inline-flex rounded-full bg-green-base text-white">
-                                  {{ $loop->index+1 }}
-                                </span>
-                              </x-table.td>
-                              <x-table.td>{{ $user->first_name }} {{ $user->last_name }}</x-table.td>
-                              <x-table.td>{{ $user->sets }}</x-table.td>
-                              <x-table.td>{{ $user->office }}</x-table.td>
-                          </x-table.tr>
-                      @endforeach
-                    </x-slot>
-                  </x-table>
+                  @if($top10Sets->count())
+                    <x-table>
+                      <x-slot name="header">
+                        <x-table.th-tr>
+                          <x-table.th by="rank">
+                              @lang('Rank')
+                          </x-table.th>
+                          <x-table.th by="representative">
+                              @lang('Representative')
+                          </x-table.th>
+                          <x-table.th by="sets">
+                              @lang('Sets')
+                          </x-table.th>
+                          <x-table.th by="office">
+                              @lang('Office')
+                          </x-table.th>
+                        </x-table.th-tr>
+                      </x-slot>
+                      <x-slot name="body">
+                        @foreach($top10Sets as $user)
+                            <x-table.tr :loop="$loop" x-on:click="openModal = true" wire:click="setUser({{ $user->id }})" class="cursor-pointer">
+                                <x-table.td>
+                                    <span class="px-2 inline-flex rounded-full bg-green-base text-white">
+                                    {{ $loop->index+1 }}
+                                  </span>
+                                </x-table.td>
+                                <x-table.td>{{ $user->first_name }} {{ $user->last_name }}</x-table.td>
+                                <x-table.td>{{ $user->sets }}</x-table.td>
+                                <x-table.td>{{ $user->office }}</x-table.td>
+                            </x-table.tr>
+                        @endforeach
+                      </x-slot>
+                    </x-table>
+                  @else
+                      <div class="h-96 ">
+                          <div class="flex justify-center align-middle">
+                              <div class="text-sm text-center text-gray-700">
+                                  <x-svg.draw.empty></x-svg.draw.empty>
+                                  No data yet.
+                              </div>
+                          </div>
+                      </div>
+                    @endif
                 </div>
               </div>
             </div>
@@ -126,38 +148,49 @@
             <div class="flex flex-col">
               <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
                 <div class="align-middle inline-block min-w-full overflow-hidden">
-                  <x-table>
-                    <x-slot name="header">
-                      <x-table.th-tr>
-                        <x-table.th by="rank">
-                            @lang('Rank')
-                        </x-table.th>
-                        <x-table.th by="representative">
-                            @lang('Representative')
-                        </x-table.th>
-                        <x-table.th by="set_closes">
-                            @lang('Set Closes')
-                        </x-table.th>
-                        <x-table.th by="office">
-                            @lang('Office')
-                        </x-table.th>
-                      </x-table.th-tr>
-                    </x-slot>
-                    <x-slot name="body">
-                      @foreach($top10SetCloses as $user)
-                          <x-table.tr :loop="$loop" x-on:click="openModal = true" wire:click="setUser({{ $user->id }})" class="cursor-pointer">
-                              <x-table.td>
-                                  <span class="px-2 inline-flex rounded-full bg-green-base text-white">
-                                  {{ $loop->index+1 }}
-                                </span>
-                              </x-table.td>
-                              <x-table.td>{{ $user->first_name }} {{ $user->last_name }}</x-table.td>
-                              <x-table.td>{{ $user->set_closes }}</x-table.td>
-                              <x-table.td>{{ $user->office }}</x-table.td>
-                          </x-table.tr>
-                      @endforeach
-                    </x-slot>
-                  </x-table>
+                  @if($top10SetCloses->count())
+                    <x-table>
+                      <x-slot name="header">
+                        <x-table.th-tr>
+                          <x-table.th by="rank">
+                              @lang('Rank')
+                          </x-table.th>
+                          <x-table.th by="representative">
+                              @lang('Representative')
+                          </x-table.th>
+                          <x-table.th by="set_closes">
+                              @lang('Set Closes')
+                          </x-table.th>
+                          <x-table.th by="office">
+                              @lang('Office')
+                          </x-table.th>
+                        </x-table.th-tr>
+                      </x-slot>
+                      <x-slot name="body">
+                        @foreach($top10SetCloses as $user)
+                            <x-table.tr :loop="$loop" x-on:click="openModal = true" wire:click="setUser({{ $user->id }})" class="cursor-pointer">
+                                <x-table.td>
+                                    <span class="px-2 inline-flex rounded-full bg-green-base text-white">
+                                    {{ $loop->index+1 }}
+                                  </span>
+                                </x-table.td>
+                                <x-table.td>{{ $user->first_name }} {{ $user->last_name }}</x-table.td>
+                                <x-table.td>{{ $user->set_closes }}</x-table.td>
+                                <x-table.td>{{ $user->office }}</x-table.td>
+                            </x-table.tr>
+                        @endforeach
+                      </x-slot>
+                    </x-table>
+                  @else
+                    <div class="h-96 ">
+                        <div class="flex justify-center align-middle">
+                            <div class="text-sm text-center text-gray-700">
+                                <x-svg.draw.empty></x-svg.draw.empty>
+                                No data yet.
+                            </div>
+                        </div>
+                    </div>
+                  @endif
                 </div>
               </div>
             </div>

@@ -32,8 +32,8 @@
                                     <option selected></option>
                                 @endif
                                 @foreach($roles as $role)
-                                <option value="{{ $role }}" {{ old('role') == $role ? 'selected' : '' }}>
-                                        {{ $role }}
+                                <option value="{{ $role['name'] }}" {{ old('role') == $role['name'] ? 'selected' : '' }}>
+                                        {{ $role['name']}}
                                     </option>
                                 @endforeach
                             </x-select>
@@ -57,7 +57,7 @@
                         </button>
                     </span>
                     <span class="ml-3 inline-flex rounded-md shadow-sm">
-                        <a href="{{route('home')}}" class="py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-gray-800 hover:bg-gray-300 focus:outline-none focus:border-gray-300 focus:shadow-outline-gray transition duration-150 ease-in-out">
+                        <a href="{{route('castle.users.index')}}" class="py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-gray-800 hover:bg-gray-300 focus:outline-none focus:border-gray-300 focus:shadow-outline-gray transition duration-150 ease-in-out">
                             Cancel
                         </a>
                     </span>

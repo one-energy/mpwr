@@ -34,8 +34,8 @@ class RegionBuilderTest extends FeatureTest
 
         $this->assertDatabaseHas('region_user', [
             'region_id' => $region->id,
-            'user_id' => $user->id,
-            'role'    => User::OWNER,
+            'user_id'   => $user->id,
+            'role'      => array_search('Owner', User::TOPLEVEL_ROLES),
         ]);
     }
 
@@ -45,6 +45,6 @@ class RegionBuilderTest extends FeatureTest
         $region = (new RegionBuilder)->save()->addMembers(2)->get();
 
         $this->assertCount(3, $region->users);
-        $this->assertCount(2, $region->users()->wherePivot('role', '=', User::MEMBER)->get());
+        $this->assertCount(3, $region->users()->wherePivot('role', '=', array_search('Setter', User::TOPLEVEL_ROLES))->get());
     }
 }

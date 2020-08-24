@@ -13,6 +13,7 @@ use App\Http\Controllers\Castle\ResponseMasterInvitationController;
 use App\Http\Controllers\Castle\RevokeMasterAccessController;
 use App\Http\Controllers\Castle\UsersController;
 use App\Http\Controllers\Castle\ManageIncentivesController;
+use App\Http\Controllers\Castle\PermissionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ScoreboardController;
@@ -62,6 +63,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('users/{user}/reset-password', [UsersController::class, 'resetPassword'])->name('users.reset-password');
         Route::delete('users/{user}', [UsersController::class, 'destroy'])->name('users.destroy');
         Route::get('users/{user}', [UsersController::class, 'show'])->name('users.show');
+
+        Route::get('permission', [PermissionController::class, 'index'])->name('permission.index');
+        Route::get('permission/{user}/edit', [PermissionController::class, 'edit'])->name('permission.edit');
+        Route::put('permission/{user}', [PermissionController::class, 'update'])->name('permission.update');
         
         Route::get('masters', [MastersController::class, 'index'])->name('masters.index');
         Route::get('masters/invite', [MasterInvitationController::class, 'form'])->name('masters.invite');
@@ -81,6 +86,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::get('/profile/show-profile-information', [ProfileController::class, 'index'])->name('profile.show-profile-information');
+    Route::get('/profile/{user}/show-modal-profile-information', [ProfileController::class, 'showData'])->name('profile.show-modal-profile-information');
     Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('/profile/show', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/photo-upload', ProfilePhotoUploadController::class)->name('profile.photo-upload');

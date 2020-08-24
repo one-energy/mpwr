@@ -23,16 +23,18 @@
                     <div class="flex justify-between mt-12">
                         <div class="flex justify-start">
                             <h3 class="text-lg text-gray-900">Customers</h3>
-                            <a href="{{route('customers.create')}}" class="ml-6">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25">
-                                    <circle cx="12" cy="12" r="10" class="fill-current text-green-light"></circle>
-                                    <symbol id="add-customer" viewBox="0 0 25 25">
-                                        <path d="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z"
-                                              class="fill-current text-green-base"/>
-                                    </symbol>
-                                    <use xlink:href="#add-customer" width="12" height="12" y="6" x="6"/>
-                                </svg>
-                            </a>
+                            @if(user()->role != 'Setter')
+                                <a href="{{route('customers.create')}}" class="ml-6">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25">
+                                        <circle cx="12" cy="12" r="10" class="fill-current text-green-light"></circle>
+                                        <symbol id="add-customer" viewBox="0 0 25 25">
+                                            <path d="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z"
+                                                class="fill-current text-green-base"/>
+                                        </symbol>
+                                        <use xlink:href="#add-customer" width="12" height="12" y="6" x="6"/>
+                                    </svg>
+                                </a>
+                            @endif
                         </div>
                         <form action="{{ route('home') }}">
                             <div class="flex justify-end" x-data="{ sortOptions: false }">

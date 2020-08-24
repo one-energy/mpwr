@@ -13,6 +13,11 @@ class ProfileController extends Controller
         return view('profile.index');
     }
 
+    public function showData(User $user)
+    {
+        return view('profile.show-data', compact('user'));
+    }
+
     public function show()
     {
         return view('profile.show');

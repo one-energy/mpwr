@@ -28,8 +28,8 @@
                                     <option selected></option>
                                 @endif
                                 @foreach($roles as $role)
-                                    <option value="{{ $role }}" {{ old('role', $user->role) == $role ? 'selected' : '' }}>
-                                        {{ $role }}
+                                    <option value="{{ $role['name'] }}" {{ old('role', $user->role) == $role['name'] ? 'selected' : '' }}>
+                                        {{ $role['name'] }}
                                     </option>
                                 @endforeach
                             </x-select>
