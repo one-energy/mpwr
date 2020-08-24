@@ -99,6 +99,7 @@ class UsersTableSeeder extends Seeder
 
         $testOfficeManager = factory(User::class)->create([
             'master' => false,
+            'role' => 'Office Manager'
         ]);
         
         $region = factory(Region::class)->create([
@@ -107,7 +108,7 @@ class UsersTableSeeder extends Seeder
     
         $testOffice = factory(Office::class)->create([
             'office_manager_id' => $testOfficeManager->id,
-            'region_id' => $region->id,
+            'region_id'         => $region->id,
         ]);
         $testOffice->users()->attach($testOwner, ['role' => array_rand(User::TOPLEVEL_ROLES)]);
 

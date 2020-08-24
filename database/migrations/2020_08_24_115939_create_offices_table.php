@@ -18,10 +18,12 @@ class CreateOfficesTable extends Migration
             $table->string('name');
             $table->unsignedBigInteger('region_id');
             $table->unsignedBigInteger('office_manager_id');
-            $table->timestamps();
 
             $table->foreign('office_manager_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('region_id')->references('id')->on('regions')->onDelete('cascade');
+            
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

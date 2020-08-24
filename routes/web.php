@@ -13,6 +13,7 @@ use App\Http\Controllers\Castle\ResponseMasterInvitationController;
 use App\Http\Controllers\Castle\RevokeMasterAccessController;
 use App\Http\Controllers\Castle\UsersController;
 use App\Http\Controllers\Castle\ManageIncentivesController;
+use App\Http\Controllers\Castle\OfficeController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ScoreboardController;
@@ -68,7 +69,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('masters/invite', [MasterInvitationController::class, 'invite']);
         Route::patch('masters/{master}/revoke', RevokeMasterAccessController::class)->name('masters.revoke');
 
-        Route::get('incentives', [ManageIncentivesController::class, 'index'])->name('incentives');
+        Route::get('offices', [OfficeController::class, 'index'])->name('offices.index');
+        Route::get('offices/create', [OfficeController::class, 'create'])->name('offices.create');
+        Route::post('offices/create', [OfficeController::class, 'store'])->name('offices.store');
+        Route::get('offices/{office}/edit', [OfficeController::class, 'edit'])->name('offices.edit');
+        Route::put('offices/{office}', [OfficeController::class, 'update'])->name('offices.update');
+        Route::delete('offices/{office}', [OfficeController::class, 'destroy'])->name('offices.destroy');
+
+        Route::get('incentives', [ManageIncentivesController::class, 'index'])->name('incentives.index');
         Route::get('incentives/create', [ManageIncentivesController::class, 'create'])->name('incentives.create');
         Route::post('incentives/create', [ManageIncentivesController::class, 'store'])->name('incentives.store');
         Route::get('incentives/{incentive}/edit', [ManageIncentivesController::class, 'edit'])->name('incentives.edit');

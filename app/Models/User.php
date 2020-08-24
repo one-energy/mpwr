@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Hash;
  * @property string $master
  * @property Carbon $created_at
  * @property Carbon $updated_at
+ * @property Carbon $deleted_at
  */
 class User extends Authenticatable implements MustVerifyEmail
 {

@@ -12,7 +12,7 @@
             <div class="px-4 py-5 sm:px-6 w-2/3">
                 <div>
                     <x-button :href="route('castle.users.create')" color="green">
-                        @lang('Create a new User')
+                        @lang('Create')
                     </x-button>
                     
                     <div class="mt-6">
