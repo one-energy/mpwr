@@ -43,7 +43,7 @@ class NumberTrackingController extends Controller
     {
         $data = request()->all();
 
-        $this->authorize('update', [DailyNumber::class, $data['regionSelected']]);
+        $this->authorize('update', [DailyNumber::class, $data['officeSelected']]);
 
         if (!empty($data['numbers'])) {
             $date = ($data['date']) ? date('Y-m-d', strtotime($data['date'])) : date('Y-m-d', time()); 
