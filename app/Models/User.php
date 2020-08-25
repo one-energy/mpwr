@@ -6,7 +6,6 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -58,6 +57,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function regions()
     {
         return $this->belongsToMany(Region::class)->withPivot('role')->withTimestamps();
+    }
+
+    public function offices()
+    {
+        return $this->belongsToMany(Office::class)->withPivot('role')->withTimestamps();
     }
 
     public function invitations()
