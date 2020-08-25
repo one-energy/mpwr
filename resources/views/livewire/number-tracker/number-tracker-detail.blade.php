@@ -404,7 +404,7 @@
                         <div class="flex flex-col">
                             <div class="overflow-x-auto">
                                 <div class="align-middle inline-block min-w-full overflow-hidden">
-                                    @if(count($trackingInformation))
+                                    @if(count($numbersTracked))
                                         <x-table>
                                             <x-slot name="header">
                                                 <x-table.th-tr>
@@ -432,15 +432,15 @@
                                                 </x-table.th-tr>
                                             </x-slot>
                                             <x-slot name="body">
-                                                @foreach($trackingInformation as $row)
+                                                @foreach($numbersTracked as $row)
                                                     <x-table.tr :loop="$loop">
-                                                        <x-table.td>{{{ $row['region_member'] }}}</x-table.td>
-                                                        <x-table.td>{{{ $row['doors'] }}}</x-table.td>
-                                                        <x-table.td>{{{ $row['hours'] }}}</x-table.td>
-                                                        <x-table.td>{{{ $row['sets'] }}}</x-table.td>
-                                                        <x-table.td>{{{ $row['sits'] }}}</x-table.td>
-                                                        <x-table.td>{{{ $row['set_closes'] }}}</x-table.td>
-                                                        <x-table.td>{{{ $row['closes'] }}}</x-table.td>
+                                                        <x-table.td>{{ $row['first_name'] . '' .  $row['last_name']}}</x-table.td>
+                                                        <x-table.td>{{ $row['doors'] ?? 0 }}</x-table.td>
+                                                        <x-table.td>{{ $row['hours'] ?? 0 }}</x-table.td>
+                                                        <x-table.td>{{ $row['sets'] ?? 0 }}</x-table.td>
+                                                        <x-table.td>{{ $row['sits'] ?? 0 }}</x-table.td>
+                                                        <x-table.td>{{ $row['set_closes'] ?? 0 }}</x-table.td>
+                                                        <x-table.td>{{ $row['closes'] ?? 0 }}</x-table.td>
                                                     </x-table.tr>
                                                 @endforeach
                                             </x-slot>

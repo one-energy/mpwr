@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\NumberTracker;
 
+use App\Models\DailyNumber;
 use Livewire\Component;
 
 class NumberTrackerDetail extends Component
@@ -9,9 +10,13 @@ class NumberTrackerDetail extends Component
 
     public $period = 'd';
 
+    public $numbersTracked;
+
+    public $dateSelected;
+
     public function mount()
     {
-      
+        $this->getTrackerNumbers();
     }
 
     public function render()
@@ -22,18 +27,24 @@ class NumberTrackerDetail extends Component
             'Monthly Total',
             'Statistics',
         ];
-        $trackingInformation = [
-            ['region_member' => 'Donna Walker',    'doors' => 100, 'hours' => 9, 'sets' => 8, 'sits' => 2, 'set_closes' => 1, 'closes' => 1],
-            ['region_member' => 'Chris Wiliams',   'doors' => 100, 'hours' => 9, 'sets' => 8, 'sits' => 2, 'set_closes' => 1, 'closes' => 1],
-            ['region_member' => 'Ana Hendersen',   'doors' => 100, 'hours' => 9, 'sets' => 8, 'sits' => 2, 'set_closes' => 1, 'closes' => 1],
-            ['region_member' => 'Donald Barnes',   'doors' => 100, 'hours' => 9, 'sets' => 8, 'sits' => 2, 'set_closes' => 1, 'closes' => 1],
-            ['region_member' => 'Joe Richardson',  'doors' => 100, 'hours' => 9, 'sets' => 8, 'sits' => 2, 'set_closes' => 1, 'closes' => 1],
-            ['region_member' => 'Tammy Collins',   'doors' => 100, 'hours' => 9, 'sets' => 8, 'sits' => 2, 'set_closes' => 1, 'closes' => 1],
-            ['region_member' => 'Joseph Bennett',  'doors' => 100, 'hours' => 9, 'sets' => 8, 'sits' => 2, 'set_closes' => 1, 'closes' => 1],
-            ['region_member' => 'Michelle Powell', 'doors' => 100, 'hours' => 9, 'sets' => 8, 'sits' => 2, 'set_closes' => 1, 'closes' => 1],
-            ['region_member' => 'Jerry Kelly',     'doors' => 100, 'hours' => 9, 'sets' => 8, 'sits' => 2, 'set_closes' => 1, 'closes' => 1],
-            ['region_member' => 'Donna Walker',    'doors' => 100, 'hours' => 9, 'sets' => 8, 'sits' => 2, 'set_closes' => 1, 'closes' => 1],
-        ];
-        return view('livewire.number-tracker.number-tracker-detail',compact('showOptions', 'trackingInformation'));
+        return view('livewire.number-tracker.number-tracker-detail',compact('showOptions'));
+    }
+
+    public function setPeriod($p)
+    {
+        $this->period = $p;
+        $this->getTrackerNumbers();
+    }
+
+    public function getTrackerNumbers()
+    {
+        $this->numbersTracked = DailyNumber::query()
+            ->leftJoin('users', function($join) {
+                $join->on('users.id', '=', 'daily_numbers.id');
+            })
+            ->whereDate('date', $dateSelected)
+            ->orderBy('doors', 'desc')
+            ->take(5)
+            ->get();                         
     }
 }
