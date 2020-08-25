@@ -3,6 +3,7 @@
 namespace Tests\Feature\Castle;
 
 use App\Models\Office;
+use App\Models\Region;
 use App\Models\User;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -23,12 +24,17 @@ class OfficeTest extends TestCase
     /** @test */
     public function it_should_list_all_offices()
     {
-        $offices = factory(Office::class, 6)->create();
+        $region        = factory(Region::class)->create(['owner_id' => $this->user->id]);
+        $officeManager = factory(User::class)->create(['role' => 'Office Manager']);
+        $offices       = factory(Office::class, 6)->create([
+            'region_id'         => $region->id,
+            'office_manager_id' => $officeManager->id,
+        ]);
 
-        $response = $this->get('/offices');
+        $response = $this->get('castle/offices');
 
         $response->assertStatus(200)
-            ->assertViewIs('castle.offices')
+            ->assertViewIs('castle.offices.index')
             ->assertViewHas('offices');
 
         foreach ($offices as $office) {
@@ -41,7 +47,7 @@ class OfficeTest extends TestCase
     {
         $this->actingAs(factory(User::class)->create(['master' => false]));
 
-        $response = $this->get('offices/create');
+        $response = $this->get('castle/offices/create');
 
         $response->assertStatus(403);
     }
@@ -49,7 +55,7 @@ class OfficeTest extends TestCase
      /** @test */
      public function it_should_show_the_create_form_for_top_level_roles()
      {
-        $response = $this->get('offices/create');
+        $response = $this->get('castle/offices/create');
         
         $response->assertStatus(200)
             ->assertViewIs('castle.offices.create');
@@ -58,13 +64,13 @@ class OfficeTest extends TestCase
     /** @test */
     public function it_should_store_a_new_office()
     {
+        $region        = factory(Region::class)->create(['owner_id' => $this->user->id]);
+        $officeManager = factory(User::class)->create(['role' => 'Office Manager']);
+
         $data = [
-            'number_installs'   => 48,
             'name'              => 'Office',
-            'installs_achieved' => 56,
-            'installs_needed'   => 67,
-            'kw_achieved'       => 78,
-            'kw_needed'         => 100,
+            'region_id'         => $region->id,
+            'office_manager_id' => $officeManager->id,
         ];
 
         $response = $this->post(route('castle.offices.store'), $data);
@@ -79,32 +85,31 @@ class OfficeTest extends TestCase
     public function it_should_require_all_fields_to_store_a_new_office()
     {
         $data = [
-            'number_installs'   => '',
             'name'              => '',
-            'installs_achieved' => '',
-            'installs_needed'   => '',
-            'kw_achieved'       => '',
-            'kw_needed'         => '',
+            'region_id'         => '',
+            'office_manager_id' => '',
         ];
 
         $response = $this->post(route('castle.offices.store'), $data);
         $response->assertSessionHasErrors(
         [
-            'number_installs',
             'name',
-            'installs_achieved',
-            'installs_needed',
-            'kw_achieved',
-            'kw_needed',
+            'region_id',
+            'office_manager_id',
         ]);
     }
 
     /** @test */
     public function it_should_show_the_edit_form_for_top_level_roles()
     {
-        $office = factory(Office::class)->create();
+        $region        = factory(Region::class)->create(['owner_id' => $this->user->id]);
+        $officeManager = factory(User::class)->create(['role' => 'Office Manager']);
+        $office        = factory(Office::class)->create([
+            'region_id'         => $region->id,
+            'office_manager_id' => $officeManager->id,
+        ]);
 
-        $response = $this->get('offices/'. $office->id . '/edit');
+        $response = $this->get('castle/offices/'. $office->id . '/edit');
         
         $response->assertStatus(200)
             ->assertViewIs('castle.offices.edit');
@@ -115,9 +120,14 @@ class OfficeTest extends TestCase
     {
         $this->actingAs(factory(User::class)->create(['role' => 'Setter']));
         
-        $office = factory(Office::class)->create();
+        $region        = factory(Region::class)->create(['owner_id' => $this->user->id]);
+        $officeManager = factory(User::class)->create(['role' => 'Office Manager']);
+        $office        = factory(Office::class)->create([
+            'region_id'         => $region->id,
+            'office_manager_id' => $officeManager->id,
+        ]);
 
-        $response = $this->get('offices/'. $office->id .'/edit');
+        $response = $this->get('castle/offices/'. $office->id .'/edit');
 
         $response->assertStatus(403);
     }
@@ -125,8 +135,14 @@ class OfficeTest extends TestCase
     /** @test */
     public function it_should_update_an_office()
     {
-        $office       = factory(Office::class)->create(['name' => 'Office']);
-        $data            = $office->toArray();
+        $region        = factory(Region::class)->create(['owner_id' => $this->user->id]);
+        $officeManager = factory(User::class)->create(['role' => 'Office Manager']);
+        $office        = factory(Office::class)->create([
+            'name'              => 'Office',
+            'region_id'         => $region->id,
+            'office_manager_id' => $officeManager->id,
+        ]);
+        $data         = $office->toArray();
         $updateOffice = array_merge($data, ['name' => 'Office Edited']);
 
         $response = $this->put(route('castle.offices.update', $office->id), $updateOffice);
@@ -143,7 +159,12 @@ class OfficeTest extends TestCase
     /** @test */
     public function it_should_destroy_an_office()
     {
-        $office = factory(Office::class)->create();
+        $region        = factory(Region::class)->create(['owner_id' => $this->user->id]);
+        $officeManager = factory(User::class)->create(['role' => 'Office Manager']);
+        $office        = factory(Office::class)->create([
+            'region_id'         => $region->id,
+            'office_manager_id' => $officeManager->id,
+        ]);
 
         $response = $this->delete(route('castle.offices.destroy', $office->id));
         $deleted  = Office::where('id', $office->id)->get();

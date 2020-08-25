@@ -13,7 +13,7 @@ class OfficeController extends Controller
     {
         $offices = Office::query()->get();
 
-        return view('castle.office.index', compact('offices'));
+        return view('castle.offices.index', compact('offices'));
     }
 
     public function create()
@@ -21,7 +21,7 @@ class OfficeController extends Controller
         $regions = Region::all();
         $users   = User::query()->where('role', 'Office Manager')->get();
 
-        return view('castle.office.create', compact('regions', 'users'));
+        return view('castle.offices.create', compact('regions', 'users'));
     }
 
     public function store()
@@ -58,7 +58,7 @@ class OfficeController extends Controller
         $regions = Region::all();
         $users   = User::query()->where('role', 'Office Manager')->get();
 
-        return view('castle.office.edit', compact('office', 'regions', 'users'));
+        return view('castle.offices.edit', compact('office', 'regions', 'users'));
     }
 
     public function update(Office $office)
