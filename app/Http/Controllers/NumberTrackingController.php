@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Region;
 use App\Models\DailyNumber;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class NumberTrackingController extends Controller
 {
@@ -25,7 +24,7 @@ class NumberTrackingController extends Controller
     {
         $data = request()->all();
 
-        $this->authorize('update', [DailyNumber::class, $data['regionSelected']]);
+        $this->authorize('update', [DailyNumber::class, $data['officeSelected']]);
 
         if (!empty($data['numbers'])) {
             $date = ($data['date']) ? date('Y-m-d', strtotime($data['date'])) : date('Y-m-d', time()); 
