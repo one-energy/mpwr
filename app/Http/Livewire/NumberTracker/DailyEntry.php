@@ -2,8 +2,9 @@
 
 namespace App\Http\Livewire\NumberTracker;
 
-use App\Models\Region;
+use App\Models\Office;
 use App\Models\User;
+use App\Models\DailyNumber;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
@@ -11,7 +12,7 @@ class DailyEntry extends Component
 {
     public $date;
 
-    public $regionSelected;
+    public $officeSelected;
 
     public $dateSelected;
 
@@ -19,23 +20,31 @@ class DailyEntry extends Component
 
     public $users;
 
+    public $missingDates = [];
+
+    public $missingOffices = [];
+
     public $usersLastDayEntries;
     
-    protected $listeners = ['dailyNumbersSaved' => 'updateSum'];
+    protected $listeners = [
+        'dailyNumbersSaved' => 'updateSum',
+        'getMissingDates' => 'getMissingDate'
+    ];
 
     public function mount()
     {
+        $this->getMissingOffices();
         $this->dateSelected     = date('Y-m-d', time());
         $this->lastDateSelected = date('Y-m-d', strtotime($this->dateSelected . '-1 day'));
-        $this->regionSelected   = Region::first()->id;
+        $this->setOffice(Office::first()->id);
     }
 
     public function getUsers($dateSelected)
     {
         return User::query()
-            ->when($this->regionSelected, function(Builder $query) {
-                $query->whereHas('regions', function(Builder $query) {
-                    $query->whereId($this->regionSelected);
+            ->when($this->officeSelected, function(Builder $query) {
+                $query->whereHas('offices', function(Builder $query) {
+                    $query->whereId($this->officeSelected);
                 });
             })
             ->leftJoin('daily_numbers', function($join) use ($dateSelected) {
@@ -55,15 +64,51 @@ class DailyEntry extends Component
             ->get();
     }
 
+    public function getMissingDate($initialDate, $officeSelected)
+    {
+        $missingDates = [];
+        $today = date('Y-m-d');
+        for($actualDate = $initialDate; $actualDate != $today; $actualDate = date('Y-m-d', strtotime($actualDate . '+1 day'))){
+            $isMissingDate = DailyNumber::whereDate('date', $actualDate)
+                ->rightJoin('users', function($join)  {
+                    $join->on('users.id', '=', 'daily_numbers.user_id');
+                })
+                ->join('office_user', function($join) use ($officeSelected) {
+                    $join->on('office_user.user_id', '=', 'users.id')
+                         ->where('office_user.office_id', '=', $officeSelected);
+                })
+                ->count();
+            if($isMissingDate == 0){
+                array_push($missingDates, $actualDate);
+            }
+        }
+
+        return $missingDates;
+    }
+
+    public function getMissingOffices()
+    {
+        $offices = Office::all();
+        foreach ($offices as $key => $office) {
+            $missingDates = $this->getMissingDate('2020-08-01', $office->id);
+
+            if(count($missingDates) > 0){
+                array_push($this->missingOffices, $office);
+            }
+        }
+    }
+
     public function setDate()
     {
         $this->dateSelected     = date('Y-m-d', strtotime($this->date));
         $this->lastDateSelected = date('Y-m-d', strtotime($this->dateSelected . '-1 day'));
+        
     }
 
-    public function setRegion($id)
+    public function setOffice($id)
     {
-        $this->regionSelected = $id;
+        $this->officeSelected = $id;
+        $this->missingDates = $this->getMissingDate('2020-08-01', $this->officeSelected);
     }
 
     public function sortBy()
@@ -73,12 +118,12 @@ class DailyEntry extends Component
 
     public function render()
     {
+        $this->getMissingOffices();
         $this->users               = $this->getUsers($this->dateSelected);
         $this->usersLastDayEntries = $this->getUsers($this->lastDateSelected);
-        
         return view('livewire.number-tracker.daily-entry',[
             // 'users' => $this->users,
-            'regions' => Region::all(),
+            'offices' => Office::all(),
         ]);
     }
 }

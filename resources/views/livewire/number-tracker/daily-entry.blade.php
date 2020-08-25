@@ -2,7 +2,7 @@
     <x-form :route="route('number-tracking.store')">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="md:flex">
-                <div class="py-5 md:w-1/3 lg:1/4">
+                <div class="py-5 md:w-1/3 LG:1/4">
                     <div class="flex-row">
                         <div class="overflow-y-auto">
                             <div class="overflow-hidden">
@@ -73,7 +73,8 @@
                                                                         class="cursor-pointer text-center text-sm rounded-full leading-loose transition ease-in-out duration-100"
                                                                         :class="{
                                                                                 'bg-green-base text-white': isToday(date) == true, 
-                                                                                'text-gray-700 hover:bg-green-light': isToday(date) == false 
+                                                                                'text-gray-700 hover:bg-green-light': isToday(date) == false,
+                                                                                'text-red-700': isMissingDate(date) == true
                                                                             }"	
                                                                     ></div>
                                                                 </div>
@@ -86,13 +87,16 @@
                                     </div>
                                 </div>
     
-                                @foreach($regions as $region)
+                                @foreach($offices as $key => $office)
                                     <button 
                                         type="button"
-                                        class="inline-flex w-full justify-left py-2 px-4 mb-2 bg-white rounded-lg border-gray-200 border-2 top-0 left-0 text-sm leading-5 font-medium focus:outline-none 
-                                            @if($regionSelected == $region->id) border-green-400 @else focus:border-gray-700 focus:shadow-outline-gray @endif transition duration-150 ease-in-out"
-                                        wire:click="setRegion({{ $region->id }})">
-                                        {{ $region->name }}
+                                        class="flex justify-between w-full justify-left py-2 px-4 mb-2 bg-white rounded-lg border-gray-200 border-2 top-0 left-0 text-sm leading-5 font-medium focus:outline-none 
+                                            @if($officeSelected == $office->id) border-green-400 @else focus:border-gray-700 focus:shadow-outline-gray @endif transition duration-150 ease-in-out"
+                                        wire:click="setOffice({{ $office->id }})">
+                                        {{ $office->name }}
+                                        @if(in_array($office, $missingOffices))
+                                            <div class=" w-2 h-2 rounded-full bg-red-600 "></div>
+                                        @endif
                                     </button>
                                 @endforeach
                                 <input name="regionSelected" id="regionSelected" value="{{ $regionSelected }}" class="hidden"/>
@@ -107,7 +111,7 @@
                     </div>
                 </div>
 
-                <div class="flex flex-wrap justify-center px-4 py-5 sm:p-6 md:w-2/3 lg:3/4">
+                <div class="flex flex-wrap justify-center px-4 py-5 sm:p-6 md:w-2/3 LG:3/4">
                     <div class="mt-3 w-full xl:px-0 lg:px-24 md:px-0">
                         <div class="grid xl:grid-cols-6 grid-cols-3 md:col-gap-4 col-gap-1 row-gap-2">
                             <div class="col-span-1 border-2 border-gray-200 rounded-lg p-3">
@@ -400,13 +404,14 @@
 
 <script>
     const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
+    const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; 
+  
     function app() {
+
         return {
             showDatepicker: true,
             datepickerValue: '',
-
+            missingDates:  [],
             month: '',
             year: '',
             no_of_days: [],
@@ -415,10 +420,20 @@
             currentDate: new Date(),
 
             initDate() {
-                let today = new Date();
+                let today  = new Date();
                 this.month = today.getMonth();
-                this.year = today.getFullYear();
-                this.datepickerValue = new Date(this.year, this.month, today.getDate()).toDateString();
+                this.year  = today.getFullYear();
+                this.datepickerValue = new Date(this.year, this.month, today.getDate()).toDateString();  
+            },
+
+            getMissingDates() {
+                let component = window.livewire.find("daily-entry-tracker");
+                this.missingDates = @this.get('missingDates');
+                debugger;
+                window.livewire.emit('getMissingDates', '2020-08-01');
+                window.livewire.on('responseMissingDate', (missingDates) => {
+                    this.missingDates = missingDates;
+                })
             },
 
             isToday(date) {
@@ -455,7 +470,29 @@
                 }
 
                 this.no_of_days = daysArray;
-            }
+            },
+
+            isMissingDate(date){
+                missingDates = @this.get('missingDates');
+                if(date != null){
+                    date = (date < 10) ? '0' + date.toString() : date.toString();
+                    let month = (this.month < 10) ? '0' + (this.month + 1).toString() : (this.month + 1).toString()
+                    let searchDate = this.year + '-' + month + '-' + date;
+                    let response;
+                    for(let missingDate of missingDates) {
+                        response = missingDate == searchDate
+                        if (response == true){
+                            break;
+                        }
+                    };
+                    return response;
+                }else{
+                    return false;
+                }
+
+            },
         }
     }
+  
 </script>
+

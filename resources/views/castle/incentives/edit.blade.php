@@ -1,7 +1,7 @@
-<x-app.auth :title="__('New Incentive')">
+<x-app.auth :title="__('Edit Incentive')">
     <div>
         <div class="max-w-6xl mx-auto py-5 sm:px-6 lg:px-8">
-            <a href="{{ route('castle.incentives') }}" class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
+            <a href="{{ route('castle.incentives.index') }}" class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
                 < Edit Incentive
             </a>
         </div>
@@ -39,11 +39,11 @@
                 <div class="flex justify-start">
                     <span class="inline-flex rounded-md shadow-sm">
                         <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
-                            Add Incentive
+                            Update
                         </button>
                     </span>
                     <span class="ml-3 inline-flex rounded-md shadow-sm">
-                        <a href="{{route('castle.incentives')}}" class="py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-gray-800 hover:bg-gray-300 focus:outline-none focus:border-gray-300 focus:shadow-outline-gray transition duration-150 ease-in-out">
+                        <a href="{{route('castle.incentives.index')}}" class="py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-gray-800 hover:bg-gray-300 focus:outline-none focus:border-gray-300 focus:shadow-outline-gray transition duration-150 ease-in-out">
                             Cancel
                         </a>
                     </span>

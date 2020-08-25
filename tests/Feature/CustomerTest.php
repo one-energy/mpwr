@@ -162,7 +162,7 @@ class CustomerTest extends TestCase
 
         $response = $this->put(route('customers.update', $customer->id), $updateCustomer);
             
-        $response->assertStatus(200);
+        $response->assertStatus(302);
 
         $this->assertDatabaseHas('customers',
         [
