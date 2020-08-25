@@ -32,12 +32,7 @@
                   When on the doors
                 </div>
                 <div class="col-span-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                    <symbol id="arrow" viewBox="0 0 25 25">
-                      <path d="M5 3l3.057-3 11.943 12-11.943 12-3.057-3 9-9z" class="text-gray-500 fill-current" />
-                    </symbol>
-                    <use xlink:href="#arrow" width="15" height="15" y="6" x="6" />
-                  </svg>
+                  <x-svg.chevron-right class="w-7 text-gray-500"/>
                 </div>
               </div>
             </div>
@@ -49,12 +44,7 @@
                     What to say
                   </div>
                   <div class="col-span-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                      <symbol id="arrow" viewBox="0 0 25 25">
-                        <path d="M5 3l3.057-3 11.943 12-11.943 12-3.057-3 9-9z" class="text-gray-500 fill-current" />
-                      </symbol>
-                      <use xlink:href="#arrow" width="15" height="15" y="6" x="6" />
-                    </svg>
+                    <x-svg.chevron-right class="w-7 text-gray-500"/>
                   </div>
                 </div>
               </a>
@@ -66,12 +56,7 @@
                   How to say it
                 </div>
                 <div class="col-span-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                    <symbol id="arrow" viewBox="0 0 25 25">
-                      <path d="M5 3l3.057-3 11.943 12-11.943 12-3.057-3 9-9z" class="text-gray-500 fill-current" />
-                    </symbol>
-                    <use xlink:href="#arrow" width="15" height="15" y="6" x="6" />
-                  </svg>
+                  <x-svg.chevron-right class="w-7 text-gray-500"/>
                 </div>
               </div>
             </div>
@@ -82,12 +67,7 @@
                   What time of the day
                 </div>
                 <div class="col-span-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                    <symbol id="arrow" viewBox="0 0 25 25">
-                      <path d="M5 3l3.057-3 11.943 12-11.943 12-3.057-3 9-9z" class="text-gray-500 fill-current" />
-                    </symbol>
-                    <use xlink:href="#arrow" width="15" height="15" y="6" x="6" />
-                  </svg>
+                  <x-svg.chevron-right class="w-7 text-gray-500"/>
                 </div>
               </div>
             </div>
@@ -98,12 +78,7 @@
                   Misc. Training
                 </div>
                 <div class="col-span-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                    <symbol id="arrow" viewBox="0 0 25 25">
-                      <path d="M5 3l3.057-3 11.943 12-11.943 12-3.057-3 9-9z" class="text-gray-500 fill-current" />
-                    </symbol>
-                    <use xlink:href="#arrow" width="15" height="15" y="6" x="6" />
-                  </svg>
+                  <x-svg.chevron-right class="w-7 text-gray-500"/>
                 </div>
               </div>
             </div>
