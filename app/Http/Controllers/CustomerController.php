@@ -99,6 +99,8 @@ class CustomerController extends Controller
 
     public function update(Customer $customer)
     {
+        $this->authorize('update', Customer::class);
+
         $validated = $this->validate(
             request(),
             [
@@ -139,6 +141,8 @@ class CustomerController extends Controller
 
     public function active(Customer $customer)
     {
+        $this->authorize('update', Customer::class);
+
         $customer->is_active = !$customer->is_active;
         $customer->save();
 

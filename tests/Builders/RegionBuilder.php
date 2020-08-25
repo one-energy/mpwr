@@ -29,9 +29,8 @@ class RegionBuilder
             $this->region->owner_id = factory(User::class)->create()->id;
         }
         $this->region->save();
-        
-        
-        $this->region->users()->attach($this->region->owner, ['role' => User::OWNER]);
+
+        $this->region->users()->attach($this->region->owner, ['role' => array_search('Owner', User::TOPLEVEL_ROLES)]);
 
         return $this;
     }
@@ -53,10 +52,9 @@ class RegionBuilder
         $users = factory(User::class, $qty)->create();
 
         foreach ($users as $user) {
-            $this->region->users()->attach($user, ['role' => User::MEMBER]);
+            $this->region->users()->attach($user, ['role' => array_search('Setter', User::ROLES)]);
         }
 
         return $this;
     }
-
 }

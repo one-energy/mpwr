@@ -143,7 +143,7 @@ class CustomerTest extends TestCase
     }
 
     /** @test */
-    public function it_should_show_the_edit_form_for_top_level_roles()
+    public function it_should_show_the_edit_form()
     {
         $customer = factory(Customer::class)->create();
 
@@ -151,18 +151,6 @@ class CustomerTest extends TestCase
         
         $response->assertStatus(200)
             ->assertViewIs('customer.show');
-    }
-
-    /** @test */
-    public function it_should_block_the_edit_form_for_non_top_level_roles()
-    {
-        $this->actingAs(factory(User::class)->create(['role' => 'Setter']));
-        
-        $customer = factory(Customer::class)->create();
-
-        $response = $this->get('customers/'. $customer->id);
-
-        $response->assertStatus(403);
     }
 
     /** @test */
@@ -174,13 +162,27 @@ class CustomerTest extends TestCase
 
         $response = $this->put(route('customers.update', $customer->id), $updateCustomer);
             
-        $response->assertStatus(302);
+        $response->assertStatus(200);
 
         $this->assertDatabaseHas('customers',
         [
             'id'  => $customer->id,
             'pay' => 24.7
         ]);
+    }
+
+    /** @test */
+    public function it_should_block_updating_a_form_for_non_top_level_roles()
+    {
+        $this->actingAs(factory(User::class)->create(['role' => 'Setter']));
+        
+        $customer       = factory(Customer::class)->create(['pay' => 30.5]);
+        $data           = $customer->toArray();
+        $updateCustomer = array_merge($data, ['pay' => 24.7]);
+
+        $response = $this->put(route('customers.update', $customer->id), $updateCustomer);
+
+        $response->assertStatus(403);
     }
 
     /** @test */

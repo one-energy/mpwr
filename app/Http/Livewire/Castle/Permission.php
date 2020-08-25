@@ -3,10 +3,10 @@
 namespace App\Http\Livewire\Castle;
 
 use App\Models\User;
-use Livewire\Component;
 use App\Traits\Livewire\FullTable;
+use Livewire\Component;
 
-class Users extends Component
+class Permission extends Component
 {
     use FullTable;
 
@@ -17,7 +17,7 @@ class Users extends Component
 
     public function render()
     {
-        return view('livewire.castle.users', [
+        return view('livewire.castle.permission', [
             'users' => User::query()
                 ->search($this->search)
                 ->orderBy($this->sortBy, $this->sortDirection)

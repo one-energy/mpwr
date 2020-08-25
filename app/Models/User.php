@@ -3,13 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Hash;
  * @property string $email
  * @property Carbon $email_verified_at
  * @property string $password
+ * @property string $role
  * @property string $timezone
  * @property string $photo_url
  * @property string $remember_token
@@ -31,18 +32,17 @@ class User extends Authenticatable implements MustVerifyEmail
     use Notifiable;
     use SoftDeletes;
 
-    const OWNER  = 'owner';
-    const MEMBER = 'member';
-
     const ROLES = [
-        'Admin',
-        'Region Manager',
-        'Office Manager',
-        'Sales Rep',
-        'Setter',
+        ['name' => 'Owner',          'description' => 'System Owner'],
+        ['name' => 'Admin',          'description' => 'Allows access to the Admin functionality and Manage Users, Incentives and others (Admin Tab)'],
+        ['name' => 'Region Manager', 'description' => 'Allows update all Regon\'s Number Traker'],
+        ['name' => 'Office Manager', 'description' => 'Allows update a Region\'s Number Tracker'],
+        ['name' => 'Sales Rep',      'description' => 'Allows read/add/edit/cancel Customer'],
+        ['name' => 'Setter',         'description' => 'Allows see the dashboard and only read Customer'],
     ];
 
     const TOPLEVEL_ROLES = [
+        'Owner',
         'Admin',
         'Region Manager',
         'Office Manager',
@@ -117,7 +117,17 @@ class User extends Authenticatable implements MustVerifyEmail
                 '%' . strtolower($search) . '%'
             )
             ->orWhere(
+                DB::raw('lower(role)'),
+                'like',
+                '%' . strtolower($search) . '%'
+            )
+            ->orWhere(
                 DB::raw('lower(email)'),
+                'like',
+                '%' . strtolower($search) . '%'
+            )
+            ->orWhere(
+                DB::raw('lower(office)'),
                 'like',
                 '%' . strtolower($search) . '%'
             );

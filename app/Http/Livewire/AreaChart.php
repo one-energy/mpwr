@@ -9,7 +9,7 @@ use Livewire\Component;
 
 class AreaChart extends Component
 {
-    public $period;
+    public $period = 'w';
 
     public $income;
 
@@ -23,11 +23,13 @@ class AreaChart extends Component
 
     public $customers;
 
+    public $chartTitle = 'Projected Income';
+
+    public $panelSold = false;
+
     public function mount()
     {
-        $period = 'w';
-
-        $this->setPeriod($period);
+        $this->setPeriod($this->period);
     }
 
     public function render()
@@ -38,17 +40,32 @@ class AreaChart extends Component
     public function setPeriod($period)
     {
         $this->period = $period;
-
+        
         $userId = Auth::user()->id;
 
-        $currentQuery = Customer::query()->where([
-            ['opened_by_id', $userId],
-            ['is_active', true],
-        ]);
-        $pastQuery = Customer::query()->where([
-            ['opened_by_id', $userId],
-            ['is_active', true],
-        ]);
+        if($this->panelSold == true){
+            $currentQuery = Customer::query()->where([
+                ['opened_by_id', $userId],
+                ['is_active', true],
+                ['panel_sold', true],
+            ]);
+
+            $pastQuery = Customer::query()->where([
+                ['opened_by_id', $userId],
+                ['is_active', true],
+                ['panel_sold', true],
+            ]);
+        }else{
+            $currentQuery = Customer::query()->where([
+                ['opened_by_id', $userId],
+                ['is_active', true],
+            ]);
+
+            $pastQuery = Customer::query()->where([
+                ['opened_by_id', $userId],
+                ['is_active', true],
+            ]);
+        }
 
         if ($period === "w") {
             $pastQuery    = $pastQuery->whereBetween('created_at', [Carbon::now()->subWeek()->startOfWeek(), Carbon::now()->subWeek()->endOfWeek()]);
@@ -79,9 +96,26 @@ class AreaChart extends Component
 
     public function sumIncome($pastCustomers, $currentCustomers)
     {
-        $pastTotalIncome    = $pastCustomers->where('is_active', 1)->sum('commission');
-        $currentTotalIncome = $currentCustomers->where('is_active', 1)->sum('commission');
-
+        if($this->panelSold){
+            $pastTotalIncome = $pastCustomers->where([
+                ['is_active', true],
+                ['panel_sold', true],
+            ])->sum('commission');
+    
+            $currentTotalIncome = $currentCustomers->where([
+                ['is_active', true],
+                ['panel_sold', true],
+            ])->sum('commission');
+        }else{
+            $pastTotalIncome = $pastCustomers->where([
+                ['is_active', true],
+            ])->sum('commission');
+    
+            $currentTotalIncome = $currentCustomers->where([
+                ['is_active', true],
+            ])->sum('commission');
+        }
+        
         $this->totalIncome = $currentTotalIncome;
 
         $this->compareIncome($pastTotalIncome, $currentTotalIncome);
@@ -94,5 +128,18 @@ class AreaChart extends Component
         if ($pastTotalIncome) {
             $this->comparativeIncomePercentage = $currentTotalIncome / $pastTotalIncome;
         }
+    }
+
+    public function toggle()
+    {
+        if ($this->chartTitle == 'Projected Income') {
+            $this->chartTitle = 'Actual Income';
+            $this->panelSold  = true;
+        }else{
+            $this->chartTitle = 'Projected Income';
+            $this->panelSold  = false;
+        }
+
+        $this->setPeriod($this->period);
     }
 }

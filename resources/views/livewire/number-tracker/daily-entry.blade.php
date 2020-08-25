@@ -99,6 +99,7 @@
                                         @endif
                                     </button>
                                 @endforeach
+                                <input name="regionSelected" id="regionSelected" value="{{ $regionSelected }}" class="hidden"/>
     
                                 <div class="mt-6">
                                     <x-button type="submit" color="green" class="inline-flex w-full">

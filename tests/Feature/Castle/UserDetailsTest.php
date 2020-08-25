@@ -50,7 +50,7 @@ class UserDetailsTest extends FeatureTest
     /** @test */
     public function it_should_show_the_regions_a_user_is_on()
     {
-        $master = (new UserBuilder)->asMaster()->save()->get();
+        $master   = (new UserBuilder)->asMaster()->save()->get();
         $region1  = (new RegionBuilder)->withOwner($master)->save()->get();
         $region2  = (new RegionBuilder)->withOwner($master)->save()->get();
 

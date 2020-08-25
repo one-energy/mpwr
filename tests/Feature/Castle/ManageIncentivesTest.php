@@ -25,7 +25,7 @@ class ManageIncentiveTest extends TestCase
     {
         $incentives = factory(Incentive::class, 6)->create();
 
-        $response = $this->get('/incentives');
+        $response = $this->get('castle/incentives');
 
         $response->assertStatus(200)
             ->assertViewIs('castle.incentives.index')
@@ -41,7 +41,7 @@ class ManageIncentiveTest extends TestCase
     {
         $this->actingAs(factory(User::class)->create(['master' => false]));
 
-        $response = $this->get('incentives/create');
+        $response = $this->get('/castle/incentives/create');
 
         $response->assertStatus(403);
     }
@@ -49,7 +49,7 @@ class ManageIncentiveTest extends TestCase
      /** @test */
      public function it_should_show_the_create_form_for_top_level_roles()
      {
-        $response = $this->get('incentives/create');
+        $response = $this->get('castle/incentives/create');
         
         $response->assertStatus(200)
             ->assertViewIs('castle.incentives.create');
@@ -104,7 +104,7 @@ class ManageIncentiveTest extends TestCase
     {
         $incentive = factory(Incentive::class)->create();
 
-        $response = $this->get('incentives/'. $incentive->id . '/edit');
+        $response = $this->get('castle/incentives/'. $incentive->id . '/edit');
         
         $response->assertStatus(200)
             ->assertViewIs('castle.incentives.edit');
@@ -117,7 +117,7 @@ class ManageIncentiveTest extends TestCase
         
         $incentive = factory(Incentive::class)->create();
 
-        $response = $this->get('incentives/'. $incentive->id .'/edit');
+        $response = $this->get('castle/incentives/'. $incentive->id .'/edit');
 
         $response->assertStatus(403);
     }
