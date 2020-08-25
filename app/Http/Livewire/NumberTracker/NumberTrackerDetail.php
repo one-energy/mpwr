@@ -7,6 +7,8 @@ use Livewire\Component;
 class NumberTrackerDetail extends Component
 {
 
+    public $period = 'd';
+
     public function mount()
     {
       

@@ -8,13 +8,59 @@
 
                 <ul class="flex border-b mt-3">
                     <li class="-mb-px mr-4">
-                        <a class="bg-white inline-block border-b-2 border-green-base py-2 text-sm text-green-base font-semibold" href="#">Daily</a>
+                        <a  class="bg-white inline-block 
+                                    @if($period == 'd') 
+                                        border-b-2 border-green-base text-green-base 
+                                    @else text-gray-900 
+                                        hover:text-gray-800 
+                                    @endIf 
+                                    py-2 text-sm font-semibold" 
+                            href="javascript:void(0);"
+                            wire:click="setPeriod('d')">Daily
+                        </a>
                     </li>
                     <li class="mr-4">
-                        <a class="bg-white inline-block py-2 text-sm text-gray-900 hover:text-gray-800 font-semibold" href="#">Weekly</a>
+                        <a  class="bg-white inline-block 
+                                    @if($period == 'w') 
+                                        border-b-2 border-green-base text-green-base 
+                                    @else
+                                        text-gray-900 hover:text-gray-800 
+                                    @endIf 
+                                    py-2 text-sm font-semibold" 
+                            href="javascript:void(0);"
+                            wire:click="setPeriod('w')">Weekly
+                        </a>
                     </li>
                     <li class="mr-4">
-                        <a class="bg-white inline-block py-2 text-sm text-gray-900 hover:text-gray-800 font-semibold" href="#">Monthly</a>
+                        <a  class="bg-white inline-block 
+                                    @if($period == 'm') 
+                                        border-b-2 border-green-base text-green-base 
+                                    @else 
+                                        text-gray-900 hover:text-gray-800 
+                                    @endIf 
+                                    py-2 text-sm font-semibold" 
+                            href="javascript:void(0);"
+                            wire:click="setPeriod('m')">Monthly</a>
+                    </li>
+                    <li>
+                        <svg class="relative hidden top-2 w-6"
+                            wire:loading.class.remove="hidden"
+                            viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#9fa6b2">
+                            <g fill="none">
+                                <g transform="translate(1 1)" stroke-width="2">
+                                    <circle stroke-opacity=".5" cx="18" cy="18" r="18" />
+                                    <path d="M36 18c0-9.94-8.06-18-18-18">
+                                        <animateTransform
+                                            attributeName="transform"
+                                            type="rotate"
+                                            from="0 18 18"
+                                            to="360 18 18"
+                                            dur="1s"
+                                            repeatCount="indefinite" />
+                                    </path>
+                                </g>
+                            </g>
+                        </svg>
                     </li>
                 </ul>
 
