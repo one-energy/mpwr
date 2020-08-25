@@ -15,6 +15,8 @@ class NumberTrackerDetail extends Component
 
     public $date;
 
+    public $filterBy = "doors";
+
     public $dateSelected;
 
     public function mount()
@@ -60,8 +62,8 @@ class NumberTrackerDetail extends Component
             }else{
                 $query->whereMonth('date', '=', Carbon::createFromFormat('Y-m-d', $this->dateSelected)->month);
             }
-            return $query->orderBy('doors', 'desc')
-            ->take(5)
-            ->get();         
+            return $query->orderBy($this->filterBy, 'desc')
+                ->take(5)
+                ->get();         
     }
 }
