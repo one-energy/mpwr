@@ -114,19 +114,16 @@
                                         </div>
 
                                         <div class="flex flex-wrap -mx-1">
-                                            <template x-for="blankday in blankdays">
-                                                <div 
-                                                    style="width: 14.28%"
-                                                    class="text-center border p-1 border-transparent text-sm"	
-                                                ></div>
-                                            </template>	
-                                            <template x-for="(date, dateIndex) in no_of_days" :key="dateIndex">	
-                                                <div style="width: 14.28%" class="px-1 mb-1">
+                                            <template x-for="(date, dateIndex) in no_of_days" :key="dateIndex" >	
+                                                <div style="width: 14.28%" class="px-1 mb-1" wire:click="setDate">
                                                     <div
-                                                        @click="getDateValue(date)"
+                                                        @click="getDateValue(date); setCurrentDate(date); @this.set('date', getDateValue(date)); @this.call('setDate')"
                                                         x-text="date"
                                                         class="cursor-pointer text-center text-sm rounded-full leading-loose transition ease-in-out duration-100"
-                                                        :class="{'bg-green-base text-white': isToday(date) == true, 'text-gray-700 hover:bg-green-light': isToday(date) == false }"	
+                                                        :class="{
+                                                                    'bg-green-base text-white': isToday(date) == true, 
+                                                                    'text-gray-700 hover:bg-green-light': isToday(date) == false 
+                                                                }"	
                                                     ></div>
                                                 </div>
                                             </template>
@@ -245,7 +242,7 @@
             </div>
             
             <div class="px-4 py-5 sm:p-6 md:w-2/3">
-                <div class="overflow-y-auto">
+                <div class="overflow-y-auto justify-center">
                     <div class="flex justify-between md:mt-12 mt-6">
                         <div class="w-full grid md:grid-cols-4 grid-cols-2 md:col-gap-4 col-gap-1 row-gap-2">
                             <div class="col-span-1 bg-green-light rounded-lg p-3">
@@ -399,62 +396,82 @@
                     <div class="flex justify-start mt-6">
                         <h2 class="text-lg text-gray-900">Top 5 Performing Members</h2>
                     </div>
-
-                    <div class="mt-6">
-                        <div class="flex flex-col">
-                            <div class="overflow-x-auto">
-                                <div class="align-middle inline-block min-w-full overflow-hidden">
-                                    @if(count($numbersTracked))
-                                        <x-table>
-                                            <x-slot name="header">
-                                                <x-table.th-tr>
-                                                    <x-table.th by="region_number">
-                                                        @lang('Region Member')
-                                                    </x-table.th>
-                                                    <x-table.th by="doors">
-                                                        @lang('Doors')
-                                                    </x-table.th>
-                                                    <x-table.th by="hours">
-                                                        @lang('Hours')
-                                                    </x-table.th>
-                                                    <x-table.th by="sets">
-                                                        @lang('Sets')
-                                                    </x-table.th>
-                                                    <x-table.th by="sits">
-                                                        @lang('Sits')
-                                                    </x-table.th>
-                                                    <x-table.th by="set_closes">
-                                                        @lang('Set Closes')
-                                                    </x-table.th>
-                                                    <x-table.th by="closes">
-                                                        @lang('Closes')
-                                                    </x-table.th>
-                                                </x-table.th-tr>
-                                            </x-slot>
-                                            <x-slot name="body">
-                                                @foreach($numbersTracked as $row)
-                                                    <x-table.tr :loop="$loop">
-                                                        <x-table.td>{{ $row['first_name'] . '' .  $row['last_name']}}</x-table.td>
-                                                        <x-table.td>{{ $row['doors'] ?? 0 }}</x-table.td>
-                                                        <x-table.td>{{ $row['hours'] ?? 0 }}</x-table.td>
-                                                        <x-table.td>{{ $row['sets'] ?? 0 }}</x-table.td>
-                                                        <x-table.td>{{ $row['sits'] ?? 0 }}</x-table.td>
-                                                        <x-table.td>{{ $row['set_closes'] ?? 0 }}</x-table.td>
-                                                        <x-table.td>{{ $row['closes'] ?? 0 }}</x-table.td>
-                                                    </x-table.tr>
-                                                @endforeach
-                                            </x-slot>
-                                        </x-table>
-                                    @else
-                                        <div class="h-96 ">
-                                            <div class="flex justify-center align-middle">
-                                                <div class="text-sm text-center text-gray-700">
-                                                    <x-svg.draw.empty></x-svg.draw.empty>
-                                                    No data yet.
+                    <div class="flex justify-center">                    
+                        <svg class="self-center hidden w-20 mt-3"
+                            wire:loading.class.remove="hidden"
+                            viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#9fa6b2">
+                            <g fill="none">
+                                <g transform="translate(1 1)" stroke-width="2">
+                                    <circle stroke-opacity=".5" cx="18" cy="18" r="18" />
+                                    <path d="M36 18c0-9.94-8.06-18-18-18">
+                                        <animateTransform
+                                            attributeName="transform"
+                                            type="rotate"
+                                            from="0 18 18"
+                                            to="360 18 18"
+                                            dur="1s"
+                                            repeatCount="indefinite" />
+                                    </path>
+                                </g>
+                            </g>
+                        </svg>
+                                                                    
+                        <div class="mt-6">
+                            <div class="flex flex-col">
+                                <div class="overflow-x-auto">
+                                    <div class="align-middle inline-block min-w-full overflow-hidden">
+                                        @if(count($numbersTracked))
+                                            <x-table wire:loading.remove>
+                                                <x-slot name="header">
+                                                    <x-table.th-tr>
+                                                        <x-table.th by="region_number">
+                                                            @lang('Region Member')
+                                                        </x-table.th>
+                                                        <x-table.th by="doors">
+                                                            @lang('Doors')
+                                                        </x-table.th>
+                                                        <x-table.th by="hours">
+                                                            @lang('Hours')
+                                                        </x-table.th>
+                                                        <x-table.th by="sets">
+                                                            @lang('Sets')
+                                                        </x-table.th>
+                                                        <x-table.th by="sits">
+                                                            @lang('Sits')
+                                                        </x-table.th>
+                                                        <x-table.th by="set_closes">
+                                                            @lang('Set Closes')
+                                                        </x-table.th>
+                                                        <x-table.th by="closes">
+                                                            @lang('Closes')
+                                                        </x-table.th>
+                                                    </x-table.th-tr>
+                                                </x-slot>
+                                                <x-slot name="body">
+                                                    @foreach($numbersTracked as $row)
+                                                        <x-table.tr :loop="$loop">
+                                                            <x-table.td>{{ $row['first_name'] . ' ' .  $row['last_name']}}</x-table.td>
+                                                            <x-table.td>{{ $row['doors'] ?? 0 }}</x-table.td>
+                                                            <x-table.td>{{ $row['hours'] ?? 0 }}</x-table.td>
+                                                            <x-table.td>{{ $row['sets'] ?? 0 }}</x-table.td>
+                                                            <x-table.td>{{ $row['sits'] ?? 0 }}</x-table.td>
+                                                            <x-table.td>{{ $row['set_closes'] ?? 0 }}</x-table.td>
+                                                            <x-table.td>{{ $row['closes'] ?? 0 }}</x-table.td>
+                                                        </x-table.tr>
+                                                    @endforeach
+                                                </x-slot>
+                                            </x-table>
+                                        @else
+                                            <div class="h-96 ">
+                                                <div class="flex justify-center align-middle">
+                                                    <div class="text-sm text-center text-gray-700">
+                                                        <x-svg.draw.empty></x-svg.draw.empty>
+                                                        No data yet.
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    @endif
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -479,7 +496,8 @@
             month: '',
             year: '',
             no_of_days: [],
-            blankdays: [],
+            currentDate: new Date(),
+            
             days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
             initDate() {
                 let today = new Date();
@@ -488,29 +506,32 @@
                 this.datepickerValue = new Date(this.year, this.month, today.getDate()).toDateString();
             },
             isToday(date) {
-                const today = new Date();
                 const d = new Date(this.year, this.month, date);
-                return today.toDateString() === d.toDateString() ? true : false;
+                return this.currentDate.toDateString() === d.toDateString() ? true : false;;
             },
-            getDateValue(date) {
+            setCurrentDate(date) {
+                this.currentDate = new Date(this.year, this.month, date);
+            },
+             getDateValue(date) {
                 let selectedDate = new Date(this.year, this.month, date);
                 this.datepickerValue = selectedDate.toDateString();
-                this.$refs.date.value = selectedDate.getFullYear() +"-"+ ('0'+ selectedDate.getMonth()).slice(-2) +"-"+ ('0' + selectedDate.getDate()).slice(-2);
+
+                this.$refs.date.value = selectedDate.toDateString();
+
                 this.showDatepicker = true;
+                return this.$refs.date.value;
             },
             getNoOfDays() {
                 let daysInMonth = new Date(this.year, this.month + 1, 0).getDate();
                 // find where to start calendar day of week
                 let dayOfWeek = new Date(this.year, this.month).getDay();
-                let blankdaysArray = [];
-                for ( var i=1; i <= dayOfWeek; i++) {
-                    blankdaysArray.push(i);
-                }
                 let daysArray = [];
+                for ( var i=1; i <= dayOfWeek; i++) {
+                    daysArray.push(null);
+                }
                 for ( var i=1; i <= daysInMonth; i++) {
                     daysArray.push(i);
                 }
-                this.blankdays = blankdaysArray;
                 this.no_of_days = daysArray;
             }
         }
