@@ -83,11 +83,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('offices/{office}', [OfficeController::class, 'destroy'])->name('offices.destroy');
 
         Route::get('regions', [RegionController::class, 'index'])->name('regions.index');
-        // Route::get('regions/create', [RegionController::class, 'create'])->name('regions.create');
-        // Route::post('regions/create', [RegionController::class, 'store'])->name('regions.store');
-        // Route::get('regions/{region}/edit', [RegionController::class, 'edit'])->name('regions.edit');
-        // Route::put('regions/{region}', [RegionController::class, 'update'])->name('regions.update');
-        // Route::delete('regions/{region}', [RegionController::class, 'destroy'])->name('regions.destroy');
+        Route::get('regions/create', [RegionController::class, 'create'])->name('regions.create');
+        Route::post('regions/create', [RegionController::class, 'store'])->name('regions.store');
+        Route::get('regions/{region}/edit', [RegionController::class, 'edit'])->name('regions.edit');
+        Route::put('regions/{region}', [RegionController::class, 'update'])->name('regions.update');
+        Route::delete('regions/{region}', [RegionController::class, 'destroy'])->name('regions.destroy');
 
         Route::get('incentives', [ManageIncentivesController::class, 'index'])->name('incentives.index');
         Route::get('incentives/create', [ManageIncentivesController::class, 'create'])->name('incentives.create');
