@@ -15,6 +15,7 @@ use App\Http\Controllers\Castle\UsersController;
 use App\Http\Controllers\Castle\ManageIncentivesController;
 use App\Http\Controllers\Castle\OfficeController;
 use App\Http\Controllers\Castle\PermissionController;
+use App\Http\Controllers\Castle\RegionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ScoreboardController;
@@ -80,6 +81,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('offices/{office}/edit', [OfficeController::class, 'edit'])->name('offices.edit');
         Route::put('offices/{office}', [OfficeController::class, 'update'])->name('offices.update');
         Route::delete('offices/{office}', [OfficeController::class, 'destroy'])->name('offices.destroy');
+
+        Route::get('regions', [RegionController::class, 'index'])->name('regions.index');
+        // Route::get('regions/create', [RegionController::class, 'create'])->name('regions.create');
+        // Route::post('regions/create', [RegionController::class, 'store'])->name('regions.store');
+        // Route::get('regions/{region}/edit', [RegionController::class, 'edit'])->name('regions.edit');
+        // Route::put('regions/{region}', [RegionController::class, 'update'])->name('regions.update');
+        // Route::delete('regions/{region}', [RegionController::class, 'destroy'])->name('regions.destroy');
 
         Route::get('incentives', [ManageIncentivesController::class, 'index'])->name('incentives.index');
         Route::get('incentives/create', [ManageIncentivesController::class, 'create'])->name('incentives.create');

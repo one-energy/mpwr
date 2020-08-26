@@ -34,6 +34,11 @@
                                         @lang('Incentives')
                                     </x-nav.link>
 
+                                    <x-nav.link :href="route('castle.regions.index')" class="ml-4"
+                                                :active="is_active('castle.Regions.*')">
+                                        @lang('Regions')
+                                    </x-nav.link>
+                                    
                                     <x-nav.link :href="route('castle.offices.index')" class="ml-4"
                                                 :active="is_active('castle.offices.*')">
                                         @lang('Offices')
