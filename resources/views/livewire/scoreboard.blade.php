@@ -199,24 +199,11 @@
       </div>
     </div>
 
-    <svg class="fixed hidden left-1/2 top-1/2 w-20"
-        wire:loading.class.remove="hidden"
-        viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#9fa6b2">
-        <g fill="none">
-            <g transform="translate(1 1)" stroke-width="2">
-                <circle stroke-opacity=".5" cx="18" cy="18" r="18" />
-                <path d="M36 18c0-9.94-8.06-18-18-18">
-                    <animateTransform
-                        attributeName="transform"
-                        type="rotate"
-                        from="0 18 18"
-                        to="360 18 18"
-                        dur="1s"
-                        repeatCount="indefinite" />
-                </path>
-            </g>
-        </g>
-    </svg>
+    <x-svg.spinner 
+        color="#9fa6b2" 
+        class="fixed hidden left-1/2 top-1/2 w-20" 
+        wire:loading.class.remove="hidden">
+    </x-svg.spinner>
   
     @if($userId)
       <div x-cloak x-show="openModal" wire:loading.remove class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center z-20">

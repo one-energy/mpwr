@@ -39,7 +39,7 @@
                                                                     @click="month--; getNoOfDays(); ">
                                                                     <svg class="h-6 w-6 text-gray-500 inline-flex"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                                                                    </svg>  
+                                                                    </svg>
                                                                 </button>
                                                                 <button 
                                                                     type="button"
@@ -119,22 +119,12 @@
                                 <div class="text-xl font-bold">{{$users->sum('doors')}}</div>
                                 <div class="flex font-semibold text-xs @if($users->sum('doors') >= $usersLastDayEntries->sum('doors')) text-green-base @else text-red-600 @endif">
                                     @if($users->sum('doors') >= $usersLastDayEntries->sum('doors'))
-                                        <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(-45)" width="20" height="20" viewBox="0 0 20 20">
-                                            <symbol id="arrow" viewBox="0 0 24 24">
-                                            <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current"></path>
-                                            </symbol>
-                                            <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
-                                        </svg>
+                                        <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
                                         <span>
                                             +{{$users->sum('doors') - $usersLastDayEntries->sum('doors')}}
                                         </span>
                                     @else
-                                        <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(45)" width="20" height="20" viewBox="0 0 20 20">
-                                            <symbol id="arrow" viewBox="0 0 24 24">
-                                            <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current"></path>
-                                            </symbol>
-                                            <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
-                                        </svg>
+                                        <x-svg.arrow-down class="text-red-600"></x-svg.arrow-up>
                                         <span>
                                             {{$users->sum('doors') - $usersLastDayEntries->sum('doors')}}
                                         </span>
@@ -146,22 +136,12 @@
                                 <div class="text-xl text-gray-900 font-bold">{{$users->sum('hours')}}</div>
                                 <div class="flex font-semibold text-xs @if($users->sum('hours') >= $usersLastDayEntries->sum('hours')) text-green-base @else text-red-600 @endif">
                                     @if($users->sum('hours') >= $usersLastDayEntries->sum('hours'))
-                                        <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(-45)" width="20" height="20" viewBox="0 0 20 20">
-                                            <symbol id="arrow" viewBox="0 0 24 24">
-                                            <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current"></path>
-                                            </symbol>
-                                            <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
-                                        </svg>
+                                        <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
                                         <span>                                                                            
                                             +{{$users->sum('hours') - $usersLastDayEntries->sum('hours')}}
                                         </span>
                                     @else
-                                        <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(45)" width="20" height="20" viewBox="0 0 20 20">
-                                            <symbol id="arrow" viewBox="0 0 24 24">
-                                            <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current"></path>
-                                            </symbol>
-                                            <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
-                                        </svg>
+                                        <x-svg.arrow-down class="text-red-600"></x-svg.arrow-up>
                                         <span>
                                             {{$users->sum('hours') - $usersLastDayEntries->sum('hours')}}
                                         </span>
@@ -173,22 +153,12 @@
                                 <div class="text-xl text-gray-900 font-bold">{{$users->sum('sets')}}</div>
                                 <div class="flex font-semibold text-xs @if($users->sum('sets') >= $usersLastDayEntries->sum('sets')) text-green-base @else text-red-600 @endif">
                                     @if($users->sum('sets') >= $usersLastDayEntries->sum('sets'))
-                                        <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(-45)" width="20" height="20" viewBox="0 0 20 20">
-                                            <symbol id="arrow" viewBox="0 0 24 24">
-                                            <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current"></path>
-                                            </symbol>
-                                            <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
-                                        </svg>
+                                        <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
                                         <span>
                                             +{{$users->sum('sets') - $usersLastDayEntries->sum('sets')}}
                                         </span>
                                     @else
-                                        <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(45)" width="20" height="20" viewBox="0 0 20 20">
-                                            <symbol id="arrow" viewBox="0 0 24 24">
-                                            <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current"></path>
-                                            </symbol>
-                                            <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
-                                        </svg>
+                                        <x-svg.arrow-down class="text-red-600"></x-svg.arrow-up>
                                         <span>    
                                             {{$users->sum('sets') - $usersLastDayEntries->sum('sets')}}
                                         </span>
@@ -200,22 +170,12 @@
                                 <div class="text-xl text-gray-900 font-bold">{{$users->sum('sits')}}</div>
                                 <div class="flex font-semibold text-xs @if($users->sum('sits') >= $usersLastDayEntries->sum('sits')) text-green-base @else text-red-600 @endif">
                                     @if($users->sum('sits') >= $usersLastDayEntries->sum('sits'))
-                                        <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(-45)" width="20" height="20" viewBox="0 0 20 20">
-                                            <symbol id="arrow" viewBox="0 0 24 24">
-                                            <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current"></path>
-                                            </symbol>
-                                            <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
-                                        </svg>
+                                        <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
                                         <span>
                                             +{{$users->sum('sits') - $usersLastDayEntries->sum('sits')}}
                                         </span>
                                     @else
-                                        <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(45)" width="20" height="20" viewBox="0 0 20 20">
-                                            <symbol id="arrow" viewBox="0 0 24 24">
-                                            <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current"></path>
-                                            </symbol>
-                                            <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
-                                        </svg>
+                                        <x-svg.arrow-down class="text-red-600"></x-svg.arrow-up>
                                         <span>
                                             {{$users->sum('sits') - $usersLastDayEntries->sum('sits')}}
                                         </span>
@@ -227,22 +187,12 @@
                                 <div class="text-xl text-gray-900 font-bold">{{$users->sum('set_closes')}}</div>
                                 <div class="flex font-semibold text-xs @if($users->sum('set_closes') >= $usersLastDayEntries->sum('set_closes')) text-green-base @else text-red-600 @endif">
                                     @if($users->sum('set_closes') >= $usersLastDayEntries->sum('set_closes'))
-                                        <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(-45)" width="20" height="20" viewBox="0 0 20 20">
-                                            <symbol id="arrow" viewBox="0 0 24 24">
-                                            <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current"></path>
-                                            </symbol>
-                                            <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
-                                        </svg>
+                                        <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
                                         <span>
                                             +{{$users->sum('set_closes') - $usersLastDayEntries->sum('set_closes')}}
                                         </span>
                                     @else
-                                        <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(45)" width="20" height="20" viewBox="0 0 20 20">
-                                            <symbol id="arrow" viewBox="0 0 24 24">
-                                            <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current"></path>
-                                            </symbol>
-                                            <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
-                                        </svg>
+                                        <x-svg.arrow-down class="text-red-600"></x-svg.arrow-up>
                                         <span>
                                             {{$users->sum('set_closes') - $usersLastDayEntries->sum('set_closes')}}
                                         </span>
@@ -254,22 +204,12 @@
                                 <div class="text-xl text-gray-900 font-bold">{{$users->sum('closes')}}</div>
                                 <div class="flex font-semibold text-xs @if($users->sum('closes') >= $usersLastDayEntries->sum('closes')) text-green-base @else text-red-600 @endif">
                                     @if($users->sum('closes') >= $usersLastDayEntries->sum('closes'))
-                                        <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(-45)" width="20" height="20" viewBox="0 0 20 20">
-                                            <symbol id="arrow" viewBox="0 0 24 24">
-                                            <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current"></path>
-                                            </symbol>
-                                            <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
-                                        </svg>
+                                        <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
                                         <span>
                                             +{{$users->sum('closes') - $usersLastDayEntries->sum('closes')}}
                                         </span>
                                     @else
-                                        <svg xmlns="http://www.w3.org/2000/svg" transform="rotate(45)" width="20" height="20" viewBox="0 0 20 20">
-                                            <symbol id="arrow" viewBox="0 0 24 24">
-                                            <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current"></path>
-                                            </symbol>
-                                            <use xlink:href="#arrow" width="8" height="8" y="6" x="6"></use>
-                                        </svg>
+                                        <x-svg.arrow-down class="text-red-600"></x-svg.arrow-up>
                                         <span>
                                             {{$users->sum('closes') - $usersLastDayEntries->sum('closes')}}
                                         </span>
@@ -279,26 +219,11 @@
                         </div>
                     </div>
 
-                    
-                    <svg class="self-center hidden w-20 mt-3"
-                        wire:loading.class.remove="hidden"
-                        viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#9fa6b2">
-                        <g fill="none">
-                            <g transform="translate(1 1)" stroke-width="2">
-                                <circle stroke-opacity=".5" cx="18" cy="18" r="18" />
-                                <path d="M36 18c0-9.94-8.06-18-18-18">
-                                    <animateTransform
-                                        attributeName="transform"
-                                        type="rotate"
-                                        from="0 18 18"
-                                        to="360 18 18"
-                                        dur="1s"
-                                        repeatCount="indefinite" />
-                                </path>
-                            </g>
-                        </g>
-                    </svg>
-                
+                    <x-svg.spinner 
+                        color="#9fa6b2" 
+                        class="self-center hidden w-20 mt-3" 
+                        wire:loading.class.remove="hidden">
+                    </x-svg.spinner>
 
                     <div class="mt-3 w-full">
                         <div class="flex flex-col">
