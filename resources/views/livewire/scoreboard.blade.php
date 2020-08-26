@@ -1,5 +1,10 @@
 <div>
-  <div x-data="{openModal: false}">
+  <div x-data="{openModal: false, 
+                openHoursTab: 'daily',
+                openSetsTab: 'daily',
+                openClosesTab: 'daily',
+                active: 'border-b-2 border-green-base text-green-base',
+                inactive: 'text-gray-900 hover:text-gray-800'}">
     <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
       <div class="px-4 py-5 sm:px-6">
         <div class="flex justify-between">
@@ -31,22 +36,17 @@
             Top 10 Hours
           </span>
 
-          <div x-data="{ openHoursTab: 'daily',
-            active: 'border-b-2 border-green-base text-green-base',
-            inactive: 'text-gray-900 hover:text-gray-800' }">
-
-            <ul class="flex border-b mt-3">
-              <li @click="openHoursTab = 'daily'" class="-mb-px mr-4">
-                  <a :class="openHoursTab === 'daily' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10HoursPeriod('daily')">Daily</a>
-              </li>
-              <li @click="openHoursTab = 'weekly'" class="-mb-px mr-4">
-                  <a :class="openHoursTab === 'weekly' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10HoursPeriod('weekly')">Weekly</a>
-              </li>
-              <li @click="openHoursTab = 'monthly'" class="-mb-px mr-4">
-                  <a :class="openHoursTab === 'monthly' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10HoursPeriod('monthly')">Monthly</a>
-              </li>
-            </ul>
-          </div>
+          <ul class="flex border-b mt-3">
+            <li @click="openHoursTab = 'daily'" class="-mb-px mr-4">
+                <a :class="openHoursTab === 'daily' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10HoursPeriod('daily')">Daily</a>
+            </li>
+            <li @click="openHoursTab = 'weekly'" class="-mb-px mr-4">
+                <a :class="openHoursTab === 'weekly' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10HoursPeriod('weekly')">Weekly</a>
+            </li>
+            <li @click="openHoursTab = 'monthly'" class="-mb-px mr-4">
+                <a :class="openHoursTab === 'monthly' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10HoursPeriod('monthly')">Monthly</a>
+            </li>
+          </ul>
 
           <div class="mt-6">
             <div class="flex flex-col">
@@ -86,11 +86,10 @@
                       </x-slot>
                     </x-table>
                   @else
-                    <div class="h-96 ">
+                    <div class="h-96">
                         <div class="flex justify-center align-middle">
                             <div class="text-sm text-center text-gray-700">
-                                <x-svg.draw.empty></x-svg.draw.empty>
-                                No data yet.
+                                No data for this period.
                             </div>
                         </div>
                     </div>
@@ -106,22 +105,17 @@
             Top 10 Sets
           </span>
 
-          <div x-data="{ openSetsTab: 'daily',
-            active: 'border-b-2 border-green-base text-green-base',
-            inactive: 'text-gray-900 hover:text-gray-800' }">
-
-            <ul class="flex border-b mt-3">
-              <li @click="openSetsTab = 'daily'" class="-mb-px mr-4">
-                  <a :class="openSetsTab === 'daily' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10SetsPeriod('daily')">Daily</a>
-              </li>
-              <li @click="openSetsTab = 'weekly'" class="-mb-px mr-4">
-                  <a :class="openSetsTab === 'weekly' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10SetsPeriod('weekly')">Weekly</a>
-              </li>
-              <li @click="openSetsTab = 'monthly'" class="-mb-px mr-4">
-                  <a :class="openSetsTab === 'monthly' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10SetsPeriod('monthly')">Monthly</a>
-              </li>
-            </ul>
-          </div>
+          <ul class="flex border-b mt-3">
+            <li @click="openSetsTab = 'daily'" class="-mb-px mr-4">
+                <a :class="openSetsTab === 'daily' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10SetsPeriod('daily')">Daily</a>
+            </li>
+            <li @click="openSetsTab = 'weekly'" class="-mb-px mr-4">
+                <a :class="openSetsTab === 'weekly' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10SetsPeriod('weekly')">Weekly</a>
+            </li>
+            <li @click="openSetsTab = 'monthly'" class="-mb-px mr-4">
+                <a :class="openSetsTab === 'monthly' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10SetsPeriod('monthly')">Monthly</a>
+            </li>
+          </ul>
 
           <div class="mt-6">
             <div class="flex flex-col">
@@ -161,11 +155,10 @@
                       </x-slot>
                     </x-table>
                   @else
-                      <div class="h-96 ">
+                      <div class="h-96">
                           <div class="flex justify-center align-middle">
                               <div class="text-sm text-center text-gray-700">
-                                  <x-svg.draw.empty></x-svg.draw.empty>
-                                  No data yet.
+                                  No data for this period.
                               </div>
                           </div>
                       </div>
@@ -181,22 +174,17 @@
             Top 10 Set Closes
           </span>
 
-          <div x-data="{ openClosesTab: 'daily',
-            active: 'border-b-2 border-green-base text-green-base',
-            inactive: 'text-gray-900 hover:text-gray-800' }">
-
-            <ul class="flex border-b mt-3">
-              <li @click="openClosesTab = 'daily'" class="-mb-px mr-4">
-                  <a :class="openClosesTab === 'daily' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10SetClosesPeriod('daily')">Daily</a>
-              </li>
-              <li @click="openClosesTab = 'weekly'" class="-mb-px mr-4">
-                  <a :class="openClosesTab === 'weekly' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10SetClosesPeriod('weekly')">Weekly</a>
-              </li>
-              <li @click="openClosesTab = 'monthly'" class="-mb-px mr-4">
-                  <a :class="openClosesTab === 'monthly' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10SetClosesPeriod('monthly')">Monthly</a>
-              </li>
-            </ul>
-          </div>
+          <ul class="flex border-b mt-3">
+            <li @click="openClosesTab = 'daily'" class="-mb-px mr-4">
+                <a :class="openClosesTab === 'daily' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10SetClosesPeriod('daily')">Daily</a>
+            </li>
+            <li @click="openClosesTab = 'weekly'" class="-mb-px mr-4">
+                <a :class="openClosesTab === 'weekly' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10SetClosesPeriod('weekly')">Weekly</a>
+            </li>
+            <li @click="openClosesTab = 'monthly'" class="-mb-px mr-4">
+                <a :class="openClosesTab === 'monthly' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10SetClosesPeriod('monthly')">Monthly</a>
+            </li>
+          </ul>
 
           <div class="mt-6">
             <div class="flex flex-col">
@@ -236,11 +224,10 @@
                       </x-slot>
                     </x-table>
                   @else
-                    <div class="h-96 ">
+                    <div class="h-96">
                         <div class="flex justify-center align-middle">
                             <div class="text-sm text-center text-gray-700">
-                                <x-svg.draw.empty></x-svg.draw.empty>
-                                No data yet.
+                                No data for this period.
                             </div>
                         </div>
                     </div>
@@ -351,7 +338,9 @@
 
     document.addEventListener("livewire:load", function(event) {
         window.livewire.hook('afterDomUpdate', () => {
-          drawBarChart();
+          if(@this.userId){
+            drawBarChart();
+          }
         });
     });
 
