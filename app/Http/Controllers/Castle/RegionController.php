@@ -54,7 +54,7 @@ class RegionController extends Controller
         Region::destroy($id);
 
         alert()
-            ->withTitle(__('Office has been deleted!'))
+            ->withTitle(__('Region has been deleted!'))
             ->send();
 
         return back();
