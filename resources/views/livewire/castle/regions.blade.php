@@ -55,7 +55,7 @@
                     </div>
     
                     <x-confirm
-                        :title="__('Delete Office')"
+                        :title="__('Delete Region')"
                         :description="__('Are you sure you want to delete this region?')"
                     ></x-confirm>
                 </div>
