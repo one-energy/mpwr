@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
+use Carbon\Carbon;
 
 class Scoreboard extends Component
 {
@@ -46,6 +47,20 @@ class Scoreboard extends Component
 
     public $office;
 
+    public $hoursPeriod = 'daily';
+
+    public $setsPeriod = 'daily';
+
+    public $closesPeriod = 'daily';
+
+    public function mount()
+    {
+        $this->filterTypes = [
+            ['index' => 'leaderboards',   'value' => 'Leaderboards'],
+            ['index' => 'records',        'value' => 'Records'],
+        ];
+    }
+
     public function setUser($userId)
     {
         $this->userId = $userId;
@@ -81,45 +96,99 @@ class Scoreboard extends Component
         }
     }
 
-    public function render()
+    public function setTop10HoursPeriod($hoursPeriod)
     {
-        $this->filterTypes = [
-            ['index' => 'leaderboards',   'value' => 'Leaderboards'],
-            ['index' => 'records',        'value' => 'Records'],
-        ];
+        $this->hoursPeriod = $hoursPeriod;
 
-        $this->top10Hours = User::query()
+        $query = User::query()
             ->leftJoin('daily_numbers', function($join) {
                 $join->on('daily_numbers.user_id', '=', 'users.id');
-            })
+            });
+
+        if ($this->hoursPeriod === "daily") {
+            $query
+                ->whereDate('daily_numbers.created_at', Carbon::today());
+        } elseif ($this->hoursPeriod === "weekly") {
+            $query
+                ->whereBetween('daily_numbers.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+        } else {
+            $query
+                ->whereMonth('daily_numbers.created_at', '=', Carbon::now()->month);
+        }
+
+        $this->top10Hours = $query
             ->select(DB::raw('sum(daily_numbers.hours) as hours, users.office, users.first_name, users.last_name, users.id'))
             ->groupBy('users.id')
             ->whereNotNull('daily_numbers.hours')
             ->orderByDesc('hours')
             ->take(10)
             ->get();
+    }
 
-        $this->top10Sets = User::query()
+    public function setTop10SetsPeriod($setsPeriod)
+    {
+        $this->setsPeriod = $setsPeriod;
+
+        $query = User::query()
             ->leftJoin('daily_numbers', function($join) {
                 $join->on('daily_numbers.user_id', '=', 'users.id');
-            })
+            });
+
+        if ($this->setsPeriod === "daily") {
+            $query
+                ->whereDate('daily_numbers.created_at', Carbon::today());
+        } elseif ($this->setsPeriod === "weekly") {
+            $query
+                ->whereBetween('daily_numbers.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+        } else {
+            $query
+                ->whereMonth('daily_numbers.created_at', '=', Carbon::now()->month);
+        }
+
+        $this->top10Sets = $query
             ->select(DB::raw('sum(daily_numbers.sets) as sets, users.office, users.first_name, users.last_name, users.id'))
             ->groupBy('users.id')
             ->whereNotNull('daily_numbers.sets')
             ->orderByDesc('sets')
             ->take(10)
             ->get();
+    }
 
-        $this->top10SetCloses = User::query()
+    public function setTop10SetClosesPeriod($closesPeriod)
+    {
+        $this->closesPeriod = $closesPeriod;
+
+        $query = User::query()
             ->leftJoin('daily_numbers', function($join) {
                 $join->on('daily_numbers.user_id', '=', 'users.id');
-            })
+            });
+
+        if ($this->closesPeriod === "daily") {
+            $query
+                ->whereDate('daily_numbers.created_at', Carbon::today());
+                
+        } elseif ($this->closesPeriod === "weekly") {
+            $query
+                ->whereBetween('daily_numbers.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+        } else {
+            $query
+                ->whereMonth('daily_numbers.created_at', '=', Carbon::now()->month);
+        }
+
+        $this->top10SetCloses = $query
             ->select(DB::raw('sum(daily_numbers.set_closes) as set_closes, users.office, users.first_name, users.last_name, users.id'))
             ->groupBy('users.id')
             ->whereNotNull('daily_numbers.set_closes')
             ->orderByDesc('set_closes')
             ->take(10)
             ->get();
+    }
+
+    public function render()
+    {
+        $this->setTop10HoursPeriod($this->hoursPeriod);
+        $this->setTop10SetsPeriod($this->setsPeriod);
+        $this->setTop10SetClosesPeriod($this->closesPeriod);
 
         return view('livewire.scoreboard');
     }
