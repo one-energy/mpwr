@@ -77,6 +77,7 @@ class UsersTableSeeder extends Seeder
     {
         $testOwner = factory(User::class)->create([
             'master' => false,
+            'role' => 'Region Manager'
         ]);
     
         $testRegion = factory(Region::class)->create([
@@ -95,6 +96,7 @@ class UsersTableSeeder extends Seeder
        
         $testOwner = factory(User::class)->create([
             'master' => false,
+            'role' => 'Region Manager'
         ]);
 
         $testOfficeManager = factory(User::class)->create([
