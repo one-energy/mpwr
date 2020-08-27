@@ -81,7 +81,7 @@ class RegionController extends Controller
         $region->save();
 
         alert()
-            ->withTitle(__('region created!'))
+            ->withTitle(__('Region created!'))
             ->send();
 
         return redirect(route('castle.regions.edit', $region));
