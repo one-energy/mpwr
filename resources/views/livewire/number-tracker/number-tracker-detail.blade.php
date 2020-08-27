@@ -43,24 +43,11 @@
                             wire:click="setPeriod('m')">Monthly</a>
                     </li>
                     <li>
-                        <svg class="relative hidden top-2 w-6"
-                            wire:loading.class.remove="hidden"
-                            viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#9fa6b2">
-                            <g fill="none">
-                                <g transform="translate(1 1)" stroke-width="2">
-                                    <circle stroke-opacity=".5" cx="18" cy="18" r="18" />
-                                    <path d="M36 18c0-9.94-8.06-18-18-18">
-                                        <animateTransform
-                                            attributeName="transform"
-                                            type="rotate"
-                                            from="0 18 18"
-                                            to="360 18 18"
-                                            dur="1s"
-                                            repeatCount="indefinite" />
-                                    </path>
-                                </g>
-                            </g>
-                        </svg>
+                        <x-svg.spinner 
+                            color="#9fa6b2" 
+                            class="relative hidden top-2 w-6" 
+                            wire:loading.class.remove="hidden">
+                        </x-svg.spinner>
                     </li>
                 </ul>
 
@@ -170,7 +157,7 @@
                                         Region
                                     </span>
                                     <div class="ml-4">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" class="text-gray-300 fill-current"><path d="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z"/></svg>
+                                        <x-svg.plus class="text-gray-300"></x-svg.plus>
                                     </div>
                                 </header>
                             </div>
@@ -186,7 +173,7 @@
                                             1
                                         </div>
                                         <div class="ml-4">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" class="text-gray-300 fill-current"><path d="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z"/></svg>
+                                            <x-svg.plus class="text-gray-300"></x-svg.plus>
                                         </div>
                                     </div>
                                 </header>
@@ -274,12 +261,7 @@
                                 <div class="text-xs font-semibold uppercase">Doors</div>
                                 <div class="text-xl font-bold">1752</div>
                                 <div class="flex font-semibold text-xs text-green-base">
-                                    <svg xmlns="http://www.w3.org/2000/svg" transform='rotate(-45)' width="20" height="20" viewBox="0 0 20 20">
-                                        <symbol id="arrow" viewBox="0 0 24 24">
-                                        <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current" />
-                                        </symbol>
-                                        <use xlink:href="#arrow" width="8" height="8" y="6" x="6" />
-                                    </svg>
+                                    <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
                                     <span>
                                         +500
                                     </span>
@@ -289,12 +271,7 @@
                                 <div class="text-xs text-gray-900 font-semibold uppercase">Hours</div>
                                 <div class="text-xl text-gray-900 font-bold">153</div>
                                 <div class="flex font-semibold text-xs text-green-base">
-                                    <svg xmlns="http://www.w3.org/2000/svg" transform='rotate(-45)' width="20" height="20" viewBox="0 0 20 20">
-                                        <symbol id="arrow" viewBox="0 0 24 24">
-                                        <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current" />
-                                        </symbol>
-                                        <use xlink:href="#arrow" width="8" height="8" y="6" x="6" />
-                                    </svg>
+                                    <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
                                     <span>
                                         +500
                                     </span>
@@ -304,12 +281,7 @@
                                 <div class="text-xs text-gray-900 font-semibold uppercase">Sets</div>
                                 <div class="text-xl text-gray-900 font-bold">113</div>
                                 <div class="flex font-semibold text-xs text-green-base">
-                                    <svg xmlns="http://www.w3.org/2000/svg" transform='rotate(-45)' width="20" height="20" viewBox="0 0 20 20">
-                                        <symbol id="arrow" viewBox="0 0 24 24">
-                                        <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current" />
-                                        </symbol>
-                                        <use xlink:href="#arrow" width="8" height="8" y="6" x="6" />
-                                    </svg>
+                                    <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
                                     <span>
                                         +500
                                     </span>
@@ -319,12 +291,7 @@
                                 <div class="text-xs text-gray-900 font-semibold uppercase">Sits</div>
                                 <div class="text-xl text-gray-900 font-bold">68</div>
                                 <div class="flex font-semibold text-xs text-green-base">
-                                    <svg xmlns="http://www.w3.org/2000/svg" transform='rotate(-45)' width="20" height="20" viewBox="0 0 20 20">
-                                        <symbol id="arrow" viewBox="0 0 24 24">
-                                        <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current" />
-                                        </symbol>
-                                        <use xlink:href="#arrow" width="8" height="8" y="6" x="6" />
-                                    </svg>
+                                    <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
                                     <span>
                                         +500
                                     </span>
@@ -334,12 +301,7 @@
                                 <div class="text-xs text-gray-900 font-semibold uppercase">Set closes</div>
                                 <div class="text-xl text-gray-900 font-bold">6</div>
                                 <div class="flex font-semibold text-xs text-green-base">
-                                    <svg xmlns="http://www.w3.org/2000/svg" transform='rotate(-45)' width="20" height="20" viewBox="0 0 20 20">
-                                        <symbol id="arrow" viewBox="0 0 24 24">
-                                        <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current" />
-                                        </symbol>
-                                        <use xlink:href="#arrow" width="8" height="8" y="6" x="6" />
-                                    </svg>
+                                    <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
                                     <span>
                                         +500
                                     </span>
@@ -349,12 +311,7 @@
                                 <div class="text-xs text-gray-900 font-semibold uppercase">Closes</div>
                                 <div class="text-xl text-gray-900 font-bold">5</div>
                                 <div class="flex font-semibold text-xs text-green-base">
-                                    <svg xmlns="http://www.w3.org/2000/svg" transform='rotate(-45)' width="20" height="20" viewBox="0 0 20 20">
-                                        <symbol id="arrow" viewBox="0 0 24 24">
-                                        <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current" />
-                                        </symbol>
-                                        <use xlink:href="#arrow" width="8" height="8" y="6" x="6" />
-                                    </svg>
+                                    <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
                                     <span>
                                         +500
                                     </span>
@@ -370,25 +327,14 @@
                                 1752
                             </div>
                             <div class="flex font-semibold text-xs text-green-base">
-                                <svg xmlns="http://www.w3.org/2000/svg" transform='rotate(-45)' width="20" height="20" viewBox="0 0 20 20">
-                                    <symbol id="arrow" viewBox="0 0 24 24">
-                                    <path d="M12.068.016l-3.717 3.698 5.263 5.286h-13.614v6h13.614l-5.295 5.317 3.718 3.699 11.963-12.016z" class="text-gree-base fill-current" />
-                                    </symbol>
-                                    <use xlink:href="#arrow" width="12" height="12" y="6" x="6" />
-                                </svg>
+                                <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
                                 <span>
                                     +500 (50.23%)
                                 </span>
                             </div>
                         </div>
                         <a href="#">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
-                            <circle cx="20" cy="20" r="14" class="text-green-base fill-current"></circle>
-                            <symbol id="panel" viewBox="0 0 25 25">
-                                <path d="M6 18h-2v5h-2v-5h-2v-3h6v3zm-2-17h-2v12h2v-12zm11 7h-6v3h2v12h2v-12h2v-3zm-2-7h-2v5h2v-5zm11 14h-6v3h2v5h2v-5h2v-3zm-2-14h-2v12h2v-12z" class="text-white fill-current" />
-                            </symbol>
-                            <use xlink:href="#panel" width="14" height="14" y="13" x="13" />
-                            </svg>
+                            <x-svg.panel></x-svg.panel>
                         </a>
                     </div>
                     <div id="chart_div"></div>
@@ -396,25 +342,12 @@
                     <div class="flex justify-start mt-6">
                         <h2 class="text-lg text-gray-900">Top 5 Performing Members</h2>
                     </div>
-                    <div class="flex justify-center">                    
-                        <svg class="self-center hidden w-20 mt-3"
-                            wire:loading.class.remove="hidden"
-                            viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#9fa6b2">
-                            <g fill="none">
-                                <g transform="translate(1 1)" stroke-width="2">
-                                    <circle stroke-opacity=".5" cx="18" cy="18" r="18" />
-                                    <path d="M36 18c0-9.94-8.06-18-18-18">
-                                        <animateTransform
-                                            attributeName="transform"
-                                            type="rotate"
-                                            from="0 18 18"
-                                            to="360 18 18"
-                                            dur="1s"
-                                            repeatCount="indefinite" />
-                                    </path>
-                                </g>
-                            </g>
-                        </svg>
+                    <div class="flex justify-center">
+                        <x-svg.spinner 
+                            color="#9fa6b2" 
+                            class="self-center hidden w-20 mt-3" 
+                            wire:loading.class.remove="hidden">
+                        </x-svg.spinner>            
                                                                     
                         <div class="mt-6">
                             <div class="flex flex-col">
