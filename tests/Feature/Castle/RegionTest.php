@@ -44,7 +44,7 @@ class RegionTest extends TestCase
     {
         $regionManager = factory(User::class)->create(['role' => 'Region Manager']);
         $regions       = factory(Region::class, 6)->create([
-            'owner_id' => $regionManager->id,
+            'region_manager_id' => $regionManager->id,
         ]);
 
         $response = $this->get('castle/regions');
@@ -64,10 +64,10 @@ class RegionTest extends TestCase
         $regionManager = factory(User::class)->create(['role' => 'Region Manager']);
         $region        = factory(Region::class)->create([
             'name'              => 'New Region',
-            'owner_id' => $regionManager->id,
+            'region_manager_id' => $regionManager->id,
         ]);
         $data         = $region->toArray();
-        $data['region_manager_id'] = $data['owner_id'];
+        $data['region_manager_id'] = $data['region_manager_id'];
         $updateRegion = array_merge($data, ['name' => 'Region Edited']);
 
         $response = $this->put(route('castle.regions.update', $region->id), $updateRegion);
@@ -88,7 +88,7 @@ class RegionTest extends TestCase
     {
         $regionManager = factory(User::class)->create(['role' => 'Region Manager']);
         $region        = factory(Region::class)->create([
-            'owner_id' => $regionManager->id,
+            'region_manager_id' => $regionManager->id,
         ]);
 
         $response = $this->delete(route('castle.regions.destroy', $region->id));

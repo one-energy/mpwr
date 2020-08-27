@@ -24,7 +24,7 @@ class OfficeTest extends TestCase
     /** @test */
     public function it_should_list_all_offices()
     {
-        $region        = factory(Region::class)->create(['owner_id' => $this->user->id]);
+        $region        = factory(Region::class)->create(['region_manager_id' => $this->user->id]);
         $officeManager = factory(User::class)->create(['role' => 'Office Manager']);
         $offices       = factory(Office::class, 6)->create([
             'region_id'         => $region->id,
@@ -64,7 +64,7 @@ class OfficeTest extends TestCase
     /** @test */
     public function it_should_store_a_new_office()
     {
-        $region        = factory(Region::class)->create(['owner_id' => $this->user->id]);
+        $region        = factory(Region::class)->create(['region_manager_id' => $this->user->id]);
         $officeManager = factory(User::class)->create(['role' => 'Office Manager']);
 
         $data = [
@@ -102,7 +102,7 @@ class OfficeTest extends TestCase
     /** @test */
     public function it_should_show_the_edit_form_for_top_level_roles()
     {
-        $region        = factory(Region::class)->create(['owner_id' => $this->user->id]);
+        $region        = factory(Region::class)->create(['region_manager_id' => $this->user->id]);
         $officeManager = factory(User::class)->create(['role' => 'Office Manager']);
         $office        = factory(Office::class)->create([
             'region_id'         => $region->id,
@@ -120,7 +120,7 @@ class OfficeTest extends TestCase
     {
         $this->actingAs(factory(User::class)->create(['role' => 'Setter']));
         
-        $region        = factory(Region::class)->create(['owner_id' => $this->user->id]);
+        $region        = factory(Region::class)->create(['region_manager_id' => $this->user->id]);
         $officeManager = factory(User::class)->create(['role' => 'Office Manager']);
         $office        = factory(Office::class)->create([
             'region_id'         => $region->id,
@@ -135,7 +135,7 @@ class OfficeTest extends TestCase
     /** @test */
     public function it_should_update_an_office()
     {
-        $region        = factory(Region::class)->create(['owner_id' => $this->user->id]);
+        $region        = factory(Region::class)->create(['region_manager_id' => $this->user->id]);
         $officeManager = factory(User::class)->create(['role' => 'Office Manager']);
         $office        = factory(Office::class)->create([
             'name'              => 'Office',
@@ -159,7 +159,7 @@ class OfficeTest extends TestCase
     /** @test */
     public function it_should_destroy_an_office()
     {
-        $region        = factory(Region::class)->create(['owner_id' => $this->user->id]);
+        $region        = factory(Region::class)->create(['region_manager_id' => $this->user->id]);
         $officeManager = factory(User::class)->create(['role' => 'Office Manager']);
         $office        = factory(Office::class)->create([
             'region_id'         => $region->id,

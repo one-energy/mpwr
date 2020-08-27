@@ -3,6 +3,7 @@
 
 namespace Tests\Builders;
 
+use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -12,13 +13,13 @@ class OfficeBuilder
 {
     use WithFaker;
 
-    /** @var Region */
+    /** @var Office */
     public $office;
 
     public function __construct($attributes = [])
     {
         $this->faker = $this->makeFaker('en_US');
-        $this->office  = (new Region)->forceFill(array_merge([
+        $this->office  = (new Office)->forceFill(array_merge([
             'name' => Str::title($this->faker->word),
         ], $attributes));
     }
@@ -40,9 +41,16 @@ class OfficeBuilder
         return $this->office;
     }
 
-    public function withOwner(User $user)
+    public function withManager(User $user)
     {
         $this->office->office_manager_id = $user->id;
+
+        return $this;
+    }
+
+    public function region(Region $region)
+    {
+        $this->office->region_id = $region->id;
 
         return $this;
     }

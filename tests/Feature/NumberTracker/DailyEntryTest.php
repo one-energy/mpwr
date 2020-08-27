@@ -8,33 +8,53 @@ use Tests\TestCase;
 use Livewire\Livewire;
 use Tests\Unit\UnitTest;
 use App\Http\Livewire\NumberTracker\DailyEntry;
+use App\Models\Office;
+use App\Models\Region;
+use App\Models\User;
 use Tests\Builders\UserBuilder;
-use Tests\Builders\RegionBuilder;
 use Tests\Builders\DailyEntryBuilder;
+use Tests\Builders\OfficeBuilder;
+use Tests\Builders\RegionBuilder;
 use Tests\Feature\FeatureTest;
 
 
 class DailyEntryTest extends FeatureTest
 {
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = factory(User::class)->create(['master' => true]);
+
+        $this->actingAs($this->user);
+    }
+
     /** @test */
     public function it_should_sum_kpi_users_entries () 
     {
-        $region = (new RegionBuilder)->save()->get();
+        $region        = factory(Region::class)->create(['region_manager_id' => $this->user->id]);
+        $officeManager = factory(User::class)->create(['role' => 'Office Manager']);
+        $Office         = factory(Office::class)->create([
+            'region_id' => $region->id,
+            'office_manager_id' => $officeManager->id
+            ]);
 
-        $userOne = (new UserBuilder)->withRegion($region)->save()->get();
-        $userTwo = (new UserBuilder)->withRegion($region)->save()->get();
-        $userThree = (new UserBuilder)->withRegion($region)->save()->get();
-        $userFour = (new UserBuilder)->withRegion($region)->save()->get();
+        $userOne    = (new UserBuilder)->withOffice($Office)->save()->get();
+        $userTwo    = (new UserBuilder)->withOffice($Office)->save()->get();
+        $userThree  = (new UserBuilder)->withOffice($Office)->save()->get();
+        $userFour   = (new UserBuilder)->withOffice($Office)->save()->get();
         
-        $dailyEntryOne = (new DailyEntryBuilder)->withUser($userOne->id)->withDate(date("Y-m-d", time()))->save()->get();
-        $dailyEntryTwo = (new DailyEntryBuilder)->withUser($userTwo->id)->withDate(date("Y-m-d", time()))->save()->get();
+        $dailyEntryOne   = (new DailyEntryBuilder)->withUser($userOne->id)->withDate(date("Y-m-d", time()))->save()->get();
+        $dailyEntryTwo   = (new DailyEntryBuilder)->withUser($userTwo->id)->withDate(date("Y-m-d", time()))->save()->get();
         $dailyEntryThree = (new DailyEntryBuilder)->withUser($userThree->id)->withDate(date("Y-m-d", time()))->save()->get();
-        $dailyEntryFour = (new DailyEntryBuilder)->withUser($userFour->id)->withDate(date("Y-m-d", time()))->save()->get();
+        $dailyEntryFour  = (new DailyEntryBuilder)->withUser($userFour->id)->withDate(date("Y-m-d", time()))->save()->get();
         
-        $lastDailyEntryOne = (new DailyEntryBuilder)->withUser($userOne->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
-        $lastDailyEntryTwo = (new DailyEntryBuilder)->withUser($userTwo->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
+        $lastDailyEntryOne   = (new DailyEntryBuilder)->withUser($userOne->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
+        $lastDailyEntryTwo   = (new DailyEntryBuilder)->withUser($userTwo->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
         $lastDailyEntryThree = (new DailyEntryBuilder)->withUser($userThree->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
-        $lastDailyEntryFour = (new DailyEntryBuilder)->withUser($userFour->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
+        $lastDailyEntryFour  = (new DailyEntryBuilder)->withUser($userFour->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
 
         //test if sum its right
         Livewire::test(DailyEntry::class)
@@ -60,10 +80,16 @@ class DailyEntryTest extends FeatureTest
         $today = date("Y-m-d", time());
         $yesterday = date("Y-m-d",  strtotime($today  . '-1 day'));
 
-        $regionOne = (new RegionBuilder)->save()->get();
+        $region = (new RegionBuilder)->save()->get();
+        //create regions
 
-        $userOne = (new UserBuilder)->withRegion($regionOne)->save()->get();
-        $userTwo = (new UserBuilder)->withRegion($regionOne)->save()->get();
+        $officeOne = factory(Office::class)->create([
+            'region_id' => $region->id,
+            'office_manager_id' => $region->id
+        ]);
+
+        $userOne = (new UserBuilder)->withOffice($officeOne)->save()->get();
+        $userTwo = (new UserBuilder)->withOffice($officeOne)->save()->get();
 
         $dailyEntryOne          = (new DailyEntryBuilder)->withUser($userOne->id)->withDate($today)->save()->get();
         $dailyEntryOneYesterday = (new DailyEntryBuilder)->withUser($userTwo->id)->withDate($yesterday)->save()->get();
@@ -87,27 +113,28 @@ class DailyEntryTest extends FeatureTest
     /** @test */
     public function it_should_show_users_per_regions() {
 
+        $region = (new RegionBuilder)->save()->get();
         //create regions
-        $regionOne = (new RegionBuilder)->save()->get();
-        $regionTwo = (new RegionBuilder)->save()->get();
+        $officeOne = (new OfficeBuilder)->region($region)->save()->get();
+        $officeTwo = (new OfficeBuilder)->region($region)->save()->get();
 
         //create user to region one
-        $userOne    = (new UserBuilder)->withRegion($regionOne)->save()->get();
-        $userTwo    = (new UserBuilder)->withRegion($regionOne)->save()->get();
-        $userThree  = (new UserBuilder)->withRegion($regionOne)->save()->get();
-        $userFour   = (new UserBuilder)->withRegion($regionOne)->save()->get();
-        $userFive   = (new UserBuilder)->withRegion($regionOne)->save()->get();
+        $userOne    = (new UserBuilder)->withOffice($officeOne)->save()->get();
+        $userTwo    = (new UserBuilder)->withOffice($officeOne)->save()->get();
+        $userThree  = (new UserBuilder)->withOffice($officeOne)->save()->get();
+        $userFour   = (new UserBuilder)->withOffice($officeOne)->save()->get();
+        $userFive   = (new UserBuilder)->withOffice($officeOne)->save()->get();
         
         //create user to region two
-        $userSix    = (new UserBuilder)->withRegion($regionTwo)->save()->get();
-        $userSeven  = (new UserBuilder)->withRegion($regionTwo)->save()->get();
-        $userEight  = (new UserBuilder)->withRegion($regionTwo)->save()->get();
-        $userNine   = (new UserBuilder)->withRegion($regionTwo)->save()->get();
-        $userTen    = (new UserBuilder)->withRegion($regionTwo)->save()->get();
+        $userSix    = (new UserBuilder)->withOffice($officeTwo)->save()->get();
+        $userSeven  = (new UserBuilder)->withOffice($officeTwo)->save()->get();
+        $userEight  = (new UserBuilder)->withOffice($officeTwo)->save()->get();
+        $userNine   = (new UserBuilder)->withOffice($officeTwo)->save()->get();
+        $userTen    = (new UserBuilder)->withOffice($officeTwo)->save()->get();
 
         //first region 
         Livewire::test(DailyEntry::class)
-            ->call('setRegion',$regionOne->id)
+            ->call('setOffice',$officeOne->id)
             ->assertSee($userOne->first_name . " " . $userOne->last_name) 
             ->assertSee($userTwo->first_name . " " . $userTwo->last_name) 
             ->assertSee($userThree->first_name . " " . $userThree->last_name) 
@@ -119,9 +146,8 @@ class DailyEntryTest extends FeatureTest
             ->assertDontSee($userNine->first_name . " " . $userNine->last_name) 
             ->assertDontSee($userTen->first_name . " " . $userTen->last_name); 
 
-        //change region
         Livewire::test(DailyEntry::class)
-            ->call('setRegion',$regionTwo->id)
+            ->call('setOffice',$officeTwo->id)
             ->assertDontSee($userOne->first_name . " " . $userOne->last_name) 
             ->assertDontSee($userTwo->first_name . " " . $userTwo->last_name) 
             ->assertDontSee($userThree->first_name . " " . $userThree->last_name) 
@@ -136,21 +162,22 @@ class DailyEntryTest extends FeatureTest
     }
 
     /** @test */
-    public function it_should_show_regions() 
+    public function it_should_show_offices() 
     {
-        //creating regions
-        $regionOne = (new RegionBuilder)->save()->get();
-        $regionTwo = (new RegionBuilder)->save()->get();
-        $regionThree = (new RegionBuilder)->save()->get();
-        $regionFour = (new RegionBuilder)->save()->get();
-        $regionFive = (new RegionBuilder)->save()->get();
+        $user = factory(User::class)->create(['role' => 'Region Manager']);
 
-        Livewire::test(DailyEntry::class)
-            ->assertSee($regionOne->name) 
-            ->assertSee($regionTwo->name) 
-            ->assertSee($regionThree->name) 
-            ->assertSee($regionFour->name) 
-            ->assertSee($regionFive->name); 
+        $region        = factory(Region::class)->create(['region_manager_id' => $user->id]);
+        $officeManager = factory(User::class)->create(['role' => 'Office Manager']);
+        //creating regions
+        $offices = factory(Office::class, 5)->create([
+            'region_id' => $region->id,
+            'office_manager_id' => $officeManager->id
+        ]);
+
+        $response = $this->get('number-tracking/create');
+        foreach ($offices as $office) {
+            $response->assertSee($office->name);
+        }
 
     }
 

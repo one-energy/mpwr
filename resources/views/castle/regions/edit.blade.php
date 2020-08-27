@@ -19,7 +19,7 @@
                                 <option selected></option>
                             @endif
                             @foreach($users as $region_manager)
-                                <option value="{{ $region_manager->id }}" {{ old('region_manager_id', $region->owner_id) == $region_manager->id ? 'selected' : '' }}>
+                                <option value="{{ $region_manager->id }}" {{ old('region_manager_id', $region->region_manager_id) == $region_manager->id ? 'selected' : '' }}>
                                     {{ $region_manager->first_name }} {{ $region_manager->last_name }}
                                 </option>
                             @endforeach

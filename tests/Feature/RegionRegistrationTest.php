@@ -33,7 +33,7 @@ class RegionRegistrationTest extends FeatureTest
 
         $this->assertDatabaseHas('regions', [
             'name'     => 'Region 1',
-            'owner_id' => $user->id,
+            'region_manager_id' => $user->id,
         ]);
 
         $this->assertDatabaseHas('users', [

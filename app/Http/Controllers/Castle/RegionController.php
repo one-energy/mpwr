@@ -38,7 +38,7 @@ class RegionController extends Controller
         );
 
         $region->name              = $validated['name'];
-        $region->owner_id          = $validated['region_manager_id'];
+        $region->region_manager_id          = $validated['region_manager_id'];
         
         $region->save();
 
@@ -54,7 +54,7 @@ class RegionController extends Controller
         Region::destroy($id);
 
         alert()
-            ->withTitle(__('Office has been deleted!'))
+            ->withTitle(__('Region has been deleted!'))
             ->send();
 
         return back();
@@ -76,12 +76,12 @@ class RegionController extends Controller
 
         $region                    = new Region();
         $region->name              = $validated['name'];
-        $region->owner_id          = $validated['region_manager_id'];
+        $region->region_manager_id          = $validated['region_manager_id'];
         
         $region->save();
 
         alert()
-            ->withTitle(__('region created!'))
+            ->withTitle(__('Region created!'))
             ->send();
 
         return redirect(route('castle.regions.edit', $region));
