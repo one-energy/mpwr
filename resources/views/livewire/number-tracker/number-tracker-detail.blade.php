@@ -321,7 +321,7 @@
                     </div>
 
                     <!-- Area Chart -->
-                    <div class="md:flex md:justify-between mt-6 w-full hidden">
+                    <div class="flex justify-between mt-6 w-full">
                         <div>
                             <div class="font-bold text-lg">
                                 1752
@@ -337,7 +337,7 @@
                             <x-svg.panel></x-svg.panel>
                         </a>
                     </div>
-                    <div class="md:flex md:justify-between hidden w-full" id="chart_div"></div>
+                    <div class="flex md:justify-between w-full" id="chart_div"></div>
                     
                     <div class="flex justify-start mt-6">
                         <h2 class="text-lg text-gray-900">Top 5 Performing Members</h2>
@@ -349,12 +349,12 @@
                             wire:loading.class.remove="hidden">
                         </x-svg.spinner>            
                                                                     
-                        <div class="mt-6 w-full">
+                        <div class="mt-6 w-full"wire:loading.remove>
                             <div class="flex flex-col">
                                 <div class="overflow-x-auto">
                                     <div class="align-middle inline-block min-w-full overflow-hidden">
                                         @if(count($numbersTracked))
-                                            <x-table wire:loading.remove>
+                                            <x-table>
                                                 <x-slot name="header">
                                                     <x-table.th-tr>
                                                         <x-table.th by="region_number">
