@@ -1,7 +1,7 @@
 <div>
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="md:flex">
-            <div class="px-4 py-5 sm:px-6 md:w-1/3 overflow-hidden">
+            <div class="py-5 md:w-1/3 overflow-hidden">
                 <div class="flex justify-start">
                     <h3 class="text-lg text-gray-900">Number Tracker</h3>
                 </div>
@@ -229,7 +229,7 @@
             </div>
             
             <div class="px-4 py-5 sm:p-6 md:w-2/3">
-                <div class="overflow-y-auto justify-center">
+                <div class="justify-center w-full">
                     <div class="flex justify-between md:mt-12 mt-6">
                         <div class="w-full grid md:grid-cols-4 grid-cols-2 md:col-gap-4 col-gap-1 row-gap-2">
                             <div class="col-span-1 bg-green-light rounded-lg p-3">
@@ -256,7 +256,7 @@
                     </div>
 
                     <div class="flex justify-between mt-3">
-                        <div class="w-full grid md:grid-cols-6 grid-cols-3 md:col-gap-4 col-gap-1 row-gap-2">
+                        <div class="w-full grid xl:grid-cols-6 grid-cols-3 md:col-gap-4 col-gap-1 row-gap-2">
                             <div class="col-span-1 border-2 border-green-base bg-green-light rounded-lg p-3">
                                 <div class="text-xs font-semibold uppercase">Doors</div>
                                 <div class="text-xl font-bold">1752</div>
@@ -321,7 +321,7 @@
                     </div>
 
                     <!-- Area Chart -->
-                    <div class="flex justify-between mt-6">
+                    <div class="flex justify-between mt-6 w-full sm:hidden">
                         <div>
                             <div class="font-bold text-lg">
                                 1752
@@ -342,14 +342,14 @@
                     <div class="flex justify-start mt-6">
                         <h2 class="text-lg text-gray-900">Top 5 Performing Members</h2>
                     </div>
-                    <div class="flex justify-center">
+                    <div class="flex justify-center w-full">
                         <x-svg.spinner 
                             color="#9fa6b2" 
                             class="self-center hidden w-20 mt-3" 
                             wire:loading.class.remove="hidden">
                         </x-svg.spinner>            
                                                                     
-                        <div class="mt-6">
+                        <div class="mt-6 w-full">
                             <div class="flex flex-col">
                                 <div class="overflow-x-auto">
                                     <div class="align-middle inline-block min-w-full overflow-hidden">
