@@ -19,7 +19,7 @@ class DailyNumberPolicy
     public function update(User $user, int $region)
     {
         $region = Region::find($region);
-        $ownerId = $region->owner_id;
+        $ownerId = $region->region_manager_id;
 
         if (($user->role == 'Setter' || $user->role == 'Sales Rep') || ($user->role == 'Office Manager' && $user->id != $ownerId))
         {

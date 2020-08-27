@@ -41,7 +41,7 @@ class RegisterController extends Controller
 
         $region           = new Region();
         $region->name     = $data['region'];
-        $region->owner_id = $user->id;
+        $region->region_manager_id = $user->id;
         $region->save();
 
         $region->users()->attach($user, ['role' => 'owner']);

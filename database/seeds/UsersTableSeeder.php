@@ -51,7 +51,7 @@ class UsersTableSeeder extends Seeder
         ]);
 
         $devsquad = factory(Region::class)->create([
-            'owner_id' => $owner->id,
+            'region_manager_id' => $owner->id,
         ]);
         $devsquad->users()->attach($owner, ['role' => array_rand(User::TOPLEVEL_ROLES)]);
 
@@ -80,7 +80,7 @@ class UsersTableSeeder extends Seeder
         ]);
     
         $testRegion = factory(Region::class)->create([
-            'owner_id' => $testOwner->id,
+            'region_manager_id' => $testOwner->id,
         ]);
         $testRegion->users()->attach($testOwner, ['role' => array_rand(User::TOPLEVEL_ROLES)]);
 
@@ -103,7 +103,7 @@ class UsersTableSeeder extends Seeder
         ]);
         
         $region = factory(Region::class)->create([
-            'owner_id' => $testOwner->id,
+            'region_manager_id' => $testOwner->id,
         ]);
     
         $testOffice = factory(Office::class)->create([

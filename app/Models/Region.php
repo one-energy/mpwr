@@ -11,16 +11,16 @@ use Illuminate\Database\Eloquent\Builder;
 /**
  * @property int $id
  * @property string $name
- * @property int $owner_id
+ * @property int $region_manager_id
  * @property Carbon $created_at
  * @property Carbon $updated_at
- * @property-read User $owner
+ * @property-read User $regionManager
  */
 class Region extends Model
 {
-    public function owner()
+    public function regionManger()
     {
-        return $this->belongsTo(User::class, 'owner_id');
+        return $this->belongsTo(User::class, 'region_manager_id');
     }
 
     public function users()

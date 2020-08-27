@@ -25,12 +25,12 @@ class RegionBuilder
 
     public function save()
     {
-        if (!$this->region->owner_id) {
-            $this->region->owner_id = factory(User::class)->create()->id;
+        if (!$this->region->region_manager_id) {
+            $this->region->region_manager_id = factory(User::class)->create()->id;
         }
         $this->region->save();
 
-        $this->region->users()->attach($this->region->owner, ['role' => array_search('Owner', User::TOPLEVEL_ROLES)]);
+        $this->region->users()->attach($this->region->regionManger, ['role' => array_search('Owner', User::TOPLEVEL_ROLES)]);
 
         return $this;
     }
@@ -40,9 +40,9 @@ class RegionBuilder
         return $this->region;
     }
 
-    public function withOwner(User $user)
+    public function withManager(User $user)
     {
-        $this->region->owner_id = $user->id;
+        $this->region->region_manager_id = $user->id;
 
         return $this;
     }

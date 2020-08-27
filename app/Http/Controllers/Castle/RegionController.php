@@ -38,7 +38,7 @@ class RegionController extends Controller
         );
 
         $region->name              = $validated['name'];
-        $region->owner_id          = $validated['region_manager_id'];
+        $region->region_manager_id          = $validated['region_manager_id'];
         
         $region->save();
 
@@ -76,7 +76,7 @@ class RegionController extends Controller
 
         $region                    = new Region();
         $region->name              = $validated['name'];
-        $region->owner_id          = $validated['region_manager_id'];
+        $region->region_manager_id          = $validated['region_manager_id'];
         
         $region->save();
 

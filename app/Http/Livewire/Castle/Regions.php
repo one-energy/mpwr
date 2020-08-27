@@ -18,7 +18,7 @@ class Regions extends Component
     public function render()
     {
         return view('livewire.castle.regions', [
-            'regions' => Region::join('users', 'users.id', '=', 'regions.owner_id')
+            'regions' => Region::join('users', 'users.id', '=', 'regions.region_manager_id')
                 ->select('regions.*', 'users.first_name', 'users.last_name')
                 ->search($this->search)
                 ->orderBy($this->sortBy, $this->sortDirection)
