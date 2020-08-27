@@ -3,6 +3,7 @@
 
 namespace Tests\Builders;
 
+use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -18,7 +19,7 @@ class UserBuilder
 
     private Collection $items;
 
-    private ?Region $region = null;
+    private ?Office $office = null;
 
     public function __construct($attributes = [])
     {
@@ -38,11 +39,11 @@ class UserBuilder
         if ($this->amount == 1) {
             $this->user->save();
 
-            if ($this->region) {
-                $this->region->owner_id = $this->user->id;
-                $this->region->save();
+            if ($this->office) {
+                $this->office->office_manager_id = $this->user->id;
+                $this->office->save();
 
-                $this->region->users()->attach($this->user->id, ['role' => 'Owner']);
+                $this->office->users()->attach($this->user->id, ['role' => 'Owner']);
             }
         }
 
@@ -54,8 +55,8 @@ class UserBuilder
                     ->withLastName($this->faker->lastName)
                     ->save()->get();
 
-                if ($this->region) {
-                    $this->region->users()->attach($user, ['role' => $i == 0 ? 'Owner' : 'Setter']);
+                if ($this->office) {
+                    $this->office->users()->attach($user, ['role' => $i == 0 ? 'Owner' : 'Setter']);
                 }
 
                 $this->items->push($user);
@@ -148,16 +149,21 @@ class UserBuilder
         return $this;
     }
 
-    public function withARegion()
+    public function withAOffice()
     {
-        $this->region = factory(Region::class)->make();
+        $user = factory(User::class)->create();
+        $region = factory(Region::class)->create(['region_manager_id' => $user->id]);
+        $this->office = factory(Office::class)->create([
+            'region_id' => $region->id,
+            'office_manager_id' => $user->id
+        ]);
 
         return $this;
     }
 
-    public function withRegion(Region $region)
+    public function withOffice(Office $office)
     {
-        $this->region = $region;
+        $this->office = $office;
 
         return $this;
     }

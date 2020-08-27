@@ -10,12 +10,12 @@ class CreateRegionsTable extends Migration
     {
         Schema::create('regions', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('owner_id');
+            $table->unsignedBigInteger('region_manager_id');
             $table->string('name');
 
             $table->timestamps();
 
-            $table->foreign('owner_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('region_manager_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

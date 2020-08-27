@@ -24,12 +24,12 @@ class RegionBuilderTest extends FeatureTest
     public function it_should_create_a_region_with_a_given_owner()
     {
         $user = (new UserBuilder)->save()->get();
-        $region = (new RegionBuilder)->withOwner($user)->save()->get();
+        $region = (new RegionBuilder)->withManager($user)->save()->get();
 
         $this->assertDatabaseHas('regions', [
             'id'       => $region->id,
             'name'     => $region->name,
-            'owner_id' => $user->id,
+            'region_manager_id' => $user->id,
         ]);
 
         $this->assertDatabaseHas('region_user', [

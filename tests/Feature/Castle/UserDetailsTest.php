@@ -51,8 +51,8 @@ class UserDetailsTest extends FeatureTest
     public function it_should_show_the_regions_a_user_is_on()
     {
         $master   = (new UserBuilder)->asMaster()->save()->get();
-        $region1  = (new RegionBuilder)->withOwner($master)->save()->get();
-        $region2  = (new RegionBuilder)->withOwner($master)->save()->get();
+        $region1  = (new RegionBuilder)->withManager($master)->save()->get();
+        $region2  = (new RegionBuilder)->withManager($master)->save()->get();
 
         $this->actingAs($master)
             ->get(route('castle.users.show', $master->id))

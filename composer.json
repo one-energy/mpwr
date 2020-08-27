@@ -12,6 +12,7 @@
         "php": "^7.4",
         "ext-json": "*",
         "ext-pdo": "*",
+        "doctrine/dbal": "^2.10",
         "facade/ignition": "^2.0",
         "fideloper/proxy": "^4.0",
         "guzzlehttp/guzzle": "^6.3",
@@ -30,8 +31,7 @@
         "nunomaduro/collision": "^4.1",
         "phpmd/phpmd": "@stable",
         "phpunit/phpunit": "^8.5",
-        "squizlabs/php_codesniffer": "^3.5",
-        "doctrine/dbal": "^2.6"
+        "squizlabs/php_codesniffer": "^3.5"
     },
     "config": {
         "optimize-autoloader": true,

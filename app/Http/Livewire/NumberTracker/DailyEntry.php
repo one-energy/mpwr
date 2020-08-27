@@ -71,7 +71,7 @@ class DailyEntry extends Component
         $today        = date('Y-m-d');
         for ($actualDate = $initialDate; $actualDate != $today; $actualDate = date('Y-m-d', strtotime($actualDate . '+1 day'))) {
             $isMissingDate = DailyNumber::whereDate('date', $actualDate)
-                ->rightJoin('users', function($join) {
+                ->leftJoin('users', function($join) {
                     $join->on('users.id', '=', 'daily_numbers.user_id');
                 })
                 ->join('office_user', function($join) use ($officeSelected) {
