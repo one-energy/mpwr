@@ -41,5 +41,11 @@ class NumberTrackerTest extends FeatureTest
             ->assertSet('period', 'm');
     
     }
+
+    public function it_should_show_top_five()
+    {
+        $users = factory(User:: class, 5)->create();
+
+    }
    
 }
