@@ -13,7 +13,7 @@
         <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
             <x-card>
                 @if (session('status'))
-                    <x-alert color="green" class="mb-6">
+                    <x-alert color="green" title="An email with reset link was sent to you" class="mb-6">
                         {{ session('status') }}
                     </x-alert>
                 @endif
