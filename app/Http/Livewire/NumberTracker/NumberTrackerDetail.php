@@ -18,6 +18,8 @@ class NumberTrackerDetail extends Component
 
     public $date;
 
+    public $graficValue;
+
     public $filterBy = "doors";
 
     public $dateSelected;
@@ -30,6 +32,7 @@ class NumberTrackerDetail extends Component
     public function render()
     {
         $this->numbersTracked =  $this->getTrackerNumbers();
+        $this->graficValue    = $this->numbersTracked->sum($this->filterBy);
         $showOptions          = [
             'Daily Total',
             'Weekly Total',

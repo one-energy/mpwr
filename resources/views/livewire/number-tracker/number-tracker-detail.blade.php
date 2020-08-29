@@ -232,22 +232,41 @@
                 <div class="justify-center w-full">
                     <div class="flex justify-between md:mt-12 mt-6">
                         <div class="w-full grid md:grid-cols-4 grid-cols-2 md:col-gap-4 col-gap-1 row-gap-2">
-                            <div class="col-span-1 bg-green-light rounded-lg p-3">
-                                <div class="text-xs text-green-base font-semibold uppercase">D.P.S</div>
-                                <div class="text-xl text-green-base font-bold">14.6</div>
-                            </div>
-                            <div class="col-span-1 bg-green-light rounded-lg p-3">
-                                <div class="text-xs text-green-base font-semibold uppercase">H.P. Set</div>
-                                <div class="text-xl text-green-base font-bold">1.52</div>
-                            </div>
-                            <div class="col-span-1 bg-green-light rounded-lg p-3">
-                                <div class="text-xs text-green-base font-semibold uppercase">Sit Ratio</div>
-                                <div class="text-xl text-green-base font-bold">0.52</div>
-                            </div>
-                            <div class="col-span-1 bg-green-light rounded-lg p-3">
-                                <div class="text-xs text-green-base font-semibold uppercase">Close Ratio</div>
-                                <div class="text-xl text-green-base font-bold">0.15</div>
-                            </div>
+                            @if($numbersTracked->sum('sets'))
+                                <div class="col-span-1 bg-green-light rounded-lg p-3">
+                                    <div class="text-xs text-green-base font-semibold uppercase">D.P.S</div>
+                                    <div class="text-xl text-green-base font-bold">{{number_format($numbersTracked->sum('doors')/$numbersTracked->sum('sets'), 2)}}</div>
+                                </div>
+                                <div class="col-span-1 bg-green-light rounded-lg p-3">
+                                    <div class="text-xs text-green-base font-semibold uppercase">H.P. Set</div>
+                                    <div class="text-xl text-green-base font-bold">{{number_format($numbersTracked->sum('hours')/$numbersTracked->sum('sets'), 2)}}</div>
+                                </div>
+                                <div class="col-span-1 bg-green-light rounded-lg p-3">
+                                    <div class="text-xs text-green-base font-semibold uppercase">Sit Ratio</div>
+                                    <div class="text-xl text-green-base font-bold">{{number_format($numbersTracked->sum('sits')/$numbersTracked->sum('sets'), 2)}}</div>
+                                </div>
+                                <div class="col-span-1 bg-green-light rounded-lg p-3">
+                                    <div class="text-xs text-green-base font-semibold uppercase">Close Ratio</div>
+                                    <div class="text-xl text-green-base font-bold">{{number_format($numbersTracked->sum('closes')/$numbersTracked->sum('sets'), 2)}}</div>
+                                </div>
+                            @else
+                                <div class="col-span-1 bg-green-light rounded-lg p-3">
+                                    <div class="text-xs text-green-base font-semibold uppercase">D.P.S</div>
+                                    <div class="text-xl text-green-base font-bold">0</div>
+                                </div>
+                                <div class="col-span-1 bg-green-light rounded-lg p-3">
+                                    <div class="text-xs text-green-base font-semibold uppercase">H.P. Set</div>
+                                    <div class="text-xl text-green-base font-bold">0</div>
+                                </div>
+                                <div class="col-span-1 bg-green-light rounded-lg p-3">
+                                    <div class="text-xs text-green-base font-semibold uppercase">Sit Ratio</div>
+                                    <div class="text-xl text-green-base font-bold">0</div>
+                                </div>
+                                <div class="col-span-1 bg-green-light rounded-lg p-3">
+                                    <div class="text-xs text-green-base font-semibold uppercase">Close Ratio</div>
+                                    <div class="text-xl text-green-base font-bold">0</div>
+                                </div>
+                            @endif
                         </div>
                     </div>
 
@@ -415,7 +434,7 @@
                     <div class="flex justify-between mt-6 w-full">
                         <div>
                             <div class="font-bold text-lg">
-                                1752
+                                {{$graficValue}}
                             </div>
                             <div class="flex font-semibold text-xs text-green-base">
                                 <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
