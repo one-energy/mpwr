@@ -29,20 +29,19 @@ class NumberTrackerDetail extends Component
 
     public $dateSelected;
 
-    public $activeFilters = ['Regions', 'Offices', 'Users', 'Admin', 'DevSquad'];
+    public $activeFilters = [];
 
     public function mount()
     {
         $this->dateSelected = date('Y-m-d', time());
-        
+        $this->getOffices();
+        $this->getRegions();
+        $this->getUsers();
     }
 
     public function render()
     {
         $this->numbersTracked = $this->getTrackerNumbers();
-        $this->getOffices();
-        $this->getRegions();
-        $this->getUsers();
         $showOptions          = [
             'Daily Total', 
             'Weekly Total',
@@ -83,6 +82,29 @@ class NumberTrackerDetail extends Component
             ->orderBy($this->filterBy, 'desc')
             ->take(5)
             ->get();
+        
+    }
+
+    public function addFilter($data, $type)
+    {
+        if($type == 'user'){
+            array_push($this->activeFilters, [
+                'type' => $type,
+                'first_name' => $data['first_name'],
+                'last_name' => $data['last_name'],
+                'id' => $data['id'],
+            ]);
+        }else{
+            array_push($this->activeFilters, [
+                'type' => $type,
+                'name' => $data['name'],
+                'id' => $data['id'],
+            ]);
+        }
+    }
+
+    public function removeFilter()
+    {
         
     }
 

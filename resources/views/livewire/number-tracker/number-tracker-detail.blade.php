@@ -156,7 +156,7 @@
                                     x-transition:leave-end="transform opacity-0 scale-95"
                                     class="mt-2 max-h-80 overflow-y-auto w-full rounded-md shadow-lg z-10">
                                     @foreach($regions as $region)
-                                        <li class="p-2"><button wire:click="archive">{{$region->name}}</button></li>
+                                        <li class="p-2"><button wire:click="addFilter({{$region}}, 'region')">{{$region->name}}</button></li>
                                     @endforeach
                                 </ul>
                             </div>
@@ -182,7 +182,7 @@
                                     x-transition:leave-end="transform opacity-0 scale-95"
                                     class="mt-2 max-h-80 overflow-y-auto w-full rounded-md shadow-lg z-10">
                                     @foreach($offices as $office)
-                                        <li class="p-2"><button wire:click="archive">{{$office->name}}</button></li>
+                                        <li class="p-2"><button wire:click="addFilter({{$office}}, 'office')">{{$office->name}}</button></li>
                                     @endforeach
                                 </ul>
                             </div>
@@ -208,7 +208,7 @@
                                     x-transition:leave-end="transform opacity-0 scale-95"
                                     class="mt-2 max-h-80 overflow-y-auto w-full rounded-md shadow-lg z-10">
                                     @foreach($users as $user)
-                                        <li class="p-2"><button wire:click="archive">{{$user->first_name . " " . $user->last_name}}</button></li>
+                                        <li class="p-2"><button wire:click="addFilter({{$user}}, 'user')">{{$user->first_name . " " . $user->last_name}}</button></li>
                                     @endforeach
                                 </ul>
                             </div>
@@ -233,7 +233,7 @@
                             <div class="flex mt-2 flex-wrap">
                                 @foreach($activeFilters as $filter)
                                 <span class="inline-flex rounded-full text-base border border-gray-700 p-1 m-1">
-                                    {{$filter}}
+                                    {{$filter['name'] ?? $filter['first_name'] . " " . $filter['last_name']}}
                                     <span class="pl-2 cursor-pointer self-center">
                                         <x-svg.x class="w-4 h-4"></x-svg.x>
                                     </span>
