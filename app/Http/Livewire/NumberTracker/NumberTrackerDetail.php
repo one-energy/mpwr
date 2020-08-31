@@ -3,6 +3,9 @@
 namespace App\Http\Livewire\NumberTracker;
 
 use App\Models\DailyNumber;
+use App\Models\Office;
+use App\Models\Region;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -13,6 +16,12 @@ class NumberTrackerDetail extends Component
     public $period = 'd';
 
     public $numbersTracked = [];
+
+    public $offices = [];
+
+    public $regions = [];
+
+    public $users = [];
 
     public $date;
 
@@ -31,6 +40,9 @@ class NumberTrackerDetail extends Component
     public function render()
     {
         $this->numbersTracked = $this->getTrackerNumbers();
+        $this->getOffices();
+        $this->getRegions();
+        $this->getUsers();
         $showOptions          = [
             'Daily Total', 
             'Weekly Total',
@@ -73,4 +85,20 @@ class NumberTrackerDetail extends Component
             ->get();
         
     }
+
+    public function getOffices() 
+    {
+        $this->offices = Office::all();
+    }
+
+    public function getRegions() 
+    {
+        $this->regions = Region::all();
+    }
+
+    public function getUsers() 
+    {
+        $this->users = User::all();
+    }
+
 }
