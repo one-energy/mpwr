@@ -205,10 +205,15 @@
                             </div>
                         </div>
                         <div class="mt-2 border-t border-gray-200">
-                            <div class="mt-2">
-                                <span class="rounded-full text-xs border border-gray-700 px-2">
-                                    Closer
+                            <div class="flex mt-2 flex-wrap">
+                                @foreach($activeFilters as $filter)
+                                <span class="rounded-full text-base border border-gray-700 p-1 m-1">
+                                    {{$filter}}
+                                    <span class="pl-3">
+                                        x
+                                    </span>
                                 </span>
+                                @endforeach
                             </div>
                         </div>
                     </section>

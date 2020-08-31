@@ -20,6 +20,8 @@ class NumberTrackerDetail extends Component
 
     public $dateSelected;
 
+    public $activeFilters = ['Regions', 'Offices', 'Users', 'Admin', 'DevSquad'];
+
     public function mount()
     {
         $this->dateSelected = date('Y-m-d', time());
