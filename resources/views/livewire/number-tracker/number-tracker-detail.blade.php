@@ -46,7 +46,7 @@
                         <x-svg.spinner 
                             color="#9fa6b2" 
                             class="relative hidden top-2 w-6" 
-                            wire:loading.class.remove="hidden">
+                            wire:loading.class.remove="hidden" wire:target="setPeriod">
                         </x-svg.spinner>
                     </li>
                 </ul>
@@ -156,7 +156,7 @@
                                     x-transition:leave-end="transform opacity-0 scale-95"
                                     class="mt-2 max-h-80 overflow-y-auto w-full rounded-md shadow-lg z-10">
                                     @foreach($regions as $region)
-                                        <li class="p-2"><button wire:click="addFilter({{$region}}, 'region')">{{$region->name}}</button></li>
+                                        <li class="p-2 cursor-pointer" @click="open = false" wire:click="addFilter({{$region}}, 'region')">{{$region->name}}</li>
                                     @endforeach
                                 </ul>
                             </div>
@@ -182,7 +182,7 @@
                                     x-transition:leave-end="transform opacity-0 scale-95"
                                     class="mt-2 max-h-80 overflow-y-auto w-full rounded-md shadow-lg z-10">
                                     @foreach($offices as $office)
-                                        <li class="p-2"><button wire:click="addFilter({{$office}}, 'office')">{{$office->name}}</button></li>
+                                        <li class="p-2 cursor-pointer" @click="open = false" wire:click="addFilter({{$office}}, 'office')">{{$office->name}}</li>
                                     @endforeach
                                 </ul>
                             </div>
@@ -207,8 +207,22 @@
                                     x-transition:leave-start="transform opacity-100 scale-100"
                                     x-transition:leave-end="transform opacity-0 scale-95"
                                     class="mt-2 max-h-80 overflow-y-auto w-full rounded-md shadow-lg z-10">
+                                    <div class="sticky top-0 p-2 bg-white">
+                                        <input
+                                            type="text"
+                                            class="form-input w-full"
+                                            placeholder="Search Users..."
+                                            wire:model="userSearch"
+                                            wire:keydown.escape="$set(userSearch, '')"
+                                            wire:keydown.tab="$set(userSearch, '')"
+                                            wire:keydown.ArrowUp="decrementHighlight"
+                                            wire:keydown.ArrowDown="incrementHighlight"
+                                            wire:keydown.enter="selectContact"
+                                            wire:keydown.debounce.500ms="updateSearch"
+                                        />
+                                    </div>
                                     @foreach($users as $user)
-                                        <li class="p-2"><button wire:click="addFilter({{$user}}, 'user')">{{$user->first_name . " " . $user->last_name}}</button></li>
+                                        <li class="p-2 cursor-pointer" @click="open = false" wire:click="addFilter({{$user}}, 'user')">{{$user->first_name . " " . $user->last_name}}</li>
                                     @endforeach
                                 </ul>
                             </div>
@@ -231,23 +245,17 @@
                         </div>
                         <div class="mt-2 border-t border-gray-200">
                             <div class="flex mt-2 flex-wrap">
-                                @foreach($activeFilters as $filter)
+                                @foreach($activeFilters as $key => $filter)
                                 <span class="inline-flex rounded-full text-base border border-gray-700 p-1 m-1">
                                     {{$filter['name'] ?? $filter['first_name'] . " " . $filter['last_name']}}
                                     <span class="pl-2 cursor-pointer self-center">
-                                        <x-svg.x class="w-4 h-4"></x-svg.x>
+                                        <x-svg.x class="w-4 h-4" wire:click="removeFilter({{$key}})"></x-svg.x>
                                     </span>
                                 </span>
                                 @endforeach
                             </div>
                         </div>
                     </section>
-                    
-                    <div class="mt-6">
-                        <button type="submit" class="inline-flex w-full justify-center py-2 px-4 border-2 border-gray-700 text-sm leading-5 font-medium rounded-md text-gray-700 hover:bg-gray-100 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
-                            Apply Filters
-                        </button>
-                    </div>
                 </div>
                 <div class="mt-6">
                     @if(user()->role != 'Setter' && user()->role != 'Sales Rep')
@@ -376,10 +384,10 @@
                         <x-svg.spinner 
                             color="#9fa6b2" 
                             class="self-center hidden w-20 mt-3" 
-                            wire:loading.class.remove="hidden">
+                            wire:loading.class.remove="hidden" wire:target="setDate, setPeriod, addFilter, removeFilter">
                         </x-svg.spinner>            
                                                                     
-                        <div class="mt-6 w-full"wire:loading.remove>
+                        <div class="mt-6 w-full"wire:loading.remove wire:target="setDate, setPeriod, addFilter, removeFilter">
                             <div class="flex flex-col">
                                 <div class="overflow-x-auto">
                                     <div class="align-middle inline-block min-w-full overflow-hidden">
