@@ -20,6 +20,8 @@ class NumberTrackerDetail extends Component
 
     public $graficValue;
 
+    public $graficValueLast;
+
     public $filterBy = "doors";
 
     public $dateSelected;
@@ -84,6 +86,8 @@ class NumberTrackerDetail extends Component
 
         $this->numbersTrackedLast = $queryLast->groupBy('user_id')
             ->get();
+
+        $this->graficValueLast    = $this->numbersTrackedLast->sum($this->filterBy);
         return $query->groupBy('user_id')
             ->orderBy($this->filterBy, 'desc')
             ->get();

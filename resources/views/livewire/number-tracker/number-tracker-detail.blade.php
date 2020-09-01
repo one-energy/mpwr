@@ -436,10 +436,24 @@
                             <div class="font-bold text-lg">
                                 {{$graficValue}}
                             </div>
-                            <div class="flex font-semibold text-xs text-green-base">
-                                <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
+                            <div class="flex font-semibold text-xs 
+                                @if($graficValueLast > $graficValue)
+                                    text-red-600
+                                @else
+                                    text-green-base
+                                @endif">
+                                @if($graficValueLast > $graficValue)
+                                    <x-svg.arrow-down class="text-red-600"></x-svg.arrow-up>                                                                
+                                @else
+                                    <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
+                                @endif
                                 <span>
-                                    +500 (50.23%)
+                                    {{$graficValue - $graficValueLast}}
+                                    @if($numbersTrackedLast->sum('closes') != 0 )
+                                        ({{number_format((($graficValue - $graficValueLast)/$graficValueLast)*100, 2)}}%)
+                                    @else
+                                        (0%)
+                                    @endif
                                 </span>
                             </div>
                         </div>
