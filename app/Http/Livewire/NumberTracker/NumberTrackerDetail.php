@@ -75,6 +75,8 @@ class NumberTrackerDetail extends Component
             ->leftJoin('users', function ($join) {
                 $join->on('users.id', '=', 'daily_numbers.user_id');
             })
+            ->join('office_user', 'daily_numbers.user_id', '=', 'office_user.user_id')
+            ->join('offices', 'office_user.office_id', '=', 'offices.id')
             ->select([DB::raw("users.first_name, users.last_name, daily_numbers.id, daily_numbers.user_id, SUM(doors) as doors,  SUM(hours) as hours,  SUM(sets) as sets,  SUM(sits) as sits,  SUM(set_closes) as set_closes, SUM(closes) as closes")]);
 
         if ($this->period == 'd') {
@@ -86,24 +88,23 @@ class NumberTrackerDetail extends Component
         }
 
         if (count($this->activeFilters) > 0) {
-            foreach ($this->activeFilters as $key => $filter) {
-                if ($filter['type'] == "user") {
-                    $query->where('daily_numbers.user_id', '=', $filter['id']);
-                } else if ($filter['type'] == "office") {
+            $activeFilters = $this->activeFilters;
+            $query->where(function ($query) use ($activeFilters) {
+                foreach ($activeFilters as $key => $filter) {
                     $id = $filter['id'];
-                    $query->leftJoin('users', function ($join) {
-                        $join->on('users.id', '=', 'daily_numbers.user_id');
-                    });
-                    $query->leftJoin('office_user', function ($join) use ($id) {
-                        $join->on('office_user.user_id', '=', 'users.id')
-                            ->where('office_user.office_id', '=', $id);
-                    });
-                } else {
+                    if ($filter['type'] == "user") {
+                        $query->orWhere('daily_numbers.user_id', '=', $id);
+                    } else if ($filter['type'] == "office") {
+                        $query->orWhere('office_id', '=', $id);
+                    } else {
+                        $query->orWhere('region_id', '=', $id);
+                    }
                 }
-            }
+                // dd($query->get());
+            });
         }
 
-        return $query->groupBy('user_id')
+        return $query->groupBy('daily_numbers.user_id')
             ->orderBy($this->filterBy, 'desc')
             ->take(5)
             ->get();
