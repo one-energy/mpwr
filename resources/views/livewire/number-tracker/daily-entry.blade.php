@@ -233,7 +233,7 @@
                                         <x-slot name="header">
                                             <x-table.th-tr>
                                                 <x-table.th by="region_member">
-                                                    @lang('Region Member')
+                                                    @lang('Member')
                                                 </x-table.th>
                                                 <x-table.th by="doors">
                                                     @lang('Doors')
