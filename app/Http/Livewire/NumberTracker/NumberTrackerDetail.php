@@ -123,7 +123,6 @@ class NumberTrackerDetail extends Component
                         $query->orWhere('region_id', '=', $id);
                     }
                 }
-                // dd($query->get());
             });
         }
 
