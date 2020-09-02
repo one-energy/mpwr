@@ -270,30 +270,30 @@
                 <div class="justify-center w-full">
                     <div class="flex justify-between md:mt-12 mt-6">
                         <div class="w-full grid md:grid-cols-4 grid-cols-2 md:col-gap-4 col-gap-1 row-gap-2">
-                                <div class="col-span-1 bg-green-light rounded-lg p-3">
-                                    <div class="text-xs text-green-base font-semibold uppercase">D.P.S</div>
-                                    <div class="text-xl text-green-base font-bold">
-                                        {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('doors')/$numbersTracked->sum('sets'), 2) : 0}}
-                                    </div>
+                            <div class="col-span-1 bg-green-light rounded-lg p-3">
+                                <div class="text-xs text-green-base font-semibold uppercase">D.P.S</div>
+                                <div class="text-xl text-green-base font-bold">
+                                    {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('doors')/$numbersTracked->sum('sets'), 2) : 0}}
                                 </div>
-                                <div class="col-span-1 bg-green-light rounded-lg p-3">
-                                    <div class="text-xs text-green-base font-semibold uppercase">H.P. Set</div>
-                                    <div class="text-xl text-green-base font-bold">
-                                        {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('hours')/$numbersTracked->sum('sets'), 2) : 0}}
-                                    </div>
+                            </div>
+                            <div class="col-span-1 bg-green-light rounded-lg p-3">
+                                <div class="text-xs text-green-base font-semibold uppercase">H.P. Set</div>
+                                <div class="text-xl text-green-base font-bold">
+                                    {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('hours')/$numbersTracked->sum('sets'), 2) : 0}}
                                 </div>
-                                <div class="col-span-1 bg-green-light rounded-lg p-3">
-                                    <div class="text-xs text-green-base font-semibold uppercase">Sit Ratio</div>
-                                    <div class="text-xl text-green-base font-bold">
-                                        {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('sits')/$numbersTracked->sum('sets'), 2) : 0}}
-                                    </div>
+                            </div>
+                            <div class="col-span-1 bg-green-light rounded-lg p-3">
+                                <div class="text-xs text-green-base font-semibold uppercase">Sit Ratio</div>
+                                <div class="text-xl text-green-base font-bold">
+                                    {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('sits')/$numbersTracked->sum('sets'), 2) : 0}}
                                 </div>
-                                <div class="col-span-1 bg-green-light rounded-lg p-3">
-                                    <div class="text-xs text-green-base font-semibold uppercase">Close Ratio</div>
-                                    <div class="text-xl text-green-base font-bold">
-                                        {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('closes')/$numbersTracked->sum('sets'), 2) : 0}}
-                                    </div>
+                            </div>
+                            <div class="col-span-1 bg-green-light rounded-lg p-3">
+                                <div class="text-xs text-green-base font-semibold uppercase">Close Ratio</div>
+                                <div class="text-xl text-green-base font-bold">
+                                    {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('closes')/$numbersTracked->sum('sets'), 2) : 0}}
                                 </div>
+                            </div>
                         </div>
                     </div>
 
