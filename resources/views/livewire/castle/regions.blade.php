@@ -44,7 +44,7 @@
                                                     x-on:click="$dispatch('confirm', {from: $event.target})"
                                                     x-on:confirmed="deleting = true; $el.submit()"
                                                 >Delete</x-link>
-                                            <span x-show="deleting" class="text-gray-400">Deleting ...</span>
+                                            <span x-cloak x-show="deleting" class="text-gray-400">Deleting ...</span>
                                             </x-form>
                                         </x-table.td>
                                     </x-table.tr>
@@ -55,6 +55,7 @@
                     </div>
     
                     <x-confirm
+                        x-cloak
                         :title="__('Delete Region')"
                         :description="__('Are you sure you want to delete this region?')"
                     ></x-confirm>

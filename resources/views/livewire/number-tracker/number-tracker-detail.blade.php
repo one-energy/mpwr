@@ -147,7 +147,7 @@
                                         <x-svg.plus class="text-gray-300"></x-svg.plus>
                                     </div>
                                 </header>
-                                <ul x-show="open === true" @click.away="open = false" 
+                                <ul x-cloak x-show="open === true" @click.away="open = false" 
                                     x-transition:enter="transition ease-out duration-100"
                                     x-transition:enter-start="transform opacity-0 scale-95"
                                     x-transition:enter-end="transform opacity-100 scale-100"
@@ -173,7 +173,7 @@
                                         </div>
                                     </div>
                                 </header>
-                                <ul x-show="open === true" @click.away="open = false" 
+                                <ul x-cloak x-show="open === true" @click.away="open = false" 
                                     x-transition:enter="transition ease-out duration-100"
                                     x-transition:enter-start="transform opacity-0 scale-95"
                                     x-transition:enter-end="transform opacity-100 scale-100"
@@ -199,7 +199,7 @@
                                         </div>
                                     </div>
                                 </header>
-                                <ul x-show="open === true" @click.away="open = false" 
+                                <ul x-cloak x-show="open === true" @click.away="open = false" 
                                     x-transition:enter="transition ease-out duration-100"
                                     x-transition:enter-start="transform opacity-0 scale-95"
                                     x-transition:enter-end="transform opacity-100 scale-100"
