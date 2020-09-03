@@ -45,7 +45,7 @@
                                                         x-on:click="$dispatch('confirm', {from: $event.target})"
                                                         x-on:confirmed="revoking = true; $el.submit()"
                                                     >Revoke access</x-link>
-                                                <span x-show="revoking" class="text-gray-400">Revoking ...</span>
+                                                <span x-cloak x-show="revoking" class="text-gray-400">Revoking ...</span>
                                                 </x-form>
                                             @endif
                                         </x-table.td>
@@ -59,6 +59,7 @@
             </div>
 
             <x-confirm
+                x-cloak
                 :title="__('Revoke Master Access')"
                 :description="__('Are you sure you want to revoke this user access to the castle? He will loose all of his powers.')"
             ></x-confirm>
