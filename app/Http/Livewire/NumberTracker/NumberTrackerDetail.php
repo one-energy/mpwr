@@ -3,6 +3,9 @@
 namespace App\Http\Livewire\NumberTracker;
 
 use App\Models\DailyNumber;
+use App\Models\Office;
+use App\Models\Region;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -14,6 +17,14 @@ class NumberTrackerDetail extends Component
 
     public $numbersTracked = [];
 
+    public $offices = [];
+
+    public $regions = [];
+
+    public $users = [];
+
+    public $userSearch = "";
+    
     public $numbersTrackedLast = [];
 
     public $date;
@@ -26,9 +37,14 @@ class NumberTrackerDetail extends Component
 
     public $dateSelected;
 
+    public $activeFilters = [];
+
     public function mount()
     {
         $this->dateSelected = date('Y-m-d', time());
+        $this->getOffices();
+        $this->getRegions();
+        $this->getUsers();
     }
 
     public function render()
@@ -59,12 +75,20 @@ class NumberTrackerDetail extends Component
         $this->dateSelected = date('Y-m-d', strtotime($this->date));
     }
 
+    public function updateSearch()
+    {
+        $this->users = User::where(DB::raw("CONCAT(`first_name`, ' ',  `last_name`)"), 'like', "%" . $this->userSearch . "%")
+            ->orWhere('email', 'like', "%{$this->userSearch}%")->get();
+    }
+
     public function getTrackerNumbers()
     {
         $query = DailyNumber::query()
             ->leftJoin('users', function ($join) {
                 $join->on('users.id', '=', 'daily_numbers.user_id');
             })
+            ->join('office_user', 'daily_numbers.user_id', '=', 'office_user.user_id')
+            ->join('offices', 'office_user.office_id', '=', 'offices.id')
             ->select([DB::raw("users.first_name, users.last_name, daily_numbers.id, daily_numbers.user_id, SUM(doors) as doors,  
                     SUM(hours) as hours,  SUM(sets) as sets,  SUM(sits) as sits,  SUM(set_closes) as set_closes, SUM(closes) as closes")]);
 
@@ -86,12 +110,74 @@ class NumberTrackerDetail extends Component
             $queryLast->whereMonth('date', '=', Carbon::createFromFormat('Y-m-d', $this->dateSelected)->subMonth()->month);
         }
 
+        if (count($this->activeFilters) > 0) {
+            $activeFilters = $this->activeFilters;
+            $query->where(function ($query) use ($activeFilters) {
+                foreach ($activeFilters as $key => $filter) {
+                    $id = $filter['id'];
+                    if ($filter['type'] == "user") {
+                        $query->orWhere('daily_numbers.user_id', '=', $id);
+                    }
+                    if ($filter['type'] == "office") {
+                        $query->orWhere('office_id', '=', $id);
+                    }
+                    if ($filter['type'] == "region"){
+                        $query->orWhere('region_id', '=', $id);
+                    }
+                }
+            });
+        }
+
         $this->numbersTrackedLast = $queryLast->groupBy('user_id')
             ->get();
 
         $this->graficValueLast    = $this->numbersTrackedLast->sum($this->filterBy);
-        return $query->groupBy('user_id')
+        return $query->groupBy('daily_numbers.user_id')
             ->orderBy($this->filterBy, 'desc')
             ->get();
+    }
+
+    public function addFilter($data, $type)
+    {
+        if ($type == 'user') {
+            $element = [
+                'type' => $type,
+                'first_name' => $data['first_name'],
+                'last_name' => $data['last_name'],
+                'id' => $data['id'],
+            ];
+            if (!in_array($element, $this->activeFilters)) {
+                array_push($this->activeFilters, $element);
+            }
+        } else {
+            $element = [
+                'type' => $type,
+                'name' => $data['name'],
+                'id' => $data['id'],
+            ];
+            if (!in_array($element, $this->activeFilters)) {
+                array_push($this->activeFilters, $element);
+            }
+        }
+    }
+
+    public function removeFilter($item)
+    {
+        unset($this->activeFilters[$item]);
+    }
+
+    public function getOffices()
+    {
+        $this->offices = Office::all();
+    }
+
+    public function getRegions()
+    {
+        $this->regions = Region::all();
+    }
+
+    public function getUsers()
+    {
+        $this->users = User::all();
     }
 }
