@@ -78,7 +78,7 @@ class NumberTrackerDetail extends Component
     public function updateSearch()
     {
         $this->users = User::where(DB::raw("CONCAT(`first_name`, ' ',  `last_name`)"), 'like', "%" . $this->userSearch . "%")
-            ->orWhere('email', 'like', '%' . $this->userSearch . '%')->get();
+            ->orWhere('email', 'like', "%{$this->userSearch}%")->get();
     }
 
     public function getTrackerNumbers()
@@ -117,9 +117,11 @@ class NumberTrackerDetail extends Component
                     $id = $filter['id'];
                     if ($filter['type'] == "user") {
                         $query->orWhere('daily_numbers.user_id', '=', $id);
-                    } else if ($filter['type'] == "office") {
+                    }
+                    if ($filter['type'] == "office") {
                         $query->orWhere('office_id', '=', $id);
-                    } else {
+                    }
+                    if ($filter['type'] == "region"){
                         $query->orWhere('region_id', '=', $id);
                     }
                 }
