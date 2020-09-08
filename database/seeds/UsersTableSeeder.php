@@ -33,11 +33,8 @@ class UsersTableSeeder extends Seeder
             );
         }
 
-        $this->createDevsquadTeam();
-        for ($i=0; $i < 5; $i++) { 
-            $this->createTestRegion();    
-            $this->createTestOffice();    
-        }
+        // $this->createDevsquadTeam();
+        $this->createExampleValues();
     }
 
     public function createDevsquadTeam()
@@ -61,16 +58,6 @@ class UsersTableSeeder extends Seeder
             'email'      => 'user@devsquad.com',
         ]);
         $devsquad->users()->attach($member, ['role' => array_rand(User::ROLES)]);
-
-        for ($i = 0; $i < 50; $i++) {
-            $member = factory(User::class)->create();
-            $devsquad->users()->attach($member, ['role' => array_rand(User::ROLES)]);
-        }
-
-        for ($i = 0; $i < 50; $i++) {
-            $master = factory(User::class)->create(['master' => true]);
-            $devsquad->users()->attach($master, ['role' => array_rand(User::ROLES)]);
-        }
     }
 
     public function createTestRegion()
@@ -79,7 +66,7 @@ class UsersTableSeeder extends Seeder
             'master' => false,
             'role' => 'Region Manager'
         ]);
-    
+
         $testRegion = factory(Region::class)->create([
             'region_manager_id' => $testOwner->id,
         ]);
@@ -91,9 +78,9 @@ class UsersTableSeeder extends Seeder
         }
     }
 
-     public function createTestOffice()
+    public function createTestOffice()
     {
-       
+
         $testOwner = factory(User::class)->create([
             'master' => false,
             'role' => 'Region Manager'
@@ -103,11 +90,11 @@ class UsersTableSeeder extends Seeder
             'master' => false,
             'role' => 'Office Manager'
         ]);
-        
+
         $region = factory(Region::class)->create([
             'region_manager_id' => $testOwner->id,
         ]);
-    
+
         $testOffice = factory(Office::class)->create([
             'office_manager_id' => $testOfficeManager->id,
             'region_id'         => $region->id,
@@ -117,6 +104,67 @@ class UsersTableSeeder extends Seeder
         for ($i = 0; $i < 10; $i++) {
             $member = factory(User::class)->create();
             $testOffice->users()->attach($member, ['role' => array_rand(User::ROLES)]);
+        }
+    }
+
+    public function createExampleValues()
+    {
+        $officesName = array(
+            'Palmdale',
+            'Victorville',
+            'San Bernardino',
+            'Stockton',
+            'Fairfield',
+            'Vacaville',
+            'Cordella',
+            'Vallejo',
+            'Fresno',
+            'Pittsburg',
+            'LA',
+            'Riverside'
+        );
+
+        $regionsName = array(
+            'west',
+            'north',
+            'south',
+            'east',
+        );
+
+        $regionKey = 0;
+        for ($i = 0; $i < 12; $i++) {
+
+            if ($i == 0 || $i == 3 || $i == 6 || $i == 10) {
+                $testOwner = factory(User::class)->create([
+                    'master' => false,
+                    'role' => 'Region Manager'
+                ]);
+                $region = factory(Region::class)->create([
+                    'name' => $regionsName[$regionKey],
+                    'region_manager_id' => $testOwner->id
+                ]);
+                $region->users()->attach($testOwner, ['role' => array_rand(User::TOPLEVEL_ROLES)]);
+                if (($regionKey + 1) < 4) {
+                    $regionKey++;
+                }
+            }
+
+            $testOfficeManager = factory(User::class)->create([
+                'master' => false,
+                'role' => 'Office Manager'
+            ]);
+
+            print_r($regionKey);
+            $testOffice = factory(Office::class)->create([
+                'name' => $officesName[$i],
+                'office_manager_id' => $testOfficeManager->id,
+                'region_id'         => $region->id,
+            ]);
+            $testOffice->users()->attach($testOwner, ['role' => array_rand(User::TOPLEVEL_ROLES)]);
+            for ($x = 0; $x < 10; $x++) {
+                $member = factory(User::class)->create();
+                $testOffice->users()->attach($member, ['role' => array_rand(User::ROLES)]);
+            }
         }
     }
 }
