@@ -42,11 +42,7 @@ class DailyEntry extends Component
     public function getUsers($dateSelected)
     {
         return User::query()
-            ->when($this->officeSelected, function(Builder $query) {
-                $query->whereHas('offices', function(Builder $query) {
-                    $query->whereId($this->officeSelected);
-                });
-            })
+            ->whereOfficeId($this->officeSelected)
             ->leftJoin('daily_numbers', function($join) use ($dateSelected) {
                 $join->on('daily_numbers.user_id', '=', 'users.id')
                     ->where('daily_numbers.date', '=', $dateSelected);
@@ -74,10 +70,10 @@ class DailyEntry extends Component
                 ->leftJoin('users', function($join) {
                     $join->on('users.id', '=', 'daily_numbers.user_id');
                 })
-                ->join('office_user', function($join) use ($officeSelected) {
-                    $join->on('office_user.user_id', '=', 'users.id')
-                         ->where('office_user.office_id', '=', $officeSelected);
-                })
+                // ->join('office_user', function($join) use ($officeSelected) {
+                //     $join->on('office_user.user_id', '=', 'users.id')
+                //          ->where('office_user.office_id', '=', $officeSelected);
+                // })
                 ->count();
             if ($isMissingDate == 0) {
                 array_push($missingDates, $actualDate);
