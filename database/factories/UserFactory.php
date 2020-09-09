@@ -35,7 +35,6 @@ $factory->define(User::class, function (Faker $faker) use ($photos) {
         'photo_url'         => Storage::disk('public')->url('profiles/' . $photos->random()),
         'remember_token'    => Str::random(10),
         'role'              => $role,
-        'office'            => $faker->city,
         'pay'               => rand(10, 100)
     ];
 });
