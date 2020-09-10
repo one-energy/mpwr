@@ -15,7 +15,6 @@ class RegionRegistrationTest extends FeatureTest
     public function it_should_create_a_region_with_an_owner()
     {
         $this->post(route('register'), [
-            'region'             => 'Region 1',
             'first_name'         => 'Joe',
             'last_name'          => 'Doe',
             'email'              => 'joe@doe.com',
@@ -40,12 +39,6 @@ class RegionRegistrationTest extends FeatureTest
             'first_name' => 'Joe',
             'last_name'  => 'Doe',
             'email'      => 'joe@doe.com',
-        ]);
-
-        $this->assertDatabaseHas('region_user', [
-            'region_id' => 1,
-            'user_id' => 1,
-            'role'    => 'owner',
         ]);
     }
     //endregion

@@ -5,7 +5,6 @@ namespace App\Http\Livewire\NumberTracker;
 use App\Models\DailyNumber;
 use App\Models\Office;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
 class DailyEntry extends Component
@@ -63,17 +62,14 @@ class DailyEntry extends Component
     public function getMissingDate($initialDate, $officeSelected)
     {
         $missingDates = [];
-        $initialDate = date($initialDate);
+        $initialDate  = date($initialDate);
         $today        = date('Y-m-d');
         for ($actualDate = $initialDate; $actualDate != $today; $actualDate = date('Y-m-d', strtotime($actualDate . '+1 day'))) {
             $isMissingDate = DailyNumber::whereDate('date', $actualDate)
                 ->leftJoin('users', function($join) {
                     $join->on('users.id', '=', 'daily_numbers.user_id');
                 })
-                // ->join('office_user', function($join) use ($officeSelected) {
-                //     $join->on('office_user.user_id', '=', 'users.id')
-                //          ->where('office_user.office_id', '=', $officeSelected);
-                // })
+                ->where('users.office_id', '=', $officeSelected)
                 ->count();
             if ($isMissingDate == 0) {
                 array_push($missingDates, $actualDate);
@@ -87,6 +83,7 @@ class DailyEntry extends Component
     {
         $offices = Office::all();
         foreach ($offices as $key => $office) {
+            // dd($this->getMissingDate('Y-m-01', 10));
             $missingDates = $this->getMissingDate('Y-m-01', $office->id);
 
             if (count($missingDates) > 0) {

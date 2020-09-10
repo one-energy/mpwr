@@ -25,5 +25,4 @@ class Regions extends Component
                 ->paginate($this->perPage),
         ]);
     }
-    
 }

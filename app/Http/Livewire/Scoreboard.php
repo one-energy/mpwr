@@ -3,9 +3,9 @@
 namespace App\Http\Livewire;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
-use Carbon\Carbon;
 
 class Scoreboard extends Component
 {
@@ -45,7 +45,7 @@ class Scoreboard extends Component
 
     public $lastName;
 
-    public $office;
+    public $office_id;
 
     public $hoursPeriod = 'daily';
 
@@ -69,7 +69,7 @@ class Scoreboard extends Component
         $this->photoUrl  = $this->user->photo_url;
         $this->firstName = $this->user->first_name;
         $this->lastName  = $this->user->last_name;
-        $this->office    = $this->user->office;
+        $this->office_id = $this->user->office_id;
 
         $query = $this->user->dailyNumbers;
 
@@ -117,7 +117,7 @@ class Scoreboard extends Component
         }
 
         $this->top10Hours = $query
-            ->select(DB::raw('sum(daily_numbers.hours) as hours, users.office, users.first_name, users.last_name, users.id'))
+            ->select(DB::raw('sum(daily_numbers.hours) as hours, users.office_id, users.first_name, users.last_name, users.id'))
             ->groupBy('users.id')
             ->whereNotNull('daily_numbers.hours')
             ->orderByDesc('hours')
@@ -146,7 +146,7 @@ class Scoreboard extends Component
         }
 
         $this->top10Sets = $query
-            ->select(DB::raw('sum(daily_numbers.sets) as sets, users.office, users.first_name, users.last_name, users.id'))
+            ->select(DB::raw('sum(daily_numbers.sets) as sets, users.office_id, users.first_name, users.last_name, users.id'))
             ->groupBy('users.id')
             ->whereNotNull('daily_numbers.sets')
             ->orderByDesc('sets')
@@ -166,7 +166,6 @@ class Scoreboard extends Component
         if ($this->closesPeriod === "daily") {
             $query
                 ->whereDate('daily_numbers.created_at', Carbon::today());
-                
         } elseif ($this->closesPeriod === "weekly") {
             $query
                 ->whereBetween('daily_numbers.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
@@ -176,7 +175,7 @@ class Scoreboard extends Component
         }
 
         $this->top10SetCloses = $query
-            ->select(DB::raw('sum(daily_numbers.set_closes) as set_closes, users.office, users.first_name, users.last_name, users.id'))
+            ->select(DB::raw('sum(daily_numbers.set_closes) as set_closes, users.office_id, users.first_name, users.last_name, users.id'))
             ->groupBy('users.id')
             ->whereNotNull('daily_numbers.set_closes')
             ->orderByDesc('set_closes')

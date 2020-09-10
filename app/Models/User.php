@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Hash;
  * @property string $photo_url
  * @property string $remember_token
  * @property string $master
+ * @property int $office_id
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Carbon $deleted_at
@@ -61,7 +62,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function offices()
     {
-        return $this->belongsToMany(Office::class)->withPivot('role')->withTimestamps();
+        return $this->belongsTo(Office::class)->withTimestamps();
     }
 
     public function invitations()

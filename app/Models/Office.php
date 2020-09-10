@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Builder;
 
 /**
  * @property int $id
@@ -33,7 +33,7 @@ class Office extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class)->withPivot('role')->withTimestamps();
+        return $this->hasMany(User::class)->withPivot('role')->withTimestamps();
     }
 
     public function getOfficeManagerAttribute()

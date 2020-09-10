@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Region;
 use App\Models\DailyNumber;
 use Illuminate\Http\Request;
 

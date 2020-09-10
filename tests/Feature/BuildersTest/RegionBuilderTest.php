@@ -32,11 +32,6 @@ class RegionBuilderTest extends FeatureTest
             'region_manager_id' => $user->id,
         ]);
 
-        $this->assertDatabaseHas('region_user', [
-            'region_id' => $region->id,
-            'user_id'   => $user->id,
-            'role'      => array_search('Owner', User::TOPLEVEL_ROLES),
-        ]);
     }
 
     /** @test */

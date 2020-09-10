@@ -43,7 +43,7 @@ class AreaChart extends Component
         
         $userId = Auth::user()->id;
 
-        if($this->panelSold == true){
+        if ($this->panelSold == true) {
             $currentQuery = Customer::query()->where([
                 ['opened_by_id', $userId],
                 ['is_active', true],
@@ -55,7 +55,7 @@ class AreaChart extends Component
                 ['is_active', true],
                 ['panel_sold', true],
             ]);
-        }else{
+        } else {
             $currentQuery = Customer::query()->where([
                 ['opened_by_id', $userId],
                 ['is_active', true],
@@ -96,7 +96,7 @@ class AreaChart extends Component
 
     public function sumIncome($pastCustomers, $currentCustomers)
     {
-        if($this->panelSold){
+        if ($this->panelSold) {
             $pastTotalIncome = $pastCustomers->where([
                 ['is_active', true],
                 ['panel_sold', true],
@@ -106,7 +106,7 @@ class AreaChart extends Component
                 ['is_active', true],
                 ['panel_sold', true],
             ])->sum('commission');
-        }else{
+        } else {
             $pastTotalIncome = $pastCustomers->where([
                 ['is_active', true],
             ])->sum('commission');
@@ -135,7 +135,7 @@ class AreaChart extends Component
         if ($this->chartTitle == 'Projected Income') {
             $this->chartTitle = 'Actual Income';
             $this->panelSold  = true;
-        }else{
+        } else {
             $this->chartTitle = 'Projected Income';
             $this->panelSold  = false;
         }

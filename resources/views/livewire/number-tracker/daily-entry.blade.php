@@ -355,7 +355,7 @@
                 let component = window.livewire.find("daily-entry-tracker");
                 this.missingDates = @this.get('missingDates');
                 debugger;
-                window.livewire.emit('getMissingDates', '2020-08-01');
+                window.livewire.emit('getMissingDates', 'Y-m-01');
                 window.livewire.on('responseMissingDate', (missingDates) => {
                     this.missingDates = missingDates;
                 })

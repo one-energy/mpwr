@@ -13,6 +13,7 @@ class RegionController extends Controller
     public function index()
     {
         $regions = Region::all();
+
         return view('castle.regions.index', compact('regions'));
     }
 
@@ -37,7 +38,7 @@ class RegionController extends Controller
             ],
         );
 
-        $region->name              = $validated['name'];
+        $region->name                       = $validated['name'];
         $region->region_manager_id          = $validated['region_manager_id'];
         
         $region->save();
@@ -74,8 +75,8 @@ class RegionController extends Controller
             ],
         );
 
-        $region                    = new Region();
-        $region->name              = $validated['name'];
+        $region                             = new Region();
+        $region->name                       = $validated['name'];
         $region->region_manager_id          = $validated['region_manager_id'];
         
         $region->save();
