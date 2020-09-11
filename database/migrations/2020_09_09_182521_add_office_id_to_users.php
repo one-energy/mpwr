@@ -28,9 +28,9 @@ class AddOfficeIdToUsers extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('office_id')->nullable();
+            $table->dropColumn('office_id');
 
-            $table->foreign('office_id')->references('id')->on('offices')->onDelete('cascade');
+            $table->dropForeign('office_id');
         });
     }
 }
