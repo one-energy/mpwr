@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Castle;
 
 use App\Http\Controllers\Controller;
 use App\Models\Invitation;
+use App\Models\Office;
 use App\Models\User;
 use App\Notifications\MasterExistingUserInvitation;
 use App\Notifications\MasterInvitation;
@@ -29,9 +30,11 @@ class UsersController extends Controller
     public function create()
     {
         $roles = User::ROLES;
+        $offices = Office::all();
 
         return view('castle.users.register',[
             'roles' => $roles,
+            'offices' => $offices,
         ]);
     }
 
@@ -73,10 +76,12 @@ class UsersController extends Controller
     public function edit(User $user)
     {
         $roles = User::ROLES;
+        $offices = Office::all();
 
         return view('castle.users.edit', [
             'user'  => $user,
             'roles' => $roles,
+            'offices' => $offices,
         ]);
     }
 

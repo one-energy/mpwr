@@ -11,7 +11,7 @@
                 {{ user()->first_name }} {{ user()->last_name }}
             </p>
             <p class="text-xs leading-4 font-medium text-gray-500 group-hover:text-gray-700 group-focus:underline transition ease-in-out duration-150">
-                {{ user()->office }}
+                {{ user()->office->name }}
             </p>
             </div>
         </div>
