@@ -12,7 +12,6 @@ use Livewire\Component;
 
 class NumberTrackerDetail extends Component
 {
-
     public $period = 'd';
 
     public $numbersTracked = [];
@@ -57,6 +56,7 @@ class NumberTrackerDetail extends Component
             'Monthly Total',
             'Statistics',
         ];
+
         return view('livewire.number-tracker.number-tracker-detail', ['showOptions' => $showOptions]);
     }
 
@@ -87,8 +87,7 @@ class NumberTrackerDetail extends Component
             ->leftJoin('users', function ($join) {
                 $join->on('users.id', '=', 'daily_numbers.user_id');
             })
-            ->join('office_user', 'daily_numbers.user_id', '=', 'office_user.user_id')
-            ->join('offices', 'office_user.office_id', '=', 'offices.id')
+            ->join('offices', 'users.office_id', '=', 'offices.id')
             ->select([DB::raw("users.first_name, users.last_name, daily_numbers.id, daily_numbers.user_id, SUM(doors) as doors,  
                     SUM(hours) as hours,  SUM(sets) as sets,  SUM(sits) as sits,  SUM(set_closes) as set_closes, SUM(closes) as closes")]);
 
@@ -121,7 +120,7 @@ class NumberTrackerDetail extends Component
                     if ($filter['type'] == "office") {
                         $query->orWhere('office_id', '=', $id);
                     }
-                    if ($filter['type'] == "region"){
+                    if ($filter['type'] == "region") {
                         $query->orWhere('region_id', '=', $id);
                     }
                 }
@@ -132,6 +131,7 @@ class NumberTrackerDetail extends Component
             ->get();
 
         $this->graficValueLast    = $this->numbersTrackedLast->sum($this->filterBy);
+
         return $query->groupBy('daily_numbers.user_id')
             ->orderBy($this->filterBy, 'desc')
             ->get();
@@ -141,10 +141,10 @@ class NumberTrackerDetail extends Component
     {
         if ($type == 'user') {
             $element = [
-                'type' => $type,
+                'type'       => $type,
                 'first_name' => $data['first_name'],
-                'last_name' => $data['last_name'],
-                'id' => $data['id'],
+                'last_name'  => $data['last_name'],
+                'id'         => $data['id'],
             ];
             if (!in_array($element, $this->activeFilters)) {
                 array_push($this->activeFilters, $element);
@@ -153,7 +153,7 @@ class NumberTrackerDetail extends Component
             $element = [
                 'type' => $type,
                 'name' => $data['name'],
-                'id' => $data['id'],
+                'id'   => $data['id'],
             ];
             if (!in_array($element, $this->activeFilters)) {
                 array_push($this->activeFilters, $element);

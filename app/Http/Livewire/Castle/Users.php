@@ -3,8 +3,8 @@
 namespace App\Http\Livewire\Castle;
 
 use App\Models\User;
-use Livewire\Component;
 use App\Traits\Livewire\FullTable;
+use Livewire\Component;
 
 class Users extends Component
 {
@@ -18,7 +18,7 @@ class Users extends Component
     public function render()
     {
         return view('livewire.castle.users', [
-            'users' => User::query()
+            'users' => User::with('office')
                 ->search($this->search)
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage),

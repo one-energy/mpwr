@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\BuildersTest;
 
+use App\Models\Office;
 use App\Models\User;
 use Tests\Builders\RegionBuilder;
 use Tests\Builders\UserBuilder;
@@ -32,19 +33,17 @@ class RegionBuilderTest extends FeatureTest
             'region_manager_id' => $user->id,
         ]);
 
-        $this->assertDatabaseHas('region_user', [
-            'region_id' => $region->id,
-            'user_id'   => $user->id,
-            'role'      => array_search('Owner', User::TOPLEVEL_ROLES),
-        ]);
     }
 
     /** @test */
-    public function it_should_be_able_to_add_more_members_to_the_region()
+    public function it_should_be_able_to_add_more_offices_to_the_region()
     {
-        $region = (new RegionBuilder)->save()->addMembers(2)->get();
-
-        $this->assertCount(3, $region->users);
-        $this->assertCount(3, $region->users()->wherePivot('role', '=', array_search('Setter', User::TOPLEVEL_ROLES))->get());
+        $user = (new UserBuilder)->save()->get();
+        $region = (new RegionBuilder)->save()->get();
+        $offices = factory(Office::class, 3)->create([
+            'region_id' => $region->id,
+            'office_manager_id' => $user->id
+            ]);
+        $this->assertCount(3, $region->offices);
     }
 }

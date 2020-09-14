@@ -48,17 +48,6 @@ class UsersTableSeeder extends Seeder
             'master'     => true,
         ]);
 
-        // $devsquad = factory(Region::class)->create([
-        //     'region_manager_id' => $owner->id,
-        // ]);
-        // $devsquad->users()->attach($owner, ['role' => array_rand(User::TOPLEVEL_ROLES)]);
-
-        // $member = factory(User::class)->create([
-        //     'first_name' => 'DevSquad',
-        //     'last_name'  => 'User',
-        //     'email'      => 'user@devsquad.com',
-        // ]);
-        // $devsquad->users()->attach($member, ['role' => array_rand(User::ROLES)]);
     }
 
     public function createTestRegion()
@@ -144,7 +133,6 @@ class UsersTableSeeder extends Seeder
                     'name' => $regionsName[$regionKey],
                     'region_manager_id' => $testOwner->id
                 ]);
-                $region->users()->attach($testOwner, ['role' => array_rand(User::TOPLEVEL_ROLES)]);
                 if (($regionKey + 1) < 4) {
                     $regionKey++;
                 }
@@ -160,15 +148,12 @@ class UsersTableSeeder extends Seeder
                 'office_manager_id' => $testOfficeManager->id,
                 'region_id'         => $region->id,
             ]);
-            $testOffice->users()->attach($testOwner, ['role' => array_rand(User::TOPLEVEL_ROLES)]);
             
             for ($x = 0; $x < 10; $x++) {
-                $member = factory(User::class)->create();
-                $testOffice->users()->attach($member, ['role' => array_rand(User::ROLES)]);
+                $member = factory(User::class)->create(['office_id' => $testOffice->id]);
                 $today = date('d');
                 $date = date('Y-m-01');
                 for($y = 0; $y < ($today - 1); $y++){
-                    
                     factory(DailyNumber::class)->create([
                         'date' => date('Y-m-d', strtotime($date . '+' . $y . 'day')),
                         'user_id' => $member->id,

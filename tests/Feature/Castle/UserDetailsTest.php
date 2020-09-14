@@ -7,6 +7,7 @@ use Tests\Builders\RegionBuilder;
 use Tests\Builders\UserBuilder;
 use Tests\Feature\FeatureTest;
 use Illuminate\Support\Facades\Hash;
+use Tests\Builders\OfficeBuilder;
 
 class UserDetailsTest extends FeatureTest
 {
@@ -48,17 +49,21 @@ class UserDetailsTest extends FeatureTest
     }
 
     /** @test */
-    public function it_should_show_the_regions_a_user_is_on()
+    public function it_should_show_the_office_a_user_is_on()
     {
         $master   = (new UserBuilder)->asMaster()->save()->get();
-        $region1  = (new RegionBuilder)->withManager($master)->save()->get();
-        $region2  = (new RegionBuilder)->withManager($master)->save()->get();
+        
+        $region   = (new RegionBuilder)->withManager($master)->save()->get();
+
+        $office1  = (new OfficeBuilder)->region($region)->withManager($master)->save()->get();
+
+        $user1    = (new UserBuilder)->withOffice($office1)->save()->get();
 
         $this->actingAs($master)
-            ->get(route('castle.users.show', $master->id))
+            ->get(route('castle.users.show', $user1->id))
             ->assertViewIs('castle.users.show')
-            ->assertSee($region1->name)
-            ->assertSee($region2->name);
+            ->assertSee($office1->name)
+            ->assertSee($user1->first_name);
     }
 
     /** @test */

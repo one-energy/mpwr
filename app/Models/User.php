@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Hash;
  * @property string $photo_url
  * @property string $remember_token
  * @property string $master
+ * @property int $office_id
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Carbon $deleted_at
@@ -54,14 +55,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'master'            => 'boolean',
     ];
 
-    public function regions()
+    public function office()
     {
-        return $this->belongsToMany(Region::class)->withPivot('role')->withTimestamps();
-    }
-
-    public function offices()
-    {
-        return $this->belongsToMany(Office::class)->withPivot('role')->withTimestamps();
+        return $this->belongsTo(Office::class, 'office_id');
     }
 
     public function invitations()
@@ -105,6 +101,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function scopeSearch(Builder $query, $search)
     {
+        
         $query->when($search, function (Builder $query) use ($search) {
             $query->where(
                 DB::raw('lower(first_name)'),
@@ -123,11 +120,6 @@ class User extends Authenticatable implements MustVerifyEmail
             )
             ->orWhere(
                 DB::raw('lower(email)'),
-                'like',
-                '%' . strtolower($search) . '%'
-            )
-            ->orWhere(
-                DB::raw('lower(office)'),
                 'like',
                 '%' . strtolower($search) . '%'
             );

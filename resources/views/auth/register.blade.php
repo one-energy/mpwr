@@ -19,7 +19,6 @@
         <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
             <x-card>
                 <x-form :route="route('register')">
-                    <x-input :label="__('Region')" name="region"></x-input>
 
                     <x-input class="mt-6" :label="__('First Name')" name="first_name"></x-input>
 
