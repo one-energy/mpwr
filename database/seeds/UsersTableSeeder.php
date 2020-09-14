@@ -48,17 +48,6 @@ class UsersTableSeeder extends Seeder
             'master'     => true,
         ]);
 
-        // $devsquad = factory(Region::class)->create([
-        //     'region_manager_id' => $owner->id,
-        // ]);
-        // $devsquad->users()->attach($owner, ['role' => array_rand(User::TOPLEVEL_ROLES)]);
-
-        // $member = factory(User::class)->create([
-        //     'first_name' => 'DevSquad',
-        //     'last_name'  => 'User',
-        //     'email'      => 'user@devsquad.com',
-        // ]);
-        // $devsquad->users()->attach($member, ['role' => array_rand(User::ROLES)]);
     }
 
     public function createTestRegion()

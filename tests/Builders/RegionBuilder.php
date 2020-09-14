@@ -44,15 +44,4 @@ class RegionBuilder
 
         return $this;
     }
-
-    // public function addMembers(int $qty)
-    // {
-    //     $users = factory(User::class, $qty)->create();
-
-    //     foreach ($users as $user) {
-    //         $this->region->users()->attach($user, ['role' => array_search('Setter', User::ROLES)]);
-    //     }
-
-    //     return $this;
-    // }
 }

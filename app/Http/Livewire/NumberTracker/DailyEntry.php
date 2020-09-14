@@ -83,7 +83,6 @@ class DailyEntry extends Component
     {
         $offices = Office::all();
         foreach ($offices as $key => $office) {
-            // dd($this->getMissingDate('Y-m-01', 10));
             $missingDates = $this->getMissingDate('Y-m-01', $office->id);
 
             if (count($missingDates) > 0) {
@@ -116,7 +115,6 @@ class DailyEntry extends Component
         $this->usersLastDayEntries = $this->getUsers($this->lastDateSelected);
 
         return view('livewire.number-tracker.daily-entry',[
-            // 'users' => $this->users,
             'offices' => Office::all(),
         ]);
     }
