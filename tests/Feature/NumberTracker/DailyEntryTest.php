@@ -36,15 +36,15 @@ class DailyEntryTest extends FeatureTest
     {
         $region        = factory(Region::class)->create(['region_manager_id' => $this->user->id]);
         $officeManager = factory(User::class)->create(['role' => 'Office Manager']);
-        $Office         = factory(Office::class)->create([
+        $office         = factory(Office::class)->create([
             'region_id' => $region->id,
             'office_manager_id' => $officeManager->id
             ]);
 
-        $userOne    = (new UserBuilder)->withOffice($Office)->save()->get();
-        $userTwo    = (new UserBuilder)->withOffice($Office)->save()->get();
-        $userThree  = (new UserBuilder)->withOffice($Office)->save()->get();
-        $userFour   = (new UserBuilder)->withOffice($Office)->save()->get();
+        $userOne    = (new UserBuilder)->withOffice($office)->save()->get();
+        $userTwo    = (new UserBuilder)->withOffice($office)->save()->get();
+        $userThree  = (new UserBuilder)->withOffice($office)->save()->get();
+        $userFour   = (new UserBuilder)->withOffice($office)->save()->get();
         
         $dailyEntryOne   = (new DailyEntryBuilder)->withUser($userOne->id)->withDate(date("Y-m-d", time()))->save()->get();
         $dailyEntryTwo   = (new DailyEntryBuilder)->withUser($userTwo->id)->withDate(date("Y-m-d", time()))->save()->get();

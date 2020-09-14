@@ -19,8 +19,6 @@ class UserBuilder
 
     private Collection $items;
 
-    private ?Office $office = null;
-
     public function __construct($attributes = [])
     {
         $this->faker = $this->makeFaker('en_US');
@@ -38,13 +36,6 @@ class UserBuilder
     {
         if ($this->amount == 1) {
             $this->user->save();
-
-            if ($this->office) {
-                $this->office->office_manager_id = $this->user->id;
-                $this->office->save();
-
-                $this->office->users()->attach($this->user->id, ['role' => 'Owner']);
-            }
         }
 
         if ($this->amount > 1) {
@@ -54,10 +45,6 @@ class UserBuilder
                     ->withFirstName($this->faker->firstName)
                     ->withLastName($this->faker->lastName)
                     ->save()->get();
-
-                if ($this->office) {
-                    $this->office->users()->attach($user, ['role' => $i == 0 ? 'Owner' : 'Setter']);
-                }
 
                 $this->items->push($user);
             }
@@ -149,21 +136,9 @@ class UserBuilder
         return $this;
     }
 
-    public function withAOffice()
-    {
-        $user = factory(User::class)->create();
-        $region = factory(Region::class)->create(['region_manager_id' => $user->id]);
-        $this->office = factory(Office::class)->create([
-            'region_id' => $region->id,
-            'office_manager_id' => $user->id
-        ]);
-
-        return $this;
-    }
-
     public function withOffice(Office $office)
     {
-        $this->office = $office;
+        $this->user->office_id = $office->id;
 
         return $this;
     }

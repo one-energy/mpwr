@@ -9,47 +9,6 @@ use Tests\Builders\UserBuilder;
 
 class RegionRegistrationTest extends FeatureTest
 {
-    //region Happy Path
-
-    /** @test */
-    public function it_should_create_a_region_with_an_owner()
-    {
-        $this->post(route('register'), [
-            'region'             => 'Region 1',
-            'first_name'         => 'Joe',
-            'last_name'          => 'Doe',
-            'email'              => 'joe@doe.com',
-            'email_confirmation' => 'joe@doe.com',
-            'password'           => '12345678',
-        ])
-            ->assertSessionHasNoErrors()
-            ->assertRedirect(route('home'));
-
-        $this->assertTrue(auth()->check());
-
-        $user = User::query()->first();
-
-        $this->assertTrue(user()->is($user));
-
-        $this->assertDatabaseHas('regions', [
-            'name'     => 'Region 1',
-            'region_manager_id' => $user->id,
-        ]);
-
-        $this->assertDatabaseHas('users', [
-            'first_name' => 'Joe',
-            'last_name'  => 'Doe',
-            'email'      => 'joe@doe.com',
-        ]);
-
-        $this->assertDatabaseHas('region_user', [
-            'region_id' => 1,
-            'user_id' => 1,
-            'role'    => 'owner',
-        ]);
-    }
-    //endregion
-
     //region Business Rules
     /** @test */
     public function it_should_send_a_notification_to_the_user_asking_email_confirmation()
@@ -87,46 +46,6 @@ class RegionRegistrationTest extends FeatureTest
             ->assertSuccessful();
     }
     //endregion
-
-    //region Validations
-    /** @test */
-    public function region_should_be_required()
-    {
-        $this->post(route('register'), [])
-            ->assertSessionHasErrors([
-                'region' => __('validation.required', ['attribute' => 'region']),
-            ]);
-    }
-
-    /** @test */
-    public function region_should_have_a_min_of_3_characters()
-    {
-        $data = [
-            'region' => '12',
-        ];
-        
-        $response = $this->post(route('register'), $data);
-    
-        $response->assertSessionHasErrors(
-        [
-            'region',
-        ]);
-    }
-
-    /** @test */
-    public function region_should_have_a_max_of_255_characters()
-    {
-        $data = [
-            'region' => str_repeat('*', 256),
-        ];
-        
-        $response = $this->post(route('register'), $data);
-    
-        $response->assertSessionHasErrors(
-        [
-            'region',
-        ]);
-    }
 
     /** @test */
     public function first_and_last_name_should_be_required()

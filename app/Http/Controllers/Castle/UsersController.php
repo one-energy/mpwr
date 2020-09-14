@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Castle;
 
 use App\Http\Controllers\Controller;
 use App\Models\Invitation;
+use App\Models\Office;
 use App\Models\User;
 use App\Notifications\MasterExistingUserInvitation;
 use App\Notifications\MasterInvitation;
@@ -29,9 +30,11 @@ class UsersController extends Controller
     public function create()
     {
         $roles = User::ROLES;
+        $offices = Office::all();
 
         return view('castle.users.register',[
             'roles' => $roles,
+            'offices' => $offices,
         ]);
     }
 
@@ -41,7 +44,7 @@ class UsersController extends Controller
             'first_name' => ['required', 'string', 'max:255'],
             'last_name'  => ['required', 'string', 'max:255'],
             'role'       => ['nullable', 'string', 'max:255'],
-            'office'     => ['nullable', 'string', 'max:255'],
+            'office_id'  => ['nullable', 'numeric'],
             'pay'        => ['nullable', 'numeric'],
             'email'      => ['required', 'email', 'unique:invitations', new MasterEmailUnique, new MasterEmailYourSelf, 'unique:users,email'],
         ], [
@@ -54,12 +57,10 @@ class UsersController extends Controller
         $invitation->email   = $data['email'];
         $invitation->token   = Uuid::uuid4();
 
-        if($data['role'] == 'Admin' || $data['role'] == 'Owner')
-        {
+        if ($data['role'] == 'Admin' || $data['role'] == 'Owner') {
             $invitation->master  = true;
-        }else{
+        } else {
             $invitation->master  = false;
-
         }
 
         $invitation->user_id = optional($user)->id;
@@ -75,10 +76,12 @@ class UsersController extends Controller
     public function edit(User $user)
     {
         $roles = User::ROLES;
+        $offices = Office::all();
 
         return view('castle.users.edit', [
             'user'  => $user,
             'roles' => $roles,
+            'offices' => $offices,
         ]);
     }
 
@@ -88,7 +91,7 @@ class UsersController extends Controller
             'first_name'  => ['required', 'string', 'min:3', 'max:255'],
             'last_name'   => ['required', 'string', 'min:3', 'max:255'],
             'role'        => ['nullable', 'string', 'max:255'],
-            'office'      => ['nullable', 'string', 'max:255'],
+            'office_id'   => ['nullable', 'numeric'],
             'pay'         => ['nullable', 'numeric'],
             'email'       => ['required', 'email', 'min:2', 'max:128', Rule::unique('users')->ignore($id)],
         ])->validate();
@@ -96,10 +99,9 @@ class UsersController extends Controller
         $user = User::find($id);
         $user->forceFill($data);
 
-        if($data['role'] == 'Admin' || $data['role'] == 'Owner')
-        {
+        if ($data['role'] == 'Admin' || $data['role'] == 'Owner') {
             $user->beCastleMaster();
-        }else{
+        } else {
             $user->revokeMastersAccess();
         }
 
@@ -177,7 +179,7 @@ class UsersController extends Controller
         $user->email_verified_at = null;
         $user->master            = $invitation->master;
         $user->role              = $data['role'];
-        $user->office            = $data['office'];
+        $user->office_id         = $data['office_id'];
         $user->pay               = $data['pay'];
         $user->save();
 

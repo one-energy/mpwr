@@ -30,8 +30,6 @@ class RegionBuilder
         }
         $this->region->save();
 
-        $this->region->users()->attach($this->region->regionManger, ['role' => array_search('Owner', User::TOPLEVEL_ROLES)]);
-
         return $this;
     }
 
@@ -43,17 +41,6 @@ class RegionBuilder
     public function withManager(User $user)
     {
         $this->region->region_manager_id = $user->id;
-
-        return $this;
-    }
-
-    public function addMembers(int $qty)
-    {
-        $users = factory(User::class, $qty)->create();
-
-        foreach ($users as $user) {
-            $this->region->users()->attach($user, ['role' => array_search('Setter', User::ROLES)]);
-        }
 
         return $this;
     }
