@@ -33,7 +33,7 @@ class Office extends Model
 
     public function users()
     {
-        return $this->hasMany(User::class)->withPivot('role')->withTimestamps();
+        return $this->hasOne(User::class);
     }
 
     public function getOfficeManagerAttribute()

@@ -31,7 +31,7 @@ class OfficeBuilder
         }
         $this->office->save();
 
-        $this->office->users()->attach($this->office->owner, ['role' => array_search('Office Manager', User::TOPLEVEL_ROLES)]);
+        // $this->office->users()->attach($this->office->owner, ['role' => array_search('Office Manager', User::TOPLEVEL_ROLES)]);
 
         return $this;
     }

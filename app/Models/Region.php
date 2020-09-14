@@ -25,7 +25,12 @@ class Region extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class)->withPivot('role')->withTimestamps();
+        return $this->hasOne(User::class, 'foreign_key', 'user_id')->withTimestamps();
+    }
+
+    public function offices()
+    {
+        return $this->hasMany(Office::class);
     }
 
     public function scopeSearch(Builder $query, $search)

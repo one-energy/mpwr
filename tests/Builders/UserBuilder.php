@@ -138,7 +138,7 @@ class UserBuilder
 
     public function withOffice(Office $office)
     {
-        $this->office = $office;
+        $this->user->office_id = $office->id;
 
         return $this;
     }

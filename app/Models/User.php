@@ -101,6 +101,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function scopeSearch(Builder $query, $search)
     {
+        
         $query->when($search, function (Builder $query) use ($search) {
             $query->where(
                 DB::raw('lower(first_name)'),
@@ -119,11 +120,6 @@ class User extends Authenticatable implements MustVerifyEmail
             )
             ->orWhere(
                 DB::raw('lower(email)'),
-                'like',
-                '%' . strtolower($search) . '%'
-            )
-            ->orWhere(
-                DB::raw('lower(office)'),
                 'like',
                 '%' . strtolower($search) . '%'
             );

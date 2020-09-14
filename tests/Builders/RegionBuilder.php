@@ -30,8 +30,6 @@ class RegionBuilder
         }
         $this->region->save();
 
-        $this->region->users()->attach($this->region->regionManger, ['role' => array_search('Owner', User::TOPLEVEL_ROLES)]);
-
         return $this;
     }
 
@@ -47,14 +45,14 @@ class RegionBuilder
         return $this;
     }
 
-    public function addMembers(int $qty)
-    {
-        $users = factory(User::class, $qty)->create();
+    // public function addMembers(int $qty)
+    // {
+    //     $users = factory(User::class, $qty)->create();
 
-        foreach ($users as $user) {
-            $this->region->users()->attach($user, ['role' => array_search('Setter', User::ROLES)]);
-        }
+    //     foreach ($users as $user) {
+    //         $this->region->users()->attach($user, ['role' => array_search('Setter', User::ROLES)]);
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 }
