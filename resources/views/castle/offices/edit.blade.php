@@ -32,9 +32,11 @@
                                     <option selected></option>
                                 @endif
                                 @foreach($users as $office_manager)
-                                    <option value="{{ $office_manager->id }}" {{ old('office_manager_id', $office->office_manager_id) == $office_manager->id ? 'selected' : '' }}>
-                                        {{ $office_manager->first_name }} {{ $office_manager->last_name }}
-                                    </option>
+                                    @if($office_manager->role == 'Office Manager')
+                                        <option value="{{ $office_manager->id }}" {{ old('office_manager_id', $office->office_manager_id) == $office_manager->id ? 'selected' : '' }}>
+                                            {{ $office_manager->first_name }} {{ $office_manager->last_name }}
+                                        </option>
+                                    @endif
                                 @endforeach
                             </x-select>
                         </div>
@@ -56,35 +58,6 @@
                 </div>
             </x-form>
         </div>
-        <div class="max-w-6xl mx-auto py-5 sm:px-6 lg:px-8">        
-            <h3 class="text-lg text-gray-900">Manage Offices</h3>
-            <div class="grid grid-cols-2 gap-4 mt-6 max-w-4xl mx-auto px-6">
-                <div class="col-span-1">
-                    <label class="block text-sm font-medium leading-5 text-gray-700" for="users_list">Users</label>
-                    <div class="border-gray-200 border-2 m-1 p-2 rounded-lg h-80 overflow-y-auto" id="users_list">
-                        @foreach($users as $user)
-                            @if($user->office_id != $office->id)
-                                <div class="hover:bg-gray-100 h-8 p-1">
-                                    {{$user->first_name . ' ' . $user->last_name}}
-                                </div>
-                            @endif
-                        @endforeach
-                    </div>
-                </div>
-                <div class="col-span-1">
-                    <label class="block text-sm font-medium leading-5 text-gray-700" for="members_list">{{$office->name}} Members</label>
-                    <div class="border-gray-200 border-2 m-1 p-2 rounded-lg h-80" id="members_list">
-                        @foreach($users as $user)
-                            {{$user}}
-                            @if($user->office_id == $office->id)
-                                <div class="hover:bg-gray-100 h-8 p-1">
-                                    {{$user->first_name . ' ' . $user->last_name}}
-                                </div>
-                            @endif
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        </div>
+        <livewire:castle.manager-members :office="$office"/>
     </div>
 </x-app.auth>
