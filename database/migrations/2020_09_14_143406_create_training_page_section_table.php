@@ -13,7 +13,7 @@ class CreateTrainingPageSectionTable extends Migration
      */
     public function up()
     {
-        Schema::create('training_page_section', function (Blueprint $table) {
+        Schema::create('training_page_sections', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('title');
             $table->timestamps();
@@ -27,6 +27,6 @@ class CreateTrainingPageSectionTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('training_page_section');
+        Schema::dropIfExists('training_page_sections');
     }
 }
