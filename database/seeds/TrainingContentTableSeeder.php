@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\TrainingPageContent;
+use App\Models\TrainingPageSection;
 use Illuminate\Database\Seeder;
 
 class TrainingContentTableSeeder extends Seeder
@@ -11,6 +13,7 @@ class TrainingContentTableSeeder extends Seeder
      */
     public function run()
     {
-        //
+        $trainingSection = factory(TrainingPageSection::class)->create();
+        $trainingContent = factory(TrainingPageContent::class)->create(['trainingPageSection_id' => $trainingSection->id]);
     }
 }

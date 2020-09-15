@@ -16,7 +16,7 @@ class CreateTrainingPageContent extends Migration
         Schema::create('training_page_contents', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('title');
-            $table->string('descriptrion');
+            $table->string('description');
             $table->unsignedBigInteger('trainingPageSection_id');
             $table->string('video_url');
 
