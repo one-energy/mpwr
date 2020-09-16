@@ -22,68 +22,34 @@
             </div>
           </div>
         </div>
-
+        @if($actualSection)
+          <div class="">
+            <a href="{{route('trainings.index', $actualSection->parent_id)}}" class="inline-flex items-center border-b-2 border-green-base hover:border-green-500 text-sm font-medium leading-5">
+              @if($actualSection->parent_id)
+                <x-svg.chevron-left class="w-6 -ml-2"/>
+              @endif
+              {{$actualSection->title}}
+            </a>
+          </div>
+        @endif
         <div class="mt-15">
           <div class="grid md:grid-cols-2 sm:grid-cols-1 md:row-gap-4 sm:row-gap-0 col-gap-4">
-            <div class="col-span-1 hover:bg-gray-50">
-              <a href="{{route('trainings.settings.index')}}">
-                <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
-                  <div class="col-span-9">
-                    Setting
+            @foreach($sections as $section)
+              <div class="col-span-1 hover:bg-gray-50">
+                <a href="{{route('trainings.index', $section->id)}}">
+                  <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
+                    <div class="col-span-9">
+                      {{$section->title}}
+                    </div>
+                    <div class="col-span-1">
+                      <x-svg.chevron-right class="w-7 text-gray-500"/>
+                    </div>
                   </div>
-                  <div class="col-span-1">
-                    <x-svg.chevron-right class="w-7 text-gray-500"/>
-                  </div>
-                </div>
-              </a>
-            </div>
-
-            <div class="col-span-1 hover:bg-gray-50">
-              <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
-                <div class="col-span-9">
-                  Closing
-                </div>
-                <div class="col-span-1">
-                  <x-svg.chevron-right class="w-7 text-gray-500"/>
-                </div>
+                </a>
               </div>
-            </div>
-
-            <div class="col-span-1 hover:bg-gray-50">
-              <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
-                <div class="col-span-9">
-                  Misc.
-                </div>
-                <div class="col-span-1">
-                  <x-svg.chevron-right class="w-7 text-gray-500"/>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-span-1 hover:bg-gray-50">
-              <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
-                <div class="col-span-9">
-                  FAQ
-                </div>
-                <div class="col-span-1">
-                  <x-svg.chevron-right class="w-7 text-gray-500"/>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-span-1 hover:bg-gray-50">
-              <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 border-b-2 p-4 md:rounded-lg">
-                <div class="col-span-9">
-                  Life
-                </div>
-                <div class="col-span-1">
-                  <x-svg.chevron-right class="w-7 text-gray-500"/>
-                </div>
-              </div>
-            </div>
+            @endforeach
           </div>
         </div>
-
       </div>
     </div>
   </div>
