@@ -23,7 +23,7 @@
           </div>
         </div>
         @if($actualSection)
-          <div class="">
+          <div>
             <a href="{{route('trainings.index', $actualSection->parent_id)}}" class="inline-flex items-center border-b-2 border-green-base hover:border-green-500 text-sm font-medium leading-5">
               @if($actualSection->parent_id)
                 <x-svg.chevron-left class="w-6 -ml-2"/>
@@ -33,7 +33,12 @@
           </div>
         @endif
         <div class="mt-15">
-          <div class="grid md:grid-cols-2 sm:grid-cols-1 md:row-gap-4 sm:row-gap-0 col-gap-4">
+          <div class="grid grid-rows-4 md:grid-cols-2 sm:grid-cols-1 md:row-gap-4 sm:row-gap-0 col-gap-4">
+            @if($videoId)
+              <div class='embed-container row-span-4 col-span-1 '>
+                <iframe src="http://www.youtube.com/embed/{{$videoId}}" frameborder='0' allowfullscreen></iframe>
+              </div>
+            @endif
             @foreach($sections as $section)
               <div class="col-span-1 hover:bg-gray-50">
                 <a href="{{route('trainings.index', $section->id)}}">
@@ -49,6 +54,14 @@
               </div>
             @endforeach
           </div>
+          @if($content && $content->title)
+            <div class="mt-3 text-xl font-semibold">
+              {{$content->title}}
+            </div>
+            <div class="mt-2 p-4 text-lg">
+              {{$content->description}}
+            </div>
+          @endif
         </div>
       </div>
     </div>

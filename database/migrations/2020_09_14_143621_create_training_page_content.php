@@ -17,10 +17,10 @@ class CreateTrainingPageContent extends Migration
             $table->bigIncrements('id');
             $table->string('title');
             $table->string('description');
-            $table->unsignedBigInteger('trainingPageSection_id');
+            $table->unsignedBigInteger('training_page_section_id');
             $table->string('video_url');
 
-            $table->foreign('trainingPageSection_id')->references('id')->on('training_page_sections')->onDelete('cascade');
+            $table->foreign('training_page_section_id')->references('id')->on('training_page_sections')->onDelete('cascade');
 
             $table->timestamps();
             $table->softDeletes();
