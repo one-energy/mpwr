@@ -23,18 +23,51 @@ class TrainingController extends Controller
         ]);
     }
 
-    public function storeSection()
+    public function storeSection(TrainingPageSection $section)
     {
-        dd(request()->all());
         $validated = $this->validate(
             request(),
             [
                 'title'     => 'required|string|min:5|max:255',
-            ]
-        );
-        
-            
+            ],
+        );        
         $trainingPageSection = new TrainingPageSection();
+        $trainingPageSection->title = $validated['title'];
+        $trainingPageSection->parent_id = $section->id;
+
+        $trainingPageSection->save();
+
+        alert()
+            ->withTitle(__('Section created!'))
+            ->send();
+
+        return redirect(route('trainings.index', $section));
+    }
+
+    public function storeContent(TrainingPageSection $section)
+    {
+        $validated = $this->validate(
+            request(),
+            [
+                'title'           => 'required|string|min:5|max:255',
+                'video_url'       => 'required|string|min:5|max:255',
+                'description'     => 'required|string',
+            ],
+        );    
+
+        $trainingPageContent = new TrainingPageContent();
+        $trainingPageContent->title       = $validated['title'];
+        $trainingPageContent->description = $validated['description'];
+        $trainingPageContent->video_url   = $validated['video_url'];
+        $trainingPageContent->training_page_section_id   = $section->id;
+
+        $trainingPageContent->save();
+
+        alert()
+            ->withTitle(__('Content created!'))
+            ->send();
+
+        return redirect(route('trainings.index', $section));
     }
 
     public function getContent($section)
