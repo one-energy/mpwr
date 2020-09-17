@@ -19,9 +19,9 @@
                                         <x-svg.chevron-left class="w-6 -ml-2"/> @lang('Leave Admin')
                                     </x-nav.link>
     
-                                    <x-nav.link :href="route('castle.dashboard')" class="ml-4"
-                                                :active="is_active('castle.dashboard')">
-                                        @lang('Dashboard')
+                                    <x-nav.link :href="route('trainings.index')" class="ml-4"
+                                                :active="is_active('trainings.index')">
+                                        @lang('Manage Trainings')
                                     </x-nav.link>
 
                                     <x-nav.link :href="route('castle.permission.index')" class="ml-4"

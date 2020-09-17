@@ -112,6 +112,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/customers/{customer}/active', [CustomerController::class, 'Active'])->name('customers.active');
     Route::get('/scoreboard', ScoreboardController::class)->name('scoreboard');
     Route::get('/trainings/{section?}', [TrainingController::class, 'index'])->name('trainings.index');
+    Route::post('/trainings/{section?}/create-section', [TrainingController::class, 'storeSection'])->name('trainings.storeSection');
+    Route::post('/trainings/{section?}/create-content', [TrainingController::class, 'storeContent'])->name('trainings.storeContent');
     // Route::get('/trainings/settings', [TrainingSettingsController::class, 'index'])->name('trainings.settings.index');
     // Route::get('/trainings/settings/best-practices', [TrainingSettingsBestPracticesController::class ,'index'])->name('trainings.settings.best-practices.index');
     // Route::get('/trainings/settings/best-practices/what-to-say', [TrainingSettingsBestPracticesWhatToSayController::class, 'index'])->name('trainings.settings.best-practices.what-to-say.index');

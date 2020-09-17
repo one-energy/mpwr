@@ -23,6 +23,20 @@ class TrainingController extends Controller
         ]);
     }
 
+    public function storeSection()
+    {
+        dd(request()->all());
+        $validated = $this->validate(
+            request(),
+            [
+                'title'     => 'required|string|min:5|max:255',
+            ]
+        );
+        
+            
+        $trainingPageSection = new TrainingPageSection();
+    }
+
     public function getContent($section)
     {
         return TrainingPageContent::whereTrainingPageSectionId($section->id ?? 1)->first();

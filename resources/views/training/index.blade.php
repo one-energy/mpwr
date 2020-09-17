@@ -8,6 +8,86 @@
           </div>
           <div class="flex md:justify-end sm:justify-start">
             <div class="pt-2 relative md:mx-auto sm:mx-0 text-gray-600">
+              <div class="inline-flex" x-data="{ 'showSectionModal': false }" @keydown.escape="showSectionModal = false" x-cloak>
+                <x-button @click="showSectionModal = true">
+                  Add Section
+                </x-button>
+                <div x-show="showSectionModal" wire:loading.remove class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center z-20">
+                  <div x-show="showSectionModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity">
+                    <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+                  </div>
+                  <div x-show="showSectionModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
+                    <div class="absolute top-0 right-0 pt-4 pr-4">
+                      <button type="button" x-on:click="showSectionModal = false; setTimeout(() => open = true, 1000)" class="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150" aria-label="Close">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                    <div class="px-4 py-5 sm:p-6">
+                      <div class="flex justify-between">
+                        <div class="flex justify-start">
+                          <div class="flex-grid items-center">
+                            <h3>Add a new section to {{$actualSection->title}}</h3>
+                            <x-form class="mt-8 inline-flex" :route="route('trainings.storeSection')">
+                              <x-input label="Title" name="title"></x-input>
+                              <div class="mt-6">
+                                <span class="block w-full rounded-md shadow-sm">
+                                  <x-button class="w-full flex ml-4" type="submit" color="green">
+                                      {{ __('Save') }}
+                                  </x-button>
+                                </span>
+                              </div>
+                            </x-form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="inline-flex" x-data="{ 'showContentModal': false }" @keydown.escape="showContentModal = false" x-cloak>
+                <x-button @click="showContentModal = true">
+                  Add Content
+                </x-button>
+                <div x-show="showContentModal" wire:loading.remove class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center z-20">
+                  <div x-show="showContentModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity">
+                    <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+                  </div>
+                  <div x-show="showContentModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
+                    <div class="absolute top-0 right-0 pt-4 pr-4">
+                      <button type="button" x-on:click="showContentModal = false; setTimeout(() => open = true, 1000)" class="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150" aria-label="Close">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                    <div class="sm:p-6">
+                      <div class="flex justify-between">
+                        <div class="flex justify-start">
+                          <div class="inline-grid items-center">
+                            <h3>Add a new content to {{$actualSection->title}}</h3>
+                            <x-form :route="route('login')">
+                              <div class="grid grid-cols-2 mt-8 gap-2">
+                                <x-input class="col-span-1" label="Title" name="title"></x-input>
+                                <x-input class="col-span-1" label="Video Url" name="video_url"></x-input>
+                                <x-input class="col-span-2" label="Description" name="description"></x-input>
+                              </div>
+                              <div class="mt-6">
+                                <span class="block w-full rounded-md shadow-sm">
+                                  <x-button class="w-full flex" type="submit" color="green">
+                                      {{ __('Save') }}
+                                  </x-button>
+                                </span>
+                              </div>
+                            </x-form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <input class="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
                 type="search" name="search" placeholder="Search for Training">
               <button type="submit" class="absolute right-0 top-0 mt-5 mr-4">

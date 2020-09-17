@@ -276,8 +276,8 @@
                     </div>
                 </div>
             </div>
-            </div>
-            <div class="mt-6">
+          </div>
+          <div class="mt-6">
             <div class="flex justify-between grid grid-cols-4 row-gap-1 col-gap-2 m-1 p-2">
                 <div class="col-span-2 text-xs text-gray-900">
                     <div class="flex justify-between grid grid-cols-2 row-gap-1 col-gap-2 border-gray-200 border-2 m-1 p-2 rounded-lg">
