@@ -15,5 +15,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class TrainingPageContent extends Model
 {
+    protected $guarded = [];  
     //
 }

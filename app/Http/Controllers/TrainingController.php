@@ -49,6 +49,27 @@ class TrainingController extends Controller
         return redirect(route('trainings.index', $section));
     }
 
+    public function updateSection(TrainingPageSection $section)
+    {
+        $validated = $this->validate(
+            request(),
+            [
+                'title'     => 'required|string|min:5|max:255',
+            ],
+        );    
+
+        $trainingPageContent = TrainingPageContent::query()->whereId($section->id)->first();
+        $trainingPageContent->title = $validated['title'];
+
+        $trainingPageContent->update();
+
+        alert()
+            ->withTitle(__('Section saved!'))
+            ->send();
+
+        return redirect(route('trainings.index', $section));
+    }
+
     public function storeContent(TrainingPageSection $section)
     {
         $validated = $this->validate(
@@ -73,6 +94,31 @@ class TrainingController extends Controller
             ->send();
 
         return redirect(route('trainings.index', $section));
+    }
+
+    public function updateContent(TrainingPageContent $content)
+    {
+        $validated = $this->validate(
+            request(),
+            [
+                'title'           => 'required|string|min:5|max:255',
+                'video_url'       => 'required|string|min:5|max:255',
+                'description'     => 'required|string',
+            ],
+        );    
+
+        $trainingPageContent = TrainingPageContent::query()->whereId($content->id)->first();
+        $trainingPageContent->title = $validated['title'];
+        $trainingPageContent->video_url = $validated['video_url'];
+        $trainingPageContent->description = $validated['description'];
+
+        $trainingPageContent->update();
+
+        alert()
+            ->withTitle(__('Content saved!'))
+            ->send();
+
+        return redirect(route('trainings.index', $content->training_page_section_id));
     }
 
     public function getPath($section)
