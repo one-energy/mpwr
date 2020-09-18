@@ -17,7 +17,7 @@ class TrainingController extends Controller
         if($content){
             $videoId = explode('/', $content->video_url);
             $index = count($videoId);
-            // dd($videoId[3]);
+            dd($videoId[3]);
         }
 
         $path = $this->getPath($actualSection);
