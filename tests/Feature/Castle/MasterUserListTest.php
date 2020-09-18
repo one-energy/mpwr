@@ -368,10 +368,10 @@ class MasterUserListTest extends FeatureTest
     /** @test */
     public function it_should_be_able_to_filter_users_by_a_given_region()
     {
-        $joe  = (new UserBuilder)->withAOffice()->withFirstName('Joe')->withLastName('Doe')->save()->get();
-        $jane = (new UserBuilder)->withAOffice()->withFirstName('Jane')->withLastName('Doe')->save()->get();
+        $joe  = (new UserBuilder)->withFirstName('Joe')->withLastName('Doe')->save()->get();
+        $jane = (new UserBuilder)->withFirstName('Jane')->withLastName('Doe')->save()->get();
 
-        $office = $joe->offices()->first();
+        $office = $joe->office()->first();
 
         Livewire::test(Users::class)
             ->assertSee($joe->first_name)

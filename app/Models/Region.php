@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Builder;
 
 
 /**
@@ -25,7 +25,12 @@ class Region extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class)->withPivot('role')->withTimestamps();
+        return $this->hasOne(User::class, 'foreign_key', 'user_id')->withTimestamps();
+    }
+
+    public function offices()
+    {
+        return $this->hasMany(Office::class);
     }
 
     public function scopeSearch(Builder $query, $search)

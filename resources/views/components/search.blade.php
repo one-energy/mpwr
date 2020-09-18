@@ -1,3 +1,9 @@
+@props(['perPage', 'search'])
+
+@php
+    $perPage  = $perPage ?? true;
+@endphp
+
 <div class="mb-4 sm:flex sm:justify-between">
     <div class="items-baseline w-full space-y-4 sm:space-x-4 sm:flex sm:space-y-0">
         <div class="relative mt-1 rounded-md shadow-sm w-ft ll sm:w-1/2 lg:w-1/3">
@@ -28,20 +34,21 @@
 
         {{ $slot }}
     </div>
-
-    <div class="relative mt-4 rounded-md shadow-sm sm:mt-1">
-        <input disabled id="perPage" class="block w-full pl-4 pr-5 form-input sm:text-sm sm:leading-5"
-               placeholder="Records per page"/>
-        <div class="absolute inset-y-0 right-0 flex items-center w-full">
-            <select wire:model="perPage" aria-label="PerPage"
-                    class="w-full h-full py-0 pl-20 text-right text-gray-500 bg-transparent border-transparent form-select pl-96 sm:pl-36 pr-7 sm:text-sm sm:leading-5">
-                <option>5</option>
-                <option>15</option>
-                <option>25</option>
-                <option>35</option>
-                <option>50</option>
-                <option>100</option>
-            </select>
+    @if($perPage)
+        <div class="relative mt-4 rounded-md shadow-sm sm:mt-1">
+            <input disabled id="perPage" class="block w-full pl-4 pr-5 form-input sm:text-sm sm:leading-5"
+                placeholder="Records per page"/>
+            <div class="absolute inset-y-0 right-0 flex items-center w-full">
+                <select wire:model="perPage" aria-label="PerPage"
+                        class="w-full h-full py-0 pl-20 text-right text-gray-500 bg-transparent border-transparent form-select pl-96 sm:pl-36 pr-7 sm:text-sm sm:leading-5">
+                    <option>5</option>
+                    <option>15</option>
+                    <option>25</option>
+                    <option>35</option>
+                    <option>50</option>
+                    <option>100</option>
+                </select>
+            </div>
         </div>
-    </div>
+    @endif
 </div>

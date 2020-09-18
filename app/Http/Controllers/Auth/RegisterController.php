@@ -22,7 +22,6 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'region'         => ['required', 'string', 'min:3', 'max:255'],
             'first_name'     => ['required', 'string', 'min:3', 'max:255'],
             'last_name'      => ['required', 'string', 'min:3', 'max:255'],
             'email'          => ['required', 'string', 'email', 'max:128', 'unique:users', 'confirmed'],
@@ -38,13 +37,6 @@ class RegisterController extends Controller
         $user->email      = $data['email'];
         $user->password   = bcrypt($data['password']);
         $user->save();
-
-        $region           = new Region();
-        $region->name     = $data['region'];
-        $region->region_manager_id = $user->id;
-        $region->save();
-
-        $region->users()->attach($user, ['role' => 'owner']);
 
         return $user;
     }

@@ -36,7 +36,16 @@
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
-                            <x-input :label="__('Office')" name="office" :value="$user->office"/>
+                                <x-select label="Offices" name="office_id">
+                                @if (old('office') == '')
+                                    <option selected></option>
+                                @endif
+                                @foreach($offices as $office)
+                                    <option value="{{ $office->id }}" {{ old('office', $user->office_id) == $office->id ? 'selected' : '' }}>
+                                        {{ $office['name'] }}
+                                    </option>
+                                @endforeach
+                            </x-select>
                         </div>
 
                         <div class="md:col-span-3 col-span-2">

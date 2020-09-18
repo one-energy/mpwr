@@ -80,7 +80,7 @@
                                 </x-table.td>
                                 <x-table.td>{{ $user->first_name }} {{ $user->last_name }}</x-table.td>
                                 <x-table.td>{{ $user->hours }}</x-table.td>
-                                <x-table.td>{{ $user->office }}</x-table.td>
+                                <x-table.td>{{ $user->office->name }}</x-table.td>
                             </x-table.tr>
                         @endforeach
                       </x-slot>
@@ -149,7 +149,7 @@
                                 </x-table.td>
                                 <x-table.td>{{ $user->first_name }} {{ $user->last_name }}</x-table.td>
                                 <x-table.td>{{ $user->sets }}</x-table.td>
-                                <x-table.td>{{ $user->office }}</x-table.td>
+                                <x-table.td>{{ $user->office->name }}</x-table.td>
                             </x-table.tr>
                         @endforeach
                       </x-slot>
@@ -218,7 +218,7 @@
                                 </x-table.td>
                                 <x-table.td>{{ $user->first_name }} {{ $user->last_name }}</x-table.td>
                                 <x-table.td>{{ $user->set_closes }}</x-table.td>
-                                <x-table.td>{{ $user->office }}</x-table.td>
+                                <x-table.td>{{ $user->office->name }}</x-table.td>
                             </x-table.tr>
                         @endforeach
                       </x-slot>
@@ -271,7 +271,7 @@
                         {{ $firstName }} {{ $lastName }}
                     </p>
                     <p class="text-xs leading-4 font-medium text-gray-500 group-hover:text-gray-700 group-focus:underline transition ease-in-out duration-150">
-                        {{ $office }}
+                        {{ $user->office->name}}
                     </p>
                     </div>
                 </div>

@@ -16,7 +16,6 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('role')->nullable();
-            $table->string('office')->nullable();
             $table->decimal('pay', 8, 2)->nullable();
             $table->string('timezone', 64)->default('UTC');
             $table->boolean('master')->default(false);

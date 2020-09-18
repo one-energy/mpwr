@@ -63,8 +63,6 @@ class InvitationsTest extends FeatureTest
         $this->assertAuthenticatedAs($user);
     }
 
-    //region Validations
-
     /** @test */
     public function first_and_last_name_are_required()
     {

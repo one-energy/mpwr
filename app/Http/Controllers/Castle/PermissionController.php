@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Castle;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Support\Facades\Validator;
 
 class PermissionController extends Controller
 {
@@ -19,7 +18,7 @@ class PermissionController extends Controller
 
         return view('castle.permission.edit', [
             'user'  => $user,
-            'roles' => $roles
+            'roles' => $roles,
         ]);
     }
 
@@ -36,10 +35,9 @@ class PermissionController extends Controller
 
         $user->role = $validated['role'];
 
-        if($user->role == 'Admin' || $user->role == 'Owner')
-        {
+        if ($user->role == 'Admin' || $user->role == 'Owner') {
             $user->beCastleMaster();
-        }else{
+        } else {
             $user->revokeMastersAccess();
         }
         
