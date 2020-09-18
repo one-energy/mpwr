@@ -12,9 +12,12 @@ class TrainingController extends Controller
         $videoId = null;
         $content = $this->getContent($section);
         $actualSection = $section ?? TrainingPageSection::whereId(1)->first();
-        
+        $index = 0;
+
         if($content){
-            $videoId = explode('v=', $content->video_url);
+            $videoId = explode('/', $content->video_url);
+            $index = count($videoId);
+            // dd($videoId[3]);
         }
 
         $path = $this->getPath($actualSection);
@@ -22,7 +25,7 @@ class TrainingController extends Controller
         return view('training.index', [
             'sections'      => $this->getParentSections($section),
             'content'       => $content,
-            'videoId'       => $videoId[1] ?? null,
+            'videoId'       => $videoId[$index - 1] ?? null,
             'actualSection' => $actualSection,
             'path'          => $path
         ]);
@@ -58,7 +61,7 @@ class TrainingController extends Controller
             ],
         );    
         
-        $trainingPageContent = TrainingPageSection::query()->whereId($section->id)->first();
+        $trainingPageContent = TrainingPageSection::query()->whereId($section->id)->first();    
         $trainingPageContent->title = $validated['title'];
         $trainingPageContent->update();
 
