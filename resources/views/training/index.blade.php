@@ -111,22 +111,18 @@
             </div>
           </div>
         </div>
-        @if($actualSection)
-          <div>
-            <a href="{{route('trainings.index', $actualSection->parent_id)}}" class="inline-flex items-center border-b-2 border-green-base hover:border-green-500 text-sm font-medium leading-5">
-              @if($actualSection->parent_id)
-                <x-svg.chevron-left class="w-6 -ml-2"/>
-              @endif
-              {{$actualSection->title}}
-            </a>
-          </div>
-        @endif
+        <div class="text-gray-600 mt-6 md:mt-3">
+          @foreach($path as $section)
+            <a href="/trainings/{{$section->id}}" class="underline">{{$section->title}}</a> / 
+          @endforeach
+        </div>
         <div class="mt-15">
           @if($videoId)
             <div class='embed-container w-1/2 float-right'>
               <iframe class="float-right" src="http://www.youtube.com/embed/{{$videoId}}" frameborder='0' allowfullscreen></iframe>
             </div>
           @endif
+          
           @if($content && $content->title)
             <div class="mt-3 text-xl font-semibold">
               {{$content->title}}
@@ -135,7 +131,6 @@
               {{$content->description}}
             </p>
           @endif
-          
           <div class="md:grid-cols-2 sm:grid-cols-1 md:row-gap-4 sm:row-gap-0 col-gap-4 inline-grid">
             @foreach($sections as $section)
               <div class="col-span-1 hover:bg-gray-50">
