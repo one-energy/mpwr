@@ -57,10 +57,9 @@ class TrainingController extends Controller
                 'title'     => 'required|string|min:5|max:255',
             ],
         );    
-
-        $trainingPageContent = TrainingPageContent::query()->whereId($section->id)->first();
+        
+        $trainingPageContent = TrainingPageSection::query()->whereId($section->id)->first();
         $trainingPageContent->title = $validated['title'];
-
         $trainingPageContent->update();
 
         alert()
