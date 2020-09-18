@@ -56,7 +56,7 @@ class OfficeController extends Controller
     public function edit(Office $office)
     {
         $regions = Region::all();
-        $users   = User::query()->where('role', 'Office Manager')->get();
+        $users   = User::query()->orderBy('first_name')->get();
 
         return view('castle.offices.edit', compact('office', 'regions', 'users'));
     }
