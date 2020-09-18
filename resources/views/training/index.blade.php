@@ -200,7 +200,7 @@
           <p class="mt-2 p-4 text-lg">
             @if($videoId)
               <div class="w-full text-center embed-container">
-                <iframe class="lg:float-right self-center" src="http://www.youtube.com/embed/{{$videoId}}" frameborder='0' height="290" width="500" allowfullscreen></iframe>
+                <iframe class="lg:float-right self-center" src="https://www.youtube.com/embed/{{$videoId}}" frameborder='0' height="290" width="500" allowfullscreen></iframe>
               </div>
             @endif
             
