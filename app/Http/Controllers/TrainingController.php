@@ -31,6 +31,30 @@ class TrainingController extends Controller
         ]);
     }
 
+    public function manageTrainings(TrainingPageSection $section = null)
+    {
+        $videoId = null;
+        $content = $this->getContent($section);
+        $actualSection = $section ?? TrainingPageSection::whereId(1)->first();
+        $index = 0;
+
+        if($content){
+            $videoId = explode('/', $content->video_url);
+            $index = count($videoId);
+            // dd($videoId[3]);
+        }
+
+        $path = $this->getPath($actualSection);
+
+        return view('castle.manage-trainings.index', [
+            'sections'      => $this->getParentSections($section),
+            'content'       => $content,
+            'videoId'       => $videoId[$index - 1] ?? null,
+            'actualSection' => $actualSection,
+            'path'          => $path
+        ]);
+    }
+
     public function storeSection(TrainingPageSection $section)
     {
         $validated = $this->validate(

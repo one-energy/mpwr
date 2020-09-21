@@ -95,6 +95,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('incentives/{incentive}/edit', [ManageIncentivesController::class, 'edit'])->name('incentives.edit');
         Route::put('incentives/{incentive}', [ManageIncentivesController::class, 'update'])->name('incentives.update');
         Route::delete('incentives/{incentive}', [ManageIncentivesController::class, 'destroy'])->name('incentives.destroy');
+
+        Route::get('/manage-trainings/{section?}', [TrainingController::class, 'manageTrainings'])->name('manage-trainings.index');
+        Route::post('/manage-trainings/{section?}/create-section', [TrainingController::class, 'storeSection'])->name('manage-trainings.storeSection');
+        Route::post('/manage-trainings/{section?}/update-section', [TrainingController::class, 'updateSection'])->name('manage-trainings.updateSection');
+        Route::post('/manage-trainings/{section?}/create-content', [TrainingController::class, 'storeContent'])->name('manage-trainings.storeContent');
+        Route::post('/manage-trainings/{content}/update-content', [TrainingController::class, 'updateContent'])->name('manage-trainings.updateContent');
+
     });
     //endregion
 
@@ -112,10 +119,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/customers/{customer}/active', [CustomerController::class, 'Active'])->name('customers.active');
     Route::get('/scoreboard', ScoreboardController::class)->name('scoreboard');
     Route::get('/trainings/{section?}', [TrainingController::class, 'index'])->name('trainings.index');
-    Route::post('/trainings/{section?}/create-section', [TrainingController::class, 'storeSection'])->name('trainings.storeSection');
-    Route::post('/trainings/{section?}/update-section', [TrainingController::class, 'updateSection'])->name('trainings.updateSection');
-    Route::post('/trainings/{section?}/create-content', [TrainingController::class, 'storeContent'])->name('trainings.storeContent');
-    Route::post('/trainings/{content}/update-content', [TrainingController::class, 'updateContent'])->name('trainings.updateContent');
     // Route::get('/trainings/settings', [TrainingSettingsController::class, 'index'])->name('trainings.settings.index');
     // Route::get('/trainings/settings/best-practices', [TrainingSettingsBestPracticesController::class ,'index'])->name('trainings.settings.best-practices.index');
     // Route::get('/trainings/settings/best-practices/what-to-say', [TrainingSettingsBestPracticesWhatToSayController::class, 'index'])->name('trainings.settings.best-practices.what-to-say.index');
