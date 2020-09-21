@@ -4,7 +4,7 @@
       <div class="px-4 py-5 sm:px-6">
         <div class="md:flex justify-between">
           <div class="md:flex justify-start">
-            <h3 class="text-lg text-gray-900">Manage Training</h3>
+            <h3 class="text-lg text-gray-900">Manage Trainings</h3>
           </div>
           <div class="flex md:justify-end sm:justify-start">
             <div class="pt-2 relative md:mx-auto sm:mx-0 text-gray-600">
@@ -73,7 +73,10 @@
                                   <div class="grid grid-cols-2 mt-8 gap-2">
                                     <x-input class="col-span-1" label="Title" name="title"></x-input>
                                     <x-input class="col-span-1" label="Video Url" name="video_url"></x-input>
-                                    <x-input class="col-span-2" label="Description" name="description"></x-input>
+                                    <!-- <x-input class="col-span-2" label="Description" name="description"></x-input> -->
+                                    <textarea id="w3review" name="w3review" rows="4" cols="50">
+                                      At w3schools.com you will learn how to make a website. They offer free tutorials in all web development technologies.
+                                    </textarea>
                                   </div>
                                   <div class="mt-6">
                                     <span class="block w-full rounded-md shadow-sm">
@@ -118,7 +121,7 @@
                                   <div class="grid grid-cols-2 mt-8 gap-2">
                                     <x-input class="col-span-1" label="Title" name="title" value="{{$content->title}}"></x-input>
                                     <x-input class="col-span-1" label="Video Url" name="video_url" value="{{$content->video_url}}"></x-input>
-                                    <x-input class="col-span-2" label="Description" name="description" value="{{$content->description}}"></x-input>
+                                    <x-text-area class="col-span-2" name="description" label="Description"></x-text-area>
                                   </div>
                                   <div class="mt-6">
                                     <span class="block w-full rounded-md shadow-sm">
