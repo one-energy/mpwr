@@ -13,4 +13,9 @@ use Illuminate\Database\Eloquent\Model;
 class TrainingPageSection extends Model
 {
     //
+
+    public function content()
+    {
+        return $this->hasOne(TrainingPageContent::class);
+    }
 }

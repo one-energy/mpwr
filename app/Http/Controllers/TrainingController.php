@@ -55,6 +55,26 @@ class TrainingController extends Controller
         ]);
     }
 
+    public function deleteSection(TrainingPageSection $section)
+    {
+        $childsSections = TrainingPageSection::query()->whereParentId($section->id)->get();
+        
+        foreach ($childsSections as $childSection) {
+            $childSection->parent_id = $section->parent_id;
+            $childSection->save();
+        }
+        
+        $section->delete();
+        return redirect(route('castle.manage-trainings.index', $section->parent_id));
+        // return view('castle.manage-trainings.index', [
+        //     'sections'      => $this->getParentSections($section),
+        //     'content'       => $content,
+        //     'videoId'       => $videoId[$index - 1] ?? null,
+        //     'actualSection' => $actualSection,
+        //     'path'          => $path
+        // ]);
+    }
+
     public function storeSection(TrainingPageSection $section)
     {
         $validated = $this->validate(
@@ -73,7 +93,7 @@ class TrainingController extends Controller
             ->withTitle(__('Section created!'))
             ->send();
 
-        return redirect(route('trainings.index', $section));
+        return redirect(route('castle.manage-trainings.index', $section));
     }
 
     public function updateSection(TrainingPageSection $section)
@@ -93,7 +113,7 @@ class TrainingController extends Controller
             ->withTitle(__('Section saved!'))
             ->send();
 
-        return redirect(route('trainings.index', $section));
+        return redirect(route('castle.manage-trainings.index', $section));
     }
 
     public function storeContent(TrainingPageSection $section)
@@ -119,7 +139,7 @@ class TrainingController extends Controller
             ->withTitle(__('Content created!'))
             ->send();
 
-        return redirect(route('trainings.index', $section));
+        return redirect(route('castle.manage-trainings.index', $section));
     }
 
     public function updateContent(TrainingPageContent $content)
@@ -144,7 +164,7 @@ class TrainingController extends Controller
             ->withTitle(__('Content saved!'))
             ->send();
 
-        return redirect(route('trainings.index', $content->training_page_section_id));
+        return redirect(route('castle.manage-trainings.index', $content->training_page_section_id));
     }
 
     public function getPath($section)

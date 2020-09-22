@@ -69,14 +69,11 @@
                             <div class="flex justify-start">
                               <div class="inline-grid items-center">
                                 <h3>Add a new content to {{$actualSection->title}}</h3>
-                                <x-form :route="route('manage-trainings.storeContent', $actualSection->id)">
+                                <x-form :route="route('castle.manage-trainings.storeContent', $actualSection->id)">
                                   <div class="grid grid-cols-2 mt-8 gap-2">
                                     <x-input class="col-span-1" label="Title" name="title"></x-input>
                                     <x-input class="col-span-1" label="Video Url" name="video_url"></x-input>
-                                    <!-- <x-input class="col-span-2" label="Description" name="description"></x-input> -->
-                                    <textarea id="w3review" name="w3review" rows="4" cols="50">
-                                      At w3schools.com you will learn how to make a website. They offer free tutorials in all web development technologies.
-                                    </textarea>
+                                    <x-text-area class="col-span-2" label="Description" name="description"></x-text-area>
                                   </div>
                                   <div class="mt-6">
                                     <span class="block w-full rounded-md shadow-sm">
@@ -121,7 +118,7 @@
                                   <div class="grid grid-cols-2 mt-8 gap-2">
                                     <x-input class="col-span-1" label="Title" name="title" value="{{$content->title}}"></x-input>
                                     <x-input class="col-span-1" label="Video Url" name="video_url" value="{{$content->video_url}}"></x-input>
-                                    <x-text-area class="col-span-2" name="description" label="Description"></x-text-area>
+                                    <x-text-area class="col-span-2" label="Description" name="description" value="{{$content->description}}"></x-text-area>
                                   </div>
                                   <div class="mt-6">
                                     <span class="block w-full rounded-md shadow-sm">
@@ -140,23 +137,12 @@
                   </div>
                 @endif
               @endif
-              <input class="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
-                type="search" name="search" placeholder="Search for Training">
-              <button type="submit" class="absolute right-0 top-0 mt-5 mr-4">
-                <svg class="text-gray-600 h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg"
-                  xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px"
-                  viewBox="0 0 56.966 56.966" style="enable-background:new 0 0 56.966 56.966;" xml:space="preserve"
-                  width="512px" height="512px">
-                  <path
-                    d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z" />
-                </svg>
-              </button>
             </div>
           </div>
         </div>
         <div class="text-gray-600 mt-6 md:mt-3 inline-flex items-center">
           @foreach($path as $pathSection)
-            <a href="/trainings/{{$pathSection->id}}" class="underline align-baseline">{{$pathSection->title}}</a> / 
+            <a href="/castle/manage-trainings/list/{{$pathSection->id}}" class="underline align-baseline">{{$pathSection->title}}</a> / 
           @endforeach
           @if(user()->isMaster())
             <div class="inline-flex" x-data="{ 'editSectionModal': false }" @keydown.escape="editSectionModal = false" x-cloak>
@@ -200,10 +186,10 @@
           @endif
         </div>
         <div class="mt-15">
-          <p class="mt-2 p-4 text-lg">
+          <div class="mt-2 p-4 text-lg">
             @if($videoId)
               <div class="w-full text-center embed-container">
-                <iframe class="lg:float-right self-center" src="https://www.youtube.com/embed/{{$videoId}}" frameborder='0' height="290" width="500" allowfullscreen></iframe>
+                <iframe class="lg:float-right self-center ml-4" src="https://www.youtube.com/embed/{{$videoId}}" frameborder='0' height="290" width="500" allowfullscreen></iframe>
               </div>
             @endif
             
@@ -211,22 +197,62 @@
               <div class="mt-3 text-xl font-semibold">
                 {{$content->title}}
               </div>
-              {{$content->description}}
+              {!!$content->description!!}
             @endif
-          </p>
+                </div>
           <div class="md:grid-cols-2 sm:grid-cols-1 md:row-gap-4 sm:row-gap-0 col-gap-4 inline-grid w-full mt-4">
             @foreach($sections as $section)
-              <div class="col-span-1 hover:bg-gray-50">
-                <a href="{{route('trainings.index', $section->id)}}">
-                  <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
-                    <div class="col-span-9">
-                      {{$section->title}}
+              <div class="col-span-1 ">
+                <div class="grid grid-cols-10">
+                  <div class="inline-flex hover:bg-gray-50 text-center md:border-2 border-t-2 md:border-r-0 md:rounded-l-lg " x-data="{ 'confirmDeleteModal': false }" @keydown.escape="confirmDeleteModal = false" x-cloak>
+                    <button class="w-full text-center h-full py-2 px-2"  @click="confirmDeleteModal = true">
+                    <div class="text-center">
+                      <svg class="inline-flex" fill="red" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M9 19c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm4 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm4 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5-17v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.315c0 .901.73 2 1.631 2h5.712zm-3 4v16h-14v-16h-2v18h18v-18h-2z"/></svg>
                     </div>
-                    <div class="col-span-1">
-                      <x-svg.chevron-right class="w-7 text-gray-500"/>
+                    </button>
+                    <div x-show="confirmDeleteModal" wire:loading.remove class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center z-20">
+                      <div x-show="confirmDeleteModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity">
+                        <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+                      </div>
+                      <div x-show="confirmDeleteModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
+                        <div class="absolute top-0 right-0 pt-4 pr-4">
+                          <button type="button" x-on:click="confirmDeleteModal = false; setTimeout(() => open = true, 1000)" class="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150" aria-label="Close">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                        <div class="px-4 py-5 sm:p-6">
+                          <h3 class="text-left">Do you want to delete {{$section->title}} section?</h3>
+                          <p class="text-left mt-4 text-base text-gray-700">If you delete this section all content into {{$section->title}} will be pass to {{$actualSection->title}}</p>
+                          <div class="mr-4 mb-4 inline-flex space-x-4 float-right mt-8">
+                            <x-button class="w-full flex ml-4" @click="confirmDeleteModal = false">
+                              {{ __('No') }}
+                            </x-button>
+                            <x-form :route="route('castle.manage-trainings.deleteSection', $section->id)"  delete
+                                                            x-data="{deleting: false}">                            
+                              <x-button class="w-full flex ml-4" type="submit" color="green">
+                                {{ __('Yes') }}
+                              </x-button>
+                            </x-form>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </a>
+                  <div class="col-span-9 hover:bg-gray-50">
+                    <a href="{{route('castle.manage-trainings.index', $section->id)}}">
+                      <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-r-lg ">
+                        <div class="col-span-9 inline-flex">
+                          <p class="self-center">{{$section->title}}</p>
+                        </div>
+                        <div class="col-span-1 self-center">
+                          <x-svg.chevron-right class="w-7 text-gray-500"/>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                </div>
               </div>
             @endforeach
           </div>
