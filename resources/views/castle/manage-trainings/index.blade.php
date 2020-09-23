@@ -71,7 +71,7 @@
                                 <h3>Add a new content to {{$actualSection->title}}</h3>
                                 <x-form :route="route('castle.manage-trainings.storeContent', $actualSection->id)">
                                   <div class="grid grid-cols-2 mt-8 gap-2">
-                                    <x-input class="col-span-1" label="Title" name="title"></x-input>
+                                    <x-input class="col-span-1" label="Title" name="content_title"></x-input>
                                     <x-input class="col-span-1" label="Video Url" name="video_url"></x-input>
                                     <x-text-area class="col-span-2" label="Description" name="description"></x-text-area>
                                   </div>
@@ -92,7 +92,7 @@
                   </div>
                 @endif
                 @if($content)
-                  <div class="inline-flex" x-data="{ 'showContentModal': false }" @keydown.escape="showContentModal = false" x-cloak>
+                  <div class="inline-flex" x-data="{ 'showContentModal':false }" x-on:keydown.escape="alert($event.target.value)"  @keydown.escape="showContentModal = false" x-cloak>
                     <x-button @click="showContentModal = true">
                       Edit Content
                     </x-button>
@@ -116,7 +116,7 @@
                                 <h3>Edit the content to {{$actualSection->title}}</h3>
                                 <x-form :route="route('castle.manage-trainings.updateContent', $content->id)">
                                   <div class="grid grid-cols-2 mt-8 gap-2">
-                                    <x-input class="col-span-1" label="Title" name="title" value="{{$content->title}}"></x-input>
+                                    <x-input class="col-span-1" label="Title" name="content_title" value="{{$content->title}}"></x-input>
                                     <x-input class="col-span-1" label="Video Url" name="video_url" value="{{$content->video_url}}"></x-input>
                                     <x-text-area class="col-span-2" label="Description" name="description" value="{{$content->description}}"></x-text-area>
                                   </div>
@@ -166,7 +166,7 @@
                       <div class="flex justify-start">
                         <div class="flex-grid items-center">
                           <h3>Edit the section {{$actualSection->title}}</h3>
-                          <x-form class="mt-8 inline-flex" :route="route('castle.manage-trainings.updateSection', $actualSection->id)">
+                          <x-form class="mt-8 inline-flex" :route="route('castle.manage-trainings.updateSection', $actualSection->id)" put>
                             <x-input label="Title" name="title" type="text" value="{{$actualSection->title}}"></x-input>
                             <div class="mt-6">
                               <span class="block w-full rounded-md shadow-sm">

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int $id
+ * @property int $parent_id
  * @property string $title
  * @property Carbon $created_at
  * @property Carbon $updated_at
