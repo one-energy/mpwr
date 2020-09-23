@@ -95,6 +95,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('incentives/{incentive}/edit', [ManageIncentivesController::class, 'edit'])->name('incentives.edit');
         Route::put('incentives/{incentive}', [ManageIncentivesController::class, 'update'])->name('incentives.update');
         Route::delete('incentives/{incentive}', [ManageIncentivesController::class, 'destroy'])->name('incentives.destroy');
+
+        Route::get('/manage-trainings/list/{section?}', [TrainingController::class, 'manageTrainings'])->name('manage-trainings.index');
+        Route::post('/manage-trainings/{section?}/create-section', [TrainingController::class, 'storeSection'])->name('manage-trainings.storeSection');
+        Route::put('/manage-trainings/{section?}/update-section', [TrainingController::class, 'updateSection'])->name('manage-trainings.updateSection');
+        Route::post('/manage-trainings/{section?}/create-content', [TrainingController::class, 'storeContent'])->name('manage-trainings.storeContent');
+        Route::post('/manage-trainings/{content}/update-content', [TrainingController::class, 'updateContent'])->name('manage-trainings.updateContent');
+        Route::delete('/manage-trainings/{section}', [TrainingController::class, 'deleteSection'])->name('manage-trainings.deleteSection');
+        
     });
     //endregion
 
@@ -111,10 +119,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('/customers', CustomerController::class);
     Route::put('/customers/{customer}/active', [CustomerController::class, 'Active'])->name('customers.active');
     Route::get('/scoreboard', ScoreboardController::class)->name('scoreboard');
-    Route::get('/trainings', [TrainingController::class, 'index'])->name('trainings.index');
-    Route::get('/trainings/settings', [TrainingSettingsController::class, 'index'])->name('trainings.settings.index');
-    Route::get('/trainings/settings/best-practices', [TrainingSettingsBestPracticesController::class ,'index'])->name('trainings.settings.best-practices.index');
-    Route::get('/trainings/settings/best-practices/what-to-say', [TrainingSettingsBestPracticesWhatToSayController::class, 'index'])->name('trainings.settings.best-practices.what-to-say.index');
+    Route::get('/trainings/{section?}', [TrainingController::class, 'index'])->name('trainings.index');
+    // Route::get('/trainings/settings', [TrainingSettingsController::class, 'index'])->name('trainings.settings.index');
+    // Route::get('/trainings/settings/best-practices', [TrainingSettingsBestPracticesController::class ,'index'])->name('trainings.settings.best-practices.index');
+    // Route::get('/trainings/settings/best-practices/what-to-say', [TrainingSettingsBestPracticesWhatToSayController::class, 'index'])->name('trainings.settings.best-practices.what-to-say.index');
     Route::get('/incentives', IncentivesController::class)->name('incentives');
     Route::get('/number-tracking', [NumberTrackingController::class, 'index'])->name('number-tracking.index');
     Route::get('/number-tracking/create', [NumberTrackingController::class, 'create'])->name('number-tracking.create');

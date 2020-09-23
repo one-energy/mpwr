@@ -22,68 +22,43 @@
             </div>
           </div>
         </div>
-
+        <div class="text-gray-600 mt-6 md:mt-3 inline-flex items-center">
+          @foreach($path as $pathSection)
+            <a href="/trainings/{{$pathSection->id}}" class="underline align-baseline">{{$pathSection->title}}</a> / 
+          @endforeach
+        </div>
         <div class="mt-15">
-          <div class="grid md:grid-cols-2 sm:grid-cols-1 md:row-gap-4 sm:row-gap-0 col-gap-4">
-            <div class="col-span-1 hover:bg-gray-50">
-              <a href="{{route('trainings.settings.index')}}">
-                <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
-                  <div class="col-span-9">
-                    Setting
+          <p class="mt-2 p-4 text-lg">
+            @if($videoId)
+              <div class="w-full text-center embed-container">
+                <iframe class="lg:float-right self-center ml-2" src="https://www.youtube.com/embed/{{$videoId}}" frameborder='0' height="290" width="500" allowfullscreen></iframe>
+              </div>
+            @endif
+            
+            @if($content && $content->title)
+              <div class="mt-3 text-xl font-semibold">
+                {{$content->title}}
+              </div>
+              {{$content->description}}
+            @endif
+          </p>
+          <div class="md:grid-cols-2 sm:grid-cols-1 md:row-gap-4 sm:row-gap-0 col-gap-4 inline-grid w-full mt-4">
+            @foreach($sections as $section)
+              <div class="col-span-1 hover:bg-gray-50">
+                <a href="{{route('trainings.index', $section->id)}}">
+                  <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
+                    <div class="col-span-9">
+                      {{$section->title}}
+                    </div>
+                    <div class="col-span-1">
+                      <x-svg.chevron-right class="w-7 text-gray-500"/>
+                    </div>
                   </div>
-                  <div class="col-span-1">
-                    <x-svg.chevron-right class="w-7 text-gray-500"/>
-                  </div>
-                </div>
-              </a>
-            </div>
-
-            <div class="col-span-1 hover:bg-gray-50">
-              <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
-                <div class="col-span-9">
-                  Closing
-                </div>
-                <div class="col-span-1">
-                  <x-svg.chevron-right class="w-7 text-gray-500"/>
-                </div>
+                </a>
               </div>
-            </div>
-
-            <div class="col-span-1 hover:bg-gray-50">
-              <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
-                <div class="col-span-9">
-                  Misc.
-                </div>
-                <div class="col-span-1">
-                  <x-svg.chevron-right class="w-7 text-gray-500"/>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-span-1 hover:bg-gray-50">
-              <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
-                <div class="col-span-9">
-                  FAQ
-                </div>
-                <div class="col-span-1">
-                  <x-svg.chevron-right class="w-7 text-gray-500"/>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-span-1 hover:bg-gray-50">
-              <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 border-b-2 p-4 md:rounded-lg">
-                <div class="col-span-9">
-                  Life
-                </div>
-                <div class="col-span-1">
-                  <x-svg.chevron-right class="w-7 text-gray-500"/>
-                </div>
-              </div>
-            </div>
+            @endforeach
           </div>
         </div>
-
       </div>
     </div>
   </div>
