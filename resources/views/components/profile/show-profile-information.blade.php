@@ -11,7 +11,9 @@
                             {{ user()->first_name }} {{ user()->last_name }}
                         </p>
                         <p class="text-xs leading-4 font-medium text-gray-500 group-hover:text-gray-700 group-focus:underline transition ease-in-out duration-150">
-                            {{ user()->office->name }}
+                            @if(user()->office)
+                                {{ user()->office->name }}
+                            @endif
                         </p>
                     </div>
                 </div>
@@ -89,7 +91,7 @@
         </div>
 
         <!-- Funnel Chart -->
-        <div class="border-gray-200 border-2 m-1 p-2 rounded-lg">
+        <div class="border-gray-200 border-2 m-1 p-2 rounded-lg" id="funnelChart">
             <div id="container"></div>
         </div>
         
@@ -104,134 +106,77 @@
     const sets = {!! json_encode(user()->dailyNumbers->sum('sets')) !!};
     const set_closes = {!! json_encode(user()->dailyNumbers->sum('set_closes')) !!};
     
-    Highcharts.chart('container', {
-        chart: {
-            type: 'funnel'
-        },
-        title: {
-            text: undefined,
-            
-        },
-        exporting:{
-            buttons: {
-                contextButton: {
-                    enabled: false
-                }
-            }
-        },
-        plotOptions: {
-            series: {
-                dataLabels: {
-                    enabled: true,
-                    format: '<b>{point.name}</b> ({point.y:,.0f})',
-                    softConnector: true
-                },
-                center: ['40%', '50%'],
-                neckWidth: '10%',
-                neckHeight: '25%',
-                width: '60%'
-            }
-        },
-        legend: {
-            enabled: false
-        },
-        colors: [
-            "#009A88",
-            "#17E5CD",
-            "#004D44",
-            "#B5B5B5",
-            "#FF6E5D"
-        ],
-        tooltip: false,
-        series: [{
-            name: undefined,
-            data: [
-                ['Doors', doors],
-                ['Hours', hours],
-                ['Sits', sits],
-                ['Sets', sets],
-                ['Set Closes', set_closes]
-            ]
-        }],
-
-        responsive: {
-            rules: [{
-                condition: {
-                    maxWidth: 250
-                },
-                chartOptions: {
-                    plotOptions: {
-                        series: {
-                            dataLabels: {
-                                inside: true
-                            },
-                            center: ['50%', '50%'],
-                            width: '100%'
-                        }
+    if(doors && hours && sits && sets && set_closes){
+        Highcharts.chart('container', {
+            chart: {
+                type: 'funnel'
+            },
+            title: {
+                text: undefined,
+                
+            },
+            exporting:{
+                buttons: {
+                    contextButton: {
+                        enabled: false
                     }
                 }
-            }]
-        }
-    });
-</script>
-<script type="text/javascript">
-    google.charts.load("visualization", "1", {
-        packages: ["bar"]
-    });
-    google.charts.setOnLoadCallback(drawFunnelChart);
-
-    function drawFunnelChart() {
-        var data = google.visualization.arrayToDataTable([
-            ["Type", "#", {
-                role: "style"
-            }],
-            ["Doors", 2000, "color: #46A049"],
-            ["Hours", 250, "color: #7de8a6"],
-            ["Sets", 125, "color: #006400"],
-            ["Sits", 85, "color: #B5B5B5"],
-            ["Closes", 22, "color: #FF6E5D"]
-        ]);
-
-        var view = new google.visualization.DataView(data);
-        view.setColumns([0, 1,
-            {
-                calc: "stringify",
-                sourceColumn: 0,
-                type: "string",
-                role: "annotation"
             },
-            2
-        ]);
-
-        var options = {
-            bar: {
-                groupWidth: "95%"
+            plotOptions: {
+                series: {
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b> ({point.y:,.0f})',
+                        softConnector: true
+                    },
+                    center: ['40%', '50%'],
+                    neckWidth: '10%',
+                    neckHeight: '25%',
+                    width: '60%'
+                }
             },
             legend: {
-                position: 'top'
+                enabled: false
             },
-            vAxis: {
-                gridlines: {
-                    count: 0
-                },
-                textPosition: 'none'
-            },
-            hAxis: {
-                gridlines: {
-                    count: 0
-                },
-                textPosition: 'none',
-                baselineColor: '#FFFFFF'
-            },
-            chartArea: {
-                left: 0,
-                top: 0,
-                width: "100%",
-                height: "100%"
-            },
-            isStacked: true
-        };
-        var chart = new google.visualization.BarChart(document.getElementById("barchart_values"));
-        chart.draw(view, options);
+            colors: [
+                "#009A88",
+                "#17E5CD",
+                "#004D44",
+                "#B5B5B5",
+                "#FF6E5D"
+            ],
+            tooltip: false,
+            series: [{
+                name: undefined,
+                data: [
+                    ['Doors', doors],
+                    ['Hours', hours],
+                    ['Sits', sits],
+                    ['Sets', sets],
+                    ['Set Closes', set_closes]
+                ]
+            }],
+
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 250
+                    },
+                    chartOptions: {
+                        plotOptions: {
+                            series: {
+                                dataLabels: {
+                                    inside: true
+                                },
+                                center: ['50%', '50%'],
+                                width: '100%'
+                            }
+                        }
+                    }
+                }]
+            }
+        }); 
+    }else{
+        document.getElementById("funnelChart").innerHTML = "No data to display";
     }
 </script>
