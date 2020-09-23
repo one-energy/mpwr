@@ -98,6 +98,12 @@
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript" language="javascript">
+    const doors = {!! json_encode(user()->dailyNumbers->sum('doors')) !!};
+    const hours = {!! json_encode(user()->dailyNumbers->sum('hours')) !!};
+    const sits = {!! json_encode(user()->dailyNumbers->sum('sits')) !!};
+    const sets = {!! json_encode(user()->dailyNumbers->sum('sets')) !!};
+    const set_closes = {!! json_encode(user()->dailyNumbers->sum('set_closes')) !!};
+    
     Highcharts.chart('container', {
         chart: {
             type: 'funnel'
@@ -140,11 +146,11 @@
         series: [{
             name: undefined,
             data: [
-                ['Doors', 15654],
-                ['Hours', 4064],
-                ['Sits', 1987],
-                ['Sets', 976],
-                ['Set Closes', 846]
+                ['Doors', doors],
+                ['Hours', hours],
+                ['Sits', sits],
+                ['Sets', sets],
+                ['Set Closes', set_closes]
             ]
         }],
 

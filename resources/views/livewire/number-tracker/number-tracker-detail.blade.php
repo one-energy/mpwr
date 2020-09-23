@@ -596,7 +596,7 @@
             setCurrentDate(date) {
                 this.currentDate = new Date(this.year, this.month, date);
             },
-             getDateValue(date) {
+            getDateValue(date) {
                 let selectedDate = new Date(this.year, this.month, date);
                 this.datepickerValue = selectedDate.toDateString();
 

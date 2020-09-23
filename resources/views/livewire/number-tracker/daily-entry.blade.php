@@ -330,7 +330,7 @@
 <script>
     const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; 
-  
+    {!! json_encode($sites->toArray(), JSON_HEX_TAG) !!}
     function app() {
 
         return {
@@ -396,7 +396,7 @@
 
                 this.no_of_days = daysArray;
             },
-
+            
             isMissingDate(date){
                 missingDates = @this.get('missingDates');
                 if(date != null){
