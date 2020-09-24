@@ -14,7 +14,9 @@
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <style>[x-cloak] { display: none; }</style>
+    <style>
+        [x-cloak] { display: none; }
+    </style>
     <livewire:styles/>
 </head>
 
