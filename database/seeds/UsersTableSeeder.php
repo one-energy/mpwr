@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\DailyNumber;
+use App\Models\Department;
 use App\Models\Region;
 use App\Models\User;
 use App\Models\Office;
@@ -122,6 +123,14 @@ class UsersTableSeeder extends Seeder
         );
 
         $regionKey = 0;
+
+        $userAdmin = factory(User::class)->create([
+            'master' => false,
+            'role' => 'Admin'
+        ]);
+        $department = factory(Department::class)->create([
+            'admin_id' => $userAdmin
+        ]);
         for ($i = 0; $i < 12; $i++) {
 
             if ($i == 0 || $i == 3 || $i == 6 || $i == 10) {
@@ -131,7 +140,8 @@ class UsersTableSeeder extends Seeder
                 ]);
                 $region = factory(Region::class)->create([
                     'name' => $regionsName[$regionKey],
-                    'region_manager_id' => $testOwner->id
+                    'region_manager_id' => $testOwner->id,
+                    'department_id' => $department
                 ]);
                 if (($regionKey + 1) < 4) {
                     $regionKey++;
