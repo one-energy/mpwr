@@ -4,12 +4,23 @@ namespace Tests\Feature\Castle;
 
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Builders\TrainingSectionBuilder;
 use Tests\Builders\UserBuilder;
 use Tests\TestCase;
 
 class TrainingsTest extends TestCase
 {
+    use RefreshDatabase;
+    
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = factory(User::class)->create(['master' => true]);
+
+        $this->actingAs($this->user);
+    }
     /** @test */
     public function it_should_show_section_index()
     {
