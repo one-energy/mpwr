@@ -110,30 +110,32 @@
         // Themes begin
         am4core.useTheme(am4themes_animated);
         // Themes end
-
-        var chart = am4core.create("chartdiv", am4charts.SlicedChart);
-        chart.data = [{
-            "name": "doors",
-            "value2": doors
-        }, {
-            "name": "hours",
-            "value2": hours
-        }, {
-            "name": "sits",
-            "value2": sits
-        }, {
-            "name": "sets",
-            "value2": sets
-        }, {
-            "name": "Set Closes",
-            "value2": set_closes
-        }];
-        chart.logo.disabled = true;
-        var series1 = chart.series.push(new am4charts.FunnelSeries());
-        series1.dataFields.value = "value2";
-        series1.dataFields.category = "name";
-        series1.labels.template.disabled = true;
-
+        if (doors && hours && sits && sets && set_closes) {
+            var chart = am4core.create("chartdiv", am4charts.SlicedChart);
+            chart.data = [{
+                "name": "doors",
+                "value2": doors
+            }, {
+                "name": "hours",
+                "value2": hours
+            }, {
+                "name": "sits",
+                "value2": sits
+            }, {
+                "name": "sets",
+                "value2": sets
+            }, {
+                "name": "Set Closes",
+                "value2": set_closes
+            }];
+            chart.logo.disabled = true;
+            var series1 = chart.series.push(new am4charts.FunnelSeries());
+            series1.dataFields.value = "value2";
+            series1.dataFields.category = "name";
+            series1.labels.template.disabled = true;
+        } else {
+            document.getElementById("chartdiv").innerHTML = "No data to display";
+        }
     }); // end am4core.ready()
 </script>
 <!-- <script type="text/javascript" language="javascript">
