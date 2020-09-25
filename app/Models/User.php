@@ -34,17 +34,19 @@ class User extends Authenticatable implements MustVerifyEmail
     use SoftDeletes;
 
     const ROLES = [
-        ['name' => 'Owner',          'description' => 'System Owner'],
-        ['name' => 'Admin',          'description' => 'Allows access to the Admin functionality and Manage Users, Incentives and others (Admin Tab)'],
-        ['name' => 'Region Manager', 'description' => 'Allows update all Regon\'s Number Traker'],
-        ['name' => 'Office Manager', 'description' => 'Allows update a Region\'s Number Tracker'],
-        ['name' => 'Sales Rep',      'description' => 'Allows read/add/edit/cancel Customer'],
-        ['name' => 'Setter',         'description' => 'Allows see the dashboard and only read Customer'],
+        ['name' => 'Owner',              'description' => 'System Owner'],
+        ['name' => 'Admin',              'description' => 'Allows access to the Admin functionality and Manage Users, Incentives and others (Admin Tab)'],
+        ['name' => 'Department Manager', 'description' => 'Allows access to Manage Users, Incentives and others'],
+        ['name' => 'Region Manager',     'description' => 'Allows update all Regon\'s Number Traker'],
+        ['name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
+        ['name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
+        ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
     ];
 
     const TOPLEVEL_ROLES = [
         'Owner',
         'Admin',
+        'Department Manager',
         'Region Manager',
         'Office Manager',
         'Sales Rep',

@@ -126,10 +126,10 @@ class UsersTableSeeder extends Seeder
 
         $userAdmin = factory(User::class)->create([
             'master' => false,
-            'role' => 'Admin'
+            'role' => 'Department Manager'
         ]);
         $department = factory(Department::class)->create([
-            'admin_id' => $userAdmin
+            'department_manager_id' => $userAdmin
         ]);
         for ($i = 0; $i < 12; $i++) {
 

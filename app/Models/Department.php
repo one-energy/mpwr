@@ -11,16 +11,16 @@ use Illuminate\Support\Facades\DB;
 /**
  * @property int $id
  * @property string $name
- * @property int $admin_id
+ * @property int $department_manager_id
  * @property Carbon $created_at
  * @property Carbon $updated_at
- * @property-read User $regionManager
+ * @property-read User $departmentManager
  */
 class Department extends Model
 {
     public function departmentAdmin()
     {
-        return $this->belongsTo(User::class, 'admin_id');
+        return $this->belongsTo(User::class, 'department_manager_id');
     }
 
     public function regions()

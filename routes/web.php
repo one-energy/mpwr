@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\VerificationController;
+use App\Http\Controllers\Castle\DepartmentController;
 use App\Http\Controllers\Castle\MasterInvitationController;
 use App\Http\Controllers\Castle\MastersController;
 use App\Http\Controllers\Castle\ResponseMasterInvitationController;
@@ -88,6 +89,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('regions/{region}/edit', [RegionController::class, 'edit'])->name('regions.edit');
         Route::put('regions/{region}', [RegionController::class, 'update'])->name('regions.update');
         Route::delete('regions/{region}', [RegionController::class, 'destroy'])->name('regions.destroy');
+
+        Route::get('departments', [DepartmentController::class, 'index'])->name('departments.index');
+        Route::get('departments/create', [DepartmentController::class, 'create'])->name('departments.create');
+        Route::post('departments/create', [DepartmentController::class, 'store'])->name('departments.store');
+        Route::get('departments/{deparment}/edit', [DepartmentController::class, 'edit'])->name('departments.edit');
+        Route::put('departments/{deparment}', [DepartmentController::class, 'update'])->name('departments.update');
+        Route::delete('departments/{deparment}', [DepartmentController::class, 'destroy'])->name('departments.destroy');
 
         Route::get('incentives', [ManageIncentivesController::class, 'index'])->name('incentives.index');
         Route::get('incentives/create', [ManageIncentivesController::class, 'create'])->name('incentives.create');
