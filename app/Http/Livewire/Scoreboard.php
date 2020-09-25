@@ -66,9 +66,9 @@ class Scoreboard extends Component
         $this->userId = $userId;
         $this->user   = User::find($userId);
 
-        $this->photoUrl  = $this->user->photo_url;
-        $this->firstName = $this->user->first_name;
-        $this->lastName  = $this->user->last_name;
+        $this->photoUrl   = $this->user->photo_url;
+        $this->firstName  = $this->user->first_name;
+        $this->lastName   = $this->user->last_name;
         $this->officeName = $this->user->office->name;
 
         $query = $this->user->dailyNumbers;

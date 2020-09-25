@@ -10,14 +10,14 @@ class TrainingController extends Controller
 {
     public function index(TrainingPageSection $section = null)
     {
-        $videoId = null;
-        $content = $this->getContent($section);
+        $videoId       = null;
+        $content       = $this->getContent($section);
         $actualSection = $section ?? TrainingPageSection::whereId(1)->first();
-        $index = 0;
+        $index         = 0;
 
-        if($content){
+        if ($content) {
             $videoId = explode('/', $content->video_url);
-            $index = count($videoId);
+            $index   = count($videoId);
         }
 
         $path = $this->getPath($actualSection);
@@ -27,20 +27,20 @@ class TrainingController extends Controller
             'content'       => $content,
             'videoId'       => $videoId[$index - 1] ?? null,
             'actualSection' => $actualSection,
-            'path'          => $path
+            'path'          => $path,
         ]);
     }
 
     public function manageTrainings(TrainingPageSection $section = null)
     {
-        $videoId = null;
-        $content = $this->getContent($section);
+        $videoId       = null;
+        $content       = $this->getContent($section);
         $actualSection = $section ?? TrainingPageSection::whereId(1)->first();
-        $index = 0;
+        $index         = 0;
 
-        if($content){
+        if ($content) {
             $videoId = explode('/', $content->video_url);
-            $index = count($videoId);
+            $index   = count($videoId);
         }
 
         $path = $this->getPath($actualSection);
@@ -50,7 +50,7 @@ class TrainingController extends Controller
             'content'       => $content,
             'videoId'       => $videoId[$index - 1] ?? null,
             'actualSection' => $actualSection,
-            'path'          => $path
+            'path'          => $path,
         ]);
     }
 
@@ -64,6 +64,7 @@ class TrainingController extends Controller
         }
         
         $section->delete();
+
         return redirect(route('castle.manage-trainings.index', $section->parent_id));
     }
 
@@ -75,8 +76,8 @@ class TrainingController extends Controller
                 'title'     => 'required|string|min:5|max:255',
             ],
         );        
-        $trainingPageSection = new TrainingPageSection();
-        $trainingPageSection->title = $validated['title'];
+        $trainingPageSection            = new TrainingPageSection();
+        $trainingPageSection->title     = $validated['title'];
         $trainingPageSection->parent_id = $section->id;
 
         $trainingPageSection->save();
@@ -97,7 +98,7 @@ class TrainingController extends Controller
             ],
         );    
         
-        $trainingPageContent = TrainingPageSection::query()->whereId($section->id)->first();    
+        $trainingPageContent        = TrainingPageSection::query()->whereId($section->id)->first();    
         $trainingPageContent->title = $validated['title'];
         $trainingPageContent->update();
 
@@ -118,10 +119,10 @@ class TrainingController extends Controller
             ],
         )->validate();    
         
-        $trainingPageContent = new TrainingPageContent();
-        $trainingPageContent->title       = $validated['content_title'];
-        $trainingPageContent->description = $validated['description'];
-        $trainingPageContent->video_url   = $validated['video_url'];
+        $trainingPageContent                             = new TrainingPageContent();
+        $trainingPageContent->title                      = $validated['content_title'];
+        $trainingPageContent->description                = $validated['description'];
+        $trainingPageContent->video_url                  = $validated['video_url'];
         $trainingPageContent->training_page_section_id   = $section->id;
 
         $trainingPageContent->save();
@@ -139,14 +140,14 @@ class TrainingController extends Controller
             request(),
             [
                 'content_title'           => 'required|string|min:5|max:255',
-                'video_url'       => 'required|string|min:5|max:255',
-                'description'     => 'required|string',
+                'video_url'               => 'required|string|min:5|max:255',
+                'description'             => 'required|string',
             ],
         );    
 
-        $trainingPageContent = TrainingPageContent::query()->whereId($content->id)->first();
-        $trainingPageContent->title = $validated['content_title'];
-        $trainingPageContent->video_url = $validated['video_url'];
+        $trainingPageContent              = TrainingPageContent::query()->whereId($content->id)->first();
+        $trainingPageContent->title       = $validated['content_title'];
+        $trainingPageContent->video_url   = $validated['video_url'];
         $trainingPageContent->description = $validated['description'];
 
         $trainingPageContent->update();
@@ -160,10 +161,10 @@ class TrainingController extends Controller
 
     public function getPath($section)
     {
-        $path = [$section];
+        $path                = [$section];
         $trainingPageSection = $section;
         do {
-            if($trainingPageSection->parent_id){
+            if ($trainingPageSection->parent_id) {
                 $trainingPageSection = TrainingPageSection::query()->whereId($trainingPageSection->parent_id)->first();
                 array_push($path, $trainingPageSection);
             }
