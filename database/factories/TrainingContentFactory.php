@@ -9,6 +9,6 @@ $factory->define(TrainingPageContent::class, function (Faker $faker) {
     return [
         'title' => $faker->name,
         'description' => $faker->text,
-        'video_url' => 'https://www.youtube.com/watch?v=cu9lJvjERPQ'
+        'video_url' => 'https://youtu.be/cu9lJvjERPQ'
     ];
 });
