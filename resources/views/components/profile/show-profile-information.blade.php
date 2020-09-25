@@ -12,7 +12,7 @@
                         </p>
                         <p class="text-xs leading-4 font-medium text-gray-500 group-hover:text-gray-700 group-focus:underline transition ease-in-out duration-150">
                             @if(user()->office)
-                                {{ user()->office->name }}
+                            {{ user()->office->name }}
                             @endif
                         </p>
                     </div>
@@ -92,30 +92,77 @@
 
         <!-- Funnel Chart -->
         <div class="border-gray-200 border-2 m-1 p-2 rounded-lg" id="funnelChart">
-            <div id="container"></div>
+            <div id="chartdiv"></div>
+            <!-- <div id="container"></div> -->
         </div>
-        
+
     </div>
 </div>
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<script type="text/javascript" language="javascript">
-    const doors = {!! json_encode(user()->dailyNumbers->sum('doors')) !!};
-    const hours = {!! json_encode(user()->dailyNumbers->sum('hours')) !!};
-    const sits = {!! json_encode(user()->dailyNumbers->sum('sits')) !!};
-    const sets = {!! json_encode(user()->dailyNumbers->sum('sets')) !!};
-    const set_closes = {!! json_encode(user()->dailyNumbers->sum('set_closes')) !!};
-    
-    if(doors && hours && sits && sets && set_closes){
+<script>
+    const doors = {!!json_encode(user()-> dailyNumbers->sum('doors')) !!};
+    const hours = {!!json_encode(user()-> dailyNumbers->sum('hours')) !!};
+    const sits = {!!json_encode(user()->dailyNumbers->sum('sits')) !!};
+    const sets = {!!json_encode(user()->dailyNumbers->sum('sets')) !!};
+    const set_closes = {!!json_encode(user()->dailyNumbers->sum('set_closes')) !!};
+    am4core.ready(function() {
+        // Themes begin
+        am4core.useTheme(am4themes_animated);
+        // Themes end
+
+        var chart = am4core.create("chartdiv", am4charts.SlicedChart);
+        chart.data = [{
+            "name": "doors",
+            "value2": doors
+        }, {
+            "name": "hours",
+            "value2": hours
+        }, {
+            "name": "sits",
+            "value2": sits
+        }, {
+            "name": "sets",
+            "value2": sets
+        }, {
+            "name": "Set Closes",
+            "value2": set_closes
+        }];
+        chart.logo.disabled = true;
+        var series1 = chart.series.push(new am4charts.FunnelSeries());
+        series1.dataFields.value = "value2";
+        series1.dataFields.category = "name";
+        series1.labels.template.disabled = true;
+
+    }); // end am4core.ready()
+</script>
+<!-- <script type="text/javascript" language="javascript">
+    const doors = {
+        !!json_encode(user() - > dailyNumbers - > sum('doors')) !!
+    };
+    const hours = {
+        !!json_encode(user() - > dailyNumbers - > sum('hours')) !!
+    };
+    const sits = {
+        !!json_encode(user() - > dailyNumbers - > sum('sits')) !!
+    };
+    const sets = {
+        !!json_encode(user() - > dailyNumbers - > sum('sets')) !!
+    };
+    const set_closes = {
+        !!json_encode(user() - > dailyNumbers - > sum('set_closes')) !!
+    };
+
+    if (doors && hours && sits && sets && set_closes) {
         Highcharts.chart('container', {
             chart: {
                 type: 'funnel'
             },
             title: {
                 text: undefined,
-                
+
             },
-            exporting:{
+            exporting: {
                 buttons: {
                     contextButton: {
                         enabled: false
@@ -175,8 +222,8 @@
                     }
                 }]
             }
-        }); 
-    }else{
+        });
+    } else {
         document.getElementById("funnelChart").innerHTML = "No data to display";
     }
-</script>
+</script> -->

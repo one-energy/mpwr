@@ -80,7 +80,9 @@ class TrainingsTest extends TestCase
     public function it_should_delete_a_section()
     {
         $master = (new UserBuilder)->asMaster()->save()->get();
-        $section = factory(TrainingPageSection::class)->create();
+        $section = factory(TrainingPageSection::class)->create([
+            'parent_id' => null
+        ]);
         $sectionOne = factory(TrainingPageSection::class)->create([
             'parent_id' => $section->id
         ]);
