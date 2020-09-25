@@ -12,9 +12,11 @@ use Illuminate\Support\Facades\DB;
  * @property int $id
  * @property string $name
  * @property int $region_manager_id
+ * @property int $department_id
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property-read User $regionManager
+ * @property-read User $department
  */
 class Region extends Model
 {
@@ -26,6 +28,11 @@ class Region extends Model
     public function users()
     {
         return $this->hasOne(User::class, 'foreign_key', 'user_id')->withTimestamps();
+    }
+
+    public function department()
+    {
+        return $this->hasOne(Department::class, 'foreign_key', 'department_id')->withTimestamps();
     }
 
     public function offices()

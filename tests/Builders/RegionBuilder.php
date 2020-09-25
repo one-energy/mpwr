@@ -3,6 +3,7 @@
 
 namespace Tests\Builders;
 
+use App\Models\Department;
 use App\Models\Region;
 use App\Models\User;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -27,6 +28,7 @@ class RegionBuilder
     {
         if (!$this->region->region_manager_id) {
             $this->region->region_manager_id = factory(User::class)->create()->id;
+            $this->region->department_id = factory(Department::class)->create()->id;
         }
         $this->region->save();
 
