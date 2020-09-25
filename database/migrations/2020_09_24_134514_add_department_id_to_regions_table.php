@@ -14,7 +14,7 @@ class AddDepartmentIdToRegionsTable extends Migration
     public function up()
     {
         Schema::table('regions', function (Blueprint $table) {
-            $table->unsignedBigInteger('department_id')->nullable(false);
+            $table->unsignedBigInteger('department_id');
             $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade');
         });
     }
