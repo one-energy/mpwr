@@ -4,12 +4,16 @@ namespace Tests\Feature\Castle;
 
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Builders\TrainingSectionBuilder;
 use Tests\Builders\UserBuilder;
 use Tests\TestCase;
 
 class TrainingsTest extends TestCase
 {
+
+    use RefreshDatabase;
+
     /** @test */
     public function it_should_show_section_index()
     {
@@ -80,7 +84,9 @@ class TrainingsTest extends TestCase
     public function it_should_delete_a_section()
     {
         $master = (new UserBuilder)->asMaster()->save()->get();
-        $section = factory(TrainingPageSection::class)->create();
+        $section = factory(TrainingPageSection::class)->create([
+            'parent_id' => null
+        ]);
         $sectionOne = factory(TrainingPageSection::class)->create([
             'parent_id' => $section->id
         ]);
