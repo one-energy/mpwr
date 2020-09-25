@@ -26,9 +26,6 @@ class AddDepartmentIdToRegionsTable extends Migration
      */
     public function down()
     {
-        Schema::table('regions', function (Blueprint $table) {
-            $table->dropColumn('department_id');
-            $table->dropForeign('regions_department_id_foreign');
-        });
+        Schema::drop('regions');
     }
 }
