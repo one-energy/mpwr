@@ -112,7 +112,7 @@ class NumberTrackerDetail extends Component
         if (count($this->activeFilters) > 0) {
             $activeFilters = $this->activeFilters;
             $query->where(function ($query) use ($activeFilters) {
-                foreach ($activeFilters as $key => $filter) {
+                foreach ($activeFilters as $filter) {
                     $id = $filter['id'];
                     if ($filter['type'] == "user") {
                         $query->orWhere('daily_numbers.user_id', '=', $id);
