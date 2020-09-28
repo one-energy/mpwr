@@ -24,6 +24,12 @@ class RegionBuilder
         ], $attributes));
     }
 
+    public function withDepartment($department) 
+    {
+        $this->region->department_id = $department->id;
+        return $this;
+    }
+
     public function save()
     {
         if (!$this->region->region_manager_id) {

@@ -11,7 +11,8 @@ use Tests\TestCase;
 class RegionTest extends TestCase
 {
     
-
+    use RefreshDatabase;
+    
     protected function setUp(): void
     {
         parent::setUp();

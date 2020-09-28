@@ -4,6 +4,7 @@ namespace Tests\Feature\Castle;
 
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Builders\TrainingSectionBuilder;
 use Tests\Builders\UserBuilder;

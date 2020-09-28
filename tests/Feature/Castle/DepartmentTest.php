@@ -10,6 +10,8 @@ use Tests\TestCase;
 class DepartmentTest extends TestCase
 {
 
+    use RefreshDatabase;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -48,9 +50,9 @@ class DepartmentTest extends TestCase
         $response = $this->get('castle/departments');
 
         $response->assertStatus(200)
-            ->assertViewIs('castle.departments.index')
-            ->assertViewHas('departments');
-
+            ->assertViewIs('castle.departments.index');
+        
+      
         foreach ($departments as $department) {
             $response->assertSee($department->name);
         }
