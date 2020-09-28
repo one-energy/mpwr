@@ -28,9 +28,8 @@ class AddOfficeIdToUsers extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('office_id');
             if (env('DB_CONNECTION') !== 'sqlite') {
-                $table->dropForeign('office_id');
+                $table->dropForeign(['office_id']);
             }
         });
     }
