@@ -84,6 +84,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->master;
     }
 
+    public function userLevel()
+    {
+        return $this->role;
+    }
+
     public function beCastleMaster()
     {
         $this->forceFill(['master' => true]);

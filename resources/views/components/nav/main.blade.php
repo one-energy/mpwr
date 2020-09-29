@@ -85,7 +85,7 @@
                             </div>
                         </div>
 
-                        @if(user()->isMaster())
+                        @if(user()->userLevel() != 'Sales Rep' && user()->userLevel() != 'Setter')
                             <x-nav.castle-icon/>
                         @endif
 

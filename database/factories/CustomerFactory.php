@@ -9,12 +9,12 @@ use Illuminate\Database\Eloquent\Factory;
 /** @var Factory $factory */
 $factory->define(Customer::class, function (Faker $faker) {
 
-    $epc        = $faker->randomFloat(2, 1, 100);
-    $pay        = $faker->randomFloat(2, 1, 100);
-    $setterFee  = $faker->randomFloat(2, 1, 100);
-    $systemSize = $faker->randomFloat(2, 1, 100);
-    $adders     = $faker->randomNumber();
-
+    $epc        = $faker->randomFloat(2, 1, 1000);
+    $pay        = $epc * 0.8;
+    $setterFee  = $pay * 0.2;
+    $systemSize = 20;
+    $adders     = 20;
+    
     return [
         'first_name'   => $faker->firstName,
         'last_name'    => $faker->lastName,
