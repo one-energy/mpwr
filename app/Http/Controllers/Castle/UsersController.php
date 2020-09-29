@@ -29,11 +29,11 @@ class UsersController extends Controller
 
     public function create()
     {
-        $roles = User::ROLES;
+        $roles   = User::ROLES;
         $offices = Office::all();
 
         return view('castle.users.register',[
-            'roles' => $roles,
+            'roles'   => $roles,
             'offices' => $offices,
         ]);
     }
@@ -75,12 +75,12 @@ class UsersController extends Controller
 
     public function edit(User $user)
     {
-        $roles = User::ROLES;
+        $roles   = User::ROLES;
         $offices = Office::all();
 
         return view('castle.users.edit', [
-            'user'  => $user,
-            'roles' => $roles,
+            'user'    => $user,
+            'roles'   => $roles,
             'offices' => $offices,
         ]);
     }

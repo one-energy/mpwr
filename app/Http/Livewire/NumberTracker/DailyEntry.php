@@ -82,7 +82,7 @@ class DailyEntry extends Component
     public function getMissingOffices()
     {
         $offices = Office::all();
-        foreach ($offices as $key => $office) {
+        foreach ($offices as $office) {
             $missingDates = $this->getMissingDate('Y-m-01', $office->id);
 
             if (count($missingDates) > 0) {

@@ -34,6 +34,11 @@
                                         @lang('Incentives')
                                     </x-nav.link>
 
+                                    <x-nav.link :href="route('castle.departments.index')" class="ml-4"
+                                                :active="is_active('castle.Regions.*')">
+                                        @lang('Departments')
+                                    </x-nav.link>
+
                                     <x-nav.link :href="route('castle.regions.index')" class="ml-4"
                                                 :active="is_active('castle.Regions.*')">
                                         @lang('Regions')
@@ -80,7 +85,7 @@
                             </div>
                         </div>
 
-                        @if(user()->isMaster())
+                        @if(user()->userLevel() != 'Sales Rep' && user()->userLevel() != 'Setter')
                             <x-nav.castle-icon/>
                         @endif
 
@@ -186,6 +191,11 @@
                         </svg>
                     </x-nav.link-mobile>
 
+                    <x-nav.link-mobile :href="route('castle.manage-trainings.index')" class="mt-1"
+                            :active="is_active('castle.manage-trainings.index')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M9 16.985v-10.021l9 5.157-9 4.864zm4-14.98c5.046.504 9 4.782 9 9.97 0 1.467-.324 2.856-.892 4.113l1.738 1.006c.732-1.555 1.154-3.285 1.154-5.119 0-6.303-4.842-11.464-11-11.975v2.005zm-10.109 14.082c-.568-1.257-.891-2.646-.891-4.112 0-5.188 3.954-9.466 9-9.97v-2.005c-6.158.511-11 5.672-11 11.975 0 1.833.421 3.563 1.153 5.118l1.738-1.006zm17.213 1.734c-1.817 2.523-4.769 4.175-8.104 4.175s-6.288-1.651-8.105-4.176l-1.746 1.011c2.167 3.122 5.768 5.169 9.851 5.169 4.082 0 7.683-2.047 9.851-5.168l-1.747-1.011z"/></svg>
+                    </x-nav.link-mobile>
+
                     <x-nav.link-mobile :href="route('castle.permission.index')" class="mt-1"
                             :active="is_active('castle.permission.*')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -204,6 +214,11 @@
                             </symbol>
                             <use xlink:href="#star" width="24" height="24" />
                         </svg>
+                    </x-nav.link-mobile>
+
+                    <x-nav.link-mobile :href="route('castle.dashboard')" class="mt-1"
+                            :active="is_active('castle.departments.*')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M18 10.031v-6.423l-6.036-3.608-5.964 3.569v6.499l-6 3.224v7.216l6.136 3.492 5.864-3.393 5.864 3.393 6.136-3.492v-7.177l-6-3.3zm-1.143.036l-4.321 2.384v-4.956l4.321-2.539v5.111zm-4.895-8.71l4.272 2.596-4.268 2.509-4.176-2.554 4.172-2.551zm-10.172 12.274l4.778-2.53 4.237 2.417-4.668 2.667-4.347-2.554zm4.917 3.587l4.722-2.697v5.056l-4.722 2.757v-5.116zm6.512-3.746l4.247-2.39 4.769 2.594-4.367 2.509-4.649-2.713zm9.638 6.323l-4.421 2.539v-5.116l4.421-2.538v5.115z"/></svg>
                     </x-nav.link-mobile>
 
                     <x-nav.link-mobile :href="route('castle.regions.index')" class="mt-1"

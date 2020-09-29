@@ -11,40 +11,28 @@ use Illuminate\Support\Facades\DB;
 /**
  * @property int $id
  * @property string $name
- * @property int $region_manager_id
- * @property int $department_id
+ * @property int $department_manager_id
  * @property Carbon $created_at
  * @property Carbon $updated_at
- * @property-read User $regionManager
- * @property-read User $department
+ * @property-read User $departmentManager
  */
-class Region extends Model
+class Department extends Model
 {
-    public function regionManger()
+    public function departmentAdmin()
     {
-        return $this->belongsTo(User::class, 'region_manager_id');
+        return $this->belongsTo(User::class, 'department_manager_id');
     }
 
-    public function users()
+    public function regions()
     {
-        return $this->hasOne(User::class, 'foreign_key', 'user_id')->withTimestamps();
-    }
-
-    public function department()
-    {
-        return $this->hasOne(Department::class, 'foreign_key', 'department_id')->withTimestamps();
-    }
-
-    public function offices()
-    {
-        return $this->hasMany(Office::class);
+        return $this->hasMany(Region::class);
     }
 
     public function scopeSearch(Builder $query, $search)
     {
         $query->when($search, function (Builder $query) use ($search) {
             $query->where(
-                DB::raw('lower(regions.name)'),
+                DB::raw('lower(departments.name)'),
                 'like',
                 '%' . strtolower($search) . '%'
             )

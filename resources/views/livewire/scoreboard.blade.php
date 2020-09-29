@@ -74,7 +74,7 @@
                         @foreach($top10Hours as $user)
                             <x-table.tr :loop="$loop" x-on:click="openModal = true" wire:click="setUser({{ $user->id }})" class="cursor-pointer">
                                 <x-table.td>
-                                    <span class="px-2 inline-flex rounded-full bg-green-base text-white">
+                                  <span class="px-2 inline-flex rounded-full bg-green-base text-white">
                                     {{ $loop->index+1 }}
                                   </span>
                                 </x-table.td>
@@ -264,14 +264,14 @@
             <div class="flex justify-start">
                 <div class="flex items-center">
                     <div>
-                    <img class="inline-block h-16 w-16 rounded-full" src="{{ $photoUrl }}" alt="" />
+                    <img class="inline-block h-16 w-16 rounded-full" src="{{ $userArray['photo_url'] }}" alt="" />
                     </div>
                     <div class="ml-3">
                     <p class="text-sm leading-5 font-medium text-gray-700 group-hover:text-gray-900">
-                        {{ $firstName }} {{ $lastName }}
+                        {{ $userArray['first_name'] }} {{ $userArray['last_name'] }}
                     </p>
                     <p class="text-xs leading-4 font-medium text-gray-500 group-hover:text-gray-700 group-focus:underline transition ease-in-out duration-150">
-                        {{ $user->office->name}}
+                        {{ $userArray['office_name']}}
                     </p>
                     </div>
                 </div>
