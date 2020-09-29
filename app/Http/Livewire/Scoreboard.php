@@ -21,15 +21,7 @@ class Scoreboard extends Component
 
     public $user;
 
-    public $totalDoors = 0;
-
-    public $totalHours = 0;
-
-    public $totalSets = 0;
-
-    public $totalSits = 0;
-
-    public $totalCloses = 0;
+    public $userArray = [];
 
     public $dpsRatio;
 
@@ -38,14 +30,6 @@ class Scoreboard extends Component
     public $sitRatio;
 
     public $closeRatio;
-
-    public $photoUrl;
-    
-    public $firstName;
-
-    public $lastName;
-
-    public $office_id;
 
     public $hoursPeriod = 'daily';
 
@@ -66,31 +50,42 @@ class Scoreboard extends Component
         $this->userId = $userId;
         $this->user   = User::find($userId);
 
-        $this->photoUrl   = $this->user->photo_url;
-        $this->firstName  = $this->user->first_name;
-        $this->lastName   = $this->user->last_name;
-        $this->officeName = $this->user->office->name;
-
         $query = $this->user->dailyNumbers;
 
-        $this->totalDoors  = $query->sum('doors');
-        $this->totalHours  = $query->sum('hours');
-        $this->totalSets   = $query->sum('sets');
-        $this->totalSits   = $query->sum('sits');
-        $this->totalCloses = $query->sum('set_closes');
+        $this->userArray             = [
+            'photo_url'     => $this->user->photo_url,
+            'first_name'    => $this->user->first_name,
+            'last_name'     => $this->user->last_name,
+            'office_name'   => $this->user->office->name,
+            'totalDoors'    => $query->sum('doors'),
+            'totalHours'    => $query->sum('hours'),
+            'totalSets'     => $query->sum('sets'),
+            'totalSits'     => $query->sum('sits'),
+            'totalCloses'   => $query->sum('set_closes'),
+        ];
+        // $this->photoUrl   = $this->user->photo_url;
+        // $this->firstName  = $this->user->first_name;
+        // $this->lastName   = $this->user->last_name;
+        // $this->officeName = $this->user->office->name;
 
-        if ($this->totalSets) {
-            $this->dpsRatio   = ($this->totalDoors / $this->totalSets);
-            $this->hpsRatio   = ($this->totalHours / $this->totalSets);
-            $this->sitRatio   = ($this->totalSits / $this->totalSets);
+        // $this->totalDoors  = $query->sum('doors');
+        // $this->totalHours  = $query->sum('hours');
+        // $this->totalSets   = $query->sum('sets');
+        // $this->totalSits   = $query->sum('sits');
+        // $this->totalCloses = $query->sum('set_closes');
+
+        if ($query->sum('sets') > 0) {
+            $this->dpsRatio   = ($query->sum('doors') / $query->sum('sets'));
+            $this->hpsRatio   = ($query->sum('hours') / $query->sum('sets'));
+            $this->sitRatio   = ($query->sum('sits') / $query->sum('sets'));
         } else {
             $this->dpsRatio   = 0;
             $this->hpsRatio   = 0;
             $this->sitRatio   = 0;
         }
 
-        if ($this->totalSits) {
-            $this->closeRatio = ($this->totalCloses / $this->totalSits);
+        if ($query->sum('sits') > 0) {
+            $this->closeRatio = ($query->sum('set_closes') / $query->sum('sits'));
         } else {
             $this->closeRatio = 0;
         }
