@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\CanEnterTheCastle;
+use App\Http\Middleware\CanEnterTheCastleIncentives;
 use App\Http\Middleware\CheckForMaintenanceMode;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\RedirectIfAuthenticated;
@@ -53,17 +54,18 @@ class Kernel extends HttpKernel
     ];
 
     protected $routeMiddleware = [
-        'auth'             => Authenticate::class,
-        'auth.basic'       => AuthenticateWithBasicAuth::class,
-        'bindings'         => SubstituteBindings::class,
-        'cache.headers'    => SetCacheHeaders::class,
-        'can'              => Authorize::class,
-        'guest'            => RedirectIfAuthenticated::class,
-        'password.confirm' => RequirePassword::class,
-        'signed'           => ValidateSignature::class,
-        'throttle'         => ThrottleRequests::class,
-        'verified'         => EnsureEmailIsVerified::class,
-        'castle'           => CanEnterTheCastle::class,
+        'auth'              => Authenticate::class,
+        'auth.basic'        => AuthenticateWithBasicAuth::class,
+        'bindings'          => SubstituteBindings::class,
+        'cache.headers'     => SetCacheHeaders::class,
+        'can'               => Authorize::class,
+        'guest'             => RedirectIfAuthenticated::class,
+        'password.confirm'  => RequirePassword::class,
+        'signed'            => ValidateSignature::class,
+        'throttle'          => ThrottleRequests::class,
+        'verified'          => EnsureEmailIsVerified::class,
+        'castle'            => CanEnterTheCastle::class,
+        'incentives'  => CanEnterTheCastleIncentives::class,
     ];
 
     protected $middlewarePriority = [

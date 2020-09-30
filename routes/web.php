@@ -97,12 +97,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('departments/{deparment}', [DepartmentController::class, 'update'])->name('departments.update');
         Route::delete('departments/{deparment}', [DepartmentController::class, 'destroy'])->name('departments.destroy');
 
-        Route::get('incentives', [ManageIncentivesController::class, 'index'])->name('incentives.index');
-        Route::get('incentives/create', [ManageIncentivesController::class, 'create'])->name('incentives.create');
-        Route::post('incentives/create', [ManageIncentivesController::class, 'store'])->name('incentives.store');
-        Route::get('incentives/{incentive}/edit', [ManageIncentivesController::class, 'edit'])->name('incentives.edit');
-        Route::put('incentives/{incentive}', [ManageIncentivesController::class, 'update'])->name('incentives.update');
-        Route::delete('incentives/{incentive}', [ManageIncentivesController::class, 'destroy'])->name('incentives.destroy');
+        Route::prefix('incentives')->middleware('incentives')->name('incentives.')->group(function () {
+            Route::get('/', [ManageIncentivesController::class, 'index'])->name('index');
+            Route::get('/create', [ManageIncentivesController::class, 'create'])->name('create');
+            Route::post('/create', [ManageIncentivesController::class, 'store'])->name('store');
+            Route::get('/{incentive}/edit', [ManageIncentivesController::class, 'edit'])->name('edit');
+            Route::put('/{incentive}', [ManageIncentivesController::class, 'update'])->name('update');
+            Route::delete('/{incentive}', [ManageIncentivesController::class, 'destroy'])->name('destroy');
+        });
 
         Route::get('/manage-trainings/list/{section?}', [TrainingController::class, 'manageTrainings'])->name('manage-trainings.index');
         Route::post('/manage-trainings/{section?}/create-section', [TrainingController::class, 'storeSection'])->name('manage-trainings.storeSection');
