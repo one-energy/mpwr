@@ -10,7 +10,11 @@ class ManageIncentivesController extends Controller
 {
     public function index()
     {
-        $incentives = Incentive::query()->get();
+        if(user()->role == "Admin" || user()->role == "Owner"){
+            $incentives = Incentive::all();
+        }else{
+            $incentives = Incentive::query()->whereDepartmentId(user()->department_id)->orderBy('number_installs')->get();
+        }
 
         return view('castle.incentives.index', compact('incentives'));
     }

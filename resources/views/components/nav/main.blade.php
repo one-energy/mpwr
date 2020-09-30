@@ -28,11 +28,12 @@
                                                 :active="is_active('castle.permission.*')">
                                         @lang('Permission')
                                     </x-nav.link>
-    
-                                    <x-nav.link :href="route('castle.incentives.index')" class="ml-4"
-                                                :active="is_active('castle.incentives.*')">
-                                        @lang('Incentives')
-                                    </x-nav.link>
+                                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
+                                        <x-nav.link :href="route('castle.incentives.index')" class="ml-4"
+                                                    :active="is_active('castle.incentives.*')">
+                                            @lang('Incentives')
+                                        </x-nav.link>
+                                    @endif
 
                                     <x-nav.link :href="route('castle.departments.index')" class="ml-4"
                                                 :active="is_active('castle.Regions.*')">

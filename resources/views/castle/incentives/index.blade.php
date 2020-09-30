@@ -25,7 +25,7 @@
                                                 <x-table.th by="number_installs">
                                                     @lang('Department')
                                                 </x-table.th>
-                                                @endif
+                                            @endif
                                             <x-table.th by="number_installs">
                                                 @lang('# of Installs')
                                             </x-table.th>
