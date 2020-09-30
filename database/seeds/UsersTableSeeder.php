@@ -42,11 +42,11 @@ class UsersTableSeeder extends Seeder
     public function createDevsquadTeam()
     {
         $owner = factory(User::class)->create([
-            'first_name' => 'DevSquad Master',
-            'last_name'  => 'User',
-            'email'      => 'team@devsquad.com',
-            'role'       => 'Admin',
-            'master'     => true,
+            'first_name'    => 'DevSquad Master',
+            'last_name'     => 'User',
+            'email'         => 'team@devsquad.com',
+            'role'          => 'Admin',
+            'master'        => true,
         ]);
 
     }

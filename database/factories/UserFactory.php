@@ -32,6 +32,7 @@ $factory->define(User::class, function (Faker $faker) use ($photos) {
         'email_verified_at' => now(),
         'password'          => bcrypt('secret'),
         'timezone'          => $faker->timezone,
+        'department_id'     => null,
         'photo_url'         => Storage::disk('public')->url('profiles/' . $photos->random()),
         'remember_token'    => Str::random(10),
         'role'              => $role,

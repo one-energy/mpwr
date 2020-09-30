@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddDepartmentIdToIncentivesTable extends Migration
+class AddDepartmentIdToUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddDepartmentIdToIncentivesTable extends Migration
      */
     public function up()
     {
-        Schema::table('incentives', function (Blueprint $table) {
-            $table->foreignId('department_id')->references('id')->on('departments')->delete('cascade');
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreignId('department_id')->nullable()->references('id')->on('departments')->delete('cascade');
         });
     }
 
@@ -25,7 +25,7 @@ class AddDepartmentIdToIncentivesTable extends Migration
      */
     public function down()
     {
-        Schema::table('incentives', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             if (env('DB_CONNECTION') !== 'sqlite') {
                 $table->dropForeign(['department_id']);
             }
