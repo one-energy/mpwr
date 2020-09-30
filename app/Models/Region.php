@@ -32,7 +32,7 @@ class Region extends Model
 
     public function department()
     {
-        return $this->hasOne(Department::class, 'foreign_key', 'department_id')->withTimestamps();
+        return $this->belongsTo(Department::class, 'department_id');
     }
 
     public function offices()
