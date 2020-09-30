@@ -33,8 +33,8 @@
                                 @endif
                                 @foreach($roles as $role)
                                 <option value="{{ $role['name'] }}" {{ old('role') == $role['name'] ? 'selected' : '' }}>
-                                        {{ $role['name']}}
-                                    </option>
+                                    {{ $role['name']}}
+                                </option>
                                 @endforeach
                             </x-select>
                         </div>
@@ -57,7 +57,34 @@
                         <div class="md:col-span-3 col-span-2">
                             <x-input-currency :label="__('Pay')" name="pay"/>
                         </div>
-                
+                        
+                        <div class="md:col-span-3 col-span-2">
+                            <div class="md:col-span-3 col-span-2">
+                                @if(user()->role != "Admin" && user()->role != "Owner")
+                                    <x-select label="Department" name="department_id" disabledToUser="{{user()->role}}">
+                                        @if (old('department') == '')
+                                            <option selected></option>
+                                        @endif
+                                        @foreach($departments as $department)
+                                            <option value="{{ $department->id }}" {{ old('department', user()->department_id) == $department->id ? 'selected' : '' }}>
+                                                {{ $department['name'] }}
+                                            </option>
+                                        @endforeach
+                                    </x-select>
+                                @else
+                                    <x-select label="Department" name="department_id">
+                                        @if (old('department') == '')
+                                            <option selected></option>
+                                        @endif
+                                        @foreach($departments as $department)
+                                            <option value="{{ $department->id }}" {{ old('department', user()->department_id) == $department->id ? 'selected' : '' }}>
+                                                {{ $department['name'] }}
+                                            </option>
+                                        @endforeach
+                                    </x-select>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 </div>
                 

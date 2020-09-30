@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Castle;
 
 use App\Http\Controllers\Controller;
+use App\Models\Department;
 use App\Models\Invitation;
 use App\Models\Office;
 use App\Models\User;
@@ -31,22 +32,25 @@ class UsersController extends Controller
     {
         $roles   = User::ROLES;
         $offices = Office::all();
+        $departments = Department::all();
 
         return view('castle.users.register',[
             'roles'   => $roles,
             'offices' => $offices,
+            'departments' => $departments,
         ]);
     }
 
     public function store()
     {
         $data = Validator::make(request()->all(), [
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name'  => ['required', 'string', 'max:255'],
-            'role'       => ['nullable', 'string', 'max:255'],
-            'office_id'  => ['nullable', 'numeric'],
-            'pay'        => ['nullable', 'numeric'],
-            'email'      => ['required', 'email', 'unique:invitations', new MasterEmailUnique, new MasterEmailYourSelf, 'unique:users,email'],
+            'first_name'    => ['required', 'string', 'max:255'],
+            'last_name'     => ['required', 'string', 'max:255'],
+            'role'          => ['nullable', 'string', 'max:255'],
+            'office_id'     => ['nullable', 'numeric'],
+            'pay'           => ['nullable', 'numeric'],
+            'department_id' => ['nullable', 'numeric'],
+            'email'         => ['required', 'email', 'unique:invitations', new MasterEmailUnique, new MasterEmailYourSelf, 'unique:users,email'],
         ], [
             'email.unique' => __('There is a pending invitation for this email.'),
         ])->validate();
@@ -77,25 +81,28 @@ class UsersController extends Controller
     {
         $roles   = User::ROLES;
         $offices = Office::all();
+        $departments = Department::all();
 
         return view('castle.users.edit', [
             'user'    => $user,
             'roles'   => $roles,
             'offices' => $offices,
+            'departments' => $departments,
         ]);
     }
 
     public function update($id)
     {
         $data = Validator::make(request()->all(), [
-            'first_name'  => ['required', 'string', 'min:3', 'max:255'],
-            'last_name'   => ['required', 'string', 'min:3', 'max:255'],
-            'role'        => ['nullable', 'string', 'max:255'],
-            'office_id'   => ['nullable', 'numeric'],
-            'pay'         => ['nullable', 'numeric'],
-            'email'       => ['required', 'email', 'min:2', 'max:128', Rule::unique('users')->ignore($id)],
+            'first_name'    => ['required', 'string', 'min:3', 'max:255'],
+            'last_name'     => ['required', 'string', 'min:3', 'max:255'],
+            'role'          => ['nullable', 'string', 'max:255'],
+            'office_id'     => ['nullable', 'numeric'],
+            'pay'           => ['nullable', 'numeric'],
+            'department_id' => ['nullable', 'numeric'],
+            'email'         => ['required', 'email', 'min:2', 'max:128', Rule::unique('users')->ignore($id)],
         ])->validate();
-
+        
         $user = User::find($id);
         $user->forceFill($data);
 

@@ -133,7 +133,7 @@ class UsersTableSeeder extends Seeder
         ]);
 
         $department->department_manager_id = $userAdmin->id;
-
+        $department->save();
         for ($i = 0; $i < 12; $i++) {
 
             if ($i == 0 || $i == 3 || $i == 6 || $i == 10) {
