@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Castle;
 
 use App\Http\Controllers\Controller;
+use App\Models\Department;
 use App\Models\Incentive;
 
 class ManageIncentivesController extends Controller
@@ -16,7 +17,8 @@ class ManageIncentivesController extends Controller
 
     public function create()
     {
-        return view('castle.incentives.create');
+        $departments = Department::all();
+        return view('castle.incentives.create', compact('departments'));
     }
 
     public function store()
@@ -30,6 +32,7 @@ class ManageIncentivesController extends Controller
                 'installs_needed'   => 'required|integer|max:9999',
                 'kw_achieved'       => 'required|integer|max:9999',
                 'kw_needed'         => 'required|integer|max:9999',
+                'department_id'     => ['nullable', 'numeric'],
             ]
         );
 
@@ -40,6 +43,7 @@ class ManageIncentivesController extends Controller
         $incentive->installs_needed   = $validated['installs_needed'];
         $incentive->kw_achieved       = $validated['kw_achieved'];
         $incentive->kw_needed         = $validated['kw_needed'];
+        $incentive->department_id         = $validated['department_id'];
         
         $incentive->save();
 
@@ -52,7 +56,8 @@ class ManageIncentivesController extends Controller
 
     public function edit(Incentive $incentive)
     {
-        return view('castle.incentives.edit', compact('incentive'));
+        $departments = Department::all();
+        return view('castle.incentives.edit', compact(['incentive','departments']));
     }
 
     public function update(Incentive $incentive)
@@ -66,6 +71,7 @@ class ManageIncentivesController extends Controller
                 'installs_needed'   => 'required|integer|max:9999',
                 'kw_achieved'       => 'required|integer|max:9999',
                 'kw_needed'         => 'required|integer|max:9999',
+                'department_id'     => ['nullable', 'numeric'],
             ]
         );
 
@@ -75,6 +81,7 @@ class ManageIncentivesController extends Controller
         $incentive->installs_needed   = $validated['installs_needed'];
         $incentive->kw_achieved       = $validated['kw_achieved'];
         $incentive->kw_needed         = $validated['kw_needed'];
+        $incentive->department_id     = $validated['department_id'];
         
         $incentive->save();
 

@@ -21,6 +21,11 @@
                                 <x-table>
                                     <x-slot name="header">
                                         <x-table.th-tr>
+                                            @if(user()->role == "Admin" || user()->role == "Owner")
+                                                <x-table.th by="number_installs">
+                                                    @lang('Department')
+                                                </x-table.th>
+                                                @endif
                                             <x-table.th by="number_installs">
                                                 @lang('# of Installs')
                                             </x-table.th>
@@ -40,11 +45,14 @@
                                                 @lang('Needed (kW\'s)')
                                             </x-table.th>
                                             <x-table.th></x-table.th>
-                                            </x-table.th-tr>
+                                        </x-table.th-tr>
                                     </x-slot>
                                     <x-slot name="body">
                                         @foreach($incentives as $incentive)
                                             <x-table.tr :loop="$loop">
+                                                @if(user()->role == "Admin" || user()->role == "Owner")
+                                                    <x-table.td>{{ $incentive->department->name }}</x-table.td>
+                                                @endif
                                                 <x-table.td>{{ $incentive->number_installs }}</x-table.td>
                                                 <x-table.td>{{ $incentive->name }}</x-table.td>
                                                 <x-table.td>{{ $incentive->installs_achieved }}</x-table.td>

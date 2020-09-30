@@ -30,8 +30,8 @@ class UsersController extends Controller
 
     public function create()
     {
-        $roles   = User::ROLES;
-        $offices = Office::all();
+        $roles       = User::ROLES;
+        $offices     = Office::all();
         $departments = Department::all();
 
         return view('castle.users.register',[

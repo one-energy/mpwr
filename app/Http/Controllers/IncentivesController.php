@@ -12,9 +12,9 @@ class IncentivesController extends Controller
     public function __invoke()
     {
         if(user()->role == "Admin" || user()->role == "Owner"){
-            $incentives   = Incentive::all();
+            $incentives = Incentive::all();
         }else{
-            $incentives   = Incentive::query()->whereDepartmentId(user()->department_id)->orderBy('number_installs')->get();
+            $incentives = Incentive::query()->whereDepartmentId(user()->department_id)->orderBy('number_installs')->get();
         }
         $userId        = Auth::user()->id;
         $myInstalls    = Customer::query()->where(['opened_by_id' => $userId, 'panel_sold' => true, 'is_active' => true])->count();
