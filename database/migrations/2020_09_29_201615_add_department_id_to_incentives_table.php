@@ -14,7 +14,7 @@ class AddDepartmentIdToIncentivesTable extends Migration
     public function up()
     {
         Schema::table('incentives', function (Blueprint $table) {
-            $table->foreignId('department_id')->references('id')->on('departments')->delete('cascade');
+            $table->foreignId('department_id')->nullable()->references('id')->on('departments')->delete('cascade');
         });
     }
 

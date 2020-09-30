@@ -124,24 +124,28 @@ class UsersTableSeeder extends Seeder
 
         $regionKey = 0;
 
+        $department = factory(Department::class)->create();
+
         $userAdmin = factory(User::class)->create([
-            'master' => false,
-            'role' => 'Department Manager'
+            'master'        => false,
+            'role'          => 'Department Manager',
+            'department_id' => $department->id
         ]);
-        $department = factory(Department::class)->create([
-            'department_manager_id' => $userAdmin
-        ]);
+
+        $department->department_manager_id = $userAdmin->id;
+
         for ($i = 0; $i < 12; $i++) {
 
             if ($i == 0 || $i == 3 || $i == 6 || $i == 10) {
                 $testOwner = factory(User::class)->create([
-                    'master' => false,
-                    'role' => 'Region Manager'
+                    'master'        => false,
+                    'role'          => 'Region Manager',
+                    'department_id' => $department->id
                 ]);
                 $region = factory(Region::class)->create([
-                    'name' => $regionsName[$regionKey],
+                    'name'              => $regionsName[$regionKey],
                     'region_manager_id' => $testOwner->id,
-                    'department_id' => $department
+                    'department_id'     => $department
                 ]);
                 if (($regionKey + 1) < 4) {
                     $regionKey++;
@@ -149,25 +153,29 @@ class UsersTableSeeder extends Seeder
             }
 
             $testOfficeManager = factory(User::class)->create([
-                'master' => false,
-                'role' => 'Office Manager'
+                'master'        => false,
+                'role'          => 'Office Manager',
+                'department_id' => $department
             ]);
 
             $testOffice = factory(Office::class)->create([
-                'name' => $officesName[$i],
+                'name'              => $officesName[$i],
                 'office_manager_id' => $testOfficeManager->id,
                 'region_id'         => $region->id,
             ]);
             
             for ($x = 0; $x < 10; $x++) {
-                $member = factory(User::class)->create(['office_id' => $testOffice->id]);
-                $today = date('d');
-                $date = date('Y-m-01');
+                $member = factory(User::class)->create([
+                    'office_id'     => $testOffice->id,
+                    'department_id' => $department
+                ]);
+                $today  = date('d');
+                $date   = date('Y-m-01');
                 for($y = 0; $y < ($today - 1); $y++){
                     factory(DailyNumber::class)->create([
-                        'date' => date('Y-m-d', strtotime($date . '+' . $y . 'day')),
+                        'date'    => date('Y-m-d', strtotime($date . '+' . $y . 'day')),
                         'user_id' => $member->id,
-                        'hours' => rand(0,24)
+                        'hours'   => rand(0,24)
                     ]);
                 }
             }

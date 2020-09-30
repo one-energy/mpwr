@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Hash;
  * @property string $remember_token
  * @property string $master
  * @property int $office_id
+ * @property int $department_id
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Carbon $deleted_at
