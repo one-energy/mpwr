@@ -11,9 +11,7 @@ class OfficeController extends Controller
 {
     public function index()
     {
-        $offices = Office::query()->get();
-
-        return view('castle.offices.index', compact('offices'));
+        return view('castle.offices.index');
     }
 
     public function create()
