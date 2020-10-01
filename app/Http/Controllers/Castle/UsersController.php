@@ -30,9 +30,9 @@ class UsersController extends Controller
 
     public function create()
     {
-        $roles       = User::ROLES;
-        $offices     = Office::all();
         $departments = Department::all();
+        $roles = $this->getRolesPerRole();
+        $offices = $this->getOfficesPerRole();
 
         return view('castle.users.register',[
             'roles'   => $roles,
@@ -80,10 +80,46 @@ class UsersController extends Controller
 
     public function edit(User $user)
     {
+        
+        $departments = Department::all();
+        $roles = $this->getRolesPerRole();
+        $offices = $this->getOfficesPerRole();
+        return view('castle.users.edit', [
+            'user'    => $user,
+            'roles'   => $roles,
+            'offices' => $offices,
+            'departments' => $departments,
+        ]);
+    }
+
+    public function getOfficesPerRole()
+    {
         if(user()->role == "Department Manager"){
             $offices = Office::query()
                 ->join('regions', 'offices.region_id', '=', 'regions.id')
                 ->where('regions.department_id', '=', user()->department_id)->get();
+        }
+        if(user()->role == "Region Manager"){
+            $offices = Office::query()->select('offices.name', 'offices.id')
+                ->join('regions', function($join){
+                    $join->on('offices.region_id', '=', 'regions.id')
+                        ->where('regions.region_manager_id', '=', user()->id);
+                })->get();
+        }
+        if(user()->role == "Office Manager"){
+            $offices = Office::query()
+                ->whereOfficeManagerId(user()->id);
+        }
+
+        if(user()->role == "Admin" || user()->role == "Owner"){
+            $offices = Office::all();
+        }
+        return $offices;
+    }
+
+    public function getRolesPerRole()
+    {
+        if(user()->role == "Department Manager"){
             $roles = [
                 ['name' => 'Region Manager',     'description' => 'Allows update all Regon\'s Number Traker'],
                 ['name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
@@ -92,11 +128,6 @@ class UsersController extends Controller
             ];
         }
         if(user()->role == "Region Manager"){
-            $offices = Office::query()->select('offices.name', 'offices.id')
-                ->join('regions', function($join){
-                    $join->on('offices.region_id', '=', 'regions.id')
-                        ->where('regions.region_manager_id', '=', user()->id);
-                })->get();
             $roles = [
                 ['name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
                 ['name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
@@ -104,8 +135,6 @@ class UsersController extends Controller
             ];
         }
         if(user()->role == "Office Manager"){
-            $offices = Office::query()
-                ->whereOfficeManagerId(user()->id);
             $roles = [
                 ['name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
                 ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
@@ -113,17 +142,9 @@ class UsersController extends Controller
         }
 
         if(user()->role == "Admin" || user()->role == "Owner"){
-            $offices = Office::all();
             $roles   = User::ROLES;
         }
-        $departments = Department::all();
-
-        return view('castle.users.edit', [
-            'user'    => $user,
-            'roles'   => $roles,
-            'offices' => $offices,
-            'departments' => $departments,
-        ]);
+        return $roles;
     }
 
     public function update($id)
@@ -222,6 +243,7 @@ class UsersController extends Controller
         $user->master            = $invitation->master;
         $user->role              = $data['role'];
         $user->office_id         = $data['office_id'];
+        $user->department_id     = $data['department_id'];
         $user->pay               = $data['pay'];
         $user->save();
 
