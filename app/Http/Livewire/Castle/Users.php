@@ -17,8 +17,29 @@ class Users extends Component
 
     public function render()
     {
+        if(user()->office_id || user()->role == "Department Manager"){
+            $query = User::with('office');
+            if(user()->role == "Office Manager"){
+                $query->whereOfficeId(user()->office_id);
+            }
+            if(user()->role == "Region Manager"){
+                $regionId = user()->id;
+                $query->join('offices', 'users.office_id', '=', 'offices.id');
+                $query->join('regions', function($join) use ($regionId) {
+                    $join->on('offices.region_id', '=', 'regions.id')
+                        ->where('regions.region_manager_id', "=", $regionId);
+
+                });
+            }
+            if(user()->role == "Department Manager"){
+                $query->whereDepartmentId(user()->department_id);
+            }
+        }else{
+            $query = User::query()->whereId(0);
+        }
+        // dd(user()->office_id);
         return view('livewire.castle.users', [
-            'users' => User::with('office')
+            'users' => $query
                 ->search($this->search)
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage),

@@ -70,11 +70,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('permission', [PermissionController::class, 'index'])->name('permission.index');
         Route::get('permission/{user}/edit', [PermissionController::class, 'edit'])->name('permission.edit');
         Route::put('permission/{user}', [PermissionController::class, 'update'])->name('permission.update');
-        
-        Route::get('masters', [MastersController::class, 'index'])->name('masters.index');
-        Route::get('masters/invite', [MasterInvitationController::class, 'form'])->name('masters.invite');
-        Route::post('masters/invite', [MasterInvitationController::class, 'invite']);
-        Route::patch('masters/{master}/revoke', RevokeMasterAccessController::class)->name('masters.revoke');
 
         Route::get('offices', [OfficeController::class, 'index'])->name('offices.index');
         Route::get('offices/create', [OfficeController::class, 'create'])->name('offices.create');
