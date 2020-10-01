@@ -17,27 +17,26 @@ class Users extends Component
 
     public function render()
     {
-        if(user()->office_id || user()->role == "Department Manager"){
-            $query = User::with('office')->select('users.*');
+        $query = User::with('office')->select('users.*');
             if(user()->role == "Office Manager"){
-                $query->whereOfficeId(user()->office_id);
+                $userOfficeId = user()->id;
+                // dd($userOfficeId);
+                $query->join('offices', function($join) use ($userOfficeId) {
+                    $join->on('users.office_id', '=', 'offices.id')
+                        ->where('offices.office_manager_id', '=', $userOfficeId);
+                });
             }
             if(user()->role == "Region Manager"){
-                $regionId = user()->id;
+                $userRegionId = user()->id;
                 $query->join('offices', 'users.office_id', '=', 'offices.id');
-                $query->join('regions', function($join) use ($regionId) {
+                $query->join('regions', function($join) use ($userRegionId) {
                     $join->on('offices.region_id', '=', 'regions.id')
-                        ->where('regions.region_manager_id', "=", $regionId);
-
+                        ->where('regions.region_manager_id', "=", $userRegionId);
                 });
             }
             if(user()->role == "Department Manager"){
                 $query->whereDepartmentId(user()->department_id);
-            }
-        }else{
-            $query = User::query()->whereId(0);
-        }
-        
+            } 
         return view('livewire.castle.users', [
             'users' => $query
                 ->search($this->search)

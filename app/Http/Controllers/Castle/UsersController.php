@@ -77,13 +77,19 @@ class UsersController extends Controller
         return back()->with('message', __("The invitation was sent to {$data['email']}"));
     }
 
+
     public function edit(User $user)
     {
-        $roles   = User::ROLES;
         if(user()->role == "Department Manager"){
             $offices = Office::query()
                 ->join('regions', 'offices.region_id', '=', 'regions.id')
                 ->where('regions.department_id', '=', user()->department_id)->get();
+            $roles = [
+                ['name' => 'Region Manager',     'description' => 'Allows update all Regon\'s Number Traker'],
+                ['name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
+                ['name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
+                ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+            ];
         }
         if(user()->role == "Region Manager"){
             $offices = Office::query()->select('offices.name', 'offices.id')
@@ -91,10 +97,24 @@ class UsersController extends Controller
                     $join->on('offices.region_id', '=', 'regions.id')
                         ->where('regions.region_manager_id', '=', user()->id);
                 })->get();
+            $roles = [
+                ['name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
+                ['name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
+                ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+            ];
         }
         if(user()->role == "Office Manager"){
             $offices = Office::query()
                 ->whereOfficeManagerId(user()->id);
+            $roles = [
+                ['name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
+                ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+            ];
+        }
+
+        if(user()->role == "Admin" || user()->role == "Owner"){
+            $offices = Office::all();
+            $roles   = User::ROLES;
         }
         $departments = Department::all();
 
