@@ -18,7 +18,7 @@ class Users extends Component
     public function render()
     {
         if(user()->office_id || user()->role == "Department Manager"){
-            $query = User::with('office');
+            $query = User::with('office')->select('users.*');
             if(user()->role == "Office Manager"){
                 $query->whereOfficeId(user()->office_id);
             }
@@ -37,7 +37,7 @@ class Users extends Component
         }else{
             $query = User::query()->whereId(0);
         }
-        // dd(user()->office_id);
+        
         return view('livewire.castle.users', [
             'users' => $query
                 ->search($this->search)
