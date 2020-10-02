@@ -17,8 +17,8 @@ class OfficeController extends Controller
     public function create()
     {
         $regions = Region::all();
-        $users   = User::query()->where('role', 'Office Manager')->get();
-
+        $users   = User::whereRole('Office Manager')->get();
+        // dd($users, $regions);
         return view('castle.offices.create', compact('regions', 'users'));
     }
 
@@ -53,8 +53,23 @@ class OfficeController extends Controller
 
     public function edit(Office $office)
     {
-        $regions = Region::all();
-        $users   = User::query()->orderBy('first_name')->get();
+        $regionsQuery = Region::query();
+        if(user()->role == "Department Manager"){
+            $regions = $regionsQuery->whereDepartmentId(user()->department_id)->get();
+        }
+
+        if(user()->role == "Region Manager"){
+            $regions = $regionsQuery->whereRegionManagerId(user()->id)->get();
+        }
+
+        if(user()->role == "Owner" || user()->role == "Admin"){
+            $regions = $regionsQuery->get();
+        }
+
+        $users   = User::query()
+            ->whereDepartmentId($office->region->department->id)
+            ->orderBy("first_name")
+            ->get();
 
         return view('castle.offices.edit', compact('office', 'regions', 'users'));
     }

@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Hash;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Carbon $deleted_at
+ * @property-read Department $department
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -61,6 +62,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function office()
     {
         return $this->belongsTo(Office::class, 'office_id');
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id');
     }
 
     public function invitations()

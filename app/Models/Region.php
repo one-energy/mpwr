@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\DB;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property-read User $regionManager
- * @property-read User $department
+ * @property-read Department $department
  */
 class Region extends Model
 {
