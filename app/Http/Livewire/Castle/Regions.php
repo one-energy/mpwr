@@ -17,9 +17,15 @@ class Regions extends Component
 
     public function render()
     {
+        if(user()->role == "Department Manager"){
+            $regions = Region::query()->select('regions.*')
+                ->join('departments', 'regions.department_id', '=', 'departments.id')
+                ->where('departments.department_manager_id', '=', user()->id);
+        }else{
+            $regions = Region::query();
+        }
         return view('livewire.castle.regions', [
-            'regions' => Region::join('users', 'users.id', '=', 'regions.region_manager_id')
-                ->select('regions.*', 'users.first_name', 'users.last_name')
+            'regions' =>  $regions
                 ->search($this->search)
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage),

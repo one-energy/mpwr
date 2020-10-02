@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Castle;
 
 use App\Http\Controllers\Controller;
+use App\Models\Department;
 use App\Models\Region;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -68,16 +69,19 @@ class RegionController extends Controller
             [
                 'name'              => 'required|string|min:3|max:255',
                 'region_manager_id' => 'required',
+                'department_id'     => 'required',
             ],
             [
                 'region_id.required'         => 'The region field is required.',
                 'region_manager_id.required' => 'The region manager field is required.',
+                'department_id.required' => 'The region manager field is required.',
             ],
         );
 
-        $region                             = new Region();
-        $region->name                       = $validated['name'];
-        $region->region_manager_id          = $validated['region_manager_id'];
+        $region                    = new Region();
+        $region->name              = $validated['name'];
+        $region->region_manager_id = $validated['region_manager_id'];
+        $region->department_id     = $validated['department_id'];
         
         $region->save();
 
@@ -91,7 +95,8 @@ class RegionController extends Controller
     public function create()
     {
         $users   = User::query()->where('role', 'Region Manager')->get();
+        $departments = Department::all();
 
-        return view('castle.regions.create', compact('users'));
+        return view('castle.regions.create', compact('users', 'departments'));
     }
 }

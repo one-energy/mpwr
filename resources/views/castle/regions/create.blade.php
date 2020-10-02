@@ -25,6 +25,18 @@
                                 @endforeach
                             </x-select>
                         </div>
+                        <div class="md:col-span-3 col-span-2">
+                            <x-select label="Region Manager" name="department_id">
+                                @if (old('department_id') == '')
+                                    <option selected></option>
+                                @endif
+                                @foreach($departments as $department)
+                                    <option value="{{ $department->id }}" {{ old('department_id') == $department->id ? 'selected' : '' }}>
+                                        {{ $department->name }}
+                                    </option>
+                                @endforeach
+                            </x-select>
+                        </div>
                     </div>
                 </div>
                 <div class="mt-8 border-t border-gray-200 pt-5">

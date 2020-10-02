@@ -47,7 +47,7 @@
 
                                     @if(user()->role != 'Office Manager' && user()->role != 'Region Manager')
                                         <x-nav.link :href="route('castle.regions.index')" class="ml-4"
-                                                    :active="is_active('castle.Regions.*')">
+                                                    :active="is_active('castle.regions.*')">
                                             @lang('Regions')
                                         </x-nav.link>
                                     @endif
