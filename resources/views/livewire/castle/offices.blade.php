@@ -6,11 +6,13 @@
                     <div>
                         <h3 class="text-lg text-gray-900">Manage Offices</h3>
                       </div>
-                      <div>
-                        <x-button :href="route('castle.offices.create')" color="green">
-                            @lang('Create')
-                        </x-button>
-                      </div>
+                      @if(user()->role != "Office Manager")
+                        <div>
+                            <x-button :href="route('castle.offices.create')" color="green">
+                                @lang('Create')
+                            </x-button>
+                        </div>
+                      @endif
                 </div>
 
                 <x-search :search="$search"/>
