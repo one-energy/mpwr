@@ -24,6 +24,11 @@
                             <x-table :pagination="$offices->links()">
                                 <x-slot name="header">
                                     <x-table.th-tr>
+                                        @if(user()->role == "Admin" || user()->role == "Owner")
+                                            <x-table.th-searchable by="offices.name" :sortedBy="$sortBy" :direction="$sortDirection">
+                                                @lang('Department')
+                                            </x-table.th>
+                                        @endif
                                         <x-table.th-searchable by="offices.name" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Office')
                                         </x-table.th>
@@ -39,6 +44,10 @@
                                 <x-slot name="body">
                                     @foreach($offices as $office)
                                         <x-table.tr :loop="$loop">
+                                            @if(user()->role == "Admin" || user()->role == "Owner")
+                                                <x-table.td>{{ $office->region->department->name }}</x-table.td>
+                                            @endif
+                                            <x-table.td>{{ $office->name }}</x-table.td>
                                             <x-table.td>{{ $office->name }}</x-table.td>
                                             <x-table.td>{{ $office->region->name }}</x-table.td>
                                             <x-table.td>{{ $office->office_manager->first_name }} {{ $office->office_manager->last_name }}</x-table.td>

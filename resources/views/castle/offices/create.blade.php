@@ -34,7 +34,7 @@
                                 @endif
                                 @foreach($users as $office_manager)
                                     <option value="{{ $office_manager->id }}" {{ old('office_manager_id') == $office_manager->id ? 'selected' : '' }}>
-                                       {{ $office_manager->first_name }} {{ $office_manager->last_name }}
+                                    {{$office_manager->department->name ?? 'Without Department'}} - {{ $office_manager->first_name }} {{ $office_manager->last_name }}
                                     </option>
                                 @endforeach
                             </x-select>
