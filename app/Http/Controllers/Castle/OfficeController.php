@@ -78,6 +78,10 @@ class OfficeController extends Controller
             $regions = $regionsQuery->whereRegionManagerId(user()->id)->get();
         }
 
+        if(user()->role == "Office Manager"){
+            $regions = $regionsQuery->whereId($office->region_id)->get();
+        }
+
         if(user()->role == "Owner" || user()->role == "Admin"){
             $regions = $regionsQuery->get();
         }
