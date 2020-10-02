@@ -26,16 +26,29 @@
                             </x-select>
                         </div>
                         <div class="md:col-span-3 col-span-2">
-                            <x-select label="Region Manager" name="department_id">
-                                @if (old('department_id') == '')
-                                    <option selected></option>
-                                @endif
-                                @foreach($departments as $department)
-                                    <option value="{{ $department->id }}" {{ old('department_id') == $department->id ? 'selected' : '' }}>
-                                        {{ $department->name }}
-                                    </option>
-                                @endforeach
-                            </x-select>
+                            @if(user()->role != "Admin" && user()->role != "Owner")
+                                <x-select label="Department" name="department_id" hidden>
+                                    @if (old('department') == '')
+                                        <option selected></option>
+                                    @endif
+                                    @foreach($departments as $department)
+                                        <option value="{{ $department->id }}" {{ old('department', user()->department_id) == $department->id ? 'selected' : '' }}>
+                                            {{ $department['name'] }}
+                                        </option>
+                                    @endforeach
+                                </x-select>
+                            @else
+                                <x-select label="Department" name="department_id">
+                                    @if (old('department') == '')
+                                        <option selected></option>
+                                    @endif
+                                    @foreach($departments as $department)
+                                        <option value="{{ $department->id }}" {{ old('department', user()->department_id) == $department->id ? 'selected' : '' }}>
+                                            {{ $department['name'] }}
+                                        </option>
+                                    @endforeach
+                                </x-select>
+                            @endif
                         </div>
                     </div>
                 </div>

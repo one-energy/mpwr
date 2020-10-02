@@ -20,9 +20,10 @@ class RegionController extends Controller
 
     public function edit(Region $region)
     {
-        $users   = User::query()->where('role', 'Region Manager')->get();
+        $users       = User::query()->where('role', 'Region Manager')->get();
+        $departments = Department::all();
 
-        return view('castle.regions.edit', compact('region', 'users'));
+        return view('castle.regions.edit', compact('region', 'users', 'departments'));
     }
 
     public function update(Region $region)
@@ -74,7 +75,7 @@ class RegionController extends Controller
             [
                 'region_id.required'         => 'The region field is required.',
                 'region_manager_id.required' => 'The region manager field is required.',
-                'department_id.required' => 'The region manager field is required.',
+                'department_id.required'     => 'The department field is required.',
             ],
         );
 

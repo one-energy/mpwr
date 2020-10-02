@@ -68,7 +68,6 @@ class Kernel extends HttpKernel
         'verified'          => EnsureEmailIsVerified::class,
         'castle'            => CanEnterTheCastle::class,
         'incentives'        => CanEnterTheCastleIncentives::class,
-        'offices'           => CanEnterTheCastleOffices::class,
         'regions'           => CanEnterTheCastleRegions::class,
     ];
 

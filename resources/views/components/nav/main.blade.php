@@ -26,11 +26,12 @@
                                         </x-nav.link>
                                     @endif
 
-                                    <x-nav.link :href="route('castle.permission.index')" class="ml-4"
-                                                :active="is_active('castle.permission.*')">
-                                        @lang('Permission')
-                                    </x-nav.link>
-
+                                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
+                                        <x-nav.link :href="route('castle.permission.index')" class="ml-4"
+                                                    :active="is_active('castle.permission.*')">
+                                            @lang('Permission')
+                                        </x-nav.link>
+                                    @endif
                                     @if(user()->role == 'Admin' || user()->role == 'Owner' )
                                         <x-nav.link :href="route('castle.departments.index')" class="ml-4"
                                                     :active="is_active('castle.Regions.*')">
@@ -45,24 +46,24 @@
                                         </x-nav.link>
                                     @endif
 
-                                    @if(user()->role != 'Office Manager' && user()->role != 'Region Manager')
+                                    @if(user()->role != 'Office Manager')
                                         <x-nav.link :href="route('castle.regions.index')" class="ml-4"
                                                     :active="is_active('castle.regions.*')">
                                             @lang('Regions')
                                         </x-nav.link>
                                     @endif
 
-                                    @if(user()->role != 'Office Manager')
-                                        <x-nav.link :href="route('castle.offices.index')" class="ml-4"
-                                                    :active="is_active('castle.offices.*')">
-                                            @lang('Offices')
+                                    <x-nav.link :href="route('castle.offices.index')" class="ml-4"
+                                                :active="is_active('castle.offices.*')">
+                                        @lang('Offices')
+                                    </x-nav.link>
+                            
+                                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
+                                        <x-nav.link :href="route('castle.users.index')" class="ml-4"
+                                                    :active="is_active('castle.users.*')">
+                                            @lang('Users')
                                         </x-nav.link>
                                     @endif
-
-                                    <x-nav.link :href="route('castle.users.index')" class="ml-4"
-                                                :active="is_active('castle.users.*')">
-                                        @lang('Users')
-                                    </x-nav.link>
                                 @else
                                     <x-nav.link :href="route('home')" class="ml-4"
                                                 :active="is_active('home')">

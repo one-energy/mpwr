@@ -37,6 +37,7 @@ class Users extends Component
             if(user()->role == "Department Manager"){
                 $query->whereDepartmentId(user()->department_id);
             } 
+
         return view('livewire.castle.users', [
             'users' => $query
                 ->search($this->search)

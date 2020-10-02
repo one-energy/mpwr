@@ -21,7 +21,12 @@ class Regions extends Component
             $regions = Region::query()->select('regions.*')
                 ->join('departments', 'regions.department_id', '=', 'departments.id')
                 ->where('departments.department_manager_id', '=', user()->id);
-        }else{
+        }
+        if(user()->role == "Region Manager"){
+            $regions = Region::query()->select('regions.*')
+                ->where('region_manager_id', '=', user()->id);
+        }
+        if(user()->role == "Admin" || user()->role == "Owner"){
             $regions = Region::query();
         }
         return view('livewire.castle.regions', [
