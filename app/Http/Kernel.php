@@ -5,6 +5,8 @@ namespace App\Http;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\CanEnterTheCastle;
 use App\Http\Middleware\CanEnterTheCastleIncentives;
+use App\Http\Middleware\CanEnterTheCastleOffices;
+use App\Http\Middleware\CanEnterTheCastleRegions;
 use App\Http\Middleware\CheckForMaintenanceMode;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\RedirectIfAuthenticated;
@@ -65,7 +67,9 @@ class Kernel extends HttpKernel
         'throttle'          => ThrottleRequests::class,
         'verified'          => EnsureEmailIsVerified::class,
         'castle'            => CanEnterTheCastle::class,
-        'incentives'  => CanEnterTheCastleIncentives::class,
+        'incentives'        => CanEnterTheCastleIncentives::class,
+        'offices'           => CanEnterTheCastleOffices::class,
+        'regions'           => CanEnterTheCastleRegions::class,
     ];
 
     protected $middlewarePriority = [

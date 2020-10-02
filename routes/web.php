@@ -70,20 +70,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('permission', [PermissionController::class, 'index'])->name('permission.index');
         Route::get('permission/{user}/edit', [PermissionController::class, 'edit'])->name('permission.edit');
         Route::put('permission/{user}', [PermissionController::class, 'update'])->name('permission.update');
+        
+        Route::prefix('offices')->middleware('offices')->name('offices.')->group(function () {
+            Route::get('/', [OfficeController::class, 'index'])->name('index');
+            Route::get('/create', [OfficeController::class, 'create'])->name('create');
+            Route::post('/create', [OfficeController::class, 'store'])->name('store');
+            Route::get('/{office}/edit', [OfficeController::class, 'edit'])->name('edit');
+            Route::put('/{office}', [OfficeController::class, 'update'])->name('update');
+            Route::delete('/{office}', [OfficeController::class, 'destroy'])->name('destroy');
+        });
 
-        Route::get('offices', [OfficeController::class, 'index'])->name('offices.index');
-        Route::get('offices/create', [OfficeController::class, 'create'])->name('offices.create');
-        Route::post('offices/create', [OfficeController::class, 'store'])->name('offices.store');
-        Route::get('offices/{office}/edit', [OfficeController::class, 'edit'])->name('offices.edit');
-        Route::put('offices/{office}', [OfficeController::class, 'update'])->name('offices.update');
-        Route::delete('offices/{office}', [OfficeController::class, 'destroy'])->name('offices.destroy');
-
-        Route::get('regions', [RegionController::class, 'index'])->name('regions.index');
-        Route::get('regions/create', [RegionController::class, 'create'])->name('regions.create');
-        Route::post('regions/create', [RegionController::class, 'store'])->name('regions.store');
-        Route::get('regions/{region}/edit', [RegionController::class, 'edit'])->name('regions.edit');
-        Route::put('regions/{region}', [RegionController::class, 'update'])->name('regions.update');
-        Route::delete('regions/{region}', [RegionController::class, 'destroy'])->name('regions.destroy');
+        Route::prefix('regions')->middleware('regions')->name('regions.')->group(function () {
+            Route::get('/', [RegionController::class, 'index'])->name('index');
+            Route::get('/create', [RegionController::class, 'create'])->name('create');
+            Route::post('/create', [RegionController::class, 'store'])->name('store');
+            Route::get('/{region}/edit', [RegionController::class, 'edit'])->name('edit');
+            Route::put('/{region}', [RegionController::class, 'update'])->name('update');
+            Route::delete('/{region}', [RegionController::class, 'destroy'])->name('destroy');
+        });
 
         Route::get('departments', [DepartmentController::class, 'index'])->name('departments.index');
         Route::get('departments/create', [DepartmentController::class, 'create'])->name('departments.create');

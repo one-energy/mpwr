@@ -16,8 +16,24 @@ class OfficeController extends Controller
 
     public function create()
     {
-        $regions = Region::all();
-        $users   = User::whereRole('Office Manager')->get();
+        if(user()->role == "Admin" || user()->role = "Owner"){
+            $regions = Region::all();
+            $users   = User::all();
+        }
+
+        if(user()->role == "Department Manager"){
+            $regions = Region::query()
+                ->join('departments', function ($join) {
+                    $join->on("regions.department_id", '=', 'departments.id')
+                        ->where('departments.department_manager_id', '=', user()->id);
+                })->get();
+            $users = User::query()->whereDepartmentId(user()->department_id)->get();
+        }
+        if(user()->role == "Region Manager"){
+            $regions = Region::query()->whereRegionManagerId(user()->id)->get();
+            $users = User::query()->whereDepartmentId(user()->department_id)->get();
+        }
+        // $users   = User::whereRole('Office Manager')->get();
         // dd($users, $regions);
         return view('castle.offices.create', compact('regions', 'users'));
     }
