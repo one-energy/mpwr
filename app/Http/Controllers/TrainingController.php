@@ -10,20 +10,28 @@ class TrainingController extends Controller
 {
     public function index(TrainingPageSection $section = null)
     {
-        $videoId       = null;
-        $content       = $this->getContent($section);
-        $actualSection = $section ?? TrainingPageSection::whereId(1)->first();
-        $index         = 0;
+        $content = [];
+        $index   = 0;
+        $videoId = 0;
+        $actualSection = 0;
+        $path          = [];
 
-        if ($content) {
-            $videoId = explode('/', $content->video_url);
-            $index   = count($videoId);
+        if(user()->department_id){
+            $videoId       = null;
+            $content       = $this->getContent($section);
+            $actualSection = $section ?? TrainingPageSection::whereTitle("Training Page");
+            $actualSection->whereDepartmentId(user()->department_id)->first();
+            $index = 0;
+            if ($content) {
+                $videoId = explode('/', $content->video_url);
+                $index   = count($videoId);
+            }
+            $path = $this->getPath($actualSection);
         }
 
-        $path = $this->getPath($actualSection);
 
         return view('training.index', [
-            'sections'      => $this->getParentSections($section),
+            'sections'      => user()->department_id ? $this->getParentSections($section) : [],
             'content'       => $content,
             'videoId'       => $videoId[$index - 1] ?? null,
             'actualSection' => $actualSection,
