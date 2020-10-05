@@ -41,13 +41,74 @@ class UsersTableSeeder extends Seeder
 
     public function createDevsquadTeam()
     {
-        $owner = factory(User::class)->create([
+        $departmentOne = factory(Department::class)->create();
+        $departmentTwo = factory(Department::class)->create();
+
+        factory(User::class)->create([
             'first_name'    => 'DevSquad Master',
             'last_name'     => 'User',
             'email'         => 'team@devsquad.com',
-            'role'          => 'Admin',
+            'role'          => 'Owner',
+            'department_id' => $departmentOne->id,
             'master'        => true,
         ]);
+        factory(User::class)->create([
+            'first_name'    => 'Admin',
+            'last_name'     => 'Devsquad',
+            'email'         => 'depar@devsquad.com',
+            'role'          => 'Admin',
+            'department_id' => $departmentOne->id,
+            'master'        => true,
+        ]);
+        factory(User::class)->create([
+            'first_name'    => 'Department one',
+            'last_name'     => 'Manager',
+            'email'         => 'onedmanager@devsquad.com',
+            'role'          => 'Department Manager',
+            'department_id' => $departmentOne->id,
+            'master'        => true,
+        ]);
+        factory(User::class)->create([
+            'first_name'    => 'Department Two',
+            'last_name'     => 'Manager',
+            'email'         => 'twodmanager@devsquad.com',
+            'department_id' => $departmentTwo->id,
+            'role'          => 'Department Manager',
+            'master'        => true,
+        ]);
+        factory(User::class)->create([
+            'first_name'    => 'Region one',
+            'last_name'     => 'Manager',
+            'email'         => 'onermanager@devsquad.com',
+            'department_id' => $departmentOne->id,
+            'role'          => 'Region Manager',
+            'master'        => true,
+        ]);
+        factory(User::class)->create([
+            'first_name'    => 'Region two',
+            'last_name'     => 'Manager',
+            'email'         => 'twormanager@devsquad.com',
+            'department_id' => $departmentTwo->id,
+            'role'          => 'Region Manager',
+            'master'        => true,
+        ]);
+        factory(User::class)->create([
+            'first_name'    => 'Office one',
+            'last_name'     => 'Manager',
+            'email'         => 'oneomanager@devsquad.com',
+            'department_id' => $departmentOne->id,
+            'role'          => 'Region Manager',
+            'master'        => true,
+        ]);
+        factory(User::class)->create([
+            'first_name'    => 'Office two',
+            'last_name'     => 'Manager',
+            'email'         => 'twoomanager@devsquad.com',
+            'department_id' => $departmentTwo->id,
+            'role'          => 'Region Manager',
+            'master'        => true,
+        ]);
+
 
     }
 
