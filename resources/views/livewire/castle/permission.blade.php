@@ -13,6 +13,11 @@
                         <x-table :pagination="$users->links()">
                             <x-slot name="header">
                                 <x-table.th-tr>
+                                    @if(user()->role == "Admin" || user()->role == "Owner")
+                                        <x-table.th>
+                                            @lang('Department')
+                                        </x-table.th>
+                                    @endif
                                     <x-table.th-searchable by="first_name" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Name')
                                     </x-table.th>
@@ -25,6 +30,9 @@
                             <x-slot name="body">
                                 @foreach($users as $user)
                                     <x-table.tr :loop="$loop">
+                                        @if(user()->role == "Admin" || user()->role == "Owner")
+                                            <x-table.td>{{ $user->department->name ?? 'Without Department'}}</x-table.td>
+                                        @endif
                                         <x-table.td>{{ $user->first_name . ' ' . $user->last_name }}</x-table.td>
                                         <x-table.td>{{ $user->role }}</x-table.td>
                                         <x-table.td>
