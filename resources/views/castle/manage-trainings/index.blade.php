@@ -30,7 +30,10 @@
                           <div class="flex justify-start">
                             <div class="flex-grid items-center">
                               <h3>Add a new section to {{$actualSection->title}}</h3>
-                              <x-form class="mt-8 inline-flex" :route="route('castle.manage-trainings.storeSection', $actualSection->id)">
+                              <x-form class="mt-8 inline-flex" :route="route('castle.manage-trainings.storeSection',[
+                                  'department' => user()->department_id,
+                                  'section' => $actualSection->id
+                                ])">
                                 <x-input label="Title" name="title" type="text"></x-input>
                                 <div class="mt-6">
                                   <span class="block w-full rounded-md shadow-sm">
@@ -142,7 +145,7 @@
         </div>
         <div class="text-gray-600 mt-6 md:mt-3 inline-flex items-center">
           @foreach($path as $pathSection)
-            <a href="/castle/manage-trainings/list/{{$pathSection->id}}" class="underline align-baseline">{{$pathSection->title}}</a> / 
+            <a href="/castle/manage-trainings/list/{{$departmentId}}/{{$pathSection->id}}" class="underline align-baseline">{{$pathSection->title}}</a> / 
           @endforeach
           @if(user()->isMaster())
             <div class="inline-flex" x-data="{ 'editSectionModal': false }" @keydown.escape="editSectionModal = false" x-cloak>
@@ -185,6 +188,28 @@
             </div>
           @endif
         </div>
+        @if(user()->role == "Admin" || user()->role == "Owner")
+          <form action="{{ route('castle.manage-trainings.changeDepartment')}}" method="POST">
+            @csrf
+            <div class="flex justify-end" x-data="{ sortOptions: false }">
+                <label for="department" class="block mt-1 text-xs font-medium leading-5 text-gray-700">
+                    Department
+                </label>
+                <div class="relative inline-block ml-2 text-left">
+                    <select name="department"
+                      onchange="this.form.submit()"
+                      class="block w-full py-1 text-lg text-gray-500 transition duration-150 ease-in-out rounded-lg form-select">
+                      @foreach($departments as $department)
+                        <option value="{{ $department->id }}" {{ $departmentId == $department->id ? 'selected' : '' }}>
+                            {{ $department->name }}
+                        </option>
+                      @endforeach 
+                    </select>
+                </div>
+            </div>
+          </form>
+        @endif
+        
         <div class="mt-15">
           <div class="mt-2 p-4 text-lg">
             @if($videoId)
@@ -241,7 +266,10 @@
                     </div>
                   </div>
                   <div class="col-span-9 hover:bg-gray-50">
-                    <a href="{{route('castle.manage-trainings.index', $section->id)}}">
+                    <a href="{{route('castle.manage-trainings.index',[
+                        'department' => user()->department_id,
+                        'section'    => $section->id
+                      ])}}">
                       <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-r-lg ">
                         <div class="col-span-9 inline-flex">
                           <p class="self-center">{{$section->title}}</p>

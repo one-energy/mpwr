@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $title
  * @property string $video_url
  * @property string $descriptrion
+ * @property-read TrainingPageSection $trainingPageSection
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
@@ -17,5 +18,4 @@ class TrainingPageContent extends Model
 {
     protected $guarded = [];
   
-    //
 }
