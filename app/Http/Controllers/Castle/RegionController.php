@@ -95,7 +95,14 @@ class RegionController extends Controller
 
     public function create()
     {
-        $users   = User::query()->where('role', 'Region Manager')->get();
+        $usersQuery   = User::query()->whereRole("Region Manager");
+
+        if(user()->role == "Admin" || user()->role == "Owner"){
+            $users = $usersQuery->get();
+        }
+        if(user()->role == "Department Manager"){
+            $users = $usersQuery->whereDepartmentId(user()->department_id)->get();
+        }
         $departments = Department::all();
 
         return view('castle.regions.create', compact('users', 'departments'));

@@ -121,7 +121,7 @@ class UsersTableSeeder extends Seeder
             'last_name'     => 'Manager',
             'email'         => 'oneomanager@devsquad.com',
             'department_id' => $departmentOne->id,
-            'role'          => 'Region Manager',
+            'role'          => 'Office Manager',
             'master'        => true,
         ]);
         factory(User::class)->create([
@@ -129,7 +129,7 @@ class UsersTableSeeder extends Seeder
             'last_name'     => 'Manager',
             'email'         => 'otheroneomanager@devsquad.com',
             'department_id' => $departmentOne->id,
-            'role'          => 'Region Manager',
+            'role'          => 'Office Manager',
             'master'        => true,
         ]);
         factory(User::class)->create([
@@ -137,7 +137,7 @@ class UsersTableSeeder extends Seeder
             'last_name'     => 'Manager',
             'email'         => 'twoomanager@devsquad.com',
             'department_id' => $departmentTwo->id,
-            'role'          => 'Region Manager',
+            'role'          => 'Office Manager',
             'master'        => true,
         ]);
         factory(User::class)->create([
@@ -145,7 +145,7 @@ class UsersTableSeeder extends Seeder
             'last_name'     => 'Manager',
             'email'         => 'othertwoomanager@devsquad.com',
             'department_id' => $departmentTwo->id,
-            'role'          => 'Region Manager',
+            'role'          => 'Office Manager',
             'master'        => true,
         ]);
 

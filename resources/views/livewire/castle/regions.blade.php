@@ -21,14 +21,14 @@
                         <x-table :pagination="$regions->links()">
                             <x-slot name="header">
                                 <x-table.th-tr>
-                                    <x-table.th-searchable by="regions.name" :sortedBy="$sortBy" :direction="$sortDirection">
-                                        @lang('Region')
-                                    </x-table.th>
                                     @if(user()->role != "Department Manager")
                                         <x-table.th-searchable by="regions.name" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Department')
                                         </x-table.th>
                                     @endif
+                                    <x-table.th-searchable by="regions.name" :sortedBy="$sortBy" :direction="$sortDirection">
+                                        @lang('Region')
+                                    </x-table.th>
                                     <x-table.th-searchable by="users.first_name" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Region Manager')
                                     </x-table.th>
@@ -38,10 +38,10 @@
                             <x-slot name="body">
                                 @foreach($regions as $region)
                                     <x-table.tr :loop="$loop">
-                                        <x-table.td>{{ $region->name }}</x-table.td>
                                         @if(user()->role != "Department Manager")
                                             <x-table.td>{{ $region->department->name }}</x-table.td>
                                         @endif
+                                        <x-table.td>{{ $region->name }}</x-table.td>
                                         <x-table.td>{{ $region->regionManger->first_name }} {{ $region->regionManger->last_name }}</x-table.td>
                                         <x-table.td class="flex space-x-3">
                                             <x-link :href="route('castle.regions.edit', $region)" class="text-sm">Edit</x-link>
