@@ -44,27 +44,37 @@ class TrainingController extends Controller
 
     public function manageTrainings(Department $department, TrainingPageSection $section = null)
     {
-        $videoId       = null;
-        $section       = TrainingPageSection::whereDepartmentId($department->id ?? 0)->first();
-        $content       = $this->getContent($section);
-        $actualSection = $section ?? TrainingPageSection::whereDepartmentId($department->id ?? 0)->first();
-        $departments   = Department::all();
-        $index         = 0; 
+        $content = [];
+        $index   = 0;
+        $videoId = 0;
+        $actualSection = 0;
+        $path          = [];
+        $section = TrainingPageSection::whereDepartmentId($department->id ?? 0)->first();
+        $departments = [];
 
-        if ($content) {
-            $videoId = explode('/', $content->video_url);
-            $index   = count($videoId);
+        if($department->id){
+            $videoId       = null;
+            $section       = TrainingPageSection::whereDepartmentId($department->id ?? 0)->first();
+            $content       = $this->getContent($section);
+            $actualSection = $section ?? TrainingPageSection::whereDepartmentId($department->id ?? 0)->first();
+            $departments   = Department::all();
+            $index         = 0; 
+    
+            if ($content) {
+                $videoId = explode('/', $content->video_url);
+                $index   = count($videoId);
+            }
+    
+            $path = $this->getPath($actualSection);
         }
-
-        $path = $this->getPath($actualSection);
-
+        // dd($department->id);
         return view('castle.manage-trainings.index', [
-            'sections'      => $this->getParentSections($actualSection),
+            'sections'      => $department->id ? $this->getParentSections($actualSection) : [],
             'content'       => $content,
             'videoId'       => $videoId[$index - 1] ?? null,
             'actualSection' => $actualSection,
             'path'          => $path,
-            'departmentId'  => $department->id,
+            'departmentId'  => $department->id ?? 0,
             'departments'   => $departments
         ]);
     }

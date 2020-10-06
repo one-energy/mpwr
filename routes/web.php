@@ -129,7 +129,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('/customers', CustomerController::class);
     Route::put('/customers/{customer}/active', [CustomerController::class, 'Active'])->name('customers.active');
     Route::get('/scoreboard', ScoreboardController::class)->name('scoreboard');
-    Route::get('/trainings/{department}/{section?}', [TrainingController::class, 'index'])->name('trainings.index');
+    Route::get('/trainings/{department?}/{section?}', [TrainingController::class, 'index'])->name('trainings.index');
     Route::get('/incentives', IncentivesController::class)->name('incentives');
     Route::get('/number-tracking', [NumberTrackingController::class, 'index'])->name('number-tracking.index');
     Route::get('/number-tracking/create', [NumberTrackingController::class, 'create'])->name('number-tracking.create');
