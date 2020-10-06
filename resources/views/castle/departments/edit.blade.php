@@ -20,7 +20,11 @@
                             @endif
                             @foreach($users as $department_manager)
                                 <option value="{{ $department_manager->id }}" {{ old('department_manager_id', $department->department_manager_id) == $department_manager->id ? 'selected' : '' }}>
-                                    {{ $department_manager->first_name }} {{ $department_manager->last_name }}
+                                    @if($department_manager->department_id)
+                                        {{$department_manager->department->name}} - {{ $department_manager->first_name }} {{ $department_manager->last_name }}
+                                    @else
+                                        Without Department - {{ $department_manager->first_name }} {{ $department_manager->last_name }}
+                                    @endif
                                 </option>
                             @endforeach
                         </x-select>

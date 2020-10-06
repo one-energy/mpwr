@@ -14,7 +14,7 @@ class AddDepartmentIdToTrainingPageSectionsTable extends Migration
     public function up()
     {
         Schema::table('training_page_sections', function (Blueprint $table) {
-            $table->foreignId('department_id')->nullable()->references('id')->on('departments')->delete('cascade');
+            $table->foreignId('department_id')->nullable()->constrained()->onDelete('cascade');
         });
     }
 
