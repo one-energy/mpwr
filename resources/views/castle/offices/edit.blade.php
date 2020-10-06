@@ -15,34 +15,62 @@
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
-                            <x-select label="Region" name="region_id">
-                                @if (old('region_id') == '')
-                                    <option selected></option>
-                                @endif
-                                @foreach($regions as $region)
-                                    <option value="{{ $region->id }}" {{ old('region_id', $office->region_id) == $region->id ? 'selected' : '' }}>
-                                        {{ $region->name }}
-                                    </option>
-                                @endforeach
-                            </x-select>
+                            @if(user()->role == "Office Manager" || user()->role == "Region Manager")
+                                <x-select label="Region" name="region_id" hidden>
+                                    @if (old('region_id') == '')
+                                        <option selected></option>
+                                    @endif
+                                    @foreach($regions as $region)
+                                        <option value="{{ $region->id }}" {{ old('region_id', $office->region_id) == $region->id ? 'selected' : '' }}>
+                                            {{ $region->name }}
+                                        </option>
+                                    @endforeach
+                                </x-select>
+                            @else
+                                <x-select label="Region" name="region_id">
+                                    @if (old('region_id') == '')
+                                        <option selected></option>
+                                    @endif
+                                    @foreach($regions as $region)
+                                        <option value="{{ $region->id }}" {{ old('region_id', $office->region_id) == $region->id ? 'selected' : '' }}>
+                                            {{ $region->name }}
+                                        </option>
+                                    @endforeach
+                                </x-select>
+                            @endif
                         </div>
                         <div class="md:col-span-3 col-span-2">
-                            <x-select label="Office Manager" name="office_manager_id">
-                                @if (old('office_manager_id') == '')
-                                    <option selected></option>
-                                @endif
-                                @foreach($users as $office_manager)
-                                    @if($office_manager->role == 'Office Manager')
-                                        <option value="{{ $office_manager->id }}" {{ old('office_manager_id', $office->office_manager_id) == $office_manager->id ? 'selected' : '' }}>
-                                            {{ $office_manager->first_name }} {{ $office_manager->last_name }}
-                                        </option>
+                            @if(user()->role == "Office Manager")
+                                <x-select label="Office Manager" name="office_manager_id" hidden>
+                                    @if (old('office_manager_id') == '')
+                                        <option selected></option>
                                     @endif
-                                @endforeach
-                            </x-select>
-                        </div>
+                                    @foreach($users as $office_manager)
+                                        @if($office_manager->role == 'Office Manager')
+                                            <option value="{{ $office_manager->id }}" {{ old('office_manager_id', $office->office_manager_id) == $office_manager->id ? 'selected' : '' }}>
+                                                {{ $office_manager->first_name }} {{ $office_manager->last_name }}
+                                            </option>
+                                        @endif
+                                    @endforeach
+                                </x-select>
+                            @else
+                                <x-select label="Office Manager" name="office_manager_id">
+                                    @if (old('office_manager_id') == '')
+                                        <option selected></option>
+                                    @endif
+                                    @foreach($users as $office_manager)
+                                        @if($office_manager->role == 'Office Manager')
+                                            <option value="{{ $office_manager->id }}" {{ old('office_manager_id', $office->office_manager_id) == $office_manager->id ? 'selected' : '' }}>
+                                                {{ $office_manager->first_name }} {{ $office_manager->last_name }}
+                                            </option>
+                                        @endif
+                                    @endforeach
+                                </x-select>
+                            @endif
                         </div>
                     </div>
-                    <div class="mt-8 border-t border-gray-200 pt-5">
+                </div>
+                <div class="mt-8 border-t border-gray-200 pt-5">
                     <div class="flex justify-start">
                         <span class="inline-flex rounded-md shadow-sm">
                             <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">

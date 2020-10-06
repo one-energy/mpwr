@@ -39,7 +39,7 @@
                                             @lang('Office Manager')
                                         </x-table.th>
                                         <x-table.th></x-table.th>
-                                        </x-table.th-tr>
+                                    </x-table.th-tr>
                                 </x-slot>
                                 <x-slot name="body">
                                     @foreach($offices as $office)
@@ -47,7 +47,6 @@
                                             @if(user()->role == "Admin" || user()->role == "Owner")
                                                 <x-table.td>{{ $office->region->department->name }}</x-table.td>
                                             @endif
-                                            <x-table.td>{{ $office->name }}</x-table.td>
                                             <x-table.td>{{ $office->name }}</x-table.td>
                                             <x-table.td>{{ $office->region->name }}</x-table.td>
                                             <x-table.td>{{ $office->office_manager->first_name }} {{ $office->office_manager->last_name }}</x-table.td>

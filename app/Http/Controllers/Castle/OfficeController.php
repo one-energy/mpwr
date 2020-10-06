@@ -16,9 +16,12 @@ class OfficeController extends Controller
 
     public function create()
     {
+        $regionsQuery = Region::query();
+        $usersQuery   = User::query()->whereRole("Office Manager");
+
         if(user()->role == "Admin" || user()->role = "Owner"){
-            $regions = Region::all();
-            $users   = User::all();
+            $users   = $usersQuery->get();
+            $regions = $regionsQuery->get();
         }
 
         if(user()->role == "Department Manager"){
@@ -64,7 +67,7 @@ class OfficeController extends Controller
             ->withTitle(__('Office created!'))
             ->send();
 
-        return redirect(route('castle.offices.edit', $office));
+        return redirect(route('castle.offices.index', $office));
     }
 
     public function edit(Office $office)
