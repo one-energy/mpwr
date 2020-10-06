@@ -9,18 +9,20 @@ use Illuminate\Support\Facades\Validator;
 
 class TrainingController extends Controller
 {
-    public function index(TrainingPageSection $section = null)
+    public function index(Department $department, TrainingPageSection $section = null)
     {
+        // dd($section);
         $content = [];
         $index   = 0;
         $videoId = 0;
         $actualSection = 0;
         $path          = [];
+        $section = TrainingPageSection::whereDepartmentId($department->id ?? 0)->first();
 
         if(user()->department_id){
             $videoId       = null;
             $content       = $this->getContent($section);
-            $actualSection = $section ?? TrainingPageSection::whereTitle("Training Page");
+            $actualSection = $section ?? TrainingPageSection::whereDepartmentId($department->id ?? 0)->first();
             $actualSection->whereDepartmentId(user()->department_id)->first();
             $index = 0;
             if ($content) {
@@ -43,6 +45,7 @@ class TrainingController extends Controller
     public function manageTrainings(Department $department, TrainingPageSection $section = null)
     {
         $videoId       = null;
+        $section       = TrainingPageSection::whereDepartmentId($department->id ?? 0)->first();
         $content       = $this->getContent($section);
         $actualSection = $section ?? TrainingPageSection::whereDepartmentId($department->id ?? 0)->first();
         $departments   = Department::all();
@@ -161,7 +164,6 @@ class TrainingController extends Controller
 
     public function updateContent(TrainingPageContent $content)
     {
-        dd($content->section);
         $validated = $this->validate(
             request(),
             [
@@ -192,6 +194,7 @@ class TrainingController extends Controller
         $path                = [$section];
         $trainingPageSection = $section;
         do {
+            
             if ($trainingPageSection->parent_id) {
                 $trainingPageSection = TrainingPageSection::query()->whereId($trainingPageSection->parent_id)->first();
                 array_push($path, $trainingPageSection);
@@ -208,7 +211,7 @@ class TrainingController extends Controller
 
     public function getContent($section)
     {
-        return TrainingPageContent::whereTrainingPageSectionId($section->id ?? 1)->first();
+        return TrainingPageContent::whereTrainingPageSectionId($section->id)->first();
     }
 
     public function getParentSections($section)

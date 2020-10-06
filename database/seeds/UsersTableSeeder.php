@@ -5,6 +5,7 @@ use App\Models\Department;
 use App\Models\Region;
 use App\Models\User;
 use App\Models\Office;
+use App\Models\TrainingPageSection;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -41,8 +42,8 @@ class UsersTableSeeder extends Seeder
 
     public function createDevsquadTeam()
     {
-        $departmentOne = factory(Department::class)->create();
-        $departmentTwo = factory(Department::class)->create();
+        $departmentOne  = factory(Department::class)->create();
+        $departmentTwo  = factory(Department::class)->create();
 
         factory(User::class)->create([
             'first_name'    => 'DevSquad Master',
@@ -60,7 +61,8 @@ class UsersTableSeeder extends Seeder
             'department_id' => $departmentOne->id,
             'master'        => true,
         ]);
-        factory(User::class)->create([
+        
+        $userdptoOne = factory(User::class)->create([
             'first_name'    => 'Department one',
             'last_name'     => 'Manager',
             'email'         => 'onedmanager@devsquad.com',
@@ -68,14 +70,20 @@ class UsersTableSeeder extends Seeder
             'department_id' => $departmentOne->id,
             'master'        => true,
         ]);
-        factory(User::class)->create([
+        $departmentOne->department_manager_id = $userdptoOne->id;
+        $departmentOne->save();
+
+        $userdptoTwo = factory(User::class)->create([
             'first_name'    => 'Department Two',
             'last_name'     => 'Manager',
             'email'         => 'twodmanager@devsquad.com',
             'department_id' => $departmentTwo->id,
             'role'          => 'Department Manager',
             'master'        => true,
-        ]);
+            ]);
+        $departmentTwo->department_manager_id = $userdptoTwo->id;
+        $departmentTwo->save();
+        
         factory(User::class)->create([
             'first_name'    => 'Region one',
             'last_name'     => 'Manager',
