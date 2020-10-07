@@ -226,8 +226,8 @@
                     </x-svg.spinner>
 
                     <div class="mt-3 w-full">
-                        <div class="flex flex-col">
-                            @if($users->count())
+                        @if($users->count())
+                            <div class="flex flex-col">
                                 <div class="overflow-x-auto">
                                     <div class="align-middle inline-block min-w-full overflow-hidden">
                                         <x-table wire:loading.remove>
@@ -320,17 +320,17 @@
                                         </x-table>
                                     </div>
                                 </div>
-                            @else
-                                <div class="h-96 ">
-                                    <div class="flex justify-center align-middle">
-                                        <div class="text-sm text-center text-gray-700">
-                                            <x-svg.draw.empty></x-svg.draw.empty>
-                                            No data yet.
-                                        </div>
+                            </div>
+                        @else
+                            <div class="h-96 ">
+                                <div class="flex justify-center align-middle">
+                                    <div class="text-sm text-center text-gray-700">
+                                        <x-svg.draw.empty></x-svg.draw.empty>
+                                        No data yet.
                                     </div>
                                 </div>
-                            @endif
-                        </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
