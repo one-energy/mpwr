@@ -53,21 +53,6 @@ class Office extends Model
                 DB::raw('lower(offices.name)'),
                 'like',
                 '%' . strtolower($search) . '%'
-            )
-            ->orWhere(
-                DB::raw('lower(regions.name)'),
-                'like',
-                '%' . strtolower($search) . '%'
-            )
-            ->orWhere(
-                DB::raw('lower(users.first_name)'),
-                'like',
-                '%' . strtolower($search) . '%'
-            )
-            ->orWhere(
-                DB::raw('lower(users.last_name)'),
-                'like',
-                '%' . strtolower($search) . '%'
             );
         });
     }
