@@ -134,6 +134,10 @@ class DailyEntry extends Component
             ->select("offices.*")
             ->join("regions", "region_id", "=", "regions.id");
 
+        if(user()->role == "Admin" || user()->role == "Owner"){
+           $query->where("regions.department_id", "=", 0);
+        }
+
         if(user()->role == "Department Manager"){
            $query->where("regions.department_id", "=", user()->department_id);
         }

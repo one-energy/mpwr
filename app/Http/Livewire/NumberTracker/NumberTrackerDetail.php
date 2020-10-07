@@ -170,16 +170,18 @@ class NumberTrackerDetail extends Component
 
     public function getOffices()
     {
-        $this->offices = Office::all();
+        $this->offices = Office::select("offices.*")
+                            ->join("regions", "offices.region_id", "=", "regions.id")
+                            ->where("regions.department_id", "=", user()->department_id)->get();
     }
 
     public function getRegions()
     {
-        $this->regions = Region::all();
+        $this->regions = Region::whereDepartmentId(user()->department_id)->get();
     }
 
     public function getUsers()
     {
-        $this->users = User::all();
+        $this->users = User::whereDepartmentId(user()->department_id)->get();
     }
 }
