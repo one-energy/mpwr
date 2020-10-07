@@ -127,12 +127,14 @@ class NumberTrackerDetail extends Component
             });
         }
 
-        $this->numbersTrackedLast = $queryLast->groupBy('user_id')
+        $this->numbersTrackedLast = $queryLast->where("users.department_id", "=", user()->department_id)
+            ->groupBy('user_id')
             ->get();
 
         $this->graficValueLast    = $this->numbersTrackedLast->sum($this->filterBy);
 
         return $query->groupBy('daily_numbers.user_id')
+            ->where("users.department_id", "=", user()->department_id)
             ->orderBy($this->filterBy, 'desc')
             ->get();
     }

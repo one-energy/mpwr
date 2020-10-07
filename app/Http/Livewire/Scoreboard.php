@@ -115,6 +115,7 @@ class Scoreboard extends Component
             ->select(DB::raw('sum(daily_numbers.hours) as hours, users.office_id, users.first_name, users.last_name, users.id'))
             ->groupBy('users.id')
             ->whereNotNull('daily_numbers.hours')
+            ->whereDepartmentId(user()->department_id)
             ->orderByDesc('hours')
             ->take(10)
             ->get();
@@ -144,6 +145,7 @@ class Scoreboard extends Component
             ->select(DB::raw('sum(daily_numbers.sets) as sets, users.office_id, users.first_name, users.last_name, users.id'))
             ->groupBy('users.id')
             ->whereNotNull('daily_numbers.sets')
+            ->whereDepartmentId(user()->department_id)
             ->orderByDesc('sets')
             ->take(10)
             ->get();
@@ -173,6 +175,7 @@ class Scoreboard extends Component
             ->select(DB::raw('sum(daily_numbers.set_closes) as set_closes, users.office_id, users.first_name, users.last_name, users.id'))
             ->groupBy('users.id')
             ->whereNotNull('daily_numbers.set_closes')
+            ->whereDepartmentId(user()->department_id)
             ->orderByDesc('set_closes')
             ->take(10)
             ->get();

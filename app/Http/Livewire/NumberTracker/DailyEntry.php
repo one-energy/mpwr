@@ -35,11 +35,12 @@ class DailyEntry extends Component
         $this->getMissingOffices();
         $this->dateSelected     = date('Y-m-d', time());
         $this->lastDateSelected = date('Y-m-d', strtotime($this->dateSelected . '-1 day'));
-        $this->setOffice(Office::first()->id);
+        $this->setOffice($this->getOfficeQuery()->first());
     }
 
     public function getUsers($dateSelected)
     {
+        // dd($this->officeSelected);
         return User::query()
             ->whereOfficeId($this->officeSelected)
             ->leftJoin('daily_numbers', function($join) use ($dateSelected) {
@@ -81,7 +82,7 @@ class DailyEntry extends Component
 
     public function getMissingOffices()
     {
-        $offices = Office::all();
+        $offices = $this->getOfficeQuery()->get();
         foreach ($offices as $office) {
             $missingDates = $this->getMissingDate('Y-m-01', $office->id);
 
@@ -97,9 +98,9 @@ class DailyEntry extends Component
         $this->lastDateSelected = date('Y-m-d', strtotime($this->dateSelected . '-1 day'));
     }
 
-    public function setOffice($id)
+    public function setOffice($office)
     {
-        $this->officeSelected = $id;
+        $this->officeSelected = $office->id ?? 0;
         $this->missingDates   = $this->getMissingDate('Y-m-01', $this->officeSelected);
     }
 
@@ -112,10 +113,37 @@ class DailyEntry extends Component
     {
         $this->getMissingOffices();
         $this->users               = $this->getUsers($this->dateSelected);
+        // dd($this->users);
         $this->usersLastDayEntries = $this->getUsers($this->lastDateSelected);
+        $offices = $this->getOfficeQuery();
+
+ 
 
         return view('livewire.number-tracker.daily-entry',[
-            'offices' => Office::all(),
+            'offices' => $offices->get(),
         ]);
+    }
+
+    public function getOfficeQuery() {
+        $query = Office::query()
+            ->select("offices.*")
+            ->join("regions", "region_id", "=", "regions.id");
+
+        if(user()->role == "Department Manager"){
+           $query->where("regions.department_id", "=", user()->department_id);
+        }
+
+        if(user()->role == "Region Manager"){
+           $query->where("regions.region_manager_id", "=", user()->id);
+        }
+
+        if(user()->role == "Office Manager"){
+           $query->where("regions.office_manager_id", "=", user()->department_id);
+        }
+        
+        if(user()->role == "Setter" || user()->role == "Sales Rep"){
+           $query->where("id", "=", user()->office_id);
+        }
+        return $query;
     }
 }
