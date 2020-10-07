@@ -75,12 +75,12 @@
                                                 :active="is_active('incentives')">
                                         @lang('Incentives')
                                     </x-nav.link>
-                                    @if(user()->role != 'Setter' && user()->role != 'Sales Rep')
-                                        <x-nav.link :href="route('number-tracking.index')" class="ml-8"
-                                                    :active="is_active('number-tracking.*')">
-                                            @lang('Number Tracker')
-                                        </x-nav.link>
-                                    @endif
+                                    
+                                    <x-nav.link :href="route('number-tracking.index')" class="ml-8"
+                                                :active="is_active('number-tracking.*')">
+                                        @lang('Number Tracker')
+                                    </x-nav.link>
+                                
                                 @endif
                             </div>
                         </div>

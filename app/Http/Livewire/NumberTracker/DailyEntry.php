@@ -41,7 +41,12 @@ class DailyEntry extends Component
     public function getUsers($dateSelected)
     {
         // dd($this->officeSelected);
-        return User::query()
+        $usersQuery = User::query();
+        if(user()->role == "Setter" || user()->role == "Sales Rep"){
+            $usersQuery->where("users.id", "=", user()->id);
+        }
+
+        return $usersQuery
             ->whereOfficeId($this->officeSelected)
             ->leftJoin('daily_numbers', function($join) use ($dateSelected) {
                 $join->on('daily_numbers.user_id', '=', 'users.id')
@@ -142,7 +147,7 @@ class DailyEntry extends Component
         }
         
         if(user()->role == "Setter" || user()->role == "Sales Rep"){
-           $query->where("id", "=", user()->office_id);
+           $query->where("offices.id", "=", user()->office_id);
         }
         return $query;
     }
