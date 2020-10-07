@@ -122,7 +122,7 @@ class OfficeController extends Controller
             ->withTitle(__('Office updated!'))
             ->send();
 
-        return back();
+        return redirect(route('castle.offices.index'));
     }
 
     public function destroy($id)

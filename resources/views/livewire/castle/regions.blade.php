@@ -23,7 +23,7 @@
                         <x-table :pagination="$regions->links()">
                             <x-slot name="header">
                                 <x-table.th-tr>
-                                    @if(user()->role != "Region Manager")
+                                    @if(user()->role != "Region Manager" && user()->role != "Department Manager")
                                         <x-table.th-searchable by="regions.name" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Department')
                                         </x-table.th>
@@ -40,7 +40,7 @@
                             <x-slot name="body">
                                 @foreach($regions as $region)
                                     <x-table.tr :loop="$loop">
-                                        @if(user()->role != "Region Manager")
+                                        @if(user()->role != "Region Manager" && user()->role != "Department Manager")
                                             <x-table.td>{{ $region->department->name }}</x-table.td>
                                         @endif
                                         <x-table.td>{{ $region->name }}</x-table.td>

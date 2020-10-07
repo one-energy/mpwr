@@ -35,7 +35,12 @@ class Users extends Component
                 });
             }
             if(user()->role == "Department Manager"){
-                $query->whereDepartmentId(user()->department_id);
+                $query->whereDepartmentId(user()->department_id)
+                    ->where("role", "!=", "Admin")
+                    ->where("role", "!=", "Owner");
+            } 
+            if(user()->role == "Admin"){
+                $query->where("role", "!=", "Owner");
             } 
 
         return view('livewire.castle.users', [

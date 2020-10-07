@@ -93,7 +93,7 @@ class ManageIncentivesController extends Controller
             ->withTitle(__('Incentive updated!'))
             ->send();
 
-        return back();
+        return  redirect(route('castle.incentives.index'));
     }
 
     public function destroy($id)

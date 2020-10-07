@@ -49,7 +49,7 @@ class RegionController extends Controller
             ->withTitle(__('Region updated!'))
             ->send();
 
-        return back();
+        return redirect(route('castle.regions.index'));
     }
 
     public function destroy($id)

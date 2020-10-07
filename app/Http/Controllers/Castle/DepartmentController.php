@@ -47,7 +47,7 @@ class DepartmentController extends Controller
             ->withTitle(__('Department Updated!'))
             ->send();
 
-        return back();
+        return redirect(route('castle.departments.index'));
     }
 
     public function destroy($id)
