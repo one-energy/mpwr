@@ -14,22 +14,21 @@ class TrainingController extends Controller
         // dd($section);
         $content = [];
         $index   = 0;
-        $videoId = 0;
+        $videoId = [];
         $actualSection = 0;
         $path          = [];
-        $section = TrainingPageSection::whereDepartmentId($department->id ?? 0)->first();
-
-        if(user()->department_id){
-            $videoId       = null;
-            $content       = $this->getContent($section);
-            $actualSection = $section ?? TrainingPageSection::whereDepartmentId($department->id ?? 0)->first();
+        if($department->id){
+               
+            $actualSection = $section ?? TrainingPageSection::whereDepartmentId($department->id)->first();
+            $content       = $this->getContent($actualSection);
             $actualSection->whereDepartmentId(user()->department_id)->first();
-            $index = 0;
+            $index         = 0;
             if ($content) {
                 $videoId = explode('/', $content->video_url);
                 $index   = count($videoId);
             }
             $path = $this->getPath($actualSection);
+            
         }
 
         return view('training.index', [
@@ -38,7 +37,6 @@ class TrainingController extends Controller
             'videoId'       => $videoId[$index - 1] ?? null,
             'actualSection' => $actualSection,
             'path'          => $path,
-            // 'departmentId'  => $this->departmentId,
         ]);
     }
 
@@ -46,28 +44,30 @@ class TrainingController extends Controller
     {
         $content = [];
         $index   = 0;
-        $videoId = 0;
+        $videoId = [];
         $actualSection = 0;
         $path          = [];
-        $section = TrainingPageSection::whereDepartmentId($department->id ?? 0)->first();
         $departments = [];
 
-        if($department->id){
-            $videoId       = null;
-            $section       = TrainingPageSection::whereDepartmentId($department->id ?? 0)->first();
-            $content       = $this->getContent($section);
-            $actualSection = $section ?? TrainingPageSection::whereDepartmentId($department->id ?? 0)->first();
+        if(!$department->id && (user()->role == "Owner" || user()->role == "Admin")){
+            $department = Department::first();
+        }
+        
+        if($department->id){   
+            $actualSection = $section ?? TrainingPageSection::whereDepartmentId($department->id)->first();
+            $content       = $this->getContent($actualSection);
+            // dd($actualSection);
             $departments   = Department::all();
             $index         = 0; 
-    
+            
             if ($content) {
                 $videoId = explode('/', $content->video_url);
                 $index   = count($videoId);
             }
-    
+            
             $path = $this->getPath($actualSection);
         }
-        // dd($department->id);
+            
         return view('castle.manage-trainings.index', [
             'sections'      => $department->id ? $this->getParentSections($actualSection) : [],
             'content'       => $content,
@@ -96,7 +96,7 @@ class TrainingController extends Controller
         ]));
     }
 
-    public function storeSection(Department $department, TrainingPageSection $section)
+    public function storeSection(TrainingPageSection $section)
     {
         $validated = $this->validate(
             request(),
@@ -107,7 +107,7 @@ class TrainingController extends Controller
         $trainingPageSection                = new TrainingPageSection();
         $trainingPageSection->title         = $validated['title'];
         $trainingPageSection->parent_id     = $section->id;
-        $trainingPageSection->department_id = $department->id;
+        $trainingPageSection->department_id = $section->department_id;
 
         $trainingPageSection->save();
 
@@ -116,7 +116,7 @@ class TrainingController extends Controller
             ->send();
 
         return redirect(route('castle.manage-trainings.index', [
-            'department' => $department->id,
+            'department' => $$section->department_id,
             'section'    => $section->id
         ]));
     }

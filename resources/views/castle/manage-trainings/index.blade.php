@@ -8,7 +8,7 @@
           </div>
           <div class="flex md:justify-end sm:justify-start">
             <div class="pt-2 relative md:mx-auto sm:mx-0 text-gray-600">
-              @if(user()->isMaster())
+              @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
                 <div class="inline-flex" x-data="{ 'showSectionModal': false }" @keydown.escape="showSectionModal = false" x-cloak>
                   <x-button @click="showSectionModal = true">
                     Add Section
@@ -147,7 +147,7 @@
           @foreach($path as $pathSection)
             <a href="/castle/manage-trainings/list/{{$departmentId}}/{{$pathSection->id}}" class="underline align-baseline">{{$pathSection->title}}</a> / 
           @endforeach
-          @if(user()->isMaster())
+          @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
             <div class="inline-flex" x-data="{ 'editSectionModal': false }" @keydown.escape="editSectionModal = false" x-cloak>
               <button class="ml-4 p-3 rounded-full hover:bg-gray-200" @click="editSectionModal = true">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M18.363 8.464l1.433 1.431-12.67 12.669-7.125 1.436 1.439-7.127 12.665-12.668 1.431 1.431-12.255 12.224-.726 3.584 3.584-.723 12.224-12.257zm-.056-8.464l-2.815 2.817 5.691 5.692 2.817-2.821-5.693-5.688zm-12.318 18.718l11.313-11.316-.705-.707-11.313 11.314.705.709z"/></svg>
@@ -267,7 +267,7 @@
                   </div>
                   <div class="col-span-9 hover:bg-gray-50">
                     <a href="{{route('castle.manage-trainings.index',[
-                        'department' => user()->department_id,
+                        'department' => $departmentId,
                         'section'    => $section->id
                       ])}}">
                       <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-r-lg ">

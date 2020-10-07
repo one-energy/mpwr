@@ -25,7 +25,7 @@
                         <div class="md:col-span-3 col-span-2">
                             <x-select label="Role" name="role">
                                 @if (old('role') == '')
-                                    <option selected></option>
+                                    <option selected>None</option>
                                 @endif
                                 @foreach($roles as $role)
                                     <option value="{{ $role['name'] }}" {{ old('role', $user->role) == $role['name'] ? 'selected' : '' }}>
@@ -38,7 +38,7 @@
                         <div class="md:col-span-3 col-span-2">
                                 <x-select label="Offices" name="office_id">
                                 @if (old('office') == '')
-                                    <option selected></option>
+                                    <option selected>None</option>
                                 @endif
                                 @foreach($offices as $office)
                                     <option value="{{ $office->id }}" {{ old('office', $user->office_id) == $office->id ? 'selected' : '' }}>
@@ -57,7 +57,7 @@
                                 @if(user()->role != "Admin" && user()->role != "Owner")
                                     <x-select label="Department" name="department_id" disabledToUser="{{user()->role}}">
                                         @if (old('department') == '')
-                                            <option selected></option>
+                                            <option selected>None</option>
                                         @endif
                                         @foreach($departments as $department)
                                             <option value="{{ $department->id }}" {{ old('department', $user->department_id) == $department->id ? 'selected' : '' }}>
@@ -68,7 +68,7 @@
                                 @else
                                     <x-select label="Department" name="department_id">
                                         @if (old('department') == '')
-                                            <option selected></option>
+                                            <option selected>None</option>
                                         @endif
                                         @foreach($departments as $department)
                                             <option value="{{ $department->id }}" {{ old('department', $user->department_id) == $department->id ? 'selected' : '' }}>

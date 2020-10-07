@@ -62,7 +62,8 @@ class UsersController extends Controller
         $invitation->token   = Uuid::uuid4();
 
         if ($data['role'] == 'Admin' || $data['role'] == 'Owner') {
-            $invitation->master  = true;
+            $invitation->master    = true;
+            $data['department_id'] = null;
         } else {
             $invitation->master  = false;
         }
@@ -174,6 +175,8 @@ class UsersController extends Controller
 
         if ($data['role'] == 'Admin' || $data['role'] == 'Owner') {
             $user->beCastleMaster();
+            $data['department_id'] = null;
+            
         } else {
             $user->revokeMastersAccess();
         }

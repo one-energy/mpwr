@@ -26,7 +26,7 @@
                     <div class="col-span-1">
                         <x-select label="Bill" name="bill">
                             @if (old('bill') == '')
-                                <option selected></option>
+                                <option selected>None</option>
                             @endif
                             @foreach($bills as $bill)
                             <option value="{{ $bill }}" {{ old('bill') == $bill ? 'selected' : '' }}>
@@ -43,7 +43,7 @@
                     <div class="col-span-1">
                         <x-select label="Financing" name="financing">
                             @if (old('financing') == '')
-                                <option selected></option>
+                                <option selected>None</option>
                             @endif
                             @foreach($financings as $financing)
                             <option value="{{ $financing }}" {{ old('financing') == $financing ? 'selected' : '' }}>
@@ -64,7 +64,7 @@
                     <div class="md:col-span-3 col-span-2">
                         <x-select label="Setter" name="setter_id">
                             @if (old('setter_id') == '')
-                                <option selected></option>
+                                <option selected>None</option>
                             @endif
                             @foreach($users as $setter)
                                 <option value="{{ $setter->id }}" {{ old('setter_id') == $setter->id ? 'selected' : '' }}>

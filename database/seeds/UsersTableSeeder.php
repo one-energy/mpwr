@@ -50,7 +50,7 @@ class UsersTableSeeder extends Seeder
             'last_name'     => 'User',
             'email'         => 'team@devsquad.com',
             'role'          => 'Owner',
-            'department_id' => $departmentOne->id,
+            'department_id' => null,
             'master'        => true,
         ]);
         factory(User::class)->create([
@@ -58,7 +58,7 @@ class UsersTableSeeder extends Seeder
             'last_name'     => 'Devsquad',
             'email'         => 'admin@devsquad.com',
             'role'          => 'Admin',
-            'department_id' => $departmentOne->id,
+            'department_id' => null,
             'master'        => true,
         ]);
         
