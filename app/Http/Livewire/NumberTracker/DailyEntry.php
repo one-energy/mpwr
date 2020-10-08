@@ -103,8 +103,11 @@ class DailyEntry extends Component
 
     public function setOffice($office)
     {
-        
-        $this->officeSelected = $office->id ?? $office['id'];
+        if(user()->role == "Admin" || user()->role == "Owner"){
+            $this->officeSelected = 0;
+        }else{
+            $this->officeSelected = $office->id ?? $office['id'];
+        }
         $this->missingDates   = $this->getMissingDate('Y-m-01', $this->officeSelected);
         empty($office);
     }
