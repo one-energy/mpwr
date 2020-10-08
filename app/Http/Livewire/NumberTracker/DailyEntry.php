@@ -103,7 +103,7 @@ class DailyEntry extends Component
 
     public function setOffice($office)
     {
-        if(user()->role == "Admin" || user()->role == "Owner"){
+        if($office == null){
             $this->officeSelected = 0;
         }else{
             $this->officeSelected = $office->id ?? $office['id'];
@@ -148,7 +148,7 @@ class DailyEntry extends Component
         }
 
         if(user()->role == "Office Manager"){
-           $query->where("regions.office_manager_id", "=", user()->department_id);
+           $query->where("offices.office_manager_id", "=", user()->id);
         }
         
         if(user()->role == "Setter" || user()->role == "Sales Rep"){
