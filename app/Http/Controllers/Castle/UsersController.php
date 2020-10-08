@@ -95,20 +95,22 @@ class UsersController extends Controller
 
     public function getOfficesPerRole()
     {
+        $officesQuery = Office::query()->select("offices.*");
         if(user()->role == "Department Manager"){
-            $offices = Office::query()
+            $offices = $officesQuery
                 ->join('regions', 'offices.region_id', '=', 'regions.id')
                 ->where('regions.department_id', '=', user()->department_id)->get();
         }
         if(user()->role == "Region Manager"){
-            $offices = Office::query()->select('offices.name', 'offices.id')
+            $offices = $officesQuery
+                ->select('offices.name', 'offices.id')
                 ->join('regions', function($join){
                     $join->on('offices.region_id', '=', 'regions.id')
                         ->where('regions.region_manager_id', '=', user()->id);
                 })->get();
         }
         if(user()->role == "Office Manager"){
-            $offices = Office::query()
+            $offices = $officesQuery
                 ->whereOfficeManagerId(user()->id);
         }
 

@@ -16,7 +16,7 @@ class OfficeController extends Controller
 
     public function create()
     {
-        $regionsQuery = Region::query();
+        $regionsQuery = Region::query()->select("regions.*");
         $usersQuery   = User::query()->whereRole("Office Manager");
 
         if(user()->role == "Admin" || user()->role == "Owner"){
@@ -25,7 +25,7 @@ class OfficeController extends Controller
         }
 
         if(user()->role == "Department Manager"){
-            $regions = Region::query()
+            $regions =  $regionsQuery
                 ->join('departments', function ($join) {
                     $join->on("regions.department_id", '=', 'departments.id')
                         ->where('departments.department_manager_id', '=', user()->id);
@@ -33,7 +33,7 @@ class OfficeController extends Controller
             $users =  $usersQuery->whereDepartmentId(user()->department_id)->get();
         }
         if(user()->role == "Region Manager"){
-            $regions = Region::query()->whereRegionManagerId(user()->id)->get();
+            $regions =  $regionsQuery->whereRegionManagerId(user()->id)->get();
             $users =  $usersQuery->whereDepartmentId(user()->department_id)->get();
         }
         // $users   = User::whereRole('Office Manager')->get();

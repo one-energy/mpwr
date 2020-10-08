@@ -21,7 +21,11 @@
                                 @endif
                                 @foreach($regions as $region)
                                     <option value="{{ $region->id }}" {{ old('region_id') == $region->id ? 'selected' : '' }}>
-                                        {{$region->department->name}} - {{ $region->name }}
+                                        @if(user()->role == "Admin" || user()->role == "Owner")
+                                            {{$region->department->name}} - {{ $region->name }}
+                                        @else
+                                            {{$region->name}}
+                                        @endif
                                     </option>
                                 @endforeach
                             </x-select>
@@ -34,7 +38,11 @@
                                 @endif
                                 @foreach($users as $office_manager)
                                     <option value="{{ $office_manager->id }}" {{ old('office_manager_id') == $office_manager->id ? 'selected' : '' }}>
-                                    {{$office_manager->department->name ?? 'Without Department'}} - {{ $office_manager->first_name }} {{ $office_manager->last_name }}
+                                        @if(user()->role == "Admin" || user()->role == "Owner")
+                                            {{$office_manager->department->name ?? 'Without Department'}} - {{ $office_manager->first_name }} {{ $office_manager->last_name }}
+                                        @else
+                                            {{ $office_manager->first_name }} {{ $office_manager->last_name }}
+                                        @endif
                                     </option>
                                 @endforeach
                             </x-select>

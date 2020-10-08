@@ -61,7 +61,7 @@
                         <div class="md:col-span-3 col-span-2">
                             <div class="md:col-span-3 col-span-2">
                                 @if(user()->role != "Admin" && user()->role != "Owner")
-                                    <x-select label="Department" name="department_id" disabledToUser="{{user()->role}}">
+                                    <x-select label="Department" name="department_id" hidden>
                                         @if (old('department') == '')
                                             <option selected>None</option>
                                         @endif
