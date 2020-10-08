@@ -32,7 +32,7 @@ class TrainingController extends Controller
         }
 
         return view('training.index', [
-            'sections'      => user()->department_id ? $this->getParentSections($section) : [],
+            'sections'      => $department->id ? $this->getParentSections($actualSection) : [],
             'content'       => $content,
             'videoId'       => $videoId[$index - 1] ?? null,
             'actualSection' => $actualSection,
