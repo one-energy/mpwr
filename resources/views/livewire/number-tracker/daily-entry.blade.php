@@ -92,7 +92,7 @@
                                         type="button"
                                         class="flex justify-between w-full justify-left py-2 px-4 mb-2 bg-white rounded-lg border-gray-200 border-2 top-0 left-0 text-sm leading-5 font-medium focus:outline-none 
                                             @if($officeSelected == $office->id) border-green-400 @else focus:border-gray-700 focus:shadow-outline-gray @endif transition duration-150 ease-in-out"
-                                        wire:click="setOffice({{ $office->id }})">
+                                        wire:click="setOffice({{ $office }})">
                                         {{$office->region->name}} - {{ $office->name }}
                                         @if(in_array($office, $missingOffices))
                                             <div class=" w-2 h-2 rounded-full bg-red-600 "></div>
@@ -411,9 +411,10 @@
                 missingDates = @this.get('missingDates');
                 if(date != null){
                     date = (date < 10) ? '0' + date.toString() : date.toString();
-                    let month = (this.month < 10) ? '0' + (this.month + 1).toString() : (this.month + 1).toString()
+                    let month = (this.month < 9) ? '0' + (this.month + 1).toString() : (this.month + 1).toString()
                     let searchDate = this.year + '-' + month + '-' + date;
                     let response;
+                    console.log(this.month);
                     for(let missingDate of missingDates) {
                         response = missingDate == searchDate
                         if (response == true){

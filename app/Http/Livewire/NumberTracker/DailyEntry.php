@@ -40,12 +40,10 @@ class DailyEntry extends Component
 
     public function getUsers($dateSelected)
     {
-        // dd($this->officeSelected);
         $usersQuery = User::query();
         if(user()->role == "Setter" || user()->role == "Sales Rep"){
             $usersQuery->where("users.id", "=", user()->id);
         }
-
         return $usersQuery
             ->whereOfficeId($this->officeSelected)
             ->leftJoin('daily_numbers', function($join) use ($dateSelected) {
@@ -105,8 +103,10 @@ class DailyEntry extends Component
 
     public function setOffice($office)
     {
-        $this->officeSelected = $office->id ?? 0;
+        
+        $this->officeSelected = $office->id ?? $office['id'];
         $this->missingDates   = $this->getMissingDate('Y-m-01', $this->officeSelected);
+        empty($office);
     }
 
     public function sortBy()
@@ -121,8 +121,6 @@ class DailyEntry extends Component
         // dd($this->users);
         $this->usersLastDayEntries = $this->getUsers($this->lastDateSelected);
         $offices = $this->getOfficeQuery();
-
- 
 
         return view('livewire.number-tracker.daily-entry',[
             'offices' => $offices->get(),
@@ -153,6 +151,7 @@ class DailyEntry extends Component
         if(user()->role == "Setter" || user()->role == "Sales Rep"){
            $query->where("offices.id", "=", user()->office_id);
         }
+        
         return $query;
     }
 }
