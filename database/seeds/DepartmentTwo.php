@@ -1,5 +1,10 @@
 <?php
 
+use App\Models\DailyNumber;
+use App\Models\Department;
+use App\Models\Office;
+use App\Models\Region;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DepartmentTwo extends Seeder
