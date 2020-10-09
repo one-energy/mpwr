@@ -72,7 +72,7 @@ class ManageIncentiveTest extends TestCase
         $created = Incentive::where('name', $data['name'])->first();
 
         $response->assertStatus(302)
-            ->assertRedirect(route('castle.incentives.edit', $created));
+            ->assertRedirect(route('castle.incentives.index', $created));
     }
 
     /** @test */

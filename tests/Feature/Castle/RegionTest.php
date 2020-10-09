@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Castle;
 
+use App\Models\Department;
 use App\Models\Region;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -43,9 +44,12 @@ class RegionTest extends TestCase
     /** @test */
     public function it_should_list_all_regions()
     {
-        $regionManager = factory(User::class)->create(['role' => 'Region Manager']);
-        $regions       = factory(Region::class, 6)->create([
+        $departmentManager = factory(User::class)->create(['role' => 'Department Manager']);
+        $department        = factory(Department::class)->create(['department_manager_id' => $departmentManager->id]);
+        $regionManager     = factory(User::class)->create(['role' => 'Region Manager']);
+        $regions           = factory(Region::class, 6)->create([
             'region_manager_id' => $regionManager->id,
+            'department_id' => $department->id,
         ]);
 
         $response = $this->get('castle/regions');

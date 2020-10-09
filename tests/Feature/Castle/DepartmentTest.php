@@ -36,7 +36,7 @@ class DepartmentTest extends TestCase
         $created = Department::where('name', $data['name'])->first();
 
         $response->assertStatus(302)
-            ->assertRedirect(route('castle.departments.edit', $created));
+            ->assertRedirect(route('castle.departments.index'));
     }
 
     /** @test */

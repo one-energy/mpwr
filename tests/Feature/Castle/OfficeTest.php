@@ -78,7 +78,7 @@ class OfficeTest extends TestCase
         $created = Office::where('name', $data['name'])->first();
 
         $response->assertStatus(302)
-            ->assertRedirect(route('castle.offices.edit', $created));
+            ->assertRedirect(route('castle.offices.index', $created));
     }
 
     /** @test */

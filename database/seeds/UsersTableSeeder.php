@@ -41,8 +41,6 @@ class UsersTableSeeder extends Seeder
 
     public function createDevsquadTeam()
     {
-        $departmentOne  = factory(Department::class)->create();
-        $departmentTwo  = factory(Department::class)->create();
 
         factory(User::class)->create([
             'first_name'    => 'DevSquad Master',
@@ -60,96 +58,9 @@ class UsersTableSeeder extends Seeder
             'department_id' => null,
             'master'        => true,
         ]);
-        
-        $userdptoOne = factory(User::class)->create([
-            'first_name'    => 'Department one',
-            'last_name'     => 'Manager',
-            'email'         => 'onedmanager@devsquad.com',
-            'role'          => 'Department Manager',
-            'department_id' => $departmentOne->id,
-            'master'        => true,
-        ]);
-        $departmentOne->department_manager_id = $userdptoOne->id;
-        $departmentOne->save();
 
-        $userdptoTwo = factory(User::class)->create([
-            'first_name'    => 'Department Two',
-            'last_name'     => 'Manager',
-            'email'         => 'twodmanager@devsquad.com',
-            'department_id' => $departmentTwo->id,
-            'role'          => 'Department Manager',
-            'master'        => true,
-            ]);
-        $departmentTwo->department_manager_id = $userdptoTwo->id;
-        $departmentTwo->save();
-        
-        factory(User::class)->create([
-            'first_name'    => 'Region one',
-            'last_name'     => 'Manager',
-            'email'         => 'onermanager@devsquad.com',
-            'department_id' => $departmentOne->id,
-            'role'          => 'Region Manager',
-            'master'        => true,
-        ]);
-        factory(User::class)->create([
-            'first_name'    => 'Other Region one',
-            'last_name'     => 'Manager',
-            'email'         => 'otheronermanager@devsquad.com',
-            'department_id' => $departmentOne->id,
-            'role'          => 'Region Manager',
-            'master'        => true,
-        ]);
-        factory(User::class)->create([
-            'first_name'    => 'Region two',
-            'last_name'     => 'Manager',
-            'email'         => 'twormanager@devsquad.com',
-            'department_id' => $departmentTwo->id,
-            'role'          => 'Region Manager',
-            'master'        => true,
-        ]);
-        factory(User::class)->create([
-            'first_name'    => 'Other Region two',
-            'last_name'     => 'Manager',
-            'email'         => 'othertwormanager@devsquad.com',
-            'department_id' => $departmentTwo->id,
-            'role'          => 'Region Manager',
-            'master'        => true,
-        ]);
-        factory(User::class)->create([
-            'first_name'    => 'Office one',
-            'last_name'     => 'Manager',
-            'email'         => 'oneomanager@devsquad.com',
-            'department_id' => $departmentOne->id,
-            'role'          => 'Office Manager',
-            'master'        => true,
-        ]);
-        factory(User::class)->create([
-            'first_name'    => 'Other Office one',
-            'last_name'     => 'Manager',
-            'email'         => 'otheroneomanager@devsquad.com',
-            'department_id' => $departmentOne->id,
-            'role'          => 'Office Manager',
-            'master'        => true,
-        ]);
-        factory(User::class)->create([
-            'first_name'    => 'Office two',
-            'last_name'     => 'Manager',
-            'email'         => 'twoomanager@devsquad.com',
-            'department_id' => $departmentTwo->id,
-            'role'          => 'Office Manager',
-            'master'        => true,
-        ]);
-        factory(User::class)->create([
-            'first_name'    => 'Other Office two',
-            'last_name'     => 'Manager',
-            'email'         => 'othertwoomanager@devsquad.com',
-            'department_id' => $departmentTwo->id,
-            'role'          => 'Office Manager',
-            'master'        => true,
-        ]);
-
-        $this->createExampleDepartmentOne($departmentOne);
-        $this->createExampleDepartmentTwo($departmentTwo);
+        // $this->createExampleDepartmentOne($departmentOne);
+        // $this->createExampleDepartmentTwo($departmentTwo);
     }
 
     public function createTestRegion()
