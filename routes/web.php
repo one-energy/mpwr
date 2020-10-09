@@ -106,7 +106,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
 
         Route::get('/manage-trainings/list/{department?}/{section?}', [TrainingController::class, 'manageTrainings'])->name('manage-trainings.index');
-        Route::post('/manage-trainings/{section?}/create-section', [TrainingController::class, 'storeSection'])->name('manage-trainings.storeSection');
+        Route::post('/manage-trainings/{department?}/{section?}/create-section', [TrainingController::class, 'storeSection'])->name('manage-trainings.storeSection');
         Route::put('/manage-trainings/{section?}/update-section', [TrainingController::class, 'updateSection'])->name('manage-trainings.updateSection');
         Route::post('/manage-trainings/{section?}/create-content', [TrainingController::class, 'storeContent'])->name('manage-trainings.storeContent');
         Route::post('/manage-trainings/{content}/update-content', [TrainingController::class, 'updateContent'])->name('manage-trainings.updateContent');
