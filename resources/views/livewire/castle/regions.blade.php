@@ -28,10 +28,10 @@
                                             @lang('Department')
                                         </x-table.th>
                                     @endif
-                                    <x-table.th-searchable by="regions.name" :sortedBy="$sortBy" :direction="$sortDirection">
+                                    <x-table.th>
                                         @lang('Region')
                                     </x-table.th>
-                                    <x-table.th-searchable by="users.first_name" :sortedBy="$sortBy" :direction="$sortDirection">
+                                    <x-table.th>
                                         @lang('Region Manager')
                                     </x-table.th>
                                     <x-table.th></x-table.th>

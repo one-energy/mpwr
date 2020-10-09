@@ -16,7 +16,7 @@
                     <div class="md:col-span-3 col-span-2">
                         <x-select label="Department Manager" name="department_manager_id">
                             @if (old('department_manager_id') == '')
-                                <option selected>None</option>
+                                <option value="" selected>None</option>
                             @endif
                             @foreach($users as $department_manager)
                                 <option value="{{ $department_manager->id }}" {{ old('department_manager_id', $department->department_manager_id) == $department_manager->id ? 'selected' : '' }}>

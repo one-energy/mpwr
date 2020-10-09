@@ -24,7 +24,7 @@
                                     <x-table.th-searchable by="departments.name" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Department')
                                     </x-table.th>
-                                    <x-table.th-searchable by="users.first_name" :sortedBy="$sortBy" :direction="$sortDirection">
+                                    <x-table.th>
                                         @lang('Department Admin')
                                     </x-table.th>
                                     <x-table.th></x-table.th>

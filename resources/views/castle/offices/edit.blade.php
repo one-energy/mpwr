@@ -18,7 +18,7 @@
                             @if(user()->role == "Office Manager" || user()->role == "Region Manager")
                                 <x-select label="Region" name="region_id" hidden>
                                     @if (old('region_id') == '')
-                                        <option selected>None</option>
+                                        <option value="" selected>None</option>
                                     @endif
                                     @foreach($regions as $region)
                                         <option value="{{ $region->id }}" {{ old('region_id', $office->region_id) == $region->id ? 'selected' : '' }}>
@@ -29,7 +29,7 @@
                             @else
                                 <x-select label="Region" name="region_id">
                                     @if (old('region_id') == '')
-                                        <option selected>None</option>
+                                        <option value="" selected>None</option>
                                     @endif
                                     @foreach($regions as $region)
                                         <option value="{{ $region->id }}" {{ old('region_id', $office->region_id) == $region->id ? 'selected' : '' }}>
@@ -43,7 +43,7 @@
                             @if(user()->role == "Office Manager")
                                 <x-select label="Office Manager" name="office_manager_id" hidden>
                                     @if (old('office_manager_id') == '')
-                                        <option selected>None</option>
+                                        <option value="" selected>None</option>
                                     @endif
                                     @foreach($users as $office_manager)
                                         @if($office_manager->role == 'Office Manager')
@@ -56,7 +56,7 @@
                             @else
                                 <x-select label="Office Manager" name="office_manager_id">
                                     @if (old('office_manager_id') == '')
-                                        <option selected>None</option>
+                                        <option value="" selected>None</option>
                                     @endif
                                     @foreach($users as $office_manager)
                                         @if($office_manager->role == 'Office Manager')

@@ -47,9 +47,9 @@ class UsersController extends Controller
             'first_name'    => ['required', 'string', 'max:255'],
             'last_name'     => ['required', 'string', 'max:255'],
             'role'          => ['nullable', 'string', 'max:255'],
-            'office_id'     => ['nullable', 'numeric'],
-            'pay'           => ['nullable', 'numeric'],
-            'department_id' => ['nullable', 'numeric'],
+            'office_id'     => ['nullable'],
+            'pay'           => ['nullable'],
+            'department_id' => ['nullable'],
             'email'         => ['required', 'email', 'unique:invitations', new MasterEmailUnique, new MasterEmailYourSelf, 'unique:users,email'],
         ], [
             'email.unique' => __('There is a pending invitation for this email.'),
@@ -61,6 +61,12 @@ class UsersController extends Controller
         $invitation->email   = $data['email'];
         $invitation->token   = Uuid::uuid4();
 
+        if($data["office_id"] == "None"){
+            $data["office_id"] = null;
+        }
+        if($data["department_id"] == "None"){
+            $data["department_id"] = null;
+        }
         if ($data['role'] == 'Admin' || $data['role'] == 'Owner') {
             $invitation->master    = true;
             $data['department_id'] = null;

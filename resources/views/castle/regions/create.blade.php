@@ -16,7 +16,7 @@
                         <div class="md:col-span-3 col-span-2">
                             <x-select label="Region Manager" name="region_manager_id">
                                 @if (old('region_manager_id') == '')
-                                    <option selected>None</option>
+                                    <option value="" selected>None</option>
                                 @endif
                                 @foreach($users as $region_manager)
                                     <option value="{{ $region_manager->id }}" {{ old('region_manager_id') == $region_manager->id ? 'selected' : '' }}>
@@ -37,7 +37,7 @@
                             @if(user()->role != "Admin" && user()->role != "Owner")
                                 <x-select label="Department" name="department_id" hidden>
                                     @if (old('department') == '')
-                                        <option selected>None</option>
+                                        <option value="" selected>None</option>
                                     @endif
                                     @foreach($departments as $department)
                                         <option value="{{ $department->id }}" {{ old('department', user()->department_id) == $department->id ? 'selected' : '' }}>
@@ -48,7 +48,7 @@
                             @else
                                 <x-select label="Department" name="department_id">
                                     @if (old('department') == '')
-                                        <option selected>None</option>
+                                        <option value="" selected>None</option>
                                     @endif
                                     @foreach($departments as $department)
                                         <option value="{{ $department->id }}" {{ old('department', user()->department_id) == $department->id ? 'selected' : '' }}>

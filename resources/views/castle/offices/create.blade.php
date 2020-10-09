@@ -17,7 +17,7 @@
                         <div class="md:col-span-3 col-span-2">
                             <x-select label="Region" name="region_id">
                                 @if (old('region_id') == '')
-                                    <option selected>None</option>
+                                    <option value="" selected>None</option>
                                 @endif
                                 @foreach($regions as $region)
                                     <option value="{{ $region->id }}" {{ old('region_id') == $region->id ? 'selected' : '' }}>
@@ -34,7 +34,7 @@
                         <div class="md:col-span-3 col-span-2">
                             <x-select label="Office Manager" name="office_manager_id">
                                 @if (old('office_manager_id') == '')
-                                    <option selected>None</option>
+                                    <option value="" selected>None</option>
                                 @endif
                                 @foreach($users as $office_manager)
                                     <option value="{{ $office_manager->id }}" {{ old('office_manager_id') == $office_manager->id ? 'selected' : '' }}>

@@ -100,6 +100,7 @@ class DepartmentController extends Controller
         $trainingPage->title         = "Training Page";
         $trainingPage->parent_id     = null;
         $trainingPage->department_id = $department->id;
+        $trainingPage->save();
 
         $user = User::query()->whereId($department->department_manager_id)->first();
         $user->department_id = $department->id;
