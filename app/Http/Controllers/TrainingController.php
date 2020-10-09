@@ -116,7 +116,7 @@ class TrainingController extends Controller
             ->send();
 
         return redirect(route('castle.manage-trainings.index', [
-            'department' => $$section->department_id,
+            'department' => $section->department_id,
             'section'    => $section->id
         ]));
     }

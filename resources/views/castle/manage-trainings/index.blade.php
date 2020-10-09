@@ -31,7 +31,6 @@
                             <div class="flex-grid items-center">
                               <h3>Add a new section to {{$actualSection->title}}</h3>
                               <x-form class="mt-8 inline-flex" :route="route('castle.manage-trainings.storeSection',[
-                                  'department' => user()->department_id,
                                   'section' => $actualSection->id
                                 ])">
                                 <x-input label="Title" name="title" type="text"></x-input>
