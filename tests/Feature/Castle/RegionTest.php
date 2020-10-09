@@ -38,7 +38,7 @@ class RegionTest extends TestCase
         $created = Region::where('name', $data['name'])->first();
 
         $response->assertStatus(302)
-            ->assertRedirect(route('castle.regions.edit', $created));
+            ->assertRedirect(route('castle.regions.index'));
     }
 
     /** @test */
@@ -46,7 +46,14 @@ class RegionTest extends TestCase
     {
         $departmentManager = factory(User::class)->create(['role' => 'Department Manager']);
         $department        = factory(Department::class)->create(['department_manager_id' => $departmentManager->id]);
-        $regionManager     = factory(User::class)->create(['role' => 'Region Manager']);
+
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
+
+        $regionManager     = factory(User::class)->create([
+            'role' => 'Region Manager',
+            'department_id' => $department->id
+        ]);
         $regions           = factory(Region::class, 6)->create([
             'region_manager_id' => $regionManager->id,
             'department_id' => $department->id,

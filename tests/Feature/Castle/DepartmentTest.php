@@ -42,20 +42,30 @@ class DepartmentTest extends TestCase
     /** @test */
     public function it_should_list_all_departments()
     {
-        $departmentManager = factory(User::class)->create(['role' => 'Department Manager']);
-        $departments       = factory(Department::class, 6)->create([
-            'department_manager_id' => $departmentManager->id,
+        $departmentManagerOne = factory(User::class)->create(['role' => 'Department Manager']);
+        $departmentManagerTwo = factory(User::class)->create(['role' => 'Department Manager']);
+
+        $departmentOne       = factory(Department::class)->create([
+            'department_manager_id' => $departmentManagerOne->id,
         ]);
+
+        $departmentTwo       = factory(Department::class)->create([
+            'department_manager_id' => $departmentManagerTwo->id,
+        ]);
+
+        $departmentManagerOne->department_id = $departmentOne->id;
+        $departmentManagerOne->save();
+
+        $departmentManagerTwo->department_id = $departmentTwo->id;
+        $departmentManagerTwo->save();
 
         $response = $this->get('castle/departments');
 
         $response->assertStatus(200)
             ->assertViewIs('castle.departments.index');
         
-      
-        foreach ($departments as $department) {
-            $response->assertSee($department->name);
-        }
+        $response->assertSee($departmentManagerOne->name);
+        $response->assertSee($departmentManagerTwo->name);
     }
 
     /** @test */
@@ -90,6 +100,9 @@ class DepartmentTest extends TestCase
         $department        = factory(Department::class)->create([
             'department_manager_id' => $departmentManager->id,
         ]);
+
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
 
         $response = $this->delete(route('castle.departments.destroy', $department->id));
         $deleted  = Department::where('id', $department->id)->get();

@@ -41,11 +41,17 @@ class DailyEntryTest extends FeatureTest
         $department    = factory(Department::class)->create([
             'department_manager_id' => $departmentManager->id
         ]);
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
+
         $region        = factory(Region::class)->create([
             'region_manager_id' => $this->user->id,
             'department_id' => $department->id
         ]);
-        $officeManager = factory(User::class)->create(['role' => 'Office Manager']);
+        $officeManager = factory(User::class)->create([
+            'role' => 'Office Manager',
+            'department_id' => $department->id
+        ]);
         $office         = factory(Office::class)->create([
             'region_id' => $region->id,
             'office_manager_id' => $officeManager->id
