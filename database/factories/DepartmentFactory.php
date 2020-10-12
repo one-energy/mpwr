@@ -6,6 +6,7 @@ use Faker\Generator as Faker;
 /** @var Factory $factory */
 $factory->define(Department::class, function (Faker $faker) {
     return [
-        'name' => $faker->city,
+        'name'                  => $faker->city,
+        'department_manager_id' => null
     ];
 });

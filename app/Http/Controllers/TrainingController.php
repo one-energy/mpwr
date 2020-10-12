@@ -2,28 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Department;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
 use Illuminate\Support\Facades\Validator;
 
 class TrainingController extends Controller
 {
-    public function index(TrainingPageSection $section = null)
+    public function index(Department $department, TrainingPageSection $section = null)
     {
-        $videoId       = null;
-        $content       = $this->getContent($section);
-        $actualSection = $section ?? TrainingPageSection::whereId(1)->first();
-        $index         = 0;
-
-        if ($content) {
-            $videoId = explode('/', $content->video_url);
-            $index   = count($videoId);
+        $content = [];
+        $index   = 0;
+        $videoId = [];
+        $actualSection = 0;
+        $path          = [];
+        if($department->id){
+               
+            $actualSection = $section ?? TrainingPageSection::whereDepartmentId($department->id)->first();
+            $content       = $this->getContent($actualSection);
+            $actualSection->whereDepartmentId(user()->department_id)->first();
+            $index         = 0;
+            if ($content) {
+                $videoId = explode('/', $content->video_url);
+                $index   = count($videoId);
+            }
+            $path = $this->getPath($actualSection);
+            
         }
 
-        $path = $this->getPath($actualSection);
-
         return view('training.index', [
-            'sections'      => $this->getParentSections($section),
+            'sections'      => $department->id ? $this->getParentSections($actualSection) : [],
             'content'       => $content,
             'videoId'       => $videoId[$index - 1] ?? null,
             'actualSection' => $actualSection,
@@ -31,26 +39,41 @@ class TrainingController extends Controller
         ]);
     }
 
-    public function manageTrainings(TrainingPageSection $section = null)
+    public function manageTrainings(Department $department, TrainingPageSection $section = null)
     {
-        $videoId       = null;
-        $content       = $this->getContent($section);
-        $actualSection = $section ?? TrainingPageSection::whereId(1)->first();
-        $index         = 0;
+        $content = [];
+        $index   = 0;
+        $videoId = [];
+        $actualSection = 0;
+        $path          = [];
+        $departments = [];
 
-        if ($content) {
-            $videoId = explode('/', $content->video_url);
-            $index   = count($videoId);
+        if(!$department->id && (user()->role == "Owner" || user()->role == "Admin")){
+            $department = Department::first();
         }
-
-        $path = $this->getPath($actualSection);
-
+        
+        if($department->id){   
+            $actualSection = $section ?? TrainingPageSection::whereDepartmentId($department->id)->first();
+            $content       = $this->getContent($actualSection);
+            $departments   = Department::all();
+            $index         = 0; 
+            
+            if ($content) {
+                $videoId = explode('/', $content->video_url);
+                $index   = count($videoId);
+            }
+            
+            $path = $this->getPath($actualSection);
+        }
+            
         return view('castle.manage-trainings.index', [
-            'sections'      => $this->getParentSections($section),
+            'sections'      => $department->id ? $this->getParentSections($actualSection) : [],
             'content'       => $content,
             'videoId'       => $videoId[$index - 1] ?? null,
             'actualSection' => $actualSection,
             'path'          => $path,
+            'departmentId'  => $department->id ?? 0,
+            'departments'   => $departments
         ]);
     }
 
@@ -65,7 +88,10 @@ class TrainingController extends Controller
         
         $section->delete();
 
-        return redirect(route('castle.manage-trainings.index', $section->parent_id));
+        return redirect(route('castle.manage-trainings.index', [
+            'department' => $section->department_id,
+            'section'    => $section->parent_id
+        ]));
     }
 
     public function storeSection(TrainingPageSection $section)
@@ -73,12 +99,13 @@ class TrainingController extends Controller
         $validated = $this->validate(
             request(),
             [
-                'title'     => 'required|string|min:5|max:255',
+                'title'     => 'required|string|max:255',
             ],
         );        
-        $trainingPageSection            = new TrainingPageSection();
-        $trainingPageSection->title     = $validated['title'];
-        $trainingPageSection->parent_id = $section->id;
+        $trainingPageSection                = new TrainingPageSection();
+        $trainingPageSection->title         = $validated['title'];
+        $trainingPageSection->parent_id     = $section->id;
+        $trainingPageSection->department_id = $section->department_id;
 
         $trainingPageSection->save();
 
@@ -86,7 +113,10 @@ class TrainingController extends Controller
             ->withTitle(__('Section created!'))
             ->send();
 
-        return redirect(route('castle.manage-trainings.index', $section));
+        return redirect(route('castle.manage-trainings.index', [
+            'department' => $section->department_id,
+            'section'    => $section->id
+        ]));
     }
 
     public function updateSection(TrainingPageSection $section)
@@ -94,7 +124,7 @@ class TrainingController extends Controller
         $validated = $this->validate(
             request(),
             [
-                'title'     => 'required|string|min:5|max:255',
+                'title'     => 'required|string|max:255',
             ],
         );    
         
@@ -106,15 +136,18 @@ class TrainingController extends Controller
             ->withTitle(__('Section saved!'))
             ->send();
 
-        return redirect(route('castle.manage-trainings.index', $section));
+        return redirect(route('castle.manage-trainings.index', [
+            'department' => $section->department_id,
+            'section'    => $section->parent_id
+        ]));
     }
 
     public function storeContent(TrainingPageSection $section)
     {
         $validated = Validator::make(request()->all(), 
             [
-                'content_title'   => 'required|string|min:5|max:255',
-                'video_url'       => 'required|string|min:5|max:255',
+                'content_title'   => 'required|string|max:255',
+                'video_url'       => 'required|string|max:255',
                 'description'     => 'required|string',
             ],
         )->validate();    
@@ -131,7 +164,10 @@ class TrainingController extends Controller
             ->withTitle(__('Content created!'))
             ->send();
 
-        return redirect(route('castle.manage-trainings.index', $section));
+        return redirect(route('castle.manage-trainings.index', [
+            'department' => $section->department_id,
+            'section'    => $section->id
+        ]));
     }
 
     public function updateContent(TrainingPageContent $content)
@@ -139,8 +175,8 @@ class TrainingController extends Controller
         $validated = $this->validate(
             request(),
             [
-                'content_title'           => 'required|string|min:5|max:255',
-                'video_url'               => 'required|string|min:5|max:255',
+                'content_title'           => 'required|string|max:255',
+                'video_url'               => 'required|string|max:255',
                 'description'             => 'required|string',
             ],
         );    
@@ -155,8 +191,10 @@ class TrainingController extends Controller
         alert()
             ->withTitle(__('Content saved!'))
             ->send();
-
-        return redirect(route('castle.manage-trainings.index', $content->training_page_section_id));
+        return redirect(route('castle.manage-trainings.index', [
+            'department' => $content->section->department_id,
+            'section'    => $content->training_page_section_id
+        ]));
     }
 
     public function getPath($section)
@@ -164,6 +202,7 @@ class TrainingController extends Controller
         $path                = [$section];
         $trainingPageSection = $section;
         do {
+            
             if ($trainingPageSection->parent_id) {
                 $trainingPageSection = TrainingPageSection::query()->whereId($trainingPageSection->parent_id)->first();
                 array_push($path, $trainingPageSection);
@@ -173,9 +212,14 @@ class TrainingController extends Controller
         return array_reverse($path);
     }
 
+    public function changeDepartment()
+    {
+        return redirect(route('castle.manage-trainings.index',  ['department' => request()->all()['department']] ));
+    }
+
     public function getContent($section)
     {
-        return TrainingPageContent::whereTrainingPageSectionId($section->id ?? 1)->first();
+        return TrainingPageContent::whereTrainingPageSectionId($section->id)->first();
     }
 
     public function getParentSections($section)

@@ -19,7 +19,7 @@ class CreateTrainingPageSectionTable extends Migration
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->timestamps();
 
-            $table->foreign('parent_id')->references('id')->on('training_page_sections');
+            $table->foreign('parent_id')->references('id')->on('training_page_sections')->onDelete('cascade');
         });
     }
 

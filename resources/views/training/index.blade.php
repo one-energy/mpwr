@@ -24,7 +24,7 @@
         </div>
         <div class="text-gray-600 mt-6 md:mt-3 inline-flex items-center">
           @foreach($path as $pathSection)
-            <a href="/trainings/{{$pathSection->id}}" class="underline align-baseline">{{$pathSection->title}}</a> / 
+            <a href="/trainings/{{user()->department_id}}/{{$pathSection->id}}" class="underline align-baseline">{{$pathSection->title}}</a> / 
           @endforeach
         </div>
         <div class="mt-15">
@@ -45,7 +45,10 @@
           <div class="md:grid-cols-2 sm:grid-cols-1 md:row-gap-4 sm:row-gap-0 col-gap-4 inline-grid w-full mt-4">
             @foreach($sections as $section)
               <div class="col-span-1 hover:bg-gray-50">
-                <a href="{{route('trainings.index', $section->id)}}">
+                <a href="{{route('trainings.index', [
+                    'department' => user()->department_id,
+                    'section'    => $section->id
+                  ])}}">
                   <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-lg">
                     <div class="col-span-9">
                       {{$section->title}}

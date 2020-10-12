@@ -182,7 +182,9 @@
                                     x-transition:leave-end="transform opacity-0 scale-95"
                                     class="mt-2 max-h-80 overflow-y-auto w-full rounded-md shadow-lg z-10">
                                     @foreach($offices as $office)
-                                        <li class="p-2 cursor-pointer" @click="open = false" wire:click="addFilter({{$office}}, 'office')">{{$office->name}}</li>
+                                        <li class="p-2 cursor-pointer" @click="open = false" wire:click="addFilter({{$office}}, 'office')">
+                                            {{$office->region->name}} - {{$office->name}}
+                                        </li>
                                     @endforeach
                                 </ul>
                             </div>
@@ -258,11 +260,11 @@
                     </section>
                 </div>
                 <div class="mt-6">
-                    @if(user()->role != 'Setter' && user()->role != 'Sales Rep')
-                        <x-button :href="route('number-tracking.create')" color="green" class="inline-flex w-full">
-                            Update Numbers
-                        </x-button>
-                    @endif
+                
+                    <x-button :href="route('number-tracking.create')" color="green" class="inline-flex w-full">
+                        Update Numbers
+                    </x-button>
+                
                 </div>
             </div>
             

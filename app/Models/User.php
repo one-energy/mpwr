@@ -24,9 +24,11 @@ use Illuminate\Support\Facades\Hash;
  * @property string $remember_token
  * @property string $master
  * @property int $office_id
+ * @property int $department_id
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Carbon $deleted_at
+ * @property-read Department $department
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -37,7 +39,7 @@ class User extends Authenticatable implements MustVerifyEmail
         ['name' => 'Owner',              'description' => 'System Owner'],
         ['name' => 'Admin',              'description' => 'Allows access to the Admin functionality and Manage Users, Incentives and others (Admin Tab)'],
         ['name' => 'Department Manager', 'description' => 'Allows access to Manage Users, Incentives and others'],
-        ['name' => 'Region Manager',     'description' => 'Allows update all Regon\'s Number Traker'],
+        ['name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
         ['name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
         ['name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
         ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
@@ -60,6 +62,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function office()
     {
         return $this->belongsTo(Office::class, 'office_id');
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id');
     }
 
     public function invitations()
@@ -87,6 +94,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function userLevel()
     {
         return $this->role;
+    }
+
+    public function getDepartment()
+    {
+        return $this->office->region->department;
     }
 
     public function beCastleMaster()

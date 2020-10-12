@@ -28,21 +28,16 @@ class Department extends Model
         return $this->hasMany(Region::class);
     }
 
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+
     public function scopeSearch(Builder $query, $search)
     {
         $query->when($search, function (Builder $query) use ($search) {
             $query->where(
                 DB::raw('lower(departments.name)'),
-                'like',
-                '%' . strtolower($search) . '%'
-            )
-            ->orWhere(
-                DB::raw('lower(users.first_name)'),
-                'like',
-                '%' . strtolower($search) . '%'
-            )
-            ->orWhere(
-                DB::raw('lower(users.last_name)'),
                 'like',
                 '%' . strtolower($search) . '%'
             );

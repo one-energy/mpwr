@@ -25,7 +25,7 @@
                         <div class="md:col-span-3 col-span-2">
                             <x-select label="Role" name="role">
                                 @if (old('role') == '')
-                                    <option selected></option>
+                                    <option value="" selected>None</option>
                                 @endif
                                 @foreach($roles as $role)
                                     <option value="{{ $role['name'] }}" {{ old('role', $user->role) == $role['name'] ? 'selected' : '' }}>
@@ -38,11 +38,15 @@
                         <div class="md:col-span-3 col-span-2">
                                 <x-select label="Offices" name="office_id">
                                 @if (old('office') == '')
-                                    <option selected></option>
+                                    <option value="" selected>None</option>
                                 @endif
                                 @foreach($offices as $office)
                                     <option value="{{ $office->id }}" {{ old('office', $user->office_id) == $office->id ? 'selected' : '' }}>
-                                        {{ $office['name'] }}
+                                        @if(user()->role == "Admin" || user()->role == "Owner")
+                                            {{$office->region->name}} - {{ $office->name }}
+                                        @else
+                                            {{ $office->name }}
+                                        @endif
                                     </option>
                                 @endforeach
                             </x-select>
@@ -50,6 +54,34 @@
 
                         <div class="md:col-span-3 col-span-2">
                             <x-input-currency :label="__('Pay')" name="pay" :value="$user->pay"/>
+                        </div>
+
+                        <div class="md:col-span-3 col-span-2">
+                            <div class="md:col-span-3 col-span-2">
+                                @if(user()->role != "Admin" && user()->role != "Owner")
+                                    <x-select label="Department" name="department_id" hidden>
+                                        @if (old('department') == '')
+                                            <option value="" selected>None</option>
+                                        @endif
+                                        @foreach($departments as $department)
+                                            <option value="{{ $department->id }}" {{ old('department', $user->department_id) == $department->id ? 'selected' : '' }}>
+                                                {{ $department['name'] }}
+                                            </option>
+                                        @endforeach
+                                    </x-select>
+                                @else
+                                    <x-select label="Department" name="department_id">
+                                        @if (old('department') == '')
+                                            <option value="" selected>None</option>
+                                        @endif
+                                        @foreach($departments as $department)
+                                            <option value="{{ $department->id }}" {{ old('department', $user->department_id) == $department->id ? 'selected' : '' }}>
+                                                {{ $department['name'] }}
+                                            </option>
+                                        @endforeach
+                                    </x-select>
+                                @endif
+                            </div>
                         </div>
                 
                     </div>

@@ -3,20 +3,26 @@
 namespace App\Http\Controllers\Castle;
 
 use App\Http\Controllers\Controller;
+use App\Models\Department;
 use App\Models\Incentive;
 
 class ManageIncentivesController extends Controller
 {
     public function index()
     {
-        $incentives = Incentive::query()->get();
+        if(user()->role == "Admin" || user()->role == "Owner"){
+            $incentives = Incentive::all();
+        }else{
+            $incentives = Incentive::query()->whereDepartmentId(user()->department_id)->orderBy('number_installs')->get();
+        }
 
         return view('castle.incentives.index', compact('incentives'));
     }
 
     public function create()
     {
-        return view('castle.incentives.create');
+        $departments = Department::all();
+        return view('castle.incentives.create', compact('departments'));
     }
 
     public function store()
@@ -30,6 +36,7 @@ class ManageIncentivesController extends Controller
                 'installs_needed'   => 'required|integer|max:9999',
                 'kw_achieved'       => 'required|integer|max:9999',
                 'kw_needed'         => 'required|integer|max:9999',
+                'department_id'     => 'required|integer',
             ]
         );
 
@@ -40,6 +47,7 @@ class ManageIncentivesController extends Controller
         $incentive->installs_needed   = $validated['installs_needed'];
         $incentive->kw_achieved       = $validated['kw_achieved'];
         $incentive->kw_needed         = $validated['kw_needed'];
+        $incentive->department_id     = $validated['department_id'];
         
         $incentive->save();
 
@@ -47,12 +55,13 @@ class ManageIncentivesController extends Controller
             ->withTitle(__('Incentive created!'))
             ->send();
 
-        return redirect(route('castle.incentives.edit', $incentive));
+        return redirect(route('castle.incentives.index', $incentive));
     }
 
     public function edit(Incentive $incentive)
     {
-        return view('castle.incentives.edit', compact('incentive'));
+        $departments = Department::all();
+        return view('castle.incentives.edit', compact(['incentive','departments']));
     }
 
     public function update(Incentive $incentive)
@@ -66,6 +75,7 @@ class ManageIncentivesController extends Controller
                 'installs_needed'   => 'required|integer|max:9999',
                 'kw_achieved'       => 'required|integer|max:9999',
                 'kw_needed'         => 'required|integer|max:9999',
+                'department_id'     => ['nullable', 'numeric'],
             ]
         );
 
@@ -75,6 +85,7 @@ class ManageIncentivesController extends Controller
         $incentive->installs_needed   = $validated['installs_needed'];
         $incentive->kw_achieved       = $validated['kw_achieved'];
         $incentive->kw_needed         = $validated['kw_needed'];
+        $incentive->department_id     = $validated['department_id'];
         
         $incentive->save();
 
@@ -82,7 +93,7 @@ class ManageIncentivesController extends Controller
             ->withTitle(__('Incentive updated!'))
             ->send();
 
-        return back();
+        return  redirect(route('castle.incentives.index'));
     }
 
     public function destroy($id)

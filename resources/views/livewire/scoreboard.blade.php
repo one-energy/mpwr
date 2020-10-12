@@ -11,7 +11,7 @@
           <div class="flex justify-start">
             <h3 class="text-lg text-gray-900">Scoring</h3>
           </div>
-          <div class="flex justify-end">
+          <!-- <div class="flex justify-end">
             <label for="show_option" class="block text-xs font-medium leading-5 text-gray-700 mt-2">
               Show:
             </label>
@@ -28,7 +28,7 @@
                   @endforeach
               </select>
             </div>
-          </div>
+          </div> -->
         </div>
         
         <div class="mt-6">

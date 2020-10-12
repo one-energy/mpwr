@@ -18,4 +18,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Incentive extends Model
 {
     use SoftDeletes;
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id');
+    }
 }

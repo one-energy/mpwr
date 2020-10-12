@@ -75,20 +75,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('masters/invite', [MasterInvitationController::class, 'form'])->name('masters.invite');
         Route::post('masters/invite', [MasterInvitationController::class, 'invite']);
         Route::patch('masters/{master}/revoke', RevokeMasterAccessController::class)->name('masters.revoke');
-
-        Route::get('offices', [OfficeController::class, 'index'])->name('offices.index');
+        
+        Route::get('offices/', [OfficeController::class, 'index'])->name('offices.index');
         Route::get('offices/create', [OfficeController::class, 'create'])->name('offices.create');
         Route::post('offices/create', [OfficeController::class, 'store'])->name('offices.store');
         Route::get('offices/{office}/edit', [OfficeController::class, 'edit'])->name('offices.edit');
-        Route::put('offices/{office}', [OfficeController::class, 'update'])->name('offices.update');
-        Route::delete('offices/{office}', [OfficeController::class, 'destroy'])->name('offices.destroy');
+        Route::put('offices{office}', [OfficeController::class, 'update'])->name('offices.update');
+        Route::delete('offices{office}', [OfficeController::class, 'destroy'])->name('offices.destroy');
+    
 
-        Route::get('regions', [RegionController::class, 'index'])->name('regions.index');
-        Route::get('regions/create', [RegionController::class, 'create'])->name('regions.create');
-        Route::post('regions/create', [RegionController::class, 'store'])->name('regions.store');
-        Route::get('regions/{region}/edit', [RegionController::class, 'edit'])->name('regions.edit');
-        Route::put('regions/{region}', [RegionController::class, 'update'])->name('regions.update');
-        Route::delete('regions/{region}', [RegionController::class, 'destroy'])->name('regions.destroy');
+        Route::prefix('regions')->middleware('regions')->name('regions.')->group(function () {
+            Route::get('/', [RegionController::class, 'index'])->name('index');
+            Route::get('/create', [RegionController::class, 'create'])->name('create');
+            Route::post('/create', [RegionController::class, 'store'])->name('store');
+            Route::get('/{region}/edit', [RegionController::class, 'edit'])->name('edit');
+            Route::put('/{region}', [RegionController::class, 'update'])->name('update');
+            Route::delete('/{region}', [RegionController::class, 'destroy'])->name('destroy');
+        });
 
         Route::get('departments', [DepartmentController::class, 'index'])->name('departments.index');
         Route::get('departments/create', [DepartmentController::class, 'create'])->name('departments.create');
@@ -97,18 +100,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('departments/{deparment}', [DepartmentController::class, 'update'])->name('departments.update');
         Route::delete('departments/{deparment}', [DepartmentController::class, 'destroy'])->name('departments.destroy');
 
-        Route::get('incentives', [ManageIncentivesController::class, 'index'])->name('incentives.index');
-        Route::get('incentives/create', [ManageIncentivesController::class, 'create'])->name('incentives.create');
-        Route::post('incentives/create', [ManageIncentivesController::class, 'store'])->name('incentives.store');
-        Route::get('incentives/{incentive}/edit', [ManageIncentivesController::class, 'edit'])->name('incentives.edit');
-        Route::put('incentives/{incentive}', [ManageIncentivesController::class, 'update'])->name('incentives.update');
-        Route::delete('incentives/{incentive}', [ManageIncentivesController::class, 'destroy'])->name('incentives.destroy');
+        Route::prefix('incentives')->middleware('incentives')->name('incentives.')->group(function () {
+            Route::get('/', [ManageIncentivesController::class, 'index'])->name('index');
+            Route::get('/create', [ManageIncentivesController::class, 'create'])->name('create');
+            Route::post('/create', [ManageIncentivesController::class, 'store'])->name('store');
+            Route::get('/{incentive}/edit', [ManageIncentivesController::class, 'edit'])->name('edit');
+            Route::put('/{incentive}', [ManageIncentivesController::class, 'update'])->name('update');
+            Route::delete('/{incentive}', [ManageIncentivesController::class, 'destroy'])->name('destroy');
+        });
 
-        Route::get('/manage-trainings/list/{section?}', [TrainingController::class, 'manageTrainings'])->name('manage-trainings.index');
+        Route::get('/manage-trainings/list/{department?}/{section?}', [TrainingController::class, 'manageTrainings'])->name('manage-trainings.index');
         Route::post('/manage-trainings/{section?}/create-section', [TrainingController::class, 'storeSection'])->name('manage-trainings.storeSection');
         Route::put('/manage-trainings/{section?}/update-section', [TrainingController::class, 'updateSection'])->name('manage-trainings.updateSection');
         Route::post('/manage-trainings/{section?}/create-content', [TrainingController::class, 'storeContent'])->name('manage-trainings.storeContent');
         Route::post('/manage-trainings/{content}/update-content', [TrainingController::class, 'updateContent'])->name('manage-trainings.updateContent');
+        Route::post('/manage-trainings/changeDepartment', [TrainingController::class, 'changeDepartment'])->name('manage-trainings.changeDepartment');
         Route::delete('/manage-trainings/{section}', [TrainingController::class, 'deleteSection'])->name('manage-trainings.deleteSection');
         
     });
@@ -127,10 +133,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('/customers', CustomerController::class);
     Route::put('/customers/{customer}/active', [CustomerController::class, 'Active'])->name('customers.active');
     Route::get('/scoreboard', ScoreboardController::class)->name('scoreboard');
-    Route::get('/trainings/{section?}', [TrainingController::class, 'index'])->name('trainings.index');
-    // Route::get('/trainings/settings', [TrainingSettingsController::class, 'index'])->name('trainings.settings.index');
-    // Route::get('/trainings/settings/best-practices', [TrainingSettingsBestPracticesController::class ,'index'])->name('trainings.settings.best-practices.index');
-    // Route::get('/trainings/settings/best-practices/what-to-say', [TrainingSettingsBestPracticesWhatToSayController::class, 'index'])->name('trainings.settings.best-practices.what-to-say.index');
+    Route::get('/trainings/{department?}/{section?}', [TrainingController::class, 'index'])->name('trainings.index');
     Route::get('/incentives', IncentivesController::class)->name('incentives');
     Route::get('/number-tracking', [NumberTrackingController::class, 'index'])->name('number-tracking.index');
     Route::get('/number-tracking/create', [NumberTrackingController::class, 'create'])->name('number-tracking.create');

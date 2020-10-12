@@ -16,6 +16,6 @@ class LoginController extends Controller
 
     public function redirectPath()
     {
-        return user()->isMaster() ? route('castle.dashboard') : route('home');
+        return user()->role == "Admin" || user()->role == "Owner" ? route('castle.users.index') : route('home');
     }
 }

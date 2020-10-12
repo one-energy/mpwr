@@ -6,9 +6,11 @@
                     <h3 class="text-lg text-gray-900">Manage Regions</h3>
                     </div>
                     <div>
-                    <x-button :href="route('castle.regions.create')" color="green">
-                        @lang('Create')
-                    </x-button>
+                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
+                        <x-button :href="route('castle.regions.create')" color="green">
+                            @lang('Create')
+                        </x-button>
+                    @endif
                     </div>
             </div>
 
@@ -21,18 +23,26 @@
                         <x-table :pagination="$regions->links()">
                             <x-slot name="header">
                                 <x-table.th-tr>
-                                    <x-table.th-searchable by="regions.name" :sortedBy="$sortBy" :direction="$sortDirection">
+                                    @if(user()->role != "Region Manager" && user()->role != "Department Manager")
+                                        <x-table.th-searchable by="regions.name" :sortedBy="$sortBy" :direction="$sortDirection">
+                                            @lang('Department')
+                                        </x-table.th>
+                                    @endif
+                                    <x-table.th>
                                         @lang('Region')
                                     </x-table.th>
-                                    <x-table.th-searchable by="users.first_name" :sortedBy="$sortBy" :direction="$sortDirection">
+                                    <x-table.th>
                                         @lang('Region Manager')
                                     </x-table.th>
                                     <x-table.th></x-table.th>
-                                    </x-table.th-tr>
+                                </x-table.th-tr>
                             </x-slot>
                             <x-slot name="body">
                                 @foreach($regions as $region)
                                     <x-table.tr :loop="$loop">
+                                        @if(user()->role != "Region Manager" && user()->role != "Department Manager")
+                                            <x-table.td>{{ $region->department->name }}</x-table.td>
+                                        @endif
                                         <x-table.td>{{ $region->name }}</x-table.td>
                                         <x-table.td>{{ $region->regionManger->first_name }} {{ $region->regionManger->last_name }}</x-table.td>
                                         <x-table.td class="flex space-x-3">

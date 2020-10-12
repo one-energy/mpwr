@@ -6,11 +6,13 @@
                     <div>
                         <h3 class="text-lg text-gray-900">Manage Offices</h3>
                       </div>
-                      <div>
-                        <x-button :href="route('castle.offices.create')" color="green">
-                            @lang('Create')
-                        </x-button>
-                      </div>
+                      @if(user()->role != "Office Manager")
+                        <div>
+                            <x-button :href="route('castle.offices.create')" color="green">
+                                @lang('Create')
+                            </x-button>
+                        </div>
+                      @endif
                 </div>
 
                 <x-search :search="$search"/>
@@ -22,21 +24,29 @@
                             <x-table :pagination="$offices->links()">
                                 <x-slot name="header">
                                     <x-table.th-tr>
-                                        <x-table.th-searchable by="offices.name" :sortedBy="$sortBy" :direction="$sortDirection">
+                                        @if(user()->role == "Admin" || user()->role == "Owner")
+                                            <x-table.th-searchable by="offices.name" :sortedBy="$sortBy" :direction="$sortDirection">
+                                                @lang('Department')
+                                            </x-table.th>
+                                        @endif
+                                        <x-table.th>
                                             @lang('Office')
                                         </x-table.th>
-                                        <x-table.th-searchable by="regions.name" :sortedBy="$sortBy" :direction="$sortDirection">
+                                        <x-table.th>
                                             @lang('Region')
                                         </x-table.th>
-                                        <x-table.th-searchable by="users.first_name" :sortedBy="$sortBy" :direction="$sortDirection">
+                                        <x-table.th>
                                             @lang('Office Manager')
                                         </x-table.th>
                                         <x-table.th></x-table.th>
-                                        </x-table.th-tr>
+                                    </x-table.th-tr>
                                 </x-slot>
                                 <x-slot name="body">
                                     @foreach($offices as $office)
                                         <x-table.tr :loop="$loop">
+                                            @if(user()->role == "Admin" || user()->role == "Owner")
+                                                <x-table.td>{{ $office->region->department->name }}</x-table.td>
+                                            @endif
                                             <x-table.td>{{ $office->name }}</x-table.td>
                                             <x-table.td>{{ $office->region->name }}</x-table.td>
                                             <x-table.td>{{ $office->office_manager->first_name }} {{ $office->office_manager->last_name }}</x-table.td>

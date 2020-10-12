@@ -127,12 +127,14 @@ class NumberTrackerDetail extends Component
             });
         }
 
-        $this->numbersTrackedLast = $queryLast->groupBy('user_id')
+        $this->numbersTrackedLast = $queryLast->where("users.department_id", "=", user()->department_id)
+            ->groupBy('user_id')
             ->get();
 
         $this->graficValueLast    = $this->numbersTrackedLast->sum($this->filterBy);
 
         return $query->groupBy('daily_numbers.user_id')
+            ->where("users.department_id", "=", user()->department_id)
             ->orderBy($this->filterBy, 'desc')
             ->get();
     }
@@ -168,16 +170,18 @@ class NumberTrackerDetail extends Component
 
     public function getOffices()
     {
-        $this->offices = Office::all();
+        $this->offices = Office::select("offices.*")
+                            ->join("regions", "offices.region_id", "=", "regions.id")
+                            ->where("regions.department_id", "=", user()->department_id)->get();
     }
 
     public function getRegions()
     {
-        $this->regions = Region::all();
+        $this->regions = Region::whereDepartmentId(user()->department_id)->get();
     }
 
     public function getUsers()
     {
-        $this->users = User::all();
+        $this->users = User::whereDepartmentId(user()->department_id)->get();
     }
 }

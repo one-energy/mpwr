@@ -28,7 +28,7 @@ class Office extends Model
 
     public function region()
     {
-        return $this->belongsTo(User::class, 'region_id');
+        return $this->belongsTo(Region::class, 'region_id');
     }
 
     public function users()
@@ -51,21 +51,6 @@ class Office extends Model
         $query->when($search, function (Builder $query) use ($search) {
             $query->where(
                 DB::raw('lower(offices.name)'),
-                'like',
-                '%' . strtolower($search) . '%'
-            )
-            ->orWhere(
-                DB::raw('lower(regions.name)'),
-                'like',
-                '%' . strtolower($search) . '%'
-            )
-            ->orWhere(
-                DB::raw('lower(users.first_name)'),
-                'like',
-                '%' . strtolower($search) . '%'
-            )
-            ->orWhere(
-                DB::raw('lower(users.last_name)'),
                 'like',
                 '%' . strtolower($search) . '%'
             );

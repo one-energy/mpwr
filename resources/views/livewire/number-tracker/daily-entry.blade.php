@@ -92,8 +92,8 @@
                                         type="button"
                                         class="flex justify-between w-full justify-left py-2 px-4 mb-2 bg-white rounded-lg border-gray-200 border-2 top-0 left-0 text-sm leading-5 font-medium focus:outline-none 
                                             @if($officeSelected == $office->id) border-green-400 @else focus:border-gray-700 focus:shadow-outline-gray @endif transition duration-150 ease-in-out"
-                                        wire:click="setOffice({{ $office->id }})">
-                                        {{ $office->name }}
+                                        wire:click="setOffice({{ $office }})">
+                                        {{$office->region->name}} - {{ $office->name }}
                                         @if(in_array($office, $missingOffices))
                                             <div class=" w-2 h-2 rounded-full bg-red-600 "></div>
                                         @endif
@@ -226,100 +226,111 @@
                     </x-svg.spinner>
 
                     <div class="mt-3 w-full">
-                        <div class="flex flex-col">
-                            <div class="overflow-x-auto">
-                                <div class="align-middle inline-block min-w-full overflow-hidden">
-                                    <x-table wire:loading.remove>
-                                        <x-slot name="header">
-                                            <x-table.th-tr>
-                                                <x-table.th by="region_member">
-                                                    @lang('Member')
-                                                </x-table.th>
-                                                <x-table.th by="doors">
-                                                    @lang('Doors')
-                                                </x-table.th>
-                                                <x-table.th by="hours">
-                                                    @lang('Hours')
-                                                </x-table.th>
-                                                <x-table.th by="sets">
-                                                    @lang('Sets')
-                                                </x-table.th>
-                                                <x-table.th by="sits">
-                                                    @lang('Sits')
-                                                </x-table.th>
-                                                <x-table.th by="set_closes">
-                                                    @lang('Set Closes')
-                                                </x-table.th>
-                                                <x-table.th by="closes">
-                                                    @lang('Closes')
-                                                </x-table.th>
-                                            </x-table.th-tr>
-                                        </x-slot>
-                                        <x-slot name="body">
-                                            @foreach($users as $user)
-                                                <x-table.tr :loop="$loop">
-                                                    <x-table.td>
-                                                        {{ $user->first_name . ' ' . $user->last_name }}
-                                                    </x-table.td>
-                                                    <x-table.td>
-                                                        <input
-                                                            type="number" 
-                                                            min="0" 
-                                                            name="numbers[{{ $user->id }}][doors]" 
-                                                            class="form-input block w-14 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                                                            value="{{ $user->doors }}"/>
-                                                    </x-table.td>
-                                                    <x-table.td>
-                                                        <input
-                                                            type="number" 
-                                                            min="0" 
-                                                            max="24"
-                                                            oninvalid="this.setCustomValidity('Value must be less than or equal 24')" 
-                                                            onchange="this.setCustomValidity('')"
-                                                            step="any" 
-                                                            name="numbers[{{ $user->id }}][hours]" 
-                                                            class="form-input block w-14 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                                                            value="{{ $user->hours }}"/>
-                                                    </x-table.td>
-                                                    <x-table.td>
-                                                        <input 
-                                                            type="number" 
-                                                            min="0"
-                                                            name="numbers[{{ $user->id }}][sets]" 
-                                                            class="form-input block w-14 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                                                            value="{{ $user->sets }}"/>
-                                                    </x-table.td>
-                                                    <x-table.td>
-                                                        <input 
-                                                            type="number" 
-                                                            min="0"
-                                                            name="numbers[{{ $user->id }}][sits]" 
-                                                            class="form-input block w-14 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                                                            value="{{ $user->sits }}"/>
-                                                    </x-table.td>
-                                                    <x-table.td>
-                                                        <input 
-                                                            type="number" 
-                                                            min="0"
-                                                            name="numbers[{{ $user->id }}][set_closes]" 
-                                                            class="form-input block w-14 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                                                            value="{{ $user->set_closes }}"/>
-                                                    </x-table.td>
-                                                    <x-table.td>
-                                                        <input 
-                                                            type="number" 
-                                                            min="0"
-                                                            name="numbers[{{ $user->id }}][closes]" 
-                                                            class="form-input block w-14 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                                                            value="{{ $user->closes }}"/>
-                                                    </x-table.td>
-                                                </x-table.tr>
-                                            @endforeach
-                                        </x-slot>
-                                    </x-table>
+                        @if($users->count())
+                            <div class="flex flex-col">
+                                <div class="overflow-x-auto">
+                                    <div class="align-middle inline-block min-w-full overflow-hidden">
+                                        <x-table wire:loading.remove>
+                                            <x-slot name="header">
+                                                <x-table.th-tr>
+                                                    <x-table.th by="region_member">
+                                                        @lang('Member')
+                                                    </x-table.th>
+                                                    <x-table.th by="doors">
+                                                        @lang('Doors')
+                                                    </x-table.th>
+                                                    <x-table.th by="hours">
+                                                        @lang('Hours')
+                                                    </x-table.th>
+                                                    <x-table.th by="sets">
+                                                        @lang('Sets')
+                                                    </x-table.th>
+                                                    <x-table.th by="sits">
+                                                        @lang('Sits')
+                                                    </x-table.th>
+                                                    <x-table.th by="set_closes">
+                                                        @lang('Set Closes')
+                                                    </x-table.th>
+                                                    <x-table.th by="closes">
+                                                        @lang('Closes')
+                                                    </x-table.th>
+                                                </x-table.th-tr>
+                                            </x-slot>
+                                            <x-slot name="body">
+                                                @foreach($users as $user)
+                                                    <x-table.tr :loop="$loop">
+                                                        <x-table.td>
+                                                            {{ $user->first_name . ' ' . $user->last_name }}
+                                                        </x-table.td>
+                                                        <x-table.td>
+                                                            <input
+                                                                type="number" 
+                                                                min="0" 
+                                                                name="numbers[{{ $user->id }}][doors]" 
+                                                                class="form-input block w-14 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                                                value="{{ $user->doors }}"/>
+                                                        </x-table.td>
+                                                        <x-table.td>
+                                                            <input
+                                                                type="number" 
+                                                                min="0" 
+                                                                max="24"
+                                                                oninvalid="this.setCustomValidity('Value must be less than or equal 24')" 
+                                                                onchange="this.setCustomValidity('')"
+                                                                step="any" 
+                                                                name="numbers[{{ $user->id }}][hours]" 
+                                                                class="form-input block w-14 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                                                value="{{ $user->hours }}"/>
+                                                        </x-table.td>
+                                                        <x-table.td>
+                                                            <input 
+                                                                type="number" 
+                                                                min="0"
+                                                                name="numbers[{{ $user->id }}][sets]" 
+                                                                class="form-input block w-14 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                                                value="{{ $user->sets }}"/>
+                                                        </x-table.td>
+                                                        <x-table.td>
+                                                            <input 
+                                                                type="number" 
+                                                                min="0"
+                                                                name="numbers[{{ $user->id }}][sits]" 
+                                                                class="form-input block w-14 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                                                value="{{ $user->sits }}"/>
+                                                        </x-table.td>
+                                                        <x-table.td>
+                                                            <input 
+                                                                type="number" 
+                                                                min="0"
+                                                                name="numbers[{{ $user->id }}][set_closes]" 
+                                                                class="form-input block w-14 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                                                value="{{ $user->set_closes }}"/>
+                                                        </x-table.td>
+                                                        <x-table.td>
+                                                            <input 
+                                                                type="number" 
+                                                                min="0"
+                                                                name="numbers[{{ $user->id }}][closes]" 
+                                                                class="form-input block w-14 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                                                value="{{ $user->closes }}"/>
+                                                        </x-table.td>
+                                                    </x-table.tr>
+                                                @endforeach
+                                            </x-slot>
+                                        </x-table>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        @else
+                            <div class="h-96 ">
+                                <div class="flex justify-center align-middle">
+                                    <div class="text-sm text-center text-gray-700">
+                                        <x-svg.draw.empty></x-svg.draw.empty>
+                                        No data yet.
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -400,9 +411,10 @@
                 missingDates = @this.get('missingDates');
                 if(date != null){
                     date = (date < 10) ? '0' + date.toString() : date.toString();
-                    let month = (this.month < 10) ? '0' + (this.month + 1).toString() : (this.month + 1).toString()
+                    let month = (this.month < 9) ? '0' + (this.month + 1).toString() : (this.month + 1).toString()
                     let searchDate = this.year + '-' + month + '-' + date;
                     let response;
+                    console.log(this.month);
                     for(let missingDate of missingDates) {
                         response = missingDate == searchDate
                         if (response == true){

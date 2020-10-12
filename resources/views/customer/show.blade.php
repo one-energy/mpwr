@@ -38,7 +38,7 @@
                         <div class="md:col-span-3 sm:cols-span-2">
                             <x-select label="Setter" name="setter_id" :disabledToUser="'Setter'">
                                 @if (old('setter_id') == '')
-                                    <option selected></option>
+                                    <option value="" selected>None</option>
                                 @endif
                                 @foreach($users as $setter)
                                     <option value="{{ $setter->id }}" {{ old('setter_id', $customer->setter_id) == $setter->id ? 'selected' : '' }}>

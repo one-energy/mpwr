@@ -10,35 +10,43 @@
                 @csrf
                 <div>
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
-                    <div class="md:col-span-6 col-span-2">
-                        <x-input label="Office Name" name="name"></x-input>
-                    </div>
+                        <div class="md:col-span-6 col-span-2">
+                            <x-input label="Office Name" name="name"></x-input>
+                        </div>
 
-                    <div class="md:col-span-3 col-span-2">
-                        <x-select label="Region" name="region_id">
-                            @if (old('region_id') == '')
-                                <option selected></option>
-                            @endif
-                            @foreach($regions as $region)
-                                <option value="{{ $region->id }}" {{ old('region_id') == $region->id ? 'selected' : '' }}>
-                                    {{ $region->name }}
-                                </option>
-                            @endforeach
-                        </x-select>
-                    </div>
-                    
-                    <div class="md:col-span-3 col-span-2">
-                        <x-select label="Office Manager" name="office_manager_id">
-                            @if (old('office_manager_id') == '')
-                                <option selected></option>
-                            @endif
-                            @foreach($users as $office_manager)
-                                <option value="{{ $office_manager->id }}" {{ old('office_manager_id') == $office_manager->id ? 'selected' : '' }}>
-                                    {{ $office_manager->first_name }} {{ $office_manager->last_name }}
-                                </option>
-                            @endforeach
-                        </x-select>
-                    </div>
+                        <div class="md:col-span-3 col-span-2">
+                            <x-select label="Region" name="region_id">
+                                @if (old('region_id') == '')
+                                    <option value="" selected>None</option>
+                                @endif
+                                @foreach($regions as $region)
+                                    <option value="{{ $region->id }}" {{ old('region_id') == $region->id ? 'selected' : '' }}>
+                                        @if(user()->role == "Admin" || user()->role == "Owner")
+                                            {{$region->department->name}} - {{ $region->name }}
+                                        @else
+                                            {{$region->name}}
+                                        @endif
+                                    </option>
+                                @endforeach
+                            </x-select>
+                        </div>
+                        
+                        <div class="md:col-span-3 col-span-2">
+                            <x-select label="Office Manager" name="office_manager_id">
+                                @if (old('office_manager_id') == '')
+                                    <option value="" selected>None</option>
+                                @endif
+                                @foreach($users as $office_manager)
+                                    <option value="{{ $office_manager->id }}" {{ old('office_manager_id') == $office_manager->id ? 'selected' : '' }}>
+                                        @if(user()->role == "Admin" || user()->role == "Owner")
+                                            {{$office_manager->department->name ?? 'Without Department'}} - {{ $office_manager->first_name }} {{ $office_manager->last_name }}
+                                        @else
+                                            {{ $office_manager->first_name }} {{ $office_manager->last_name }}
+                                        @endif
+                                    </option>
+                                @endforeach
+                            </x-select>
+                        </div>
                     </div>
                 </div>
                 <div class="mt-8 border-t border-gray-200 pt-5">

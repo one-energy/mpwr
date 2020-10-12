@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\DB;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property-read User $regionManager
- * @property-read User $department
+ * @property-read Department $department
  */
 class Region extends Model
 {
@@ -32,7 +32,7 @@ class Region extends Model
 
     public function department()
     {
-        return $this->hasOne(Department::class, 'foreign_key', 'department_id')->withTimestamps();
+        return $this->belongsTo(Department::class, 'department_id');
     }
 
     public function offices()
@@ -45,16 +45,6 @@ class Region extends Model
         $query->when($search, function (Builder $query) use ($search) {
             $query->where(
                 DB::raw('lower(regions.name)'),
-                'like',
-                '%' . strtolower($search) . '%'
-            )
-            ->orWhere(
-                DB::raw('lower(users.first_name)'),
-                'like',
-                '%' . strtolower($search) . '%'
-            )
-            ->orWhere(
-                DB::raw('lower(users.last_name)'),
                 'like',
                 '%' . strtolower($search) . '%'
             );

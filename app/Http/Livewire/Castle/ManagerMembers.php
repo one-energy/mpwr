@@ -24,8 +24,17 @@ class ManagerMembers extends Component
 
     public function render()
     {
+        $usersQuery = User::query();
+
+        if(user()->role == "Admin" || user()->role == "Owner"){
+            $users = $usersQuery;
+        }else{
+            $users = $usersQuery->whereDepartmentId(user()->department_id);
+        }
+        
         return view('livewire.castle.manager-members', [
-            'users' => User::search($this->search)                
+            'users' => $users
+                ->search($this->search)                
                 ->orderBy('first_name')
                 ->get(),
         ]);

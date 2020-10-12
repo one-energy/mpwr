@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Castle;
 
+use App\Models\Department;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
 use App\Models\User;
@@ -26,11 +27,14 @@ class TrainingsTest extends TestCase
     /** @test */
     public function it_should_show_section_index()
     {
-        $master = (new UserBuilder)->asMaster()->save()->get();
-        $section = (new TrainingSectionBuilder)->save()->get();
+        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
+        $department = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
+        $section = factory(TrainingPageSection::class)->create(["department_id" => $department->id]);
 
-        $this->actingAs($master)
-            ->get(route('castle.manage-trainings.index', $section->id))
+        $this->actingAs($departmentManager)
+            ->get(route('castle.manage-trainings.index', $department->id, $section->id))
             ->assertStatus(200);
 
     }
@@ -38,31 +42,40 @@ class TrainingsTest extends TestCase
     /** @test */
     public function it_should_show_sections()
     {
-        $master = (new UserBuilder)->asMaster()->save()->get();
+        $master = factory(User::class)->create([
+            "role" => "Admin"
+        ]);
+        $department = factory(Department::class)->create([
+            "department_manager_id" => $master->id
+        ]);
         $section = (new TrainingSectionBuilder)->save()->get();
         $sectionOne = factory(TrainingPageSection::class)->create([
-            'parent_id' => $section->id
+            'parent_id' => $section->id,
+            'department_id' => $department->id
         ]);
         $sectionTwo = factory(TrainingPageSection::class)->create([
-            'parent_id' => $section->id
+            'parent_id' => $section->id,
+            'department_id' => $department->id
         ]);
         $sectionThree = factory(TrainingPageSection::class)->create([
-            'parent_id' => $section->id
+            'parent_id' => $section->id,
+            'department_id' => $department->id
         ]);
         $sectionFour = factory(TrainingPageSection::class)->create([
-            'parent_id' => $section->id
+            'parent_id' => $section->id,
+            'department_id' => $department->id
         ]);
 
         // print_r($sectionOne);
         $this->actingAs($master)
-            ->get(route('castle.manage-trainings.index', $section->id))
+            ->get(route('castle.manage-trainings.index', $department->id, $section->id))
             ->assertSee($sectionOne->title)
             ->assertSee($sectionTwo->title)
             ->assertSee($sectionThree->title)
             ->assertSee($sectionFour->title);
 
         $this->actingAs($master)
-            ->get(route('trainings.index', $section->id))
+            ->get(route('trainings.index', $department->id, $section->id))
             ->assertSee($sectionOne->title)
             ->assertSee($sectionTwo->title)
             ->assertSee($sectionThree->title)

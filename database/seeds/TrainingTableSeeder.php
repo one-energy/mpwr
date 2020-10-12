@@ -1,7 +1,11 @@
 <?php
 
+use App\Models\Department;
+use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
+use App\Models\User;
 use Illuminate\Database\Seeder;
+use Faker\Generator as Faker;
 
 class TrainingTableSeeder extends Seeder
 {
@@ -10,20 +14,32 @@ class TrainingTableSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(Faker $faker)
     {
-        $firstSection = factory(TrainingPageSection::class)->create(['title' => 'Training Page']);
-        $trainingSections = factory(TrainingPageSection::class, 10)->create();
+        $departments = Department::all();
+        foreach ($departments as $department) {
+            factory(TrainingPageSection::class)->create([
+                'title' => 'Training Page',
+                'department_id' => $department->id
+            ]);
+        }
+        $inicialTrainingPages = TrainingPageSection::all();
 
-        $trainingSections->map(function($section, $key) use($firstSection) {
-            if($key > 4){
-                $section->parent_id = rand(1,5);
-                $section->save();
-            }else{
-                $section->parent_id = $firstSection->id;
-                $section->save();
+        foreach ($inicialTrainingPages as $trainingPage) {
+            factory(TrainingPageSection::class, rand(0,3))->create([
+                'parent_id'     => $trainingPage->id,
+                'department_id' => $trainingPage->department_id
+            ]);
+            $trueOrFalse = rand(0,1);
+            if($trueOrFalse == 1){
+                factory(TrainingPageContent::class, rand(0,3))->create([
+                    'title'                    => $faker->name,
+                    'description'              => $faker->text,
+                    'training_page_section_id' => $trainingPage->id,
+                    'video_url'                => 'https://youtu.be/cu9lJvjERPQ'
+                ]);
             }
-        });
+        }
     }
 
     public function getSections()

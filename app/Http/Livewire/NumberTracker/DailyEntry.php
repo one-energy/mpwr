@@ -35,12 +35,16 @@ class DailyEntry extends Component
         $this->getMissingOffices();
         $this->dateSelected     = date('Y-m-d', time());
         $this->lastDateSelected = date('Y-m-d', strtotime($this->dateSelected . '-1 day'));
-        $this->setOffice(Office::first()->id);
+        $this->setOffice($this->getOfficeQuery()->first());
     }
 
     public function getUsers($dateSelected)
     {
-        return User::query()
+        $usersQuery = User::query();
+        if(user()->role == "Setter" || user()->role == "Sales Rep"){
+            $usersQuery->where("users.id", "=", user()->id);
+        }
+        return $usersQuery
             ->whereOfficeId($this->officeSelected)
             ->leftJoin('daily_numbers', function($join) use ($dateSelected) {
                 $join->on('daily_numbers.user_id', '=', 'users.id')
@@ -81,7 +85,7 @@ class DailyEntry extends Component
 
     public function getMissingOffices()
     {
-        $offices = Office::all();
+        $offices = $this->getOfficeQuery()->get();
         foreach ($offices as $office) {
             $missingDates = $this->getMissingDate('Y-m-01', $office->id);
 
@@ -97,10 +101,15 @@ class DailyEntry extends Component
         $this->lastDateSelected = date('Y-m-d', strtotime($this->dateSelected . '-1 day'));
     }
 
-    public function setOffice($id)
+    public function setOffice($office)
     {
-        $this->officeSelected = $id;
+        if($office == null){
+            $this->officeSelected = 0;
+        }else{
+            $this->officeSelected = $office->id ?? $office['id'];
+        }
         $this->missingDates   = $this->getMissingDate('Y-m-01', $this->officeSelected);
+        empty($office);
     }
 
     public function sortBy()
@@ -113,9 +122,38 @@ class DailyEntry extends Component
         $this->getMissingOffices();
         $this->users               = $this->getUsers($this->dateSelected);
         $this->usersLastDayEntries = $this->getUsers($this->lastDateSelected);
+        $offices = $this->getOfficeQuery();
 
         return view('livewire.number-tracker.daily-entry',[
-            'offices' => Office::all(),
+            'offices' => $offices->get(),
         ]);
+    }
+
+    public function getOfficeQuery() {
+        $query = Office::query()
+            ->select("offices.*")
+            ->join("regions", "region_id", "=", "regions.id");
+
+        if(user()->role == "Admin" || user()->role == "Owner"){
+           $query->where("regions.department_id", "=", 0);
+        }
+
+        if(user()->role == "Department Manager"){
+           $query->where("regions.department_id", "=", user()->department_id);
+        }
+
+        if(user()->role == "Region Manager"){
+           $query->where("regions.region_manager_id", "=", user()->id);
+        }
+
+        if(user()->role == "Office Manager"){
+           $query->where("offices.office_manager_id", "=", user()->id);
+        }
+        
+        if(user()->role == "Setter" || user()->role == "Sales Rep"){
+           $query->where("offices.id", "=", user()->office_id);
+        }
+        
+        return $query;
     }
 }

@@ -22,8 +22,12 @@
                     @foreach($users as $user)
                         @if($user->office_id !== $office->id)
                             <div class="hover:bg-gray-100 h-8 p-1 grid grid-cols-6" wire:click="addUserToOffice({{$user}})">
-                                <div class="text-right col-span-5">
-                                    {{$user->first_name . ' ' . $user->last_name}}
+                                <div class="text-right col-span-5 truncate">
+                                    @if($user->office_id)
+                                        {{$user->office->name}} - {{$user->first_name . ' ' . $user->last_name}}
+                                    @else
+                                        Without Office - {{$user->first_name . ' ' . $user->last_name}}
+                                    @endif
                                 </div>
                                 <div class="float-right col-span-1">
                                     <x-svg.chevron-right class="float-right w-7 text-gray-500"/>
@@ -53,8 +57,12 @@
                                 <div class="col-span-1">
                                     <x-svg.chevron-left class="w-7 text-gray-500"/>
                                 </div>
-                                <div class="col-span-5">
-                                    {{$user->first_name . ' ' . $user->last_name}}
+                                <div class="col-span-5 h-full truncate">
+                                    @if($user->office_id)
+                                        {{$user->office->name}} - {{$user->first_name . ' ' . $user->last_name}}
+                                    @else
+                                        Without Office - {{$user->first_name . ' ' . $user->last_name}}
+                                    @endif
                                 </div>
                             </div>
                         @endif

@@ -19,6 +19,11 @@
                             <x-table :pagination="$users->links()">
                                 <x-slot name="header">
                                     <tr class="sm:border-gray-200 border-b-2">
+                                        @if(user()->role == "Admin")
+                                            <x-table.th-searchable by="first_name" :sortedBy="$sortBy" :direction="$sortDirection">
+                                                @lang('Department')
+                                            </x-table.th>
+                                        @endif
                                         <x-table.th-searchable by="first_name" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Name')
                                         </x-table.th>
@@ -40,6 +45,9 @@
                                 <x-slot name="body">
                                     @foreach($users as $user)
                                         <x-table.tr :loop="$loop" onclick="window.location='{{route('castle.users.show', $user->id)}}';" class="cursor-pointer">
+                                            @if(user()->role == "Admin")
+                                                <x-table.td>{{ $user->department->name ?? 'Whitout Department' }}</x-table.td>
+                                            @endif
                                             <x-table.td>{{ $user->first_name . ' ' . $user->last_name }}</x-table.td>
                                             <x-table.td>{{ $user->email }}</x-table.td>
                                             <x-table.td>{{ $user->role }}</x-table.td>

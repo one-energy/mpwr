@@ -10,29 +10,56 @@
                 @csrf
                 <div>
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
-                    <div class="md:col-span-3 col-span-2">
-                        <x-input label="Number of Installs" name="number_installs" type="number"></x-input>
-                    </div>
+                        <div class="md:col-span-3 col-span-2">
+                            <x-input label="Number of Installs" name="number_installs" type="number"></x-input>
+                        </div>
 
-                    <div class="md:col-span-3 col-span-2">
-                        <x-input label="Incentive Name" name="name"></x-input>
-                    </div>
-            
-                    <div class="md:col-span-3 col-span-1">
-                        <x-input-add-on label="Installs Achieved" name="installs_achieved" addOn="%"></x-input-add-on >
-                    </div>
-                    
-                    <div class="md:col-span-3 col-span-1">
-                        <x-input label="Installs Needed" name="installs_needed"></x-input>
-                    </div>
+                        <div class="md:col-span-3 col-span-2">
+                            <x-input label="Incentive Name" name="name"></x-input>
+                        </div>
+                
+                        <div class="md:col-span-3 col-span-1">
+                            <x-input-add-on label="Installs Achieved" name="installs_achieved" addOn="%"></x-input-add-on >
+                        </div>
+                        
+                        <div class="md:col-span-3 col-span-1">
+                            <x-input label="Installs Needed" name="installs_needed"></x-input>
+                        </div>
 
-                    <div class="md:col-span-3 col-span-2">
-                        <x-input-add-on label="kW Achieved" name="kw_achieved" addOn="%"></x-input-add-on>
-                    </div>
-            
-                    <div class="md:col-span-3 col-span-2">
-                        <x-input-add-on  label="kW Needed" name="kw_needed" addOn="kW"></x-input-add-on >
-                    </div>
+                        <div class="md:col-span-3 col-span-2">
+                            <x-input-add-on label="kW Achieved" name="kw_achieved" addOn="%"></x-input-add-on>
+                        </div>
+                
+                        <div class="md:col-span-3 col-span-2">
+                            <x-input-add-on  label="kW Needed" name="kw_needed" addOn="kW"></x-input-add-on >
+                        </div>
+                        <div class="md:col-span-3 col-span-2">
+                            <div class="md:col-span-3 col-span-2">
+                                @if(user()->role != "Admin" && user()->role != "Owner")
+                                    <x-select label="Department" name="department_id" hidden>
+                                        @if (old('department') == '')
+                                            <option value="" selected>None</option>
+                                        @endif
+                                        @foreach($departments as $department)
+                                            <option value="{{ $department->id }}" {{ old('department', user()->department_id) == $department->id ? 'selected' : '' }}>
+                                                {{ $department['name'] }}
+                                            </option>
+                                        @endforeach
+                                    </x-select>
+                                @else
+                                    <x-select label="Department" name="department_id">
+                                        @if (old('department') == '')
+                                            <option value="" selected>None</option>
+                                        @endif
+                                        @foreach($departments as $department)
+                                            <option value="{{ $department->id }}" {{ old('department', user()->department_id) == $department->id ? 'selected' : '' }}>
+                                                {{ $department['name'] }}
+                                            </option>
+                                        @endforeach
+                                    </x-select>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="mt-8 border-t border-gray-200 pt-5">

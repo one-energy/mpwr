@@ -11,16 +11,31 @@ class OfficeController extends Controller
 {
     public function index()
     {
-        $offices = Office::query()->get();
-
-        return view('castle.offices.index', compact('offices'));
+        return view('castle.offices.index');
     }
 
     public function create()
     {
-        $regions = Region::all();
-        $users   = User::query()->where('role', 'Office Manager')->get();
+        $regionsQuery = Region::query()->select("regions.*");
+        $usersQuery   = User::query()->whereRole("Office Manager");
 
+        if(user()->role == "Admin" || user()->role == "Owner"){
+            $users   = $usersQuery->get();
+            $regions = $regionsQuery->get();
+        }
+
+        if(user()->role == "Department Manager"){
+            $regions =  $regionsQuery
+                ->join('departments', function ($join) {
+                    $join->on("regions.department_id", '=', 'departments.id')
+                        ->where('departments.department_manager_id', '=', user()->id);
+                })->get();
+            $users =  $usersQuery->whereDepartmentId(user()->department_id)->get();
+        }
+        if(user()->role == "Region Manager"){
+            $regions =  $regionsQuery->whereRegionManagerId(user()->id)->get();
+            $users =  $usersQuery->whereDepartmentId(user()->department_id)->get();
+        }
         return view('castle.offices.create', compact('regions', 'users'));
     }
 
@@ -50,13 +65,32 @@ class OfficeController extends Controller
             ->withTitle(__('Office created!'))
             ->send();
 
-        return redirect(route('castle.offices.edit', $office));
+        return redirect(route('castle.offices.index', $office));
     }
 
     public function edit(Office $office)
     {
-        $regions = Region::all();
-        $users   = User::query()->orderBy('first_name')->get();
+        $regionsQuery = Region::query();
+        if(user()->role == "Department Manager"){
+            $regions = $regionsQuery->whereDepartmentId(user()->department_id)->get();
+        }
+
+        if(user()->role == "Region Manager"){
+            $regions = $regionsQuery->whereRegionManagerId(user()->id)->get();
+        }
+
+        if(user()->role == "Office Manager"){
+            $regions = $regionsQuery->whereId($office->region_id)->get();
+        }
+
+        if(user()->role == "Owner" || user()->role == "Admin"){
+            $regions = $regionsQuery->get();
+        }
+
+        $users   = User::query()
+            ->whereDepartmentId($office->region->department->id)
+            ->orderBy("first_name")
+            ->get();
 
         return view('castle.offices.edit', compact('office', 'regions', 'users'));
     }
@@ -86,7 +120,7 @@ class OfficeController extends Controller
             ->withTitle(__('Office updated!'))
             ->send();
 
-        return back();
+        return redirect(route('castle.offices.index'));
     }
 
     public function destroy($id)
