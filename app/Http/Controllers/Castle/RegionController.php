@@ -90,7 +90,7 @@ class RegionController extends Controller
             ->withTitle(__('Region created!'))
             ->send();
 
-        return redirect(route('castle.regions.index', $region));
+        return redirect(route('castle.regions.index'));
     }
 
     public function create()

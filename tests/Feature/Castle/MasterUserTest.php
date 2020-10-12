@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Castle;
 
+use App\Models\Department;
+use App\Models\User;
 use Tests\Builders\UserBuilder;
 use Tests\Feature\FeatureTest;
 
@@ -10,15 +12,30 @@ class MasterUserTest extends FeatureTest
     /** @test */
     public function only_master_users_should_enter_the_castle()
     {
-        $nonMaster = (new UserBuilder)->save()->get();
+        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
+        $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
 
-        $this->actingAs($nonMaster)
+        $admin = factory(User::class)->create([
+            "role" => "Admin",
+            "department_id" => $department->id
+        ]);
+        $owner = factory(User::class)->create([
+            "role" => "Owner",
+            "department_id" => $department->id
+        ]);
+
+
+        $this->actingAs($departmentManager)
             ->get(route('castle.users.index'))
-            ->assertForbidden();
+            ->assertSuccessful();
 
-        $master = (new UserBuilder)->asMaster()->save()->get();
+        $this->actingAs($admin)
+            ->get(route('castle.users.index'))
+            ->assertSuccessful();
 
-        $this->actingAs($master)
+        $this->actingAs($owner)
             ->get(route('castle.users.index'))
             ->assertSuccessful();
     }

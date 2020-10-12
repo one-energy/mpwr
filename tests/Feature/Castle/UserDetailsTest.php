@@ -15,16 +15,30 @@ class UserDetailsTest extends FeatureTest
     /** @test */
     public function only_master_users_can_see_user_details()
     {
-        $nonMaster = (new UserBuilder)->save()->get();
+        $departmentManager = factory(User::class)->create([
+            "role" => "Department Manager"
+        ]);
 
-        $this->actingAs($nonMaster)
-            ->get(route('castle.users.edit', $nonMaster->id))
+        $department = factory(Department::class)->create([
+            "department_manager_id" => $departmentManager->id   
+        ]);
+        
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
+
+        $setter = factory(User::class)->create([
+            "role" => "Setter",
+            "department_id" => $department->id
+        ]);
+
+        $this->actingAs($setter)
+            ->get(route('castle.users.edit', $setter->id))
             ->assertForbidden();
 
-        $master = (new UserBuilder)->asMaster()->save()->get();
+        
 
-        $this->actingAs($master)
-            ->get(route('castle.users.edit', $master->id))
+        $this->actingAs($departmentManager)
+            ->get(route('castle.users.edit', $departmentManager->id))
             ->assertSuccessful();
     }
 

@@ -55,7 +55,7 @@ class ManageIncentivesController extends Controller
             ->withTitle(__('Incentive created!'))
             ->send();
 
-        return redirect(route('castle.incentives.index', $incentive));
+        return redirect(route('castle.incentives.index'));
     }
 
     public function edit(Incentive $incentive)

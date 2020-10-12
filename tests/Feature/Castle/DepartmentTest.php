@@ -24,12 +24,14 @@ class DepartmentTest extends TestCase
     /** @test */
     public function it_should_store_a_new_department()
     {
-        $departmentManager = factory(User::class)->create(['role' => 'Department Manager']);
+        $admin = factory(User::class)->create(["role" => "Admin"]);
 
         $data = [
             'name'              => 'Department',
-            'department_manager_id' => $departmentManager->id,
+            'department_manager_id' => $admin->id,
         ];
+
+        $this->actingAs($admin);
 
         $response = $this->post(route('castle.departments.store'), $data);
 
@@ -42,6 +44,8 @@ class DepartmentTest extends TestCase
     /** @test */
     public function it_should_list_all_departments()
     {
+        $admin = factory(User::class)->create(['role' => 'Department Manager']);
+
         $departmentManagerOne = factory(User::class)->create(['role' => 'Department Manager']);
         $departmentManagerTwo = factory(User::class)->create(['role' => 'Department Manager']);
 
@@ -59,6 +63,8 @@ class DepartmentTest extends TestCase
         $departmentManagerTwo->department_id = $departmentTwo->id;
         $departmentManagerTwo->save();
 
+        $this->actingAs($admin);
+
         $response = $this->get('castle/departments');
 
         $response->assertStatus(200)
@@ -71,14 +77,16 @@ class DepartmentTest extends TestCase
     /** @test */
     public function it_should_edit_an_department()
     {
-        $departmentManager = factory(User::class)->create(['role' => 'Department Manager']);
-        $department        = factory(Department::class)->create([
-            'name'              => 'New Department',
-            'department_manager_id' => $departmentManager->id,
-        ]);
+        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
+        $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
+
         $data         = $department->toArray();
         $data['department_manager_id'] = $data['department_manager_id'];
         $updateDepartment = array_merge($data, ['name' => 'Department Edited']);
+
+        $this->actingAs($departmentManager);
 
         $response = $this->put(route('castle.departments.update', $department->id), $updateDepartment);
 
@@ -96,14 +104,21 @@ class DepartmentTest extends TestCase
     /** @test */
     public function it_should_destroy_an_department()
     {
-        $departmentManager = factory(User::class)->create(['role' => 'Department Manager']);
+        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
+        $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
+
         $department        = factory(Department::class)->create([
             'department_manager_id' => $departmentManager->id,
         ]);
 
+        
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
-
+        
+        $this->actingAs($departmentManager);
+        
         $response = $this->delete(route('castle.departments.destroy', $department->id));
         $deleted  = Department::where('id', $department->id)->get();
 
@@ -115,7 +130,18 @@ class DepartmentTest extends TestCase
     /** @test */
     public function it_should_block_the_create_form_for_non_top_level_roles()
     {
-        $this->actingAs(factory(User::class)->create(['master' => false]));
+        $setter = factory(User::class)->create([
+            "role" => "Setter"
+        ]);
+
+        $department = factory(Department::class)->create([
+            "department_manager_id" => $setter->id
+        ]);
+
+        $setter->department_id = $department->id;
+        $setter->save();
+
+        $this->actingAs($setter);
 
         $response = $this->get('castle/departments/create');
 
@@ -125,20 +151,29 @@ class DepartmentTest extends TestCase
     /** @test */
     public function it_should_show_the_create_form_for_top_level_roles()
     {
-       $response = $this->get('castle/departments/create');
+        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
+        $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
+
+        $this->actingAs($departmentManager);
+        $response = $this->get('castle/departments/create');
        
-       $response->assertStatus(200)
+        $response->assertStatus(200)
            ->assertViewIs('castle.departments.create');
     }
 
     /** @test */
     public function it_should_require_all_fields_to_store_a_new_department()
     {
+        $admin = factory(User::class)->create(["role" => "Admin"]);
+
         $data = [
             'name'              => '',
             'department_manager_id' => '',
         ];
 
+        $this->actingAs($admin);
         $response = $this->post(route('castle.departments.store'), $data);
         $response->assertSessionHasErrors(
         [
