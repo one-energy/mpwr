@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Castle;
 
+use App\Models\Department;
 use App\Models\User;
 use Tests\Builders\RegionBuilder;
 use Tests\Builders\UserBuilder;
@@ -32,6 +33,18 @@ class UserDetailsTest extends FeatureTest
     {
         $master    = (new UserBuilder)->asMaster()->save()->get();
         $nonMaster = (new UserBuilder)->save()->get();
+        $department = factory(Department::class)->create([
+            "name" => "Department One"
+        ]);
+
+        $master    = factory(User::class)->create([
+            "role" => "Admin",
+        ]);
+
+        $nonMaster    = factory(User::class)->create([
+            "role"          => "Department Manager",
+            "department_id" => $department->id
+        ]);
 
         $this->actingAs($master)
             ->get(route('castle.users.edit', $master->id))

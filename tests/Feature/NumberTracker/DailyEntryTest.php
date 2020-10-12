@@ -38,7 +38,7 @@ class DailyEntryTest extends FeatureTest
         $departmentManager = factory(User::class)->create([
             'role' => 'Department Manager'
         ]);
-        $department    = factory(Department::class)->create([
+        $department        = factory(Department::class)->create([
             'department_manager_id' => $departmentManager->id
         ]);
         $departmentManager->department_id = $department->id;
@@ -57,10 +57,23 @@ class DailyEntryTest extends FeatureTest
             'office_manager_id' => $officeManager->id
         ]);
 
-        $userOne    = (new UserBuilder)->withOffice($office)->save()->get();
-        $userTwo    = (new UserBuilder)->withOffice($office)->save()->get();
-        $userThree  = (new UserBuilder)->withOffice($office)->save()->get();
-        $userFour   = (new UserBuilder)->withOffice($office)->save()->get();
+        $userOne    = factory(User::class)->create([
+            "office_id" => $office->id,
+            "department_id" => $department->id
+        ]);
+        $userTwo    = factory(User::class)->create([
+            "office_id" => $office->id,
+            "department_id" => $department->id
+        ]);
+        $userThree    = factory(User::class)->create([
+            "office_id" => $office->id,
+            "department_id" => $department->id
+        ]);
+        $userFour    = factory(User::class)->create([
+            "office_id" => $office->id,
+            "department_id" => $department->id
+        ]);
+
         
         $dailyEntryOne   = (new DailyEntryBuilder)->withUser($userOne->id)->withDate(date("Y-m-d", time()))->save()->get();
         $dailyEntryTwo   = (new DailyEntryBuilder)->withUser($userTwo->id)->withDate(date("Y-m-d", time()))->save()->get();

@@ -27,11 +27,14 @@ class TrainingsTest extends TestCase
     /** @test */
     public function it_should_show_section_index()
     {
-        $master = (new UserBuilder)->asMaster()->save()->get();
-        $section = (new TrainingSectionBuilder)->save()->get();
+        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
+        $department = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
+        $section = factory(TrainingPageSection::class)->create(["department_id" => $department->id]);
 
-        $this->actingAs($master)
-            ->get(route('castle.manage-trainings.index', $section->id))
+        $this->actingAs($departmentManager)
+            ->get(route('castle.manage-trainings.index', $department->id, $section->id))
             ->assertStatus(200);
 
     }
