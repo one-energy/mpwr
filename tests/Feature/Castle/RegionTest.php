@@ -28,14 +28,22 @@ class RegionTest extends TestCase
     {
         $regionManager = factory(User::class)->create(['role' => 'Region Manager']);
 
+        $departmentManager = factory(User::class)->create(['role' => 'Department Manager']);
+
+        $department = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+
+        $regionManager->department_id = $department->id;
+        $regionManager->save();
+
         $data = [
             'name'              => 'Region',
             'region_manager_id' => $regionManager->id,
+            "department_id"     => $department->id,
         ];
 
-        $response = $this->post(route('castle.regions.store'), $data);
+        $this->actingAs($regionManager);
 
-        $created = Region::where('name', $data['name'])->first();
+        $response = $this->post(route('castle.regions.store'), $data);
 
         $response->assertStatus(302)
             ->assertRedirect(route('castle.regions.index'));
@@ -58,7 +66,7 @@ class RegionTest extends TestCase
             'region_manager_id' => $regionManager->id,
             'department_id' => $department->id,
         ]);
-
+        $this->actingAs($departmentManager);
         $response = $this->get('castle/regions');
 
         $response->assertStatus(200)
@@ -73,15 +81,24 @@ class RegionTest extends TestCase
     /** @test */
     public function it_should_edit_an_region()
     {
-        $regionManager = factory(User::class)->create(['role' => 'Region Manager']);
+        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
+        $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
+
+        $regionManager     = factory(User::class)->create(['role' => 'Region Manager']);
         $region        = factory(Region::class)->create([
             'name'              => 'New Region',
             'region_manager_id' => $regionManager->id,
+            'department_id'     => $department->id
         ]);
+
         $data         = $region->toArray();
         $data['region_manager_id'] = $data['region_manager_id'];
         $updateRegion = array_merge($data, ['name' => 'Region Edited']);
 
+        $this->actingAs($departmentManager);
         $response = $this->put(route('castle.regions.update', $region->id), $updateRegion);
 
         $response->assertStatus(302);
@@ -98,11 +115,18 @@ class RegionTest extends TestCase
     /** @test */
     public function it_should_destroy_an_region()
     {
+        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
+        $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
+
         $regionManager = factory(User::class)->create(['role' => 'Region Manager']);
         $region        = factory(Region::class)->create([
             'region_manager_id' => $regionManager->id,
         ]);
 
+        $this->actingAs($departmentManager);
+        
         $response = $this->delete(route('castle.regions.destroy', $region->id));
         $deleted  = Region::where('id', $region->id)->get();
 
@@ -114,7 +138,21 @@ class RegionTest extends TestCase
     /** @test */
     public function it_should_block_the_create_form_for_non_top_level_roles()
     {
-        $this->actingAs(factory(User::class)->create(['master' => false]));
+        $departmentManager = $setter = factory(User::class)->create([
+            "role" => "Department Manager"
+        ]);
+        $setter = factory(User::class)->create([
+            "role" => "Setter"
+        ]);
+
+        $department = factory(Department::class)->create([
+            "department_manager_id" => $departmentManager ->id
+        ]);
+        
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
+
+        $this->actingAs($setter);
 
         $response = $this->get('castle/regions/create');
 
@@ -124,15 +162,41 @@ class RegionTest extends TestCase
     /** @test */
     public function it_should_show_the_create_form_for_top_level_roles()
     {
-       $response = $this->get('castle/regions/create');
+        $departmentManager = factory(User::class)->create([
+            "role" => "Department Manager"
+        ]);
+
+        $department = factory(Department::class)->create([
+            "department_manager_id" => $departmentManager->id
+        ]);
+
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
+
+        $this->actingAs($departmentManager);
+
+        $response = $this->get('castle/regions/create');
        
-       $response->assertStatus(200)
+        $response->assertStatus(200)
            ->assertViewIs('castle.regions.create');
     }
 
     /** @test */
     public function it_should_require_all_fields_to_store_a_new_region()
     {
+        $departmentManager = factory(User::class)->create([
+            "role" => "Department Manager"
+        ]);
+
+        $department = factory(Department::class)->create([
+            "department_manager_id" => $departmentManager->id
+        ]);
+
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
+
+        $this->actingAs($departmentManager);
+
         $data = [
             'name'              => '',
             'region_manager_id' => '',

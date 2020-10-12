@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Customer;
+use App\Models\Department;
 use App\Models\User;
 use Carbon\Carbon;
 use Tests\TestCase;
@@ -40,9 +41,29 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_filter_by_active_customers()
     {
-        $activeCustomers   = factory(Customer::class, 3)->create(['is_active' => true]);
-        $inactiveCustomers = factory(Customer::class, 3)->create(['is_active' => false]);
+        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
+        $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
+        
+        $setter            = factory(User::class)->create([
+            "role" => "Setter",
+            'department_id' => $department->id,
+        ]);
 
+        
+        $activeCustomers   = factory(Customer::class, 3)->create([
+            'is_active' => true,
+            'opened_by_id' => $setter->id
+            ]);
+            
+            $inactiveCustomers = factory(Customer::class, 3)->create([
+                'is_active' => false,
+                'opened_by_id' => $setter->id
+                ]);
+
+        $this->actingAs($setter);
+            
         $response = $this->get('/?sort_by=is_active');
 
         foreach ($activeCustomers as $activeCustomer) {
@@ -84,6 +105,12 @@ class CustomerTest extends TestCase
      /** @test */
      public function it_should_show_the_create_form_for_top_level_roles()
      {
+        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
+        $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
+
+        $this->actingAs($departmentManager);
         $response = $this->get('customers/create');
         
         $response->assertStatus(200)

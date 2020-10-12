@@ -74,7 +74,6 @@ class DailyEntryTest extends FeatureTest
             "department_id" => $department->id
         ]);
 
-        
         $dailyEntryOne   = (new DailyEntryBuilder)->withUser($userOne->id)->withDate(date("Y-m-d", time()))->save()->get();
         $dailyEntryTwo   = (new DailyEntryBuilder)->withUser($userTwo->id)->withDate(date("Y-m-d", time()))->save()->get();
         $dailyEntryThree = (new DailyEntryBuilder)->withUser($userThree->id)->withDate(date("Y-m-d", time()))->save()->get();
@@ -84,6 +83,8 @@ class DailyEntryTest extends FeatureTest
         $lastDailyEntryTwo   = (new DailyEntryBuilder)->withUser($userTwo->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
         $lastDailyEntryThree = (new DailyEntryBuilder)->withUser($userThree->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
         $lastDailyEntryFour  = (new DailyEntryBuilder)->withUser($userFour->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
+        
+        $this->actingAs($departmentManager);
 
         //test if sum its right
         Livewire::test(DailyEntry::class)

@@ -68,14 +68,14 @@ class TrainingsTest extends TestCase
 
         // print_r($sectionOne);
         $this->actingAs($master)
-            ->get(route('castle.manage-trainings.index', $department->id, $section->id))
+            ->get(route('castle.manage-trainings.index', ["department" => $department->id, "section" => $section->id]))
             ->assertSee($sectionOne->title)
             ->assertSee($sectionTwo->title)
             ->assertSee($sectionThree->title)
             ->assertSee($sectionFour->title);
 
         $this->actingAs($master)
-            ->get(route('trainings.index', $department->id, $section->id))
+            ->get(route('trainings.index', ["department" => $department->id, "section" => $section->id]))
             ->assertSee($sectionOne->title)
             ->assertSee($sectionTwo->title)
             ->assertSee($sectionThree->title)
@@ -85,18 +85,29 @@ class TrainingsTest extends TestCase
     /** @test */
     public function it_should_show_content_of_section()
     {
-        $master = (new UserBuilder)->asMaster()->save()->get();
-        $section = (new TrainingSectionBuilder)->save()->get();
+        $departmentManager = factory(User::class)->create([
+            "role" => "Deppartment Manager"
+        ]);
+        $department = factory(Department::class)->create([
+            "department_manager_id" => $departmentManager->id
+        ]);
+
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
+
+        $section = factory(TrainingPageSection::class)->create([
+            "department_id" => $department->id
+        ]);
         $content = factory(TrainingPageContent::class)->create([
             'training_page_section_id' => $section->id
         ]);
     
-        $this->actingAs($master)
+        $this->actingAs($departmentManager)
             ->get(route('castle.manage-trainings.index', $section->id))
             ->assertSee($content->description)
             ->assertSee($content->title);
 
-        $this->actingAs($master)
+        $this->actingAs($departmentManager)
             ->get(route('trainings.index', $section->id))
             ->assertSee($content->description)
             ->assertSee($content->title);
@@ -105,19 +116,31 @@ class TrainingsTest extends TestCase
     /** @test */
     public function it_should_delete_a_section()
     {
-        $master = (new UserBuilder)->asMaster()->save()->get();
-        $section = factory(TrainingPageSection::class)->create([
-            'parent_id' => null
+        $departmentManager = factory(User::class)->create([
+            "role" => "Department Manager"
         ]);
-        $sectionOne = factory(TrainingPageSection::class)->create([
-            'parent_id' => $section->id
+        
+        $department = factory(Department::class)->create([
+            "department_manager_id" => $departmentManager->id
         ]);
 
-        $this->actingAs($master)
+        $departmentManager->department_id = $department->id;
+        $department->save();
+
+        $section = factory(TrainingPageSection::class)->create([
+            'parent_id' => null,
+            'department_id' => $department->id
+        ]);
+        $sectionOne = factory(TrainingPageSection::class)->create([
+            'parent_id' => $section->id,
+            'department_id' => $department->id
+        ]);
+
+        $this->actingAs($departmentManager)
             ->get(route('castle.manage-trainings.index', $section->id))
             ->assertSee($sectionOne->title);
         
-        $this->actingAs($master)
+        $this->actingAs($departmentManager)
             ->delete(route('castle.manage-trainings.deleteSection', $sectionOne->id))
             ->assertDontSee($sectionOne->title);
     }
