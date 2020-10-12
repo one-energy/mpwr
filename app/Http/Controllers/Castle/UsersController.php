@@ -130,9 +130,9 @@ class UsersController extends Controller
     {
         if(user()->role == "Admin"){
             $roles = [
-                ['name' => 'Admin',              'description' => 'Allows to update al system except owner users'],
-                ['name' => 'Department Manager', 'description' => 'Allows update all in departments and Regon\'s Number Traker'],
-                ['name' => 'Region Manager',     'description' => 'Allows update all Regon\'s Number Traker'],
+                ['name' => 'Admin',              'description' => 'Allows to update all system except owner users'],
+                ['name' => 'Department Manager', 'description' => 'Allows update all in departments and Regon\'s Number Tracker'],
+                ['name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
                 ['name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
                 ['name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
                 ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],

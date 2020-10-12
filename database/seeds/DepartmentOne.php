@@ -18,7 +18,7 @@ class DepartmentOne extends Seeder
     {
         $department  = factory(Department::class)->create();
 
-        $userdptoOne = factory(User::class)->create([
+        $userDepartmentOne = factory(User::class)->create([
             'first_name'    => 'Department one',
             'last_name'     => 'Manager',
             'email'         => '1.departmentmanager@devsquad.com',
@@ -26,7 +26,7 @@ class DepartmentOne extends Seeder
             'department_id' => $department->id,
             'master'        => true,
         ]);
-        $department->department_manager_id = $userdptoOne->id;
+        $department->department_manager_id = $userDepartmentOne->id;
         $department->save();
         
         //Region

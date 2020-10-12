@@ -36,8 +36,6 @@ class OfficeController extends Controller
             $regions =  $regionsQuery->whereRegionManagerId(user()->id)->get();
             $users =  $usersQuery->whereDepartmentId(user()->department_id)->get();
         }
-        // $users   = User::whereRole('Office Manager')->get();
-        // dd($users, $regions);
         return view('castle.offices.create', compact('regions', 'users'));
     }
 

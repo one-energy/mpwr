@@ -11,7 +11,6 @@ class TrainingController extends Controller
 {
     public function index(Department $department, TrainingPageSection $section = null)
     {
-        // dd($section);
         $content = [];
         $index   = 0;
         $videoId = [];
@@ -56,7 +55,6 @@ class TrainingController extends Controller
         if($department->id){   
             $actualSection = $section ?? TrainingPageSection::whereDepartmentId($department->id)->first();
             $content       = $this->getContent($actualSection);
-            // dd($actualSection);
             $departments   = Department::all();
             $index         = 0; 
             

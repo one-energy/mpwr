@@ -121,7 +121,6 @@ class DailyEntry extends Component
     {
         $this->getMissingOffices();
         $this->users               = $this->getUsers($this->dateSelected);
-        // dd($this->users);
         $this->usersLastDayEntries = $this->getUsers($this->lastDateSelected);
         $offices = $this->getOfficeQuery();
 

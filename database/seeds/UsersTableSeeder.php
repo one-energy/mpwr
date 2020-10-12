@@ -58,9 +58,6 @@ class UsersTableSeeder extends Seeder
             'department_id' => null,
             'master'        => true,
         ]);
-
-        // $this->createExampleDepartmentOne($departmentOne);
-        // $this->createExampleDepartmentTwo($departmentTwo);
     }
 
     public function createTestRegion()

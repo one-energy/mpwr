@@ -20,7 +20,6 @@ class Users extends Component
         $query = User::with('office')->select('users.*');
             if(user()->role == "Office Manager"){
                 $userOfficeId = user()->id;
-                // dd($userOfficeId);
                 $query->join('offices', function($join) use ($userOfficeId) {
                     $join->on('users.office_id', '=', 'offices.id')
                         ->where('offices.office_manager_id', '=', $userOfficeId);
