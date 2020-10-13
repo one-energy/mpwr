@@ -270,4 +270,11 @@ class UsersController extends Controller
 
         return $user;
     }
+
+    public function getRegionsManager($departmentId)
+    {
+        return User::whereDepartmentId($departmentId)
+            ->whereRole("Region Manager")
+            ->get();
+    }
 }

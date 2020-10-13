@@ -79,6 +79,8 @@ class RegionController extends Controller
             ],
         );
 
+        dd($validated);
+        
         $region                    = new Region();
         $region->name              = $validated['name'];
         $region->region_manager_id = $validated['region_manager_id'];
@@ -106,5 +108,10 @@ class RegionController extends Controller
         $departments = Department::all();
 
         return view('castle.regions.create', compact('users', 'departments'));
+    }
+
+    public function getRegions($departmentId)
+    {
+        return Region::whereDepartmentId($departmentId)->get();
     }
 }
