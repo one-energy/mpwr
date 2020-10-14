@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\Invitation;
 use App\Models\Office;
+use App\Models\Region;
 use App\Models\User;
 use App\Notifications\MasterExistingUserInvitation;
 use App\Notifications\MasterInvitation;
@@ -275,6 +276,21 @@ class UsersController extends Controller
     {
         return User::whereDepartmentId($departmentId)
             ->whereRole("Region Manager")
+            ->get();
+    }
+    
+    public function getOfficesManager($regionId)
+    {
+        $region = Region::whereId($regionId)->first();
+
+        $usersQuery = User::query()->select("users.*");
+        return $usersQuery->whereRole("Office Manager")
+            ->whereDepartmentId($region->department_id)
+            ->whereNull('office_id')
+            ->join("offices", function ($join) use ($regionId) {
+                $join->on("users.office_id", "=", "offices.id")
+                    ->orWhere("offices.region_id", "=", $regionId);
+            })
             ->get();
     }
 }

@@ -138,8 +138,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/number-tracking/create', [NumberTrackingController::class, 'create'])->name('number-tracking.create');
     Route::post('/number-tracking/create', [NumberTrackingController::class, 'store'])->name('number-tracking.store');
 
+    Route::post('/get-offices-managers/{departmentId}', [UsersController::class, 'getOfficesManager'])->name('getOfficesManager');
     Route::post('/get-regions-managers/{departmentId}', [UsersController::class, 'getRegionsManager'])->name('getRegionsManager');
-    Route::post('/get-regions/{departmentId}', [RegionController::class, 'getRegions'])->name('getRegions');
+    Route::post('/get-regions/{departmentId?}', [RegionController::class, 'getRegions'])->name('getRegions');
     Route::post('/get-departments', [DepartmentController::class, 'getDepartments'])->name('getDepartments');
 
 });
