@@ -56,9 +56,6 @@
                         </div>
                     </div>
                 </div>
-                <div >
-                   
-                </div>
                 <div class="mt-8 border-t border-gray-200 pt-5">
                     <div class="flex justify-start">
                         <span class="inline-flex rounded-md shadow-sm">
