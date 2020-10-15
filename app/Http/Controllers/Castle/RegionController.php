@@ -110,10 +110,24 @@ class RegionController extends Controller
 
     public function getRegions($departmentId = null)
     {
-        if($departmentId){
-            return Region::whereDepartmentId($departmentId)->get();
-        }else{
-            return Region::query()->select('regions.*', 'departments.name as departmentName')->join("departments", "regions.department_id", "=", "departments.id")->get();
+        $regionsQuery = Region::query()->select("regions.*");
+
+        if(user()->role == "Admin" || user()->role == "Owner"){
+            $regions = $regionsQuery->get();
         }
+
+        if(user()->role == "Department Manager"){
+            $regions =  $regionsQuery
+                ->join('departments', function ($join) {
+                    $join->on("regions.department_id", '=', 'departments.id')
+                        ->where('departments.department_manager_id', '=', user()->id);
+                })->get();
+            
+        }
+        if(user()->role == "Region Manager"){
+            $regions =  $regionsQuery->whereRegionManagerId(user()->id)->get();
+            
+        }
+       return $regions;
     }
 }

@@ -286,11 +286,6 @@ class UsersController extends Controller
         $usersQuery = User::query()->select("users.*");
         return $usersQuery->whereRole("Office Manager")
             ->whereDepartmentId($region->department_id)
-            ->whereNull('office_id')
-            ->join("offices", function ($join) use ($regionId) {
-                $join->on("users.office_id", "=", "offices.id")
-                    ->orWhere("offices.region_id", "=", $regionId);
-            })
             ->get();
     }
 }
