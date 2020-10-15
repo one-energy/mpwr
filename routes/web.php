@@ -142,6 +142,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/get-regions-managers/{departmentId}', [UsersController::class, 'getRegionsManager'])->name('getRegionsManager');
     Route::post('/get-regions/{departmentId?}', [RegionController::class, 'getRegions'])->name('getRegions');
     Route::post('/get-departments', [DepartmentController::class, 'getDepartments'])->name('getDepartments');
+    Route::post('/get-offices/{departmentId}', [OfficeController::class, 'getOffices'])->name('getOffices');
 
 });
 

@@ -133,4 +133,12 @@ class OfficeController extends Controller
 
         return back();
     }
+
+    public function getOffices($department)
+    {
+        return Office::query()
+            ->join("regions", "offices.region_id", "=", "regions.id")
+            ->where("regions.department_id", "=", $department)
+            ->get();
+    }
 }

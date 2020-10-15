@@ -8,7 +8,23 @@
 
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <x-form :route="route('castle.users.update', $user->id)" put>
-                <div>
+                <div x-data="{ 
+                              selectedDepartment: null
+                              departments: null
+                              token: document.head.querySelector('meta[name=csrf-token]').content, 
+                             }"
+                     x-init="$watch('selectedDepartment', 
+                                     (region) => { 
+                                    fetch('http://' + location.hostname + '/get-offices-managers/' + region, {method: 'post',  headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': token
+                                    }}).then(res => res.json()).then((officeManagerData) => { officesManagers = officeManagerData }) }),
+                            fetch('http://' + location.hostname + '/get-department/' + '{{user()->department_id}}' ,{method: 'post',  headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': token
+                                    }}).then(res=> res.json()).then( (departmentsData) => { 
+                                        departments = departmetsData
+                                    })">
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                         <div class="md:col-span-3 col-span-2">
                             <x-input :label="__('First Name')" name="first_name" :value="$user->first_name"/>
@@ -21,6 +37,24 @@
                         <div class="md:col-span-3 col-span-2">
                             <x-input :label="__('Email')" name="email" :value="$user->email"/>
                         </div>
+
+                        @if(user()->role != "Admin" && user()->role != "Owner")
+                            <div class="md:col-span-3 col-span-2 hidden">
+                                <x-select x-model="selectedDepartment" label="Department" name="department_id">
+                                    <template x-for="department in departments" :key="department.id">
+                                        <option :value="department.id" x-text="department.name" ></option>
+                                    </template>
+                                </x-select> 
+                            </div>
+                        @else
+                            <div class="md:col-span-3 col-span-2">
+                                <x-select x-model="selectedDepartment" label="Department" name="department_id">
+                                    <template x-for="department in departments" :key="department.id">
+                                        <option :value="department.id" x-text="department.name" ></option>
+                                    </template>
+                                </x-select>
+                            </div>
+                        @endif
 
                         <div class="md:col-span-3 col-span-2">
                             <x-select label="Role" name="role">
