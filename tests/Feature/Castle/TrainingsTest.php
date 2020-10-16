@@ -86,7 +86,7 @@ class TrainingsTest extends TestCase
     public function it_should_show_content_of_section()
     {
         $departmentManager = factory(User::class)->create([
-            "role" => "Deppartment Manager"
+            "role" => "Department Manager"
         ]);
         $department = factory(Department::class)->create([
             "department_manager_id" => $departmentManager->id

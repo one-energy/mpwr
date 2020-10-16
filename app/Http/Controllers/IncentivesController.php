@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
-use App\Models\Department;
 use App\Models\Incentive;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,9 +10,9 @@ class IncentivesController extends Controller
 {
     public function __invoke()
     {
-        if(user()->role == "Admin" || user()->role == "Owner"){
+        if (user()->role == "Admin" || user()->role == "Owner") {
             $incentives = Incentive::all();
-        }else{
+        } else {
             $incentives = Incentive::query()->whereDepartmentId(user()->department_id)->orderBy('number_installs')->get();
         }
         $userId        = Auth::user()->id;

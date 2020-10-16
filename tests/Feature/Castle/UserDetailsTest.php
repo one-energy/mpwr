@@ -98,7 +98,7 @@ class UserDetailsTest extends FeatureTest
     {
         $this->withoutExceptionHandling();
         
-        $master      = factory(User::class)->create(['master' => 1]);
+        $master      = factory(User::class)->create(['role' => "admin"]);
         $user        = factory(User::class)->create(['password' => '123456789']);
         $data        = $user->toArray();
         $newPassword = array_merge($data, [

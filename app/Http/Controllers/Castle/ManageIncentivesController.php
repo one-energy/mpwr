@@ -10,9 +10,9 @@ class ManageIncentivesController extends Controller
 {
     public function index()
     {
-        if(user()->role == "Admin" || user()->role == "Owner"){
+        if (user()->role == "Admin" || user()->role == "Owner") {
             $incentives = Incentive::all();
-        }else{
+        } else {
             $incentives = Incentive::query()->whereDepartmentId(user()->department_id)->orderBy('number_installs')->get();
         }
 
@@ -22,6 +22,7 @@ class ManageIncentivesController extends Controller
     public function create()
     {
         $departments = Department::all();
+
         return view('castle.incentives.create', compact('departments'));
     }
 
@@ -61,6 +62,7 @@ class ManageIncentivesController extends Controller
     public function edit(Incentive $incentive)
     {
         $departments = Department::all();
+
         return view('castle.incentives.edit', compact(['incentive','departments']));
     }
 

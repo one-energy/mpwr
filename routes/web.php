@@ -76,13 +76,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('masters/invite', [MasterInvitationController::class, 'invite']);
         Route::patch('masters/{master}/revoke', RevokeMasterAccessController::class)->name('masters.revoke');
         
-        Route::get('offices/', [OfficeController::class, 'index'])->name('offices.index');
-        Route::get('offices/create', [OfficeController::class, 'create'])->name('offices.create');
-        Route::post('offices/create', [OfficeController::class, 'store'])->name('offices.store');
-        Route::get('offices/{office}/edit', [OfficeController::class, 'edit'])->name('offices.edit');
-        Route::put('offices{office}', [OfficeController::class, 'update'])->name('offices.update');
-        Route::delete('offices{office}', [OfficeController::class, 'destroy'])->name('offices.destroy');
-    
+        Route::prefix('offices')->middleware('offices')->name('offices.')->group(function () {
+            Route::get('/', [OfficeController::class, 'index'])->name('index');
+            Route::get('/create', [OfficeController::class, 'create'])->name('create');
+            Route::post('/create', [OfficeController::class, 'store'])->name('store');
+            Route::get('/{office}/edit', [OfficeController::class, 'edit'])->name('edit');
+            Route::put('{office}', [OfficeController::class, 'update'])->name('update');
+            Route::delete('{office}', [OfficeController::class, 'destroy'])->name('destroy');
+        });
 
         Route::prefix('regions')->middleware('regions')->name('regions.')->group(function () {
             Route::get('/', [RegionController::class, 'index'])->name('index');
@@ -93,12 +94,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('/{region}', [RegionController::class, 'destroy'])->name('destroy');
         });
 
-        Route::get('departments', [DepartmentController::class, 'index'])->name('departments.index');
-        Route::get('departments/create', [DepartmentController::class, 'create'])->name('departments.create');
-        Route::post('departments/create', [DepartmentController::class, 'store'])->name('departments.store');
-        Route::get('departments/{deparment}/edit', [DepartmentController::class, 'edit'])->name('departments.edit');
-        Route::put('departments/{deparment}', [DepartmentController::class, 'update'])->name('departments.update');
-        Route::delete('departments/{deparment}', [DepartmentController::class, 'destroy'])->name('departments.destroy');
+        Route::prefix('departments')->middleware('departments')->name('departments.')->group(function () {
+            Route::get('/', [DepartmentController::class, 'index'])->name('index');
+            Route::get('/create', [DepartmentController::class, 'create'])->name('create');
+            Route::post('/create', [DepartmentController::class, 'store'])->name('store');
+            Route::get('/{deparment}/edit', [DepartmentController::class, 'edit'])->name('edit');
+            Route::put('/{deparment}', [DepartmentController::class, 'update'])->name('update');
+            Route::delete('/{deparment}', [DepartmentController::class, 'destroy'])->name('destroy');
+        });
 
         Route::prefix('incentives')->middleware('incentives')->name('incentives.')->group(function () {
             Route::get('/', [ManageIncentivesController::class, 'index'])->name('index');
@@ -109,14 +112,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('/{incentive}', [ManageIncentivesController::class, 'destroy'])->name('destroy');
         });
 
-        Route::get('/manage-trainings/list/{department?}/{section?}', [TrainingController::class, 'manageTrainings'])->name('manage-trainings.index');
-        Route::post('/manage-trainings/{section?}/create-section', [TrainingController::class, 'storeSection'])->name('manage-trainings.storeSection');
-        Route::put('/manage-trainings/{section?}/update-section', [TrainingController::class, 'updateSection'])->name('manage-trainings.updateSection');
-        Route::post('/manage-trainings/{section?}/create-content', [TrainingController::class, 'storeContent'])->name('manage-trainings.storeContent');
-        Route::post('/manage-trainings/{content}/update-content', [TrainingController::class, 'updateContent'])->name('manage-trainings.updateContent');
-        Route::post('/manage-trainings/changeDepartment', [TrainingController::class, 'changeDepartment'])->name('manage-trainings.changeDepartment');
-        Route::delete('/manage-trainings/{section}', [TrainingController::class, 'deleteSection'])->name('manage-trainings.deleteSection');
-        
+        Route::prefix('manage-trainings')->middleware('incentives')->name('manage-trainings.')->group(function () {
+            Route::get('/list/{department?}/{section?}', [TrainingController::class, 'manageTrainings'])->name('index');
+            Route::post('/{section?}/create-section', [TrainingController::class, 'storeSection'])->name('storeSection');
+            Route::put('/{section?}/update-section', [TrainingController::class, 'updateSection'])->name('updateSection');
+            Route::post('/{section?}/create-content', [TrainingController::class, 'storeContent'])->name('storeContent');
+            Route::post('/{content}/update-content', [TrainingController::class, 'updateContent'])->name('updateContent');
+            Route::post('/changeDepartment', [TrainingController::class, 'changeDepartment'])->name('changeDepartment');
+            Route::delete('/{section}', [TrainingController::class, 'deleteSection'])->name('deleteSection');
+        });
     });
     //endregion
 

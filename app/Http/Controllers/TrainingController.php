@@ -11,13 +11,12 @@ class TrainingController extends Controller
 {
     public function index(Department $department, TrainingPageSection $section = null)
     {
-        $content = [];
-        $index   = 0;
-        $videoId = [];
+        $content       = [];
+        $index         = 0;
+        $videoId       = [];
         $actualSection = 0;
         $path          = [];
-        if($department->id){
-               
+        if ($department->id) {
             $actualSection = $section ?? TrainingPageSection::whereDepartmentId($department->id)->first();
             $content       = $this->getContent($actualSection);
             $actualSection->whereDepartmentId(user()->department_id)->first();
@@ -27,7 +26,6 @@ class TrainingController extends Controller
                 $index   = count($videoId);
             }
             $path = $this->getPath($actualSection);
-            
         }
 
         return view('training.index', [
@@ -41,18 +39,18 @@ class TrainingController extends Controller
 
     public function manageTrainings(Department $department, TrainingPageSection $section = null)
     {
-        $content = [];
-        $index   = 0;
-        $videoId = [];
+        $content       = [];
+        $index         = 0;
+        $videoId       = [];
         $actualSection = 0;
         $path          = [];
-        $departments = [];
+        $departments   = [];
 
-        if(!$department->id && (user()->role == "Owner" || user()->role == "Admin")){
+        if (!$department->id && (user()->role == "Owner" || user()->role == "Admin")) {
             $department = Department::first();
         }
         
-        if($department->id){   
+        if ($department->id) {
             $actualSection = $section ?? TrainingPageSection::whereDepartmentId($department->id)->first();
             $content       = $this->getContent($actualSection);
             $departments   = Department::all();
@@ -73,7 +71,7 @@ class TrainingController extends Controller
             'actualSection' => $actualSection,
             'path'          => $path,
             'departmentId'  => $department->id ?? 0,
-            'departments'   => $departments
+            'departments'   => $departments,
         ]);
     }
 
@@ -90,7 +88,7 @@ class TrainingController extends Controller
 
         return redirect(route('castle.manage-trainings.index', [
             'department' => $section->department_id,
-            'section'    => $section->parent_id
+            'section'    => $section->parent_id,
         ]));
     }
 
@@ -115,7 +113,7 @@ class TrainingController extends Controller
 
         return redirect(route('castle.manage-trainings.index', [
             'department' => $section->department_id,
-            'section'    => $section->id
+            'section'    => $section->id,
         ]));
     }
 
@@ -138,7 +136,7 @@ class TrainingController extends Controller
 
         return redirect(route('castle.manage-trainings.index', [
             'department' => $section->department_id,
-            'section'    => $section->parent_id
+            'section'    => $section->parent_id,
         ]));
     }
 
@@ -166,7 +164,7 @@ class TrainingController extends Controller
 
         return redirect(route('castle.manage-trainings.index', [
             'department' => $section->department_id,
-            'section'    => $section->id
+            'section'    => $section->id,
         ]));
     }
 
@@ -191,9 +189,10 @@ class TrainingController extends Controller
         alert()
             ->withTitle(__('Content saved!'))
             ->send();
+
         return redirect(route('castle.manage-trainings.index', [
             'department' => $content->section->department_id,
-            'section'    => $content->training_page_section_id
+            'section'    => $content->training_page_section_id,
         ]));
     }
 
@@ -202,7 +201,6 @@ class TrainingController extends Controller
         $path                = [$section];
         $trainingPageSection = $section;
         do {
-            
             if ($trainingPageSection->parent_id) {
                 $trainingPageSection = TrainingPageSection::query()->whereId($trainingPageSection->parent_id)->first();
                 array_push($path, $trainingPageSection);
