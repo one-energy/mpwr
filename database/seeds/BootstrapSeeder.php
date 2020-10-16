@@ -94,7 +94,7 @@ class BootstrapSeeder extends Seeder
         ]);
         
         $sanBernardinoOffice = factory(Office::class)->create([
-            "name"              => "Victorville Office",
+            "name"              => "San Bernardino Office",
             "office_manager_id" => $sanBernardinoOfficeManager->id,
             "region_id"         => $region->id,
         ]);
@@ -113,7 +113,7 @@ class BootstrapSeeder extends Seeder
         ]);
         
         $stocktonOffice = factory(Office::class)->create([
-            "name"              => "Victorville Office",
+            "name"              => "Stockton Office",
             "office_manager_id" => $stocktonOfficeManager->id,
             "region_id"         => $region->id,
         ]);
