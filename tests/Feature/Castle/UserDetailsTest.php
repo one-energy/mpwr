@@ -110,4 +110,18 @@ class UserDetailsTest extends FeatureTest
 
         $response->assertStatus(302);
     }
+
+     /** @test */
+     public function it_shouldnt_show_index_page()
+     {   
+         $regionManager   = factory(User::class)->create(['role' => "Region Manager"]);
+         $officeManager   = factory(User::class)->create(['role' => "Office Manager"]);
+         $salesRepManager = factory(User::class)->create(['role' => "Sales rep"]);
+         $setterManager   = factory(User::class)->create(['role' => "Setter"]);
+         
+         $response = $this->actingAs($regionManager)
+            ->get(route('castle.users'));
+ 
+         $response->assertStatus(302);
+     }
 }

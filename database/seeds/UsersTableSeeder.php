@@ -50,14 +50,6 @@ class UsersTableSeeder extends Seeder
             'department_id' => null,
             'master'        => true,
         ]);
-        factory(User::class)->create([
-            'first_name'    => 'Admin',
-            'last_name'     => 'Devsquad',
-            'email'         => 'admin@devsquad.com',
-            'role'          => 'Admin',
-            'department_id' => null,
-            'master'        => true,
-        ]);
     }
 
     public function createTestRegion()
