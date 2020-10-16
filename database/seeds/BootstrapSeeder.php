@@ -3,6 +3,7 @@
 use App\Models\Department;
 use App\Models\Office;
 use App\Models\Region;
+use App\Models\TrainingPageSection;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -33,8 +34,25 @@ class BootstrapSeeder extends Seeder
             'master'        => true,
         ]);
 
+        $departmentManager = factory(User::class)->create([
+            "first_name"    => "Jake",
+            "last_name"     => "Ebert",
+            "email"         => "jake.department@californiarenewableenergy.org",
+            'role'          => 'Department Manager',
+            'master'        => true,
+        ]);
+        
         $department    = factory(Department::class)->create([
-            "name" => "California Renewable Energy"
+            "name" => "California Renewable Energy",
+            "department_manager_id" => $departmentManager->id
+        ]);
+
+        $departmentManager->department_id = $department->id;
+
+
+        factory(TrainingPageSection::class)->create([
+            'title' => 'Training Page',
+            'department_id' => $department->id
         ]);
 
         //Region

@@ -59,9 +59,9 @@
                             </div>
                         @else
                             <div class="md:col-span-3 col-span-2">
-                                <x-select x-model="selectedDepartment" label="Department" name="department_id">
-                                    <template x-for="department in departments" :key="department.id">
-                                        <option :value="department.id" x-text="department.name" ></option>
+                                <x-select x-model="selectedRegionManager" label="Region Manager" name="region_manager_id">
+                                    <template x-for="manager in regionsManager" :key="manager.id">
+                                        <option :value="manager.id" x-text="manager.first_name + ' ' + manager.last_name"></option>
                                     </template>
                                 </x-select>
                             </div>
