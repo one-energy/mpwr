@@ -14,11 +14,11 @@
                               regions: null }"
                      x-init="$watch('selectedRegion', 
                                      (region) => { 
-                                    fetch('http://' + location.hostname + '/get-offices-managers/' + region, {method: 'post',  headers: {
+                                    fetch('https://' + location.hostname + '/get-offices-managers/' + region, {method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
                                     }}).then(res => res.json()).then((officeManagerData) => { officesManagers = officeManagerData }) }),
-                            fetch('http://' + location.hostname + '/get-regions/' + '{{user()->department_id}}' ,{method: 'post',  headers: {
+                            fetch('https://' + location.hostname + '/get-regions/' + '{{user()->department_id}}' ,{method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
                                     }}).then(res=> res.json()).then( (regionsData) => { 
@@ -30,7 +30,7 @@
                             <x-input label="Office Name" name="name"></x-input>
                         </div>
                         @if(user()->role != "Admin" && user()->role != "Owner")
-                            <div class="md:col-span-3 col-span-2 @if(user()->role == 'Region Manager') hidden @endif">
+                            <div class="md:col-span-3 col-span-2 @if(user()->role == 'Region Manager') hidden @endif"git status>
                                 <x-select x-model="selectedRegion" label="Region" name="region_id">
                                     <template x-for="region in regions" :key="region.id">
                                         <option :value="region.id" x-text="region.name"></option>

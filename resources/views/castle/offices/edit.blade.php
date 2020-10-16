@@ -15,11 +15,11 @@
                               regions: null }"
                      x-init="$watch('selectedRegion', 
                                      (region) => { 
-                                    fetch('http://' + location.hostname + '/get-offices-managers/' + region, {method: 'post',  headers: {
+                                    fetch('https://' + location.hostname + '/get-offices-managers/' + region, {method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
                                     }}).then(res => res.json()).then((officeManagerData) => { officesManagers = officeManagerData }) }),
-                            fetch('http://' + location.hostname + '/get-regions/' + '{{user()->department_id}}' ,{method: 'post',  headers: {
+                            fetch('https://' + location.hostname + '/get-regions/' + '{{user()->department_id}}' ,{method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
                                     }}).then(res=> res.json()).then( (regionsData) => { 

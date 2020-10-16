@@ -17,11 +17,11 @@
                              }"
                      x-init="$watch('selectedDepartment', 
                                      (department) => { 
-                                    fetch('http://' + location.hostname + '/get-offices/' + department, {method: 'post',  headers: {
+                                    fetch('https://' + location.hostname + '/get-offices/' + department, {method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
                                     }}).then(res => res.json()).then((officesData) => { offices = officesData }) }),
-                            fetch('http://' + location.hostname + '/get-departments' ,{method: 'post',  headers: {
+                            fetch('https://' + location.hostname + '/get-departments' ,{method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
                                     }}).then(res=> res.json()).then( (departmentsData) => { 
