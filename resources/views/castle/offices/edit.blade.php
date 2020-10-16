@@ -32,8 +32,8 @@
                             <x-input label="Office Name" name="name" value="{{ $office->name }}"></x-input>
                         </div>
 
-                        @if(user()->role != "Admin" && user()->role != "Owner")
-                            <div class="md:col-span-3 col-span-2">
+                        @if(user()->role != "Admin" && user()->role != "Owner" )
+                            <div class="md:col-span-3 col-span-2 @if(user()->role == 'Region Manager') hidden @endif">
                                 <x-select x-model="selectedRegion" label="Region" name="region_id">
                                     <template x-for="region in regions" :key="region.id">
                                         <option :value="region.id" x-text="region.name"></option>
