@@ -42,6 +42,8 @@ class TrainingController extends Controller
 
     public function manageTrainings(Department $department, TrainingPageSection $section = null)
     {
+
+        $this->authorize('viewList', [TrainingPageSection::class, $department->id]);
         $content       = [];
         $index         = 0;
         $videoId       = [];
