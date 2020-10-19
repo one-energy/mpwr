@@ -8,63 +8,67 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <x-form :route="route('castle.regions.update', $region)" put>
                 @csrf
-                <div>
+                <div x-data="{ selectedDepartment: null, 
+                              selectedRegionManager: null,
+                              token: document.head.querySelector('meta[name=csrf-token]').content, 
+                              departments: null,
+                              regionsManager: null }"
+                     x-init="$watch('selectedDepartment', 
+                                     (department) => { 
+                                    fetch('https://' + location.hostname + '/get-regions-managers/' + department, {method: 'post',  headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': token
+                                    }}).then(res => res.json()).then((regionManagerData) => { regionsManager = regionManagerData }) }),
+                            fetch('https://' + location.hostname + '/get-departments',{method: 'post',  headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': token
+                                    }}).then(res=> res.json()).then( (departmentsData) => { 
+                                            departments = departmentsData
+                                            selectedRegionManager = '{{ $region->regionManger->id ?? 1}}' 
+                                            selectedDepartment = '{{$region->department_id ?? 1}}' 
+                                    })">
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                         <div class="md:col-span-3 col-span-2">
                             <x-input label="Region Name" name="name" value="{{ $region->name }}"></x-input>
                         </div>
-                        <div class="md:col-span-3 col-span-2">
-                            @if(user()->role != "Admin" && user()->role != "Owner" && user()->role != "Department Manager")
-                                <x-select label="Region Manager" name="region_manager_id" hidden>
-                                    @if (old('region_manager_id') == '')
-                                        <option value="" selected>None</option>
-                                    @endif
-                                    @foreach($users as $region_manager)
-                                        <option value="{{ $region_manager->id }}" {{ old('region_manager_id', $region->region_manager_id) == $region_manager->id ? 'selected' : '' }}>
-                                            {{ $region_manager->first_name }} {{ $region_manager->last_name }}
-                                        </option>
-                                    @endforeach
+                        @if(user()->role != "Admin" && user()->role != "Owner")
+                            <div class="md:col-span-3 col-span-2 hidden">
+                                <x-select x-model="selectedDepartment" label="Department" name="department_id">
+                                    <template x-for="department in departments" :key="department.id">
+                                        <option :value="department.id" x-text="department.name" ></option>
+                                    </template>
+                                </x-select> 
+                            </div>
+                        @else
+                            <div class="md:col-span-3 col-span-2">
+                                <x-select x-model="selectedDepartment" label="Department" name="department_id">
+                                    <template x-for="department in departments" :key="department.id">
+                                        <option :value="department.id" x-text="department.name" ></option>
+                                    </template>
                                 </x-select>
-                            @else
-                                <x-select label="Region Manager" name="region_manager_id">
-                                    @if (old('region_manager_id') == '')
-                                        <option value="" selected>None</option>
-                                    @endif
-                                    @foreach($users as $region_manager)
-                                        <option value="{{ $region_manager->id }}" {{ old('region_manager_id', $region->region_manager_id) == $region_manager->id ? 'selected' : '' }}>
-                                            {{ $region_manager->first_name }} {{ $region_manager->last_name }}
-                                        </option>
-                                    @endforeach
+                            </div>
+                        @endif
+
+                        @if(user()->role != "Admin" && user()->role != "Owner")
+                            <div class="md:col-span-3 col-span-2 @if(user()->role == 'Region Manager') hidden @endif"">
+                                <x-select x-model="selectedRegionManager" label="Region Manager" name="region_manager_id">
+                                    <template x-for="manager in regionsManager" :key="manager.id">
+                                        <option :value="manager.id" x-text="manager.first_name + ' ' + manager.last_name"></option>
+                                    </template>
                                 </x-select>
-                            @endif
-                        </div>
-                        <div class="md:col-span-3 col-span-2">
-                            @if(user()->role != "Admin" && user()->role != "Owner")
-                                <x-select label="Department" name="department_id" hidden>
-                                    @if (old('department') == '')
-                                        <option value="" selected>None</option>
-                                    @endif
-                                    @foreach($departments as $department)
-                                        <option value="{{ $department->id }}" {{ old('department', $region->department_id) == $department->id ? 'selected' : '' }}>
-                                            {{ $department['name'] }}
-                                        </option>
-                                    @endforeach
+                            </div>
+                        @else
+                            <div class="md:col-span-3 col-span-2">
+                                <x-select x-model="selectedRegionManager" label="Region Manager" name="region_manager_id">
+                                    <template x-for="manager in regionsManager" :key="manager.id">
+                                        <option :value="manager.id" x-text="manager.first_name + ' ' + manager.last_name"></option>
+                                    </template>
                                 </x-select>
-                            @else
-                                <x-select label="Department" name="department_id">
-                                    @if (old('department') == '')
-                                        <option value="" selected>None</option>
-                                    @endif
-                                    @foreach($departments as $department)
-                                        <option value="{{ $department->id }}" {{ old('department', $region->department_id) == $department->id ? 'selected' : '' }}>
-                                            {{ $department['name'] }}
-                                        </option>
-                                    @endforeach
-                                </x-select>
-                            @endif
-                        </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
+              
                 <div class="mt-8 border-t border-gray-200 pt-5">
                 <div class="flex justify-start">
                     <span class="inline-flex rounded-md shadow-sm">

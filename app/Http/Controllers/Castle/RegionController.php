@@ -107,4 +107,25 @@ class RegionController extends Controller
 
         return view('castle.regions.create', compact('users', 'departments'));
     }
+
+    public function getRegions($departmentId = null)
+    {
+        $regionsQuery = Region::query()
+            ->select("regions.*", "departments.name as departmentName")
+            ->join("departments", "regions.department_id", '=', 'departments.id');
+
+        if(user()->role == "Admin" || user()->role == "Owner"){
+            $regions = $regionsQuery->get();
+        }
+
+        if(user()->role == "Department Manager"){
+            $regions =  $regionsQuery->whereDepatmentId($departmentId)->get();
+            
+        }
+        if(user()->role == "Region Manager"){
+            $regions =  $regionsQuery->whereRegionManagerId(user()->id)->get();
+            
+        }
+       return $regions;
+    }
 }

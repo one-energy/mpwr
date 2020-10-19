@@ -119,4 +119,9 @@ class DepartmentController extends Controller
 
         return view('castle.departments.create', compact('users'));
     }
+
+    public function getDepartments()
+    {
+        return Department::all();
+    }
 }

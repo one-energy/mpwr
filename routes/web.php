@@ -82,7 +82,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('offices/{office}/edit', [OfficeController::class, 'edit'])->name('offices.edit');
         Route::put('offices{office}', [OfficeController::class, 'update'])->name('offices.update');
         Route::delete('offices{office}', [OfficeController::class, 'destroy'])->name('offices.destroy');
-    
 
         Route::prefix('regions')->middleware('regions')->name('regions.')->group(function () {
             Route::get('/', [RegionController::class, 'index'])->name('index');
@@ -138,5 +137,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/number-tracking', [NumberTrackingController::class, 'index'])->name('number-tracking.index');
     Route::get('/number-tracking/create', [NumberTrackingController::class, 'create'])->name('number-tracking.create');
     Route::post('/number-tracking/create', [NumberTrackingController::class, 'store'])->name('number-tracking.store');
+
+    Route::post('/get-offices-managers/{departmentId}', [UsersController::class, 'getOfficesManager'])->name('getOfficesManager');
+    Route::post('/get-regions-managers/{departmentId}', [UsersController::class, 'getRegionsManager'])->name('getRegionsManager');
+    Route::post('/get-regions/{departmentId?}', [RegionController::class, 'getRegions'])->name('getRegions');
+    Route::post('/get-departments', [DepartmentController::class, 'getDepartments'])->name('getDepartments');
+    Route::post('/get-offices/{departmentId?}', [OfficeController::class, 'getOffices'])->name('getOffices');
+
 });
 

@@ -10,9 +10,9 @@ class DatabaseSeeder extends Seeder
         // $this->call(DepartmentOne::class);
         // $this->call(DepartmentTwo::class);
         $this->call(BootstrapSeeder::class);
-        $this->call(IncentivesTableSeeder::class);
-        $this->call(CustomersTableSeeder::class);
-        $this->call(TrainingTableSeeder::class);
-        $this->call(TrainingContentTableSeeder::class);
+        // $this->call(IncentivesTableSeeder::class);
+        // $this->call(CustomersTableSeeder::class);
+        // $this->call(TrainingTableSeeder::class);
+        // $this->call(TrainingContentTableSeeder::class);
     }
 }
