@@ -11,6 +11,9 @@ class TrainingController extends Controller
 {
     public function index(Department $department, TrainingPageSection $section = null)
     {
+        // dd($department->id === user()->department_id);
+        $this->authorize('viewList', [TrainingPageSection::class, $department->id]);
+        
         $content       = [];
         $index         = 0;
         $videoId       = [];
