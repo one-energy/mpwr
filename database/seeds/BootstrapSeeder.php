@@ -48,7 +48,7 @@ class BootstrapSeeder extends Seeder
         ]);
 
         $departmentManager->department_id = $department->id;
-
+        $departmentManager->save();
 
         factory(TrainingPageSection::class)->create([
             'title' => 'Training Page',
