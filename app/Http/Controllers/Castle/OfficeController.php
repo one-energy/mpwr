@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Castle;
 
 use App\Http\Controllers\Controller;
+use App\Models\Department;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
@@ -133,5 +134,20 @@ class OfficeController extends Controller
             ->send();
 
         return back();
+    }
+
+    public function getOffices($department = null)
+    {
+        if($department){
+            return Office::query()->select("offices.*")
+                ->join("regions", "offices.region_id", "=", "regions.id")
+                ->where("regions.department_id", "=", $department)
+                ->get();
+        }
+        $department = Department::first()->id;
+        return Office::query()->select("offices.*")
+            ->join("regions", "offices.region_id", "=", "regions.id")
+            ->where("regions.department_id", "=", $department)
+            ->get();
     }
 }

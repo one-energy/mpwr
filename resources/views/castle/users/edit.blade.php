@@ -8,7 +8,27 @@
 
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <x-form :route="route('castle.users.update', $user->id)" put>
-                <div>
+                <div x-data="{ 
+                              selectedDepartment: null,
+                              departments: null,
+                              offices: null,
+                              selectedOffice: null,
+                              token: document.head.querySelector('meta[name=csrf-token]').content, 
+                             }"
+                     x-init="$watch('selectedDepartment', 
+                                     (department) => { 
+                                    fetch('https://' + location.hostname + '/get-offices/' + department, {method: 'post',  headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': token
+                                    }}).then(res => res.json()).then((officesData) => { offices = officesData }) }),
+                            fetch('https://' + location.hostname + '/get-departments' ,{method: 'post',  headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': token
+                                    }}).then(res=> res.json()).then( (departmentsData) => { 
+                                        departments = departmentsData
+                                        selectedOffice = '{{$user->office_id}}'
+                                        selectedDepartment = '{{$user->department_id}}'
+                                    })">
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                         <div class="md:col-span-3 col-span-2">
                             <x-input :label="__('First Name')" name="first_name" :value="$user->first_name"/>
@@ -35,55 +55,35 @@
                             </x-select>
                         </div>
 
+                        @if(user()->role != "Admin" && user()->role != "Owner")
+                            <div class="md:col-span-3 col-span-2 hidden">
+                                <x-select x-model="selectedDepartment" label="Department" name="department_id">
+                                    <template x-for="department in departments" :key="department.id">
+                                        <option :value="department.id" x-text="department.name" ></option>
+                                    </template>
+                                </x-select> 
+                            </div>
+                        @else
+                            <div class="md:col-span-3 col-span-2">
+                                <x-select x-model="selectedDepartment" label="Department" name="department_id">
+                                    <template x-for="department in departments" :key="department.id">
+                                        <option :value="department.id" x-text="department.name" ></option>
+                                    </template>
+                                </x-select>
+                            </div>
+                        @endif
+
                         <div class="md:col-span-3 col-span-2">
-                                <x-select label="Offices" name="office_id">
-                                @if (old('office') == '')
-                                    <option value="" selected>None</option>
-                                @endif
-                                @foreach($offices as $office)
-                                    <option value="{{ $office->id }}" {{ old('office', $user->office_id) == $office->id ? 'selected' : '' }}>
-                                        @if(user()->role == "Admin" || user()->role == "Owner")
-                                            {{$office->region->name}} - {{ $office->name }}
-                                        @else
-                                            {{ $office->name }}
-                                        @endif
-                                    </option>
-                                @endforeach
+                            <x-select x-model="selectedOffice" label="Office" name="office_id">
+                                <template x-for="office in offices" :key="office.id">
+                                    <option :value="office.id" x-text="office.name" ></option>
+                                </template>
                             </x-select>
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
                             <x-input-currency :label="__('Pay')" name="pay" :value="$user->pay"/>
                         </div>
-
-                        <div class="md:col-span-3 col-span-2">
-                            <div class="md:col-span-3 col-span-2">
-                                @if(user()->role != "Admin" && user()->role != "Owner")
-                                    <x-select label="Department" name="department_id" hidden>
-                                        @if (old('department') == '')
-                                            <option value="" selected>None</option>
-                                        @endif
-                                        @foreach($departments as $department)
-                                            <option value="{{ $department->id }}" {{ old('department', $user->department_id) == $department->id ? 'selected' : '' }}>
-                                                {{ $department['name'] }}
-                                            </option>
-                                        @endforeach
-                                    </x-select>
-                                @else
-                                    <x-select label="Department" name="department_id">
-                                        @if (old('department') == '')
-                                            <option value="" selected>None</option>
-                                        @endif
-                                        @foreach($departments as $department)
-                                            <option value="{{ $department->id }}" {{ old('department', $user->department_id) == $department->id ? 'selected' : '' }}>
-                                                {{ $department['name'] }}
-                                            </option>
-                                        @endforeach
-                                    </x-select>
-                                @endif
-                            </div>
-                        </div>
-                
                     </div>
                 </div>
                 
@@ -150,7 +150,7 @@
                     </div>
                     <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                         <span class="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto">
-                            <button x-on:click="openModal = false" type="submit" class="inline-flex justify-center py-2 px-4 border-2 border-red-500 rounded-md text-sm leading-5 font-medium rounded-md text-red-500 hover:text-red-600 hover:border-red-600 focus:outline-none focus:border-red-500 focus:shadow-outline-red active:bg-red-50 transition duration-150 ease-in-out">
+                            <button x-on:click="openModal = false" type="submit" class="inline-flex justify-center py-2 px-4 border-2 border-red-500 rounded-md text-sm leading-5 font-medium text-red-500 hover:text-red-600 hover:border-red-600 focus:outline-none focus:border-red-500 focus:shadow-outline-red active:bg-red-50 transition duration-150 ease-in-out">
                                 {{ __('Delete') }}
                             </button>
                         </span>

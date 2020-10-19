@@ -31,8 +31,8 @@ class UsersTableSeeder extends Seeder
 
         foreach ($photos as $photo) {
             File::copy(
-                __DIR__ . '/photos/' . $photo,
-                storage_path('/app/public/profiles/' . $photo)
+                __DIR__ . '/photos/' . 'profile.png',
+                storage_path('/app/public/profiles/' . 'profile.png')
             );
         }
 
@@ -41,12 +41,11 @@ class UsersTableSeeder extends Seeder
 
     public function createDevsquadTeam()
     {
-
         factory(User::class)->create([
-            'first_name'    => 'DevSquad Master',
-            'last_name'     => 'User',
-            'email'         => 'team@devsquad.com',
-            'role'          => 'Owner',
+            'first_name'    => 'Admin',
+            'last_name'     => 'Devsquad',
+            'email'         => 'admin@devsquad.com',
+            'role'          => 'Admin',
             'department_id' => null,
             'master'        => true,
         ]);
