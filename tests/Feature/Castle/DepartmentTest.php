@@ -172,4 +172,18 @@ class DepartmentTest extends TestCase
             'department_manager_id',
         ]);
     }
+
+    /** @test */
+    public function it_should_block_access()
+    {
+        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
+        $regionManager = factory(User::class)->create(["role" => "Region Manager"]);
+        $officeManager = factory(User::class)->create(["role" => "Office Manager"]);
+        $setter = factory(User::class)->create(["role" => "Setter"]);
+        $salesRep = factory(User::class)->create(["role" => "Sales Rep"]);
+
+        $this->actingAs($regionManager)
+            ->get(route('castle.departments.index'))
+            ->assertForbidden();
+    }
 }   
