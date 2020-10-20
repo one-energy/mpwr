@@ -209,4 +209,49 @@ class RegionTest extends TestCase
             'region_manager_id',
         ]);
     }
+
+    /** @test */
+    public function it_should_block_access_to_regions()
+    {
+        $officeManager = factory(User::class)->create(["role" => "Office Manager"]);
+        $setter = factory(User::class)->create(["role" => "Setter"]);
+        $salesRep = factory(User::class)->create(["role" => "Sales Rep"]);
+
+        $this->actingAs($officeManager)
+            ->get(route('castle.regions.index'))
+            ->assertForbidden();
+
+        $this->actingAs($setter)
+            ->get(route('castle.regions.index'))
+            ->assertForbidden();
+
+        $this->actingAs($salesRep)
+            ->get(route('castle.regions.index'))
+            ->assertForbidden();
+    }
+    
+    /** @test */
+    public function it_should_allow_access_to_regions()
+    {
+        $owner = factory(User::class)->create(["role" => "Owner"]);
+        $admin = factory(User::class)->create(["role" => "Admin"]);
+        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
+        $regionManager = factory(User::class)->create(["role" => "Region Manager"]);
+
+        $this->actingAs($owner)
+            ->get(route('castle.regions.index'))
+            ->assertSuccessful();
+
+        $this->actingAs($admin)
+            ->get(route('castle.regions.index'))
+            ->assertSuccessful();
+
+        $this->actingAs($departmentManager)
+            ->get(route('castle.regions.index'))
+            ->assertSuccessful();
+
+        $this->actingAs($regionManager)
+            ->get(route('castle.regions.index'))
+            ->assertSuccessful();
+    }
 }   
