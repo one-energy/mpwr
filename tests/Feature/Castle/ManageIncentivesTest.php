@@ -218,4 +218,49 @@ class ManageIncentiveTest extends TestCase
 
         $this->assertNotNull($deleted);
     }
+
+    /** @test */
+    public function it_should_block_access_to_incentives()
+    {
+        $regionManager = factory(User::class)->create(["role" => "Region Manager"]);
+        $officeManager = factory(User::class)->create(["role" => "Office Manager"]);
+        $setter = factory(User::class)->create(["role" => "Setter"]);
+        $salesRep = factory(User::class)->create(["role" => "Sales Rep"]);
+
+        $this->actingAs($regionManager)
+            ->get(route('castle.incentives.index'))
+            ->assertForbidden();
+
+        $this->actingAs($officeManager)
+            ->get(route('castle.incentives.index'))
+            ->assertForbidden();
+
+        $this->actingAs($setter)
+            ->get(route('castle.incentives.index'))
+            ->assertForbidden();
+
+        $this->actingAs($salesRep)
+            ->get(route('castle.incentives.index'))
+            ->assertForbidden();
+    }
+    
+    /** @test */
+    public function it_should_allow_access_to_incentives()
+    {
+        $owner = factory(User::class)->create(["role" => "Owner"]);
+        $admin = factory(User::class)->create(["role" => "Admin"]);
+        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
+
+        $this->actingAs($owner)
+            ->get(route('castle.incentives.index'))
+            ->assertSuccessful();
+
+        $this->actingAs($admin)
+            ->get(route('castle.incentives.index'))
+            ->assertSuccessful();
+
+        $this->actingAs($departmentManager)
+            ->get(route('castle.incentives.index'))
+            ->assertSuccessful();
+    }
 }
