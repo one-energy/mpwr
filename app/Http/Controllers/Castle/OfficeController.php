@@ -20,12 +20,12 @@ class OfficeController extends Controller
         $regionsQuery = Region::query()->select("regions.*");
         $usersQuery   = User::query()->whereRole("Office Manager");
 
-        if(user()->role == "Admin" || user()->role == "Owner"){
+        if (user()->role == "Admin" || user()->role == "Owner") {
             $users   = $usersQuery->get();
             $regions = $regionsQuery->get();
         }
 
-        if(user()->role == "Department Manager"){
+        if (user()->role == "Department Manager") {
             $regions =  $regionsQuery
                 ->join('departments', function ($join) {
                     $join->on("regions.department_id", '=', 'departments.id')
@@ -33,10 +33,11 @@ class OfficeController extends Controller
                 })->get();
             $users =  $usersQuery->whereDepartmentId(user()->department_id)->get();
         }
-        if(user()->role == "Region Manager"){
+        if (user()->role == "Region Manager") {
             $regions =  $regionsQuery->whereRegionManagerId(user()->id)->get();
-            $users =  $usersQuery->whereDepartmentId(user()->department_id)->get();
+            $users   =  $usersQuery->whereDepartmentId(user()->department_id)->get();
         }
+
         return view('castle.offices.create', compact('regions', 'users'));
     }
 
@@ -72,19 +73,19 @@ class OfficeController extends Controller
     public function edit(Office $office)
     {
         $regionsQuery = Region::query();
-        if(user()->role == "Department Manager"){
+        if (user()->role == "Department Manager") {
             $regions = $regionsQuery->whereDepartmentId(user()->department_id)->get();
         }
 
-        if(user()->role == "Region Manager"){
+        if (user()->role == "Region Manager") {
             $regions = $regionsQuery->whereRegionManagerId(user()->id)->get();
         }
 
-        if(user()->role == "Office Manager"){
+        if (user()->role == "Office Manager") {
             $regions = $regionsQuery->whereId($office->region_id)->get();
         }
 
-        if(user()->role == "Owner" || user()->role == "Admin"){
+        if (user()->role == "Owner" || user()->role == "Admin") {
             $regions = $regionsQuery->get();
         }
 

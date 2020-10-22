@@ -97,10 +97,10 @@ class RegionController extends Controller
     {
         $usersQuery   = User::query()->whereRole("Region Manager");
 
-        if(user()->role == "Admin" || user()->role == "Owner"){
+        if (user()->role == "Admin" || user()->role == "Owner") {
             $users = $usersQuery->get();
         }
-        if(user()->role == "Department Manager"){
+        if (user()->role == "Department Manager") {
             $users = $usersQuery->whereDepartmentId(user()->department_id)->get();
         }
         $departments = Department::all();

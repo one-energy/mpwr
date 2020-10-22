@@ -32,12 +32,12 @@ class UsersController extends Controller
     public function create()
     {
         $departments = Department::all();
-        $roles = $this->getRolesPerRole();
-        $offices = $this->getOfficesPerRole();
+        $roles       = $this->getRolesPerRole();
+        $offices     = $this->getOfficesPerRole();
 
         return view('castle.users.register',[
-            'roles'   => $roles,
-            'offices' => $offices,
+            'roles'       => $roles,
+            'offices'     => $offices,
             'departments' => $departments,
         ]);
     }
@@ -62,10 +62,10 @@ class UsersController extends Controller
         $invitation->email   = $data['email'];
         $invitation->token   = Uuid::uuid4();
 
-        if($data["office_id"] == "None"){
+        if ($data["office_id"] == "None") {
             $data["office_id"] = null;
         }
-        if($data["department_id"] == "None"){
+        if ($data["department_id"] == "None") {
             $data["department_id"] = null;
         }
         if ($data['role'] == 'Admin' || $data['role'] == 'Owner') {
@@ -85,17 +85,16 @@ class UsersController extends Controller
         return back()->with('message', __("The invitation was sent to {$data['email']}"));
     }
 
-
     public function edit(User $user)
     {
-        
         $departments = Department::all();
-        $roles = $this->getRolesPerRole();
-        $offices = $this->getOfficesPerRole();
+        $roles       = $this->getRolesPerRole();
+        $offices     = $this->getOfficesPerRole();
+
         return view('castle.users.edit', [
-            'user'    => $user,
-            'roles'   => $roles,
-            'offices' => $offices,
+            'user'        => $user,
+            'roles'       => $roles,
+            'offices'     => $offices,
             'departments' => $departments,
         ]);
     }
@@ -103,33 +102,34 @@ class UsersController extends Controller
     public function getOfficesPerRole()
     {
         $officesQuery = Office::query()->select("offices.*");
-        if(user()->role == "Department Manager"){
+        if (user()->role == "Department Manager") {
             $offices = $officesQuery
                 ->join('regions', 'offices.region_id', '=', 'regions.id')
                 ->where('regions.department_id', '=', user()->department_id)->get();
         }
-        if(user()->role == "Region Manager"){
+        if (user()->role == "Region Manager") {
             $offices = $officesQuery
                 ->select('offices.name', 'offices.id')
-                ->join('regions', function($join){
+                ->join('regions', function($join) {
                     $join->on('offices.region_id', '=', 'regions.id')
                         ->where('regions.region_manager_id', '=', user()->id);
                 })->get();
         }
-        if(user()->role == "Office Manager"){
+        if (user()->role == "Office Manager") {
             $offices = $officesQuery
                 ->whereOfficeManagerId(user()->id);
         }
 
-        if(user()->role == "Admin" || user()->role == "Owner"){
+        if (user()->role == "Admin" || user()->role == "Owner") {
             $offices = Office::all();
         }
+
         return $offices;
     }
 
     public function getRolesPerRole()
     {
-        if(user()->role == "Admin"){
+        if (user()->role == "Admin") {
             $roles = [
                 ['name' => 'Admin',              'description' => 'Allows to update all system except owner users'],
                 ['name' => 'Department Manager', 'description' => 'Allows update all in departments and Region\'s Number Tracker'],
@@ -139,7 +139,7 @@ class UsersController extends Controller
                 ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
             ];
         }
-        if(user()->role == "Department Manager"){
+        if (user()->role == "Department Manager") {
             $roles = [
                 ['name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
                 ['name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
@@ -147,23 +147,24 @@ class UsersController extends Controller
                 ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
             ];
         }
-        if(user()->role == "Region Manager"){
+        if (user()->role == "Region Manager") {
             $roles = [
                 ['name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
                 ['name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
                 ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
             ];
         }
-        if(user()->role == "Office Manager"){
+        if (user()->role == "Office Manager") {
             $roles = [
                 ['name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
                 ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
             ];
         }
 
-        if(user()->role == "Owner"){
+        if (user()->role == "Owner") {
             $roles   = User::ROLES;
         }
+
         return $roles;
     }
 
@@ -185,7 +186,6 @@ class UsersController extends Controller
         if ($data['role'] == 'Admin' || $data['role'] == 'Owner') {
             $user->beCastleMaster();
             $data['department_id'] = null;
-            
         } else {
             $user->revokeMastersAccess();
         }

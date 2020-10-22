@@ -13,8 +13,7 @@ use Tests\TestCase;
 
 class TrainingsTest extends TestCase
 {
-    use RefreshDatabase;
-    
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -86,7 +85,7 @@ class TrainingsTest extends TestCase
     public function it_should_show_content_of_section()
     {
         $departmentManager = factory(User::class)->create([
-            "role" => "Deppartment Manager"
+            "role" => "Department Manager"
         ]);
         $department = factory(Department::class)->create([
             "department_manager_id" => $departmentManager->id
@@ -143,5 +142,69 @@ class TrainingsTest extends TestCase
         $this->actingAs($departmentManager)
             ->delete(route('castle.manage-trainings.deleteSection', $sectionOne->id))
             ->assertDontSee($sectionOne->title);
+    }
+    
+    /** @test */
+    public function it_shouldnt_show_if_user_doesnt_belongs_to_departments()
+    {
+        $departmentOne = factory(Department::class)->create();
+        $departmentTwo = factory(Department::class)->create();
+        
+        $departmentManagerOne = factory(User::class)->create([
+            "department_id" => $departmentOne->id
+        ]);
+        $departmentManagerTwo = factory(User::class)->create([
+            "department_id" => $departmentTwo->id
+        ]);
+
+        $departmentOne->department_manager_id = $departmentManagerOne->id;
+        $departmentTwo->department_manager_id = $departmentManagerTwo->id;
+        
+        $departmentOne->save();
+        $departmentTwo->save();
+
+        $salesRepOne = factory(User::class)->create([
+            "department_id" => $departmentOne->id,
+            "role"          => "Sales Rep"
+        ]);
+
+        $salesRepTwo = factory(User::class)->create([
+            "department_id" => $departmentTwo->id,
+            "role"          => "Sales Rep"
+        ]);
+
+        $sectionOne = factory(TrainingPageSection::class)->create([
+            'parent_id' => null,
+            'department_id' => $departmentOne->id
+        ]);
+
+        $sectionTwo = factory(TrainingPageSection::class)->create([
+            'parent_id' => null,
+            'department_id' => $departmentTwo->id
+        ]);
+
+        $this->actingAs($salesRepOne)
+            ->get(route('trainings.index', [
+                "department" => $salesRepOne->department_id
+                ])
+            )->assertSuccessful();
+
+        $this->actingAs($salesRepOne)
+            ->get(route('trainings.index', [
+                "department" => $departmentTwo->id
+                ])
+            )->assertForbidden();
+        
+        $this->actingAs($salesRepTwo)
+            ->get(route('trainings.index', [
+                "department" => $salesRepTwo->department_id
+                ])
+            )->assertSuccessful();
+
+        $this->actingAs($salesRepTwo)
+            ->get(route('trainings.index', [
+                "department" => $departmentOne->id
+                ])
+            )->assertForbidden();
     }
 }

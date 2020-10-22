@@ -19,21 +19,21 @@ class Offices extends Component
     {
         $officesQuery = Office::query()->select('offices.*');
         
-        if(user()->role == "Region Manager"){
+        if (user()->role == "Region Manager") {
             $officesQuery->join('regions', 'offices.region_id', '=', 'regions.id')
                 ->where('regions.region_manager_id', '=', user()->id);
         }
 
-        if(user()->role == "Department Manager"){
+        if (user()->role == "Department Manager") {
             $officesQuery->join('regions', 'offices.region_id', '=', 'regions.id')
                 ->where('regions.department_id', '=', user()->department_id);
         }
 
-        if(user()->role == "Office Manager"){
+        if (user()->role == "Office Manager") {
             $officesQuery->where('office_manager_id', '=', user()->id);
         }
 
-        if(user()->role == "Owner" || user()->role == "Admin"){
+        if (user()->role == "Owner" || user()->role == "Admin") {
             $officesQuery;
         }
 

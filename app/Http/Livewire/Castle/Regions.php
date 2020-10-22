@@ -17,20 +17,21 @@ class Regions extends Component
 
     public function render()
     {
-        if(user()->role == "Department Manager"){
+        if (user()->role == "Department Manager") {
             $regions = Region::query()->select('regions.*')
                 ->join('departments', 'regions.department_id', '=', 'departments.id')
                 ->where('departments.department_manager_id', '=', user()->id);
         }
-        if(user()->role == "Region Manager"){
+        if (user()->role == "Region Manager") {
             $regions = Region::query()->select('regions.*')
                 ->where('region_manager_id', '=', user()->id);
         }
-        if(user()->role == "Admin" || user()->role == "Owner"){
+        if (user()->role == "Admin" || user()->role == "Owner") {
             $regions = Region::query();
         }
+
         return view('livewire.castle.regions', [
-            'regions' =>  $regions
+            'regions' => $regions
                 ->search($this->search)
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage),

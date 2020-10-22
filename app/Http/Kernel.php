@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\CanEnterTheCastle;
+use App\Http\Middleware\CanEnterTheCastleDepartments;
 use App\Http\Middleware\CanEnterTheCastleIncentives;
 use App\Http\Middleware\CanEnterTheCastleOffices;
 use App\Http\Middleware\CanEnterTheCastleRegions;
@@ -69,6 +70,8 @@ class Kernel extends HttpKernel
         'castle'            => CanEnterTheCastle::class,
         'incentives'        => CanEnterTheCastleIncentives::class,
         'regions'           => CanEnterTheCastleRegions::class,
+        'departments'       => CanEnterTheCastleDepartments::class,
+        'offices'           => CanEnterTheCastleOffices::class,
     ];
 
     protected $middlewarePriority = [
