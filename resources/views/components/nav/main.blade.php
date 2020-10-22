@@ -174,7 +174,7 @@
             </div>
         </div>
         
-        <div class="z-40 fixed bottom-0 block bg-white w-full md:hidden">
+        <div class="z-40 fixed bottom-0 block bg-white w-full md:hidden overflow-x-scroll">
             <div class="flex items-center justify-between px-4 py-3 sm:px-3">
                 @if(is_active('castle.*'))
                     <x-nav.link-mobile :href="route('home')" class="flex self-center">
