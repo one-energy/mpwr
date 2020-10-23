@@ -61,7 +61,7 @@
                         @if(user()->role != "Admin" && user()->role != "Owner")
                             <div class="md:col-span-3 col-span-2 hidden">
                                 <x-select x-model="selectedDepartment" label="Department" name="department_id">
-                                    <template x-for="department in departments" :key="department.id">
+                                    <template x-for="department in departments" :key="department.id">    
                                         <option :value="department.id" x-text="department.name" ></option>
                                     </template>
                                 </x-select> 
@@ -69,6 +69,7 @@
                         @else
                             <div class="md:col-span-3 col-span-2">
                                 <x-select x-model="selectedDepartment" label="Department" name="department_id">
+                                    <option value="">None</option>
                                     <template x-for="department in departments" :key="department.id">
                                         <option :value="department.id" x-text="department.name" ></option>
                                     </template>
@@ -78,6 +79,9 @@
 
                         <div class="md:col-span-3 col-span-2">
                             <x-select x-model="selectedOffice" label="Office" name="office_id">
+                                @if(user()->role == "Admin" || user()->role == "Owner")
+                                    <option value="">None</option>
+                                @endif
                                 <template x-for="office in offices" :key="office.id">
                                     <option :value="office.id" x-text="office.name" ></option>
                                 </template>
