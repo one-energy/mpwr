@@ -43,7 +43,7 @@ class ManageOffice extends Component
 
     public function addOfficeToRegion($office)
     {
-        $changeOffice = Office::whereId($office['id'])->first();
+        $changeOffice = Office::whereId($office)->first();
 
         $changeOffice['region_id'] = $this->region->id;
 
