@@ -40,13 +40,13 @@
                 placeholder="Records per page"/>
             <div class="absolute inset-y-0 right-0 flex items-center w-full">
                 <select wire:model="perPage" aria-label="PerPage"
-                        class="w-full h-full py-0 pl-20 text-right text-gray-500 bg-transparent border-transparent form-select pl-96 sm:pl-36 pr-7 sm:text-sm sm:leading-5">
-                    <option>5</option>
-                    <option>15</option>
-                    <option>25</option>
-                    <option>35</option>
-                    <option>50</option>
-                    <option>100</option>
+                        class="right-dropdown w-full h-full py-0 text-right text-gray-500 bg-transparent border-transparent form-select sm:pl-20 pr-7 sm:text-sm sm:leading-5">
+                    <option class="right-option">5</option>
+                    <option class="right-option">15</option>
+                    <option class="right-option">25</option>
+                    <option class="right-option">35</option>
+                    <option class="right-option">50</option>
+                    <option class="right-option">100</option>
                 </select>
             </div>
         </div>
