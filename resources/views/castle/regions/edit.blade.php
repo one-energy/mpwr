@@ -85,5 +85,6 @@
                 </div>
             </x-form>
         </div>
+        <livewire:castle.manage-office :region="$region"/>
     </div>
 </x-app.auth>
