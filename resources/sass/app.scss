@@ -113,3 +113,9 @@ input[type=number] {
 .highcharts-data-table tr:hover {
     background: #f1f7ff;
 }
+.right-dropdown {
+    text-align-last: right;
+}
+.right-option { 
+    direction: rtl; 
+}
