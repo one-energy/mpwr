@@ -72,7 +72,7 @@
                               <div class="w-full inline-grid items-center">
                                 <h3>Add a new content to {{$actualSection->title}}</h3>
                                 <x-form id="formContent" :route="route('castle.manage-trainings.storeContent', $actualSection->id)">
-                                  <div class="grid grid-cols-2 mt-8 gap-2 mb-8">
+                                  <div class="grid grid-cols-2 mt-8 gap-2 mb-4">
                                     <x-input class="col-span-1" label="Title" name="content_title"></x-input>
                                     <x-input class="col-span-1" label="Video Url" name="video_url"></x-input>      
                                     <x-text-area class="col-span-2" label="Description" name="description" hidden></x-text-area>
@@ -118,7 +118,7 @@
                               <div class="inline-grid items-center">
                                 <h3>Edit the content to {{$actualSection->title}}</h3>
                                 <x-form id="formContent" :route="route('castle.manage-trainings.updateContent', $content->id)">
-                                  <div class="grid grid-cols-2 mt-8 gap-2">
+                                  <div class="grid grid-cols-2 mt-8 mb-4 gap-2">
                                     <x-input class="col-span-1" label="Title" name="content_title" value="{{$content->title}}"></x-input>
                                     <x-input class="col-span-1" label="Video Url" name="video_url" value="{{$content->video_url}}"></x-input>
                                     <x-text-area id="description" class="col-span-2" label="Description" name="description" value="{{$content->description}}" hidden></x-text-area>
