@@ -212,10 +212,11 @@
         @endif
         
         <div class="mt-15">
-          <div class="mt-2 p-4 text-lg">
+          <div class="mt-2 text-lg">
             @if($videoId)
               <div class="w-full text-center embed-container">
-                <iframe class="lg:float-right self-center ml-4" src="https://www.youtube.com/embed/{{$videoId}}" frameborder='0' height="290" width="500" allowfullscreen></iframe>
+                <iframe class="lg:float-right self-center w-full max-w-xl" src="https://www.youtube.com/embed/{{$videoId}}" frameborder='0'
+                   width="500" allowfullscreen></iframe>
               </div>
             @endif
             
