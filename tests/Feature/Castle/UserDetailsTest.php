@@ -119,9 +119,9 @@ class UserDetailsTest extends FeatureTest
          $salesRepManager = factory(User::class)->create(['role' => "Sales rep"]);
          $setterManager   = factory(User::class)->create(['role' => "Setter"]);
          
-         $response = $this->actingAs($regionManager)
-            ->get(route('castle.users'));
+         $response = $this->actingAs($setterManager)
+            ->get(route('castle.users.index'));
  
-         $response->assertStatus(302);
+         $response->assertStatus(403);
      }
 }
