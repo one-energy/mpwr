@@ -17,7 +17,7 @@ class TrainingController extends Controller
         $content       = [];
         $index         = 0;
         $videoId       = [];
-        $actualSection = 0;
+        $actualSection = new TrainingPageSection();
         $path          = [];
         if ($department->id) {
             $actualSection = $section ?? TrainingPageSection::whereDepartmentId($department->id)->first();
@@ -42,15 +42,14 @@ class TrainingController extends Controller
 
     public function manageTrainings(Department $department, TrainingPageSection $section = null)
     {
-
         $this->authorize('viewList', [TrainingPageSection::class, $department->id]);
         $content       = [];
         $index         = 0;
         $videoId       = [];
-        $actualSection = 0;
+        $actualSection = new TrainingPageSection();
         $path          = [];
         $departments   = [];
-
+        
         if (!$department->id && (user()->role == "Owner" || user()->role == "Admin")) {
             $department = Department::first();
         }

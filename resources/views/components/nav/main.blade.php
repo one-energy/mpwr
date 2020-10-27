@@ -88,12 +88,12 @@
                         @if(user()->userLevel() != 'Sales Rep' && user()->userLevel() != 'Setter')
                             <x-nav.castle-icon/>
                         @endif
-
+<!-- 
                         <button
                             class="p-1 border-2 border-transparent text-gray-400 rounded-full hover:text-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"
                             aria-label="Notifications">
                             <x-svg.notification/>
-                        </button>
+                        </button> -->
 
                         <div @click.away="open = false" class="ml-3 relative" x-data="{ open: false }">
                             <div>
@@ -112,7 +112,7 @@
                                 x-transition:leave="transition ease-in duration-75"
                                 x-transition:leave-start="transform opacity-100 scale-100"
                                 x-transition:leave-end="transform opacity-0 scale-95"
-                                class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg z-10">
+                                class="origin-top-right absolute right-0 mt-2 rounded-md shadow-lg z-10">
                                 <div class="py-1 rounded-md bg-white shadow-xs">
                                     <div>
                                         <span class="block px-4 pt-2 text-sm text-gray-600">
