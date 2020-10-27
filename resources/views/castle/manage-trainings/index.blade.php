@@ -72,7 +72,7 @@
                               <div class="w-full inline-grid items-center">
                                 <h3>Add a new content to {{$actualSection->title}}</h3>
                                 <x-form id="formContent" :route="route('castle.manage-trainings.storeContent', $actualSection->id)">
-                                  <div class="grid grid-cols-2 mt-8 gap-2 mb-8">
+                                  <div class="grid grid-cols-2 mt-8 gap-2 mb-4">
                                     <x-input class="col-span-1" label="Title" name="content_title"></x-input>
                                     <x-input class="col-span-1" label="Video Url" name="video_url"></x-input>      
                                     <x-text-area class="col-span-2" label="Description" name="description" hidden></x-text-area>
@@ -104,7 +104,7 @@
                       <div x-show="showContentModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity">
                         <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
                       </div>
-                      <div x-show="showContentModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
+                      <div x-show="showContentModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="relative bottom-16 p-4 bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
                         <div class="absolute top-0 right-0 pt-4 pr-4">
                           <button type="button" x-on:click="showContentModal = false; setTimeout(() => open = true, 1000)" class="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150" aria-label="Close">
                             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -118,7 +118,7 @@
                               <div class="inline-grid items-center">
                                 <h3>Edit the content to {{$actualSection->title}}</h3>
                                 <x-form id="formContent" :route="route('castle.manage-trainings.updateContent', $content->id)">
-                                  <div class="grid grid-cols-2 mt-8 gap-2">
+                                  <div class="grid grid-cols-2 mt-8 mb-4 gap-2">
                                     <x-input class="col-span-1" label="Title" name="content_title" value="{{$content->title}}"></x-input>
                                     <x-input class="col-span-1" label="Video Url" name="video_url" value="{{$content->video_url}}"></x-input>
                                     <x-text-area id="description" class="col-span-2" label="Description" name="description" value="{{$content->description}}" hidden></x-text-area>
@@ -212,10 +212,11 @@
         @endif
         
         <div class="mt-15">
-          <div class="mt-2 p-4 text-lg">
+          <div class="mt-2 text-lg">
             @if($videoId)
               <div class="w-full text-center embed-container">
-                <iframe class="lg:float-right self-center ml-4" src="https://www.youtube.com/embed/{{$videoId}}" frameborder='0' height="290" width="500" allowfullscreen></iframe>
+                <iframe class="lg:float-right self-center w-full max-w-xl xl:h-80 lg:h-72 lg:w-3/5" src="https://www.youtube.com/embed/{{$videoId}}" frameborder='0'
+                   width="500" allowfullscreen></iframe>
               </div>
             @endif
             
