@@ -251,7 +251,7 @@
         <div x-show="openModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity">
           <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
         </div>
-        <div x-show="openModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
+        <div class="relative bottom-24" x-show="openModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
           <div class="absolute top-0 right-0 pt-4 pr-4">
             <button type="button" x-on:click="openModal = false; setTimeout(() => open = true, 1000)" class="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150" aria-label="Close">
               <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -259,25 +259,25 @@
               </svg>
             </button>
           </div>
-          <div class="px-4 py-5 sm:p-6">
+          <div class="px-4 py-5 sm:p-6 bg-gray-50">
             <div class="flex justify-between">
-            <div class="flex justify-start">
+              <div class="flex justify-start">
                 <div class="flex items-center">
-                    <div>
+                  <div>
                     <img class="inline-block h-16 w-16 rounded-full" src="{{ $userArray['photo_url'] }}" alt="" />
-                    </div>
-                    <div class="ml-3">
+                  </div>
+                  <div class="ml-3">
                     <p class="text-sm leading-5 font-medium text-gray-700 group-hover:text-gray-900">
                         {{ $userArray['first_name'] }} {{ $userArray['last_name'] }}
                     </p>
                     <p class="text-xs leading-4 font-medium text-gray-500 group-hover:text-gray-700 group-focus:underline transition ease-in-out duration-150">
                         {{ $userArray['office_name']}}
                     </p>
-                    </div>
+                  </div>
                 </div>
+              </div>
             </div>
-          </div>
-          <div class="mt-6">
+            <div class="mt-6">
             <div class="flex justify-between grid grid-cols-4 row-gap-1 col-gap-2 m-1 p-2">
                 <div class="col-span-2 text-xs text-gray-900">
                     <div class="flex justify-between grid grid-cols-2 row-gap-1 col-gap-2 border-gray-200 border-2 m-1 p-2 rounded-lg">
@@ -322,8 +322,15 @@
             </div>
         
             <!-- Bar Chart -->
-            <div class="flex justify-between border-gray-200 border-2 m-1 p-2 rounded-lg">
-                <div id="bar_chart" class="max-w-full min-w-full"></div>
+            <div class="flex border-gray-200 border-2 m-1 h-48 rounded-lg">
+              <div class="w-2/3" id="chartdiv"></div>
+              <div class="w-1/3 block pt-4 space-y-1">
+                <div id="hours">0 hours</div>
+                <div id="doors">0 doors</div>
+                <div id="sits">0 sits</div>
+                <div id="sets">0 sets</div>
+                <div id="set_closes">0 set closes</div>
+              </div>
             </div>
             </div>            
           </div>
@@ -334,52 +341,48 @@
 </div>
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<script type="text/javascript">
-
-    document.addEventListener("livewire:load", function(event) {
-        window.livewire.hook('afterDomUpdate', () => {
-          if(@this.userId){
-            drawBarChart();
-          }
-        });
-    });
-
-    google.charts.load('current', {'packages':['corechart']});
-    google.charts.setOnLoadCallback(drawBarChart);
-    
-    function drawBarChart() {
-        var doors  = @this.get('totalDoors');
-        var hours  = @this.get('totalHours');
-        var sets   = @this.get('totalSets');
-        var sits   = @this.get('totalSits');
-        var closes = @this.get('totalCloses');
-
-        var data = google.visualization.arrayToDataTable([
-            ["Type",   "Quantity", { role: "style" }],
-            ["Doors",  doors,      "color: #46A049"],
-            ["Hours",  hours,      "color: #7de8a6"],
-            ["Sets",   sets,       "color: #006400"],
-            ["Sits",   sits,       "color: #B5B5B5"],
-            ["Closes", closes,     "color: #FF6E5D"]
-        ]);
-
-        var view = new google.visualization.DataView(data);
-        view.setColumns([0, 1,
-            { calc: "stringify",
-                sourceColumn: 0,
-                type: "string",
-                role: "annotation" },
-            2]);
-
-        var options = {
-            bar: {groupWidth: "95%"},
-            legend: { position: 'top' },
-            vAxis: { gridlines: { count: 0 }, textPosition: 'none' },
-            hAxis: { gridlines: { count: 0 }, textPosition: 'none', baselineColor: '#FFFFFF' },
-            chartArea:{left:0, top:0, width:"100%", height:"100%"},
-            isStacked: true
-        };
-        var chart = new google.visualization.BarChart(document.getElementById("bar_chart"));
-        chart.draw(view, options);
-  }
+<script>
+    am4core.ready(function() {
+      // Themes begin
+      window.addEventListener('setUserNumbers', event => {
+        am4core.useTheme(am4themes_animated);
+      // Themes end
+      if (event.detail.doors && event.detail.hours && event.detail.sits && event.detail.sets && event.detail.set_closes) {
+        var chart = am4core.create("chartdiv", am4charts.SlicedChart);
+        chart.data = [{
+            "name": "doors",
+            "value2": event.detail.doors
+        }, {
+            "name": "hours",
+            "value2": event.detail.hours
+        }, {
+            "name": "sits",
+            "value2": event.detail.sits
+        }, {
+            "name": "sets",
+            "value2": event.detail.sets
+        }, {
+            "name": "Set Closes",
+            "value2": event.detail.set_closes
+        }];
+        chart.logo.disabled = true;
+        var series1 = chart.series.push(new am4charts.FunnelSeries());
+        series1.dataFields.value = "value2";
+        series1.dataFields.category = "name";
+        series1.labels.template.disabled = true;
+        document.getElementById("hours").innerHTML = event.detail.doors + " " + "Hours";
+        document.getElementById("hours").style.color = "#67B7DC";
+        document.getElementById("doors").innerHTML = event.detail.hours + " " + "Doors";
+        document.getElementById("doors").style.color = "#648FD5";
+        document.getElementById("sits").innerHTML = event.detail.sits + " " + "Sits";
+        document.getElementById("sits").style.color = "#6670DB";
+        document.getElementById("sets").innerHTML = event.detail.sets + " " + "Sets";
+        document.getElementById("sets").style.color = "#8067DC";
+        document.getElementById("set_closes").innerHTML = event.detail.set_closes + " " + "Set Closes";
+        document.getElementById("set_closes").style.color = "#A367DC";
+      } else {
+          document.getElementById("chartdiv").innerHTML = "No data to display";
+      }
+      })
+    }); // end am4core.ready()
 </script>
