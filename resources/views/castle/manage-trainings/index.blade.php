@@ -69,14 +69,15 @@
                         <div class="sm:p-6">
                           <div class="flex justify-between">
                             <div class="flex justify-start">
-                              <div class="inline-grid items-center">
+                              <div class="w-full inline-grid items-center">
                                 <h3>Add a new content to {{$actualSection->title}}</h3>
-                                <x-form :route="route('castle.manage-trainings.storeContent', $actualSection->id)">
-                                  <div class="grid grid-cols-2 mt-8 gap-2">
+                                <x-form id="formContent" :route="route('castle.manage-trainings.storeContent', $actualSection->id)">
+                                  <div class="grid grid-cols-2 mt-8 gap-2 mb-8">
                                     <x-input class="col-span-1" label="Title" name="content_title"></x-input>
-                                    <x-input class="col-span-1" label="Video Url" name="video_url"></x-input>
-                                    <x-text-area class="col-span-2" label="Description" name="description"></x-text-area>
+                                    <x-input class="col-span-1" label="Video Url" name="video_url"></x-input>      
+                                    <x-text-area class="col-span-2" label="Description" name="description" hidden></x-text-area>
                                   </div>
+                                  <div class="grid" id="editor"></div>
                                   <div class="mt-6">
                                     <span class="block w-full rounded-md shadow-sm">
                                       <x-button class="w-full flex" type="submit" color="green">
@@ -116,12 +117,13 @@
                             <div class="flex justify-start">
                               <div class="inline-grid items-center">
                                 <h3>Edit the content to {{$actualSection->title}}</h3>
-                                <x-form :route="route('castle.manage-trainings.updateContent', $content->id)">
+                                <x-form id="formContent" :route="route('castle.manage-trainings.updateContent', $content->id)">
                                   <div class="grid grid-cols-2 mt-8 gap-2">
                                     <x-input class="col-span-1" label="Title" name="content_title" value="{{$content->title}}"></x-input>
                                     <x-input class="col-span-1" label="Video Url" name="video_url" value="{{$content->video_url}}"></x-input>
-                                    <x-text-area class="col-span-2" label="Description" name="description" value="{{$content->description}}"></x-text-area>
+                                    <x-text-area id="description" class="col-span-2" label="Description" name="description" value="{{$content->description}}" hidden></x-text-area>
                                   </div>
+                                  <div class="grid" id="editor"></div>
                                   <div class="mt-6">
                                     <span class="block w-full rounded-md shadow-sm">
                                       <x-button class="w-full flex" type="submit" color="green">
@@ -221,10 +223,10 @@
               <div class="mt-3 text-xl font-semibold">
                 {{$content->title}}
               </div>
-              {!!$content->description!!}
+              <div class="grid" id="reader"></div>
             @endif
                 </div>
-          <div class="md:grid-cols-2 sm:grid-cols-1 md:row-gap-4 sm:row-gap-0 col-gap-4 inline-grid w-full mt-4">
+          <div class="md:grid-cols-2 sm:grid-cols-1 md:row-gap-4 sm:row-gap-0 col-gap-4 inline-grid w-full mt-4 max-w-full">
             @foreach($sections as $section)
               <div class="col-span-1 ">
                 <div class="grid grid-cols-10">
@@ -288,3 +290,31 @@
     </div>
   </div>
 </x-app.auth>
+
+<script>
+  var readerOption = {
+    readOnly: true
+  }
+
+  var options = {
+    height: "200px",
+    theme: 'snow'
+  };
+
+  var content = <?=$content->description ?? 'null'?>
+  
+  var quill = new Quill('#editor', options);
+  var reader = new Quill('#reader', readerOption);
+  
+  if(content){
+    quill.setContents(content);
+    reader.setContents(content);
+  }
+  
+  var form = document.getElementById("formContent");
+  form.onsubmit = function() { // onsubmit do this first
+    var description = document.querySelector('textarea[name="description"]'); // set name input var
+    description.value = JSON.stringify(quill.getContents()); // populate name input with quill data
+    return true; // submit form
+  }
+</script>
