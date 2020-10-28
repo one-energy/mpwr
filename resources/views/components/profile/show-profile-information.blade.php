@@ -94,6 +94,13 @@
         <div class="border-gray-200 border-2 m-1 p-2 rounded-lg" id="funnelChart">
             <div id="chartdiv"></div>
             <!-- <div id="container"></div> -->
+            <div class="grid grid-cols-3 place-items-stretch flex-wrap space-x-2">
+                <div id="doors">{{user()->dailyNumbers->sum('doors')}} Doors</div>
+                <div id="hours">{{user()->dailyNumbers->sum('hours')}} Hours</div>
+                <div id="sits">{{user()->dailyNumbers->sum('sits')}} Sits</div>
+                <div id="sets">{{user()->dailyNumbers->sum('sets')}} Sets</div>
+                <div id="setCloses" class="col-span-2">{{user()->dailyNumbers->sum('set_closes')}} Set Closes</div>
+            </div>
         </div>
 
     </div>
@@ -101,8 +108,8 @@
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
-    const doors = {!!json_encode(user()-> dailyNumbers->sum('doors')) !!};
-    const hours = {!!json_encode(user()-> dailyNumbers->sum('hours')) !!};
+    const doors = {!!json_encode(user()->dailyNumbers->sum('doors')) !!};
+    const hours = {!!json_encode(user()->dailyNumbers->sum('hours')) !!};
     const sits = {!!json_encode(user()->dailyNumbers->sum('sits')) !!};
     const sets = {!!json_encode(user()->dailyNumbers->sum('sets')) !!};
     const set_closes = {!!json_encode(user()->dailyNumbers->sum('set_closes')) !!};
@@ -133,6 +140,11 @@
             series1.dataFields.value = "value2";
             series1.dataFields.category = "name";
             series1.labels.template.disabled = true;
+            document.getElementById("hours").style.color = "#67B7DC";
+            document.getElementById("doors").style.color = "#648FD5";
+            document.getElementById("sits").style.color = "#6670DB";
+            document.getElementById("sets").style.color = "#8067DC";
+            document.getElementById("setCloses").style.color = "#A367DC";
         } else {
             document.getElementById("chartdiv").innerHTML = "No data to display";
         }
