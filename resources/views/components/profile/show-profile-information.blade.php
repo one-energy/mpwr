@@ -147,6 +147,11 @@
             document.getElementById("setCloses").style.color = "#A367DC";
         } else {
             document.getElementById("chartdiv").innerHTML = "No data to display";
+            document.getElementById("hours").innerHTML = "";
+            document.getElementById("doors").innerHTML = "";
+            document.getElementById("sits").innerHTML ="";
+            document.getElementById("sets").innerHTML = "";
+            document.getElementById("setCloses").innerHTML = "";
         }
     }); // end am4core.ready()
 </script>
