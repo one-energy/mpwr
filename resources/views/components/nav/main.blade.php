@@ -285,7 +285,7 @@
                                         c-30 -30 -56 -52 -59 -50 -3 3 19 30 49 60 30 30 56 52 59 50 3 -3 -19 -30
                                         -49 -60z m125 35 c-10 -11 -23 -20 -28 -20 -6 0 0 11 13 25 27 29 42 25 15 -5z"/>
                                     </g>
-                                </svg>git s
+                                </svg>
                     </x-nav.link-mobile>
 
                     <x-nav.link-mobile :href="route('incentives')" class="mt-1"
