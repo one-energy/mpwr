@@ -33,29 +33,31 @@
                         </div>
 
                         @if(user()->role != "Admin" && user()->role != "Owner" )
-                            <div class="md:col-span-3 col-span-2 @if(user()->role == 'Region Manager') hidden @endif">
+                            <div class="md:col-span-3 col-span-2 @if(user()->role == 'Region Manager' || user()->role == 'Office Manager') hidden @endif">
                                 <x-select x-model="selectedRegion" label="Region" name="region_id">
-                                    <template x-for="region in regions" :key="region.id">
+                                    <template x-if="regions" x-for="region in regions" :key="region.id">
                                         <option :value="region.id" x-text="region.name"></option>
                                     </template>
                                 </x-select>
                             </div>
                         @else
-                            <div class="md:col-span-3 col-span-2">
+                            <div class="md:col-span-3 col-span-2 ">
                                 <x-select x-model="selectedRegion" label="Region" name="region_id">
-                                    <template x-for="region in regions" :key="region.id">
+                                    <template x-if="regions" x-for="region in regions" :key="region.id">
                                         <option :value="region.id" x-text="region.departmentName + ' - ' + region.name"></option>
                                     </template>
                                 </x-select>
                             </div>
                         @endif
-                        <div class="md:col-span-3 col-span-2">
-                            <x-select x-model="selectedManager" label="Office Manager" name="office_manager_id">
-                                <template x-for="manager in officesManagers" :key="manager.id">
+                      
+                        <div class="md:col-span-3 col-span-2 @if(user()->role == 'Office Manager') hidden @endif">
+                            <x-select label="Office Manager" name="office_manager_id">
+                                <template x-if="officesManagers" x-for="manager in officesManagers" :key="manager.id">
                                     <option :value="manager.id" x-text="manager.first_name + ' ' + manager.last_name"></option>
                                 </template>
                             </x-select>
                         </div>
+                      
                     </div>
                 </div>
                 <div class="mt-8 border-t border-gray-200 pt-5">

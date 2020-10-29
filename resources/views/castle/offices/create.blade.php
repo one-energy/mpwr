@@ -32,7 +32,7 @@
                         @if(user()->role != "Admin" && user()->role != "Owner")
                             <div class="md:col-span-3 col-span-2">
                                 <x-select x-model="selectedRegion" label="Region" name="region_id">
-                                    <template x-for="region in regions" :key="region.id">
+                                    <template x-if="regions" x-for="region in regions" :key="region.id">
                                         <option :value="region.id" x-text="region.name"></option>
                                     </template>
                                 </x-select>
@@ -40,7 +40,7 @@
                         @else
                             <div class="md:col-span-3 col-span-2">
                                 <x-select x-model="selectedRegion" label="Region" name="region_id">
-                                    <template x-for="region in regions" :key="region.id">
+                                    <template x-if="regions" x-for="region in regions" :key="region.id">
                                         <option :value="region.id" x-text="region.departmentName + ' - ' + region.name"></option>
                                     </template>
                                 </x-select>
@@ -48,7 +48,7 @@
                         @endif
                         <div class="md:col-span-3 col-span-2">
                             <x-select label="Office Manager" name="office_manager_id">
-                                <template x-for="manager in officesManagers" :key="manager.id">
+                                <template x-if="officesManagers" x-for="manager in officesManagers" :key="manager.id">
                                     <option :value="manager.id" x-text="manager.first_name + ' ' + manager.last_name"></option>
                                 </template>
                             </x-select>

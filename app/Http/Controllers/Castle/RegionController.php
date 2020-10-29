@@ -23,7 +23,7 @@ class RegionController extends Controller
         $users       = User::query()->where('role', 'Region Manager')->get();
         $departments = Department::all();
 
-        return view('castle.regions.edit', compact('region', 'users', 'departments'));
+        return view('castle.regions.edit', compact('region', 'departments'));
     }
 
     public function update(Region $region)
@@ -119,13 +119,18 @@ class RegionController extends Controller
         }
 
         if(user()->role == "Department Manager"){
-            $regions =  $regionsQuery->whereDepatmentId($departmentId)->get();
+            $regions =  $regionsQuery->whereDepartmentId($departmentId)->get();
             
         }
+        
         if(user()->role == "Region Manager"){
             $regions =  $regionsQuery->whereRegionManagerId(user()->id)->get();
             
         }
-       return $regions;
+
+        if(user()->role == "Office Manager"){
+            $regions =  $regionsQuery->where("regions.id", "=", user()->office->region->id)->get();
+        }
+        return $regions;
     }
 }
