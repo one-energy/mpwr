@@ -70,37 +70,41 @@
 </div>
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<script type="text/javascript">
-  google.charts.load("visualization", "1", {packages:["bar"]});
-  google.charts.setOnLoadCallback(drawFunnelChart);
-
-  function drawFunnelChart() {
-      var data = google.visualization.arrayToDataTable([
-        ["Type",   "#",  { role: "style" }],
-        ["Doors",  2000, "color: #46A049"],
-        ["Hours",  250,  "color: #7de8a6"],
-        ["Sets",   125,  "color: #006400"],
-        ["Sits",   85,   "color: #B5B5B5"],
-        ["Closes", 22,   "color: #FF6E5D"]
-      ]);
-
-      var view = new google.visualization.DataView(data);
-      view.setColumns([0, 1,
-                       { calc: "stringify",
-                         sourceColumn: 0,
-                         type: "string",
-                         role: "annotation" },
-                       2]);
-
-      var options = {
-        bar: {groupWidth: "95%"},
-        legend: { position: 'top' },
-        vAxis: { gridlines: { count: 0 }, textPosition: 'none' },
-        hAxis: { gridlines: { count: 0 }, textPosition: 'none', baselineColor: '#FFFFFF' },
-        chartArea:{left:0, top:0, width:"100%", height:"100%"},
-        isStacked: true
-      };
-      var chart = new google.visualization.BarChart(document.getElementById("barchart_values"));
-      chart.draw(view, options);
-  }
+<script>
+    const doors = {!!json_encode(user()-> dailyNumbers->sum('doors')) !!};
+    const hours = {!!json_encode(user()-> dailyNumbers->sum('hours')) !!};
+    const sits = {!!json_encode(user()->dailyNumbers->sum('sits')) !!};
+    const sets = {!!json_encode(user()->dailyNumbers->sum('sets')) !!};
+    const set_closes = {!!json_encode(user()->dailyNumbers->sum('set_closes')) !!};
+    am4core.ready(function() {
+        // Themes begin
+        am4core.useTheme(am4themes_animated);
+        // Themes end
+        if (doors && hours && sits && sets && set_closes) {
+            var chart = am4core.create("chartdiv", am4charts.SlicedChart);
+            chart.data = [{
+                "name": "doors",
+                "value2": doors
+            }, {
+                "name": "hours",
+                "value2": hours
+            }, {
+                "name": "sits",
+                "value2": sits
+            }, {
+                "name": "sets",
+                "value2": sets
+            }, {
+                "name": "Set Closes",
+                "value2": set_closes
+            }];
+            chart.logo.disabled = true;
+            var series1 = chart.series.push(new am4charts.FunnelSeries());
+            series1.dataFields.value = "value2";
+            series1.dataFields.category = "name";
+            series1.labels.template.disabled = true;
+        } else {
+            document.getElementById("chartdiv").innerHTML = "No data to display";
+        }
+    }); // end am4core.ready()
 </script>
