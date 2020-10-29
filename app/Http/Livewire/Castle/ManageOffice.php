@@ -26,6 +26,7 @@ class ManageOffice extends Component
     public function render()
     {
         $officeQuery = Office::query()
+            ->select("offices.*")
             ->join("regions", "offices.region_id", "=", "regions.id");
 
         if (user()->role == "Admin" || user()->role == "Owner") {
