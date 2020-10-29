@@ -114,18 +114,17 @@ class RegionController extends Controller
             ->select("regions.*", "departments.name as departmentName")
             ->join("departments", "regions.department_id", '=', 'departments.id');
 
-        if(user()->role == "Admin" || user()->role == "Owner"){
+        if (user()->role == "Admin" || user()->role == "Owner") {
             $regions = $regionsQuery->get();
         }
 
-        if(user()->role == "Department Manager"){
+        if (user()->role == "Department Manager") {
             $regions =  $regionsQuery->whereDepatmentId($departmentId)->get();
-            
         }
-        if(user()->role == "Region Manager"){
+        if (user()->role == "Region Manager") {
             $regions =  $regionsQuery->whereRegionManagerId(user()->id)->get();
-            
         }
-       return $regions;
+
+        return $regions;
     }
 }

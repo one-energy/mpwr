@@ -89,6 +89,15 @@ class Scoreboard extends Component
         } else {
             $this->closeRatio = 0;
         }
+
+        $this->dispatchBrowserEvent('setUserNumbers', [
+            'doors'      => $query->sum('doors'),
+            'hours'      => $query->sum('hours'),
+            'sets'       => $query->sum('sets'),
+            'sits'       => $query->sum('sits'),
+            'set_closes' => $query->sum('set_closes'),
+        ]);
+
     }
 
     public function setTop10HoursPeriod($hoursPeriod)

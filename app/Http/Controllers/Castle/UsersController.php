@@ -284,6 +284,7 @@ class UsersController extends Controller
         $region = Region::whereId($regionId)->first();
 
         $usersQuery = User::query()->select("users.*");
+
         return $usersQuery->whereRole("Office Manager")
             ->whereDepartmentId($region->department_id)
             ->get();
