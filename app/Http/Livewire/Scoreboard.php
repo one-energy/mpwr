@@ -97,7 +97,6 @@ class Scoreboard extends Component
             'sits'       => $query->sum('sits'),
             'set_closes' => $query->sum('set_closes'),
         ]);
-
     }
 
     public function setTop10HoursPeriod($hoursPeriod)

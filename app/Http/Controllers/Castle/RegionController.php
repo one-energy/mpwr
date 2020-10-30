@@ -125,6 +125,10 @@ class RegionController extends Controller
             $regions =  $regionsQuery->whereRegionManagerId(user()->id)->get();
         }
 
+        if (user()->role == "Office Manager") {
+            $regions =  $regionsQuery->where("regions.id", "=", user()->office->region->id)->get();
+        }
+
         return $regions;
     }
 }
