@@ -81,7 +81,7 @@ class CustomerController extends Controller
 
     public function calculateCommission($customer)
     {
-        return (($customer->epc - ( $customer->pay + $customer->setter_fee )) * ($customer->system_size * 1000)) - $customer->adders;
+        return (($customer->epc - ( $customer->pay + $customer->setter_fee )) * ($customer->system_size)) - $customer->adders;
     }
 
     public function show(Customer $customer)
