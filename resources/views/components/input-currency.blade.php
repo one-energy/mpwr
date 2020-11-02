@@ -33,6 +33,8 @@
         <input {{ $attributes->except('class')->merge(['class' => $class]) }}
                name="{{ $name }}" id="{{ $name }}"
                type="number"
+               min="0"
+               step="0.01" 
                value="{{ old($name, $value ?? null) }}"
                @if($disabledToUser && user()->role == $disabledToUser) disabled @endif/>
         

@@ -45,9 +45,9 @@
                     </div>
                     <div class="mt-6">
                         <div class="flex items-center justify-end py-2">
-                            <div class="flex items-center px-3"><span class="rounded-full h-2 w-2 bg-green-base"></span><span class="text-xs ml-1">Active Customers</span></div>
-                            <div class="flex items-center px-3"><span class="rounded-full h-2 w-2 bg-gray-700"></span><span class="text-xs ml-1">Prospective Customers</span></div>
-                            <div class="flex items-center px-3"><span class="rounded-full h-2 w-2 bg-red-500"></span><span class="text-xs ml-1">Inactive Customers</span></div>
+                            <div class="flex items-center px-3"><span class="rounded-full h-2 w-2 bg-green-base"></span><span class="text-xs ml-1">Installed and Paid</span></div>
+                            <div class="flex items-center px-3"><span class="rounded-full h-2 w-2 bg-gray-700"></span><span class="text-xs ml-1">Signed and pending</span></div>
+                            <div class="flex items-center px-3"><span class="rounded-full h-2 w-2 bg-red-500"></span><span class="text-xs ml-1">Canceled</span></div>
                         </div>
                         @forelse ($customers as $customer)
                             <a href="{{route('customers.show', $customer->id)}}">
