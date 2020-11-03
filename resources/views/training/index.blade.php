@@ -30,16 +30,17 @@
         <div class="mt-15">
           <p class="mt-2 p-4 text-lg">
             @if($videoId)
-              <div class="w-full text-center embed-container">
-                <iframe class="lg:float-right self-center ml-2" src="https://www.youtube.com/embed/{{$videoId}}" frameborder='0' height="290" width="500" allowfullscreen></iframe>
-              </div>
+            <div class="w-full text-center embed-container">
+                <iframe class="lg:float-right self-center w-full max-w-xl xl:h-80 lg:h-72 lg:w-3/5" src="https://www.youtube.com/embed/{{$videoId}}" frameborder='0'
+                   width="500" allowfullscreen></iframe>
+            </div>
             @endif
             
             @if($content && $content->title)
               <div class="mt-3 text-xl font-semibold">
                 {{$content->title}}
               </div>
-              {{$content->description}}
+              <div class="grid" id="reader"></div>
             @endif
           </p>
           <div class="md:grid-cols-2 sm:grid-cols-1 md:row-gap-4 sm:row-gap-0 col-gap-4 inline-grid w-full mt-4">
@@ -66,3 +67,18 @@
     </div>
   </div>
 </x-app.auth>
+
+<script>
+  var readerOption = {
+    readOnly: true
+  }
+
+  var content = <?=$content->description ?? 'null'?>
+
+  var reader = new Quill('#reader', readerOption);
+  
+  if(content){
+    reader.setContents(content);
+  }
+  
+</script>
