@@ -268,7 +268,7 @@ class CustomerTest extends TestCase
 
         $created = Customer::where('first_name', $data['first_name'])->first();
         
-        $commission = (($data['epc'] - ( $data['pay'] + $data['setter_fee'] )) * ($data['system_size'])) - $data['adders'];
+        $commission = (($data['epc'] - ( $data['pay'] + $data['setter_fee'] )) * ($data['system_size'] * 1000)) - $data['adders'];
 
         $this->assertTrue( $created->commission == $commission);
     }
