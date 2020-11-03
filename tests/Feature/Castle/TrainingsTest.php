@@ -13,7 +13,8 @@ use Tests\TestCase;
 
 class TrainingsTest extends TestCase
 {
-
+    use RefreshDatabase; 
+    
     protected function setUp(): void
     {
         parent::setUp();

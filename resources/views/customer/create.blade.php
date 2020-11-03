@@ -12,15 +12,15 @@
                     <input type="hidden" value="{{ $openedById }}" name="opened_by_id">
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                     <div class="md:col-span-3 col-span-2">
-                        <x-input label="First Name" name="first_name"></x-input>
+                        <x-input label="Customer First Name" name="first_name"></x-input>
                     </div>
 
                     <div class="md:col-span-3 col-span-2">
-                        <x-input label="Last Name" name="last_name"></x-input>
+                        <x-input label="Customer Last Name" name="last_name"></x-input>
                     </div>
             
                     <div class="md:col-span-2 col-span-1">
-                        <x-input-add-on  type="number" step=0.01 label="System Size" name="system_size" addOn="kW"></x-input>
+                        <x-input-add-on label="System Size" name="system_size" addOn="kW"></x-input>
                     </div>
 
                     <div class="col-span-1">
@@ -37,7 +37,7 @@
                     </div>
             
                     <div class="md:col-span-2 col-span-1">
-                        <x-input-currency label="Pay" name="pay"></x-input>
+                        <x-input-currency label="Redline" name="pay"></x-input>
                     </div>
 
                     <div class="col-span-1">

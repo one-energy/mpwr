@@ -12,10 +12,10 @@
                     <div>
                         <div class="mt-6 grid sm:grid-cols-2 row-gap-6 col-gap-4 md:grid-cols-6">
                         <div class="md:col-span-3 sm:cols-span-2">
-                            <x-input label="First Name" name="first_name" value="{{ $customer->first_name }}" :disabledToUser="'Setter'"></x-input>
+                            <x-input label="Customer First Name" name="first_name" value="{{ $customer->first_name }}" :disabledToUser="'Setter'"></x-input>
                         </div>
                         <div class="md:col-span-3 sm:cols-span-2">
-                            <x-input label="Last Name" name="last_name" value="{{ $customer->last_name }}" :disabledToUser="'Setter'"></x-input>
+                            <x-input label="Customer Last Name" name="last_name" value="{{ $customer->last_name }}" :disabledToUser="'Setter'"></x-input>
                         </div>
                 
                         <div class="md:col-span-3 sm:cols-span-2">
@@ -54,7 +54,7 @@
 
                         <div class="md:col-span-4 sm:cols-span-2 flex items-center justify-between">
                             <input type="hidden" name="panel_sold" value="0">
-                            <x-checkbox label="Panel Sold" name="panel_sold" :checked="old('panel_sold', $customer->panel_sold)" :disabledToUser="'Setter'"></x-checkbox>
+                            <x-checkbox label="Installed and Paid" name="panel_sold" :checked="old('panel_sold', $customer->panel_sold)" :disabledToUser="'Setter'"></x-checkbox>
                         </div>
     
                         <div class="sm:col-span-1">
@@ -63,7 +63,7 @@
                             </label>
                             <div class="mt-3">
                             <span class="block w-full font-bold transition duration-150 ease-in-out sm:text-sm sm:leading-5">
-                                ${{ number_format($customer->setter_fee) }}
+                                ${{ number_format($customer->setter_fee, 2) }}
                             </span>
                             </div>
                         </div>
