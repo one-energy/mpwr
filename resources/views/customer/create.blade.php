@@ -54,7 +54,7 @@
                     </div>
             
                     <div class="md:col-span-3 col-span-2">
-                        <x-input label="Adders" name="adders" type="number"></x-input>
+                        <x-input label="Adders" name="adders" step="0.01" type="number"></x-input>
                     </div>
             
                     <div class="md:col-span-3 col-span-2">
