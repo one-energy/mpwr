@@ -136,6 +136,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('/customers', CustomerController::class);
     Route::put('/customers/{customer}/active', [CustomerController::class, 'Active'])->name('customers.active');
+    Route::delete('/customers/{customer}', [CustomerController::class, 'delete'])->name('customers.delete');
     Route::get('/scoreboard', ScoreboardController::class)->name('scoreboard');
     Route::get('/trainings/{department?}/{section?}', [TrainingController::class, 'index'])->name('trainings.index');
     Route::get('/incentives', IncentivesController::class)->name('incentives');
