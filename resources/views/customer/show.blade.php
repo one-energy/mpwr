@@ -28,7 +28,7 @@
                         
                               
                         <div class="md:col-span-3 sm:cols-span-2">
-                            <x-input label="Adders" name="adders" value="{{ $customer->adders }}" type="number" :disabledToUser="'Setter'"></x-input>
+                            <x-input label="Adders" name="adders" step="0.01" value="{{ $customer->adders }}" type="number" :disabledToUser="'Setter'"></x-input>
                         </div>
     
                         <div class="md:col-span-3 sm:cols-span-2">
