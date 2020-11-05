@@ -83,7 +83,7 @@
                 <div class="flex justify-start">
                     <span class="inline-flex rounded-md shadow-sm">
                         <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
-                            Add Home Owner
+                            Submit
                         </button>
                     </span>
                     <span class="ml-3 inline-flex rounded-md shadow-sm">
