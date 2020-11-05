@@ -6,42 +6,48 @@
 
                     <livewire:area-chart/>
 
-                    <div class="flex justify-between mt-12">
-                        <div class="flex justify-start">
-                            <h3 class="text-lg text-gray-900">Customers</h3>
+                    <div class="grid grid-flow-col grid-rows-2 grid-cols-1 sm:grid-rows-1 sm:grid-cols-2 mt-12">
+                        <div class="flex w-full justify-between sm:justify-start ">
+                            <div>
+                                <h3 class="text-lg text-gray-900">Customers</h3>
+                            </div>
                             @if(user()->role != 'Setter')
-                                <a href="{{route('customers.create')}}" class="ml-6">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25">
-                                        <circle cx="12" cy="12" r="10" class="fill-current text-green-light"></circle>
+                            <div class="flex sm:ml-2">
+                                <a href="{{route('customers.create')}}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="-3 -5 40 35">
+                                        <circle cx="12" cy="12" r="15" class="fill-current text-green-base"></circle>
                                         <symbol id="add-customer" viewBox="0 0 25 25">
                                             <path d="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z"
-                                                class="fill-current text-green-base"/>
+                                                class="fill-current text-white"/>
                                         </symbol>
                                         <use xlink:href="#add-customer" width="12" height="12" y="6" x="6"/>
                                     </svg>
                                 </a>
+                            </div>
                             @endif
                         </div>
-                        <form action="{{ route('home') }}">
-                            <div class="flex justify-end" x-data="{ sortOptions: false }">
-                                <label for="sort_by" class="block mt-1 text-xs font-medium leading-5 text-gray-700">
-                                    Sort by:
-                                </label>
-                                <div class="relative inline-block ml-2 text-left">
-                                    <select id="sort_by"
-                                            name="sort_by"
-                                            onchange="this.form.submit()"
-                                            class="block w-full py-1 text-lg text-gray-500 transition duration-150 ease-in-out rounded-lg form-select">
-                                        @foreach($sortTypes as $type)
-                                            <option value="{{$type['index']}}"
-                                                    @if(request('sort_by') == $type['index']) selected @endif>
-                                                {{$type['value']}}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                        <div>
+                            <form action="{{ route('home') }}">
+                                <div class="flex justify-end" x-data="{ sortOptions: false }">
+                                    <label for="sort_by" class="block mt-1 text-xs font-medium leading-5 text-gray-700">
+                                        Sort by:
+                                    </label>
+                                    <div class="relative inline-block ml-2 text-left">
+                                        <select id="sort_by"
+                                                name="sort_by"
+                                                onchange="this.form.submit()"
+                                                class="block w-full py-1 text-lg text-gray-500 transition duration-150 ease-in-out rounded-lg form-select">
+                                            @foreach($sortTypes as $type)
+                                                <option value="{{$type['index']}}"
+                                                        @if(request('sort_by') == $type['index']) selected @endif>
+                                                    {{$type['value']}}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
                     <div class="mt-6">
                         <div class="flex items-center justify-end py-2">
