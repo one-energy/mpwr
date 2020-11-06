@@ -243,6 +243,21 @@ class CustomerTest extends TestCase
     }
 
     /** @test */
+    public function it_should_delete_a_customer()
+    {
+        $customer = factory(Customer::class)->create();
+
+        $response = $this->delete(route('customers.delete', $customer));
+
+        $response->assertStatus(302);
+
+        $deleted  = Customer::where('id', $customer->id)->first();
+
+        $this->assertNull($deleted);
+       
+    }
+
+    /** @test */
     public function it_should_calculate_comission()
     {
         $user = factory(User::class)->create();
