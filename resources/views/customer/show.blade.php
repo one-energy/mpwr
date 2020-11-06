@@ -88,14 +88,21 @@
                                         Update
                                     <button>
                                 </span>
+                                <x-form :route="route('customers.delete', $customer->id)" delete>
+                                    <span class="ml-3 inline-flex rounded-md shadow-sm">
+                                        <button type="submit" class="py-2 px-4 border-2 bg-red-500 border-red-500 rounded-md text-sm leading-5 font-medium text-white hover:bg-red-600 focus:outline-none focus:border-red-500 focus:shadow-outline-red active:bg-red-50 transition duration-150 ease-in-out">
+                                            Delete
+                                        </button>
+                                    </span>
+                                </x-form>
                                 <span class="ml-3 inline-flex rounded-md shadow-sm">
                                     @if($customer->is_active == true)
-                                        <a href="#" x-on:click="openModal = true; loading = true" x-show="!openModal" class="py-2 px-4 border-2 border-red-500 rounded-md text-sm leading-5 font-medium rounded-md text-red-500 hover:text-red-600 hover:border-red-600 focus:outline-none focus:border-red-500 focus:shadow-outline-red active:bg-red-50 transition duration-150 ease-in-out">
+                                        <a href="#" x-on:click="openModal = true; loading = true" x-show="!openModal" class="py-2 px-4 border-2 border-red-500 rounded-md text-sm leading-5 font-medium text-red-500 hover:text-red-600 hover:border-red-600 focus:outline-none focus:border-red-500 focus:shadow-outline-red active:bg-red-50 transition duration-150 ease-in-out">
                                             Set as Canceled
                                         </a>
                                         <span x-show="loading" class="text-gray-400 ml-3 mt-2">Inacticating ...</span>
                                     @else
-                                        <a href="#" x-on:click="openModal = true; loading = true" x-show="!openModal" class="py-2 px-4 border-2 border-green-base rounded-md text-sm leading-5 font-medium rounded-md text-green-base hover:text-green-dark hover:border-green-dark focus:outline-none focus:border-green-500 focus:shadow-outline-red active:bg-green-50 transition duration-150 ease-in-out">
+                                        <a href="#" x-on:click="openModal = true; loading = true" x-show="!openModal" class="py-2 px-4 border-2 border-green-base rounded-md text-sm leading-5 font-medium text-green-base hover:text-green-dark hover:border-green-dark focus:outline-none focus:border-green-500 focus:shadow-outline-red active:bg-green-50 transition duration-150 ease-in-out">
                                             Set as Active
                                         </a>
                                         <span x-show="loading" class="text-gray-400 ml-3 mt-2">Activating ...</span>
@@ -145,11 +152,11 @@
                         <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                             <span class="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto">
                                 @if($customer->is_active == true)
-                                <button x-on:click="openModal = false" type="submit" class="inline-flex justify-center py-2 px-4 border-2 border-red-500 rounded-md text-sm leading-5 font-medium rounded-md text-red-500 hover:text-red-600 hover:border-red-600 focus:outline-none focus:border-red-500 focus:shadow-outline-red active:bg-red-50 transition duration-150 ease-in-out">
+                                <button x-on:click="openModal = false" type="submit" class="inline-flex justify-center py-2 px-4 border-2 border-red-500 rounded-md text-sm leading-5 font-medium text-red-500 hover:text-red-600 hover:border-red-600 focus:outline-none focus:border-red-500 focus:shadow-outline-red active:bg-red-50 transition duration-150 ease-in-out">
                                     {{ __('Set as Canceled') }}
                                 </button>
                                 @else
-                                <button x-on:click="openModal = false" type="submit" class="inline-flex justify-center py-2 px-4 border-2 border-green-base rounded-md text-sm leading-5 font-medium rounded-md text-green-base hover:text-green-dark hover:border-green-dark focus:outline-none focus:border-green-500 focus:shadow-outline-red active:bg-green-50 transition duration-150 ease-in-out">
+                                <button x-on:click="openModal = false" type="submit" class="inline-flex justify-center py-2 px-4 border-2 border-green-base text-sm leading-5 font-medium rounded-md text-green-base hover:text-green-dark hover:border-green-dark focus:outline-none focus:border-green-500 focus:shadow-outline-red active:bg-green-50 transition duration-150 ease-in-out">
                                     {{ __('Set as Active') }}
                                 </button>
                                 @endif

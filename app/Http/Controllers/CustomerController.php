@@ -33,6 +33,17 @@ class CustomerController extends Controller
             ] 
         );
     }
+    
+    public function delete(Customer $customer)
+    {
+        $customer->delete();
+
+        alert()
+            ->withTitle(__('Home Owner deleted!'))
+            ->send();
+
+        return redirect()->route('home');
+    }
 
     public function store()
     {
