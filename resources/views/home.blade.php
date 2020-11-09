@@ -13,7 +13,8 @@
                             </div>
                             @if(user()->role != 'Setter')
                             <div class="flex sm:ml-2">
-                                <a href="{{route('customers.create')}}">
+                                <a class="flex rounded-full bg-green-base text-white items-center pl-3 text-sm h-8" href="{{route('customers.create')}}">
+                                    Add Customer
                                     <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="-3 -5 40 35">
                                         <circle cx="12" cy="12" r="15" class="fill-current text-green-base"></circle>
                                         <symbol id="add-customer" viewBox="0 0 25 25">

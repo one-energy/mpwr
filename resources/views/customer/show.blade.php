@@ -7,7 +7,7 @@
                 </x-link>
             </div>
             <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-                <x-form :route="route('customers.update', $customer->id)" put>
+                <x-form id="updateForm" :route="route('customers.update', $customer->id)" put>
                     @csrf
                     <div>
                         <div class="mt-6 grid sm:grid-cols-2 row-gap-6 col-gap-4 md:grid-cols-6">
@@ -80,17 +80,19 @@
                         </div>
                         </div>
                     </div>
-                    <div class="mt-8 border-t border-gray-200 pt-5">
+                    
+                </x-form>
+                <div class="mt-8 border-t border-gray-200 pt-5">
                         @if(user()->role != 'Setter')
                             <div class="flex justify-start">
                                 <span class="inline-flex rounded-md shadow-sm">
-                                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
+                                    <button type="submit" form="updateForm" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
                                         Update
                                     <button>
                                 </span>
-                                <x-form :route="route('customers.delete', $customer->id)" delete>
+                                <x-form id="deleteForm" :route="route('customers.delete', $customer->id)" delete>
                                     <span class="ml-3 inline-flex rounded-md shadow-sm">
-                                        <button type="submit" class="py-2 px-4 border-2 bg-red-500 border-red-500 rounded-md text-sm leading-5 font-medium text-white hover:bg-red-600 focus:outline-none focus:border-red-500 focus:shadow-outline-red active:bg-red-50 transition duration-150 ease-in-out">
+                                        <button type="submit" form="deleteForm" class="py-2 px-4 border-2 bg-red-500 border-red-500 rounded-md text-sm leading-5 font-medium text-white hover:bg-red-600 focus:outline-none focus:border-red-500 focus:shadow-outline-red active:bg-red-50 transition duration-150 ease-in-out">
                                             Delete
                                         </button>
                                     </span>
@@ -111,7 +113,6 @@
                             </div>
                         @endif
                     </div>
-                </x-form>
             </div>
             <div x-cloak x-show="openModal" class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center z-20">
                 <div x-show="openModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity">
