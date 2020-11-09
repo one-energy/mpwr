@@ -74,7 +74,7 @@
                             </label>
                             <div class="mt-3">
                             <span class="block w-full font-bold transition duration-150 ease-in-out sm:text-sm sm:leading-5">
-                                ${{ number_format($customer->commission) }}
+                                ${{ number_format($customer->commission,2) }}
                             </span>
                             </div>
                         </div>
