@@ -13,7 +13,8 @@
                             </div>
                             @if(user()->role != 'Setter')
                             <div class="flex sm:ml-2">
-                                <a href="{{route('customers.create')}}">
+                                <a class="flex rounded-md bg-green-base text-white items-center pl-3 text-sm h-8" href="{{route('customers.create')}}">
+                                    Add Customer
                                     <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="-3 -5 40 35">
                                         <circle cx="12" cy="12" r="15" class="fill-current text-green-base"></circle>
                                         <symbol id="add-customer" viewBox="0 0 25 25">
@@ -65,7 +66,7 @@
                                     <div class="col-span-1 row-span-2 md:col-span-2">
                                         <div
                                             class="@if($customer->is_active && $customer->panel_sold) bg-green-base @elseif($customer->is_active == false) bg-red-500 @else bg-gray-700 @endif text-white rounded-md py-1 px-1 text-center">
-                                            $ {{ number_format($customer->commission) }}
+                                            $ {{ number_format($customer->commission, 2) }}
                                         </div>
                                     </div>
                                     <div class="col-span-7 text-xs text-gray-600">

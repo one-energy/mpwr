@@ -458,8 +458,8 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Area Chart -->
+<!-- 
+                    
                     <div class="flex justify-between mt-6 w-full">
                         <div>
                             <div class="font-bold text-lg">
@@ -490,7 +490,7 @@
                             <x-svg.panel></x-svg.panel>
                         </a>
                     </div>
-                    <div class="flex md:justify-between w-full" id="chart_div"></div>
+                    <div class="flex md:justify-between w-full" id="chart_div"></div> -->
                     
                     <div class="flex justify-start mt-6">
                         <h2 class="text-lg text-gray-900">Top 5 Performing Members</h2>
