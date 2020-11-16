@@ -9,35 +9,66 @@ use Illuminate\Support\Facades\Validator;
 
 class TrainingController extends Controller
 {
-    public function index(Department $department, TrainingPageSection $section = null)
+    public $trainings = [];
+
+    public function index(Department $department, TrainingPageSection $section = null, $search = null)
     {
-        // dd($department->id === user()->department_id);
         $this->authorize('viewList', [TrainingPageSection::class, $department->id]);
         
         $content       = [];
+        $sections      = [];
         $index         = 0;
         $videoId       = [];
         $actualSection = new TrainingPageSection();
         $path          = [];
         if ($department->id) {
             $actualSection = $section ?? TrainingPageSection::whereDepartmentId($department->id)->first();
-            $content       = $this->getContent($actualSection);
             $actualSection->whereDepartmentId(user()->department_id)->first();
             $index         = 0;
-            if ($content) {
-                $videoId = explode('/', $content->video_url);
-                $index   = count($videoId);
+            if(!$search){
+                $content       = $this->getContent($actualSection);
+                $sections = $department->id ? $this->getParentSections($actualSection) : [];
+                if ($content) {
+                    $videoId = explode('/', $content->video_url);
+                    $index   = count($videoId);
+                }
+            }else{
+                $trainings = TrainingPageSection::query()
+                    ->with('content')->get();
+
+                $sections = $trainings->filter(function ($section) use ($search) {
+                    if(strpos(strtoupper($section->title), strtoupper($search))){
+                        return true;
+                    }
+                    if($section->content){
+                        // dd($section->content);
+                        if(strpos(strtoupper($section->content->description), strtoupper($search))){
+                            return true;
+                        }
+                    }
+
+                    return false;
+                });
+                // dd(strpos(strtoupper($trainings[0]->title), strtoupper($search)));
+
             }
             $path = $this->getPath($actualSection);
         }
 
         return view('training.index', [
-            'sections'      => $department->id ? $this->getParentSections($actualSection) : [],
+            'sections'      => $sections,
             'content'       => $content,
             'videoId'       => $videoId[$index - 1] ?? null,
             'actualSection' => $actualSection,
             'path'          => $path,
+            'trainings'     => $this->trainings,
+            'search'       => $search,
         ]);
+    }
+
+    public function searchTrainings()
+    {
+        $this->trainings = TrainingPageSection::get();
     }
 
     public function manageTrainings(Department $department, TrainingPageSection $section = null)
