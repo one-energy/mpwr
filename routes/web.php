@@ -16,6 +16,7 @@ use App\Http\Controllers\Castle\UsersController;
 use App\Http\Controllers\Castle\ManageIncentivesController;
 use App\Http\Controllers\Castle\OfficeController;
 use App\Http\Controllers\Castle\PermissionController;
+use App\Http\Controllers\Castle\RatesController;
 use App\Http\Controllers\Castle\RegionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CustomerController;
@@ -83,6 +84,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/{office}/edit', [OfficeController::class, 'edit'])->name('edit');
             Route::put('{office}', [OfficeController::class, 'update'])->name('update');
             Route::delete('{office}', [OfficeController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::prefix('rates')->middleware('rates')->name('rates.')->group(function () {
+            Route::get('/',[RatesController::class, 'index'])->name('index');
         });
 
         Route::prefix('regions')->middleware('regions')->name('regions.')->group(function () {
