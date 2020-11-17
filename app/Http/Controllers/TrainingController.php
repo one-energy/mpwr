@@ -37,7 +37,8 @@ class TrainingController extends Controller
                     ->with('content')->get();
 
                 $sections = $trainings->filter(function ($section) use ($search) {
-                    if(strpos(strtoupper($section->title), strtoupper($search))){
+                    $pos = strpos(strtoupper($section->title), strtoupper($search));
+                    if($pos !== false){
                         return true;
                     }
                     if($section->content){
