@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Castle;
 
 use App\Http\Controllers\Controller;
+use App\Models\Department;
+use App\Models\Rates;
 use Illuminate\Http\Request;
 
 class RatesController extends Controller
@@ -14,7 +16,7 @@ class RatesController extends Controller
      */
     public function index()
     {
-        return view('castle.rates.index');
+        return view('castle.rate.index');
     }
 
     /**
@@ -24,7 +26,9 @@ class RatesController extends Controller
      */
     public function create()
     {
-        //
+        $departments = Department::query()->get();
+
+        return view('castle.rate.create', compact('departments'));
     }
 
     /**
@@ -35,7 +39,29 @@ class RatesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $this->validate(
+            request(),
+            [
+                'name'              => 'required|string|min:3|max:255',
+                'time'              => 'required',
+                'rate'              => 'required',
+                'department_id'     => 'required',
+            ]
+        );
+
+        $rate                = new Rates();
+        $rate->name          = $validated['name'];
+        $rate->time          = $validated['time'];
+        $rate->rate          = $validated['rate'];
+        $rate->department_id = $validated['department_id'];
+        
+        $rate->save();
+
+        alert()
+            ->withTitle(__('rate created!'))
+            ->send();
+
+        return redirect(route('castle.rates.index'));
     }
 
     /**
@@ -55,9 +81,11 @@ class RatesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Rates $rate)
     {
-        //
+       $departments = Department::get();
+
+       return view('castle.rate.edit', compact('rate', 'departments'));
     }
 
     /**

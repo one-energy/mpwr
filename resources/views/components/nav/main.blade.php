@@ -20,7 +20,7 @@
                                     </x-nav.link>
                                     
                                     @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
-                                        <x-nav.link :href="route('castle.rates.index', ['department' => user()->department_id] )" class="ml-4"
+                                        <x-nav.link :href="route('castle.rates.index')" class="ml-4"
                                                     :active="is_active('castle.rates.index')">
                                             @lang('Manage Rates')
                                         </x-nav.link>

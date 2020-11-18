@@ -87,7 +87,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
 
         Route::prefix('rates')->middleware('rates')->name('rates.')->group(function () {
-            Route::get('/',[RatesController::class, 'index'])->name('index');
+            Route::get('/',[RatesController::class, 'index'])->name('index');    
+            Route::get('/create', [RatesController::class, 'create'])->name('create');
+            Route::post('/create', [RatesController::class, 'store'])->name('store');
+            Route::get('/{rate}/edit', [RatesController::class, 'edit'])->name('edit');
+            Route::put('{rRate}', [RatesController::class, 'update'])->name('update');
+            Route::delete('{rate}', [RatesController::class, 'destroy'])->name('destroy');
         });
 
         Route::prefix('regions')->middleware('regions')->name('regions.')->group(function () {
