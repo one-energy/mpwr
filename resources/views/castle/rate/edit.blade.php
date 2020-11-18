@@ -6,7 +6,7 @@
             </a>
         </div>
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <x-form :route="route('castle.rates.update', $rate)" put>
+            <x-form :route="route('castle.rates.update', $rate->id)" put>
                 @csrf
                 <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                     <div class="md:col-span-6 col-span-2">

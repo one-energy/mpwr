@@ -95,7 +95,7 @@ class RatesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Rates $rate)
+    public function update($id)
     {
         $validated = $this->validate(
             request(),
@@ -106,13 +106,13 @@ class RatesController extends Controller
                 'department_id'     => 'required',
             ]
         );
-
+        $rate                = Rates::whereId($id)->first();
         $rate->name          = $validated['name'];
         $rate->time          = $validated['time'];
         $rate->rate          = $validated['rate'];
         $rate->department_id = $validated['department_id'];
-        dd($rate);
-        $rate->update();
+        
+        $rate->save();
 
         alert()
             ->withTitle(__('Rate updated!'))
