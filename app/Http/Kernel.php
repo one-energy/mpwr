@@ -7,6 +7,7 @@ use App\Http\Middleware\CanEnterTheCastle;
 use App\Http\Middleware\CanEnterTheCastleDepartments;
 use App\Http\Middleware\CanEnterTheCastleIncentives;
 use App\Http\Middleware\CanEnterTheCastleOffices;
+use App\Http\Middleware\CanEnterTheCastleRates;
 use App\Http\Middleware\CanEnterTheCastleRegions;
 use App\Http\Middleware\CheckForMaintenanceMode;
 use App\Http\Middleware\EncryptCookies;
@@ -72,6 +73,7 @@ class Kernel extends HttpKernel
         'regions'           => CanEnterTheCastleRegions::class,
         'departments'       => CanEnterTheCastleDepartments::class,
         'offices'           => CanEnterTheCastleOffices::class,
+        'rates'             => CanEnterTheCastleRates::class,
     ];
 
     protected $middlewarePriority = [

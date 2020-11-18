@@ -7,7 +7,7 @@
 @endphp
 
 @if($type ?? false)
-    <button {{ $attributes }} type="{{ $type }}"
+    <button type="{{ $type }}"
     @if($color == 'green')
         {{ $attributes->merge(['class' => "font-medium text-green-base hover:text-green-dark focus:outline-none focus:underline transition ease-in-out duration-150"]) }}>
     @else
@@ -16,7 +16,7 @@
         {!! $slot !!}
     </button>
 @else
-    <a {{ $attributes }} href="{{ $href }}"
+    <a href="{{ $href }}"
     @if($color == 'green')
         {{ $attributes->merge(['class' => "font-medium text-green-base hover:text-green-dark focus:outline-none focus:underline transition ease-in-out duration-150"]) }}>
     @else
