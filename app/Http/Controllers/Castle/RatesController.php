@@ -54,7 +54,7 @@ class RatesController extends Controller
         $rate->time          = $validated['time'];
         $rate->rate          = $validated['rate'];
         $rate->department_id = $validated['department_id'];
-        
+    
         $rate->save();
 
         alert()

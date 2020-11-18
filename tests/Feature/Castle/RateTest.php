@@ -175,6 +175,7 @@ class RateTest extends TestCase
 
         $rate        = factory(Rates::class)->create([
             'department_id' => $department->id,
+            'rate'          => 2.1
         ]);
         $data         = $rate->toArray();
         $updaterate = array_merge($data, ['name' => 'rate Edited']);
@@ -182,9 +183,8 @@ class RateTest extends TestCase
         $this->actingAs($departmentManager);
 
         $response = $this->put(route('castle.rates.update', $rate->id), $updaterate);
-            
+        
         $response->assertStatus(302);
-        print_r($rate);
         $this->assertDatabaseHas('rates',
         [
             'id'   => $rate->id,
