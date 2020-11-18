@@ -58,7 +58,7 @@ class RatesController extends Controller
         $rate->save();
 
         alert()
-            ->withTitle(__('rate created!'))
+            ->withTitle(__('Rate created!'))
             ->send();
 
         return redirect(route('castle.rates.index'));
@@ -95,9 +95,30 @@ class RatesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Rates $rate)
     {
-        //
+        $validated = $this->validate(
+            request(),
+            [
+                'name'              => 'required|string|min:3|max:255',
+                'time'              => 'required',
+                'rate'              => 'required',
+                'department_id'     => 'required',
+            ]
+        );
+
+        $rate->name          = $validated['name'];
+        $rate->time          = $validated['time'];
+        $rate->rate          = $validated['rate'];
+        $rate->department_id = $validated['department_id'];
+        dd($rate);
+        $rate->update();
+
+        alert()
+            ->withTitle(__('Rate updated!'))
+            ->send();
+
+        return redirect(route('castle.rates.index'));
     }
 
     /**
@@ -106,8 +127,14 @@ class RatesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Rates $rate)
     {
-        //
+        $rate->delete();
+
+        alert()
+            ->withTitle(__('Rate deleted!'))
+            ->send();
+
+        return redirect(route('castle.rates.index'));
     }
 }
