@@ -42,7 +42,7 @@
                                                 <x-table.td>{{ $rate->deparment->name }}</x-table.td>
                                             @endif
                                             <x-table.td>{{ $rate->name }}</x-table.td>
-                                            <x-table.td>{{ $rate->department->name }}</x-table.td>
+                                            <x-table.td>{{ $rate->rate }}</x-table.td>
                                             <x-table.td class="flex space-x-3">
                                                 <x-link :href="route('castle.rates.edit', $rate)" class="text-sm">Edit</x-link>
                                                 <x-form :route="route('castle.rates.destroy', $rate->id)" delete x-data="{deleting: false}">
