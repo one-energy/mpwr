@@ -28,7 +28,7 @@ class BootstrapSeeder extends Seeder
         factory(User::class)->create([
             "first_name"    => "Jake",
             "last_name"     => "Ebert",
-            "email"         => "jake.admin@californiarenewableenergy.org",
+            "email"         => "admin@californiarenewableenergy.org",
             'role'          => 'Admin',
             'department_id' => null,
             'master'        => true,
