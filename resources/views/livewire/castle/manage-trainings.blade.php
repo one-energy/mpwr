@@ -1,12 +1,12 @@
 <div>
     <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
         <div class="px-4 py-5 sm:px-6">
-            <div class="grid justify-between md:grid-cols-4 sm:grid-cols-3 gap-4">
+            <div class="grid md:grid-cols-4 sm:grid-cols-2 gap-4">
                 <div class="md:flex justify-start col-span-1 w-auto">
                     <h3 class="text-lg text-gray-900">Manage Trainings</h3>
                 </div>
 
-                <div class="flex md:col-span-2 sm:col-span-2 grid-flow-col auto-cols-max justify-end gap-3">
+                <div class="flex grid-cols-2 sm:col-span-1 md:col-span-2 gap-3 justify-end">
                     @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
                         <div class="col-span-1"  x-data="{ 'showSectionModal': false }" @keydown.escape="showSectionModal = false" x-cloak>
                             <x-button @click="showSectionModal = true">
@@ -143,7 +143,7 @@
                         @endif
                     @endif
                 </div>
-                <div class="col-span-1">
+                <div class="col-span-2 md:col-span-1 sm:col-span-2">
                     <x-search :search="$search" :perPage="false"/>
                 </div>
             </div>
