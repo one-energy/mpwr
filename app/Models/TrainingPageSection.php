@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @property int $id
@@ -18,5 +20,16 @@ class TrainingPageSection extends Model
     public function content()
     {
         return $this->hasOne(TrainingPageContent::class);
+    }
+
+    public function scopeSearch(Builder $query, $search)
+    {
+        $query->when($search, function (Builder $query) use ($search) {
+            $query->where(
+                DB::raw('lower(trining_page_sections.title)'),
+                'like',
+                '%' . strtolower($search) . '%'
+            );
+        });
     }
 }
