@@ -5,43 +5,51 @@ namespace App\Http\Livewire;
 use App\Models\Department;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
+use App\Traits\Livewire\FullTable;
 use Livewire\Component;
 
 class ShowTrainings extends Component
 {
+    use FullTable;
+    
     public $content       = [];
     public $sections      = [];
     public $videoId       = [];
     public $actualSection = [];
     public $path          = [];
+    public $section       = [];
+    public $department;
+
+    public function sortBy()
+    {
+        return 'title';
+    }
 
     public function render()
     {
-        return view('livewire.show-trainings');
-    }
-
-    public function mount(Department $department, TrainingPageSection $section = null)
-    { 
         $index         = 0;
-
-        if ($department->id) {
-            $actualSection = $section ?? TrainingPageSection::whereDepartmentId($department->id)->first();
-            $actualSection->whereDepartmentId(user()->department_id)->first();
+        if ($this->department->id) {
+            $actualSection = $this->section ?? TrainingPageSection::whereDepartmentId($this->department->id)->first();
             $index         = 0;
         
             $this->content       = $this->getContent($actualSection);
-            $this->sections = $department->id ? $this->getParentSections($actualSection) : [];
+            $this->sections = $this->department->id ? $this->getParentSections($actualSection) : [];
+            // dd($this->sections);
             if ($this->content) {
                 $this->videoId = explode('/', $this->content->video_url);
                 $index   = count($this->videoId);
             }
             
-                // dd(strpos(strtoupper($trainings[0]->title), strtoupper($search)));
-
-            
             $this->path = $this->getPath($actualSection);
         }
         $this->videoId = $this->videoId[$index - 1] ?? null;
+        return view('livewire.show-trainings');
+    }
+
+    public function mount(Department $department, TrainingPageSection $section = null)
+    { 
+       $this->department = $department;
+       $this->section    = $section;
 
     }
 
@@ -71,6 +79,23 @@ class ShowTrainings extends Component
 
     public function getParentSections($section)
     {
-        return TrainingPageSection::whereParentId($section->id ?? 1)->get();
+        $search = $this->search;
+        $trainingsQuery = TrainingPageSection::query()->with('content')
+            ->select( 'training_page_sections.*')
+            ->whereDepartmentId($this->department->id)
+            ->leftJoin('training_page_contents', 'training_page_sections.id', '=', 'training_page_contents.training_page_section_id' );
+        
+        $trainingsQuery->when($search == "", function ($query) use ($section) {
+            $query->where('training_page_sections.parent_id', $section->id ?? 1);
+        });
+
+        $trainingsQuery->when($search != "", function ($query) use ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->orWhere('training_page_sections.title', "like", "%" . $this->search . "%")
+                    ->orWhere('training_page_contents.description', 'like', "%" . $search . "%");
+            });
+        });
+        
+        return $trainingsQuery->get();
     }
 }

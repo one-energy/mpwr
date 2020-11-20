@@ -5,10 +5,13 @@ namespace App\Http\Livewire\Castle;
 use App\Models\Department;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
+use App\Traits\Livewire\FullTable;
 use Livewire\Component;
 
 class ManageTrainings extends Component
 {
+    use FullTable;
+
     public $content       = [];
     public $sections      = [];
     public $videoId       = [];
@@ -16,31 +19,25 @@ class ManageTrainings extends Component
     public $path          = [];
     public $departments   = [];
     public $departmentId  = 0;
+    public $department;
+
+    public function sortBy()
+    {
+        return 'title';
+    }
 
     public function render()
     {
-        return view('livewire.castle.manage-trainings');
-    }
-
-    public function mount(Department $department, TrainingPageSection $section = null)
-    {
-        // 'sections'      => $department->id ? $this->getParentSections($actualSection) : [],
-        //     'content'       => $content,
-        //     'videoId'       => $videoId[$index - 1] ?? null,
-        //     'actualSection' => $actualSection,
-        //     'path'          => $path,
-        //     'departmentId'  => $department->id ?? 0,
-        //     'departments'   => $departments,
         $index         = 0;
 
         $this->actualSection = new TrainingPageSection();
 
-        if (!$department->id && (user()->role == "Owner" || user()->role == "Admin")) {
-            $department = Department::first();
+        if (!$this->department->id && (user()->role == "Owner" || user()->role == "Admin")) {
+            $this->department = Department::first();
         }
         
-        if ($department->id) {
-            $this->actualSection = $section ?? TrainingPageSection::whereDepartmentId($department->id)->first();
+        if ($this->department->id) {
+            $this->actualSection = $section ?? TrainingPageSection::whereDepartmentId($this->department->id)->first();
             $this->content       = $this->getContent($this->actualSection);
             $this->departments   = Department::all();
             $index         = 0; 
@@ -53,8 +50,24 @@ class ManageTrainings extends Component
             $this->path = $this->getPath($this->actualSection);
         }
         $this->videoId = $this->videoId[$index - 1] ?? null;
-        $this->sections = $department->id ? $this->getParentSections($this->actualSection) : [];
-        $this->departmentId = $department->id ?? 0;
+        $this->sections = $this->department->id ? $this->getParentSections($this->actualSection) : [];
+        $this->departmentId = $this->department->id ?? 0;
+
+        return view('livewire.castle.manage-trainings');
+    }
+
+    public function mount(Department $department, TrainingPageSection $section = null)
+    {
+        $this->department = $department;
+        $this->section    = $section;
+        // 'sections'      => $department->id ? $this->getParentSections($actualSection) : [],
+        //     'content'       => $content,
+        //     'videoId'       => $videoId[$index - 1] ?? null,
+        //     'actualSection' => $actualSection,
+        //     'path'          => $path,
+        //     'departmentId'  => $department->id ?? 0,
+        //     'departments'   => $departments,
+        
         // dd($this->departments);
   
     }
@@ -85,6 +98,23 @@ class ManageTrainings extends Component
 
     public function getParentSections($section)
     {
-        return TrainingPageSection::whereParentId($section->id ?? 1)->get();
+        $search = $this->search;
+        $trainingsQuery = TrainingPageSection::query()->with('content')
+            ->select( 'training_page_sections.*')
+            ->whereDepartmentId($this->department->id)
+            ->leftJoin('training_page_contents', 'training_page_sections.id', '=', 'training_page_contents.training_page_section_id' );
+        
+        $trainingsQuery->when($search == "", function ($query) use ($section) {
+            $query->where('training_page_sections.parent_id', $section->id ?? 1);
+        });
+
+        $trainingsQuery->when($search != "", function ($query) use ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->orWhere('training_page_sections.title', "like", "%" . $this->search . "%")
+                    ->orWhere('training_page_contents.description', 'like', "%" . $search . "%");
+            });
+        });
+        
+        return $trainingsQuery->get();
     }
 }

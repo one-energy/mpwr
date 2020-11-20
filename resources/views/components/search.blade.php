@@ -6,7 +6,7 @@
 
 <div class="mb-4 sm:flex sm:justify-between">
     <div class="items-baseline w-full space-y-4 sm:space-x-4 sm:flex sm:space-y-0">
-        <div class="relative mt-1 rounded-md shadow-sm w-ft ll sm:w-1/2 lg:w-1/3">
+        <div class="relative rounded-md shadow-sm md:w-full sm:w-1/2">
             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd"
