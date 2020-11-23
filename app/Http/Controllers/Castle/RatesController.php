@@ -142,4 +142,9 @@ class RatesController extends Controller
 
         return redirect(route('castle.rates.index'));
     }
+
+    public function getRatesPerRole($role)
+    {
+        return Rates::whereRole($role)->first();
+    }
 }

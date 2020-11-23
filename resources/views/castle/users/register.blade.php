@@ -10,28 +10,55 @@
             <x-alert class="mb-4" :title="__('Success')" :description="$message"></x-alert>
         @endif
 
+        
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <x-form :route="route('castle.users.store')">
                 <div x-data="{ 
                               selectedDepartment: null,
+                              selectedRole: null,
                               departments: null,
                               offices: null,
+                              roles: null,
+                              rate: null,
                               selectedOffice: null,
                               token: document.head.querySelector('meta[name=csrf-token]').content, 
                              }"
                      x-init="$watch('selectedDepartment', 
-                                     (department) => { 
-                                    fetch('https://' + location.hostname + '/get-offices/' + department, {method: 'post',  headers: {
+                                    (department) => { 
+                                        fetch('https://' + location.hostname + '/get-offices/' + department, {
+                                            method: 'post',  
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': token
+                                            }
+                                    }).then(res => res.json()).then((officesData) => { offices = officesData })
+                                });
+                            $watch('selectedRole', (role) => {
+                                    fetch('https://' + location.hostname + '/get-rates-per-role/' + role, {
+                                        method: 'post',  
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': token
+                                        }
+                                    }).then(res => res.json()).then((ratesData) => { rate = ratesData })
+                                });
+                            fetch('https://' + location.hostname + '/get-departments' , {
+                                    method: 'post',  
+                                    headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
-                                    }}).then(res => res.json()).then((officesData) => { offices = officesData }) }),
-                            fetch('https://' + location.hostname + '/get-departments' ,{method: 'post',  headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-TOKEN': token
-                                    }}).then(res=> res.json()).then( (departmentsData) => { 
-                                        departments = departmentsData
-                                        selectedDepartment = '{{user()->department_id}}'
-                                    })">
+                                    }
+                                }).then(res=> res.json()).then( (departmentsData) => { 
+                                    departments = departmentsData
+                                    selectedDepartment = '{{user()->department_id}}'
+                                })
+                            fetch('https://' + location.hostname + '/get-roles', {
+                                method: 'post',  
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': token
+                                }
+                            }).then(res => res.json()).then((rolesData) => { roles = rolesData })">
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                         <div class="md:col-span-3 col-span-2">
                             <x-input :label="__('First Name')" name="first_name"/>
@@ -57,7 +84,13 @@
                                 @endforeach
                             </x-select>
                         </div>
-
+                        <div class="md:col-span-3 col-span-2">
+                            <x-select x-model="selectedRole" label="Roles" name="role">
+                                <template x-for="role in roles" :key="role.name">    
+                                    <option :value="role.name" x-text="role.name" ></option>
+                                </template>
+                            </x-select> 
+                        </div>
                         @if(user()->role != "Admin" && user()->role != "Owner")
                             <div class="md:col-span-3 col-span-2 hidden">
                                 <x-select x-model="selectedDepartment" label="Department" name="department_id">
@@ -87,9 +120,9 @@
                                 </template>
                             </x-select>
                         </div>
-
+                        
                         <div class="md:col-span-3 col-span-2">
-                            <x-input-currency :label="__('Pay')" name="pay"/>
+                            <x-input-currency :label="__('Pay')" name="pay" x-model="rate.rate"/>
                         </div>
                     </div>
                 </div>

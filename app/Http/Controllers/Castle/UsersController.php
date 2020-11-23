@@ -289,4 +289,9 @@ class UsersController extends Controller
             ->whereDepartmentId($region->department_id)
             ->get();
     }
+
+    public function getRoles()
+    {
+        return User::ROLES;
+    }
 }

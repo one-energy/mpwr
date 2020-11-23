@@ -159,6 +159,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/get-regions/{departmentId?}', [RegionController::class, 'getRegions'])->name('getRegions');
     Route::post('/get-departments', [DepartmentController::class, 'getDepartments'])->name('getDepartments');
     Route::post('/get-offices/{departmentId?}', [OfficeController::class, 'getOffices'])->name('getOffices');
+    Route::post('/get-roles', [UsersController::class, 'getRoles'])->name('getRoles');
+    Route::post('/get-rates-per-role/{role}', [RatesController::class, 'getRatesPerRole'])->name('getRatesPerRole');
 
 });
 
