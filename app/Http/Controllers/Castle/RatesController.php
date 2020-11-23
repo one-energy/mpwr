@@ -145,6 +145,6 @@ class RatesController extends Controller
 
     public function getRatesPerRole($role)
     {
-        return Rates::whereRole($role)->first();
+        return Rates::whereRole($role)->firstOrFail();
     }
 }

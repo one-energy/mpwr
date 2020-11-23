@@ -40,7 +40,7 @@
                                             'Content-Type': 'application/json',
                                             'X-CSRF-TOKEN': token
                                         }
-                                    }).then(res => res.json()).then((ratesData) => { rate = ratesData })
+                                    }).then(res => res.json()).then((ratesData) => { rate = ratesData.rate })
                                 });
                             fetch('https://' + location.hostname + '/get-departments' , {
                                     method: 'post',  
@@ -52,7 +52,7 @@
                                     departments = departmentsData
                                     selectedDepartment = '{{user()->department_id}}'
                                 })
-                            fetch('https://' + location.hostname + '/get-roles', {
+                            fetch('https://' + location.hostname + '/get-roles-per-user-role', {
                                 method: 'post',  
                                 headers: {
                                     'Content-Type': 'application/json',
@@ -74,7 +74,7 @@
 
                         <div class="md:col-span-3 col-span-2">
                             <x-select x-model="selectedRole" label="Role" name="role">
-                                <template x-for="role in roles" :key="role.name">    
+                                <template x-if="roles" x-for="role in roles" :key="role.name">    
                                     <option :value="role.name" x-text="role.name" ></option>
                                 </template>
                             </x-select> 
@@ -82,7 +82,7 @@
                         @if(user()->role != "Admin" && user()->role != "Owner")
                             <div class="md:col-span-3 col-span-2 hidden">
                                 <x-select x-model="selectedDepartment" label="Department" name="department_id">
-                                    <template x-for="department in departments" :key="department.id">    
+                                    <template x-if="departments" x-for="department in departments" :key="department.id">    
                                         <option :value="department.id" x-text="department.name" ></option>
                                     </template>
                                 </x-select> 
@@ -91,7 +91,7 @@
                             <div class="md:col-span-3 col-span-2">
                                 <x-select x-model="selectedDepartment" label="Department" name="department_id">
                                     <option value="">None</option>
-                                    <template x-for="department in departments" :key="department.id">
+                                    <template x-if="departments" x-for="department in departments" :key="department.id">
                                         <option :value="department.id" x-text="department.name" ></option>
                                     </template>
                                 </x-select>
@@ -103,14 +103,14 @@
                                 @if(user()->role == "Admin" || user()->role == "Owner")
                                     <option value="">None</option>
                                 @endif
-                                <template x-for="office in offices" :key="office.id">
+                                <template x-if="offices" x-for="office in offices" :key="office.id">
                                     <option :value="office.id" x-text="office.name" ></option>
                                 </template>
                             </x-select>
                         </div>
                         
                         <div class="md:col-span-3 col-span-2">
-                            <x-input-currency :label="__('Pay')" name="pay" x-model="rate.rate"/>
+                            <x-input-currency  :label="__('Pay')" name="pay" x-model="rate"/>
                         </div>
                     </div>
                 </div>

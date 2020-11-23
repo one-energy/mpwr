@@ -32,7 +32,7 @@ class UsersController extends Controller
     public function create()
     {
         $departments = Department::all();
-        $roles       = $this->getRolesPerRole();
+        $roles       = $this->getRolesPerUrserRole();
         $offices     = $this->getOfficesPerRole();
 
         return view('castle.users.register',[
@@ -88,7 +88,7 @@ class UsersController extends Controller
     public function edit(User $user)
     {
         $departments = Department::all();
-        $roles       = $this->getRolesPerRole();
+        $roles       = $this->getRolesPerUrserRole();
         $offices     = $this->getOfficesPerRole();
 
         return view('castle.users.edit', [
@@ -127,7 +127,7 @@ class UsersController extends Controller
         return $offices;
     }
 
-    public function getRolesPerRole()
+    public function getRolesPerUrserRole()
     {
         if (user()->role == "Admin") {
             $roles = [
