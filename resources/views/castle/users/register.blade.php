@@ -73,19 +73,7 @@
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
-                            <x-select label="Role" name="role">
-                                @if (old('role') == '')
-                                    <option value="" selected>None</option>
-                                @endif
-                                @foreach($roles as $role)
-                                <option value="{{ $role['name'] }}" {{ old('role') == $role['name'] ? 'selected' : '' }}>
-                                    {{ $role['name']}}
-                                </option>
-                                @endforeach
-                            </x-select>
-                        </div>
-                        <div class="md:col-span-3 col-span-2">
-                            <x-select x-model="selectedRole" label="Roles" name="role">
+                            <x-select x-model="selectedRole" label="Role" name="role">
                                 <template x-for="role in roles" :key="role.name">    
                                     <option :value="role.name" x-text="role.name" ></option>
                                 </template>
