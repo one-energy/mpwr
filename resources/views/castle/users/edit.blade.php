@@ -12,45 +12,60 @@
                               selectedDepartment: null,
                               departments: null,
                               offices: null,
-                              selectedRole: {{$user->role}},
                               roles: null,
+                              onInit: true,
+                              selectedRole: null,
                               rate: {{$user->pay}},
                               selectedOffice: null,
                               token: document.head.querySelector('meta[name=csrf-token]').content, 
                              }"
-                     x-init="$watch('selectedDepartment', 
-                                    (department) => { 
-                                        fetch('https://' + location.hostname + '/get-offices/' + department, {method: 'post',  headers: {
-                                            'Content-Type': 'application/json',
-                                            'X-CSRF-TOKEN': token
-                                        }}).then(res => res.json()).then((officesData) => { offices = officesData }) 
-                                    }),
-                                    $watch('selectedRole', (role) => {
-                                        fetch('https://' + location.hostname + '/get-rates-per-role/' + role, {
-                                            method: 'post',  
-                                            headers: {
-                                                'Content-Type': 'application/json',
-                                                'X-CSRF-TOKEN': token
-                                            }
-                                        }).then(res => res.json()).then((ratesData) => { rate = ratesData.rate })
-                                    });
-                                    fetch('https://' + location.hostname + '/get-departments' ,{
+                     x-init="
+                            $watch('selectedDepartment', 
+                                (department) => { 
+                                    fetch('https://' + location.hostname + '/get-offices/' + department, {
                                         method: 'post',  
                                         headers: {
                                             'Content-Type': 'application/json',
-                                            'X-CSRF-TOKEN': token}
-                                        }).then(res=> res.json()).then( (departmentsData) => { 
-                                            departments = departmentsData
-                                            selectedOffice = '{{$user->office_id}}'
-                                            selectedDepartment = '{{$user->department_id}}'
-                                        })
-                                        fetch('https://' + location.hostname + '/get-roles-per-user-role', {
-                                            method: 'post',  
-                                            headers: {
-                                                'Content-Type': 'application/json',
-                                                'X-CSRF-TOKEN': token
-                                            }
-                                        }).then(res => res.json()).then((rolesData) => { roles = rolesData })">">
+                                            'X-CSRF-TOKEN': token
+                                        }
+                                    }).then(res => res.json()).then((officesData) => { offices = officesData }) 
+                                });
+                                $watch('selectedRole', (role) => {
+                                    fetch('https://' + location.hostname + '/get-rates-per-role/' + role, {
+                                        method: 'post',  
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': token
+                                        }
+                                    }).then(res => res.json()).then((ratesData) => { 
+                                        if(!onInit){
+                                            rate = ratesData.rate 
+                                        }
+                                        onInit = false
+                                    })
+                                });
+                                fetch('https://' + location.hostname + '/get-departments' ,{
+                                    method: 'post',  
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': token
+                                    }
+                                }).then(res=> res.json()).then( (departmentsData) => { 
+                                    departments = departmentsData
+                                    selectedOffice = '{{$user->office_id}}'
+                                    selectedDepartment = '{{$user->department_id}}'
+                                });
+                                fetch('https://' + location.hostname + '/get-roles-per-user-role', {
+                                    method: 'post',  
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': token
+                                    }
+                                }).then(res => res.json()).then((rolesData) => { 
+                                    roles = rolesData 
+                                    user = {{$user}}
+                                    selectedRole = user.role
+                                })">
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                         <div class="md:col-span-3 col-span-2">
                             <x-input :label="__('First Name')" name="first_name" :value="$user->first_name"/>
@@ -62,19 +77,6 @@
 
                         <div class="md:col-span-3 col-span-2">
                             <x-input :label="__('Email')" name="email" :value="$user->email"/>
-                        </div>
-
-                        <div class="md:col-span-3 col-span-2">
-                            <x-select label="Role" name="role">
-                                @if (old('role') == '')
-                                    <option value="" selected>None</option>
-                                @endif
-                                @foreach($roles as $role)
-                                    <option value="{{ $role['name'] }}" {{ old('role', $user->role) == $role['name'] ? 'selected' : '' }}>
-                                        {{ $role['name'] }}
-                                    </option>
-                                @endforeach
-                            </x-select>
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
@@ -112,7 +114,7 @@
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
-                            <x-input-currency x-model="rate" :label="__('Pay')" name="pay"/>
+                            <x-input-currency x-model="rate" :label="__('Pay')" name="pay" value="{{$user->role}}"/>
                         </div>
                     </div>
                 </div>
