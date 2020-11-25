@@ -8,75 +8,111 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <x-form :route="route('customers.store')" post>
                 @csrf
-                <div>
+                <div x-data="{ 
+                              selectedDepartment: null,
+                              departments: null,
+                              offices: null,
+                              selectedOffice: null,
+                              token: document.head.querySelector('meta[name=csrf-token]').content, 
+                             }"
+                     x-init="$watch('selectedDepartment', 
+                                     (department) => { 
+                                    fetch('https://' + location.hostname + '/get-offices/' + department, {method: 'post',  headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': token
+                                    }}).then(res => res.json()).then((officesData) => { offices = officesData }) }),
+                            fetch('https://' + location.hostname + '/get-departments' ,{method: 'post',  headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': token
+                                    }}).then(res=> res.json()).then( (departmentsData) => { 
+                                        departments = departmentsData
+                                        selectedDepartment = '{{user()->department_id}}'
+                                    })">
                     <input type="hidden" value="{{ $openedById }}" name="opened_by_id">
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
-                    <div class="md:col-span-3 col-span-2">
-                        <x-input label="Customer First Name" name="first_name"></x-input>
-                    </div>
+                        <div class="md:col-span-3 col-span-2">
+                            <x-input label="Customer First Name" name="first_name"></x-input>
+                        </div>
 
-                    <div class="md:col-span-3 col-span-2">
-                        <x-input label="Customer Last Name" name="last_name"></x-input>
-                    </div>
-            
-                    <div class="md:col-span-2 col-span-1">
-                        <x-input-add-on label="System Size" name="system_size" addOn="kW"></x-input>
-                    </div>
+                        <div class="md:col-span-3 col-span-2">
+                            <x-input label="Customer Last Name" name="last_name"></x-input>
+                        </div>
+                
+                        <div class="md:col-span-2 col-span-1">
+                            <x-input-add-on label="System Size" name="system_size" addOn="kW"></x-input>
+                        </div>
 
-                    <div class="col-span-1">
-                        <x-select label="Bill" name="bill">
-                            @if (old('bill') == '')
-                                <option value="" selected>None</option>
-                            @endif
-                            @foreach($bills as $bill)
-                            <option value="{{ $bill }}" {{ old('bill') == $bill ? 'selected' : '' }}>
-                                    {{ $bill }}
-                                </option>
-                            @endforeach
-                        </x-select>
-                    </div>
-            
-                    <div class="md:col-span-2 col-span-1">
-                        <x-input-currency label="Redline" name="pay"></x-input>
-                    </div>
+                        <div class="col-span-1">
+                            <x-select label="Bill" name="bill">
+                                @if (old('bill') == '')
+                                    <option value="" selected>None</option>
+                                @endif
+                                @foreach($bills as $bill)
+                                <option value="{{ $bill }}" {{ old('bill') == $bill ? 'selected' : '' }}>
+                                        {{ $bill }}
+                                    </option>
+                                @endforeach
+                            </x-select>
+                        </div>
+                
+                        <div class="md:col-span-2 col-span-1">
+                            <x-input-currency label="Redline" name="pay"></x-input>
+                        </div>
 
-                    <div class="col-span-1">
-                        <x-select label="Financing" name="financing">
-                            @if (old('financing') == '')
-                                <option value="" selected>None</option>
-                            @endif
-                            @foreach($financings as $financing)
-                            <option value="{{ $financing }}" {{ old('financing') == $financing ? 'selected' : '' }}>
-                                    {{ $financing }}
-                                </option>
-                            @endforeach
-                        </x-select>
-                    </div>
-            
-                    <div class="md:col-span-3 col-span-2">
-                        <x-input label="Adders" name="adders" step="0.01" type="number"></x-input>
-                    </div>
-            
-                    <div class="md:col-span-3 col-span-2">
-                        <x-input-currency label="EPC" name="epc" observation="Sold Price"></x-input>
-                    </div>
-            
-                    <div class="md:col-span-3 col-span-2">
-                        <x-select label="Setter" name="setter_id">
-                            @if (old('setter_id') == '')
-                                <option value="" selected>None</option>
-                            @endif
-                            @foreach($users as $setter)
-                                <option value="{{ $setter->id }}" {{ old('setter_id') == $setter->id ? 'selected' : '' }}>
-                                    {{ $setter->first_name }} {{ $setter->last_name }}
-                                </option>
-                            @endforeach
-                        </x-select>
-                    </div>
-            
-                    <div class="md:col-span-3 col-span-2">
-                        <x-input-currency label="Setter Fee" name="setter_fee"></x-input>
-                    </div>
+                        <div class="col-span-1">
+                            <x-select label="Financing" name="financing">
+                                @if (old('financing') == '')
+                                    <option value="" selected>None</option>
+                                @endif
+                                @foreach($financings as $financing)
+                                <option value="{{ $financing }}" {{ old('financing') == $financing ? 'selected' : '' }}>
+                                        {{ $financing }}
+                                    </option>
+                                @endforeach
+                            </x-select>
+                        </div>
+                
+                        <div class="md:col-span-3 col-span-2">
+                            <x-input label="Adders" name="adders" step="0.01" type="number"></x-input>
+                        </div>
+                
+                        <div class="md:col-span-3 col-span-2">
+                            <x-input-currency label="EPC" name="epc" observation="Sold Price"></x-input>
+                        </div>
+                
+                        <div class="md:col-span-3 col-span-2">
+                            <x-select label="Setter" name="setter_id">
+                                @if (old('setter_id') == '')
+                                    <option value="" selected>None</option>
+                                @endif
+                                @foreach($users as $setter)
+                                    <option value="{{ $setter->id }}" {{ old('setter_id') == $setter->id ? 'selected' : '' }}>
+                                        {{ $setter->first_name }} {{ $setter->last_name }}
+                                    </option>
+                                @endforeach
+                            </x-select>
+                        </div>
+                
+                        <div class="md:col-span-3 col-span-2">
+                            <x-input-currency label="Setter Fee" name="setter_fee"></x-input>
+                        </div>
+
+                        <div class="md:col-span-3 col-span-2">
+                            <x-select label="Sales Rep" name="sales_rep_id">
+                                @if (old('sales_rep_id') == '')
+                                    <option value="" selected>None</option>
+                                @endif
+                                @foreach($salesRep as $user)
+                                    <option value="{{ $user->id }}" {{ old('sales_rep_id') == $user->id ? 'selected' : '' }}>
+                                        {{ $user->first_name }} {{ $user->last_name }}
+                                    </option>
+                                @endforeach
+                            </x-select>
+                        </div>
+                
+                        <div class="md:col-span-3 col-span-2">
+                            <x-input-currency label="Sales Rep Fee" name="sales_rep_fee"></x-input>
+                        </div>
                     </div>
                 </div>
                 <div class="mt-8 border-t border-gray-200 pt-5">

@@ -23,13 +23,14 @@ class CustomerController extends Controller
         $financings = Customer::FINANCINGS;
         $openedById = Auth::user()->id;
         $users      = User::get();
-
+        $salesRep   = User::whereRole('Sales Rep')->whereDepartmentId(user()->department_id)->get();
         return view('customer.create', 
             [
                 'bills'      => $bills,
                 'financings' => $financings,
                 'openedById' => $openedById,
                 'users'      => $users,
+                'salesRep'   => $salesRep,
             ] 
         );
     }
@@ -127,6 +128,10 @@ class CustomerController extends Controller
             ]
         );
 
+        if(($customer->panel_sold != $validated['panel_sold']) && $validated['panel_sold'] == 0){
+            // $customer->installs++; calc installs
+        }
+        
         $customer->first_name   = $validated['first_name'];
         $customer->last_name    = $validated['last_name'];
         $customer->system_size  = $validated['system_size'];

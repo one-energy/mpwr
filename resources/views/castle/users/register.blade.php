@@ -51,9 +51,9 @@
                                     <option value="" selected>None</option>
                                 @endif
                                 @foreach($roles as $role)
-                                <option value="{{ $role['name'] }}" {{ old('role') == $role['name'] ? 'selected' : '' }}>
-                                    {{ $role['name']}}
-                                </option>
+                                    <option value="{{ $role['name'] }}" {{ old('role') == $role['name'] ? 'selected' : '' }}>
+                                        {{ $role['name']}}
+                                    </option>
                                 @endforeach
                             </x-select>
                         </div>
