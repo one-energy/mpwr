@@ -12,23 +12,60 @@
                               selectedDepartment: null,
                               departments: null,
                               offices: null,
+                              roles: null,
+                              onInit: true,
+                              selectedRole: null,
+                              rate: {{$user->pay}},
                               selectedOffice: null,
                               token: document.head.querySelector('meta[name=csrf-token]').content, 
                              }"
-                     x-init="$watch('selectedDepartment', 
-                                     (department) => { 
-                                    fetch('https://' + location.hostname + '/get-offices/' + department, {method: 'post',  headers: {
+                     x-init="
+                            $watch('selectedDepartment', 
+                                (department) => { 
+                                    fetch('https://' + location.hostname + '/get-offices/' + department, {
+                                        method: 'post',  
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': token
+                                        }
+                                    }).then(res => res.json()).then((officesData) => { offices = officesData }) 
+                                });
+                                $watch('selectedRole', (role) => {
+                                    fetch('https://' + location.hostname + '/get-rates-per-role/' + role, {
+                                        method: 'post',  
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': token
+                                        }
+                                    }).then(res => res.json()).then((ratesData) => { 
+                                        if(!onInit){
+                                            rate = ratesData.rate 
+                                        }
+                                        onInit = false
+                                    })
+                                });
+                                fetch('https://' + location.hostname + '/get-departments' ,{
+                                    method: 'post',  
+                                    headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
-                                    }}).then(res => res.json()).then((officesData) => { offices = officesData }) }),
-                            fetch('https://' + location.hostname + '/get-departments' ,{method: 'post',  headers: {
+                                    }
+                                }).then(res=> res.json()).then( (departmentsData) => { 
+                                    departments = departmentsData
+                                    selectedOffice = '{{$user->office_id}}'
+                                    selectedDepartment = '{{$user->department_id}}'
+                                });
+                                fetch('https://' + location.hostname + '/get-roles-per-user-role', {
+                                    method: 'post',  
+                                    headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
-                                    }}).then(res=> res.json()).then( (departmentsData) => { 
-                                        departments = departmentsData
-                                        selectedOffice = '{{$user->office_id}}'
-                                        selectedDepartment = '{{$user->department_id}}'
-                                    })">
+                                    }
+                                }).then(res => res.json()).then((rolesData) => { 
+                                    roles = rolesData 
+                                    user = {{$user}}
+                                    selectedRole = user.role
+                                })">
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                         <div class="md:col-span-3 col-span-2">
                             <x-input :label="__('First Name')" name="first_name" :value="$user->first_name"/>
@@ -43,16 +80,11 @@
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
-                            <x-select label="Role" name="role">
-                                @if (old('role') == '')
-                                    <option value="" selected>None</option>
-                                @endif
-                                @foreach($roles as $role)
-                                    <option value="{{ $role['name'] }}" {{ old('role', $user->role) == $role['name'] ? 'selected' : '' }}>
-                                        {{ $role['name'] }}
-                                    </option>
-                                @endforeach
-                            </x-select>
+                            <x-select x-model="selectedRole" label="Role" name="role">
+                                <template x-if="roles" x-for="role in roles" :key="role.name">    
+                                    <option :value="role.name" x-text="role.name" ></option>
+                                </template>
+                            </x-select> 
                         </div>
 
                         @if(user()->role != "Admin" && user()->role != "Owner")
@@ -82,7 +114,7 @@
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
-                            <x-input-currency :label="__('Pay')" name="pay" :value="$user->pay"/>
+                            <x-input-currency x-model="rate" :label="__('Pay')" name="pay" value="{{$user->role}}"/>
                         </div>
                     </div>
                 </div>

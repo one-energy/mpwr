@@ -18,6 +18,7 @@ class CreateRatesTable extends Migration
             $table->string('name');
             $table->integer('time');
             $table->foreignId('department_id')->nullable()->constrained()->onDelete('cascade');
+            $table->string('role');
             $table->decimal('rate')->nullable();
             $table->timestamps();
         });
