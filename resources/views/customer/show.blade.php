@@ -9,7 +9,17 @@
             <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
                 <x-form id="updateForm" :route="route('customers.update', $customer->id)" put>
                     @csrf
-                    <div>
+                    <div x-data="{
+                                token: document.head.querySelector('meta[name=csrf-token]').content, 
+                                users:null,
+                             }"
+                         x-init="fetch('https://' + location.hostname + '/get-users' ,{method: 'post',  headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': token
+                                    }}).then(res=> res.json()).then( (usersData) => { 
+                                        users = usersData;
+                                        console.log(users);
+                                    })">
                         <div class="mt-6 grid sm:grid-cols-2 row-gap-6 col-gap-4 md:grid-cols-6">
                         <div class="md:col-span-3 sm:cols-span-2">
                             <x-input label="Customer First Name" name="first_name" value="{{ $customer->first_name }}" :disabledToUser="'Setter'"></x-input>
@@ -41,15 +51,36 @@
                                     <option value="" selected>None</option>
                                 @endif
                                 @foreach($users as $setter)
-                                    <option value="{{ $setter->id }}" {{ old('setter_id', $customer->setter_id) == $setter->id ? 'selected' : '' }}>
-                                        {{ $setter->first_name }} {{ $setter->last_name }}
-                                    </option>
+                                    @if($setter->role == "Setter")
+                                        <option value="{{ $setter->id }}" {{ old('setter_id', $customer->setter_id) == $setter->id ? 'selected' : '' }}>
+                                            {{ $setter->first_name }} {{ $setter->last_name }}
+                                        </option>
+                                    @endif
                                 @endforeach
                             </x-select>
                         </div>
     
                         <div class="md:col-span-3 sm:cols-span-2">
                             <x-input-currency label="Setter Fee" name="setter_fee" value="{{ $customer->setter_fee }}" :disabledToUser="'Setter'"></x-input-currency>
+                        </div>
+
+                        <div class="md:col-span-3 sm:cols-span-2">
+                            <x-select label="Sales Rep" name="sales_rep_id" :disabledToUser="'Sales Rep'">
+                                @if (old('setter_id') == '')
+                                    <option value="" selected>None</option>
+                                @endif
+                                @foreach($users as $salesRep)
+                                    @if($salesRep->role == "Sales Rep")
+                                        <option value="{{ $salesRep->id }}" {{ old('sales_rep_id', $customer->sales_rep_id) == $salesRep->id ? 'selected' : '' }}>
+                                            {{ $salesRep->first_name }} {{ $salesRep->last_name }}
+                                        </option>
+                                    @endif
+                                @endforeach
+                            </x-select>
+                        </div>
+                                    
+                        <div class="md:col-span-3 col-span-2">
+                            <x-input-currency label="Sales Rep Fee" name="sales_rep_fee" value="{{$customer->sales_rep_fee}}"></x-input>
                         </div>
 
                         <div class="md:col-span-4 sm:cols-span-2 flex items-center justify-between">
