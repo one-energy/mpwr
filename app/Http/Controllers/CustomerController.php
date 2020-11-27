@@ -144,8 +144,7 @@ class CustomerController extends Controller
             ]
         );
         
-        if($customer->panel_sold != $validated['panel_sold']){
-
+        if ($customer->panel_sold != $validated['panel_sold']) {
             $user = User::whereId($validated['sales_rep_id'])->first();
     
             if ($validated['panel_sold'] == 1) {

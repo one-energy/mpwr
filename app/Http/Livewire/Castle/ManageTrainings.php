@@ -28,6 +28,8 @@ class ManageTrainings extends Component
 
     public $department;
 
+    public $section;
+
     public function sortBy()
     {
         return 'title';
@@ -44,7 +46,7 @@ class ManageTrainings extends Component
         }
         
         if ($this->department->id) {
-            $this->actualSection = $section ?? TrainingPageSection::whereDepartmentId($this->department->id)->first();
+            $this->actualSection = $this->section ?? TrainingPageSection::whereDepartmentId($this->department->id)->first();
             $this->content       = $this->getContent($this->actualSection);
             $this->departments   = Department::all();
             $index               = 0; 
