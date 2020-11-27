@@ -13,12 +13,19 @@ class ManageTrainings extends Component
     use FullTable;
 
     public $content       = [];
+
     public $sections      = [];
+
     public $videoId       = [];
+
     public $actualSection = [];
+
     public $path          = [];
+
     public $departments   = [];
+
     public $departmentId  = 0;
+
     public $department;
 
     public function sortBy()
@@ -40,17 +47,17 @@ class ManageTrainings extends Component
             $this->actualSection = $section ?? TrainingPageSection::whereDepartmentId($this->department->id)->first();
             $this->content       = $this->getContent($this->actualSection);
             $this->departments   = Department::all();
-            $index         = 0; 
+            $index               = 0; 
             
             if ($this->content) {
                 $this->videoId = explode('/', $this->content->video_url);
-                $index   = count($this->videoId);
+                $index         = count($this->videoId);
             }
             
             $this->path = $this->getPath($this->actualSection);
         }
-        $this->videoId = $this->videoId[$index - 1] ?? null;
-        $this->sections = $this->department->id ? $this->getParentSections($this->actualSection) : [];
+        $this->videoId      = $this->videoId[$index - 1] ?? null;
+        $this->sections     = $this->department->id ? $this->getParentSections($this->actualSection) : [];
         $this->departmentId = $this->department->id ?? 0;
 
         return view('livewire.castle.manage-trainings');
@@ -69,7 +76,6 @@ class ManageTrainings extends Component
         //     'departments'   => $departments,
         
         // dd($this->departments);
-  
     }
 
     public function getPath($section)
@@ -98,7 +104,7 @@ class ManageTrainings extends Component
 
     public function getParentSections($section)
     {
-        $search = $this->search;
+        $search         = $this->search;
         $trainingsQuery = TrainingPageSection::query()->with('content')
             ->select( 'training_page_sections.*')
             ->whereDepartmentId($this->department->id)

@@ -71,6 +71,12 @@ class CustomerController extends Controller
             ]
         );
 
+        if ($validated['panel_sold'] == 1) {
+            $user = User::whereId($validated['sales_rep_id'])->first();
+            $user->installs++;
+            $user->save();
+        }
+
         $customer                = new Customer();
         $customer->first_name    = $validated['first_name'];
         $customer->last_name     = $validated['last_name'];
@@ -124,31 +130,46 @@ class CustomerController extends Controller
         $validated = $this->validate(
             request(),
             [
-                'first_name'   => 'required|string|min:3|max:255',
-                'last_name'    => 'required|string|min:3|max:255',
-                'system_size'  => 'nullable',
-                'pay'          => 'nullable',
-                'adders'       => 'nullable',
-                'epc'          => 'nullable',
-                'setter_id'    => 'nullable',
-                'setter_fee'   => 'nullable',
-                'panel_sold'   => 'nullable',
+                'first_name'    => 'required|string|min:3|max:255',
+                'last_name'     => 'required|string|min:3|max:255',
+                'system_size'   => 'nullable',
+                'pay'           => 'nullable',
+                'adders'        => 'nullable',
+                'epc'           => 'nullable',
+                'setter_id'     => 'nullable',
+                'setter_fee'    => 'nullable',
+                'sales_rep_id'  => 'nullable',
+                'sales_rep_fee' => 'nullable',
+                'panel_sold'    => 'nullable',
             ]
         );
+        
+        if($customer->panel_sold != $validated['panel_sold']){
 
-        if(($customer->panel_sold != $validated['panel_sold']) && $validated['panel_sold'] == 0){
-            // $customer->installs++; calc installs
+            $user = User::whereId($validated['sales_rep_id'])->first();
+    
+            if ($validated['panel_sold'] == 1) {
+                $user->installs++;
+            }
+    
+            if ($validated['panel_sold'] == 0) {
+                $user->installs--;
+            }
+
+            $user->save();
         }
         
-        $customer->first_name   = $validated['first_name'];
-        $customer->last_name    = $validated['last_name'];
-        $customer->system_size  = $validated['system_size'];
-        $customer->pay          = $validated['pay'];
-        $customer->adders       = $validated['adders'];
-        $customer->epc          = $validated['epc'];
-        $customer->setter_id    = $validated['setter_id'];
-        $customer->setter_fee   = $validated['setter_fee'];
-        $customer->panel_sold   = $validated['panel_sold'];
+        $customer->first_name    = $validated['first_name'];
+        $customer->last_name     = $validated['last_name'];
+        $customer->system_size   = $validated['system_size'];
+        $customer->pay           = $validated['pay'];
+        $customer->adders        = $validated['adders'];
+        $customer->epc           = $validated['epc'];
+        $customer->setter_id     = $validated['setter_id'];
+        $customer->setter_fee    = $validated['setter_fee'];
+        $customer->sales_rep_id  = $validated['sales_rep_id'];
+        $customer->sales_rep_fee = $validated['sales_rep_fee'];
+        $customer->panel_sold    = $validated['panel_sold'];
 
         $commission = $this->calculateCommission($customer);
 

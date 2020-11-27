@@ -296,7 +296,7 @@ class UsersController extends Controller
     }
 
     public function getUsers()
-    { 
+    {
         $usersQuery = User::when(user()->department_id, function ($query) {
             $query->whereDepartmentId(user()->department_id);
         });

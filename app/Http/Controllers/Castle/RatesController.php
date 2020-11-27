@@ -29,7 +29,7 @@ class RatesController extends Controller
     {
         $departments = Department::query()->get();
         $roles       = User::ROLES;
-        $roles = array_slice($roles, -5);
+        $roles       = array_slice($roles, -5);
 
         return view('castle.rate.create', compact('departments', 'roles'));
     }
@@ -88,9 +88,9 @@ class RatesController extends Controller
      */
     public function edit(Rates $rate)
     {
-       $departments = Department::get();
+        $departments = Department::get();
 
-       return view('castle.rate.edit', compact('rate', 'departments'));
+        return view('castle.rate.edit', compact('rate', 'departments'));
     }
 
     /**
