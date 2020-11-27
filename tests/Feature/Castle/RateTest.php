@@ -96,7 +96,7 @@ class RateTest extends TestCase
         $created = Rates::where('name', $data['name'])->first();
 
         $response->assertStatus(302)
-            ->assertRedirect(route('castle.rates.index'));
+            ->assertRedirect(route('home'));
     }
 
     /** @test */

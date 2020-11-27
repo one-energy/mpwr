@@ -158,6 +158,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/get-regions-managers/{departmentId}', [UsersController::class, 'getRegionsManager'])->name('getRegionsManager');
     Route::post('/get-roles-per-user-role', [UsersController::class, 'getRolesPerUrserRole'])->name('getRolesPerUrserRole');
     Route::post('/get-users', [UsersController::class, 'getUsers'])->name('getUsers');
+    Route::post('/get-user-rate/{user}', [UsersController::class, 'getUserRate'])->name('getUserRate');
     
     Route::post('/get-regions/{departmentId?}', [RegionController::class, 'getRegions'])->name('getRegions');
     

@@ -121,6 +121,8 @@ class CustomerTest extends TestCase
     public function it_should_store_a_new_customer()
     {
         $user = factory(User::class)->create();
+        $userOne = factory(User::class)->create();
+        $userTwo = factory(User::class)->create();
         $data = [
             'first_name'    => 'First Name',
             'last_name'     => 'Last Name',
@@ -133,6 +135,8 @@ class CustomerTest extends TestCase
             'epc'           => '',
             'setter_id'     => '',
             'setter_fee'    => '',
+            'sale_rep_id'   => $userTwo->id,
+            'sale_rep_fee'  => '',
             'commission'    => '',
             "created_at"    => Carbon::now()->timestamp,
             "updated_at"    => Carbon::now()->timestamp,

@@ -16,19 +16,23 @@ $factory->define(Customer::class, function (Faker $faker) {
     $adders     = 20;
     
     return [
-        'first_name'   => $faker->firstName,
-        'last_name'    => $faker->lastName,
-        'system_size'  => $systemSize,
-        'bill'         => $faker->word,
-        'pay'          => $pay,
-        'financing'    => $faker->word,
-        'adders'       => $adders,
-        'epc'          => $epc+100,
-        'commission'   => (($epc - ( $pay + $setterFee )) * $systemSize) - $adders,
-        'setter_fee'   => $setterFee,
-        'panel_sold'   => $faker->boolean(),
-        'is_active'    => $faker->boolean(),
-        'setter_id'    => function () {
+        'first_name'    => $faker->firstName,
+        'last_name'     => $faker->lastName,
+        'system_size'   => $systemSize,
+        'bill'          => $faker->word,
+        'pay'           => $pay,
+        'financing'     => $faker->word,
+        'adders'        => $adders,
+        'epc'           => $epc+100,
+        'commission'    => (($epc - ( $pay + $setterFee )) * $systemSize) - $adders,
+        'setter_fee'    => $setterFee,
+        'sales_rep_fee' => 0,
+        'panel_sold'    => $faker->boolean(),
+        'is_active'     => $faker->boolean(),
+        'setter_id'     => function () {
+            return factory(User::class)->create()->id;
+        },
+        'sales_rep_id'     => function () {
             return factory(User::class)->create()->id;
         },
         'opened_by_id' => 1

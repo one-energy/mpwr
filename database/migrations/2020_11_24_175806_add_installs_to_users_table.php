@@ -14,7 +14,7 @@ class AddInstallsToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->integer('installs');
+            $table->integer('installs')->default('0');
         });
     }
 
