@@ -66,17 +66,11 @@ class CustomerController extends Controller
                 'setter_id'     => 'nullable',
                 'setter_fee'    => 'nullable',
                 'opened_by_id'  => 'required',
-                'sales_rep_fee' => 'integer',
+                'sales_rep_fee' => 'nullable',
                 'sales_rep_id'  => 'integer',
             ]
         );
-
-        if ($validated['panel_sold'] == 1) {
-            $user = User::whereId($validated['sales_rep_id'])->first();
-            $user->installs++;
-            $user->save();
-        }
-
+        
         $customer                = new Customer();
         $customer->first_name    = $validated['first_name'];
         $customer->last_name     = $validated['last_name'];
@@ -217,6 +211,6 @@ class CustomerController extends Controller
 
     public function getSalesRepFee()
     {
-        return Rates::whereRole('Sales Rep')->first();
+        return Rates::whereRole('Sales Rep')->orderBy('rate', 'desc')->first();
     }
 }

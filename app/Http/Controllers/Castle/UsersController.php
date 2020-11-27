@@ -307,10 +307,10 @@ class UsersController extends Controller
 
     public function getUserRate($userId)
     {
-        $user  = User::whereId($userId)->get();
-        $rate = Rates::query();
-        $rate->whereRole($user->role);
-        $rate->when($user->role == 'Sales Rep', function($query) use ($user) {
+        $user  = User::whereId($userId)->first();
+        
+        $rate = Rates::whereRole('Sales Rep');
+        $rate->when('Sales Rep' == 'Sales Rep', function($query) use ($user) {
             $query->where('time', "<=", $user->installs)->orderBy('time', 'desc');
         });
 

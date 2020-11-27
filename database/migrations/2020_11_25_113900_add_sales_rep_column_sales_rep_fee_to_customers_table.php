@@ -14,7 +14,7 @@ class AddSalesRepColumnSalesRepFeeToCustomersTable extends Migration
     public function up()
     {
         Schema::table('customers', function (Blueprint $table) {
-            $table->integer('sales_rep_fee')->nullable();
+            $table->decimal('sales_rep_fee')->nullable();
             $table->unsignedBigInteger('sales_rep_id')->nullable();
             $table->foreign('sales_rep_id')
                     ->references('id')

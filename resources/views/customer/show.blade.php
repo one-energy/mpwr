@@ -12,14 +12,25 @@
                     <div x-data="{
                                 token: document.head.querySelector('meta[name=csrf-token]').content, 
                                 users:null,
+                                saleRepSelected: null,
+                                salesRepFee: {{$customer->sales_rep_fee}},
                              }"
-                         x-init="fetch('https://' + location.hostname + '/get-users' ,{method: 'post',  headers: {
+                         x-init="$watch('saleRepSelected', (salesRep) => {
+                                    fetch('https://' + location.hostname + '/get-user-rate/' + salesRep ,{method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
-                                    }}).then(res=> res.json()).then( (usersData) => { 
-                                        users = usersData;
-                                        console.log(users);
-                                    })">
+                                    }}).then(res=> res.json()).then( (rate) => { 
+                                        salesRepFee = rate.rate
+                                        console.log(salesRepFee)
+                                    }) 
+                                })
+                                fetch('https://' + location.hostname + '/get-users' ,{method: 'post',  headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': token
+                                }}).then(res=> res.json()).then( (usersData) => { 
+                                    users = usersData;
+                                    console.log(users);
+                                })">
                         <div class="mt-6 grid sm:grid-cols-2 row-gap-6 col-gap-4 md:grid-cols-6">
                         <div class="md:col-span-3 sm:cols-span-2">
                             <x-input label="Customer First Name" name="first_name" value="{{ $customer->first_name }}" :disabledToUser="'Setter'"></x-input>
@@ -65,7 +76,7 @@
                         </div>
 
                         <div class="md:col-span-3 sm:cols-span-2">
-                            <x-select label="Sales Rep" name="sales_rep_id" :disabledToUser="'Sales Rep'">
+                            <x-select x-model="salesRepFee" label="Sales Rep" name="sales_rep_id" :disabledToUser="'Sales Rep'">
                                 @if (old('setter_id') == '')
                                     <option value="" selected>None</option>
                                 @endif

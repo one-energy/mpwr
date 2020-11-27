@@ -11,14 +11,25 @@
                 <div x-data="{
                                 token: document.head.querySelector('meta[name=csrf-token]').content, 
                                 users:null,
+                                saleRepSelected: null,
+                                salesRepFee: {{$salesRepFee}},
                              }"
-                     x-init="fetch('https://' + location.hostname + '/get-users' ,{method: 'post',  headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-TOKEN': token
-                                    }}).then(res=> res.json()).then( (usersData) => { 
-                                        users = usersData;
-                                        console.log(users);
-                                    })">
+                     x-init="$watch('saleRepSelected', (salesRep) => {
+                                fetch('https://' + location.hostname + '/get-user-rate/' + salesRep ,{method: 'post',  headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': token
+                                }}).then(res=> res.json()).then( (rate) => { 
+                                    salesRepFee = rate.rate
+                                    console.log(salesRepFee)
+                                }) 
+                            })
+                            fetch('https://' + location.hostname + '/get-users' ,{method: 'post',  headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': token
+                                }}).then(res=> res.json()).then( (usersData) => { 
+                                    users = usersData;
+                                    console.log(users);
+                                })">
                     <input type="hidden" value="{{ $openedById }}" name="opened_by_id">
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                         <div class="md:col-span-3 col-span-2">
@@ -85,7 +96,7 @@
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
-                            <x-select label="SetterFee" name="sales_rep_id">
+                            <x-select x-model="saleRepSelected" label="Setter Fee" name="sales_rep_id">
                                 <option value="">None</option>
                                 <template x-if="users" x-for="user in users" :key="user.id">
                                     <option x-show="user.role == 'Sales Rep'" :value="user.id" x-text="user.first_name + ' ' + user.last_name"></option>
@@ -94,7 +105,7 @@
                         </div>
                                     
                         <div class="md:col-span-3 col-span-2">
-                            <x-input-currency label="Sales Rep Fee" name="sales_rep_fee" value="{{$salesRepFee}}"></x-input>
+                            <x-input-currency x-model="salesRepFee" label="Sales Rep Fee" name="sales_rep_fee"></x-input>
                         </div>
                     </div>
                 </div>
