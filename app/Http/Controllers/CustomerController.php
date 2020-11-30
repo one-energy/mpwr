@@ -70,7 +70,7 @@ class CustomerController extends Controller
                 'sales_rep_id'  => 'integer',
             ]
         );
-        
+
         $customer                = new Customer();
         $customer->first_name    = $validated['first_name'];
         $customer->last_name     = $validated['last_name'];
@@ -109,7 +109,7 @@ class CustomerController extends Controller
         $this->authorize('view', Customer::class);
 
         $users = User::get();
-
+        
         return view('customer.show', 
         [
             'customer'   => $customer,

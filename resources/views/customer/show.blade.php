@@ -12,8 +12,7 @@
                     <div x-data="{
                                 token: document.head.querySelector('meta[name=csrf-token]').content, 
                                 users:null,
-                                saleRepSelected: null,
-                                salesRepFee: {{$customer->sales_rep_fee}},
+                                saleRepSelected: {{$customer->sales_rep_id}},
                              }"
                          x-init="$watch('saleRepSelected', (salesRep) => {
                                     fetch('https://' + location.hostname + '/get-user-rate/' + salesRep ,{method: 'post',  headers: {
@@ -44,7 +43,7 @@
                         </div>
     
                         <div class="md:col-span-3 sm:cols-span-2">
-                            <x-input-currency label="Redline" name="pay" value="{{ $customer->pay }}" tooltip="Pay" observation="Pay Rate" :disabledToUser="'Setter'"></x-input-currency>
+                            <x-input-currency label="Redline" name="pay" value="{{ $customer->pay }}"  :disabledToUser="'Setter'"></x-input-currency>
                         </div>
                         
                               
@@ -75,18 +74,12 @@
                             <x-input-currency label="Setter Fee" name="setter_fee" value="{{ $customer->setter_fee }}" :disabledToUser="'Setter'"></x-input-currency>
                         </div>
 
-                        <div class="md:col-span-3 sm:cols-span-2">
-                            <x-select x-model="salesRepFee" label="Sales Rep" name="sales_rep_id" :disabledToUser="'Sales Rep'">
-                                @if (old('setter_id') == '')
-                                    <option value="" selected>None</option>
-                                @endif
-                                @foreach($users as $salesRep)
-                                    @if($salesRep->role == "Sales Rep")
-                                        <option value="{{ $salesRep->id }}" {{ old('sales_rep_id', $customer->sales_rep_id) == $salesRep->id ? 'selected' : '' }}>
-                                            {{ $salesRep->first_name }} {{ $salesRep->last_name }}
-                                        </option>
-                                    @endif
-                                @endforeach
+                        <div class="md:col-span-3 col-span-2">
+                            <x-select x-model="saleRepSelected" label="Sales Rep Fee" name="sales_rep_id">
+                                <option value="">None</option>
+                                <template x-if="users" x-for="user in users" :key="user.id">
+                                    <option x-show="user.role == 'Sales Rep'" :value="user.id" x-text="user.first_name + ' ' + user.last_name"></option>
+                                </template>
                             </x-select>
                         </div>
                                     

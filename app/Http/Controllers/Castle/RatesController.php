@@ -89,8 +89,10 @@ class RatesController extends Controller
     public function edit(Rates $rate)
     {
         $departments = Department::get();
+        $roles       = User::ROLES;
+        $roles       = array_slice($roles, -5);
 
-        return view('castle.rate.edit', compact('rate', 'departments'));
+        return view('castle.rate.edit', compact('rate', 'departments', 'roles'));
     }
 
     /**
@@ -105,10 +107,11 @@ class RatesController extends Controller
         $validated = $this->validate(
             request(),
             [
-                'name'              => 'required|string|min:3|max:255',
-                'time'              => 'required',
-                'rate'              => 'required',
-                'department_id'     => 'required',
+                'name'          => 'required|string|min:3|max:255',
+                'time'          => 'required',
+                'rate'          => 'required',
+                'department_id' => 'required',
+                'role'          => 'required',
             ]
         );
         $rate                = Rates::whereId($id)->first();
@@ -116,6 +119,7 @@ class RatesController extends Controller
         $rate->time          = $validated['time'];
         $rate->rate          = $validated['rate'];
         $rate->department_id = $validated['department_id'];
+        $rate->role          = $validated['role'];
         
         $rate->save();
 
