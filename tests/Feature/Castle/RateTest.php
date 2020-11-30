@@ -23,7 +23,8 @@ class RateTest extends TestCase
 
 
         $rates       = factory(Rates::class, 6)->create([
-            'department_id'     => $department->id,
+            'department_id' => $department->id,
+            'role'          => 'Sales Rep',
         ]);
 
         $this->actingAs($departmentManager);
@@ -83,10 +84,11 @@ class RateTest extends TestCase
         $departmentManager->save();
 
         $data = [
-            'name'            => 'rate',
-            'time'            => 25,
-            'rate'            => 2.5,
-            'department_id'   => $department->id,
+            'name'          => 'rate',
+            'time'          => 25,
+            'rate'          => 2.5,
+            'department_id' => $department->id,
+            'role'          => 'Sales Rep',
         ];
 
         $this->actingAs($departmentManager);
@@ -96,7 +98,7 @@ class RateTest extends TestCase
         $created = Rates::where('name', $data['name'])->first();
 
         $response->assertStatus(302)
-            ->assertRedirect(route('home'));
+            ->assertRedirect(route('castle.rates.index'));
     }
 
     /** @test */
@@ -108,10 +110,11 @@ class RateTest extends TestCase
         $departmentManager->save();
 
         $data = [
-            'name'              => '',
-            'time'              => '',
-            'rate'              => '',
-            'department_id'     => '',
+            'name'          => '',
+            'time'          => '',
+            'rate'          => '',
+            'department_id' => '',
+            'role'          => 'Sales Rep',
         ];
         
         $this->actingAs($departmentManager);
@@ -136,6 +139,7 @@ class RateTest extends TestCase
 
         $rate        = factory(Rates::class)->create([
             'department_id'   => $department->id,
+            'role' => 'Sales Rep'
         ]);
 
         $this->actingAs($departmentManager);
@@ -158,6 +162,7 @@ class RateTest extends TestCase
         
         $rate        = factory(Rates::class)->create([
             'department_id'         => $department->id,
+            'role' => 'Sales Rep'
         ]);
 
         $response = $this->get('castle/rates/'. $rate->id .'/edit');
@@ -175,7 +180,8 @@ class RateTest extends TestCase
 
         $rate        = factory(Rates::class)->create([
             'department_id' => $department->id,
-            'rate'          => 2.1
+            'rate'          => 2.1,
+            'role' => 'Sales Rep'
         ]);
         $data         = $rate->toArray();
         $updaterate = array_merge($data, ['name' => 'rate Edited']);
@@ -196,12 +202,15 @@ class RateTest extends TestCase
     public function it_should_destroy_an_rate()
     {
         $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
+        $salesRep = factory(User::class)->create(["role" => "Sales Rep"]);
+        $setter = factory(User::class)->create(["role" => "Setter"]);
         $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
         $rate        = factory(Rates::class)->create([
             'department_id' => $department->id,
+            'role' => 'Sales Rep'
         ]);
 
         $this->actingAs($departmentManager);

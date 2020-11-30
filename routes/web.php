@@ -91,7 +91,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/create', [RatesController::class, 'create'])->name('create');
             Route::post('/create', [RatesController::class, 'store'])->name('store');
             Route::get('/{rate}/edit', [RatesController::class, 'edit'])->name('edit');
-            Route::put('{rRate}', [RatesController::class, 'update'])->name('update');
+            Route::put('{rate}', [RatesController::class, 'update'])->name('update');
             Route::delete('{rate}', [RatesController::class, 'destroy'])->name('destroy');
         });
 

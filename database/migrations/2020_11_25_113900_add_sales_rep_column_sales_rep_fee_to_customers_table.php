@@ -32,7 +32,9 @@ class AddSalesRepColumnSalesRepFeeToCustomersTable extends Migration
     {
         Schema::table('customers', function (Blueprint $table) {
             $table->dropColumn('sales_rep_fee');
-            $table->dropForeign('sales_rep_id');
+            if (env('DB_CONNECTION') !== 'sqlite') {
+                $table->dropForeign('sales_rep_id');
+            }
         });
     }
 }
