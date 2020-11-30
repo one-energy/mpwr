@@ -19,7 +19,7 @@
                                     'Content-Type': 'application/json',
                                     'X-CSRF-TOKEN': token
                                 }}).then(res=> res.json()).then( (rate) => { 
-                                    salesRepFee = rate.rate
+                                    salesRepFee = rate
                                     console.log(salesRepFee)
                                 }) 
                             })

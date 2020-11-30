@@ -309,11 +309,18 @@ class UsersController extends Controller
     {
         $user  = User::whereId($userId)->first();
         
-        $rate = Rates::whereRole('Sales Rep');
-        $rate->when('Sales Rep' == 'Sales Rep', function($query) use ($user) {
+        $rate = Rates::whereRole($user->role);
+        $rate->when($user->role == 'Sales Rep', function($query) use ($user) {
             $query->where('time', "<=", $user->installs)->orderBy('time', 'desc');
         });
-
-        return $rate->first();
+        
+        if($rate) {
+            return $user->pay;
+        }else{
+            return $rate->first()->rate;
+        };
+        // if(count($rate) == 0){
+        //     $rate->time = $user->pay;
+        // }
     }
 }
