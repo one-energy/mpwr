@@ -319,8 +319,5 @@ class UsersController extends Controller
         }else{
             return $rate->first()->rate;
         };
-        // if(count($rate) == 0){
-        //     $rate->time = $user->pay;
-        // }
     }
 }

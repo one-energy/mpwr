@@ -2,8 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Http\Livewire\Castle\Rate;
 use App\Models\Customer;
 use App\Models\Department;
+use App\Models\Rates;
 use App\Models\User;
 use Carbon\Carbon;
 use Tests\TestCase;
@@ -295,4 +297,23 @@ class CustomerTest extends TestCase
         $commission = (($data['epc'] - ( $data['pay'] + $data['setter_fee'] )) * ($data['system_size'] * 1000)) - $data['adders'];
         $this->assertTrue( $created->commission == $commission);
     }
+
+     /** @test */
+     public function it_should_show_sales_rep_and_setter_fees()
+     {
+        $saleRepRate = factory(Rates::class)->create([
+             'role' => 'Sales Rep',
+             'rate' => 3
+             ]);
+        $setterRate = factory(Rates::class)->create([
+             'role' => 'Setter',
+             'rate' => 6
+             ]);
+
+        $response = $this->get(route('customers.create'));
+
+        $response->assertSee($saleRepRate->rate)
+                ->assertSee($setterRate->rate);
+        
+     }
 }
