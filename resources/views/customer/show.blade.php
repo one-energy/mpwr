@@ -77,7 +77,7 @@
                         <div class="md:col-span-3 col-span-2">
                             <x-select x-model="saleRepSelected" label="Sales Rep Fee" name="sales_rep_id">
                                 <option value="">None</option>
-                                <template x-if="users" x-for="user in users" :key="user.id">
+                                <template x-for="user in users" :key="user.id">
                                     <option x-show="user.role == 'Sales Rep'" :value="user.id" x-text="user.first_name + ' ' + user.last_name"></option>
                                 </template>
                             </x-select>
