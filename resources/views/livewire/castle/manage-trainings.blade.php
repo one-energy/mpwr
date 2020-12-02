@@ -216,6 +216,16 @@
             @endif
 
             <div class="mt-15">
+                @if(!$path || ($content == null && $sections->isEmpty()) )
+                    <div class="h-96 ">
+                        <div class="flex justify-center align-middle">
+                            <div class="text-sm text-center text-gray-700">
+                            <x-svg.draw.empty></x-svg.draw.empty>
+                            No data yet.
+                            </div>
+                        </div>
+                    </div>
+                @endif
                 <div class="mt-2 text-lg">
                     @if($videoId)
                     <div class="w-full text-center embed-container">

@@ -47,6 +47,7 @@ class ShowTrainings extends Component
             }
             
             $this->path = $this->getPath($actualSection);
+            // dd($this->content->isEmpty());
         }
         $this->videoId = $this->videoId[$index - 1] ?? null;
 

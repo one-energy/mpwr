@@ -16,7 +16,7 @@
         @endforeach
       </div>
       <div class="mt-15">
-        @if(!$path)
+        @if(!$path || ($content == null && $sections->isEmpty()) )
         <div class="h-96 ">
           <div class="flex justify-center align-middle">
             <div class="text-sm text-center text-gray-700">

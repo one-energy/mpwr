@@ -57,6 +57,7 @@ class ManageTrainings extends Component
             }
             
             $this->path = $this->getPath($this->actualSection);
+            
         }
         $this->videoId      = $this->videoId[$index - 1] ?? null;
         $this->sections     = $this->department->id ? $this->getParentSections($this->actualSection) : [];
