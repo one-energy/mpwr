@@ -18,7 +18,7 @@ class TrainingController extends Controller
         
         return view('training.index', [
             'department'      => $department,
-            'section'       => $section,
+            'section'         => $section,
         ]);
     }
 
@@ -36,7 +36,6 @@ class TrainingController extends Controller
             'department' => $department,
             'section'    => $section,
         ]);
-        
     }
 
     public function deleteSection(TrainingPageSection $section)
@@ -159,5 +158,4 @@ class TrainingController extends Controller
             'section'    => $content->training_page_section_id,
         ]));
     }
-
 }

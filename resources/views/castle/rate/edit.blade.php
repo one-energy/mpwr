@@ -39,6 +39,15 @@
                     <div class="md:col-span-3 col-span-2">
                         <x-input-currency :label="__('Rate')" name="rate" value="{{$rate->rate}}"></x-input>
                     </div>
+                    <div class="md:col-span-3 col-span-2">
+                        <x-select label="Role" name="role">
+                            @foreach($roles as $role)
+                                <option value="{{ $role['name'] }}"  {{ old('role', $rate->role) == $role['name'] ? 'selected' : '' }}>
+                                    {{ $role['name'] }}
+                                </option>
+                            @endforeach
+                        </x-select>
+                    </div>
                 </div>
                 
                 <div class="mt-8 border-t border-gray-200 pt-5">

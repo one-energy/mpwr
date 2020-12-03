@@ -2,14 +2,16 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\TrainingPageSection;
 use Livewire\Component;
 
 class SearchBar extends Component
 {
     public $trainings = [];
+
     public $search = "";
+
     public $sectionId;
+
     public $departmentId;
 
     public function render()
@@ -20,7 +22,7 @@ class SearchBar extends Component
     public function mount($sectionId, $departmentId, $search)
     {
         $this->departmentId = $departmentId;
-        $this->sectionId = $sectionId;
-        $this->search = $search;
+        $this->sectionId    = $sectionId;
+        $this->search       = $search;
     }
 }

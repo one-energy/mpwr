@@ -39,7 +39,7 @@
                                         @foreach($rates as $rate)
                                         <x-table.tr :loop="$loop">
                                             @if(user()->role == "Admin" || user()->role == "Owner")
-                                                <x-table.td>{{ $rate->deparment->name }}</x-table.td>
+                                                <x-table.td>{{ $rate->department->name}}</x-table.td>
                                             @endif
                                             <x-table.td>{{ $rate->name }}</x-table.td>
                                             <x-table.td>{{ $rate->rate }}</x-table.td>

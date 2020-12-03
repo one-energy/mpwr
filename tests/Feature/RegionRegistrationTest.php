@@ -4,11 +4,13 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Tests\Builders\UserBuilder;
 
 class RegionRegistrationTest extends FeatureTest
 {
+    use RefreshDatabase;
     //region Business Rules
     /** @test */
     public function it_should_send_a_notification_to_the_user_asking_email_confirmation()

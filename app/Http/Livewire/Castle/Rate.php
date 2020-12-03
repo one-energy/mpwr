@@ -3,8 +3,8 @@
 namespace App\Http\Livewire\Castle;
 
 use App\Models\Rates;
-use Livewire\Component;
 use App\Traits\Livewire\FullTable;
+use Livewire\Component;
 
 class Rate extends Component
 {

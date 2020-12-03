@@ -13,11 +13,17 @@ class ShowTrainings extends Component
     use FullTable;
     
     public $content       = [];
+
     public $sections      = [];
+
     public $videoId       = [];
+
     public $actualSection = [];
+
     public $path          = [];
+
     public $section       = [];
+
     public $department;
 
     public function sortBy()
@@ -33,24 +39,25 @@ class ShowTrainings extends Component
             $index         = 0;
         
             $this->content       = $this->getContent($actualSection);
-            $this->sections = $this->department->id ? $this->getParentSections($actualSection) : [];
+            $this->sections      = $this->department->id ? $this->getParentSections($actualSection) : [];
             // dd($this->sections);
             if ($this->content) {
                 $this->videoId = explode('/', $this->content->video_url);
-                $index   = count($this->videoId);
+                $index         = count($this->videoId);
             }
             
             $this->path = $this->getPath($actualSection);
+            // dd($this->content->isEmpty());
         }
         $this->videoId = $this->videoId[$index - 1] ?? null;
+
         return view('livewire.show-trainings');
     }
 
     public function mount(Department $department, TrainingPageSection $section = null)
-    { 
-       $this->department = $department;
-       $this->section    = $section;
-
+    {
+        $this->department = $department;
+        $this->section    = $section;
     }
 
     public function getPath($section)
@@ -79,7 +86,7 @@ class ShowTrainings extends Component
 
     public function getParentSections($section)
     {
-        $search = $this->search;
+        $search         = $this->search;
         $trainingsQuery = TrainingPageSection::query()->with('content')
             ->select( 'training_page_sections.*')
             ->whereDepartmentId($this->department->id)

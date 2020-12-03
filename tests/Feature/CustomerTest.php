@@ -2,8 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Http\Livewire\Castle\Rate;
 use App\Models\Customer;
 use App\Models\Department;
+use App\Models\Rates;
 use App\Models\User;
 use Carbon\Carbon;
 use Tests\TestCase;
@@ -121,6 +123,8 @@ class CustomerTest extends TestCase
     public function it_should_store_a_new_customer()
     {
         $user = factory(User::class)->create();
+        $userOne = factory(User::class)->create(['role' => "Setter"]);
+        $userTwo = factory(User::class)->create(['role' => "Sales Rep"]);
         $data = [
             'first_name'    => 'First Name',
             'last_name'     => 'Last Name',
@@ -131,8 +135,10 @@ class CustomerTest extends TestCase
             'pay'           => '',
             'adders'        => '',
             'epc'           => '',
-            'setter_id'     => '',
-            'setter_fee'    => '',
+            'setter_id'     => $userOne->id,
+            'setter_fee'    => 20,
+            'sales_rep_id'   => $userTwo->id,
+            'sales_rep_fee'  => 20,
             'commission'    => '',
             "created_at"    => Carbon::now()->timestamp,
             "updated_at"    => Carbon::now()->timestamp,
@@ -261,6 +267,8 @@ class CustomerTest extends TestCase
     public function it_should_calculate_comission()
     {
         $user = factory(User::class)->create();
+        $userOne = factory(User::class)->create(['role' => "Setter"]);
+        $userTwo = factory(User::class)->create(['role' => "Sales Rep"]);
         $data = [
             'first_name'    => 'First Name',
             'last_name'     => 'Last Name',
@@ -271,20 +279,41 @@ class CustomerTest extends TestCase
             'pay'           => '5000',
             'adders'        => '300',
             'epc'           => '7000',
-            'setter_id'     => '',
+            'setter_id'     => $userOne->id,
             'setter_fee'    => '450',
+            'sales_rep_id'  => $userTwo->id,
+            'sales_rep_fee' => 20,
             'commission'    => '',
             "created_at"    => Carbon::now()->timestamp,
             "updated_at"    => Carbon::now()->timestamp,
             'is_active'     => true
         ];
 
-        $this->post(route('customers.store'), $data);
+        $reponse = $this->post(route('customers.store'), $data);
 
         $created = Customer::where('first_name', $data['first_name'])->first();
         
+        $reponse->assertStatus(302);
         $commission = (($data['epc'] - ( $data['pay'] + $data['setter_fee'] )) * ($data['system_size'] * 1000)) - $data['adders'];
-
         $this->assertTrue( $created->commission == $commission);
     }
+
+     /** @test */
+     public function it_should_show_sales_rep_and_setter_fees()
+     {
+        $saleRepRate = factory(Rates::class)->create([
+             'role' => 'Sales Rep',
+             'rate' => 3
+             ]);
+        $setterRate = factory(Rates::class)->create([
+             'role' => 'Setter',
+             'rate' => 6
+             ]);
+
+        $response = $this->get(route('customers.create'));
+
+        $response->assertSee($saleRepRate->rate)
+                ->assertSee($setterRate->rate);
+        
+     }
 }

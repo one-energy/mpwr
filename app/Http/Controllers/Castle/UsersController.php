@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\Invitation;
 use App\Models\Office;
+use App\Models\Rates;
 use App\Models\Region;
 use App\Models\User;
 use App\Notifications\MasterExistingUserInvitation;
@@ -293,5 +294,30 @@ class UsersController extends Controller
     public function getRoles()
     {
         return User::ROLES;
+    }
+
+    public function getUsers()
+    {
+        $usersQuery = User::when(user()->department_id, function ($query) {
+            $query->whereDepartmentId(user()->department_id);
+        });
+        
+        return $usersQuery->get();
+    }
+
+    public function getUserRate($userId)
+    {
+        $user  = User::whereId($userId)->first();
+        
+        $rate = Rates::whereRole($user->role);
+        $rate->when($user->role == 'Sales Rep', function($query) use ($user) {
+            $query->where('time', "<=", $user->installs)->orderBy('time', 'desc');
+        });
+        
+        if($rate) {
+            return $user->pay;
+        }else{
+            return $rate->first()->rate;
+        };
     }
 }
