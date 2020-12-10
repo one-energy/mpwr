@@ -1,4 +1,4 @@
-## Dental Front Flare
+## One Energy
 
 | QA | Stage | Production  |
 |---|---|---|
@@ -16,19 +16,19 @@ To collaborate you will need accounts for the following tools:
 #### <TODO>
 
 #### Laravel Envoyer
- 
+
  We will use Laravel Envoyer to auto deploy new code into our QA environment available at [here][qa-environment].
  I'ts important to mention that a new version will be published after a successful build on [ChipperCI][chipper-ci] and
  that our database will be refreshed (and reseeded) after each build.
- 
+
  Chances are that you have already been invited to the project QA environment configuration. You can check the pending
  invitations [here](https://envoyer.io/user/profile#/invitations).
- 
+
  The project was named: **[<TODO>] QA**
- 
+
 #### Mailtrap
 
- With the default Laravel setup you can configure your mailing configuration by setting these values in the .env file 
+ With the default Laravel setup you can configure your mailing configuration by setting these values in the .env file
  in the root directory of your project. The snippet bellow is and example from the CI environment configuration.
 
  ```
@@ -43,7 +43,7 @@ To collaborate you will need accounts for the following tools:
 
 ### Before Committing
 
-#### PHP Mess Detector 
+#### PHP Mess Detector
 
 This will validate the code against a set of code standard rules.
 
@@ -90,7 +90,7 @@ eslint --ext .js,.vue resources/js
 ````bash
 eslint --ext .js,.vue resources/js --fix
 ````
- 
+
  Keep in mind that some of the problems will require manual fix.
 
 ## Docker
@@ -104,7 +104,7 @@ eslint --ext .js,.vue resources/js --fix
 * Composer
 * Nodejs
 * NPM
-* Artisan   
+* Artisan
 
 ### How do I get set up? ###
 
