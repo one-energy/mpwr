@@ -27,6 +27,9 @@
                                         @lang('Email')
                                     </x-table.th-searchable>
                                     <x-table.th></x-table.th>
+                                    @if($master->isNot(user()))
+                                        <x-table.th></x-table.th>
+                                    @endif
                                 </tr>
                             </x-slot>
                             <x-slot name="body">
@@ -34,10 +37,11 @@
                                     <x-table.tr :loop="$loop">
                                         <x-table.td>{{ $master->first_name . ' ' . $master->last_name }}</x-table.td>
                                         <x-table.td>{{ $master->email }}</x-table.td>
-                                        <x-table.td class="flex space-x-3">
+                                        <x-table.td>
                                             <x-link class="text-sm">Edit</x-link>
-
-                                            @if($master->isNot(user()))
+                                        </x-table.td>
+                                        @if($master->isNot(user()))
+                                            <x-table.td>
                                                 <x-form :route="route('castle.masters.revoke', $master)" patch
                                                         x-data="{revoking: false}">
                                                 <x-link color="red" class="text-sm" type="button"
@@ -47,8 +51,8 @@
                                                     >Revoke access</x-link>
                                                 <span x-cloak x-show="revoking" class="text-gray-400">Revoking ...</span>
                                                 </x-form>
-                                            @endif
-                                        </x-table.td>
+                                            </x-table.td>
+                                        @endif
                                     </x-table.tr>
                                 @endforeach
                             </x-slot>

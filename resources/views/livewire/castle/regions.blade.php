@@ -46,7 +46,9 @@
                                         @endif
                                         <x-table.td>{{ $region->name }}</x-table.td>
                                         <x-table.td>{{ $region->regionManger->first_name }} {{ $region->regionManger->last_name }}</x-table.td>
-                                        <x-table.td><x-link :href="route('castle.regions.edit', $region)" class="text-sm">Edit</x-link></x-table.td>
+                                        <x-table.td>
+                                            <x-link :href="route('castle.regions.edit', $region)" class="text-sm">Edit</x-link>
+                                        </x-table.td>
                                         <x-table.td>
                                             <x-form :route="route('castle.regions.destroy', $region->id)" delete
                                                     x-data="{deleting: false}">

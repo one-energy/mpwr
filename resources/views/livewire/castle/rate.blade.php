@@ -33,6 +33,7 @@
                                                 @lang('Rate')
                                             </x-table.th>
                                             <x-table.th></x-table.th>
+                                            <x-table.th></x-table.th>
                                         </x-table.th-tr>
                                     </x-slot>
                                     <x-slot name="body">
@@ -43,8 +44,10 @@
                                             @endif
                                             <x-table.td>{{ $rate->name }}</x-table.td>
                                             <x-table.td>{{ $rate->rate }}</x-table.td>
-                                            <x-table.td class="flex space-x-3">
+                                            <x-table.td>
                                                 <x-link :href="route('castle.rates.edit', $rate)" class="text-sm">Edit</x-link>
+                                            </x-table.td>
+                                            <x-table.td>
                                                 <x-form :route="route('castle.rates.destroy', $rate->id)" delete x-data="{deleting: false}">
                                                     <x-link color="red" class="text-sm" type="button" x-show="!deleting" x-on:click="$dispatch('confirm', {from: $event.target})" x-on:confirmed="deleting = true; $el.submit()">Delete</x-link>
                                                     <span x-cloak x-show="deleting" class="text-gray-400">Deleting ...</span>

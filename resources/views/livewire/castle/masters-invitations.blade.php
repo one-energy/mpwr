@@ -6,6 +6,7 @@
                     <x-table.th>@lang('Email')</x-table.th>
                     <x-table.th>@lang('Invited At')</x-table.th>
                     <x-table.th></x-table.th>
+                    <x-table.th></x-table.th>
                 </tr>
             </x-slot>
 
@@ -14,19 +15,17 @@
                     <x-table.tr :loop="$loop">
                         <x-table.td>{{ $invite->email }}</x-table.td>
                         <x-table.td>{{ $invite->created_at->diffForHumans() }}</x-table.td>
-                        <x-table.td class="text-right">
-
+                        <x-table.td>
                             <x-button color="green" class="text-sm mr-8" :x-copy="$invite->path()" @click="
                                 Utils.copyText($event.target);
-                                alert('Copied to the clipboard');
-                            ">
+                                alert('Copied to the clipboard');">
                                 @lang('Copy Invitation')
                             </x-button>
-
+                        </x-table.td>
+                        <x-table.td class="text-right">
                             <x-button class="text-sm" :wire:click='"delete($invite->id)"'>
                                 @lang('Delete')
                             </x-button>
-
                         </x-table.td>
                     </x-table.tr>
                 @endforeach
