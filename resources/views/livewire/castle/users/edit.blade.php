@@ -50,6 +50,9 @@
 
                         <div class="md:col-span-3 col-span-2">
                             <x-select wire:model="user.office_id" label="Office" name="office_id">
+                                <option value="">
+                                    None
+                                </option>
                                 @foreach($offices as $office)
                                     <option value="{{$office->id}}">{{$office->name}}</option>
                                 @endforeach

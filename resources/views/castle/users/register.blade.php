@@ -10,10 +10,10 @@
             <x-alert class="mb-4" :title="__('Success')" :description="$message"></x-alert>
         @endif
 
-        
+
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <x-form :route="route('castle.users.store')">
-                <div x-data="{ 
+                <div x-data="{
                               selectedDepartment: null,
                               selectedRole: null,
                               departments: null,
@@ -21,12 +21,12 @@
                               roles: null,
                               rate: null,
                               selectedOffice: null,
-                              token: document.head.querySelector('meta[name=csrf-token]').content, 
+                              token: document.head.querySelector('meta[name=csrf-token]').content,
                              }"
-                     x-init="$watch('selectedDepartment', 
-                                    (department) => { 
+                     x-init="$watch('selectedDepartment',
+                                    (department) => {
                                         fetch('https://' + location.hostname + '/get-offices/' + department, {
-                                            method: 'post',  
+                                            method: 'post',
                                             headers: {
                                                 'Content-Type': 'application/json',
                                                 'X-CSRF-TOKEN': token
@@ -35,7 +35,7 @@
                                 });
                             $watch('selectedRole', (role) => {
                                     fetch('https://' + location.hostname + '/get-rates-per-role/' + role, {
-                                        method: 'post',  
+                                        method: 'post',
                                         headers: {
                                             'Content-Type': 'application/json',
                                             'X-CSRF-TOKEN': token
@@ -43,17 +43,17 @@
                                     }).then(res => res.json()).then((ratesData) => { rate = ratesData.rate })
                                 });
                             fetch('https://' + location.hostname + '/get-departments' , {
-                                    method: 'post',  
+                                    method: 'post',
                                     headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
                                     }
-                                }).then(res=> res.json()).then( (departmentsData) => { 
+                                }).then(res=> res.json()).then( (departmentsData) => {
                                     departments = departmentsData
                                     selectedDepartment = '{{user()->department_id}}'
                                 })
                             fetch('https://' + location.hostname + '/get-roles-per-user-role', {
-                                method: 'post',  
+                                method: 'post',
                                 headers: {
                                     'Content-Type': 'application/json',
                                     'X-CSRF-TOKEN': token
@@ -63,7 +63,7 @@
                         <div class="md:col-span-3 col-span-2">
                             <x-input :label="__('First Name')" name="first_name"/>
                         </div>
-                
+
                         <div class="md:col-span-3 col-span-2">
                             <x-input :label="__('Last Name')" name="last_name"/>
                         </div>
@@ -74,18 +74,18 @@
 
                         <div class="md:col-span-3 col-span-2">
                             <x-select x-model="selectedRole" label="Role" name="role">
-                                <template x-if="roles" x-for="role in roles" :key="role.name">    
+                                <template x-if="roles" x-for="role in roles" :key="role.name">
                                     <option :value="role.name" x-text="role.name" ></option>
                                 </template>
-                            </x-select> 
+                            </x-select>
                         </div>
                         @if(user()->role != "Admin" && user()->role != "Owner")
                             <div class="md:col-span-3 col-span-2 hidden">
                                 <x-select x-model="selectedDepartment" label="Department" name="department_id">
-                                    <template x-if="departments" x-for="department in departments" :key="department.id">    
+                                    <template x-if="departments" x-for="department in departments" :key="department.id">
                                         <option :value="department.id" x-text="department.name" ></option>
                                     </template>
-                                </x-select> 
+                                </x-select>
                             </div>
                         @else
                             <div class="md:col-span-3 col-span-2">
@@ -108,13 +108,13 @@
                                 </template>
                             </x-select>
                         </div>
-                        
+
                         <div class="md:col-span-3 col-span-2">
                             <x-input-currency  :label="__('Pay')" name="pay" x-model="rate"/>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="mt-8 pt-2 flex justify-end">
                     <span class="inline-flex rounded-md shadow-sm">
                         <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
@@ -127,7 +127,7 @@
                         </a>
                     </span>
                 </div>
-                
+
             </x-form>
         </div>
     </div>
