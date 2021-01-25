@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\Invitation;
 use App\Models\Office;
-use App\Models\Rates;
-use App\Models\Region;
 use App\Models\User;
 use App\Notifications\MasterExistingUserInvitation;
 use App\Notifications\MasterInvitation;
@@ -100,6 +98,26 @@ class UsersController extends Controller
         ]);
     }
 
+    public function destroy($id)
+    {
+        if ($id == auth()->user()->id) {
+            alert()
+                ->withTitle(__('You cannot delete yourself!'))
+                ->send();
+
+            return back();
+        }
+
+        User::destroy($id);
+
+        alert()
+            ->withTitle(__('User has been deleted!'))
+            ->send();
+
+        return redirect(route('castle.users.index'));
+    }
+
+
     public function getOfficesPerRole()
     {
         $officesQuery = Office::query()->select("offices.*");
@@ -128,11 +146,44 @@ class UsersController extends Controller
         return $offices;
     }
 
+    private function findUser($email)
+    {
+        /** @var User $user */
+        if ($user = User::query()->where('email', '=', $email)->first()) {
+            return $user;
+        }
+
+        return null;
+    }
+
+    private function createUser(array $data, Invitation $invitation): User
+    {
+        $user                    = new User();
+        $user->first_name        = $data['first_name'];
+        $user->last_name         = $data['last_name'];
+        $user->email             = $data['email'];
+        $user->password          = bcrypt(Str::random(8));
+        $user->email_verified_at = null;
+        $user->master            = $invitation->master;
+        $user->role              = $data['role'];
+        $user->office_id         = $data['office_id'];
+        $user->department_id     = $data['department_id'];
+        $user->pay               = $data['pay'];
+        $user->save();
+
+        return $user;
+    }
+
+    public function requestResetPassword(User $user)
+    {
+        return view('castle.users.reset-password', compact('user'));
+    }
+
+
     public function getRolesPerUrserRole()
     {
         if (user()->role == "Admin") {
             $roles = [
-                ['name' => 'Admin',              'description' => 'Allows to update all system except owner users'],
                 ['name' => 'Department Manager', 'description' => 'Allows update all in departments and Region\'s Number Tracker'],
                 ['name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
                 ['name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
@@ -180,7 +231,7 @@ class UsersController extends Controller
             'department_id' => ['nullable', 'numeric'],
             'email'         => ['required', 'email', 'min:2', 'max:128', Rule::unique('users')->ignore($id)],
         ])->validate();
-        
+
         $user = User::find($id);
         $user->forceFill($data);
 
@@ -200,124 +251,4 @@ class UsersController extends Controller
         return redirect(route('castle.users.index'));
     }
 
-    public function requestResetPassword(User $user)
-    {
-        return view('castle.users.reset-password', compact('user'));
-    }
-
-    public function resetPassword($id)
-    {
-        $user = User::find($id);
-
-        $data = Validator::make(request()->all(), [
-            'new_password' => ['required', 'string', 'min:8', 'confirmed'],
-        ])->validate();
-
-        $user
-            ->changePassword($data['new_password'])
-            ->save();
-
-        alert()->withTitle(__('Password reset successfully!'))->send();
-
-        return redirect(route('castle.users.edit', compact('user')));
-    }
-
-    public function destroy($id)
-    {
-        if ($id == auth()->user()->id) {
-            alert()
-                ->withTitle(__('You cannot delete yourself!'))
-                ->send();
-
-            return back();
-        }
-
-        User::destroy($id);
-
-        alert()
-            ->withTitle(__('User has been deleted!'))
-            ->send();
-
-        return redirect(route('castle.users.index'));
-    }
-
-    /**
-     * @param $email
-     * @return User|null
-     */
-    private function findUser($email)
-    {
-        /** @var User $user */
-        if ($user = User::query()->where('email', '=', $email)->first()) {
-            return $user;
-        }
-
-        return null;
-    }
-
-    private function createUser(array $data, Invitation $invitation): User
-    {
-        $user                    = new User();
-        $user->first_name        = $data['first_name'];
-        $user->last_name         = $data['last_name'];
-        $user->email             = $data['email'];
-        $user->password          = bcrypt(Str::random(8));
-        $user->email_verified_at = null;
-        $user->master            = $invitation->master;
-        $user->role              = $data['role'];
-        $user->office_id         = $data['office_id'];
-        $user->department_id     = $data['department_id'];
-        $user->pay               = $data['pay'];
-        $user->save();
-
-        return $user;
-    }
-
-    public function getRegionsManager($departmentId)
-    {
-        return User::whereDepartmentId($departmentId)
-            ->whereRole("Region Manager")
-            ->get();
-    }
-    
-    public function getOfficesManager($regionId)
-    {
-        $region = Region::whereId($regionId)->first();
-
-        $usersQuery = User::query()->select("users.*");
-
-        return $usersQuery->whereRole("Office Manager")
-            ->whereDepartmentId($region->department_id)
-            ->get();
-    }
-
-    public function getRoles()
-    {
-        return User::ROLES;
-    }
-
-    public function getUsers()
-    {
-        $usersQuery = User::when(user()->department_id, function ($query) {
-            $query->whereDepartmentId(user()->department_id);
-        });
-        
-        return $usersQuery->get();
-    }
-
-    public function getUserRate($userId)
-    {
-        $user  = User::whereId($userId)->first();
-        
-        $rate = Rates::whereRole($user->role);
-        $rate->when($user->role == 'Sales Rep', function($query) use ($user) {
-            $query->where('time', "<=", $user->installs)->orderBy('time', 'desc');
-        });
-        
-        if($rate) {
-            return $user->pay;
-        }else{
-            return $rate->first()->rate;
-        };
-    }
 }
