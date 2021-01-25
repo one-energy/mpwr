@@ -37,7 +37,7 @@
                         <x-input label="Systems Installed" name="time"></x-input>
                     </div>
                     <div class="md:col-span-3 col-span-2">
-                        <x-input-currency :label="__('Rate')" name="rate"></x-input>
+                        <x-input-currency :label="__('Sale Rate ($/W)')" name="rate"></x-input>
                     </div>
                     <div class="md:col-span-3 col-span-2">
                         <x-select label="Role" name="role">

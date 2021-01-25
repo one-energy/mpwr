@@ -60,7 +60,7 @@
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
-                            <x-input-currency wire:model="user.pay" label="Pay" name="pay" />
+                            <x-input-currency wire:model="user.pay" label="Sale Rate ($/W)" name="pay" />
                         </div>
                     </div>
                 </div>
