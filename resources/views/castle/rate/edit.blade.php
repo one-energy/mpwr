@@ -34,7 +34,7 @@
                         </div>
                     @endif
                     <div class="md:col-span-3 col-span-2">
-                        <x-input label="Time" name="time" value="{{$rate->time}}"></x-input>
+                        <x-input label="Systems Installed" name="time" value="{{$rate->time}}"></x-input>
                     </div>
                     <div class="md:col-span-3 col-span-2">
                         <x-input-currency :label="__('Rate')" name="rate" value="{{$rate->rate}}"></x-input>
