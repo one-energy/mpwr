@@ -10,6 +10,8 @@ class Users extends Component
 {
     use FullTable;
 
+    public $roles;
+
     public function sortBy()
     {
         return 'first_name';
@@ -17,6 +19,7 @@ class Users extends Component
 
     public function render()
     {
+        $this->roles = User::ROLES;
         $query = User::with('office')->select('users.*');
         if (user()->role == "Office Manager") {
             $userOfficeId = user()->id;
@@ -37,10 +40,10 @@ class Users extends Component
             $query->whereDepartmentId(user()->department_id)
                     ->where("role", "!=", "Admin")
                     ->where("role", "!=", "Owner");
-        } 
+        }
         if (user()->role == "Admin") {
             $query->where("role", "!=", "Owner");
-        } 
+        }
 
         return view('livewire.castle.users', [
             'users' => $query
@@ -48,5 +51,16 @@ class Users extends Component
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage),
         ]);
+    }
+
+    public function userRole($userRole)
+    {
+        $roleTitle = '';
+        foreach ($this->roles as $role) {
+            if ($role['name'] == $userRole) {
+                $roleTitle = $role['title'];
+            }
+        }
+        return $roleTitle;
     }
 }

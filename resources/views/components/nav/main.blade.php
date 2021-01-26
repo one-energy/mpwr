@@ -18,7 +18,7 @@
                                     <x-nav.link :href="route('home')" class="flex self-center">
                                         <x-svg.chevron-left class="w-6 -ml-2"/> @lang('Leave Admin')
                                     </x-nav.link>
-                                    
+
                                     @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
                                         <x-nav.link :href="route('castle.rates.index')" class="ml-4"
                                                     :active="is_active('castle.rates.index')">
@@ -58,13 +58,11 @@
                                                 :active="is_active('castle.offices.*')">
                                         @lang('Offices')
                                     </x-nav.link>
-                            
-                                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
-                                        <x-nav.link :href="route('castle.users.index')" class="ml-4"
-                                                    :active="is_active('castle.users.*')">
-                                            @lang('Users')
-                                        </x-nav.link>
-                                    @endif
+
+                                    <x-nav.link :href="route('castle.users.index')" class="ml-4"
+                                                :active="is_active('castle.users.*')">
+                                        @lang('Users')
+                                    </x-nav.link>
                                 @else
                                     <x-nav.link :href="route('home')" class="ml-4"
                                                 :active="is_active('home')">
@@ -82,12 +80,12 @@
                                                 :active="is_active('incentives')">
                                         @lang('Incentives')
                                     </x-nav.link>
-                                    
+
                                     <x-nav.link :href="route('number-tracking.index')" class="ml-8"
                                                 :active="is_active('number-tracking.*')">
                                         @lang('Number Tracker')
                                     </x-nav.link>
-                                
+
                                 @endif
                             </div>
                         </div>
@@ -95,7 +93,7 @@
                         @if(user()->userLevel() != 'Sales Rep' && user()->userLevel() != 'Setter')
                             <x-nav.castle-icon/>
                         @endif
-<!-- 
+<!--
                         <button
                             class="p-1 border-2 border-transparent text-gray-400 rounded-full hover:text-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"
                             aria-label="Notifications">
@@ -130,7 +128,7 @@
                                         </span>
                                     </div>
                                     <hr class="my-2">
-                                    
+
                                     <a href="{{ route('profile.show') }}"
                                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                         @lang('Your Profile')
@@ -180,7 +178,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="z-40 fixed bottom-0 block bg-white w-full md:hidden overflow-x-scroll">
             <div class="flex items-center justify-between px-4 py-3 sm:px-3">
                 @if(is_active('castle.*'))
@@ -233,10 +231,12 @@
                         </x-nav.link-mobile>
                     @endif
 
-                    <x-nav.link-mobile :href="route('castle.departments.index')" class="mt-1"
-                            :active="is_active('castle.departments.*')">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M18 10.031v-6.423l-6.036-3.608-5.964 3.569v6.499l-6 3.224v7.216l6.136 3.492 5.864-3.393 5.864 3.393 6.136-3.492v-7.177l-6-3.3zm-1.143.036l-4.321 2.384v-4.956l4.321-2.539v5.111zm-4.895-8.71l4.272 2.596-4.268 2.509-4.176-2.554 4.172-2.551zm-10.172 12.274l4.778-2.53 4.237 2.417-4.668 2.667-4.347-2.554zm4.917 3.587l4.722-2.697v5.056l-4.722 2.757v-5.116zm6.512-3.746l4.247-2.39 4.769 2.594-4.367 2.509-4.649-2.713zm9.638 6.323l-4.421 2.539v-5.116l4.421-2.538v5.115z"/></svg>
-                    </x-nav.link-mobile>
+                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
+                        <x-nav.link-mobile :href="route('castle.departments.index')" class="mt-1"
+                                :active="is_active('castle.departments.*')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M18 10.031v-6.423l-6.036-3.608-5.964 3.569v6.499l-6 3.224v7.216l6.136 3.492 5.864-3.393 5.864 3.393 6.136-3.492v-7.177l-6-3.3zm-1.143.036l-4.321 2.384v-4.956l4.321-2.539v5.111zm-4.895-8.71l4.272 2.596-4.268 2.509-4.176-2.554 4.172-2.551zm-10.172 12.274l4.778-2.53 4.237 2.417-4.668 2.667-4.347-2.554zm4.917 3.587l4.722-2.697v5.056l-4.722 2.757v-5.116zm6.512-3.746l4.247-2.39 4.769 2.594-4.367 2.509-4.649-2.713zm9.638 6.323l-4.421 2.539v-5.116l4.421-2.538v5.115z"/></svg>
+                        </x-nav.link-mobile>
+                    @endif
 
                     @if(user()->role != 'Office Manager')
                         <x-nav.link-mobile :href="route('castle.regions.index')" class="mt-1"
@@ -259,17 +259,15 @@
                             <use xlink:href="#office" width="24" height="24" />
                         </svg>
                     </x-nav.link-mobile>
-                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
-                        <x-nav.link-mobile :href="route('castle.users.index')" class="mt-1"
-                                :active="is_active('castle.users.*')">
-                            <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <symbol id="group" viewBox="0 0 24 24">
-                                <path d="M10.119 16.064c2.293-.53 4.427-.994 3.394-2.946-3.147-5.941-.835-9.118 2.488-9.118 3.388 0 5.643 3.299 2.488 9.119-1.065 1.964 1.149 2.427 3.393 2.946 1.985.458 2.118 1.428 2.118 3.107l-.003.828h-1.329c0-2.089.083-2.367-1.226-2.669-1.901-.438-3.695-.852-4.351-2.304-.239-.53-.395-1.402.226-2.543 1.372-2.532 1.719-4.726.949-6.017-.902-1.517-3.617-1.509-4.512-.022-.768 1.273-.426 3.479.936 6.05.607 1.146.447 2.016.206 2.543-.66 1.445-2.472 1.863-4.39 2.305-1.252.29-1.172.588-1.172 2.657h-1.331c0-2.196-.176-3.406 2.116-3.936zm-10.117 3.936h1.329c0-1.918-.186-1.385 1.824-1.973 1.014-.295 1.91-.723 2.316-1.612.212-.463.355-1.22-.162-2.197-.952-1.798-1.219-3.374-.712-4.215.547-.909 2.27-.908 2.819.015.935 1.567-.793 3.982-1.02 4.982h1.396c.44-1 1.206-2.208 1.206-3.9 0-2.01-1.312-3.1-2.998-3.1-2.493 0-4.227 2.383-1.866 6.839.774 1.464-.826 1.812-2.545 2.209-1.49.345-1.589 1.072-1.589 2.334l.002.618z"/>
-                                </symbol>
-                                <use xlink:href="#group" width="24" height="24" />
-                            </svg>
-                        </x-nav.link-mobile>
-                    @endif
+                    <x-nav.link-mobile :href="route('castle.users.index')" class="mt-1"
+                            :active="is_active('castle.users.*')">
+                        <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <symbol id="group" viewBox="0 0 24 24">
+                            <path d="M10.119 16.064c2.293-.53 4.427-.994 3.394-2.946-3.147-5.941-.835-9.118 2.488-9.118 3.388 0 5.643 3.299 2.488 9.119-1.065 1.964 1.149 2.427 3.393 2.946 1.985.458 2.118 1.428 2.118 3.107l-.003.828h-1.329c0-2.089.083-2.367-1.226-2.669-1.901-.438-3.695-.852-4.351-2.304-.239-.53-.395-1.402.226-2.543 1.372-2.532 1.719-4.726.949-6.017-.902-1.517-3.617-1.509-4.512-.022-.768 1.273-.426 3.479.936 6.05.607 1.146.447 2.016.206 2.543-.66 1.445-2.472 1.863-4.39 2.305-1.252.29-1.172.588-1.172 2.657h-1.331c0-2.196-.176-3.406 2.116-3.936zm-10.117 3.936h1.329c0-1.918-.186-1.385 1.824-1.973 1.014-.295 1.91-.723 2.316-1.612.212-.463.355-1.22-.162-2.197-.952-1.798-1.219-3.374-.712-4.215.547-.909 2.27-.908 2.819.015.935 1.567-.793 3.982-1.02 4.982h1.396c.44-1 1.206-2.208 1.206-3.9 0-2.01-1.312-3.1-2.998-3.1-2.493 0-4.227 2.383-1.866 6.839.774 1.464-.826 1.812-2.545 2.209-1.49.345-1.589 1.072-1.589 2.334l.002.618z"/>
+                            </symbol>
+                            <use xlink:href="#group" width="24" height="24" />
+                        </svg>
+                    </x-nav.link-mobile>
                 @else
                     <x-nav.link-mobile :href="route('home')" class="mt-1"
                                 :active="is_active('home')">
