@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\Invitation;
 use App\Models\Office;
+use App\Models\Region;
 use App\Models\User;
 use App\Notifications\MasterExistingUserInvitation;
 use App\Notifications\MasterInvitation;
@@ -249,6 +250,24 @@ class UsersController extends Controller
             ->send();
 
         return redirect(route('castle.users.index'));
+    }
+
+    public function getRegionsManager($departmentId)
+    {
+        return User::whereDepartmentId($departmentId)
+            ->whereRole("Region Manager")
+            ->get();
+    }
+
+    public function getOfficesManager($regionId)
+    {
+        $region = Region::whereId($regionId)->first();
+
+        $usersQuery = User::query()->select("users.*");
+
+        return $usersQuery->whereRole("Office Manager")
+            ->whereDepartmentId($region->department_id)
+            ->get();
     }
 
 }
