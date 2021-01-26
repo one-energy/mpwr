@@ -98,24 +98,6 @@ class Edit extends Component
         $this->offices = $this->officeRepository->getOffices($departmentId);
     }
 
-    public function getRegionsManager($departmentId)
-    {
-        return User::whereDepartmentId($departmentId)
-            ->whereRole("Region Manager")
-            ->get();
-    }
-
-    public function getOfficesManager($regionId)
-    {
-        $region = Region::whereId($regionId)->first();
-
-        $usersQuery = User::query()->select("users.*");
-
-        return $usersQuery->whereRole("Office Manager")
-            ->whereDepartmentId($region->department_id)
-            ->get();
-    }
-
     public function getRoles()
     {
         return User::ROLES;
