@@ -16,7 +16,7 @@
                 </div>
 
                 <x-search :search="$search"/>
-              
+
                 <div class="mt-6">
                     <div class="flex flex-col">
                         <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
@@ -36,7 +36,7 @@
                                             @lang('Region')
                                         </x-table.th>
                                         <x-table.th>
-                                            @lang('Office Manager')
+                                            @lang('Manager')
                                         </x-table.th>
                                         <x-table.th></x-table.th>
                                     </x-table.th-tr>
@@ -68,7 +68,7 @@
                             </x-table>
                         </div>
                         </div>
-        
+
                         <x-confirm
                             x-cloak
                             :title="__('Delete Office')"

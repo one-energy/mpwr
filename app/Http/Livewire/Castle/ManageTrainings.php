@@ -26,9 +26,9 @@ class ManageTrainings extends Component
 
     public $departmentId  = 0;
 
-    public $department;
+    public Department $department;
 
-    public $section;
+    public ?TrainingPageSection $section;
 
     public function sortBy()
     {
@@ -38,47 +38,32 @@ class ManageTrainings extends Component
     public function render()
     {
         $index         = 0;
-
         $this->actualSection = new TrainingPageSection();
 
         if (!$this->department->id && (user()->role == "Owner" || user()->role == "Admin")) {
             $this->department = Department::first();
         }
-        
+
+
         if ($this->department->id) {
             $this->actualSection = $this->section ?? TrainingPageSection::whereDepartmentId($this->department->id)->first();
             $this->content       = $this->getContent($this->actualSection);
             $this->departments   = Department::all();
-            $index               = 0; 
-            
+            $index               = 0;
+
             if ($this->content) {
                 $this->videoId = explode('/', $this->content->video_url);
                 $index         = count($this->videoId);
             }
-            
+
             $this->path = $this->getPath($this->actualSection);
-            
+
         }
         $this->videoId      = $this->videoId[$index - 1] ?? null;
         $this->sections     = $this->department->id ? $this->getParentSections($this->actualSection) : [];
         $this->departmentId = $this->department->id ?? 0;
 
         return view('livewire.castle.manage-trainings');
-    }
-
-    public function mount(Department $department, TrainingPageSection $section = null)
-    {
-        $this->department = $department;
-        $this->section    = $section;
-        // 'sections'      => $department->id ? $this->getParentSections($actualSection) : [],
-        //     'content'       => $content,
-        //     'videoId'       => $videoId[$index - 1] ?? null,
-        //     'actualSection' => $actualSection,
-        //     'path'          => $path,
-        //     'departmentId'  => $department->id ?? 0,
-        //     'departments'   => $departments,
-        
-        // dd($this->departments);
     }
 
     public function getPath($section)
@@ -91,7 +76,7 @@ class ManageTrainings extends Component
                 array_push($path, $trainingPageSection);
             }
         } while ($trainingPageSection->parent_id);
-        
+
         return array_reverse($path);
     }
 
@@ -112,7 +97,7 @@ class ManageTrainings extends Component
             ->select( 'training_page_sections.*')
             ->whereDepartmentId($this->department->id)
             ->leftJoin('training_page_contents', 'training_page_sections.id', '=', 'training_page_contents.training_page_section_id' );
-        
+
         $trainingsQuery->when($search == "", function ($query) use ($section) {
             $query->where('training_page_sections.parent_id', $section->id ?? 1);
         });
@@ -123,7 +108,7 @@ class ManageTrainings extends Component
                     ->orWhere('training_page_contents.description', 'like', "%" . $search . "%");
             });
         });
-        
+
         return $trainingsQuery->get();
     }
 }

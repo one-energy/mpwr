@@ -11,7 +11,7 @@ use Livewire\Component;
 class ShowTrainings extends Component
 {
     use FullTable;
-    
+
     public $content       = [];
 
     public $sections      = [];
@@ -37,7 +37,7 @@ class ShowTrainings extends Component
         if ($this->department->id) {
             $actualSection = $this->section ?? TrainingPageSection::whereDepartmentId($this->department->id)->first();
             $index         = 0;
-        
+
             $this->content       = $this->getContent($actualSection);
             $this->sections      = $this->department->id ? $this->getParentSections($actualSection) : [];
             // dd($this->sections);
@@ -45,19 +45,13 @@ class ShowTrainings extends Component
                 $this->videoId = explode('/', $this->content->video_url);
                 $index         = count($this->videoId);
             }
-            
+
             $this->path = $this->getPath($actualSection);
             // dd($this->content->isEmpty());
         }
         $this->videoId = $this->videoId[$index - 1] ?? null;
 
         return view('livewire.show-trainings');
-    }
-
-    public function mount(Department $department, TrainingPageSection $section = null)
-    {
-        $this->department = $department;
-        $this->section    = $section;
     }
 
     public function getPath($section)
@@ -70,7 +64,7 @@ class ShowTrainings extends Component
                 array_push($path, $trainingPageSection);
             }
         } while ($trainingPageSection->parent_id);
-        
+
         return array_reverse($path);
     }
 
@@ -91,7 +85,7 @@ class ShowTrainings extends Component
             ->select( 'training_page_sections.*')
             ->whereDepartmentId($this->department->id)
             ->leftJoin('training_page_contents', 'training_page_sections.id', '=', 'training_page_contents.training_page_section_id' );
-        
+
         $trainingsQuery->when($search == "", function ($query) use ($section) {
             $query->where('training_page_sections.parent_id', $section->id ?? 1);
         });
@@ -102,7 +96,7 @@ class ShowTrainings extends Component
                     ->orWhere('training_page_contents.description', 'like', "%" . $search . "%");
             });
         });
-        
+
         return $trainingsQuery->get();
     }
 }

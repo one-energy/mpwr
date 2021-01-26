@@ -10,7 +10,7 @@
                 @csrf
                 <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                     <div class="md:col-span-6 col-span-2">
-                        <x-input label="Name" name="name"></x-input>
+                        <x-input label="Title" name="name"></x-input>
                     </div>
                     @if(user()->role != "Admin" && user()->role != "Owner")
                         <div class="md:col-span-3 col-span-2 hidden">
@@ -34,10 +34,10 @@
                         </div>
                     @endif
                     <div class="md:col-span-3 col-span-2">
-                        <x-input label="Time" name="time"></x-input>
+                        <x-input label="Systems Installed" name="time"></x-input>
                     </div>
                     <div class="md:col-span-3 col-span-2">
-                        <x-input-currency :label="__('Rate')" name="rate"></x-input>
+                        <x-input-currency :label="__('Sale Rate ($/W)')" name="rate"></x-input>
                     </div>
                     <div class="md:col-span-3 col-span-2">
                         <x-select label="Role" name="role">
