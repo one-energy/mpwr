@@ -43,13 +43,13 @@
                         <x-select label="Role" name="role">
                             @foreach($roles as $role)
                                 <option value="{{ $role['name'] }}"  {{ old('role', user()->role) == $role['name'] ? 'selected' : '' }}>
-                                    {{ $role['name'] }}
+                                    {{ $role['title'] }}
                                 </option>
                             @endforeach
                         </x-select>
                     </div>
                 </div>
-                
+
                 <div class="mt-8 border-t border-gray-200 pt-5">
                 <div class="flex justify-start">
                     <span class="inline-flex rounded-md shadow-sm">

@@ -8,7 +8,7 @@
 
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <x-form :route="route('castle.users.update', $user->id)" put>
-                <div x-data="{ 
+                <div x-data="{
                               selectedDepartment: null,
                               departments: null,
                               offices: null,
@@ -17,52 +17,52 @@
                               selectedRole: null,
                               rate: {{$user->pay}},
                               selectedOffice: null,
-                              token: document.head.querySelector('meta[name=csrf-token]').content, 
+                              token: document.head.querySelector('meta[name=csrf-token]').content,
                              }"
                      x-init="
-                            $watch('selectedDepartment', 
-                                (department) => { 
+                            $watch('selectedDepartment',
+                                (department) => {
                                     fetch('https://' + location.hostname + '/get-offices/' + department, {
-                                        method: 'post',  
+                                        method: 'post',
                                         headers: {
                                             'Content-Type': 'application/json',
                                             'X-CSRF-TOKEN': token
                                         }
-                                    }).then(res => res.json()).then((officesData) => { offices = officesData }) 
+                                    }).then(res => res.json()).then((officesData) => { offices = officesData })
                                 });
                                 $watch('selectedRole', (role) => {
                                     fetch('https://' + location.hostname + '/get-rates-per-role/' + role, {
-                                        method: 'post',  
+                                        method: 'post',
                                         headers: {
                                             'Content-Type': 'application/json',
                                             'X-CSRF-TOKEN': token
                                         }
-                                    }).then(res => res.json()).then((ratesData) => { 
+                                    }).then(res => res.json()).then((ratesData) => {
                                         if(!onInit){
-                                            rate = ratesData.rate 
+                                            rate = ratesData.rate
                                         }
                                         onInit = false
                                     })
                                 });
                                 fetch('https://' + location.hostname + '/get-departments' ,{
-                                    method: 'post',  
+                                    method: 'post',
                                     headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
                                     }
-                                }).then(res=> res.json()).then( (departmentsData) => { 
+                                }).then(res=> res.json()).then( (departmentsData) => {
                                     departments = departmentsData
                                     selectedOffice = '{{$user->office_id}}'
                                     selectedDepartment = '{{$user->department_id}}'
                                 });
                                 fetch('https://' + location.hostname + '/get-roles-per-user-role', {
-                                    method: 'post',  
+                                    method: 'post',
                                     headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
                                     }
-                                }).then(res => res.json()).then((rolesData) => { 
-                                    roles = rolesData 
+                                }).then(res => res.json()).then((rolesData) => {
+                                    roles = rolesData
                                     user = {{$user}}
                                     selectedRole = user.role
                                 })">
@@ -70,7 +70,7 @@
                         <div class="md:col-span-3 col-span-2">
                             <x-input :label="__('First Name')" name="first_name" :value="$user->first_name"/>
                         </div>
-                
+
                         <div class="md:col-span-3 col-span-2">
                             <x-input :label="__('Last Name')" name="last_name" :value="$user->last_name"/>
                         </div>
@@ -81,10 +81,10 @@
 
                         <div class="md:col-span-3 col-span-2">
                             <x-select x-model="selectedRole" label="Role" name="role">
-                                <template x-if="roles" x-for="role in roles" :key="role.name">    
-                                    <option :value="role.name" x-text="role.name" ></option>
+                                <template x-if="roles" x-for="role in roles" :key="role.name">
+                                    <option :value="role.name" x-text="role.title" ></option>
                                 </template>
-                            </x-select> 
+                            </x-select>
                         </div>
 
                         @if(user()->role != "Admin" && user()->role != "Owner")
@@ -93,7 +93,7 @@
                                     <template x-for="department in departments" :key="department.id">
                                         <option :value="department.id" x-text="department.name" ></option>
                                     </template>
-                                </x-select> 
+                                </x-select>
                             </div>
                         @else
                             <div class="md:col-span-3 col-span-2">
@@ -118,7 +118,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="mt-8 pt-2 flex justify-end">
                     <span class="inline-flex rounded-md shadow-sm">
                         <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
@@ -149,7 +149,7 @@
                         </a>
                     </span>
                 </div>
-                
+
             </x-form>
         </div>
 
@@ -157,7 +157,7 @@
             <div x-show="openModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity">
             <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
             </div>
-        
+
             <div x-show="openModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
                 <x-form :route="route('castle.users.destroy', $user->id)" delete>
                     @csrf

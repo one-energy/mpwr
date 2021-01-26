@@ -132,33 +132,32 @@ class UsersController extends Controller
     {
         if (user()->role == "Admin") {
             $roles = [
-                ['name' => 'Admin',              'description' => 'Allows to update all system except owner users'],
-                ['name' => 'Department Manager', 'description' => 'Allows update all in departments and Region\'s Number Tracker'],
-                ['name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
-                ['name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
-                ['name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
-                ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+                ['title' => 'VP',               'name' => 'Department Manager', 'description' => 'Allows update all in departments and Region\'s Number Tracker'],
+                ['title' => 'Regional Manager', 'name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
+                ['title' => 'Manager',          'name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
+                ['title' => 'Sales Rep',        'name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
+                ['title' => 'Setter',           'name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
             ];
         }
         if (user()->role == "Department Manager") {
             $roles = [
-                ['name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
-                ['name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
-                ['name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
-                ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+                ['title' => 'Regional Manager', 'name' => 'Region Manager', 'description' => 'Allows update all Region\'s Number Tracker'],
+                ['title' => 'Manager',          'name' => 'Office Manager', 'description' => 'Allows update a Region\'s Number Tracker'],
+                ['title' => 'Sales Rep',        'name' => 'Sales Rep',      'description' => 'Allows read/add/edit/cancel Customer'],
+                ['title' => 'Setter',           'name' => 'Setter',         'description' => 'Allows see the dashboard and only read Customer'],
             ];
         }
         if (user()->role == "Region Manager") {
             $roles = [
-                ['name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
-                ['name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
-                ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+                ['title' => 'Manager',   'name' => 'Office Manager', 'description' => 'Allows update a Region\'s Number Tracker'],
+                ['title' => 'Sales Rep', 'name' => 'Sales Rep',      'description' => 'Allows read/add/edit/cancel Customer'],
+                ['title' => 'Setter',    'name' => 'Setter',         'description' => 'Allows see the dashboard and only read Customer'],
             ];
         }
         if (user()->role == "Office Manager") {
             $roles = [
-                ['name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
-                ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+                ['title' => 'Sales Rep', 'name' => 'Sales Rep', 'description' => 'Allows read/add/edit/cancel Customer'],
+                ['title' => 'Setter',    'name' => 'Setter',    'description' => 'Allows see the dashboard and only read Customer'],
             ];
         }
 
@@ -180,7 +179,7 @@ class UsersController extends Controller
             'department_id' => ['nullable', 'numeric'],
             'email'         => ['required', 'email', 'min:2', 'max:128', Rule::unique('users')->ignore($id)],
         ])->validate();
-        
+
         $user = User::find($id);
         $user->forceFill($data);
 
@@ -279,7 +278,7 @@ class UsersController extends Controller
             ->whereRole("Region Manager")
             ->get();
     }
-    
+
     public function getOfficesManager($regionId)
     {
         $region = Region::whereId($regionId)->first();
@@ -301,19 +300,19 @@ class UsersController extends Controller
         $usersQuery = User::when(user()->department_id, function ($query) {
             $query->whereDepartmentId(user()->department_id);
         });
-        
+
         return $usersQuery->get();
     }
 
     public function getUserRate($userId)
     {
         $user  = User::whereId($userId)->first();
-        
+
         $rate = Rates::whereRole($user->role);
         $rate->when($user->role == 'Sales Rep', function($query) use ($user) {
             $query->where('time', "<=", $user->installs)->orderBy('time', 'desc');
         });
-        
+
         if($rate) {
             return $user->pay;
         }else{
