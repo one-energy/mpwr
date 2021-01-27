@@ -23,6 +23,11 @@ class Rates extends Model
         return $this->belongsTo(Department::class);
     }
 
+    public function ratesPerRole($role)
+    {
+        return Rates::whereRole($role)->first();
+    }
+
     public function scopeSearch(Builder $query, $search)
     {
         $query->when($search, function (Builder $query) use ($search) {

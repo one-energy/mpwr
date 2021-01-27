@@ -2,10 +2,9 @@
 
 namespace App\Http\Livewire\Castle\Users;
 
+use App\Models\Department;
 use App\Models\Rates;
-use App\Models\Region;
 use App\Models\User;
-use App\Repositories\OfficeRepository;
 use App\Repositories\RateRepository;
 use App\Repositories\UserRepository;
 use App\Services\UserCanChangeRole;
@@ -41,8 +40,6 @@ class Edit extends Component
         'user.email'         => 'required',
     ];
 
-    private OfficeRepository $officeRepository;
-
     private UserRepository $userRepository;
 
     private RateRepository $rateRepository;
@@ -51,9 +48,7 @@ class Edit extends Component
 
     public function __construct()
     {
-        $this->officeRepository  = resolve(OfficeRepository::class);
         $this->userRepository    = resolve(UserRepository::class);
-        $this->rateRepository    = resolve(RateRepository::class);
         $this->userCanChangeRole = resolve(UserCanChangeRole::class);
     }
 
@@ -65,8 +60,9 @@ class Edit extends Component
 
     public function render()
     {
+        $department = Department::find($this->selectedDepartment);
         $this->roles   = $this->userRepository->getRolesPerUrserRole(user());
-        $this->offices = $this->officeRepository->getOffices($this->selectedDepartment);
+        $this->offices = $department->offices()->get();
 
         if(!$this->canChange) {
             $this->user->role = $this->originalUser->role;
@@ -95,7 +91,7 @@ class Edit extends Component
     }
 
     public function getOffices(int $departmentId){
-        $this->offices = $this->officeRepository->getOffices($departmentId);
+        $this->offices = Department::getOffices($departmentId);
     }
 
     public function getRoles()
