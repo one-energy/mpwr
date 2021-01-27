@@ -5,9 +5,6 @@ namespace App\Http\Livewire\Castle\Users;
 use App\Models\Department;
 use App\Models\Rates;
 use App\Models\User;
-use App\Repositories\RateRepository;
-use App\Repositories\UserRepository;
-use App\Services\UserCanChangeRole;
 use App\Traits\Livewire\Actions;
 use Livewire\Component;
 use Illuminate\Support\Facades\Validator;
@@ -41,12 +38,7 @@ class Edit extends Component
     ];
 
 
-    private UserCanChangeRole $userCanChangeRole;
 
-    public function __construct()
-    {
-        $this->userCanChangeRole = resolve(UserCanChangeRole::class);
-    }
 
     public function mount(User $user)
     {
