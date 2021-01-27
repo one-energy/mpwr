@@ -16,7 +16,7 @@
                 </div>
 
                 <x-search :search="$search"/>
-              
+
                 <div class="mt-6">
                     <div class="flex flex-col">
                         <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
@@ -39,6 +39,7 @@
                                             @lang('Office Manager')
                                         </x-table.th>
                                         <x-table.th></x-table.th>
+                                        <x-table.th></x-table.th>
                                     </x-table.th-tr>
                                 </x-slot>
                                 <x-slot name="body">
@@ -50,16 +51,18 @@
                                             <x-table.td>{{ $office->name }}</x-table.td>
                                             <x-table.td>{{ $office->region->name }}</x-table.td>
                                             <x-table.td>{{ $office->office_manager->first_name }} {{ $office->office_manager->last_name }}</x-table.td>
-                                            <x-table.td class="flex space-x-3">
+                                            <x-table.td>
                                                 <x-link :href="route('castle.offices.edit', $office)" class="text-sm">Edit</x-link>
+                                            </x-table.td>
+                                            <x-table.td>
                                                 <x-form :route="route('castle.offices.destroy', $office->id)" delete
                                                         x-data="{deleting: false}">
-                                                <x-link color="red" class="text-sm" type="button"
-                                                        x-show="!deleting"
-                                                        x-on:click="$dispatch('confirm', {from: $event.target})"
-                                                        x-on:confirmed="deleting = true; $el.submit()"
-                                                    >Delete</x-link>
-                                                <span x-cloak x-show="deleting" class="text-gray-400">Deleting ...</span>
+                                                    <x-link color="red" class="text-sm" type="button"
+                                                            x-show="!deleting"
+                                                            x-on:click="$dispatch('confirm', {from: $event.target})"
+                                                            x-on:confirmed="deleting = true; $el.submit()"
+                                                        >Delete</x-link>
+                                                    <span x-cloak x-show="deleting" class="text-gray-400">Deleting ...</span>
                                                 </x-form>
                                             </x-table.td>
                                         </x-table.tr>
@@ -68,7 +71,7 @@
                             </x-table>
                         </div>
                         </div>
-        
+
                         <x-confirm
                             x-cloak
                             :title="__('Delete Office')"

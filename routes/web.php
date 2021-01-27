@@ -71,12 +71,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('permission', [PermissionController::class, 'index'])->name('permission.index');
         Route::get('permission/{user}/edit', [PermissionController::class, 'edit'])->name('permission.edit');
         Route::put('permission/{user}', [PermissionController::class, 'update'])->name('permission.update');
-        
-        Route::get('masters', [MastersController::class, 'index'])->name('masters.index');
-        Route::get('masters/invite', [MasterInvitationController::class, 'form'])->name('masters.invite');
-        Route::post('masters/invite', [MasterInvitationController::class, 'invite']);
-        Route::patch('masters/{master}/revoke', RevokeMasterAccessController::class)->name('masters.revoke');
-        
+
         Route::prefix('offices')->middleware('offices')->name('offices.')->group(function () {
             Route::get('/', [OfficeController::class, 'index'])->name('index');
             Route::get('/create', [OfficeController::class, 'create'])->name('create');
@@ -87,7 +82,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
 
         Route::prefix('rates')->middleware('rates')->name('rates.')->group(function () {
-            Route::get('/',[RatesController::class, 'index'])->name('index');    
+            Route::get('/',[RatesController::class, 'index'])->name('index');
             Route::get('/create', [RatesController::class, 'create'])->name('create');
             Route::post('/create', [RatesController::class, 'store'])->name('store');
             Route::get('/{rate}/edit', [RatesController::class, 'edit'])->name('edit');
@@ -159,14 +154,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/get-roles-per-user-role', [UsersController::class, 'getRolesPerUrserRole'])->name('getRolesPerUrserRole');
     Route::post('/get-users', [UsersController::class, 'getUsers'])->name('getUsers');
     Route::post('/get-user-rate/{user}', [UsersController::class, 'getUserRate'])->name('getUserRate');
-    
+
     Route::post('/get-regions/{departmentId?}', [RegionController::class, 'getRegions'])->name('getRegions');
-    
+
     Route::post('/get-departments', [DepartmentController::class, 'getDepartments'])->name('getDepartments');
-    
+
     Route::post('/get-offices/{departmentId?}', [OfficeController::class, 'getOffices'])->name('getOffices');
 
     Route::post('/get-rates-per-role/{role}', [RatesController::class, 'getRatesPerRole'])->name('getRatesPerRole');
 
 });
-
