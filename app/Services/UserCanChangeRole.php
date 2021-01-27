@@ -5,19 +5,10 @@ declare(strict_types = 1);
 namespace App\Services;
 
 use App\Models\User;
-use App\Repositories\UserRepository;
 use Illuminate\Database\Eloquent\Collection;
 
 class UserCanChangeRole
 {
-
-    private UserRepository $userRepository;
-
-    public function __construct(UserRepository $userRepository)
-    {
-        $this->userRepository = $userRepository;
-    }
-
     public function handler(User $user): array
     {
         $response = [
@@ -26,21 +17,21 @@ class UserCanChangeRole
         ];
         $previous = 'This user is the manager for the';
 
-        if($offices = $this->userRepository->userManageOffices($user)){
+        if($offices = User::userManageOffices($user)){
             $response['status']  = false;
             $previous .= ' Offices:';
             $previous = $this->getMessage($previous, $offices);
             $response['message'] = $previous;
         }
 
-        if($regions = $this->userRepository->userManageRegion($user)){
+        if($regions = User::userManageRegion($user)){
             $response['status']  = false;
             $previous .= ' Regions:';
             $previous = $this->getMessage($previous, $regions);
             $response['message'] = $previous;
         }
 
-        if($departments = $this->userRepository->userManageDepartment($user)){
+        if($departments = User::userManageDepartment($user)){
             $response['status']  = false;
             $previous .= ' Departments:';
             $previous = $this->getMessage($previous, $departments);

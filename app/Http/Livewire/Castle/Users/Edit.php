@@ -40,15 +40,11 @@ class Edit extends Component
         'user.email'         => 'required',
     ];
 
-    private UserRepository $userRepository;
-
-    private RateRepository $rateRepository;
 
     private UserCanChangeRole $userCanChangeRole;
 
     public function __construct()
     {
-        $this->userRepository    = resolve(UserRepository::class);
         $this->userCanChangeRole = resolve(UserCanChangeRole::class);
     }
 
@@ -61,7 +57,7 @@ class Edit extends Component
     public function render()
     {
         $department = Department::find($this->selectedDepartment);
-        $this->roles   = $this->userRepository->getRolesPerUrserRole(user());
+        $this->roles   = User::getRolesPerUrserRole(user());
         $this->offices = $department->offices()->get();
 
         if(!$this->canChange) {
