@@ -2,10 +2,9 @@
 
 namespace App\Http\Livewire\Castle\Users;
 
+use App\Models\Department;
 use App\Models\Rates;
-use App\Models\Region;
 use App\Models\User;
-use App\Repositories\OfficeRepository;
 use App\Repositories\RateRepository;
 use App\Repositories\UserRepository;
 use App\Services\UserCanChangeRole;
@@ -41,19 +40,11 @@ class Edit extends Component
         'user.email'         => 'required',
     ];
 
-    private OfficeRepository $officeRepository;
-
-    private UserRepository $userRepository;
-
-    private RateRepository $rateRepository;
 
     private UserCanChangeRole $userCanChangeRole;
 
     public function __construct()
     {
-        $this->officeRepository  = resolve(OfficeRepository::class);
-        $this->userRepository    = resolve(UserRepository::class);
-        $this->rateRepository    = resolve(RateRepository::class);
         $this->userCanChangeRole = resolve(UserCanChangeRole::class);
     }
 
@@ -65,8 +56,9 @@ class Edit extends Component
 
     public function render()
     {
-        $this->roles   = $this->userRepository->getRolesPerUrserRole(user());
-        $this->offices = $this->officeRepository->getOffices($this->selectedDepartment);
+        $department = Department::find($this->selectedDepartment);
+        $this->roles   = User::getRolesPerUrserRole(user());
+        $this->offices = $department->offices()->get();
 
         if(!$this->canChange) {
             $this->user->role = $this->originalUser->role;
@@ -95,7 +87,7 @@ class Edit extends Component
     }
 
     public function getOffices(int $departmentId){
-        $this->offices = $this->officeRepository->getOffices($departmentId);
+        $this->offices = Department::getOffices($departmentId);
     }
 
     public function getRoles()
@@ -114,10 +106,10 @@ class Edit extends Component
 
     public function changeRole(string $role): void
     {
-        $canChange = $this->userCanChangeRole->handler($this->originalUser);
+        $canChange = User::userCanChangeRole($this->originalUser);
         $this->canChange = $canChange['status'];
         if ($canChange['status']) {
-            $this->user->pay = $this->rateRepository->getRatesPerRole($role)->rate ?? $this->user->pay;
+            $this->user->pay = Rates::whereRole($role)->first()->rate ?? $this->user->pay;
         } else {
             $this->showModal([
                 'icon'  => 'warning',
