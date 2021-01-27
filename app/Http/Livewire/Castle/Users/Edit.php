@@ -50,7 +50,7 @@ class Edit extends Component
     {
         $department = Department::find($this->selectedDepartment);
         $this->roles   = User::getRolesPerUrserRole(user());
-        $this->offices = $department->offices()->get();
+        $this->offices = $department ? $department->offices()->get() : [];
 
         if(!$this->canChange) {
             $this->user->role = $this->originalUser->role;

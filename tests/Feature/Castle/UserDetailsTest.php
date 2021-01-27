@@ -20,9 +20,9 @@ class UserDetailsTest extends FeatureTest
         ]);
 
         $department = factory(Department::class)->create([
-            "department_manager_id" => $departmentManager->id   
+            "department_manager_id" => $departmentManager->id
         ]);
-        
+
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
@@ -35,7 +35,7 @@ class UserDetailsTest extends FeatureTest
             ->get(route('castle.users.edit', $setter->id))
             ->assertForbidden();
 
-        
+
 
         $this->actingAs($departmentManager)
             ->get(route('castle.users.edit', $departmentManager->id))
@@ -45,8 +45,6 @@ class UserDetailsTest extends FeatureTest
     /** @test */
     public function it_should_show_the_details_for_a_user()
     {
-        $master    = (new UserBuilder)->asMaster()->save()->get();
-        $nonMaster = (new UserBuilder)->save()->get();
         $department = factory(Department::class)->create([
             "name" => "Department One"
         ]);
@@ -60,16 +58,17 @@ class UserDetailsTest extends FeatureTest
             "department_id" => $department->id
         ]);
 
-        $this->actingAs($master)
+        $response = $this->actingAs($master)
             ->get(route('castle.users.edit', $master->id))
-            ->assertViewIs('castle.users.edit')
+            ->assertSuccessful()
             ->assertSee($master->first_name)
             ->assertSee($master->last_name)
             ->assertSee($master->email);
 
+
         $this->actingAs($master)
             ->get(route('castle.users.edit', $nonMaster->id))
-            ->assertViewIs('castle.users.edit')
+            ->assertSuccessful()
             ->assertSee($nonMaster->first_name)
             ->assertSee($nonMaster->last_name)
             ->assertSee($nonMaster->email);
@@ -79,7 +78,7 @@ class UserDetailsTest extends FeatureTest
     public function it_should_show_the_office_a_user_is_on()
     {
         $master   = (new UserBuilder)->asMaster()->save()->get();
-        
+
         $region   = (new RegionBuilder)->withManager($master)->save()->get();
 
         $office1  = (new OfficeBuilder)->region($region)->withManager($master)->save()->get();
@@ -97,7 +96,7 @@ class UserDetailsTest extends FeatureTest
     public function it_should_reset_users_password()
     {
         $this->withoutExceptionHandling();
-        
+
         $master      = factory(User::class)->create(['role' => "admin"]);
         $user        = factory(User::class)->create(['password' => '123456789']);
         $data        = $user->toArray();
@@ -113,15 +112,15 @@ class UserDetailsTest extends FeatureTest
 
      /** @test */
      public function it_shouldnt_show_index_page()
-     {   
+     {
          $regionManager   = factory(User::class)->create(['role' => "Region Manager"]);
          $officeManager   = factory(User::class)->create(['role' => "Office Manager"]);
          $salesRepManager = factory(User::class)->create(['role' => "Sales rep"]);
          $setterManager   = factory(User::class)->create(['role' => "Setter"]);
-         
+
          $response = $this->actingAs($setterManager)
             ->get(route('castle.users.index'));
- 
+
          $response->assertStatus(403);
      }
 }

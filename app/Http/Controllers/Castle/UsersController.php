@@ -180,6 +180,22 @@ class UsersController extends Controller
         return view('castle.users.reset-password', compact('user'));
     }
 
+    public function resetPassword($id)
+    {
+        $user = User::find($id);
+
+        $data = Validator::make(request()->all(), [
+            'new_password' => ['required', 'string', 'min:8', 'confirmed'],
+        ])->validate();
+
+        $user
+            ->changePassword($data['new_password'])
+            ->save();
+
+        alert()->withTitle(__('Password reset successfully!'))->send();
+
+        return redirect(route('castle.users.edit', compact('user')));
+    }
 
     public function getRolesPerUrserRole()
     {
