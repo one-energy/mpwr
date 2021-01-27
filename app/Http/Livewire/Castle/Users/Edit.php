@@ -113,7 +113,7 @@ class Edit extends Component
         $canChange = $this->userCanChangeRole->handler($this->originalUser);
         $this->canChange = $canChange['status'];
         if ($canChange['status']) {
-            $this->user->pay = $this->rateRepository->getRatesPerRole($role)->rate ?? $this->user->pay;
+            $this->user->pay = Rates::whereRole($role)->first()->rate ?? $this->user->pay;
         } else {
             $this->showModal([
                 'icon'  => 'warning',
