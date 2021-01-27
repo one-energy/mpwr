@@ -221,6 +221,10 @@ class UsersController extends Controller
         return $roles;
     }
 
+    public function getUsers() {
+        return User::get();
+    }
+
     public function update($id)
     {
         $data = Validator::make(request()->all(), [
