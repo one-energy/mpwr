@@ -106,7 +106,7 @@ class Edit extends Component
 
     public function changeRole(string $role): void
     {
-        $canChange = $this->userCanChangeRole->handler($this->originalUser);
+        $canChange = User::userCanChangeRole($this->originalUser);
         $this->canChange = $canChange['status'];
         if ($canChange['status']) {
             $this->user->pay = Rates::whereRole($role)->first()->rate ?? $this->user->pay;

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -169,6 +170,44 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $departments = Department::whereDepartmentManagerId($user->id)->get();
         return count($departments) > 0 ? $departments : false;
+    }
+
+    public static function userCanChangeRole(User $user): array
+    {
+        $response = [
+            'status'  => true,
+            'message' => ''
+        ];
+        $previous = 'This user is the manager for the';
+
+        if($offices = User::userManageOffices($user)){
+            $response['status']  = false;
+            $previous .= ' Offices:';
+            $previous = User::getChangeRoleMessage($previous, $offices);
+            $response['message'] = $previous;
+        }
+
+        if($regions = User::userManageRegion($user)){
+            $response['status']  = false;
+            $previous .= ' Regions:';
+            $previous = User::getChangeRoleMessage($previous, $regions);
+            $response['message'] = $previous;
+        }
+
+        if($departments = User::userManageDepartment($user)){
+            $response['status']  = false;
+            $previous .= ' Departments:';
+            $previous = User::getChangeRoleMessage($previous, $departments);
+            $response['message'] = $previous;
+        }
+
+        return $response;
+    }
+
+    protected static function getChangeRoleMessage(string $previous, Collection $content): string
+    {
+        $message = $previous . ' ' . $content->implode('name', ', ');
+        return $message . '. Please disassociate the user from what was mentioned before continuing.';
     }
 
     public function scopeMasters(Builder $query)
