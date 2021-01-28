@@ -113,14 +113,10 @@ class UserDetailsTest extends FeatureTest
      /** @test */
      public function it_shouldnt_show_index_page()
      {
-         $regionManager   = factory(User::class)->create(['role' => "Region Manager"]);
-         $officeManager   = factory(User::class)->create(['role' => "Office Manager"]);
-         $salesRepManager = factory(User::class)->create(['role' => "Sales rep"]);
          $setterManager   = factory(User::class)->create(['role' => "Setter"]);
 
-         $response = $this->actingAs($setterManager)
-            ->get(route('castle.users.index'));
-
-         $response->assertStatus(403);
+         $this->actingAs($setterManager)
+            ->get(route('castle.users.index'))
+            ->assertStatus(403);
      }
 }
