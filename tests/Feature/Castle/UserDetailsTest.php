@@ -58,7 +58,7 @@ class UserDetailsTest extends FeatureTest
             "department_id" => $department->id
         ]);
 
-        $response = $this->actingAs($master)
+        $this->actingAs($master)
             ->get(route('castle.users.edit', $master->id))
             ->assertSuccessful()
             ->assertSee($master->first_name)

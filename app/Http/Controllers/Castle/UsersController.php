@@ -8,8 +8,7 @@ use App\Models\Invitation;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
-use App\Notifications\MasterExistingUserInvitation;
-use App\Notifications\MasterInvitation;
+use App\Notifications\UserInvitation;
 use App\Rules\Castle\MasterEmailUnique;
 use App\Rules\Castle\MasterEmailYourSelf;
 use Illuminate\Support\Facades\Validator;
@@ -80,7 +79,7 @@ class UsersController extends Controller
 
         $this->createUser($data, $invitation);
 
-        $user ? $user->notify(new MasterExistingUserInvitation) : $invitation->notify(new MasterInvitation);
+        $invitation->notify(new UserInvitation);
 
         return back()->with('message', __("The invitation was sent to {$data['email']}"));
     }
@@ -109,7 +108,18 @@ class UsersController extends Controller
             return back();
         }
 
-        User::destroy($id);
+        $user = User::find($id);
+        $canDelete = User::userCanChangeRole($user);
+        if ($canDelete['status']) {
+            User::destroy($id);
+        } else {
+            alert()
+                ->withTitle(__('You cannot delete this user!'))
+                ->withDescription(__('This user was associate to any department, region or office. Please desassociate this user before continue'))
+                ->send();
+
+            return back();
+        }
 
         alert()
             ->withTitle(__('User has been deleted!'))

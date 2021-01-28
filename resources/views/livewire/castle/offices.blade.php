@@ -50,7 +50,11 @@
                                             @endif
                                             <x-table.td>{{ $office->name }}</x-table.td>
                                             <x-table.td>{{ $office->region->name }}</x-table.td>
-                                            <x-table.td>{{ $office->office_manager->first_name }} {{ $office->office_manager->last_name }}</x-table.td>
+                                            @if($office->office_manager)
+                                                <x-table.td>{{ $office->office_manager->first_name }} {{ $office->office_manager->last_name }}</x-table.td>
+                                            @else
+                                                <x-table.td>Without Manager</x-table.td>
+                                            @endif
                                             <x-table.td>
                                                 <x-link :href="route('castle.offices.edit', $office)" class="text-sm">Edit</x-link>
                                             </x-table.td>
