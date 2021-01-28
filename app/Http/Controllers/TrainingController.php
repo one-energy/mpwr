@@ -104,13 +104,13 @@ class TrainingController extends Controller
 
     public function storeContent(TrainingPageSection $section)
     {
-        $validated = Validator::make(request()->all(),
+        $validated = $this->validate(request(),
             [
                 'content_title'   => 'required|string|max:255',
                 'video_url'       => 'required|string|max:255',
                 'description'     => 'required|string',
             ],
-        )->validate();
+        );
 
         $trainingPageContent                             = new TrainingPageContent();
         $trainingPageContent->title                      = $validated['content_title'];

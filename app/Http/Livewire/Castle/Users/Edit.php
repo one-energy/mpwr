@@ -37,9 +37,6 @@ class Edit extends Component
         'user.email'         => 'required',
     ];
 
-
-
-
     public function mount(User $user)
     {
         $this->originalUser = $user;
@@ -65,9 +62,13 @@ class Edit extends Component
     {
         $user = User::find($id);
 
-        $data = Validator::make(request()->all(), [
-            'new_password' => ['required', 'string', 'min:8', 'confirmed'],
-        ])->validate();
+        $data = $this->validate(
+            request(),
+            [
+                'new_password'    => 'required|string|min:8|',
+
+            ]
+        );
 
         $user
             ->changePassword($data['new_password'])
@@ -125,10 +126,12 @@ class Edit extends Component
             $query->where('time', "<=", $user->installs)->orderBy('time', 'desc');
         });
 
-        if($rate) {
+        if ($rate) {
             return $user->pay;
-        }else{
+        } else {
             return $rate->first()->rate;
-        };
+        }
     }
+
+
 }

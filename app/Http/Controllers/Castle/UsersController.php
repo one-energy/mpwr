@@ -55,7 +55,7 @@ class UsersController extends Controller
             'email.unique' => __('There is a pending invitation for this email.'),
         ])->validate();
 
-        $user = $this->findUser($data['email']);
+        $user = User::query()->where('email', '=', $data['email'])->first();
 
         $invitation          = new Invitation();
         $invitation->email   = $data['email'];
@@ -155,16 +155,6 @@ class UsersController extends Controller
         }
 
         return $offices;
-    }
-
-    private function findUser($email)
-    {
-        /** @var User $user */
-        if ($user = User::query()->where('email', '=', $email)->first()) {
-            return $user;
-        }
-
-        return null;
     }
 
     private function createUser(array $data, Invitation $invitation): User
