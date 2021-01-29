@@ -13,7 +13,7 @@
 
     <div class="mt-1 relative rounded-md shadow-sm">
         <input {{ $attributes->except('class')->merge(['class' => $class]) }}
-               name="{{ $name }}" 
+               name="{{ $name }}"
                id="{{ $name }}"
                @if($attributes->get('type') != 'password') value="{{ old($name, $value ?? null) }}" @endif
                @if($disabledToUser && user()->role == $disabledToUser) disabled @endif/>

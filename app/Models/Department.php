@@ -33,6 +33,11 @@ class Department extends Model
         return $this->hasMany(User::class);
     }
 
+    public function offices()
+    {
+        return $this->hasManyThrough(Office::class, Region::class);
+    }
+
     public function scopeSearch(Builder $query, $search)
     {
         $query->when($search, function (Builder $query) use ($search) {
