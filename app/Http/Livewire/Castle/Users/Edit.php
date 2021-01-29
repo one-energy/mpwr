@@ -7,7 +7,6 @@ use App\Models\Rates;
 use App\Models\User;
 use App\Traits\Livewire\Actions;
 use Livewire\Component;
-use Illuminate\Support\Facades\Validator;
 
 class Edit extends Component
 {
@@ -37,40 +36,34 @@ class Edit extends Component
         'user.email'         => 'required',
     ];
 
-
-
-
     public function mount(User $user)
     {
-        $this->originalUser = $user;
+        $this->originalUser       = $user;
         $this->selectedDepartment = $user->department_id;
     }
 
     public function render()
     {
-        $department = Department::find($this->selectedDepartment);
+        $department    = Department::find($this->selectedDepartment);
         $this->roles   = User::getRolesPerUrserRole(user());
-        $this->offices = $department->offices()->get();
+        $this->offices = $department ? $department->offices()->get() : [];
 
-        if(!$this->canChange) {
+        if (!$this->canChange) {
             $this->user->role = $this->originalUser->role;
         }
 
         return view('livewire.castle.users.edit');
     }
 
-
-
     public function resetPassword($id)
     {
         $user = User::find($id);
 
-        $data = Validator::make(request()->all(), [
-            'new_password' => ['required', 'string', 'min:8', 'confirmed'],
-        ])->validate();
+        $data = $this->validate([
+            'new_password' => 'required|string|min:8',
+        ]);
 
-        $user
-            ->changePassword($data['new_password'])
+        $user->changePassword($data['new_password'])
             ->save();
 
         alert()->withTitle(__('Password reset successfully!'))->send();
@@ -78,7 +71,8 @@ class Edit extends Component
         return redirect(route('castle.users.edit', compact('user')));
     }
 
-    public function getOffices(int $departmentId){
+    public function getOffices(int $departmentId)
+    {
         $this->offices = Department::getOffices($departmentId);
     }
 
@@ -98,7 +92,7 @@ class Edit extends Component
 
     public function changeRole(string $role): void
     {
-        $canChange = User::userCanChangeRole($this->originalUser);
+        $canChange       = User::userCanChangeRole($this->originalUser);
         $this->canChange = $canChange['status'];
         if ($canChange['status']) {
             $this->user->pay = Rates::whereRole($role)->first()->rate ?? $this->user->pay;
@@ -118,17 +112,17 @@ class Edit extends Component
 
     public function getUserRate($userId)
     {
-        $user  = User::whereId($userId)->first();
+        $user = User::whereId($userId)->first();
 
         $rate = Rates::whereRole($user->role);
         $rate->when($user->role == 'Sales Rep', function($query) use ($user) {
-            $query->where('time', "<=", $user->installs)->orderBy('time', 'desc');
+            $query->where('time', '<=', $user->installs)->orderBy('time', 'desc');
         });
 
-        if($rate) {
+        if ($rate) {
             return $user->pay;
-        }else{
-            return $rate->first()->rate;
-        };
+        }
+
+        return $rate->first()->rate;
     }
 }

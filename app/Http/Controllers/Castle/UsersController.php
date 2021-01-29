@@ -8,8 +8,7 @@ use App\Models\Invitation;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
-use App\Notifications\MasterExistingUserInvitation;
-use App\Notifications\MasterInvitation;
+use App\Notifications\UserInvitation;
 use App\Rules\Castle\MasterEmailUnique;
 use App\Rules\Castle\MasterEmailYourSelf;
 use Illuminate\Support\Facades\Validator;
@@ -44,7 +43,7 @@ class UsersController extends Controller
 
     public function store()
     {
-        $data = Validator::make(request()->all(), [
+        $data = request()->validate([
             'first_name'    => ['required', 'string', 'max:255'],
             'last_name'     => ['required', 'string', 'max:255'],
             'role'          => ['nullable', 'string', 'max:255'],
@@ -54,25 +53,25 @@ class UsersController extends Controller
             'email'         => ['required', 'email', 'unique:invitations', new MasterEmailUnique, new MasterEmailYourSelf, 'unique:users,email'],
         ], [
             'email.unique' => __('There is a pending invitation for this email.'),
-        ])->validate();
+        ]);
 
-        $user = $this->findUser($data['email']);
+        $user = User::query()->where('email', '=', $data['email'])->first();
 
-        $invitation          = new Invitation();
-        $invitation->email   = $data['email'];
-        $invitation->token   = Uuid::uuid4();
+        $invitation        = new Invitation();
+        $invitation->email = $data['email'];
+        $invitation->token = Uuid::uuid4();
 
-        if ($data["office_id"] == "None") {
-            $data["office_id"] = null;
+        if ($data['office_id'] == 'None') {
+            $data['office_id'] = null;
         }
-        if ($data["department_id"] == "None") {
-            $data["department_id"] = null;
+        if ($data['department_id'] == 'None') {
+            $data['department_id'] = null;
         }
         if ($data['role'] == 'Admin' || $data['role'] == 'Owner') {
             $invitation->master    = true;
             $data['department_id'] = null;
         } else {
-            $invitation->master  = false;
+            $invitation->master = false;
         }
 
         $invitation->user_id = optional($user)->id;
@@ -80,7 +79,7 @@ class UsersController extends Controller
 
         $this->createUser($data, $invitation);
 
-        $user ? $user->notify(new MasterExistingUserInvitation) : $invitation->notify(new MasterInvitation);
+        $invitation->notify(new UserInvitation);
 
         return back()->with('message', __("The invitation was sent to {$data['email']}"));
     }
@@ -109,7 +108,18 @@ class UsersController extends Controller
             return back();
         }
 
-        User::destroy($id);
+        $user      = User::find($id);
+        $canDelete = User::userCanChangeRole($user);
+        if ($canDelete['status']) {
+            User::destroy($id);
+        } else {
+            alert()
+                ->withTitle(__('You cannot delete this user!'))
+                ->withDescription(__('This user was associate to any department, region or office. Please desassociate this user before continue'))
+                ->send();
+
+            return back();
+        }
 
         alert()
             ->withTitle(__('User has been deleted!'))
@@ -118,16 +128,15 @@ class UsersController extends Controller
         return redirect(route('castle.users.index'));
     }
 
-
     public function getOfficesPerRole()
     {
-        $officesQuery = Office::query()->select("offices.*");
-        if (user()->role == "Department Manager") {
+        $officesQuery = Office::query()->select('offices.*');
+        if (user()->role == 'Department Manager') {
             $offices = $officesQuery
                 ->join('regions', 'offices.region_id', '=', 'regions.id')
                 ->where('regions.department_id', '=', user()->department_id)->get();
         }
-        if (user()->role == "Region Manager") {
+        if (user()->role == 'Region Manager') {
             $offices = $officesQuery
                 ->select('offices.name', 'offices.id')
                 ->join('regions', function($join) {
@@ -135,26 +144,16 @@ class UsersController extends Controller
                         ->where('regions.region_manager_id', '=', user()->id);
                 })->get();
         }
-        if (user()->role == "Office Manager") {
+        if (user()->role == 'Office Manager') {
             $offices = $officesQuery
                 ->whereOfficeManagerId(user()->id);
         }
 
-        if (user()->role == "Admin" || user()->role == "Owner") {
+        if (user()->role == 'Admin' || user()->role == 'Owner') {
             $offices = Office::all();
         }
 
         return $offices;
-    }
-
-    private function findUser($email)
-    {
-        /** @var User $user */
-        if ($user = User::query()->where('email', '=', $email)->first()) {
-            return $user;
-        }
-
-        return null;
     }
 
     private function createUser(array $data, Invitation $invitation): User
@@ -180,10 +179,26 @@ class UsersController extends Controller
         return view('castle.users.reset-password', compact('user'));
     }
 
+    public function resetPassword($id)
+    {
+        $user = User::find($id);
+
+        $data = request()->validate([
+            'new_password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $user
+            ->changePassword($data['new_password'])
+            ->save();
+
+        alert()->withTitle(__('Password reset successfully!'))->send();
+
+        return redirect(route('castle.users.edit', compact('user')));
+    }
 
     public function getRolesPerUrserRole()
     {
-        if (user()->role == "Admin") {
+        if (user()->role == 'Admin') {
             $roles = [
                 ['title' => 'VP',               'name' => 'Department Manager', 'description' => 'Allows update all in departments and Region\'s Number Tracker'],
                 ['title' => 'Regional Manager', 'name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
@@ -192,7 +207,7 @@ class UsersController extends Controller
                 ['title' => 'Setter',           'name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
             ];
         }
-        if (user()->role == "Department Manager") {
+        if (user()->role == 'Department Manager') {
             $roles = [
                 ['title' => 'Regional Manager', 'name' => 'Region Manager', 'description' => 'Allows update all Region\'s Number Tracker'],
                 ['title' => 'Manager',          'name' => 'Office Manager', 'description' => 'Allows update a Region\'s Number Tracker'],
@@ -200,22 +215,22 @@ class UsersController extends Controller
                 ['title' => 'Setter',           'name' => 'Setter',         'description' => 'Allows see the dashboard and only read Customer'],
             ];
         }
-        if (user()->role == "Region Manager") {
+        if (user()->role == 'Region Manager') {
             $roles = [
                 ['title' => 'Manager',   'name' => 'Office Manager', 'description' => 'Allows update a Region\'s Number Tracker'],
                 ['title' => 'Sales Rep', 'name' => 'Sales Rep',      'description' => 'Allows read/add/edit/cancel Customer'],
                 ['title' => 'Setter',    'name' => 'Setter',         'description' => 'Allows see the dashboard and only read Customer'],
             ];
         }
-        if (user()->role == "Office Manager") {
+        if (user()->role == 'Office Manager') {
             $roles = [
                 ['title' => 'Sales Rep', 'name' => 'Sales Rep', 'description' => 'Allows read/add/edit/cancel Customer'],
                 ['title' => 'Setter',    'name' => 'Setter',    'description' => 'Allows see the dashboard and only read Customer'],
             ];
         }
 
-        if (user()->role == "Owner") {
-            $roles   = User::ROLES;
+        if (user()->role == 'Owner') {
+            $roles = User::ROLES;
         }
 
         return $roles;
@@ -227,7 +242,7 @@ class UsersController extends Controller
 
     public function update($id)
     {
-        $data = Validator::make(request()->all(), [
+        $data = request()->validate([
             'first_name'    => ['required', 'string', 'min:3', 'max:255'],
             'last_name'     => ['required', 'string', 'min:3', 'max:255'],
             'role'          => ['nullable', 'string', 'max:255'],
@@ -235,7 +250,7 @@ class UsersController extends Controller
             'pay'           => ['nullable', 'numeric'],
             'department_id' => ['nullable', 'numeric'],
             'email'         => ['required', 'email', 'min:2', 'max:128', Rule::unique('users')->ignore($id)],
-        ])->validate();
+        ]);
 
         $user = User::find($id);
         $user->forceFill($data);
@@ -259,7 +274,7 @@ class UsersController extends Controller
     public function getRegionsManager($departmentId)
     {
         return User::whereDepartmentId($departmentId)
-            ->whereRole("Region Manager")
+            ->whereRole('Region Manager')
             ->get();
     }
 
@@ -267,11 +282,10 @@ class UsersController extends Controller
     {
         $region = Region::whereId($regionId)->first();
 
-        $usersQuery = User::query()->select("users.*");
+        $usersQuery = User::query()->select('users.*');
 
-        return $usersQuery->whereRole("Office Manager")
+        return $usersQuery->whereRole('Office Manager')
             ->whereDepartmentId($region->department_id)
             ->get();
     }
-
 }

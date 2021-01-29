@@ -35,6 +35,7 @@
                                         @lang('Regional Manager')
                                     </x-table.th>
                                     <x-table.th></x-table.th>
+                                    <x-table.th></x-table.th>
                                 </x-table.th-tr>
                             </x-slot>
                             <x-slot name="body">
@@ -44,20 +45,25 @@
                                             <x-table.td>{{ $region->department->name }}</x-table.td>
                                         @endif
                                         <x-table.td>{{ $region->name }}</x-table.td>
-                                        <x-table.td>{{ $region->regionManger->first_name }} {{ $region->regionManger->last_name }}</x-table.td>
-                                        <x-table.td class="flex space-x-3">
+                                        @if($region->regionManger)
+                                            <x-table.td>{{ $region->regionManger->first_name }} {{ $region->regionManger->last_name }}</x-table.td>
+                                        @else
+                                            <x-table.td>Without Manager</x-table.td>
+                                        @endif
+                                        <x-table.td>
                                             <x-link :href="route('castle.regions.edit', $region)" class="text-sm">Edit</x-link>
+                                        </x-table.td>
+                                        <x-table.td>
                                             @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
                                                 <x-form :route="route('castle.regions.destroy', $region->id)" delete
                                                         x-data="{deleting: false}">
-                                                <x-link color="red" class="text-sm" type="button"
-                                                        x-show="!deleting"
-                                                        x-on:click="$dispatch('confirm', {from: $event.target})"
-                                                        x-on:confirmed="deleting = true; $el.submit()"
-                                                    >Delete</x-link>
-                                                <span x-cloak x-show="deleting" class="text-gray-400">Deleting ...</span>
+                                                    <x-link color="red" class="text-sm" type="button"
+                                                            x-show="!deleting"
+                                                            x-on:click="$dispatch('confirm', {from: $event.target})"
+                                                            x-on:confirmed="deleting = true; $el.submit()">Delete</x-link>
+                                                    <span x-cloak x-show="deleting" class="text-gray-400">Deleting ...</span>
+                                                </x-form>
                                             @endif
-                                            </x-form>
                                         </x-table.td>
                                     </x-table.tr>
                                 @endforeach

@@ -28,15 +28,18 @@
                                         @lang('Vp')
                                     </x-table.th>
                                     <x-table.th></x-table.th>
-                                    </x-table.th-tr>
+                                    <x-table.th></x-table.th>
+                                </x-table.th-tr>
                             </x-slot>
                             <x-slot name="body">
                                 @foreach($departments as $department)
                                     <x-table.tr :loop="$loop">
                                         <x-table.td>{{ $department->name }}</x-table.td>
                                         <x-table.td>{{ $department->departmentAdmin->first_name }} {{ $department->departmentAdmin->last_name }}</x-table.td>
-                                        <x-table.td class="flex space-x-3">
+                                        <x-table.td>
                                             <x-link :href="route('castle.departments.edit', $department)" class="text-sm">Edit</x-link>
+                                        </x-table.td>
+                                        <x-table.td>
                                             <x-form :route="route('castle.departments.destroy', $department->id)" delete
                                                     x-data="{deleting: false}">
                                             <x-link color="red" class="text-sm" type="button"

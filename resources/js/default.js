@@ -19,8 +19,7 @@ const $app = {
 
 document.addEventListener('livewire:load', () => {
 
-    this.livewire.on('app:modal', data => {
-        console.log('xablau');
+    window.livewire.on('app:modal', data => {
         $app.modal(data)
     })
 
