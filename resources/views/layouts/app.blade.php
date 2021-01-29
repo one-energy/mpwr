@@ -21,6 +21,11 @@
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link rel="apple-touch-icon" sizes="60x60" href="assets/images/icon/ios/icon-60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="assets/images/icon/ios/icon-72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="assets/images/icon/ios/icon-76.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="assets/images/icon/ios/icon-167.png">
+    <link rel="apple-touch-icon" sizes="1024x1024" href="assets/images/icon/ios/icon-1024.png">
     <style>
         [x-cloak] { display: none; }
     </style>
