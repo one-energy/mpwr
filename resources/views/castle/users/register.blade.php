@@ -75,7 +75,7 @@
                         <div class="md:col-span-3 col-span-2">
                             <x-select x-model="selectedRole" label="Role" name="role">
                                 <template x-if="roles" x-for="role in roles" :key="role.name">
-                                    <option :value="role.name" x-text="role.name" ></option>
+                                    <option :value="role.name" x-text="role.title" ></option>
                                 </template>
                             </x-select>
                         </div>

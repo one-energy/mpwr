@@ -200,32 +200,32 @@ class UsersController extends Controller
     {
         if (user()->role == 'Admin') {
             $roles = [
-                ['name' => 'Department Manager', 'description' => 'Allows update all in departments and Region\'s Number Tracker'],
-                ['name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
-                ['name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
-                ['name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
-                ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+                ['title' => 'VP',               'name' => 'Department Manager', 'description' => 'Allows update all in departments and Region\'s Number Tracker'],
+                ['title' => 'Regional Manager', 'name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
+                ['title' => 'Manager',          'name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
+                ['title' => 'Sales Rep',        'name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
+                ['title' => 'Setter',           'name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
             ];
         }
         if (user()->role == 'Department Manager') {
             $roles = [
-                ['name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
-                ['name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
-                ['name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
-                ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+                ['title' => 'Regional Manager', 'name' => 'Region Manager', 'description' => 'Allows update all Region\'s Number Tracker'],
+                ['title' => 'Manager',          'name' => 'Office Manager', 'description' => 'Allows update a Region\'s Number Tracker'],
+                ['title' => 'Sales Rep',        'name' => 'Sales Rep',      'description' => 'Allows read/add/edit/cancel Customer'],
+                ['title' => 'Setter',           'name' => 'Setter',         'description' => 'Allows see the dashboard and only read Customer'],
             ];
         }
         if (user()->role == 'Region Manager') {
             $roles = [
-                ['name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
-                ['name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
-                ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+                ['title' => 'Manager',   'name' => 'Office Manager', 'description' => 'Allows update a Region\'s Number Tracker'],
+                ['title' => 'Sales Rep', 'name' => 'Sales Rep',      'description' => 'Allows read/add/edit/cancel Customer'],
+                ['title' => 'Setter',    'name' => 'Setter',         'description' => 'Allows see the dashboard and only read Customer'],
             ];
         }
         if (user()->role == 'Office Manager') {
             $roles = [
-                ['name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
-                ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+                ['title' => 'Sales Rep', 'name' => 'Sales Rep', 'description' => 'Allows read/add/edit/cancel Customer'],
+                ['title' => 'Setter',    'name' => 'Setter',    'description' => 'Allows see the dashboard and only read Customer'],
             ];
         }
 
@@ -234,6 +234,10 @@ class UsersController extends Controller
         }
 
         return $roles;
+    }
+
+    public function getUsers() {
+        return User::get();
     }
 
     public function update($id)

@@ -25,7 +25,7 @@
                         <div class="md:col-span-3 col-span-2">
                             <x-select wire:change="changeRole($event.target.value)" wire:model="user.role" label="Role" name="role">
                                     @foreach ($roles as $role)
-                                        <option value="{{$role['name']}}" > {{$role['name']}}</option>
+                                        <option value="{{$role['name']}}" > {{$role['title']}}</option>
                                     @endforeach
                             </x-select>
                         </div>

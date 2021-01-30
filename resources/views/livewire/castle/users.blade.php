@@ -34,7 +34,7 @@
                                             @lang('Role')
                                         </x-table.th>
                                         <x-table.th-searchable by="role" :sortedBy="$sortBy" :direction="$sortDirection">
-                                            @lang('Office')
+                                            @lang('Team')
                                         </x-table.th>
                                         <x-table.th-searchable by="role" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Pay')
@@ -50,7 +50,7 @@
                                             @endif
                                             <x-table.td>{{ $user->first_name . ' ' . $user->last_name }}</x-table.td>
                                             <x-table.td>{{ $user->email }}</x-table.td>
-                                            <x-table.td>{{ $user->role }}</x-table.td>
+                                            <x-table.td>{{ $this->userRole($user->role) }}</x-table.td>
                                             @if($user->office)
                                                 <x-table.td>{{ $user->office->name }}</x-table.td>
                                             @else

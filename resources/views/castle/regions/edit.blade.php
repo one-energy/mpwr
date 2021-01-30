@@ -52,7 +52,6 @@
                         @if(user()->role != "Admin" && user()->role != "Owner")
                             <div class="md:col-span-3 col-span-2 @if(user()->role == 'Region Manager') hidden @endif">
                                 <x-select x-model="selectedRegionManager" label="Region Manager" name="region_manager_id">
-                                    <option value="">None</option>
                                     <template x-for="manager in regionsManager" :key="manager.id">
                                         <option :value="manager.id" x-text="manager.first_name + ' ' + manager.last_name"></option>
                                     </template>

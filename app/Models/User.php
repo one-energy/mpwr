@@ -37,13 +37,13 @@ class User extends Authenticatable implements MustVerifyEmail
     use SoftDeletes;
 
     const ROLES = [
-        ['name' => 'Owner',              'description' => 'System Owner'],
-        ['name' => 'Admin',              'description' => 'Allows access to the Admin functionality and Manage Users, Incentives and others (Admin Tab)'],
-        ['name' => 'Department Manager', 'description' => 'Allows access to Manage Users, Incentives and others'],
-        ['name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
-        ['name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
-        ['name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
-        ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+        ['title' => 'Owner',            'name' => 'Owner',              'description' => 'System Owner'],
+        ['title' => 'Admin',            'name' => 'Admin',              'description' => 'Allows access to the Admin functionality and Manage Users, Incentives and others (Admin Tab)'],
+        ['title' => 'VP',               'name' => 'Department Manager', 'description' => 'Allows access to Manage Users, Incentives and others'],
+        ['title' => 'Regional Manager', 'name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
+        ['title' => 'Manager',          'name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
+        ['title' => 'Sales Rep',        'name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
+        ['title' => 'Setter',           'name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
     ];
 
     const TOPLEVEL_ROLES = [
@@ -118,32 +118,32 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         if ($user->role == "Admin") {
             $roles = [
-                ['name' => 'Department Manager', 'description' => 'Allows update all in departments and Region\'s Number Tracker'],
-                ['name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
-                ['name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
-                ['name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
-                ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+                ['title' => 'VP',               'name' => 'Department Manager', 'description' => 'Allows update all in departments and Region\'s Number Tracker'],
+                ['title' => 'Regional Manager', 'name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
+                ['title' => 'Manager',          'name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
+                ['title' => 'Sales Rep',        'name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
+                ['title' => 'Setter',           'name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
             ];
         }
         if ($user->role == "Department Manager") {
             $roles = [
-                ['name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
-                ['name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
-                ['name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
-                ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+                ['title' => 'Regional Manager', 'name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
+                ['title' => 'Manager',          'name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
+                ['title' => 'Sales Rep',        'name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
+                ['title' => 'Setter',           'name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
             ];
         }
         if ($user->role == "Region Manager") {
             $roles = [
-                ['name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
-                ['name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
-                ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+                ['title' => 'Manager',          'name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
+                ['title' => 'Sales Rep',        'name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
+                ['title' => 'Setter',           'name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
             ];
         }
         if ($user->role == "Office Manager") {
             $roles = [
-                ['name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
-                ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+                ['title' => 'Sales Rep',        'name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
+                ['title' => 'Setter',           'name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
             ];
         }
 

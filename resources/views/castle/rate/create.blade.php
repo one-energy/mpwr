@@ -43,7 +43,7 @@
                         <x-select label="Role" name="role">
                             @foreach($roles as $role)
                                 <option value="{{ $role['name'] }}"  {{ old('role', user()->role) == $role['name'] ? 'selected' : '' }}>
-                                    {{ $role['name'] }}
+                                    {{ $role['title'] }}
                                 </option>
                             @endforeach
                         </x-select>

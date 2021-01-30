@@ -51,8 +51,7 @@
                         @endif
 
                         <div class="md:col-span-3 col-span-2 @if(user()->role == 'Office Manager') hidden @endif">
-                            <x-select label="Office Manager" name="office_manager_id">
-                                    <option value="">None</option>
+                            <x-select label="Manager" name="office_manager_id">
                                 <template x-if="officesManagers" x-for="manager in officesManagers" :key="manager.id">
                                     <option :value="manager.id" x-text="manager.first_name + ' ' + manager.last_name"></option>
                                 </template>
