@@ -255,13 +255,6 @@ class UsersController extends Controller
         $user = User::find($id);
         $user->forceFill($data);
 
-        if ($data['role'] == 'Admin' || $data['role'] == 'Owner') {
-            $user->beCastleMaster();
-            $data['department_id'] = null;
-        } else {
-            $user->revokeMastersAccess();
-        }
-
         $user->save();
 
         alert()

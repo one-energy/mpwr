@@ -21,14 +21,15 @@
                         <div class="md:col-span-3 col-span-2">
                             <x-input label="Email" name="email" wire:model="user.email"/>
                         </div>
-
-                        <div class="md:col-span-3 col-span-2">
-                            <x-select wire:change="changeRole($event.target.value)" wire:model="user.role" label="Role" name="role">
-                                    @foreach ($roles as $role)
-                                        <option value="{{$role['name']}}" > {{$role['title']}}</option>
-                                    @endforeach
-                            </x-select>
-                        </div>
+                        @if(user()->id != $user->id)
+                            <div class="md:col-span-3 col-span-2">
+                                <x-select wire:change="changeRole($event.target.value)" wire:model="user.role" label="Role" name="role">
+                                        @foreach ($roles as $role)
+                                            <option value="{{$role['name']}}" > {{$role['title']}}</option>
+                                        @endforeach
+                                </x-select>
+                            </div>
+                        @endif
 
                         @if(user()->role != "Admin" && user()->role != "Owner")
                             <div class="md:col-span-3 col-span-2 hidden">
@@ -59,9 +60,11 @@
                             </x-select>
                         </div>
 
-                        <div class="md:col-span-3 col-span-2">
-                            <x-input-currency wire:model="user.pay" label="Sale Rate ($/W)" name="pay" />
-                        </div>
+                        @if(user()->id != $user->id)
+                            <div class="md:col-span-3 col-span-2">
+                                <x-input-currency wire:model="user.pay" label="Sale Rate ($/W)" name="pay" />
+                            </div>
+                        @endif
                     </div>
                 </div>
 
