@@ -25,7 +25,7 @@
                                         @lang('Department')
                                     </x-table.th>
                                     <x-table.th>
-                                        @lang('Department Admin')
+                                        @lang('Vp')
                                     </x-table.th>
                                     <x-table.th></x-table.th>
                                     <x-table.th></x-table.th>

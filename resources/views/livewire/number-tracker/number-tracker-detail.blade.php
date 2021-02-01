@@ -8,44 +8,44 @@
 
                 <ul class="flex border-b mt-3">
                     <li class="-mb-px mr-4">
-                        <a  class="bg-white inline-block 
-                                    @if($period == 'd') 
-                                        border-b-2 border-green-base text-green-base 
-                                    @else text-gray-900 
-                                        hover:text-gray-800 
-                                    @endIf 
-                                    py-2 text-sm font-semibold" 
+                        <a  class="bg-white inline-block
+                                    @if($period == 'd')
+                                        border-b-2 border-green-base text-green-base
+                                    @else text-gray-900
+                                        hover:text-gray-800
+                                    @endIf
+                                    py-2 text-sm font-semibold"
                             href="javascript:void(0);"
                             wire:click="setPeriod('d')">Daily
                         </a>
                     </li>
                     <li class="mr-4">
-                        <a  class="bg-white inline-block 
-                                    @if($period == 'w') 
-                                        border-b-2 border-green-base text-green-base 
+                        <a  class="bg-white inline-block
+                                    @if($period == 'w')
+                                        border-b-2 border-green-base text-green-base
                                     @else
-                                        text-gray-900 hover:text-gray-800 
-                                    @endIf 
-                                    py-2 text-sm font-semibold" 
+                                        text-gray-900 hover:text-gray-800
+                                    @endIf
+                                    py-2 text-sm font-semibold"
                             href="javascript:void(0);"
                             wire:click="setPeriod('w')">Weekly
                         </a>
                     </li>
                     <li class="mr-4">
-                        <a  class="bg-white inline-block 
-                                    @if($period == 'm') 
-                                        border-b-2 border-green-base text-green-base 
-                                    @else 
-                                        text-gray-900 hover:text-gray-800 
-                                    @endIf 
-                                    py-2 text-sm font-semibold" 
+                        <a  class="bg-white inline-block
+                                    @if($period == 'm')
+                                        border-b-2 border-green-base text-green-base
+                                    @else
+                                        text-gray-900 hover:text-gray-800
+                                    @endIf
+                                    py-2 text-sm font-semibold"
                             href="javascript:void(0);"
                             wire:click="setPeriod('m')">Monthly</a>
                     </li>
                     <li>
-                        <x-svg.spinner 
-                            color="#9fa6b2" 
-                            class="relative hidden top-2 w-6" 
+                        <x-svg.spinner
+                            color="#9fa6b2"
+                            class="relative hidden top-2 w-6"
                             wire:loading.class.remove="hidden" wire:target="setPeriod">
                         </x-svg.spinner>
                     </li>
@@ -58,7 +58,7 @@
                                 <div class="relative">
                                     <input type="hidden" name="date" x-ref="date">
 
-                                    <div 
+                                    <div
                                         class="bg-white rounded-lg border-gray-200 border-2 p-4 top-0 left-0">
 
                                         <div class="flex justify-between items-center mb-2">
@@ -67,56 +67,56 @@
                                                 <span x-text="year" class="ml-1 text-lg text-gray-600 font-normal"></span>
                                             </div>
                                             <div>
-                                                <button 
+                                                <button
                                                     type="button"
-                                                    class="transition ease-in-out duration-100 inline-flex cursor-pointer hover:bg-gray-200 p-1 rounded-full" 
+                                                    class="transition ease-in-out duration-100 inline-flex cursor-pointer hover:bg-gray-200 p-1 rounded-full"
                                                     :class="{'cursor-not-allowed opacity-25': month == 0 }"
                                                     :disabled="month == 0 ? true : false"
                                                     @click="month--; getNoOfDays()">
                                                     <svg class="h-6 w-6 text-gray-500 inline-flex"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                                                    </svg>  
+                                                    </svg>
                                                 </button>
-                                                <button 
+                                                <button
                                                     type="button"
-                                                    class="transition ease-in-out duration-100 inline-flex cursor-pointer hover:bg-gray-200 p-1 rounded-full" 
+                                                    class="transition ease-in-out duration-100 inline-flex cursor-pointer hover:bg-gray-200 p-1 rounded-full"
                                                     :class="{'cursor-not-allowed opacity-25': month == 11 }"
                                                     :disabled="month == 11 ? true : false"
                                                     @click="month++; getNoOfDays()">
                                                     <svg class="h-6 w-6 text-gray-500 inline-flex"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                                    </svg>									  
+                                                    </svg>
                                                 </button>
                                             </div>
                                         </div>
 
                                         <div class="flex flex-wrap mb-3 -mx-1">
-                                            <template x-for="(day, index) in DAYS" :key="index">	
+                                            <template x-for="(day, index) in DAYS" :key="index">
                                                 <div style="width: 14.26%" class="px-1">
                                                     <div
-                                                        x-text="day" 
+                                                        x-text="day"
                                                         class="text-gray-800 font-medium text-center text-xs"></div>
                                                 </div>
                                             </template>
                                         </div>
 
                                         <div class="flex flex-wrap -mx-1">
-                                            <template x-for="(date, dateIndex) in no_of_days" :key="dateIndex" >	
+                                            <template x-for="(date, dateIndex) in no_of_days" :key="dateIndex" >
                                                 <div style="width: 14.28%" class="px-1 mb-1" wire:click="setDate">
                                                     <div
                                                         @click="getDateValue(date); setCurrentDate(date); @this.set('date', getDateValue(date)); @this.call('setDate')"
                                                         x-text="date"
                                                         class="cursor-pointer text-center text-sm rounded-full leading-loose transition ease-in-out duration-100"
                                                         :class="{
-                                                                    'bg-green-base text-white': isToday(date) == true, 
-                                                                    'text-gray-700 hover:bg-green-light': isToday(date) == false 
-                                                                }"	
+                                                                    'bg-green-base text-white': isToday(date) == true,
+                                                                    'text-gray-700 hover:bg-green-light': isToday(date) == false
+                                                                }"
                                                     ></div>
                                                 </div>
                                             </template>
                                         </div>
                                     </div>
-                                </div>	 
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -134,7 +134,7 @@
                             <use xlink:href="#filter" width="15" height="15" y="4" x="4" />
                         </svg>
                     </div>
-                    
+
                     <!-- Filter -->
                     <section class="mt-6">
                         <article>
@@ -147,7 +147,7 @@
                                         <x-svg.plus class="text-gray-300"></x-svg.plus>
                                     </div>
                                 </header>
-                                <ul x-cloak x-show="open === true" @click.away="open = false" 
+                                <ul x-cloak x-show="open === true" @click.away="open = false"
                                     x-transition:enter="transition ease-out duration-100"
                                     x-transition:enter-start="transform opacity-0 scale-95"
                                     x-transition:enter-end="transform opacity-100 scale-100"
@@ -173,7 +173,7 @@
                                         </div>
                                     </div>
                                 </header>
-                                <ul x-cloak x-show="open === true" @click.away="open = false" 
+                                <ul x-cloak x-show="open === true" @click.away="open = false"
                                     x-transition:enter="transition ease-out duration-100"
                                     x-transition:enter-start="transform opacity-0 scale-95"
                                     x-transition:enter-end="transform opacity-100 scale-100"
@@ -201,7 +201,7 @@
                                         </div>
                                     </div>
                                 </header>
-                                <ul x-cloak x-show="open === true" @click.away="open = false" 
+                                <ul x-cloak x-show="open === true" @click.away="open = false"
                                     x-transition:enter="transition ease-out duration-100"
                                     x-transition:enter-start="transform opacity-0 scale-95"
                                     x-transition:enter-end="transform opacity-100 scale-100"
@@ -260,14 +260,14 @@
                     </section>
                 </div>
                 <div class="mt-6">
-                
+
                     <x-button :href="route('number-tracking.create')" color="green" class="inline-flex w-full">
                         Update Numbers
                     </x-button>
-                
+
                 </div>
             </div>
-            
+
             <div class="px-4 py-5 sm:p-6 md:w-2/3">
                 <div class="justify-center w-full">
                     <div class="flex justify-between md:mt-12 mt-6">
@@ -275,25 +275,25 @@
                             <div class="col-span-1 bg-green-light rounded-lg p-3">
                                 <div class="text-xs text-green-base font-semibold uppercase">D.P.S</div>
                                 <div class="text-xl text-green-base font-bold">
-                                    {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('doors')/$numbersTracked->sum('sets'), 2) : 0}}
+                                    {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('doors')/$numbersTracked->sum('sets'), 2) : '-'}}
                                 </div>
                             </div>
                             <div class="col-span-1 bg-green-light rounded-lg p-3">
                                 <div class="text-xs text-green-base font-semibold uppercase">H.P. Set</div>
                                 <div class="text-xl text-green-base font-bold">
-                                    {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('hours')/$numbersTracked->sum('sets'), 2) : 0}}
+                                    {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('hours')/$numbersTracked->sum('sets'), 2) : '-'}}
                                 </div>
                             </div>
                             <div class="col-span-1 bg-green-light rounded-lg p-3">
                                 <div class="text-xs text-green-base font-semibold uppercase">Sit Ratio</div>
                                 <div class="text-xl text-green-base font-bold">
-                                    {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('sits')/$numbersTracked->sum('sets'), 2) : 0}}
+                                    {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('sits')/$numbersTracked->sum('sets'), 2) : '-'}}
                                 </div>
                             </div>
                             <div class="col-span-1 bg-green-light rounded-lg p-3">
                                 <div class="text-xs text-green-base font-semibold uppercase">Close Ratio</div>
                                 <div class="text-xl text-green-base font-bold">
-                                    {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('closes')/$numbersTracked->sum('sets'), 2) : 0}}
+                                    {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('closes')/$numbersTracked->sum('sets'), 2) : '-'}}
                                 </div>
                             </div>
                         </div>
@@ -305,7 +305,7 @@
 
                     <div class="flex justify-between mt-3">
                         <div class="w-full grid xl:grid-cols-6 grid-cols-3 md:col-gap-4 col-gap-1 row-gap-2">
-                            <div class="col-span-1 border-2 
+                            <div class="col-span-1 border-2
                                 @if($filterBy == 'doors')
                                     border-green-base bg-green-light
                                 @else
@@ -322,9 +322,9 @@
                                     @else
                                         <x-svg.arrow-down class="text-red-600"></x-svg.arrow-down>
                                     @endif
-                                    <span class="@if($numbersTracked->sum('doors') - $numbersTrackedLast->sum('doors') >= 0) 
-                                                    text-green-base 
-                                                @else 
+                                    <span class="@if($numbersTracked->sum('doors') - $numbersTrackedLast->sum('doors') >= 0)
+                                                    text-green-base
+                                                @else
                                                     text-red-600
                                                 @endif">
                                         {{$numbersTracked->sum('doors') - $numbersTrackedLast->sum('doors')}}
@@ -347,9 +347,9 @@
                                     @else
                                         <x-svg.arrow-down class="text-red-600"></x-svg.arrow-down>
                                     @endif
-                                    <span class="@if($numbersTracked->sum('hours') - $numbersTrackedLast->sum('hours') >= 0) 
-                                                    text-green-base 
-                                                @else 
+                                    <span class="@if($numbersTracked->sum('hours') - $numbersTrackedLast->sum('hours') >= 0)
+                                                    text-green-base
+                                                @else
                                                     text-red-600
                                                 @endif">
                                         {{$numbersTracked->sum('hours') - $numbersTrackedLast->sum('hours')}}
@@ -372,9 +372,9 @@
                                     @else
                                         <x-svg.arrow-down class="text-red-600"></x-svg.arrow-down>
                                     @endif
-                                    <span class="@if($numbersTracked->sum('sets') - $numbersTrackedLast->sum('sets') >= 0) 
-                                                    text-green-base 
-                                                @else 
+                                    <span class="@if($numbersTracked->sum('sets') - $numbersTrackedLast->sum('sets') >= 0)
+                                                    text-green-base
+                                                @else
                                                     text-red-600
                                                 @endif">
                                         {{$numbersTracked->sum('sets') - $numbersTrackedLast->sum('sets')}}
@@ -397,9 +397,9 @@
                                     @else
                                         <x-svg.arrow-down class="text-red-600"></x-svg.arrow-down>
                                     @endif
-                                    <span class="@if($numbersTracked->sum('sits') - $numbersTrackedLast->sum('sits') >= 0) 
-                                                    text-green-base 
-                                                @else 
+                                    <span class="@if($numbersTracked->sum('sits') - $numbersTrackedLast->sum('sits') >= 0)
+                                                    text-green-base
+                                                @else
                                                     text-red-600
                                                 @endif">
                                         {{$numbersTracked->sum('sits') - $numbersTrackedLast->sum('sits')}}
@@ -422,9 +422,9 @@
                                     @else
                                         <x-svg.arrow-down class="text-red-600"></x-svg.arrow-down>
                                     @endif
-                                    <span class="@if($numbersTracked->sum('set_closes') - $numbersTrackedLast->sum('set_closes') >= 0) 
-                                                    text-green-base 
-                                                @else 
+                                    <span class="@if($numbersTracked->sum('set_closes') - $numbersTrackedLast->sum('set_closes') >= 0)
+                                                    text-green-base
+                                                @else
                                                     text-red-600
                                                 @endif">
                                         {{$numbersTracked->sum('set_closes') - $numbersTrackedLast->sum('set_closes')}}
@@ -447,9 +447,9 @@
                                     @else
                                         <x-svg.arrow-down class="text-red-600"></x-svg.arrow-down>
                                     @endif
-                                    <span class="@if($numbersTracked->sum('doors') - $numbersTrackedLast->sum('doors') >= 0) 
-                                                    text-green-base 
-                                                @else 
+                                    <span class="@if($numbersTracked->sum('doors') - $numbersTrackedLast->sum('doors') >= 0)
+                                                    text-green-base
+                                                @else
                                                     text-red-600
                                                 @endif">
                                         {{$numbersTracked->sum('closes') - $numbersTrackedLast->sum('closes')}}
@@ -458,21 +458,21 @@
                             </div>
                         </div>
                     </div>
-<!-- 
-                    
+<!--
+
                     <div class="flex justify-between mt-6 w-full">
                         <div>
                             <div class="font-bold text-lg">
                                 {{$graficValue}}
                             </div>
-                            <div class="flex font-semibold text-xs 
+                            <div class="flex font-semibold text-xs
                                 @if($graficValueLast > $graficValue)
                                     text-red-600
                                 @else
                                     text-green-base
                                 @endif">
                                 @if($graficValueLast > $graficValue)
-                                    <x-svg.arrow-down class="text-red-600"></x-svg.arrow-up>                                                                
+                                    <x-svg.arrow-down class="text-red-600"></x-svg.arrow-up>
                                 @else
                                     <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
                                 @endif
@@ -491,17 +491,17 @@
                         </a>
                     </div>
                     <div class="flex md:justify-between w-full" id="chart_div"></div> -->
-                    
+
                     <div class="flex justify-start mt-6">
                         <h2 class="text-lg text-gray-900">Top 5 Performing Members</h2>
                     </div>
                     <div class="flex justify-center w-full">
-                        <x-svg.spinner 
-                            color="#9fa6b2" 
-                            class="self-center hidden w-20 mt-3" 
+                        <x-svg.spinner
+                            color="#9fa6b2"
+                            class="self-center hidden w-20 mt-3"
                             wire:loading.class.remove="hidden" wire:target="setDate, setPeriod, addFilter, removeFilter">
-                        </x-svg.spinner>            
-                                                                    
+                        </x-svg.spinner>
+
                         <div class="mt-6 w-full"wire:loading.remove wire:target="setDate, setPeriod, addFilter, removeFilter">
                             <div class="flex flex-col">
                                 <div class="overflow-x-auto">
@@ -583,7 +583,7 @@
             year: '',
             no_of_days: [],
             currentDate: new Date(),
-            
+
             days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
             initDate() {
                 let today = new Date();

@@ -9,12 +9,12 @@
             <x-form :route="route('castle.offices.update', $office)" put>
                 @csrf
                 <div x-data="{ selectedRegion: null,
-                              selectedManager: null, 
-                              token: document.head.querySelector('meta[name=csrf-token]').content, 
+                              selectedManager: null,
+                              token: document.head.querySelector('meta[name=csrf-token]').content,
                               officesManagers: null,
                               regions: null }"
-                     x-init="$watch('selectedRegion', 
-                                     (region) => { 
+                     x-init="$watch('selectedRegion',
+                                     (region) => {
                                     fetch('https://' + location.hostname + '/get-offices-managers/' + region, {method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
@@ -22,7 +22,7 @@
                             fetch('https://' + location.hostname + '/get-regions/' + '{{user()->department_id}}' ,{method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
-                                    }}).then(res=> res.json()).then( (regionsData) => { 
+                                    }}).then(res=> res.json()).then( (regionsData) => {
                                         regions = regionsData
                                         selectedRegion = '{{$office->region_id}}'
                                         selectedManager = '{{$office->office_manager_id}}'
@@ -49,15 +49,15 @@
                                 </x-select>
                             </div>
                         @endif
-                      
+
                         <div class="md:col-span-3 col-span-2 @if(user()->role == 'Office Manager') hidden @endif">
-                            <x-select label="Office Manager" name="office_manager_id">
+                            <x-select label="Manager" name="office_manager_id">
                                 <template x-if="officesManagers" x-for="manager in officesManagers" :key="manager.id">
                                     <option :value="manager.id" x-text="manager.first_name + ' ' + manager.last_name"></option>
                                 </template>
                             </x-select>
                         </div>
-                      
+
                     </div>
                 </div>
                 <div class="mt-8 border-t border-gray-200 pt-5">

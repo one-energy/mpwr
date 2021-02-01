@@ -12,13 +12,14 @@
     },
     "dependencies": {
         "@tailwindcss/ui": "^0.1.4",
-        "alpinejs": "^2.4.1",
+        "alpinejs": "^2.7.0",
         "axios": "^0.19.2",
         "cross-env": "^7.0.2",
         "laravel-mix": "^5.0.4",
         "laravel-mix-purgecss": "^5.0.0",
         "sass": "^1.26.9",
         "sass-loader": "^8.0.2",
+        "sweetalert2": "^10.13.3",
         "tailwindcss": "^1.4.6"
     },
     "devDependencies": {

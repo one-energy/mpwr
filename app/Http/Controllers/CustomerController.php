@@ -27,7 +27,7 @@ class CustomerController extends Controller
         $setterFee   = $this->getSetterFee();
         $salesRepFee = $this->getSalesRepFee();
 
-        return view('customer.create', 
+        return view('customer.create',
             [
                 'bills'       => $bills,
                 'financings'  => $financings,
@@ -35,10 +35,10 @@ class CustomerController extends Controller
                 'users'       => $users,
                 'setterFee'   => $setterFee->rate ?? 0,
                 'salesRepFee' => $salesRepFee->rate ?? 0,
-            ] 
+            ]
         );
     }
-    
+
     public function delete(Customer $customer)
     {
         $customer->delete();
@@ -96,7 +96,7 @@ class CustomerController extends Controller
             ->withTitle(__('Home Owner created!'))
             ->send();
 
-        return redirect(route('customers.show', $customer->id));
+        return redirect(route('home'));
     }
 
     public function calculateCommission($customer)
@@ -109,8 +109,8 @@ class CustomerController extends Controller
         $this->authorize('view', Customer::class);
 
         $users = User::get();
-        
-        return view('customer.show', 
+
+        return view('customer.show',
         [
             'customer'   => $customer,
             'users'      => $users,
@@ -137,21 +137,21 @@ class CustomerController extends Controller
                 'panel_sold'    => 'nullable',
             ]
         );
-        
+
         if ($customer->panel_sold != $validated['panel_sold']) {
             $user = User::whereId($validated['sales_rep_id'])->first();
-    
+
             if ($validated['panel_sold'] == 1) {
                 $user->installs++;
             }
-    
+
             if ($validated['panel_sold'] == 0) {
                 $user->installs--;
             }
 
             $user->save();
         }
-        
+
         $customer->first_name    = $validated['first_name'];
         $customer->last_name     = $validated['last_name'];
         $customer->system_size   = $validated['system_size'];

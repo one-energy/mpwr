@@ -8,13 +8,13 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <x-form :route="route('castle.regions.update', $region)" put>
                 @csrf
-                <div x-data="{ selectedDepartment: null, 
+                <div x-data="{ selectedDepartment: null,
                               selectedRegionManager: null,
-                              token: document.head.querySelector('meta[name=csrf-token]').content, 
+                              token: document.head.querySelector('meta[name=csrf-token]').content,
                               departments: null,
                               regionsManager: null }"
-                     x-init="$watch('selectedDepartment', 
-                                     (department) => { 
+                     x-init="$watch('selectedDepartment',
+                                     (department) => {
                                     fetch('https://' + location.hostname + '/get-regions-managers/' + department, {method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
@@ -22,10 +22,10 @@
                             fetch('https://' + location.hostname + '/get-departments',{method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
-                                    }}).then(res=> res.json()).then( (departmentsData) => { 
+                                    }}).then(res=> res.json()).then( (departmentsData) => {
                                             departments = departmentsData
-                                            selectedRegionManager = '{{ $region->regionManger->id ?? 1}}' 
-                                            selectedDepartment = '{{$region->department_id ?? 1}}' 
+                                            selectedRegionManager = '{{ $region->regionManger->id ?? 1}}'
+                                            selectedDepartment = '{{$region->department_id ?? 1}}'
                                     })">
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                         <div class="md:col-span-3 col-span-2">
@@ -37,7 +37,7 @@
                                     <template x-for="department in departments" :key="department.id">
                                         <option :value="department.id" x-text="department.name" ></option>
                                     </template>
-                                </x-select> 
+                                </x-select>
                             </div>
                         @else
                             <div class="md:col-span-3 col-span-2">
@@ -68,7 +68,7 @@
                         @endif
                     </div>
                 </div>
-              
+
                 <div class="mt-8 border-t border-gray-200 pt-5">
                 <div class="flex justify-start">
                     <span class="inline-flex rounded-md shadow-sm">

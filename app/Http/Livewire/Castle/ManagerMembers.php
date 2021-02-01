@@ -9,7 +9,7 @@ use Livewire\Component;
 class ManagerMembers extends Component
 {
     use FullTable;
-    
+
     public $office;
 
     public function sortBy()
@@ -31,10 +31,10 @@ class ManagerMembers extends Component
         } else {
             $users = $usersQuery->whereDepartmentId(user()->department_id);
         }
-        
+
         return view('livewire.castle.manager-members', [
             'users' => $users
-                ->search($this->search)                
+                ->search($this->search)
                 ->orderBy('first_name')
                 ->get(),
         ]);
