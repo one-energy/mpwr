@@ -1,4 +1,4 @@
-@props(['label', 'name', 'value', 'tooltip', 'observation', 'disabledToUser'])
+@props(['label', 'name', 'value', 'tooltip', 'observation', 'disabledToUser', 'disabled'])
 
 @php
     $class = 'form-input block w-full pl-7 pr-12 sm:text-sm sm:leading-5';
@@ -8,6 +8,7 @@
     $tooltip        = $tooltip ?? null;
     $observation    = $observation ?? null;
     $disabledToUser = $disabledToUser ?? null;
+    $disabled       = $disabled ?? false;
 @endphp
 
 <div {{ $attributes }}>
@@ -34,10 +35,10 @@
                name="{{ $name }}" id="{{ $name }}"
                type="number"
                min="0"
-               step="0.01" 
+               step="0.01"
                value="{{ old($name, $value ?? null) }}"
-               @if($disabledToUser && user()->role == $disabledToUser) disabled @endif/>
-        
+               @if(($disabledToUser && user()->role == $disabledToUser) || $disabled) disabled @endif/>
+
         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
             <span class="text-gray-500 sm:text-sm sm:leading-5">
                 USD
@@ -56,4 +57,4 @@
         {{ $message }}
     </p>
     @enderror
-</div>                
+</div>
