@@ -70,9 +70,11 @@
                                                 <button
                                                     type="button"
                                                     class="transition ease-in-out duration-100 inline-flex cursor-pointer hover:bg-gray-200 p-1 rounded-full"
-                                                    :class="{'cursor-not-allowed opacity-25': month == 0 }"
-                                                    :disabled="month == 0 ? true : false"
-                                                    @click="month--; getNoOfDays()">
+                                                    @click="
+                                                        month == 0 ? year-- : year = year;
+                                                        month > 0 ? month-- : month = 11;
+                                                        getNoOfDays()
+                                                        ">
                                                     <svg class="h-6 w-6 text-gray-500 inline-flex"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                                     </svg>
@@ -80,9 +82,11 @@
                                                 <button
                                                     type="button"
                                                     class="transition ease-in-out duration-100 inline-flex cursor-pointer hover:bg-gray-200 p-1 rounded-full"
-                                                    :class="{'cursor-not-allowed opacity-25': month == 11 }"
-                                                    :disabled="month == 11 ? true : false"
-                                                    @click="month++; getNoOfDays()">
+                                                    @click="
+                                                        month == 11 ? year++ : year = year;
+                                                        month < 11 ? month++ : month = 0;
+                                                        getNoOfDays()
+                                                        ">
                                                     <svg class="h-6 w-6 text-gray-500 inline-flex"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                                     </svg>
