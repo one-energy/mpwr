@@ -26,7 +26,7 @@ class NumberTrackingController extends Controller
         // $this->authorize('update', [DailyNumber::class, $data['officeSelected']]);
 
         if (!empty($data['numbers'])) {
-            $date = ($data['date']) ? date('Y-m-d', strtotime($data['date'])) : date('Y-m-d', time()); 
+            $date = ($data['date']) ? date('Y-m-d', strtotime($data['date'])) : date('Y-m-d', time());
 
             foreach ($data['numbers'] as $userId => $numbers) {
                 $filteredNumbers = array_filter($numbers, function ($element) {
