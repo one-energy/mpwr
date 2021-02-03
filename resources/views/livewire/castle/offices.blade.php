@@ -36,7 +36,7 @@
                                             @lang('Region')
                                         </x-table.th>
                                         <x-table.th>
-                                            @lang('Office Manager')
+                                            @lang('Manager')
                                         </x-table.th>
                                         <x-table.th></x-table.th>
                                         <x-table.th></x-table.th>
@@ -50,20 +50,26 @@
                                             @endif
                                             <x-table.td>{{ $office->name }}</x-table.td>
                                             <x-table.td>{{ $office->region->name }}</x-table.td>
-                                            <x-table.td>{{ $office->office_manager->first_name }} {{ $office->office_manager->last_name }}</x-table.td>
+                                            @if($office->office_manager)
+                                                <x-table.td>{{ $office->office_manager->first_name }} {{ $office->office_manager->last_name }}</x-table.td>
+                                            @else
+                                                <x-table.td>Without Manager</x-table.td>
+                                            @endif
                                             <x-table.td>
                                                 <x-link :href="route('castle.offices.edit', $office)" class="text-sm">Edit</x-link>
+
                                             </x-table.td>
                                             <x-table.td>
-                                                <x-form :route="route('castle.offices.destroy', $office->id)" delete
-                                                        x-data="{deleting: false}">
-                                                    <x-link color="red" class="text-sm" type="button"
+                                                @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager" || user()->role == "Region Manager")
+                                                    <x-form :route="route('castle.offices.destroy', $office->id)" delete
+                                                            x-data="{deleting: false}">
+                                                        <x-link color="red" class="text-sm" type="button"
                                                             x-show="!deleting"
                                                             x-on:click="$dispatch('confirm', {from: $event.target})"
-                                                            x-on:confirmed="deleting = true; $el.submit()"
-                                                        >Delete</x-link>
-                                                    <span x-cloak x-show="deleting" class="text-gray-400">Deleting ...</span>
-                                                </x-form>
+                                                            x-on:confirmed="deleting = true; $el.submit()">Delete</x-link>
+                                                        <span x-cloak x-show="deleting" class="text-gray-400">Deleting ...</span>
+                                                    </x-form>
+                                                @endIf
                                             </x-table.td>
                                         </x-table.tr>
                                     @endforeach

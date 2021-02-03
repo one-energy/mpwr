@@ -8,12 +8,12 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <x-form :route="route('castle.regions.store')" post>
                 @csrf
-                <div x-data="{ selectedDepartment: null,  
-                              token: document.head.querySelector('meta[name=csrf-token]').content, 
+                <div x-data="{ selectedDepartment: null,
+                              token: document.head.querySelector('meta[name=csrf-token]').content,
                               departments: null,
                               regionsManager: null }"
-                     x-init="$watch('selectedDepartment', 
-                                     (department) => { 
+                     x-init="$watch('selectedDepartment',
+                                     (department) => {
                                     fetch('https://' + location.hostname + '/get-regions-managers/' + department, {method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
@@ -21,22 +21,22 @@
                             fetch('https://' + location.hostname + '/get-departments',{method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
-                                    }}).then(res=> res.json()).then( (departmentsData) => { 
-                                            departments = departmentsData 
-                                            selectedDepartment = '{{user()->department_id ?? 1}}' 
+                                    }}).then(res=> res.json()).then( (departmentsData) => {
+                                            departments = departmentsData
+                                            selectedDepartment = '{{user()->department_id ?? 1}}'
                                     })"
                     >
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                         <div class="md:col-span-3 col-span-2">
                             <x-input label="Region Name" name="name"></x-input>
-                        </div>                    
+                        </div>
                         @if(user()->role != "Admin" && user()->role != "Owner")
                             <div class="md:col-span-3 col-span-2 hidden">
                                 <x-select x-model="selectedDepartment" label="Department" name="department_id">
                                     <template x-for="department in departments" :key="department.id">
                                         <option :value="department.id" x-text="department.name" ></option>
                                     </template>
-                                </x-select> 
+                                </x-select>
                             </div>
                         @else
                             <div class="md:col-span-3 col-span-2">
@@ -48,7 +48,7 @@
                             </div>
                         @endif
                         <div class="md:col-span-3 col-span-2">
-                            <x-select label="Region Manager" name="region_manager_id">
+                            <x-select label="Regional Manager" name="region_manager_id">
                                 <template x-for="manager in regionsManager" :key="manager.id">
                                     <option :value="manager.id" x-text="manager.first_name + ' ' + manager.last_name"></option>
                                 </template>

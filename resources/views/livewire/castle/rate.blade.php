@@ -27,7 +27,7 @@
                                                 </x-table.th>
                                             @endif
                                             <x-table.th>
-                                                @lang('Name')
+                                                @lang('Title')
                                             </x-table.th>
                                             <x-table.th>
                                                 @lang('Rate')

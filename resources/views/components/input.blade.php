@@ -1,4 +1,4 @@
-@props(['label', 'name', 'value', 'disabledToUser'])
+@props(['label', 'name', 'value', 'disabledToUser', 'disabled'])
 
 @php
     $class = 'form-input block w-full pr-10 sm:text-sm sm:leading-5';
@@ -6,6 +6,7 @@
         $class .= 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-300 focus:shadow-outline-red';
     }
     $disabledToUser = $disabledToUser ?? null;
+    $disabled = $disabled ?? false;
 @endphp
 
 <div {{ $attributes }}>
@@ -13,10 +14,10 @@
 
     <div class="mt-1 relative rounded-md shadow-sm">
         <input {{ $attributes->except('class')->merge(['class' => $class]) }}
-               name="{{ $name }}" 
+               name="{{ $name }}"
                id="{{ $name }}"
                @if($attributes->get('type') != 'password') value="{{ old($name, $value ?? null) }}" @endif
-               @if($disabledToUser && user()->role == $disabledToUser) disabled @endif/>
+               @if(($disabledToUser && user()->role == $disabledToUser) || $disabled) disabled @endif/>
 
         @error($name)
         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">

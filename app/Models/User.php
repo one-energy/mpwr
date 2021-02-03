@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -36,13 +37,13 @@ class User extends Authenticatable implements MustVerifyEmail
     use SoftDeletes;
 
     const ROLES = [
-        ['name' => 'Owner',              'description' => 'System Owner'],
-        ['name' => 'Admin',              'description' => 'Allows access to the Admin functionality and Manage Users, Incentives and others (Admin Tab)'],
-        ['name' => 'Department Manager', 'description' => 'Allows access to Manage Users, Incentives and others'],
-        ['name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
-        ['name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
-        ['name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
-        ['name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+        ['title' => 'Owner',            'name' => 'Owner',              'description' => 'System Owner'],
+        ['title' => 'Admin',            'name' => 'Admin',              'description' => 'Allows access to the Admin functionality and Manage Users, Incentives and others (Admin Tab)'],
+        ['title' => 'VP',               'name' => 'Department Manager', 'description' => 'Allows access to Manage Users, Incentives and others'],
+        ['title' => 'Regional Manager', 'name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
+        ['title' => 'Manager',          'name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
+        ['title' => 'Sales Rep',        'name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
+        ['title' => 'Setter',           'name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
     ];
 
     const TOPLEVEL_ROLES = [
@@ -111,6 +112,102 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $this->forceFill(['master' => false]);
         $this->save();
+    }
+
+    public static function getRolesPerUrserRole(User $user)
+    {
+        if ($user->role == "Admin") {
+            $roles = [
+                ['title' => 'VP',               'name' => 'Department Manager', 'description' => 'Allows update all in departments and Region\'s Number Tracker'],
+                ['title' => 'Regional Manager', 'name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
+                ['title' => 'Manager',          'name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
+                ['title' => 'Sales Rep',        'name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
+                ['title' => 'Setter',           'name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+            ];
+        }
+        if ($user->role == "Department Manager") {
+            $roles = [
+                ['title' => 'Regional Manager', 'name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
+                ['title' => 'Manager',          'name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
+                ['title' => 'Sales Rep',        'name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
+                ['title' => 'Setter',           'name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+            ];
+        }
+        if ($user->role == "Region Manager") {
+            $roles = [
+                ['title' => 'Manager',          'name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
+                ['title' => 'Sales Rep',        'name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
+                ['title' => 'Setter',           'name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+            ];
+        }
+        if ($user->role == "Office Manager") {
+            $roles = [
+                ['title' => 'Sales Rep',        'name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
+                ['title' => 'Setter',           'name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+            ];
+        }
+
+        if ($user->role == "Owner") {
+            $roles   = User::ROLES;
+        }
+
+        return $roles;
+    }
+
+    public static function userManageOffices(User $user)
+    {
+        $offices = Office::whereOfficeManagerId($user->id)->get();
+        return count($offices) > 0 ? $offices : false;
+    }
+
+    public static function userManageRegion(User $user)
+    {
+        $regions = Region::whereRegionManagerId($user->id)->get();
+        return count($regions) > 0 ? $regions : false;
+    }
+
+    public static function userManageDepartment(User $user)
+    {
+        $departments = Department::whereDepartmentManagerId($user->id)->get();
+        return count($departments) > 0 ? $departments : false;
+    }
+
+    public static function userCanChangeRole(User $user): array
+    {
+        $response = [
+            'status'  => true,
+            'message' => ''
+        ];
+        $previous = 'This user is the manager for the';
+
+        if($offices = User::userManageOffices($user)){
+            $response['status']  = false;
+            $previous .= ' Offices:';
+            $previous = User::getChangeRoleMessage($previous, $offices);
+            $response['message'] = $previous;
+        }
+
+        if($regions = User::userManageRegion($user)){
+            $response['status']  = false;
+            $previous .= ' Regions:';
+            $previous = User::getChangeRoleMessage($previous, $regions);
+            $response['message'] = $previous;
+        }
+
+        if($departments = User::userManageDepartment($user)){
+            $response['status']  = false;
+            $previous .= ' Departments:';
+            $previous = User::getChangeRoleMessage($previous, $departments);
+            $response['message'] = $previous;
+        }
+
+        return $response;
+    }
+
+    protected static function getChangeRoleMessage(string $previous, Collection $content): string
+    {
+        $message = $previous . ' ' . $content->implode('name', ', ');
+        return $message . '. Please disassociate the user from what was mentioned before continuing.';
     }
 
     public function scopeMasters(Builder $query)

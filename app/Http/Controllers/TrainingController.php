@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Department;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
-use Illuminate\Support\Facades\Validator;
 
 class TrainingController extends Controller
 {
@@ -14,11 +13,10 @@ class TrainingController extends Controller
     public function index(Department $department, TrainingPageSection $section = null, $search = null)
     {
         $this->authorize('viewList', [TrainingPageSection::class, $department->id]);
-        
-        
+
         return view('training.index', [
-            'department'      => $department,
-            'section'         => $section,
+            'department' => $department,
+            'section'    => $section,
         ]);
     }
 
@@ -30,8 +28,7 @@ class TrainingController extends Controller
     public function manageTrainings(Department $department, TrainingPageSection $section = null)
     {
         $this->authorize('viewList', [TrainingPageSection::class, $department->id]);
-        
-        
+
         return view('castle.manage-trainings.index', [
             'department' => $department,
             'section'    => $section,
@@ -41,12 +38,12 @@ class TrainingController extends Controller
     public function deleteSection(TrainingPageSection $section)
     {
         $childsSections = TrainingPageSection::query()->whereParentId($section->id)->get();
-        
+
         foreach ($childsSections as $childSection) {
             $childSection->parent_id = $section->parent_id;
             $childSection->save();
         }
-        
+
         $section->delete();
 
         return redirect(route('castle.manage-trainings.index', [
@@ -57,12 +54,10 @@ class TrainingController extends Controller
 
     public function storeSection(TrainingPageSection $section)
     {
-        $validated = $this->validate(
-            request(),
-            [
-                'title'     => 'required|string|max:255',
-            ],
-        );        
+        $validated = request()->validate([
+            'title' => 'required|string|max:255',
+        ]);
+
         $trainingPageSection                = new TrainingPageSection();
         $trainingPageSection->title         = $validated['title'];
         $trainingPageSection->parent_id     = $section->id;
@@ -82,14 +77,11 @@ class TrainingController extends Controller
 
     public function updateSection(TrainingPageSection $section)
     {
-        $validated = $this->validate(
-            request(),
-            [
-                'title'     => 'required|string|max:255',
-            ],
-        );    
-        
-        $trainingPageContent        = TrainingPageSection::query()->whereId($section->id)->first();    
+        $validated = request()->validate([
+            'title' => 'required|string|max:255',
+        ]);
+
+        $trainingPageContent        = TrainingPageSection::query()->whereId($section->id)->first();
         $trainingPageContent->title = $validated['title'];
         $trainingPageContent->update();
 
@@ -105,19 +97,17 @@ class TrainingController extends Controller
 
     public function storeContent(TrainingPageSection $section)
     {
-        $validated = Validator::make(request()->all(), 
-            [
-                'content_title'   => 'required|string|max:255',
-                'video_url'       => 'required|string|max:255',
-                'description'     => 'required|string',
-            ],
-        )->validate();    
-        
-        $trainingPageContent                             = new TrainingPageContent();
-        $trainingPageContent->title                      = $validated['content_title'];
-        $trainingPageContent->description                = $validated['description'];
-        $trainingPageContent->video_url                  = $validated['video_url'];
-        $trainingPageContent->training_page_section_id   = $section->id;
+        $validated = request()->validate([
+            'content_title' => 'required|string|max:255',
+            'video_url'     => 'required|string|max:255',
+            'description'   => 'required|string',
+        ]);
+
+        $trainingPageContent                           = new TrainingPageContent();
+        $trainingPageContent->title                    = $validated['content_title'];
+        $trainingPageContent->description              = $validated['description'];
+        $trainingPageContent->video_url                = $validated['video_url'];
+        $trainingPageContent->training_page_section_id = $section->id;
 
         $trainingPageContent->save();
 
@@ -133,14 +123,11 @@ class TrainingController extends Controller
 
     public function updateContent(TrainingPageContent $content)
     {
-        $validated = $this->validate(
-            request(),
-            [
-                'content_title'           => 'required|string|max:255',
-                'video_url'               => 'required|string|max:255',
-                'description'             => 'required|string',
-            ],
-        );    
+        $validated = request()->validate([
+            'content_title' => 'required|string|max:255',
+            'video_url'     => 'required|string|max:255',
+            'description'   => 'required|string',
+        ]);
 
         $trainingPageContent              = TrainingPageContent::query()->whereId($content->id)->first();
         $trainingPageContent->title       = $validated['content_title'];

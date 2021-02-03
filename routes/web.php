@@ -8,10 +8,6 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\Castle\DepartmentController;
-use App\Http\Controllers\Castle\MasterInvitationController;
-use App\Http\Controllers\Castle\MastersController;
-use App\Http\Controllers\Castle\ResponseMasterInvitationController;
-use App\Http\Controllers\Castle\RevokeMasterAccessController;
 use App\Http\Controllers\Castle\UsersController;
 use App\Http\Controllers\Castle\ManageIncentivesController;
 use App\Http\Controllers\Castle\OfficeController;
@@ -22,9 +18,6 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ScoreboardController;
 use App\Http\Controllers\TrainingController;
-use App\Http\Controllers\TrainingSettingsController;
-use App\Http\Controllers\TrainingSettingsBestPracticesController;
-use App\Http\Controllers\TrainingSettingsBestPracticesWhatToSayController;
 use App\Http\Controllers\IncentivesController;
 use App\Http\Controllers\NumberTrackingController;
 use App\Http\Controllers\ProfileChangePasswordController;
@@ -53,8 +46,6 @@ Route::post('register/{token}', [InvitationController::class, 'register']);
 
 Route::middleware(['auth', 'verified'])->group(function () {
     //region Castle
-    Route::post('castle/masters/invite/response', ResponseMasterInvitationController::class)->name('castle.masters.invite.response');
-
     Route::prefix('castle/')->middleware('castle')->name('castle.')->group(function () {
         Route::get('dashboard', HomeController::class)->name('dashboard');
 

@@ -60,7 +60,7 @@ class OfficeController extends Controller
         $office->name              = $validated['name'];
         $office->region_id         = $validated['region_id'];
         $office->office_manager_id = $validated['office_manager_id'];
-        
+
         $office->save();
 
         alert()
@@ -115,7 +115,7 @@ class OfficeController extends Controller
         $office->name              = $validated['name'];
         $office->region_id         = $validated['region_id'];
         $office->office_manager_id = $validated['office_manager_id'];
-        
+
         $office->save();
 
         alert()
