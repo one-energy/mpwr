@@ -24,7 +24,7 @@ class DailyEntry extends Component
     public $missingOffices = [];
 
     public $usersLastDayEntries;
-
+    
     protected $listeners = [
         'dailyNumbersSaved' => 'updateSum',
         'getMissingDates'   => 'getMissingDate',
@@ -53,12 +53,12 @@ class DailyEntry extends Component
             })
             ->orderBy($this->sortBy())
             ->select(
-                'users.*',
-                'daily_numbers.doors',
-                'daily_numbers.hours',
-                'daily_numbers.sets',
-                'daily_numbers.sits',
-                'daily_numbers.set_closes',
+                'users.*', 
+                'daily_numbers.doors', 
+                'daily_numbers.hours', 
+                'daily_numbers.sets', 
+                'daily_numbers.sits', 
+                'daily_numbers.set_closes', 
                 'daily_numbers.closes'
             )
             ->get();
@@ -113,21 +113,6 @@ class DailyEntry extends Component
         empty($office);
     }
 
-    public function save($value, $userId, $inputType)
-    {
-        $filteredNumbers = [
-            $inputType => $value
-        ];
-        if ($value) {
-            DailyNumber::updateOrCreate(
-                [
-                    'user_id' => $userId,
-                    'date'    => $this->dateSelected,
-                ],
-                $filteredNumbers
-            );
-        }
-    }
     public function sortBy()
     {
         return 'first_name';
@@ -166,11 +151,11 @@ class DailyEntry extends Component
         if (user()->role == "Office Manager") {
             $query->where("offices.office_manager_id", "=", user()->id);
         }
-
+        
         if (user()->role == "Setter" || user()->role == "Sales Rep") {
             $query->where("offices.id", "=", user()->office_id);
         }
-
+        
         return $query;
     }
 }
