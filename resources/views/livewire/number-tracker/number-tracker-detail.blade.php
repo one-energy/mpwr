@@ -144,7 +144,7 @@
                         <article>
                             <div class="border-b border-gray-200" x-data="{ open: false }">
                                 <header class="flex justify-between items-center py-2 cursor-pointer select-none" @click="open = true">
-                                    <span class="text-gray-700 font-thin text-sm">
+                                    <span class="text-gray-700 font-thin text-sm" x-data="open">
                                         Regions
                                     </span>
                                     <div class="ml-4">
