@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Financer;
+use App\Financing;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -54,6 +56,21 @@ class Customer extends Model
     public function userSetter()
     {
         return $this->belongsTo(User::class, 'setter_id');
+    }
+
+    public function financer()
+    {
+        return $this->hasOne(Financer::class);
+    }
+
+    public function financing()
+    {
+        return $this->hasOne(Financing::class);
+    }
+
+    public function term()
+    {
+        return $this->hasOne(Term::class);
     }
 
     public function getOpenedByAttribute()

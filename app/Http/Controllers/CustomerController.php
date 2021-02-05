@@ -58,9 +58,10 @@ class CustomerController extends Controller
                 'first_name'    => 'required|string|min:3|max:255',
                 'last_name'     => 'required|string|min:3|max:255',
                 'bill'          => 'required',
-                'financing'     => 'required',
+                'financing_id'  => 'required',
+                'financer_id'   => 'nullable',
+                'term_id'       => 'required',
                 'system_size'   => 'nullable',
-                'pay'           => 'nullable',
                 'adders'        => 'nullable',
                 'epc'           => 'nullable',
                 'setter_id'     => 'nullable',
@@ -75,9 +76,10 @@ class CustomerController extends Controller
         $customer->first_name    = $validated['first_name'];
         $customer->last_name     = $validated['last_name'];
         $customer->bill          = $validated['bill'];
-        $customer->financing     = $validated['financing'];
+        $customer->financing_id  = $validated['financing_id'];
+        $customer->financer_id   = $validated['financer_id'];
+        $customer->term_id       = $validated['term_id'];
         $customer->system_size   = $validated['system_size'];
-        $customer->pay           = $validated['pay'];
         $customer->adders        = $validated['adders'];
         $customer->epc           = $validated['epc'];
         $customer->setter_id     = $validated['setter_id'];
