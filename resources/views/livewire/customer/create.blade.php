@@ -88,20 +88,22 @@
                         @endif
 
                         <div class="col-span-2 md:col-span-3">
-                            <x-select label="Setter" name="setter_id">
+                            <x-select wire:change="getSetterRate($event.target.value)" label="Setter" name="setter_id">
                                 <option value="">None</option>
-                                <template x-if="users" x-for="user in users" :key="user.id">
-                                    <option x-show="user.role == 'Setter'" :value="user.id" x-text="user.first_name + ' ' + user.last_name"></option>
-                                </template>
+                                @foreach($users as $setter)
+                                    @if($setter->role == 'Setter')
+                                        <option value="{{$setter->id}}">{{$setter->first_name}} {{$setter->last_name}}</option>
+                                    @endif
+                                @endforeach
                             </x-select>
                         </div>
 
                         <div class="col-span-2 md:col-span-3">
-                            <x-input-currency label="Setter Fee" name="setter_fee" value="{{$setterFee}}" readonly></x-input>
+                            <x-input-currency wire:model="setterRate" label="Setter Fee" name="setter_fee" value="{{$setterFee}}" readonly></x-input>
                         </div>
 
                         <div class="col-span-2 md:col-span-3">
-                            <x-select x-model="saleRepSelected" label="Sales Rep Fee" name="sales_rep_id">
+                            <x-select wire:change="getSalesRepRate($event.target.value)" label="Sales Rep" name="sales_rep_id">
                                 <option value="">None</option>
                                 @foreach($users as $rep)
                                     <option value="{{$rep->id}}">{{$rep->first_name}} {{$rep->last_name}}</option>
@@ -110,7 +112,7 @@
                         </div>
 
                         <div  class="col-span-2 md:col-span-3">
-                            <x-input-currency x-model="salesRepFee" label="Sales Rep Fee" name="sales_rep_fee"></x-input>
+                            <x-input-currency wire:model="salesRepRate" label="Sales Rep Fee" name="sales_rep_fee"></x-input>
                         </div>
 
                         @if($selecteFinancer == 1)
@@ -120,7 +122,7 @@
                         @endif
 
                         <div class="col-span-2 col-start-5">
-                            <x-input-currency label="Sales Rep Comission" name="sales_rep_comission"></x-input>
+                            <x-input-currency wire:model="salesRepComission" label="Sales Rep Comission" name="sales_rep_comission"></x-input>
                         </div>
                     </div>
                 </div>

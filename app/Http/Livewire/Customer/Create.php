@@ -18,9 +18,15 @@ class Create extends Component
 
     public $financings;
 
+    public $salesRepRate;
+
+    public $setterRate;
+
     public $selecteFinanacing;
 
     public $selecteFinancer;
+
+    public $salesRepComission;
 
     public function render()
     {
@@ -41,5 +47,38 @@ class Create extends Component
     public function getSalesRepFee()
     {
         return Rates::whereRole('Sales Rep')->orderBy('rate', 'desc')->first();
+    }
+
+    public function getSalesRepRate($userId)
+    {
+        $this->salesRepRate = $this->getUserRate($userId);
+        $this->calcComission();
+    }
+
+    public function getSetterRate($userId)
+    {
+        $this->setterRate = $this->getUserRate($userId);
+        $this->calcComission();
+    }
+
+    public function getUserRate($userId)
+    {
+        $user = User::whereId($userId)->first();
+
+        $rate = Rates::whereRole($user->role);
+        $rate->when($user->role == 'Sales Rep', function($query) use ($user) {
+            $query->where('time', '<=', $user->installs)->orderBy('time', 'desc');
+        });
+
+        if ($rate) {
+            return $user->pay;
+        }
+
+        return $rate->first()->rate;
+    }
+
+    public function calcComission()
+    {
+        $this->salesRepComission = 5;
     }
 }
