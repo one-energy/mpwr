@@ -2,19 +2,16 @@
 
 namespace App\Http\Livewire\Customer;
 
-use App\Models\Financing;
-use App\Models\Financer;
 use App\Models\Customer;
+use App\Models\Financer;
+use App\Models\Financing;
 use App\Models\Rates;
-use App\Models\User;
 use App\Models\Term;
+use App\Models\User;
 use Livewire\Component;
 
-class Create extends Component
+class Edit extends Component
 {
-
-    public int $openedById;
-
     public Customer $customer;
 
     protected $rules = [
@@ -31,23 +28,15 @@ class Create extends Component
         'customer.setter_fee'          => 'required',
         'customer.sales_rep_id'        => 'required',
         'customer.sales_rep_fee'       => 'required',
-        'customer.enium_points'        => 'required',
-        'customer.sales_rep_comission' => 'required',
     ];
-
-    public $bills;
-
-    public function mount()
-    {
-        $this->customer = new Customer();
-    }
 
     public function render()
     {
-        return view('livewire.customer.create',[
+        return view('livewire.customer.edit', [
             'setterFee'  => $this->getSetterFee(),
-            'financings' => Financing::all(),
             'users'      => User::all(),
+            'bills'      => Customer::BILLS,
+            'financings' => Financing::all(),
             'financers'  => Financer::all(),
             'terms'      => Term::all(),
         ]);

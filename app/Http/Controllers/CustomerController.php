@@ -52,8 +52,7 @@ class CustomerController extends Controller
 
     public function store()
     {
-        $validated = $this->validate(
-            request(),
+        $validated = request()->validate(
             [
                 'first_name'    => 'required|string|min:3|max:255',
                 'last_name'     => 'required|string|min:3|max:255',
@@ -123,13 +122,11 @@ class CustomerController extends Controller
     {
         $this->authorize('update', Customer::class);
 
-        $validated = $this->validate(
-            request(),
+        $validated = request()->validate(
             [
                 'first_name'    => 'required|string|min:3|max:255',
                 'last_name'     => 'required|string|min:3|max:255',
                 'system_size'   => 'nullable',
-                'pay'           => 'nullable',
                 'adders'        => 'nullable',
                 'epc'           => 'nullable',
                 'setter_id'     => 'nullable',
@@ -157,7 +154,6 @@ class CustomerController extends Controller
         $customer->first_name    = $validated['first_name'];
         $customer->last_name     = $validated['last_name'];
         $customer->system_size   = $validated['system_size'];
-        $customer->pay           = $validated['pay'];
         $customer->adders        = $validated['adders'];
         $customer->epc           = $validated['epc'];
         $customer->setter_id     = $validated['setter_id'];

@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Financer;
-use App\Financing;
+use App\Models\Financer;
+use App\Models\Financing;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
