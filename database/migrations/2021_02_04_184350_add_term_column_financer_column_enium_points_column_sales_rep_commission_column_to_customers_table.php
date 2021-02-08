@@ -35,9 +35,7 @@ class AddTermColumnFinancerColumnEniumPointsColumnSalesRepCommissionColumnToCust
     public function down()
     {
         Schema::table('customers', function (Blueprint $table) {
-            $table->dropForeign(['financing_id']);
-            $table->dropForeign(['financer_id']);
-            $table->dropForeign(['term_id']);
+            $table->dropForeign(['financing_id', 'financer_id', 'term_id']);
 
             $table->dropColumn('financing_id');
             $table->dropColumn('financer_id');
