@@ -1,6 +1,6 @@
 <div>
     <x-form :route="route('number-tracking.store')">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8" x-data>
             <div class="md:flex">
                 <div class="py-5 md:w-1/3 LG:1/4">
                     <div class="flex-row">
@@ -263,14 +263,14 @@
                                             </x-slot>
                                             <x-slot name="body">
                                                 @foreach($users as $user)
-                                                    <x-table.tr :loop="$loop">
+                                                    <x-table.tr :loop="$loop" wire:key="user.id-{{$user->id}}">
                                                         <x-table.td>
                                                             {{ $user->first_name . ' ' . $user->last_name }}
                                                         </x-table.td>
                                                         <x-table.td>
                                                             <input
                                                                 type="number"
-                                                                x-on:focusout="@this.call('save', $event.target.value, {{$user->id}}, 'doors')"
+                                                                x-on:focusout="$wire.save($event.target.value, {{$user->id}}, 'doors')"
                                                                 min="0"
                                                                 name="numbers[{{ $user->id }}][doors]"
                                                                 class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
@@ -281,7 +281,7 @@
                                                                 type="number"
                                                                 min="0"
                                                                 max="24"
-                                                                x-on:focusout="@this.call('save', $event.target.value, {{$user->id}}, 'hours')"
+                                                                x-on:focusout="$wire.save($event.target.value, {{$user->id}}, 'hours')"
                                                                 oninvalid="this.setCustomValidity('Value must be less than or equal 24')"
                                                                 onchange="this.setCustomValidity('')"
                                                                 step="any"
@@ -293,7 +293,7 @@
                                                             <input
                                                                 type="number"
                                                                 min="0"
-                                                                x-on:focusout="@this.call('save', $event.target.value, {{$user->id}}, 'sets')"
+                                                                x-on:focusout="$wire.save($event.target.value, {{$user->id}}, 'sets')"
                                                                 name="numbers[{{ $user->id }}][sets]"
                                                                 class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
                                                                 value="{{ $user->sets }}"/>
@@ -302,7 +302,7 @@
                                                             <input
                                                                 type="number"
                                                                 min="0"
-                                                                x-on:focusout="@this.call('save', $event.target.value, {{$user->id}}, 'sits')"
+                                                                x-on:focusout="$wire.save($event.target.value, {{$user->id}}, 'sits')"
                                                                 name="numbers[{{ $user->id }}][sits]"
                                                                 class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
                                                                 value="{{ $user->sits }}"/>
@@ -311,7 +311,7 @@
                                                             <input
                                                                 type="number"
                                                                 min="0"
-                                                                x-on:focusout="@this.call('save', $event.target.value, {{$user->id}}, 'set_closes')"
+                                                                x-on:focusout="$wire.save($event.target.value, {{$user->id}}, 'set_closes')"
                                                                 name="numbers[{{ $user->id }}][set_closes]"
                                                                 class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
                                                                 value="{{ $user->set_closes }}"/>
@@ -320,7 +320,7 @@
                                                             <input
                                                                 type="number"
                                                                 min="0"
-                                                                x-on:focusout="@this.call('save', $event.target.value, {{$user->id}}, 'closes')"
+                                                                x-on:focusout="$wire.save($event.target.value, {{$user->id}}, 'closes')"
                                                                 name="numbers[{{ $user->id }}][closes]"
                                                                 class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
                                                                 value="{{ $user->closes }}"/>
