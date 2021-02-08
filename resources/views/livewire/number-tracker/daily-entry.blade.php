@@ -227,7 +227,8 @@
                     <x-svg.spinner
                         color="#9fa6b2"
                         class="self-center hidden w-20 mt-3"
-                        wire:loading.class.remove="hidden">
+                        wire:loading.class.remove="hidden"
+                        wire:target="setOffice, setDate">
                     </x-svg.spinner>
 
                     <div class="w-full mt-3">
@@ -235,7 +236,7 @@
                             <div class="flex flex-col">
                                 <div class="overflow-x-auto">
                                     <div class="inline-block min-w-full overflow-hidden align-middle">
-                                        <x-table wire:loading.remove>
+                                        <x-table wire:loading.remove wire:target="setOffice, setDate">
                                             <x-slot name="header">
                                                 <x-table.th-tr>
                                                     <x-table.th by="region_member">
