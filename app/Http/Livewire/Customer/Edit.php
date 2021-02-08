@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Customer;
 
 use App\Models\Customer;
+use App\Models\Department;
 use App\Models\Financer;
 use App\Models\Financing;
 use App\Models\Rates;
@@ -13,6 +14,8 @@ use Livewire\Component;
 class Edit extends Component
 {
     public Customer $customer;
+
+    public int $departmentId;
 
     protected $rules = [
         'customer.first_name'          => ['required', 'string', 'max:255'],
@@ -32,12 +35,22 @@ class Edit extends Component
         'customer.sales_rep_comission' => 'required',
     ];
 
+    public function mount()
+    {
+        if(user()->role != 'Admin' && user()->role != 'Owner'){
+            $this->departmentId = user()->department_id;
+        } else {
+            $this->departmentId = Department::first()->id;
+        }
+    }
+
     public function render()
     {
         $this->customer->calcComission();
         return view('livewire.customer.edit', [
+            'departments' => Department::all(),
             'setterFee'  => $this->getSetterFee(),
-            'users'      => User::all(),
+            'users'      => User::whereDepartmentId($this->departmentId)->get(),
             'bills'      => Customer::BILLS,
             'financings' => Financing::all(),
             'financers'  => Financer::all(),

@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Customer;
 use App\Models\Financing;
 use App\Models\Financer;
 use App\Models\Customer;
+use App\Models\Department;
 use App\Models\Rates;
 use App\Models\User;
 use App\Models\Term;
@@ -14,6 +15,8 @@ class Create extends Component
 {
 
     public int $openedById;
+
+    public int $departmentId;
 
     public Customer $customer;
 
@@ -41,17 +44,23 @@ class Create extends Component
     public function mount()
     {
         $this->customer = new Customer();
+        if(user()->role != 'Admin' && user()->role != 'Owner'){
+            $this->departmentId = user()->department_id;
+        } else {
+            $this->departmentId = Department::first()->id;
+        }
     }
 
     public function render()
     {
         $this->customer->calcComission();
         return view('livewire.customer.create',[
-            'setterFee'  => $this->getSetterFee(),
-            'financings' => Financing::all(),
-            'users'      => User::all(),
-            'financers'  => Financer::all(),
-            'terms'      => Term::all(),
+            'departments' => Department::all(),
+            'setterFee'   => $this->getSetterFee(),
+            'financings'  => Financing::all(),
+            'users'       => User::whereDepartmentId($this->departmentId)->get(),
+            'financers'   => Financer::all(),
+            'terms'       => Term::all(),
         ]);
     }
 

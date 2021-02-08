@@ -8,6 +8,15 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <x-form :route="route('customers.store')" post>
                 @csrf
+                @if(user()->role == 'Admin' || user()->role == 'Owner')
+                    <x-select wire:model="departmentId" label="Department" name="departmentId">
+                        @foreach($departments as $department)
+                            <option value="{{ $department->id }}" {{ old('departmentId') == $department ? 'selected' : '' }}>
+                                {{ $department->name }}
+                            </option>
+                        @endforeach
+                    </x-select>
+                @endif
                 <div >
                     <input type="hidden" value="{{ $openedById }}" name="opened_by_id">
                     <div class="sm:grid sm:grid-cols-2 sm:row-gap-6 sm:col-gap-4 mt-6 md:grid-cols-6">
