@@ -20,7 +20,7 @@
                         </div>
 
                         <div class="col-span-1 md:col-span-2">
-                            <x-input-add-on wire:focusout="calcComission()" wire:model="customer.system_size" label="System Size" name="system_size" addOn="kW"></x-input>
+                            <x-input-add-on wire:model="customer.system_size" label="System Size" name="system_size" addOn="kW"></x-input>
                         </div>
 
                         <div class="col-span-1">
@@ -37,11 +37,11 @@
                         </div>
 
                         <div class="col-span-2 md:col-span-3">
-                            <x-input wire:focusout="calcComission()" wire:model="customer.adders" label="Adders Total" name="adders" step="0.01" type="number"></x-input>
+                            <x-input wire:model="customer.adders" label="Adders Total" name="adders" step="0.01" type="number"></x-input>
                         </div>
 
                         <div class="col-span-1 md:col-span-2">
-                            <x-input-currency wire:focusout="calcComission()" wire:model="customer.epc" label="EPC" name="epc" observation="Sold Price"></x-input>
+                            <x-input-currency wire:model="customer.epc" label="EPC" name="epc" observation="Sold Price"></x-input>
                         </div>
 
                         <div class="col-span-1">

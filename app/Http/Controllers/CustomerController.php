@@ -54,38 +54,42 @@ class CustomerController extends Controller
     {
         $validated = request()->validate(
             [
-                'first_name'    => 'required|string|min:3|max:255',
-                'last_name'     => 'required|string|min:3|max:255',
-                'bill'          => 'required',
-                'financing_id'  => 'required',
-                'financer_id'   => 'nullable',
-                'term_id'       => 'required',
-                'system_size'   => 'nullable',
-                'adders'        => 'nullable',
-                'epc'           => 'nullable',
-                'setter_id'     => 'nullable',
-                'setter_fee'    => 'nullable',
-                'opened_by_id'  => 'required',
-                'sales_rep_fee' => 'nullable',
-                'sales_rep_id'  => 'integer',
+                'first_name'          => 'required|string|min:3|max:255',
+                'last_name'           => 'required|string|min:3|max:255',
+                'bill'                => 'required',
+                'financing_id'        => 'required',
+                'financer_id'         => 'nullable',
+                'term_id'             => 'nullable',
+                'system_size'         => 'required',
+                'adders'              => 'required',
+                'epc'                 => 'required',
+                'setter_id'           => 'required',
+                'setter_fee'          => 'required',
+                'opened_by_id'        => 'required',
+                'sales_rep_fee'       => 'required',
+                'sales_rep_id'        => 'required',
+                'sales_rep_comission' => 'required',
+                'enium_points'        => 'nullable',
             ]
         );
 
-        $customer                = new Customer();
-        $customer->first_name    = $validated['first_name'];
-        $customer->last_name     = $validated['last_name'];
-        $customer->bill          = $validated['bill'];
-        $customer->financing_id  = $validated['financing_id'];
-        $customer->financer_id   = $validated['financer_id'];
-        $customer->term_id       = $validated['term_id'];
-        $customer->system_size   = $validated['system_size'];
-        $customer->adders        = $validated['adders'];
-        $customer->epc           = $validated['epc'];
-        $customer->setter_id     = $validated['setter_id'];
-        $customer->setter_fee    = $validated['setter_fee'];
-        $customer->sales_rep_fee = $validated['sales_rep_fee'];
-        $customer->sales_rep_id  = $validated['sales_rep_id'];
-        $customer->opened_by_id  = $validated['opened_by_id'];
+        $customer                      = new Customer();
+        $customer->first_name          = $validated['first_name'];
+        $customer->last_name           = $validated['last_name'];
+        $customer->bill                = $validated['bill'];
+        $customer->financing_id        = $validated['financing_id'];
+        $customer->financer_id         = $validated['financer_id'] ?? null;
+        $customer->term_id             = $validated['term_id'] ?? null;
+        $customer->system_size         = $validated['system_size'];
+        $customer->adders              = $validated['adders'];
+        $customer->epc                 = $validated['epc'];
+        $customer->setter_id           = $validated['setter_id'];
+        $customer->setter_fee          = $validated['setter_fee'];
+        $customer->sales_rep_fee       = $validated['sales_rep_fee'];
+        $customer->sales_rep_id        = $validated['sales_rep_id'];
+        $customer->sales_rep_comission = $validated['sales_rep_comission'];
+        $customer->enium_points        = $validated['enium_points'] ?? 0;
+        $customer->opened_by_id        = $validated['opened_by_id'];
 
         $commission = $this->calculateCommission($customer);
 
@@ -126,13 +130,17 @@ class CustomerController extends Controller
             [
                 'first_name'    => 'required|string|min:3|max:255',
                 'last_name'     => 'required|string|min:3|max:255',
-                'system_size'   => 'nullable',
-                'adders'        => 'nullable',
-                'epc'           => 'nullable',
-                'setter_id'     => 'nullable',
-                'setter_fee'    => 'nullable',
-                'sales_rep_id'  => 'nullable',
-                'sales_rep_fee' => 'nullable',
+                'system_size'   => 'required',
+                'bill'          => 'required',
+                'adders'        => 'required',
+                'epc'           => 'required',
+                'financing_id'  => 'required',
+                'financer_id'   => 'integer|nullable',
+                'term_id'       => 'integer|nullable',
+                'setter_id'     => 'required',
+                'setter_fee'    => 'required',
+                'sales_rep_fee' => 'required',
+                'sales_rep_id'  => 'required',
                 'panel_sold'    => 'nullable',
             ]
         );
@@ -153,14 +161,17 @@ class CustomerController extends Controller
 
         $customer->first_name    = $validated['first_name'];
         $customer->last_name     = $validated['last_name'];
+        $customer->bill          = $validated['bill'];
+        $customer->financing_id  = $validated['financing_id'];
+        $customer->financer_id   = $validated['financer_id'] ?? null;
+        $customer->term_id       = $validated['term_id'] ?? null;
         $customer->system_size   = $validated['system_size'];
         $customer->adders        = $validated['adders'];
         $customer->epc           = $validated['epc'];
         $customer->setter_id     = $validated['setter_id'];
         $customer->setter_fee    = $validated['setter_fee'];
-        $customer->sales_rep_id  = $validated['sales_rep_id'];
         $customer->sales_rep_fee = $validated['sales_rep_fee'];
-        $customer->panel_sold    = $validated['panel_sold'];
+        $customer->sales_rep_id  = $validated['sales_rep_id'];
 
         $commission = $this->calculateCommission($customer);
 

@@ -1,6 +1,6 @@
 <?php
 
-use App\Financing;
+use App\Models\Financing;
 use Illuminate\Database\Seeder;
 
 class FinancingsSeeder extends Seeder

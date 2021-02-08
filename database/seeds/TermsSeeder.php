@@ -1,6 +1,6 @@
 <?php
 
-use App\Term;
+use App\Models\Term;
 use Illuminate\Database\Seeder;
 
 class TermsSeeder extends Seeder

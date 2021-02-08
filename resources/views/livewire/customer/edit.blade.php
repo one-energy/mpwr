@@ -20,11 +20,11 @@
                             </div>
 
                             <div class="col-span-1 md:col-span-2">
-                                <x-input-add-on wire:focusout="calcComission()" wire:model="customer.system_size" label="System Size" name="system_size" addOn="kW"></x-input>
+                                <x-input-add-on wire:model="customer.system_size" label="System Size" name="system_size" addOn="kW"></x-input>
                             </div>
 
                             <div class="col-span-1">
-                                <x-select label="Bill" name="bill">
+                                <x-select wire:model="customer.bill" label="Bill" name="bill">
                                     @if (old('bill') == '')
                                         <option value="" selected>None</option>
                                     @endif
@@ -37,11 +37,11 @@
                             </div>
 
                             <div class="col-span-2 md:col-span-3">
-                                <x-input wire:focusout="calcComission()" wire:model="customer.adders" label="Adders Total" name="adders" step="0.01" type="number"></x-input>
+                                <x-input wire:model="customer.adders" label="Adders Total" name="adders" step="0.01" type="number"></x-input>
                             </div>
 
                             <div class="col-span-1 md:col-span-2">
-                                <x-input-currency wire:focusout="calcComission()" wire:model="customer.epc" label="EPC" name="epc" observation="Sold Price"></x-input>
+                                <x-input-currency wire:model="customer.epc" label="EPC" name="epc" observation="Sold Price"></x-input>
                             </div>
 
                             <div class="col-span-1">
@@ -70,21 +70,21 @@
                                         @endforeach
                                     </x-select>
                                 </div>
-                            @endif
 
-                            @if($customer->financer_id == 1)
-                                <div class="w-full col-span-1 md:col-span-2">
-                                    <x-select wire:model="customer.term_id" label="Term" name="term_id" readonly>
-                                        @if (old('term_id') == '')
-                                            <option value="" selected>None</option>
-                                        @endif
-                                        @foreach($terms as $term)
-                                            <option value="{{ $term->id }}" {{ old('term_id') == $term->id ? 'selected' : '' }}>
-                                                {{ $term->value }}
-                                            </option>
-                                        @endforeach
-                                    </x-select>
-                                </div>
+                                @if($customer->financer_id == 1)
+                                    <div class="w-full col-span-1 md:col-span-2">
+                                        <x-select wire:model="customer.term_id" label="Term" name="term_id" readonly>
+                                            @if (old('term_id') == '')
+                                                <option value="" selected>None</option>
+                                            @endif
+                                            @foreach($terms as $term)
+                                                <option value="{{ $term->id }}" {{ old('term_id') == $term->id ? 'selected' : '' }}>
+                                                    {{ $term->value }}
+                                                </option>
+                                            @endforeach
+                                        </x-select>
+                                    </div>
+                                @endif
                             @endif
 
                             <div class="col-span-2 md:col-span-3">
@@ -115,6 +115,16 @@
                                 <x-input-currency wire:model="customer.sales_rep_fee" label="Sales Rep Fee" name="sales_rep_fee"></x-input>
                             </div>
 
+                        @if($customer->financer_id == 1)
+                            <div class="col-span-1 col-start-4 hidden">
+                                <x-input-currency wire:model="customer.enium_points" label="Enium Points" name="enium_points" readonly></x-input>
+                            </div>
+                        @endif
+
+                        <div class="col-span-2 col-start-5 hidden">
+                            <x-input-currency  wire:model="customer.sales_rep_comission" label="Sales Rep Comission" name="sales_rep_comission"></x-input>
+                        </div>
+
                         <div class="md:col-span-4 sm:cols-span-2 flex items-center justify-between">
                             <input type="hidden" name="panel_sold" value="0">
                             <x-checkbox label="Installed and Paid" name="panel_sold" :checked="old('panel_sold', $customer->panel_sold)" :disabledToUser="'Setter'"></x-checkbox>
@@ -137,7 +147,7 @@
                             </label>
                             <div class="mt-3">
                             <span class="block w-full font-bold transition duration-150 ease-in-out sm:text-sm sm:leading-5">
-                                ${{ number_format($customer->commission,2) }}
+                                ${{ number_format($customer->sales_rep_comission,2) }}
                             </span>
                             </div>
                         </div>

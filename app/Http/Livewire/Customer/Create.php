@@ -25,14 +25,15 @@ class Create extends Component
         'customer.adders'              => 'required',
         'customer.epc'                 => 'required',
         'customer.financing_id'        => 'required',
-        'customer.financer_id'         => 'required',
-        'customer.term_id'             => 'required',
+        'customer.financer_id'         => 'nullable',
+        'customer.term_id'             => 'nullable',
         'customer.setter_id'           => 'required',
         'customer.setter_fee'          => 'required',
         'customer.sales_rep_id'        => 'required',
         'customer.sales_rep_fee'       => 'required',
-        'customer.enium_points'        => 'required',
+        'customer.enium_points'        => 'nullable',
         'customer.sales_rep_comission' => 'required',
+        'customer.opened_by_id'        => 'required',
     ];
 
     public $bills;
@@ -44,6 +45,7 @@ class Create extends Component
 
     public function render()
     {
+        $this->customer->calcComission();
         return view('livewire.customer.create',[
             'setterFee'  => $this->getSetterFee(),
             'financings' => Financing::all(),
@@ -66,36 +68,30 @@ class Create extends Component
     public function getSalesRepRate($userId)
     {
         $this->customer->sales_rep_fee = $this->getUserRate($userId);
-
-        $this->calcComission();
     }
 
     public function getSetterRate($userId)
     {
         $this->customer->setter_fee = $this->getUserRate($userId);
-        $this->calcComission();
     }
 
     public function getUserRate($userId)
     {
         $user = User::whereId($userId)->first();
 
-        $rate = Rates::whereRole($user->role);
-        $rate->when($user->role == 'Sales Rep', function($query) use ($user) {
-            $query->where('time', '<=', $user->installs)->orderBy('time', 'desc');
-        });
+        if($user) {
+            $rate = Rates::whereRole($user->role);
+            $rate->when($user->role == 'Sales Rep', function($query) use ($user) {
+                $query->where('time', '<=', $user->installs)->orderBy('time', 'desc');
+            });
 
-        if ($rate) {
-            return $user->pay;
+            if ($rate) {
+                return $user->pay;
+            }
+
+            return $rate->first()->rate;
         }
 
-        return $rate->first()->rate;
-    }
-
-    public function calcComission()
-    {
-        if($this->customer->epc && $this->customer->sales_rep_fee && $this->customer->setter_fee && $this->customer->system_size && $this->customer->adders) {
-            $this->customer->sales_rep_comission = (($this->customer->epc - $this->customer->sales_rep_fee - $this->customer->setter_fee) * ($this->customer->system_size * 1000)) - $this->customer->adders;
-        }
+        return 0;
     }
 }

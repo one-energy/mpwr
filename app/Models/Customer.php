@@ -82,4 +82,13 @@ class Customer extends Model
     {
         return User::find($this->setter_id);
     }
+
+    public function calcComission()
+    {
+        if($this->epc && $this->sales_rep_fee && $this->setter_fee && $this->system_size && $this->adders) {
+            $this->sales_rep_comission = (($this->epc - $this->sales_rep_fee - $this->setter_fee) * ($this->system_size * 1000)) - $this->adders;
+        } else {
+            $this->sales_rep_comission = 0;
+        }
+    }
 }
