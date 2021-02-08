@@ -14,7 +14,7 @@ class AddTermColumnFinancerColumnEniumPointsColumnSalesRepCommissionColumnToCust
     public function up()
     {
         Schema::table('customers', function (Blueprint $table) {
-            $table->foreignId('financing_id')->after('id');
+            $table->foreignId('financing_id')->nullable()->after('id');
             $table->foreignId('financer_id')->nullable()->after('financing_id');
             $table->foreignId('term_id')->nullable()->after('financer_id');
 
