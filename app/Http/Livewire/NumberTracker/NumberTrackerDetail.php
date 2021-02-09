@@ -23,7 +23,7 @@ class NumberTrackerDetail extends Component
     public $users = [];
 
     public $userSearch = "";
-    
+
     public $numbersTrackedLast = [];
 
     public $date;
@@ -88,14 +88,14 @@ class NumberTrackerDetail extends Component
                 $join->on('users.id', '=', 'daily_numbers.user_id');
             })
             ->join('offices', 'users.office_id', '=', 'offices.id')
-            ->select([DB::raw("users.first_name, users.last_name, daily_numbers.id, daily_numbers.user_id, SUM(doors) as doors,  
+            ->select([DB::raw("users.first_name, users.last_name, daily_numbers.id, daily_numbers.user_id, SUM(doors) as doors,
                     SUM(hours) as hours,  SUM(sets) as sets,  SUM(sits) as sits,  SUM(set_closes) as set_closes, SUM(closes) as closes")]);
 
         $queryLast = DailyNumber::query()
             ->leftJoin('users', function ($join) {
                 $join->on('users.id', '=', 'daily_numbers.user_id');
             })
-            ->select([DB::raw("users.first_name, users.last_name, daily_numbers.id, daily_numbers.user_id, 
+            ->select([DB::raw("users.first_name, users.last_name, daily_numbers.id, daily_numbers.user_id,
                     SUM(doors) as doors,  SUM(hours) as hours,  SUM(sets) as sets,  SUM(sits) as sits,  SUM(set_closes) as set_closes, SUM(closes) as closes")]);
 
         if ($this->period == 'd') {
