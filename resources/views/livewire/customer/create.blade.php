@@ -79,6 +79,8 @@
                                     @endforeach
                                 </x-select>
                             </div>
+                        @else
+                            <div class="col-span-3"></div>
                         @endif
 
                         @if($customer->financer_id == 1)
