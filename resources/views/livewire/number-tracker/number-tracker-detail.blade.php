@@ -279,7 +279,7 @@
                             <div class="col-span-1 p-3 rounded-lg bg-green-light">
                                 <div class="text-xs font-semibold uppercase text-green-base">D.P.S</div>
                                 <div class="text-xl font-bold text-green-base">
-                                    {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('doors')/$numbersTracked->sum('sets'), 2) : '-'}}
+                                    {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('doors')/$numbersTracked->sum('sets'), 0) : '-'}}
                                 </div>
                             </div>
                             <div class="col-span-1 p-3 rounded-lg bg-green-light">
@@ -291,13 +291,13 @@
                             <div class="col-span-1 p-3 rounded-lg bg-green-light">
                                 <div class="text-xs font-semibold uppercase text-green-base">Sit Ratio</div>
                                 <div class="text-xl font-bold text-green-base">
-                                    {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('sits')/$numbersTracked->sum('sets'), 2) : '-'}}
+                                    {{$numbersTracked->sum('sets') ? (number_format($numbersTracked->sum('sits')/$numbersTracked->sum('sets'), 2) * 100) . '%' : '-'}}
                                 </div>
                             </div>
                             <div class="col-span-1 p-3 rounded-lg bg-green-light">
                                 <div class="text-xs font-semibold uppercase text-green-base">Close Ratio</div>
                                 <div class="text-xl font-bold text-green-base">
-                                    {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('closes')/$numbersTracked->sum('sets'), 2) : '-'}}
+                                    {{$numbersTracked->sum('sets') ? (number_format($numbersTracked->sum('closes')/$numbersTracked->sum('sets'), 2) * 100) . '%' : '-'}}
                                 </div>
                             </div>
                         </div>
@@ -496,8 +496,21 @@
                     </div>
                     <div class="flex w-full md:justify-between" id="chart_div"></div> -->
 
-                    <div class="flex justify-start mt-6">
-                        <h2 class="text-lg text-gray-900">Top 5 Performing Members</h2>
+                    <div class="flex justify-start gap-4 mt-6">
+                        <div class="col-span-1 border-2
+                            cursor-pointer
+                            rounded-lg p-1" wire:click="changeOrder">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                @if($order == 'desc')
+                                    <path d="M6 3l-6 8h4v10h4v-10h4l-6-8zm16 14h-8v-2h8v2zm2 2h-10v2h10v-2zm-4-8h-6v2h6v-2zm-2-4h-4v2h4v-2zm-2-4h-2v2h2v-2z"/>
+                                @else
+                                    <path d="M6 21l6-8h-4v-10h-4v10h-4l6 8zm16-12h-8v-2h8v2zm2-6h-10v2h10v-2zm-4 8h-6v2h6v-2zm-2 4h-4v2h4v-2zm-2 4h-2v2h2v-2z"/>
+                                @endif
+                            </svg>
+                        </div>
+                        <div class="p-1">
+                            <h2 class="text-lg text-gray-900">All Members</h2>
+                        </div>
                     </div>
                     <div class="flex justify-center w-full">
                         <x-svg.spinner
@@ -538,7 +551,7 @@
                                                     </x-table.th-tr>
                                                 </x-slot>
                                                 <x-slot name="body">
-                                                    @foreach($numbersTracked->take(5) as $row)
+                                                    @foreach($numbersTracked as $row)
                                                         <x-table.tr :loop="$loop">
                                                             <x-table.td>{{ $row['first_name'] . ' ' .  $row['last_name']}}</x-table.td>
                                                             <x-table.td>{{ $row['doors'] ?? 0 }}</x-table.td>

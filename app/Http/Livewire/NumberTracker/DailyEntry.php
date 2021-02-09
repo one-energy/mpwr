@@ -118,16 +118,15 @@ class DailyEntry extends Component
         $filteredNumbers = [
             $inputType => $value
         ];
-        if ($value) {
-            DailyNumber::updateOrCreate(
-                [
-                    'user_id' => $userId,
-                    'date'    => $this->dateSelected,
-                ],
-                $filteredNumbers
-            );
-        }
+        DailyNumber::updateOrCreate(
+            [
+                'user_id' => $userId,
+                'date'    => $this->dateSelected,
+            ],
+            $filteredNumbers
+        );
     }
+
     public function sortBy()
     {
         return 'first_name';

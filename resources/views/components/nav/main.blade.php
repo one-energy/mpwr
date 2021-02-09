@@ -22,7 +22,7 @@
                                     @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
                                         <x-nav.link :href="route('castle.rates.index')" class="ml-4"
                                                     :active="is_active('castle.rates.index')">
-                                            @lang('Manage Rates')
+                                            @lang('Manage Compensations')
                                         </x-nav.link>
                                     @endif
 

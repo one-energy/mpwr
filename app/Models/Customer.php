@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Financer;
+use App\Models\Financing;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -56,6 +58,21 @@ class Customer extends Model
         return $this->belongsTo(User::class, 'setter_id');
     }
 
+    public function financer()
+    {
+        return $this->hasOne(Financer::class);
+    }
+
+    public function financing()
+    {
+        return $this->hasOne(Financing::class);
+    }
+
+    public function term()
+    {
+        return $this->hasOne(Term::class);
+    }
+
     public function getOpenedByAttribute()
     {
         return User::find($this->opened_by_id);
@@ -64,5 +81,14 @@ class Customer extends Model
     public function getSetterAttribute()
     {
         return User::find($this->setter_id);
+    }
+
+    public function calcComission()
+    {
+        if($this->epc && $this->sales_rep_fee && $this->setter_fee && $this->system_size && $this->adders) {
+            $this->sales_rep_comission = (($this->epc - $this->sales_rep_fee - $this->setter_fee) * ($this->system_size * 1000)) - $this->adders;
+        } else {
+            $this->sales_rep_comission = 0;
+        }
     }
 }
