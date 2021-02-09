@@ -28,14 +28,11 @@ class ManageIncentivesController extends Controller
 
     public function store()
     {
-        $validated = $this->validate(
-            request(),
+        $validated = request()->validate(
             [
                 'number_installs'   => 'required|integer|max:9999',
                 'name'              => 'required|string|min:3|max:255',
-                'installs_achieved' => 'required|integer|max:9999',
                 'installs_needed'   => 'required|integer|max:9999',
-                'kw_achieved'       => 'required|integer|max:9999',
                 'kw_needed'         => 'required|integer|max:9999',
                 'department_id'     => 'required|integer',
             ]
@@ -44,12 +41,10 @@ class ManageIncentivesController extends Controller
         $incentive                    = new Incentive();
         $incentive->number_installs   = $validated['number_installs'];
         $incentive->name              = $validated['name'];
-        $incentive->installs_achieved = $validated['installs_achieved'];
         $incentive->installs_needed   = $validated['installs_needed'];
-        $incentive->kw_achieved       = $validated['kw_achieved'];
         $incentive->kw_needed         = $validated['kw_needed'];
         $incentive->department_id     = $validated['department_id'];
-        
+
         $incentive->save();
 
         alert()
@@ -68,14 +63,11 @@ class ManageIncentivesController extends Controller
 
     public function update(Incentive $incentive)
     {
-        $validated = $this->validate(
-            request(),
+        $validated = request()->validate(
             [
                 'number_installs'   => 'required|integer|max:9999',
                 'name'              => 'required|string|min:3|max:255',
-                'installs_achieved' => 'required|integer|max:9999',
                 'installs_needed'   => 'required|integer|max:9999',
-                'kw_achieved'       => 'required|integer|max:9999',
                 'kw_needed'         => 'required|integer|max:9999',
                 'department_id'     => ['nullable', 'numeric'],
             ]
@@ -83,12 +75,10 @@ class ManageIncentivesController extends Controller
 
         $incentive->number_installs   = $validated['number_installs'];
         $incentive->name              = $validated['name'];
-        $incentive->installs_achieved = $validated['installs_achieved'];
         $incentive->installs_needed   = $validated['installs_needed'];
-        $incentive->kw_achieved       = $validated['kw_achieved'];
         $incentive->kw_needed         = $validated['kw_needed'];
         $incentive->department_id     = $validated['department_id'];
-        
+
         $incentive->save();
 
         alert()

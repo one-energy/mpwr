@@ -14,9 +14,6 @@
                   <x-table>
                     <x-slot name="header">
                       <x-table.th-tr>
-                        <x-table.th by="number_installs">
-                            @lang('# of Installs')
-                        </x-table.th>
                         <x-table.th by="incentives">
                             @lang('Incentive')
                         </x-table.th>
@@ -39,15 +36,10 @@
                         <x-table.tr :loop="$loop">
                           @php ($nextIncentive = $incentives->get(++$index) ?? $incentives->last())
                           @php ($lastIncentive = $incentives->last())
-                          <x-table.td>
-                            <div class="@if(($myInstalls >= $incentive->number_installs && $myInstalls < $nextIncentive->number_installs) || ($myInstalls >= $lastIncentive->number_installs && $loop->last)) text-green-base font-bold @endif">
-                              {{ $incentive->number_installs }}
-                            </div>
-                          </x-table.td>
                           <x-table.td>{{ $incentive->name }}</x-table.td>
-                          <x-table.td>{{ $incentive->installs_achieved }}</x-table.td>
+                          <x-table.td>25</x-table.td>
                           <x-table.td>{{ $incentive->installs_needed }}</x-table.td>
-                          <x-table.td>{{ $incentive->kw_achieved }}</x-table.td>
+                          <x-table.td>10</x-table.td>
                           <x-table.td>
                             <div class="@if(($myKws >= $incentive->kw_needed && $myKws < $nextIncentive->kw_needed) || ($myKws >= $lastIncentive->kw_needed && $loop->last)) text-green-base font-bold @endif">
                               {{ $incentive->kw_needed }}

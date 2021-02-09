@@ -17,19 +17,11 @@
                         <div class="md:col-span-3 col-span-2">
                             <x-input label="Incentive Name" name="name"></x-input>
                         </div>
-                
-                        <div class="md:col-span-3 col-span-1">
-                            <x-input-add-on label="Installs Achieved" name="installs_achieved" addOn="%"></x-input-add-on >
-                        </div>
-                        
+
                         <div class="md:col-span-3 col-span-1">
                             <x-input label="Installs Needed" name="installs_needed"></x-input>
                         </div>
 
-                        <div class="md:col-span-3 col-span-2">
-                            <x-input-add-on label="kW Achieved" name="kw_achieved" addOn="%"></x-input-add-on>
-                        </div>
-                
                         <div class="md:col-span-3 col-span-2">
                             <x-input-add-on  label="kW Needed" name="kw_needed" addOn="kW"></x-input-add-on >
                         </div>
