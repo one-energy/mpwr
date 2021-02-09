@@ -36,6 +36,8 @@ class NumberTrackerDetail extends Component
 
     public $dateSelected;
 
+    public $order = "desc";
+
     public $activeFilters = [];
 
     public function mount()
@@ -135,7 +137,7 @@ class NumberTrackerDetail extends Component
 
         return $query->groupBy('daily_numbers.user_id')
             ->where("users.department_id", "=", user()->department_id)
-            ->orderBy($this->filterBy, 'desc')
+            ->orderBy($this->filterBy, $this->order)
             ->get();
     }
 
@@ -161,6 +163,10 @@ class NumberTrackerDetail extends Component
                 array_push($this->activeFilters, $element);
             }
         }
+    }
+
+    public function changeOrder(){
+        $this->order = $this->order == 'desc' ? 'asc' : 'desc';
     }
 
     public function removeFilter($item)

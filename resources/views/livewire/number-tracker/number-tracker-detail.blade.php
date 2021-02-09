@@ -508,7 +508,9 @@
                                 @endif
                             </svg>
                         </div>
-                        <h2 class="text-lg text-gray-900">All Members</h2>
+                        <div class="p-1">
+                            <h2 class="text-lg text-gray-900">All Members</h2>
+                        </div>
                     </div>
                     <div class="flex justify-center w-full">
                         <x-svg.spinner
@@ -549,7 +551,7 @@
                                                     </x-table.th-tr>
                                                 </x-slot>
                                                 <x-slot name="body">
-                                                    @foreach($numbersTracked->take(5) as $row)
+                                                    @foreach($numbersTracked as $row)
                                                         <x-table.tr :loop="$loop">
                                                             <x-table.td>{{ $row['first_name'] . ' ' .  $row['last_name']}}</x-table.td>
                                                             <x-table.td>{{ $row['doors'] ?? 0 }}</x-table.td>
