@@ -279,7 +279,7 @@
                             <div class="col-span-1 p-3 rounded-lg bg-green-light">
                                 <div class="text-xs font-semibold uppercase text-green-base">D.P.S</div>
                                 <div class="text-xl font-bold text-green-base">
-                                    {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('doors')/$numbersTracked->sum('sets'), 2) : '-'}}
+                                    {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('doors')/$numbersTracked->sum('sets'), 0) : '-'}}
                                 </div>
                             </div>
                             <div class="col-span-1 p-3 rounded-lg bg-green-light">
@@ -291,13 +291,13 @@
                             <div class="col-span-1 p-3 rounded-lg bg-green-light">
                                 <div class="text-xs font-semibold uppercase text-green-base">Sit Ratio</div>
                                 <div class="text-xl font-bold text-green-base">
-                                    {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('sits')/$numbersTracked->sum('sets'), 2) : '-'}}
+                                    {{$numbersTracked->sum('sets') ? (number_format($numbersTracked->sum('sits')/$numbersTracked->sum('sets'), 2) * 100) . '%' : '-'}}
                                 </div>
                             </div>
                             <div class="col-span-1 p-3 rounded-lg bg-green-light">
                                 <div class="text-xs font-semibold uppercase text-green-base">Close Ratio</div>
                                 <div class="text-xl font-bold text-green-base">
-                                    {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('closes')/$numbersTracked->sum('sets'), 2) : '-'}}
+                                    {{$numbersTracked->sum('sets') ? (number_format($numbersTracked->sum('closes')/$numbersTracked->sum('sets'), 2) * 100) . '%' : '-'}}
                                 </div>
                             </div>
                         </div>
