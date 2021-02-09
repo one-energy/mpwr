@@ -50,9 +50,11 @@
 
                         <div class="md:col-span-3 col-span-2">
                             <x-select wire:model="user.office_id" label="Office" name="office_id" disabled="{{user()->id == $user->id}}">
-                                <option value="">
-                                    None
-                                </option>
+                                @if($user->role != "Office Manager" && $user->role != "Sales Rep" && $user->role != "Setter")
+                                    <option value="">
+                                        None
+                                    </option>
+                                @endif
                                 @foreach($offices as $office)
                                     <option value="{{$office->id}}">{{$office->name}}</option>
                                 @endforeach

@@ -101,7 +101,9 @@
                         <div class="md:col-span-3 col-span-2">
                             <x-select x-model="selectedOffice" label="Office" name="office_id">
                                 @if(user()->role == "Admin" || user()->role == "Owner")
-                                    <option value="">None</option>
+                                    <template x-if="selectedRole != 'Setter' && selectedRole != 'Sales Rep' && selectedRole != 'Office Manager'">
+                                        <option  value="">None</option>
+                                    </template>
                                 @endif
                                 <template x-if="offices" x-for="office in offices" :key="office.id">
                                     <option :value="office.id" x-text="office.name" ></option>
