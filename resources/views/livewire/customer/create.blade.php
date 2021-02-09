@@ -130,11 +130,15 @@
                             <div class="col-span-1 col-start-4">
                                 <x-input-currency wire:model="customer.enium_points" label="Enium Points" name="enium_points" readonly></x-input>
                             </div>
+                            <div class="col-span-2 col-start-5">
+                                <x-input-currency  wire:model="customer.sales_rep_comission" label="Sales Rep Comission" name="sales_rep_comission"></x-input>
+                            </div>
+                        @else
+                            <div class="col-span-3 col-start-4">
+                                <x-input-currency  wire:model="customer.sales_rep_comission" label="Sales Rep Comission" name="sales_rep_comission"></x-input>
+                            </div>
                         @endif
 
-                        <div class="col-span-2 col-start-5">
-                            <x-input-currency  wire:model="customer.sales_rep_comission" label="Sales Rep Comission" name="sales_rep_comission"></x-input>
-                        </div>
                     </div>
                 </div>
                 <div class="pt-5 mt-8 border-t border-gray-200">
