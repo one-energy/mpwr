@@ -52,9 +52,9 @@
                                                     <x-table.td>{{ $incentive->department->name }}</x-table.td>
                                                 @endif
                                                 <x-table.td>{{ $incentive->name }}</x-table.td>
-                                                <x-table.td>25</x-table.td>
+                                                <x-table.td>{{ number_format((user()->installs/$incentive->installs_needed) * 100, 2) }}%</x-table.td>
                                                 <x-table.td>{{ $incentive->installs_needed }}</x-table.td>
-                                                <x-table.td>10</x-table.td>
+                                                <x-table.td>{{ number_format((user()->kw_achived/$incentive->kw_needed) * 100, 2) }}%</x-table.td>
                                                 <x-table.td>{{ $incentive->kw_needed }}</x-table.td>
                                                 <x-table.td>
                                                     <x-link :href="route('castle.incentives.edit', $incentive)" class="text-sm">Edit</x-link>

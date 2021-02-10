@@ -37,9 +37,9 @@
                           @php ($nextIncentive = $incentives->get(++$index) ?? $incentives->last())
                           @php ($lastIncentive = $incentives->last())
                           <x-table.td>{{ $incentive->name }}</x-table.td>
-                          <x-table.td>25</x-table.td>
+                          <x-table.td>{{ number_format((user()->installs/$incentive->installs_needed) * 100, 2) }}%</x-table.td>
                           <x-table.td>{{ $incentive->installs_needed }}</x-table.td>
-                          <x-table.td>10</x-table.td>
+                          <x-table.td>{{ number_format((user()->kw_achived/$incentive->kw_needed) * 100, 2) }}%</x-table.td>
                           <x-table.td>
                             <div class="@if(($myKws >= $incentive->kw_needed && $myKws < $nextIncentive->kw_needed) || ($myKws >= $lastIncentive->kw_needed && $loop->last)) text-green-base font-bold @endif">
                               {{ $incentive->kw_needed }}
@@ -62,8 +62,8 @@
               </div>
             </div>
             <div class="flex justify-end items-center mt-3 p-3 text-gray-600">
-              <span class="text-xs">My installs:</span><span class="text-sm font-bold ml-1">{{ $myInstalls }}</span>
-              <span class="text-xs ml-3">My kw's:</span><span class="text-sm font-bold ml-1">{{ number_format($myKws) }}</span>
+              <span class="text-xs">My installs:</span><span class="text-sm font-bold ml-1">{{ user()->installs }}</span>
+              <span class="text-xs ml-3">My kw's:</span><span class="text-sm font-bold ml-1">{{ user()->kw_achived }}</span>
             </div>
           </div>
         </div>

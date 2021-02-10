@@ -9,13 +9,15 @@
             <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
                 <x-form id="updateForm" :route="route('customers.update', $customer->id)" put>
                     @csrf
-                    <x-select wire:model="departmentId" label="Department" name="departmentId">
-                        @foreach($departments as $department)
-                            <option value="{{ $department->id }}" {{ old('departmentId') == $department ? 'selected' : '' }}>
-                                {{ $department->name }}
-                            </option>
-                        @endforeach
-                    </x-select>
+                    @if(user()->role == 'Admin' || user()->role == 'Owner')
+                        <x-select wire:model="departmentId" label="Department" name="departmentId">
+                            @foreach($departments as $department)
+                                <option value="{{ $department->id }}" {{ old('departmentId') == $department ? 'selected' : '' }}>
+                                    {{ $department->name }}
+                                </option>
+                            @endforeach
+                        </x-select>
+                    @endif
                     <div>
                         <div class="mt-6 grid sm:grid-cols-2 row-gap-6 col-gap-4 md:grid-cols-6">
                             <div class="col-span-2 md:col-span-3">
