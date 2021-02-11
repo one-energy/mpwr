@@ -13,6 +13,6 @@ class IncentiveTest extends TestCase
     {
         $response = $this->get('/incentives');
 
-        $response->assertStatus(200);
+        $response->assertStatus(302);
     }
 }

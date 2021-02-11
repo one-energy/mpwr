@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Http\Livewire\Castle\Rate;
+use App\Http\Livewire\Customer\Create;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\Rates;
@@ -10,6 +11,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 
 class CustomerTest extends TestCase
 {
@@ -20,6 +22,7 @@ class CustomerTest extends TestCase
         parent::setUp();
 
         $this->user = factory(User::class)->create(['role' => 'Admin']);
+        factory(Department::class, 6)->create();
 
         $this->actingAs($this->user);
     }
@@ -47,25 +50,25 @@ class CustomerTest extends TestCase
         $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
-        
+
         $setter            = factory(User::class)->create([
             "role" => "Setter",
             'department_id' => $department->id,
         ]);
 
-        
+
         $activeCustomers   = factory(Customer::class, 3)->create([
             'is_active' => true,
             'opened_by_id' => $setter->id
             ]);
-            
+
             $inactiveCustomers = factory(Customer::class, 3)->create([
                 'is_active' => false,
                 'opened_by_id' => $setter->id
                 ]);
 
         $this->actingAs($setter);
-            
+
         $response = $this->get('/?sort_by=is_active');
 
         foreach ($activeCustomers as $activeCustomer) {
@@ -114,7 +117,7 @@ class CustomerTest extends TestCase
 
         $this->actingAs($departmentManager);
         $response = $this->get('customers/create');
-        
+
         $response->assertStatus(200)
             ->assertViewIs('customer.create');
      }
@@ -126,31 +129,32 @@ class CustomerTest extends TestCase
         $userOne = factory(User::class)->create(['role' => "Setter"]);
         $userTwo = factory(User::class)->create(['role' => "Sales Rep"]);
         $data = [
-            'first_name'    => 'First Name',
-            'last_name'     => 'Last Name',
-            'bill'          => 'Bill',
-            'financing'     => 'Financing',
-            'opened_by_id'  => $user->id,
-            'system_size'   => '',
-            'pay'           => '',
-            'adders'        => '',
-            'epc'           => '',
-            'setter_id'     => $userOne->id,
-            'setter_fee'    => 20,
-            'sales_rep_id'   => $userTwo->id,
-            'sales_rep_fee'  => 20,
-            'commission'    => '',
-            "created_at"    => Carbon::now()->timestamp,
-            "updated_at"    => Carbon::now()->timestamp,
-            'is_active'     => true
+            'first_name'          => 'First Name',
+            'last_name'           => 'Last Name',
+            'bill'                => 'Bill',
+            'financing_id'        => 1,
+            'opened_by_id'        => $user->id,
+            'system_size'         => 0,
+            'adders'              => '',
+            'epc'                 => '',
+            'setter_id'           => $userOne->id,
+            'setter_fee'          => 20,
+            'sales_rep_id'        => $userTwo->id,
+            'sales_rep_fee'       => 20,
+            'sales_rep_comission' => 0,
+            'commission'          => '',
+            "created_at"          => Carbon::now()->timestamp,
+            "updated_at"          => Carbon::now()->timestamp,
+            'is_active'           => true
         ];
 
         $response = $this->post(route('customers.store'), $data);
 
+
         $created = Customer::where('first_name', $data['first_name'])->first();
 
         $response->assertStatus(302)
-            ->assertRedirect(route('customers.show', $created->id));
+            ->assertRedirect(route('home'));
     }
 
     /** @test */
@@ -160,7 +164,6 @@ class CustomerTest extends TestCase
             'first_name'   => '',
             'last_name'    => '',
             'bill'         => '',
-            'financing'    => '',
             'opened_by_id' => '',
         ];
 
@@ -170,7 +173,6 @@ class CustomerTest extends TestCase
             'first_name',
             'last_name',
             'bill',
-            'financing',
             'opened_by_id',
         ]);
     }
@@ -181,7 +183,7 @@ class CustomerTest extends TestCase
         $customer = factory(Customer::class)->create();
 
         $response = $this->get('customers/'. $customer->id);
-        
+
         $response->assertStatus(200)
             ->assertViewIs('customer.show');
     }
@@ -189,18 +191,18 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_update_a_customer()
     {
-        $customer       = factory(Customer::class)->create(['pay' => 30.5]);
+        $customer       = factory(Customer::class)->create(['adders' => 30.5]);
         $data           = $customer->toArray();
-        $updateCustomer = array_merge($data, ['pay' => 24.7]);
+        $updateCustomer = array_merge($data, ['adders' => 24.7]);
 
         $response = $this->put(route('customers.update', $customer->id), $updateCustomer);
-            
+
         $response->assertStatus(302);
 
         $this->assertDatabaseHas('customers',
         [
             'id'  => $customer->id,
-            'pay' => 24.7
+            'adders' => 24.7
         ]);
     }
 
@@ -208,10 +210,10 @@ class CustomerTest extends TestCase
     public function it_should_block_updating_a_form_for_non_top_level_roles()
     {
         $this->actingAs(factory(User::class)->create(['role' => 'Setter']));
-        
-        $customer       = factory(Customer::class)->create(['pay' => 30.5]);
+
+        $customer       = factory(Customer::class)->create(['adders' => 30.5]);
         $data           = $customer->toArray();
-        $updateCustomer = array_merge($data, ['pay' => 24.7]);
+        $updateCustomer = array_merge($data, ['adders' => 24.7]);
 
         $response = $this->put(route('customers.update', $customer->id), $updateCustomer);
 
@@ -260,42 +262,21 @@ class CustomerTest extends TestCase
         $deleted  = Customer::where('id', $customer->id)->first();
 
         $this->assertNull($deleted);
-       
+
     }
 
     /** @test */
     public function it_should_calculate_comission()
     {
-        $user = factory(User::class)->create();
-        $userOne = factory(User::class)->create(['role' => "Setter"]);
-        $userTwo = factory(User::class)->create(['role' => "Sales Rep"]);
-        $data = [
-            'first_name'    => 'First Name',
-            'last_name'     => 'Last Name',
-            'bill'          => 'Bill',
-            'financing'     => 'Financing',
-            'opened_by_id'  => $user->id,
-            'system_size'   => '2000',
-            'pay'           => '5000',
-            'adders'        => '300',
-            'epc'           => '7000',
-            'setter_id'     => $userOne->id,
-            'setter_fee'    => '450',
-            'sales_rep_id'  => $userTwo->id,
-            'sales_rep_fee' => 20,
-            'commission'    => '',
-            "created_at"    => Carbon::now()->timestamp,
-            "updated_at"    => Carbon::now()->timestamp,
-            'is_active'     => true
-        ];
+        $customer = new Customer();
+        $customer->system_size   = 4.5;
+        $customer->adders        = 300;
+        $customer->epc           = 4.7;
+        $customer->setter_fee    = 0.2;
+        $customer->sales_rep_fee = 3.1;
+        $customer->calcComission();
 
-        $reponse = $this->post(route('customers.store'), $data);
-
-        $created = Customer::where('first_name', $data['first_name'])->first();
-        
-        $reponse->assertStatus(302);
-        $commission = (($data['epc'] - ( $data['pay'] + $data['setter_fee'] )) * ($data['system_size'] * 1000)) - $data['adders'];
-        $this->assertTrue( $created->commission == $commission);
+        $this->assertEquals($customer->sales_rep_comission, 6000.00 );
     }
 
      /** @test */
@@ -314,6 +295,6 @@ class CustomerTest extends TestCase
 
         $response->assertSee($saleRepRate->rate)
                 ->assertSee($setterRate->rate);
-        
+
      }
 }

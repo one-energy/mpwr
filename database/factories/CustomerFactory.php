@@ -3,6 +3,7 @@
 
 use App\Models\User;
 use App\Models\Customer;
+use App\Models\Financing;
 use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factory;
 
@@ -14,7 +15,7 @@ $factory->define(Customer::class, function (Faker $faker) {
     $setterFee  = $pay * 0.2;
     $systemSize = 20;
     $adders     = 20;
-    
+
     return [
         'first_name'    => $faker->firstName,
         'last_name'     => $faker->lastName,
@@ -22,6 +23,7 @@ $factory->define(Customer::class, function (Faker $faker) {
         'bill'          => $faker->word,
         'pay'           => $pay,
         'financing'     => $faker->word,
+        'financing_id'  => 1,
         'adders'        => $adders,
         'epc'           => $epc+100,
         'commission'    => (($epc - ( $pay + $setterFee )) * $systemSize) - $adders,
@@ -35,6 +37,7 @@ $factory->define(Customer::class, function (Faker $faker) {
         'sales_rep_id'     => function () {
             return factory(User::class)->create()->id;
         },
-        'opened_by_id' => 1
+        'opened_by_id' => 1,
+        'enium_points' => 0
     ];
 });

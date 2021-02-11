@@ -18,8 +18,8 @@ class AddTermColumnFinancerColumnEniumPointsColumnSalesRepCommissionColumnToCust
             $table->foreignId('financer_id')->nullable()->after('financing_id');
             $table->foreignId('term_id')->nullable()->after('financer_id');
 
-            $table->bigInteger('enium_points');
-            $table->bigInteger('sales_rep_comission');
+            $table->bigInteger('enium_points')->default(0);
+            $table->decimal('sales_rep_comission')->default(0);
 
             $table->foreign('financing_id')->references('id')->on('financings')->onDelete('cascade');
             $table->foreign('financer_id')->references('id')->on('financers')->onDelete('cascade');
@@ -35,13 +35,10 @@ class AddTermColumnFinancerColumnEniumPointsColumnSalesRepCommissionColumnToCust
     public function down()
     {
         Schema::table('customers', function (Blueprint $table) {
-            $table->dropForeign(['financing_id', 'financer_id', 'term_id']);
-
-            $table->dropColumn('financing_id');
-            $table->dropColumn('financer_id');
-            $table->dropColumn('term_id');
-            $table->dropColumn('enium_points');
-            $table->dropColumn('sales_rep_comission');
+            if (env('DB_CONNECTION') !== 'sqlite') {
+                $table->dropForeign(['financing_id', 'financer_id', 'term_id']);
+            }
+            $table->dropColumn(['financing_id', 'financer_id', 'term_id', 'enium_points', 'sales_rep_comission']);
         });
     }
 }

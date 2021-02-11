@@ -12,9 +12,7 @@ class CreateIncentivesTable extends Migration
             $table->bigIncrements('id');
             $table->integer('number_installs');
             $table->string('name');
-            $table->integer('installs_achieved');
             $table->integer('installs_needed');
-            $table->integer('kw_achieved');
             $table->integer('kw_needed');
 
             $table->timestamps();
