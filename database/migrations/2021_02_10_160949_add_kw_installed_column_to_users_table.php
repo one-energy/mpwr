@@ -14,7 +14,7 @@ class AddKwInstalledColumnToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->bigInteger('kw_achived')->default(0);
+            $table->bigInteger('kw_achived')->default(0)->after('created_at');
         });
     }
 
