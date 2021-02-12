@@ -102,7 +102,7 @@ class CustomerTest extends TestCase
     {
         $this->actingAs(factory(User::class)->create(['role' => 'Setter']));
 
-        $response = $this->get('customers/create');
+        $response = $this->get(route('customers.create'));
 
         $response->assertStatus(403);
     }
@@ -116,7 +116,7 @@ class CustomerTest extends TestCase
         $departmentManager->save();
 
         $this->actingAs($departmentManager);
-        $response = $this->get('customers/create');
+        $response = $this->get(route('customers.create'));
 
         $response->assertStatus(200)
             ->assertViewIs('customer.create');

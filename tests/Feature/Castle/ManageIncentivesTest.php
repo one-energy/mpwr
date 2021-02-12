@@ -35,7 +35,7 @@ class ManageIncentiveTest extends TestCase
 
         $this->actingAs($departmentManager);
 
-        $response = $this->get('castle/incentives');
+        $response = $this->get(route('castle.incentives.index'));
 
         $response->assertStatus(200)
             ->assertViewIs('castle.incentives.index');
@@ -61,7 +61,7 @@ class ManageIncentiveTest extends TestCase
 
         $this->actingAs($setter);
 
-        $response = $this->get('/castle/incentives/create');
+        $response = $this->get(route('castle.incentives.create'));
 
         $response->assertStatus(403);
     }
@@ -76,7 +76,7 @@ class ManageIncentiveTest extends TestCase
 
         $this->actingAs($departmentManager);
 
-        $response = $this->get('castle/incentives/create');
+        $response = $this->get(route('castle.incentives.create'));
 
         $response->assertStatus(200)
             ->assertViewIs('castle.incentives.create');
@@ -147,7 +147,7 @@ class ManageIncentiveTest extends TestCase
 
         $this->actingAs($departmentManager);
 
-        $response = $this->get('castle/incentives/'. $incentive->id . '/edit');
+        $response = $this->get(route('castle.incentives.edit', $incentive->id));
 
         $response->assertStatus(200)
             ->assertViewIs('castle.incentives.edit');
@@ -160,7 +160,7 @@ class ManageIncentiveTest extends TestCase
 
         $incentive = factory(Incentive::class)->create();
 
-        $response = $this->get('castle/incentives/'. $incentive->id .'/edit');
+        $response = $this->get(route('castle.incentives.edit', $incentive->id));
 
         $response->assertStatus(403);
     }
