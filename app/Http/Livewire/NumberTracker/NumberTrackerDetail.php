@@ -46,6 +46,7 @@ class NumberTrackerDetail extends Component
         $this->getOffices();
         $this->getRegions();
         $this->getUsers();
+        $this->setFilter();
     }
 
     public function render()
@@ -127,6 +128,20 @@ class NumberTrackerDetail extends Component
                     }
                 }
             });
+            $queryLast->where(function ($query) use ($activeFilters) {
+                foreach ($activeFilters as $filter) {
+                    $id = $filter['id'];
+                    if ($filter['type'] == "user") {
+                        $query->orWhere('daily_numbers.user_id', '=', $id);
+                    }
+                    if ($filter['type'] == "office") {
+                        $query->orWhere('office_id', '=', $id);
+                    }
+                    if ($filter['type'] == "region") {
+                        $query->orWhere('region_id', '=', $id);
+                    }
+                }
+            });
         }
 
         $this->numbersTrackedLast = $queryLast->where("users.department_id", "=", user()->department_id)
@@ -189,5 +204,45 @@ class NumberTrackerDetail extends Component
     public function getUsers()
     {
         $this->users = User::whereDepartmentId(user()->department_id)->get();
+    }
+
+    public function setFilter()
+    {
+        $data = [];
+        if(user()->role == "Region Manager")
+        {
+            $regions = Region::whereRegionManagerId(user()->id)->get();
+            $regions->map(function($item) {
+                $data = [
+                    'name' => $item->name,
+                    'id'   => $item->id,
+                ];
+                $this->addFilter($data, 'region');
+            });
+        }
+
+        if(user()->role == "Office Manager")
+        {
+            $offices = Office::whereOfficeManagerId(user()->id)->get();
+            $offices->map(function($item) {
+                $data = [
+                    'name' => $item->name,
+                    'id'   => $item->id,
+                ];
+                $this->addFilter($data, 'office');
+            });
+        }
+
+        if(user()->role == "Setter" || user()->role == "Sales Rep")
+        {
+            $user = User::whereId(user()->id)->first();
+                $data = [
+                    'first_name' => $user->first_name,
+                    'last_name'  => $user->last_name,
+                    'id'         => $user->id
+                ];
+                $this->addFilter($data, 'user');
+
+        }
     }
 }
