@@ -81,7 +81,7 @@ class UsersController extends Controller
     public function edit(User $user)
     {
         $departments = Department::all();
-        $roles       = $this->getRolesPerUrserRole();
+        $roles       = User::getRolesPerUserRole();
         $offices     = $this->getOfficesPerRole();
 
         return view('castle.users.edit', [
