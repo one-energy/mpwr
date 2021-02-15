@@ -43,15 +43,7 @@
                                 </x-select>
                             </div>
 
-                            <div class="col-span-2 md:col-span-3">
-                                <x-input wire:model="customer.adders" label="Adders Total" name="adders" step="0.01" type="number"></x-input>
-                            </div>
-
-                            <div class="col-span-1 md:col-span-2">
-                                <x-input-currency wire:model="customer.epc" label="EPC" name="epc" observation="Sold Price"></x-input>
-                            </div>
-
-                            <div class="col-span-1">
+                            <div class="ol-span-2 md:col-span-3">
                                 <x-select wire:model="customer.financing_id" label="Financing" name="financing_id">
                                     @if (old('financing') == '')
                                         <option value="" selected>None</option>
@@ -93,6 +85,14 @@
                                     </div>
                                 @endif
                             @endif
+
+                            <div class="col-span-1 md:col-span-2">
+                                <x-input-currency wire:model="customer.epc" label="EPC" name="epc" observation="Sold Price"></x-input>
+                            </div>
+
+                            <div class="col-span-2 md:col-span-3">
+                                <x-input wire:model="customer.adders" label="Adders Total" name="adders" step="0.01" type="number"></x-input>
+                            </div>
 
                             <div class="col-span-2 md:col-span-3">
                                 <x-select wire:change="getSetterRate($event.target.value)" wire:model="customer.setter_id" label="Setter" name="setter_id">
