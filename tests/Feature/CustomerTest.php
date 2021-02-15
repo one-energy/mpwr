@@ -36,7 +36,7 @@ class CustomerTest extends TestCase
             ->assertViewHas('customers');
 
         foreach ($customers as $customer) {
-            $response->assertSee($customer->first_name);
+            $response->assertSee($customer->first_name . ' ' . $customer->last_name);
         }
     }
 
@@ -68,11 +68,11 @@ class CustomerTest extends TestCase
         $response = $this->get('/?sort_by=is_active');
 
         foreach ($activeCustomers as $activeCustomer) {
-            $response->assertSee($activeCustomer->first_name);
+            $response->assertSee($activeCustomer->first_name . ' ' . $activeCustomer->last_name);
         }
 
         foreach ($inactiveCustomers as $inactiveCustomer) {
-            $response->assertDontSee($inactiveCustomer->first_name);
+            $response->assertDontSee($inactiveCustomer->first_name . ' ' . $inactiveCustomer->last_name);
         }
     }
 
@@ -85,11 +85,11 @@ class CustomerTest extends TestCase
         $response = $this->get('/?sort_by=is_inactive');
 
         foreach ($activeCustomers as $activeCustomer) {
-            $response->assertDontSee($activeCustomer->first_name);
+            $response->assertDontSee($activeCustomer->first_name . ' ' . $activeCustomer->last_name);
         }
 
         foreach ($inactiveCustomers as $inactiveCustomer) {
-            $response->assertSee($inactiveCustomer->first_name);
+            $response->assertSee($inactiveCustomer->first_name . ' ' . $inactiveCustomer->last_name);
         }
     }
 
@@ -164,12 +164,12 @@ class CustomerTest extends TestCase
 
         $response = $this->post(route('customers.store'), $data);
         $response->assertSessionHasErrors(
-        [
-            'first_name',
-            'last_name',
-            'bill',
-            'opened_by_id',
-        ]);
+            [
+                'first_name',
+                'last_name',
+                'bill',
+                'opened_by_id',
+            ]);
     }
 
     /** @test */
@@ -195,10 +195,10 @@ class CustomerTest extends TestCase
         $response->assertStatus(302);
 
         $this->assertDatabaseHas('customers',
-        [
-            'id'     => $customer->id,
-            'adders' => 24.7,
-        ]);
+            [
+                'id'     => $customer->id,
+                'adders' => 24.7,
+            ]);
     }
 
     /** @test */
@@ -270,7 +270,7 @@ class CustomerTest extends TestCase
         $customer->sales_rep_fee = 3.1;
         $customer->calcComission();
 
-        $this->assertEquals($customer->sales_rep_comission, 6000.00 );
+        $this->assertEquals($customer->sales_rep_comission, 6000.00);
     }
 
     /** @test */
@@ -280,7 +280,7 @@ class CustomerTest extends TestCase
             'role' => 'Sales Rep',
             'rate' => 3,
         ]);
-        $setterRate = factory(Rates::class)->create([
+        $setterRate  = factory(Rates::class)->create([
             'role' => 'Setter',
             'rate' => 6,
         ]);
@@ -288,6 +288,6 @@ class CustomerTest extends TestCase
         $response = $this->get(route('customers.create'));
 
         $response->assertSee($saleRepRate->rate)
-                ->assertSee($setterRate->rate);
+            ->assertSee($setterRate->rate);
     }
 }
