@@ -12,19 +12,15 @@
 <div {{ $attributes }} x-data="app()" x-init="[initDate(), getNoOfDays()]" x-cloak>
     <label for="{{ $name }}" class="block text-sm font-medium leading-5 text-gray-700">{{ $label }}</label>
     <div class="mt-1 relative rounded-md shadow-sm">
-        <input type="hidden" name="date" x-ref="date">
-        <input
-            type="text"
-            name="{{ $name }}"
-            id="{{ $name }}"
-            {{ $attributes->except('class')->merge(['class' => $class]) }}
-            readonly
-            x-model="datepickerValue"
-            @click="showDatepicker = !showDatepicker"
-            @keydown.escape="showDatepicker = false"
+        <input type="datetime" {{ $attributes->except('class')->merge(['class' => $class]) }} x-model="datepickerValue"
+            @click="showDatepicker = !showDatepicker" @keydown.escape="showDatepicker = false"
             @if(($disabledToUser && user()->role == $disabledToUser) || $disabled) disabled @endif
-            class="w-full pl-4 pr-10 py-3 leading-none rounded-lg shadow-sm focus:outline-none focus:shadow-outline text-gray-600 font-medium">
-
+            readonly>
+        @error($name)
+        <p class="mt-2 text-sm text-red-600">
+            {{ $message }}
+        </p>
+        @enderror
         <div class="absolute top-0 right-0 px-3 py-2">
             <svg class="h-6 w-6 text-gray-400"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
@@ -91,8 +87,8 @@
                         <div
                             @click="getDateValue(date)"
                             x-text="date"
-                            class="cursor-pointer text-center text-sm leading-none rounded-full leading-loose transition ease-in-out duration-100"
-                            :class="{'bg-blue-500 text-white': isToday(date) == true, 'text-gray-700 hover:bg-blue-200': isToday(date) == false }"
+                            class="cursor-pointer text-center text-sm leading-none rounded-full transition ease-in-out duration-100"
+                            :class="{'bg-green-base text-white': isSelectedDate(date) == true, 'text-gray-700 hover:bg-blue-200': isSelectedDate(date) == false }"
                         ></div>
                     </div>
                 </template>
@@ -108,7 +104,7 @@
         console.log('init');
         return {
             showDatepicker: false,
-            datepickerValue: '',
+            datepickerValue: @entangle($attributes->wire('model')),
 
             month: '',
             year: '',
@@ -126,18 +122,19 @@
             isToday(date) {
                 const today = new Date();
                 const d = new Date(this.year, this.month, date);
-
                 return today.toDateString() === d.toDateString() ? true : false;
+            },
+
+            isSelectedDate(date) {
+                const d = new Date(this.year, this.month, date);
+                console.log(typeof this.datepickerValue, this.datepickerValue)
+                return this.datepickerValue === d.toDateString() ? true : false;
             },
 
             getDateValue(date) {
                 let selectedDate = new Date(this.year, this.month, date);
                 this.datepickerValue = selectedDate.toDateString();
-
                 this.$refs.date.value = selectedDate.getFullYear() +"-"+ ('0'+ selectedDate.getMonth()).slice(-2) +"-"+ ('0' + selectedDate.getDate()).slice(-2);
-
-                console.log(this.$refs.date.value);
-
                 this.showDatepicker = false;
             },
 
@@ -147,6 +144,7 @@
                 // find where to start calendar day of week
                 let dayOfWeek = new Date(this.year, this.month).getDay();
                 let blankdaysArray = [];
+
                 for ( var i=1; i <= dayOfWeek; i++) {
                     blankdaysArray.push(i);
                 }

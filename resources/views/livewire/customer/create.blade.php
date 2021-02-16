@@ -5,7 +5,7 @@
         </x-link>
     </div>
     <div class="max-w-4xl mx-auto px-6 lg:px-8">
-        <x-form :route="route('customers.store')" post>
+        <form wire:submit.prevent="store">
             <div class="grid grid-cols-2 gap-4 sm:col-gap-4 md:grid-cols-6">
                 @if(user()->role == 'Admin' || user()->role == 'Owner')
                 <div class="col-span-2 md:col-span-6">
@@ -18,14 +18,18 @@
                     </x-select>
                 </div>
                 @endif
-                <input type="hidden" value="{{ $openedById }}" name="opened_by_id">
+                <input wire:model="customer.opened_by_id" type="hidden" value="{{ $openedById }}" name="opened_by_id">
 
                 <div class="col-span-2 md:col-span-3">
-                    <x-input wire:model="customer.first_name" label="Customer First Name" name="first_name"/>
+                    <x-input wire:model="customer.first_name" label="Customer First Name" name="customer.first_name"/>
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
-                    <x-input wire:model="customer.last_name" label="Customer Last Name" name="last_name"/>
+                    <x-input wire:model="customer.last_name" label="Customer Last Name" name="customer.last_name"/>
+                </div>
+
+                <div class="col-span-2 md:col-span-3">
+                    <x-input-calendar wire:model="customer.date_of_sale" label="Date of Sale" name="customer.date_of_sale"/>
                 </div>
 
                 <div class="col-span-1 md:col-span-2">
@@ -88,13 +92,11 @@
                     </div>
                 @endif
 
-                <div class="col-span-2 md:col-span-3">
+                <div class="col-span-2 md:col-span-6">
                     <x-input-currency wire:model="customer.epc" label="EPC" name="epc" observation="Sold Price"/>
                 </div>
 
-                <div class="col-span-2 md:col-span-3">
-                    <x-input-calendar label="Date of Sale" name="date_of_sale"/>
-                </div>
+
 
                 <div class="col-span-2 md:col-span-3 md:col-start-1">
                     <x-select wire:change="getSetterRate($event.target.value)" wire:model="customer.setter_id" label="Setter" name="setter_id">
@@ -164,6 +166,6 @@
                     </span>
                 </div>
             </div>
-        </x-form>
+        </form>
     </div>
 </div>
