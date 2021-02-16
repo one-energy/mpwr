@@ -97,7 +97,7 @@
 
                 <div class="col-span-2 md:col-span-3 md:col-start-1">
                     <x-select wire:change="getSetterRate($event.target.value)" wire:model="customer.setter_id" label="Setter" name="customer.setter_id">
-                        <option value="">None</option>
+                        <option wire:click="setSelfGen" value="">Self Gen</option>
                         @foreach($users as $setter)
                             @if($setter->role == 'Setter')
                                 <option value="{{$setter->id}}">{{$setter->first_name}} {{$setter->last_name}}</option>
@@ -107,7 +107,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
-                    <x-input-currency wire:model="customer.setter_fee" label="Setter Comission Rate" name="customer.setter_fee" value="{{$setterFee}}"/>
+                    <x-input-currency wire:model="customer.setter_fee" label="Setter Comission Rate" name="customer.setter_fee" disabled="{{!$customer->setter_id}}"/>
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
@@ -124,7 +124,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <x-input-currency  wire:model="customer.margin" label="Margin" name="customer.margin" readonly></x-input-currency>
+                    <x-input-currency  wire:model="customer.margin" label="Margin" name="customer.margin" readonly/>
                 </div>
 
                 <div class="col-span-2 md:col-span-2">

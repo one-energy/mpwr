@@ -100,7 +100,7 @@
 
                     <div class="col-span-2 md:col-span-3 md:col-start-1">
                         <x-select wire:change="getSetterRate($event.target.value)" wire:model="customer.setter_id" label="Setter" name="customer.setter_id">
-                            <option value="">None</option>
+                            <option value="">Self Gen</option>
                             @foreach($users as $setter)
                                 @if($setter->role == 'Setter')
                                     <option value="{{$setter->id}}">{{$setter->first_name}} {{$setter->last_name}}</option>
@@ -110,7 +110,7 @@
                     </div>
 
                     <div class="col-span-2 md:col-span-3">
-                        <x-input-currency wire:model="customer.setter_fee" label="Setter Comission Rate" name="customer.setter_fee" value="{{$setterFee}}"/>
+                        <x-input-currency wire:model="customer.setter_fee" label="Setter Comission Rate" name="customer.setter_fee" disabled="{{$customer->setter_fee == 0}}"/>
                     </div>
 
                     <div class="col-span-2 md:col-span-3">
@@ -184,7 +184,7 @@
                     @if(user()->role != 'Setter')
                         <div class="flex justify-start">
                             <span class="inline-flex rounded-md shadow-sm">
-                                <button type="submit" form="updateForm" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
+                                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
                                     Update
                                 <button>
                             </span>
@@ -212,10 +212,6 @@
                     @endif
                 </div>
             </form>
-            <x-form id="updateForm" :route="route('customers.update', $customer->id)" put>
-
-            </x-form>
-
         </div>
         <div x-cloak x-show="openModal" class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center z-20">
             <div x-show="openModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity">

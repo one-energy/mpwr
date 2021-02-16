@@ -36,7 +36,7 @@ class Create extends Component
         'customer.financing_id'        => 'required',
         'customer.financer_id'         => 'nullable',
         'customer.term_id'             => 'nullable',
-        'customer.setter_id'           => 'required',
+        'customer.setter_id'           => 'nullable',
         'customer.setter_fee'          => 'required',
         'customer.sales_rep_id'        => 'required',
         'customer.sales_rep_fee'       => 'required',
@@ -52,6 +52,7 @@ class Create extends Component
     public function mount()
     {
         $this->customer = new Customer();
+        $this->setSelfGen();
         if(user()->role != 'Admin' && user()->role != 'Owner'){
             $this->departmentId = user()->department_id;
         } else {
@@ -87,6 +88,11 @@ class Create extends Component
             ->send();
 
         return redirect(route('home'));
+    }
+
+    public function setSelfGen()
+    {
+        $this->customer->setter_fee = 0;
     }
 
     public function getSetterFee()
@@ -131,9 +137,9 @@ class Create extends Component
 
     public function calculateGrossRepComission(Customer $customer)
     {
-        if($customer->margin && $customer->system_size)
+        if($customer->margin && $customer->system_size) {
             return $customer->margin * $customer->system_size * 1000;
-
+        }
         return 0;
     }
 }
