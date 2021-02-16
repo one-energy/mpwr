@@ -18,6 +18,10 @@ class Create extends Component
 
     public int $departmentId;
 
+    public int $grossRepComission;
+
+    public int $stockPoints = 250;
+
     public Customer $customer;
 
     protected $rules = [
@@ -38,7 +42,8 @@ class Create extends Component
         'customer.enium_points'        => 'nullable',
         'customer.sales_rep_comission' => 'required',
         'customer.margin'              => 'required',
-        'customer.opened_by_id'        => 'required',
+        'stockPoints'                  => 'required',
+        'grossRepComission'            => 'required',
     ];
 
     public $bills;
@@ -57,6 +62,7 @@ class Create extends Component
     {
         $this->customer->calcComission();
         $this->customer->calcMargin();
+        $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
         return view('livewire.customer.create',[
             'departments' => Department::all(),
             'setterFee'   => $this->getSetterFee(),
@@ -69,7 +75,7 @@ class Create extends Component
 
     public function store()
     {
-        dd($this->customer->date_of_sale);
+        // dd($this->customer);
         $this->validate();
         // $customer                      = new Customer();
         // $customer->first_name          = $validated['first_name'];
@@ -89,7 +95,7 @@ class Create extends Component
         // $customer->enium_points        = $validated['enium_points'] ?? 0;
         // $customer->opened_by_id        = $validated['opened_by_id'];
 
-
+        $this->customer->opened_by_id = user()->id;
         $this->customer->save();
 
         alert()
@@ -135,6 +141,14 @@ class Create extends Component
 
             return $rate->first()->rate;
         }
+
+        return 0;
+    }
+
+    public function calculateGrossRepComission(Customer $customer)
+    {
+        if($customer->margin && $customer->system_size)
+            return $customer->margin * $customer->system_size * 1000;
 
         return 0;
     }

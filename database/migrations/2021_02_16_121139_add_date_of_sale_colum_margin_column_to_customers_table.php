@@ -14,8 +14,8 @@ class AddDateOfSaleColumMarginColumnToCustomersTable extends Migration
     public function up()
     {
         Schema::table('customers', function (Blueprint $table) {
-            $table->dateTime('date_of_sale');
-            $table->double('margin');
+            $table->dateTime('date_of_sale')->after('created_at')->useCurrent();
+            $table->double('margin')->after('created_at')->default(0);
         });
     }
 

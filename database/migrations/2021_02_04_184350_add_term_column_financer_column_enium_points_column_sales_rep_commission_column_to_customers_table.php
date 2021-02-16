@@ -18,8 +18,8 @@ class AddTermColumnFinancerColumnEniumPointsColumnSalesRepCommissionColumnToCust
             $table->foreignId('financer_id')->nullable()->after('financing_id');
             $table->foreignId('term_id')->nullable()->after('financer_id');
 
-            $table->bigInteger('enium_points');
-            $table->bigInteger('sales_rep_comission');
+            $table->bigInteger('enium_points')->after('created_at')->nullable()->default(0);
+            $table->bigInteger('sales_rep_comission')->after('created_at')->default(0);
 
             $table->foreign('financing_id')->references('id')->on('financings')->onDelete('cascade');
             $table->foreign('financer_id')->references('id')->on('financers')->onDelete('cascade');

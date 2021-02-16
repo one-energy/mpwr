@@ -18,7 +18,6 @@
                     </x-select>
                 </div>
                 @endif
-                <input wire:model="customer.opened_by_id" type="hidden" value="{{ $openedById }}" name="opened_by_id">
 
                 <div class="col-span-2 md:col-span-3">
                     <x-input wire:model="customer.first_name" label="Customer First Name" name="customer.first_name"/>
@@ -131,24 +130,24 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-2">
-                    <x-input wire:model="customer.gross_rep_comission" label="Gross Rep Comission" name="gross_rep_comission" type="number" readonly/>
+                    <x-input wire:model="grossRepComission" label="Gross Rep Comission" name="grossRepComission" type="number" readonly/>
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
-                    <x-input wire:model="customer.adders" label="Adders Total" name="adders" step="0.01" type="number"/>
+                    <x-input wire:model="customer.adders" label="Adders Total" name="custormer.adders" step="0.01" type="number"/>
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
-                    <x-input wire:model="customer.sales_rep_comission" label="Net Rep Commisson" name="sales_rep_comission" step="0.01" type="number" adders/>
+                    <x-input wire:model="customer.sales_rep_comission" label="Net Rep Commisson" name="customer.sales_rep_comission" step="0.01" type="number" readonly/>
                 </div>
 
                 <div class="col-span-2">
-                    <x-input-currency  wire:model="customer.stock_points" label="Stock Points" name="stock_points"/>
+                    <x-input-currency  wire:model="stockPoints" label="Stock Points" name="stockPoints" readonly/>
                 </div>
 
                 @if($customer->financer_id == 1)
                     <div class="col-span-2 md:col-span-1">
-                        <x-input-currency wire:model="customer.enium_points" label="Noble Pay Points" name="enium_points" readonly/>
+                        <x-input-currency wire:model="customer.enium_points" label="Noble Pay Points" name="customer.enium_points" readonly/>
                     </div>
                 @endif
             </div>
