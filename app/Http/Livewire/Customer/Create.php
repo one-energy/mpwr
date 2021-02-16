@@ -9,6 +9,7 @@ use App\Models\Department;
 use App\Models\Rates;
 use App\Models\User;
 use App\Models\Term;
+use Carbon\Carbon;
 use Livewire\Component;
 
 class Create extends Component
@@ -75,26 +76,9 @@ class Create extends Component
 
     public function store()
     {
-        // dd($this->customer);
         $this->validate();
-        // $customer                      = new Customer();
-        // $customer->first_name          = $validated['first_name'];
-        // $customer->last_name           = $validated['last_name'];
-        // $customer->bill                = $validated['bill'];
-        // $customer->financing_id        = $validated['financing_id'];
-        // $customer->financer_id         = $validated['financer_id'] ?? null;
-        // $customer->term_id             = $validated['term_id'] ?? null;
-        // $customer->system_size         = $validated['system_size'];
-        // $customer->adders              = $validated['adders'];
-        // $customer->epc                 = $validated['epc'];
-        // $customer->setter_id           = $validated['setter_id'];
-        // $customer->setter_fee          = $validated['setter_fee'];
-        // $customer->sales_rep_fee       = $validated['sales_rep_fee'];
-        // $customer->sales_rep_id        = $validated['sales_rep_id'];
-        // $customer->sales_rep_comission = $validated['sales_rep_comission'];
-        // $customer->enium_points        = $validated['enium_points'] ?? 0;
-        // $customer->opened_by_id        = $validated['opened_by_id'];
 
+        $this->customer->date_of_sale = Carbon::parse($this->customer->date_of_sale);
         $this->customer->opened_by_id = user()->id;
         $this->customer->save();
 

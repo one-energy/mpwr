@@ -87,7 +87,7 @@
                         <div
                             @click="getDateValue(date)"
                             x-text="date"
-                            class="cursor-pointer text-center text-sm leading-none rounded-full transition ease-in-out duration-100"
+                            class="cursor-pointer text-center text-sm leading-none rounded-full leading-loose transition ease-in-out duration-100"
                             :class="{'bg-green-base text-white': isSelectedDate(date) == true, 'text-gray-700 hover:bg-blue-200': isSelectedDate(date) == false }"
                         ></div>
                     </div>
@@ -101,11 +101,9 @@
     const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     function app() {
-        console.log('init');
         return {
             showDatepicker: false,
             datepickerValue: @entangle($attributes->wire('model')),
-
             month: '',
             year: '',
             no_of_days: [],
@@ -113,10 +111,10 @@
             days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
 
             initDate() {
-                let today = new Date();
-                this.month = today.getMonth();
-                this.year = today.getFullYear();
-                this.datepickerValue = new Date(this.year, this.month, today.getDate()).toDateString();
+                let day = this.datepickerValue ? new Date(this.datepickerValue) : new Date();
+                this.month = day.getMonth();
+                this.year = day.getFullYear();
+                this.datepickerValue = new Date(this.year, this.month, day.getDate()).toDateString();
             },
 
             isToday(date) {
@@ -127,14 +125,12 @@
 
             isSelectedDate(date) {
                 const d = new Date(this.year, this.month, date);
-                console.log(typeof this.datepickerValue, this.datepickerValue)
                 return this.datepickerValue === d.toDateString() ? true : false;
             },
 
             getDateValue(date) {
                 let selectedDate = new Date(this.year, this.month, date);
                 this.datepickerValue = selectedDate.toDateString();
-                this.$refs.date.value = selectedDate.getFullYear() +"-"+ ('0'+ selectedDate.getMonth()).slice(-2) +"-"+ ('0' + selectedDate.getDate()).slice(-2);
                 this.showDatepicker = false;
             },
 

@@ -95,8 +95,6 @@
                     <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc" observation="Sold Price"/>
                 </div>
 
-
-
                 <div class="col-span-2 md:col-span-3 md:col-start-1">
                     <x-select wire:change="getSetterRate($event.target.value)" wire:model="customer.setter_id" label="Setter" name="customer.setter_id">
                         <option value="">None</option>
