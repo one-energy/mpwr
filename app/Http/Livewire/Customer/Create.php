@@ -26,6 +26,7 @@ class Create extends Component
         'customer.system_size'         => 'required',
         'customer.bill'                => 'required',
         'customer.adders'              => 'required',
+        'customer.date_of_sale'        => 'required',
         'customer.epc'                 => 'required',
         'customer.financing_id'        => 'required',
         'customer.financer_id'         => 'nullable',

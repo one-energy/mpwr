@@ -8,7 +8,7 @@
         <x-form :route="route('customers.store')" post>
             <div class="grid grid-cols-2 gap-4 sm:col-gap-4 md:grid-cols-6">
                 @if(user()->role == 'Admin' || user()->role == 'Owner')
-                <div class="col-span-2 md:col-span-3">
+                <div class="col-span-2 md:col-span-6">
                     <x-select wire:model="departmentId" label="Department" name="departmentId">
                         @foreach($departments as $department)
                             <option value="{{ $department->id }}" {{ old('departmentId') == $department ? 'selected' : '' }}>
@@ -46,14 +46,6 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
-                    <x-input-calendar label="Date of Sale" name="date_of_sale"/>
-                </div>
-
-                <div class="col-span-1 md:col-span-2">
-                    <x-input-currency wire:model="customer.epc" label="EPC" name="epc" observation="Sold Price"/>
-                </div>
-
-                <div class="col-span-1">
                     <x-select wire:model="customer.financing_id" label="Financing" name="financing_id">
                         @if (old('financing') == '')
                             <option value="" selected>None</option>
@@ -67,7 +59,7 @@
                 </div>
 
                 @if($customer->financing_id == 1)
-                    <div class="col-span-1">
+                    <div class="col-span-1 md:col-span-1 md:col-start-4">
                         <x-select wire:model="customer.financer_id" label="Financer" name="financer_id">
                             @if (old('financer') == '')
                                 <option value="" selected>None</option>
@@ -97,6 +89,14 @@
                 @endif
 
                 <div class="col-span-2 md:col-span-3">
+                    <x-input-currency wire:model="customer.epc" label="EPC" name="epc" observation="Sold Price"/>
+                </div>
+
+                <div class="col-span-2 md:col-span-3">
+                    <x-input-calendar label="Date of Sale" name="date_of_sale"/>
+                </div>
+
+                <div class="col-span-2 md:col-span-3 md:col-start-1">
                     <x-select wire:change="getSetterRate($event.target.value)" wire:model="customer.setter_id" label="Setter" name="setter_id">
                         <option value="">None</option>
                         @foreach($users as $setter)
@@ -125,7 +125,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <x-input-currency  wire:model="customer.margin" label="Margin" name="margin" readonly/>
+                    <x-input-currency  wire:model="customer.margin" label="Margin" name="margin" readonly>{{$customer->epc - $customer->sales_rep_fee}}</x-input-currency>
                 </div>
 
                 <div class="col-span-2 md:col-span-2">
@@ -140,18 +140,15 @@
                     <x-input wire:model="customer.sales_rep_comission" label="Net Rep Commisson" name="sales_rep_comission" step="0.01" type="number" adders/>
                 </div>
 
-                <div class="col-span-2 md:col-start-5">
+                <div class="col-span-2">
                     <x-input-currency  wire:model="customer.stock_points" label="Stock Points" name="stock_points"/>
                 </div>
 
                 @if($customer->financer_id == 1)
-                    <div class="col-span-2 md:col-span-1 md:col-start-4">
+                    <div class="col-span-2 md:col-span-1">
                         <x-input-currency wire:model="customer.enium_points" label="Noble Pay Points" name="enium_points" readonly/>
                     </div>
                 @endif
-
-
-
             </div>
             <div class="pt-5 mt-8 border-t border-gray-200">
                 <div class="flex justify-start">
