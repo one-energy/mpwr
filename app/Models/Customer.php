@@ -91,4 +91,13 @@ class Customer extends Model
             $this->sales_rep_comission = 0;
         }
     }
+
+    public function calcMargin()
+    {
+        if($this->epc && $this->setter_fee) {
+            $this->margin = $this->epc - $this->setter_fee;
+        } else {
+            $this->margin = 0;
+        }
+    }
 }

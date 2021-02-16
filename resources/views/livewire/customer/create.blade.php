@@ -33,11 +33,11 @@
                 </div>
 
                 <div class="col-span-1 md:col-span-2">
-                    <x-input-add-on wire:model="customer.system_size" label="System Size" name="system_size" addOn="kW"/>
+                    <x-input-add-on wire:model="customer.system_size" label="System Size" name="system_size" addOn="kW" name="customer.system_size"/>
                 </div>
 
                 <div class="col-span-1">
-                    <x-select label="Bill" name="bill">
+                    <x-select wire:model="customer.bill" label="Bill" name="customer.bill">
                         @if (old('bill') == '')
                             <option value="" selected>None</option>
                         @endif
@@ -50,7 +50,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
-                    <x-select wire:model="customer.financing_id" label="Financing" name="financing_id">
+                    <x-select wire:model="customer.financing_id" label="Financing" name="customer.financing_id">
                         @if (old('financing') == '')
                             <option value="" selected>None</option>
                         @endif
@@ -64,7 +64,7 @@
 
                 @if($customer->financing_id == 1)
                     <div class="col-span-1 md:col-span-1 md:col-start-4">
-                        <x-select wire:model="customer.financer_id" label="Financer" name="financer_id">
+                        <x-select wire:model="customer.financer_id" label="Financer" name="customer.financer_id">
                             @if (old('financer') == '')
                                 <option value="" selected>None</option>
                             @endif
@@ -79,7 +79,7 @@
 
                 @if($customer->financer_id == 1)
                     <div class="col-span-1 md:col-span-2">
-                        <x-select wire:model="customer.term_id" label="Term" name="term_id" readonly>
+                        <x-select wire:model="customer.term_id" label="Term" name="customer.term_id" readonly>
                             @if (old('term_id') == '')
                                 <option value="" selected>None</option>
                             @endif
@@ -93,13 +93,13 @@
                 @endif
 
                 <div class="col-span-2 md:col-span-6">
-                    <x-input-currency wire:model="customer.epc" label="EPC" name="epc" observation="Sold Price"/>
+                    <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc" observation="Sold Price"/>
                 </div>
 
 
 
                 <div class="col-span-2 md:col-span-3 md:col-start-1">
-                    <x-select wire:change="getSetterRate($event.target.value)" wire:model="customer.setter_id" label="Setter" name="setter_id">
+                    <x-select wire:change="getSetterRate($event.target.value)" wire:model="customer.setter_id" label="Setter" name="customer.setter_id">
                         <option value="">None</option>
                         @foreach($users as $setter)
                             @if($setter->role == 'Setter')
@@ -110,11 +110,11 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
-                    <x-input-currency wire:model="customer.setter_fee" label="Setter Comission Rate" name="setter_fee" value="{{$setterFee}}"/>
+                    <x-input-currency wire:model="customer.setter_fee" label="Setter Comission Rate" name="customer.setter_fee" value="{{$setterFee}}"/>
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
-                    <x-select wire:change="getSalesRepRate($event.target.value)" wire:model="customer.sales_rep_id" label="Sales Rep" name="sales_rep_id">
+                    <x-select wire:change="getSalesRepRate($event.target.value)" wire:model="customer.sales_rep_id" label="Sales Rep" name="customer.sales_rep_id">
                         <option value="">None</option>
                         @foreach($users as $rep)
                             <option value="{{$rep->id}}">{{$rep->first_name}} {{$rep->last_name}}</option>
@@ -123,11 +123,11 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
-                    <x-input-currency wire:model="customer.sales_rep_fee" label="Sales Rep Pay Rate" name="sales_rep_fee" readonly/>
+                    <x-input-currency wire:model="customer.sales_rep_fee" label="Sales Rep Pay Rate" name="customer.sales_rep_fee" readonly/>
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <x-input-currency  wire:model="customer.margin" label="Margin" name="margin" readonly>{{$customer->epc - $customer->sales_rep_fee}}</x-input-currency>
+                    <x-input-currency  wire:model="customer.margin" label="Margin" name="customer.margin" readonly></x-input-currency>
                 </div>
 
                 <div class="col-span-2 md:col-span-2">

@@ -56,6 +56,7 @@ class Create extends Component
     public function render()
     {
         $this->customer->calcComission();
+        $this->customer->calcMargin();
         return view('livewire.customer.create',[
             'departments' => Department::all(),
             'setterFee'   => $this->getSetterFee(),
