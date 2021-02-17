@@ -16,7 +16,6 @@ class CustomerTest extends TestCase
 
     public User $user;
 
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -92,11 +91,11 @@ class CustomerTest extends TestCase
             'department_id' => $department->id,
         ]);
         $activeCustomers   = factory(Customer::class, 3)->create([
-            'is_active' => true,
+            'is_active'    => true,
             'opened_by_id' => $setter->id,
         ]);
         $inactiveCustomers = factory(Customer::class, 3)->create([
-            'is_active' => false,
+            'is_active'    => false,
             'opened_by_id' => $setter->id,
         ]);
 

@@ -23,8 +23,7 @@
                     <input type="hidden" value="{{ $openedById }}" name="opened_by_id">
                     <div class="sm:grid sm:grid-cols-2 sm:row-gap-6 sm:col-gap-4 mt-6 md:grid-cols-6">
                         <div class="col-span-2 md:col-span-3">
-                            <x-input wire:model="customer.first_name" label="Customer First Name"
-                                     name="first_name"/>
+                            <x-input label="Customer First Name" name="customer.first_name" :wire="true"/>
                         </div>
 
                         <div class="col-span-2 md:col-span-3">
