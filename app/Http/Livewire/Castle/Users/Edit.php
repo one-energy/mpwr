@@ -45,7 +45,7 @@ class Edit extends Component
     public function render()
     {
         $department    = Department::find($this->selectedDepartment);
-        $this->roles   = User::getRolesPerUrserRole(user());
+        $this->roles   = User::getRolesPerUserRole(user());
         $this->offices = $department ? $department->offices()->get() : [];
 
         if (!$this->canChange) {
@@ -115,7 +115,7 @@ class Edit extends Component
         $user = User::whereId($userId)->first();
 
         $rate = Rates::whereRole($user->role);
-        $rate->when($user->role == 'Sales Rep', function($query) use ($user) {
+        $rate->when($user->role == 'Sales Rep', function ($query) use ($user) {
             $query->where('time', '<=', $user->installs)->orderBy('time', 'desc');
         });
 
