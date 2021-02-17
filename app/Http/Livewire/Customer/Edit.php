@@ -38,6 +38,7 @@ class Edit extends Component
         'customer.setter_fee'          => 'required',
         'customer.sales_rep_id'        => 'required',
         'customer.sales_rep_fee'       => 'required',
+        'customer.panel_sold'          => 'nullable',
         'customer.enium_points'        => 'nullable',
         'customer.sales_rep_comission' => 'required',
         'customer.margin'              => 'required',
@@ -79,7 +80,6 @@ class Edit extends Component
         if ($this->customer->panel_sold != $this->panelSold) {
             $user = User::find($this->customer->sales_rep_id);
 
-            dd($user);
             if ($this->customer->panel_sold == 1) {
                 $user->installs++;
             }

@@ -139,7 +139,7 @@
                     </div>
 
                     <div class="col-span-2 md:col-span-3">
-                        <x-input wire:model="customer.sales_rep_comission" label="Net Rep Commisson" name="customer.sales_rep_comission" step="0.01" type="number" readonly/>
+                        <x-input-currency wire:model="customer.sales_rep_comission" label="Net Rep Commisson" name="customer.sales_rep_comission" readonly/>
                     </div>
 
                     <div class="col-span-2">
