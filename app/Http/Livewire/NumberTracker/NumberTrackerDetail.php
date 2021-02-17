@@ -94,12 +94,7 @@ class NumberTrackerDetail extends Component
             ->select([DB::raw("users.first_name, users.last_name, daily_numbers.id, daily_numbers.user_id, SUM(doors) as doors,
                     SUM(hours) as hours,  SUM(sets) as sets,  SUM(sits) as sits,  SUM(set_closes) as set_closes, SUM(closes) as closes")]);
 
-        $queryLast = DailyNumber::query()
-            ->leftJoin('users', function ($join) {
-                $join->on('users.id', '=', 'daily_numbers.user_id');
-            })
-            ->select([DB::raw("users.first_name, users.last_name, daily_numbers.id, daily_numbers.user_id,
-                    SUM(doors) as doors,  SUM(hours) as hours,  SUM(sets) as sets,  SUM(sits) as sits,  SUM(set_closes) as set_closes, SUM(closes) as closes")]);
+        $queryLast = $query;
 
         if ($this->period == 'd') {
             $query->whereDate('date', $this->dateSelected);
