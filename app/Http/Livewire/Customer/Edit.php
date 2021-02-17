@@ -38,7 +38,7 @@ class Edit extends Component
 
     public function mount()
     {
-        if(user()->role != 'Admin' && user()->role != 'Owner'){
+        if (user()->role != 'Admin' && user()->role != 'Owner') {
             $this->departmentId = user()->department_id;
         } else {
             $this->departmentId = Department::first()->id;
@@ -50,12 +50,12 @@ class Edit extends Component
         $this->customer->calcComission();
         return view('livewire.customer.edit', [
             'departments' => Department::all(),
-            'setterFee'  => $this->getSetterFee(),
-            'users'      => User::whereDepartmentId($this->departmentId)->get(),
-            'bills'      => Customer::BILLS,
-            'financings' => Financing::all(),
-            'financers'  => Financer::all(),
-            'terms'      => Term::all(),
+            'setterFee'   => $this->getSetterFee(),
+            'users'       => User::whereDepartmentId($this->departmentId)->get(),
+            'bills'       => Customer::BILLS,
+            'financings'  => Financing::all(),
+            'financers'   => Financer::all(),
+            'terms'       => Term::all(),
         ]);
     }
 
@@ -85,10 +85,10 @@ class Edit extends Component
 
         $this->customer->save();
 
-        dd('test');
         alert()
             ->withTitle(__('Home Owner updated!'))
             ->send();
+
         return redirect(route('customers.show', $this->customer->id));
     }
 
@@ -110,7 +110,7 @@ class Edit extends Component
 
     public function calculateCommission($customer)
     {
-        return (($customer->epc - ( $customer->pay + $customer->setter_fee )) * ($customer->system_size * 1000)) - $customer->adders;
+        return (($customer->epc - ($customer->pay + $customer->setter_fee)) * ($customer->system_size * 1000)) - $customer->adders;
     }
 
     public function getSalesRepFee()
@@ -133,7 +133,7 @@ class Edit extends Component
         $user = User::whereId($userId)->first();
 
         $rate = Rates::whereRole($user->role);
-        $rate->when($user->role == 'Sales Rep', function($query) use ($user) {
+        $rate->when($user->role == 'Sales Rep', function ($query) use ($user) {
             $query->where('time', '<=', $user->installs)->orderBy('time', 'desc');
         });
 

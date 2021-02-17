@@ -27,8 +27,7 @@ class CustomerController extends Controller
         $setterFee   = $this->getSetterFee();
         $salesRepFee = $this->getSalesRepFee();
 
-        return view('customer.create',
-            [
+        return view('customer.create', [
                 'bills'       => $bills,
                 'financings'  => $financings,
                 'openedById'  => $openedById,
@@ -50,63 +49,9 @@ class CustomerController extends Controller
         return redirect()->route('home');
     }
 
-    public function store()
-    {
-        $validated = request()->validate(
-            [
-                'first_name'          => 'required|string|min:3|max:255',
-                'last_name'           => 'required|string|min:3|max:255',
-                'bill'                => 'required',
-                'financing_id'        => 'required',
-                'financer_id'         => 'nullable',
-                'term_id'             => 'nullable',
-                'system_size'         => 'required',
-                'adders'              => 'required',
-                'epc'                 => 'required',
-                'setter_id'           => 'required',
-                'setter_fee'          => 'required',
-                'opened_by_id'        => 'required',
-                'sales_rep_fee'       => 'required',
-                'sales_rep_id'        => 'required',
-                'sales_rep_comission' => 'required',
-                'enium_points'        => 'nullable',
-            ]
-        );
-
-        $customer                      = new Customer();
-        $customer->first_name          = $validated['first_name'];
-        $customer->last_name           = $validated['last_name'];
-        $customer->bill                = $validated['bill'];
-        $customer->financing_id        = $validated['financing_id'];
-        $customer->financer_id         = $validated['financer_id'] ?? null;
-        $customer->term_id             = $validated['term_id'] ?? null;
-        $customer->system_size         = $validated['system_size'];
-        $customer->adders              = $validated['adders'];
-        $customer->epc                 = $validated['epc'];
-        $customer->setter_id           = $validated['setter_id'];
-        $customer->setter_fee          = $validated['setter_fee'];
-        $customer->sales_rep_fee       = $validated['sales_rep_fee'];
-        $customer->sales_rep_id        = $validated['sales_rep_id'];
-        $customer->sales_rep_comission = $validated['sales_rep_comission'];
-        $customer->enium_points        = $validated['enium_points'] ?? 0;
-        $customer->opened_by_id        = $validated['opened_by_id'];
-
-        $commission = $this->calculateCommission($customer);
-
-        $customer->commission = $commission;
-
-        $customer->save();
-
-        alert()
-            ->withTitle(__('Home Owner created!'))
-            ->send();
-
-        return redirect(route('home'));
-    }
-
     public function calculateCommission($customer)
     {
-        return (($customer->epc - ( $customer->pay + $customer->setter_fee )) * ($customer->system_size * 1000)) - $customer->adders;
+        return (($customer->epc - ($customer->pay + $customer->setter_fee)) * ($customer->system_size * 1000)) - $customer->adders;
     }
 
     public function show(Customer $customer)
@@ -116,74 +61,10 @@ class CustomerController extends Controller
         $users = User::get();
 
         return view('customer.show',
-        [
-            'customer'   => $customer,
-            'users'      => $users,
-        ]);
-    }
-
-    public function update(Customer $customer)
-    {
-        $this->authorize('update', Customer::class);
-
-        $validated = request()->validate(
             [
-                'first_name'    => 'required|string|min:3|max:255',
-                'last_name'     => 'required|string|min:3|max:255',
-                'system_size'   => 'required',
-                'bill'          => 'required',
-                'adders'        => 'required',
-                'epc'           => 'required',
-                'financing_id'  => 'required',
-                'financer_id'   => 'integer|nullable',
-                'term_id'       => 'integer|nullable',
-                'setter_id'     => 'required',
-                'setter_fee'    => 'required',
-                'sales_rep_fee' => 'required',
-                'sales_rep_id'  => 'required',
-                'panel_sold'    => 'nullable',
-            ]
-        );
-
-        if ($customer->panel_sold != $validated['panel_sold']) {
-            $user = User::whereId($validated['sales_rep_id'])->first();
-
-            if ($validated['panel_sold'] == 1) {
-                $user->installs++;
-            }
-
-            if ($validated['panel_sold'] == 0) {
-                $user->installs--;
-            }
-
-            $user->save();
-        }
-
-        $customer->first_name    = $validated['first_name'];
-        $customer->last_name     = $validated['last_name'];
-        $customer->bill          = $validated['bill'];
-        $customer->financing_id  = $validated['financing_id'];
-        $customer->financer_id   = $validated['financer_id'] ?? null;
-        $customer->term_id       = $validated['term_id'] ?? null;
-        $customer->system_size   = $validated['system_size'];
-        $customer->adders        = $validated['adders'];
-        $customer->epc           = $validated['epc'];
-        $customer->setter_id     = $validated['setter_id'];
-        $customer->setter_fee    = $validated['setter_fee'];
-        $customer->sales_rep_fee = $validated['sales_rep_fee'];
-        $customer->sales_rep_id  = $validated['sales_rep_id'];
-
-        $commission = $this->calculateCommission($customer);
-
-        $customer->commission = $commission;
-
-        $customer->save();
-
-        alert()
-            ->withTitle(__('Home Owner updated!'))
-            ->send();
-
-        return redirect(route('customers.show', $customer->id));
+                'customer' => $customer,
+                'users'    => $users,
+            ]);
     }
 
     public function active(Customer $customer)
@@ -195,12 +76,12 @@ class CustomerController extends Controller
 
         if ($customer->is_active == true) {
             alert()
-            ->withTitle(__('Home Owner set as active!'))
-            ->send();
+                ->withTitle(__('Home Owner set as active!'))
+                ->send();
         } else {
             alert()
-            ->withTitle(__('Home Owner set as canceled!'))
-            ->send();
+                ->withTitle(__('Home Owner set as canceled!'))
+                ->send();
         }
 
         return redirect(route('customers.show', $customer));

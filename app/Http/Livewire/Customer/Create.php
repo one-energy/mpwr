@@ -2,18 +2,17 @@
 
 namespace App\Http\Livewire\Customer;
 
-use App\Models\Financing;
-use App\Models\Financer;
 use App\Models\Customer;
 use App\Models\Department;
+use App\Models\Financer;
+use App\Models\Financing;
 use App\Models\Rates;
-use App\Models\User;
 use App\Models\Term;
+use App\Models\User;
 use Livewire\Component;
 
 class Create extends Component
 {
-
     public int $openedById;
 
     public int $departmentId;
@@ -44,7 +43,7 @@ class Create extends Component
     public function mount()
     {
         $this->customer = new Customer();
-        if(user()->role != 'Admin' && user()->role != 'Owner'){
+        if (user()->role != 'Admin' && user()->role != 'Owner') {
             $this->departmentId = user()->department_id;
         } else {
             $this->departmentId = Department::first()->id;
@@ -54,7 +53,8 @@ class Create extends Component
     public function render()
     {
         $this->customer->calcComission();
-        return view('livewire.customer.create',[
+
+        return view('livewire.customer.create', [
             'departments' => Department::all(),
             'setterFee'   => $this->getSetterFee(),
             'financings'  => Financing::all(),
@@ -105,9 +105,9 @@ class Create extends Component
     {
         $user = User::whereId($userId)->first();
 
-        if($user) {
+        if ($user) {
             $rate = Rates::whereRole($user->role);
-            $rate->when($user->role == 'Sales Rep', function($query) use ($user) {
+            $rate->when($user->role == 'Sales Rep', function ($query) use ($user) {
                 $query->where('time', '<=', $user->installs)->orderBy('time', 'desc');
             });
 

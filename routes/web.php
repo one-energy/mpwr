@@ -130,7 +130,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/profile/photo-upload', ProfilePhotoUploadController::class)->name('profile.photo-upload');
     Route::put('/profile/change-password', ProfileChangePasswordController::class)->name('profile.change-password');
 
-    Route::resource('/customers', CustomerController::class);
+    Route::resource('/customers', CustomerController::class)->except('store', 'update')->names('customers');
     Route::put('/customers/{customer}/active', [CustomerController::class, 'Active'])->name('customers.active');
     Route::delete('/customers/{customer}', [CustomerController::class, 'delete'])->name('customers.delete');
     Route::get('/scoreboard', ScoreboardController::class)->name('scoreboard');
