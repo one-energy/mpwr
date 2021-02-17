@@ -94,7 +94,12 @@ class NumberTrackerDetail extends Component
             ->select([DB::raw("users.first_name, users.last_name, daily_numbers.id, daily_numbers.user_id, SUM(doors) as doors,
                     SUM(hours) as hours,  SUM(sets) as sets,  SUM(sits) as sits,  SUM(set_closes) as set_closes, SUM(closes) as closes")]);
 
-        $queryLast = $query;
+        $queryLast = DailyNumber::query()
+            ->leftJoin('users', function ($join) {
+                $join->on('users.id', '=', 'daily_numbers.user_id');
+            })
+            ->select([DB::raw("users.first_name, users.last_name, daily_numbers.id, daily_numbers.user_id, SUM(doors) as doors,
+                    SUM(hours) as hours,  SUM(sets) as sets,  SUM(sits) as sits,  SUM(set_closes) as set_closes, SUM(closes) as closes")]);
 
         if ($this->period == 'd') {
             $query->whereDate('date', $this->dateSelected);
@@ -106,6 +111,7 @@ class NumberTrackerDetail extends Component
             $query->whereMonth('date', '=', Carbon::createFromFormat('Y-m-d', $this->dateSelected)->month);
             $queryLast->whereMonth('date', '=', Carbon::createFromFormat('Y-m-d', $this->dateSelected)->subMonth()->month);
         }
+
 
         if (count($this->activeFilters) > 0) {
             $activeFilters = $this->activeFilters;
@@ -210,38 +216,36 @@ class NumberTrackerDetail extends Component
         $data = [];
         if(user()->role == "Region Manager")
         {
-            $regions = Region::whereRegionManagerId(user()->id)->get();
-            $regions->map(function($item) {
+            $regions = user()->managedRegions()->get();
+            foreach ($regions as $region) {
                 $data = [
-                    'name' => $item->name,
-                    'id'   => $item->id,
+                    'name' => $region->name,
+                    'id'   => $region->id,
                 ];
-                $this->addFilter($data, 'region');
-            });
+                $this->addFilter($data, 'office');
+            }
         }
 
         if(user()->role == "Office Manager")
         {
-            $offices = Office::whereOfficeManagerId(user()->id)->get();
-            $offices->map(function($item) {
+            $offices = user()->managedOffices()->get();
+            foreach ($offices as $office) {
                 $data = [
-                    'name' => $item->name,
-                    'id'   => $item->id,
+                    'name' => $office->name,
+                    'id'   => $office->id,
                 ];
                 $this->addFilter($data, 'office');
-            });
+            }
         }
 
         if(user()->role == "Setter" || user()->role == "Sales Rep")
         {
-            $user = User::whereId(user()->id)->first();
-                $data = [
-                    'first_name' => $user->first_name,
-                    'last_name'  => $user->last_name,
-                    'id'         => $user->id
-                ];
-                $this->addFilter($data, 'user');
-
+            $data = [
+                'first_name' => user()->first_name,
+                'last_name'  => user()->last_name,
+                'id'         => user()->id
+            ];
+            $this->addFilter($data, 'user');
         }
     }
 }
