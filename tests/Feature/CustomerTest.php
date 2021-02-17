@@ -14,6 +14,9 @@ class CustomerTest extends TestCase
 {
     use RefreshDatabase;
 
+    public User $user;
+
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -27,7 +30,7 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_list_all_customers_on_dashboard()
     {
-        $customers = factory(Customer::class, 5)->create();
+        $customers = factory(Customer::class, 5)->create(['opened_by_id' => $this->user->id]);
 
         $response = $this->get('/');
 
@@ -79,8 +82,25 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_filter_by_inactive_customers()
     {
-        $activeCustomers   = factory(Customer::class, 3)->create(['is_active' => true]);
-        $inactiveCustomers = factory(Customer::class, 3)->create(['is_active' => false]);
+        $departmentManager                = factory(User::class)->create(['role' => 'Department Manager']);
+        $department                       = factory(Department::class)->create(['department_manager_id' => $departmentManager->id]);
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
+
+        $setter = factory(User::class)->create([
+            'role'          => 'Setter',
+            'department_id' => $department->id,
+        ]);
+        $activeCustomers   = factory(Customer::class, 3)->create([
+            'is_active' => true,
+            'opened_by_id' => $setter->id,
+        ]);
+        $inactiveCustomers = factory(Customer::class, 3)->create([
+            'is_active' => false,
+            'opened_by_id' => $setter->id,
+        ]);
+
+        $this->actingAs($setter);
 
         $response = $this->get('/?sort_by=is_inactive');
 

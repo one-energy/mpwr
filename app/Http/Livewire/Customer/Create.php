@@ -64,6 +64,23 @@ class Create extends Component
         ]);
     }
 
+    public function store()
+    {
+        $this->validate();
+
+        $commission = $this->calculateCommission($this->customer);
+
+        $this->customer->commission = $commission;
+
+        $this->customer->save();
+
+        alert()
+            ->withTitle(__('Home Owner created!'))
+            ->send();
+
+        return redirect(route('home'));
+    }
+
     public function getSetterFee()
     {
         return Rates::whereRole('Setter')->first();
