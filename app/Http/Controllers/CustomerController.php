@@ -150,12 +150,10 @@ class CustomerController extends Controller
 
             if ($validated['panel_sold'] == 1) {
                 $user->installs++;
-                $user->kw_achived += $validated['system_size'];
             }
 
             if ($validated['panel_sold'] == 0) {
                 $user->installs--;
-                $user->kw_achived -= $validated['system_size'];
             }
 
             $user->save();

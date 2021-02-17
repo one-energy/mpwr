@@ -26,6 +26,7 @@ class Edit extends Component
         'customer.epc'                 => 'required',
         'customer.financing_id'        => 'required',
         'customer.financer_id'         => 'nullable',
+        'customer.panel_sold'          => 'required',
         'customer.term_id'             => 'nullable',
         'customer.setter_id'           => 'required',
         'customer.setter_fee'          => 'required',
@@ -58,9 +59,58 @@ class Edit extends Component
         ]);
     }
 
+    public function update()
+    {
+        $this->validate();
+
+        if ($this->customer->panel_sold != $this->customer->panel_sold) {
+            $user = User::whereId($this->customer->sales_rep_id)->first();
+
+            if ($this->customer->panel_sold == 1) {
+                $user->installs++;
+                $user->kw_achived += $this->customer->system_size;
+            }
+
+            if ($this->customer->panel_sold == 0) {
+                $user->installs--;
+                $user->kw_achived -= $this->customer->system_size;
+            }
+
+            $user->save();
+        }
+
+        $commission = $this->calculateCommission($this->customer);
+
+        $this->customer->commission = $commission;
+
+        $this->customer->save();
+
+        dd('test');
+        alert()
+            ->withTitle(__('Home Owner updated!'))
+            ->send();
+        return redirect(route('customers.show', $this->customer->id));
+    }
+
+    public function delete()
+    {
+        $this->customer->delete();
+
+        alert()
+            ->withTitle(__('Home Owner deleted!'))
+            ->send();
+
+        return redirect()->route('home');
+    }
+
     public function getSetterFee()
     {
         return Rates::whereRole('Setter')->first();
+    }
+
+    public function calculateCommission($customer)
+    {
+        return (($customer->epc - ( $customer->pay + $customer->setter_fee )) * ($customer->system_size * 1000)) - $customer->adders;
     }
 
     public function getSalesRepFee()

@@ -7,7 +7,7 @@
                 </x-link>
             </div>
             <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-                <x-form id="updateForm" :route="route('customers.update', $customer->id)" put>
+                <form wire:submit.prevent="update">
                     @csrf
                     @if(user()->role == 'Admin' || user()->role == 'Owner')
                         <x-select wire:model="departmentId" label="Department" name="departmentId">
@@ -135,8 +135,7 @@
                         </div>
 
                         <div class="md:col-span-4 sm:cols-span-2 flex items-center justify-between">
-                            <input type="hidden" name="panel_sold" value="0">
-                            <x-checkbox label="Installed and Paid" name="panel_sold" :checked="old('panel_sold', $customer->panel_sold)" :disabledToUser="'Setter'"></x-checkbox>
+                            <x-checkbox wire:model="customer.panel_sold" label="Installed and Paid" name="panel_sold" :checked="old('panel_sold', $customer->panel_sold)" :disabledToUser="'Setter'"></x-checkbox>
                         </div>
 
                         <div class="sm:col-span-1">
@@ -162,23 +161,19 @@
                         </div>
                         </div>
                     </div>
-
-                </x-form>
-                <div class="mt-8 border-t border-gray-200 pt-5">
+                    <div class="mt-8 border-t border-gray-200 pt-5">
                         @if(user()->role != 'Setter')
                             <div class="flex justify-start">
                                 <span class="inline-flex rounded-md shadow-sm">
-                                    <button type="submit" form="updateForm" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
+                                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
                                         Update
                                     <button>
                                 </span>
-                                <x-form id="deleteForm" :route="route('customers.delete', $customer->id)" delete>
-                                    <span class="ml-3 inline-flex rounded-md shadow-sm">
-                                        <button type="submit" form="deleteForm" class="py-2 px-4 border-2 bg-red-500 border-red-500 rounded-md text-sm leading-5 font-medium text-white hover:bg-red-600 focus:outline-none focus:border-red-500 focus:shadow-outline-red active:bg-red-50 transition duration-150 ease-in-out">
-                                            Delete
-                                        </button>
-                                    </span>
-                                </x-form>
+                                <span class="ml-3 inline-flex rounded-md shadow-sm">
+                                    <button type="button" wire:click="delete" class="py-2 px-4 border-2 bg-red-500 border-red-500 rounded-md text-sm leading-5 font-medium text-white hover:bg-red-600 focus:outline-none focus:border-red-500 focus:shadow-outline-red active:bg-red-50 transition duration-150 ease-in-out">
+                                        Delete
+                                    </button>
+                                </span>
                                 <span class="ml-3 inline-flex rounded-md shadow-sm">
                                     @if($customer->is_active == true)
                                         <a href="#" x-on:click="openModal = true; loading = true" x-show="!openModal" class="py-2 px-4 border-2 border-red-500 rounded-md text-sm leading-5 font-medium text-red-500 hover:text-red-600 hover:border-red-600 focus:outline-none focus:border-red-500 focus:shadow-outline-red active:bg-red-50 transition duration-150 ease-in-out">
@@ -195,7 +190,8 @@
                             </div>
                         @endif
                     </div>
-            </div>
+                </div>
+            </form>
             <div x-cloak x-show="openModal" class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center z-20">
                 <div x-show="openModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity">
                 <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
@@ -204,7 +200,7 @@
                 <div x-show="openModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
                     <x-form :route="route('customers.active', $customer->id)" put>
                         @csrf
-                    <input type="hidden" id="active" name="active" value="{{ $customer->is_active ? true : false }}">
+                        <input type="hidden" id="active" name="active" value="{{ $customer->is_active ? true : false }}">
                         <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                             <div class="sm:flex sm:items-start">
                             @if($customer->is_active == true)
