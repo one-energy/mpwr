@@ -18,15 +18,26 @@
                                     fetch('https://' + location.hostname + '/get-offices-managers/' + region, {method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
-                                    }}).then(res => res.json()).then((officeManagerData) => { officesManagers = officeManagerData }) }),
+                                    }}).then(res => res.json()).then((officeManagerData) => {
+                                            selectedManager = '{{$office->office_manager_id}}'
+                                            officesManagers = officeManagerData
+                                        })
+                                    }),
                             fetch('https://' + location.hostname + '/get-regions/' + '{{user()->department_id}}' ,{method: 'post',  headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-TOKEN': token
-                                    }}).then(res=> res.json()).then( (regionsData) => {
-                                        regions = regionsData
-                                        selectedRegion = '{{$office->region_id}}'
-                                        selectedManager = '{{$office->office_manager_id}}'
-                                    })">
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': token
+                            }}).then(res=> res.json()).then( (regionsData) => {
+                                regions = regionsData
+                                selectedRegion = '{{$office->region_id}}'
+                            }),
+
+                            fetch('https://' + location.hostname + '/get-offices-managers/' + {{$office->region_id}}, {method: 'post',  headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': token
+                            }}).then(res => res.json()).then((officeManagerData) => {
+                                    selectedManager = '{{$office->office_manager_id}}'
+                                    officesManagers = officeManagerData
+                            })">
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                         <div class="md:col-span-6 col-span-2">
                             <x-input label="Office Name" name="name" value="{{ $office->name }}"></x-input>
@@ -44,20 +55,18 @@
                             <div class="md:col-span-3 col-span-2 ">
                                 <x-select x-model="selectedRegion" label="Region" name="region_id">
                                     <template x-if="regions" x-for="region in regions" :key="region.id">
-                                        <option :value="region.id" x-text="region.departmentName + ' - ' + region.name"></option>
+                                        <option :value="region.id" x-text="region.department.name + ' - ' + region.name"></option>
                                     </template>
                                 </x-select>
                             </div>
                         @endif
-
                         <div class="md:col-span-3 col-span-2 @if(user()->role == 'Office Manager') hidden @endif">
-                            <x-select label="Manager" name="office_manager_id">
-                                <template x-if="officesManagers" x-for="manager in officesManagers" :key="manager.id">
-                                    <option :value="manager.id" x-text="manager.first_name + ' ' + manager.last_name"></option>
+                            <x-select x-model="selectedManager" label="Manager" name="office_manager_id">
+                                <template x-if="officesManagers" x-for="manager in officesManagers" :key="manager?.id">
+                                    <option :value="manager.id" x-text="manager.first_name + ' - ' + manager.last_name" ></option>
                                 </template>
                             </x-select>
                         </div>
-
                     </div>
                 </div>
                 <div class="mt-8 border-t border-gray-200 pt-5">
