@@ -53,13 +53,14 @@ class RatesController extends Controller
             ]
         );
 
-        
+
         $rate                = new Rates();
         $rate->name          = $validated['name'];
         $rate->time          = $validated['time'];
         $rate->rate          = $validated['rate'];
         $rate->department_id = $validated['department_id'];
         $rate->role          = $validated['role'];
+        dd($rate->canSave());
         $rate->save();
 
         alert()
@@ -120,7 +121,7 @@ class RatesController extends Controller
         $rate->rate          = $validated['rate'];
         $rate->department_id = $validated['department_id'];
         $rate->role          = $validated['role'];
-        
+
         $rate->save();
 
         alert()

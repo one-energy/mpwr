@@ -23,6 +23,11 @@ class Rates extends Model
         return $this->belongsTo(Department::class);
     }
 
+    public function canSave()
+    {
+        return Rates::whereRole($this->role)->whereDepartmentId($this->department_id)->where('time', $this->time)->get()->count() > 0;
+    }
+
     public function scopeSearch(Builder $query, $search)
     {
         $query->when($search, function (Builder $query) use ($search) {
