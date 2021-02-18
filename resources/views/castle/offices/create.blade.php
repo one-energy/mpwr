@@ -14,8 +14,8 @@
                               regions: null }"
                      x-init="$watch('selectedRegion',
                                      (region) => {
-                                    const url = '{{ route('getOfficesManager', :region) }}'.replace(':region', region);
-                                    fetch('{{ route('getOfficesManager') }}' + region, {method: 'post',  headers: {
+                                        const url = '{{ route('getOfficesManager', ':region') }}'.replace(':region', region);
+                                    fetch(url, {method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
                                     }}).then(res => res.json()).then((officeManagerData) => { officesManagers = officeManagerData }) }),
