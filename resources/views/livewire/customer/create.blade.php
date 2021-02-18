@@ -28,16 +28,16 @@
 
                         <div class="col-span-2 md:col-span-3">
                             <x-input wire:model="customer.last_name" label="Customer Last Name"
-                                     name="last_name"/>
+                                     name="last_name" :wire="true"/>
                         </div>
 
                         <div class="col-span-1 md:col-span-2">
                             <x-input-add-on wire:model="customer.system_size" label="System Size" name="system_size"
-                                            addOn="kW"/>
+                                            addOn="kW" :wire="true"/>
                         </div>
 
                         <div class="col-span-1">
-                            <x-select label="Bill" name="bill">
+                            <x-select label="Bill" name="bill" :wire="true">
                                 @if (old('bill') == '')
                                     <option value="" selected>None</option>
                                 @endif

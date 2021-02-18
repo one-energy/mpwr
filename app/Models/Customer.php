@@ -31,6 +31,8 @@ class Customer extends Model
 {
     use SoftDeletes;
 
+    protected $fillable = ['first_name' ,'last_name' ,'bill', 'financing_id', 'opened_by_id', 'system_size', 'adders', 'epc', 'setter_id', 'setter_fee', 'sales_rep_id', 'sales_rep_fee', 'sales_rep_comission', 'commission', 'created_at', 'updated_at', 'is_active'];
+
     protected $casts = [
         'panel_sold' => 'boolean',
         'is_active'  => 'boolean',

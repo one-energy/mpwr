@@ -2,12 +2,18 @@
 
 namespace Tests\Feature;
 
+use App\Http\Livewire\Customer\Create;
+use App\Http\Livewire\Customer\Edit;
 use App\Models\Customer;
 use App\Models\Department;
+use App\Models\Financer;
+use App\Models\Financing;
 use App\Models\Rates;
+use App\Models\Term;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class CustomerTest extends TestCase
@@ -48,6 +54,10 @@ class CustomerTest extends TestCase
         $departmentManager                = factory(User::class)->create(['role' => 'Department Manager']);
         $department                       = factory(Department::class)->create(['department_manager_id' => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
+        factory(Financing::class)->create();
+        factory(Financer::class)->create();
+        factory(Term::class)->create();
+        factory(Rates::class)->create();
         $departmentManager->save();
 
         $setter = factory(User::class)->create([
@@ -140,10 +150,10 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_store_a_new_customer()
     {
-        $user    = factory(User::class)->create();
-        $userOne = factory(User::class)->create(['role' => 'Setter']);
-        $userTwo = factory(User::class)->create(['role' => 'Sales Rep']);
-        $data    = [
+        $user     = factory(User::class)->create();
+        $userOne  = factory(User::class)->create(['role' => 'Setter']);
+        $userTwo  = factory(User::class)->create(['role' => 'Sales Rep']);
+        $customer = factory(Customer::class)->make([
             'first_name'          => 'First Name',
             'last_name'           => 'Last Name',
             'bill'                => 'Bill',
@@ -161,34 +171,37 @@ class CustomerTest extends TestCase
             'created_at'          => Carbon::now()->timestamp,
             'updated_at'          => Carbon::now()->timestamp,
             'is_active'           => true,
-        ];
+        ]);
 
-        $response = $this->post(route('customers.store'), $data);
+        // $response = $this->post(route('customers.store'), $data);
 
-        $created = Customer::where('first_name', $data['first_name'])->first();
+        Livewire::test(Create::class, [
+            'bills' => Customer::BILLS,
+            'customer' => $customer
+        ])->call('store')
+            ->assertSee($customer->first_name);
 
-        $response->assertStatus(302)
-            ->assertRedirect(route('home'));
+        // $created = Customer::where('first_name', $data['first_name'])->first();
+
+        // $livewire->assertRedirect('home');
+        // $response->assertStatus(302)
+        //     ->assertRedirect(route('home'));
     }
 
     /** @test */
     public function it_should_require_some_fields_to_store_a_new_customer()
     {
-        $data = [
-            'first_name'   => '',
-            'last_name'    => '',
-            'bill'         => '',
-            'opened_by_id' => '',
-        ];
+        $customer = factory(Customer::class)->make();
 
-        $response = $this->post(route('customers.store'), $data);
-        $response->assertSessionHasErrors(
-            [
-                'first_name',
-                'last_name',
-                'bill',
-                'opened_by_id',
-            ]);
+        Livewire::test(Create::class, [
+            'bills' => Customer::BILLS,
+            'customer' => $customer
+        ])->call('store')
+        ->assertHasErrors([
+            'customer.first_name' => 'required',
+            'customer.last_name' => 'required',
+            'customer.bill' => 'required',
+        ]);
     }
 
     /** @test */
@@ -196,22 +209,21 @@ class CustomerTest extends TestCase
     {
         $customer = factory(Customer::class)->create();
 
-        $response = $this->get('customers/' . $customer->id);
+        Livewire::test(Edit::class, [
+            'customer' => $customer
+        ])->assertViewIs('livewire.customer.edit');
 
-        $response->assertStatus(200)
-            ->assertViewIs('customer.show');
     }
 
     /** @test */
     public function it_should_update_a_customer()
     {
         $customer       = factory(Customer::class)->create(['adders' => 30.5]);
-        $data           = $customer->toArray();
-        $updateCustomer = array_merge($data, ['adders' => 24.7]);
 
-        $response = $this->put(route('customers.update', $customer->id), $updateCustomer);
-
-        $response->assertStatus(302);
+        Livewire::test(Edit::class, [
+            'customer' => $customer
+        ])->set('customer.adders', 24.7)
+            ->call('update');
 
         $this->assertDatabaseHas('customers',
             [
@@ -223,15 +235,17 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_block_updating_a_form_for_non_top_level_roles()
     {
-        $this->actingAs(factory(User::class)->create(['role' => 'Setter']));
+        $this->actingAs(factory(User::class)->create([
+            'role' => 'Setter',
+            'department_id' => factory(Department::class)->create()
+            ]));
 
         $customer       = factory(Customer::class)->create(['adders' => 30.5]);
-        $data           = $customer->toArray();
-        $updateCustomer = array_merge($data, ['adders' => 24.7]);
 
-        $response = $this->put(route('customers.update', $customer->id), $updateCustomer);
-
-        $response->assertStatus(403);
+        Livewire::test(Edit::class, [
+            'customer' => $customer
+        ])->set('customer.adders', 24.7)
+            ->assertDontSee('Update');
     }
 
     /** @test */
