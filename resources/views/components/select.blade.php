@@ -1,4 +1,4 @@
-@props(['label', 'name', 'value', 'disabledToUser', 'disabled'])
+@props(['label', 'name', 'value', 'disabledToUser', 'disabled', 'wire' => null])
 
 @php
     $disabledToUser = $disabledToUser ?? null;
@@ -12,6 +12,7 @@
         <div class="relative mt-1 rounded-md shadow-sm">
             <select {{  $attributes->except('class') }}
                 name="{{ $name }}" id="{{ $name }}"class="block w-full transition duration-150 ease-in-out form-select sm:text-sm sm:leading-5"
+                @if ($wire) wire:model="{{ $wire }}" @endif
                 @if(($disabledToUser && user()->role == $disabledToUser) || $disabled) disabled @endif>
                 {{ $slot }}
             </select>
