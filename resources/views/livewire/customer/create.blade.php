@@ -60,7 +60,7 @@
                         </div>
 
                         <div class="col-span-1">
-                            <x-select wire:model="customer.financing_id" label="Financing" name="customer.financing_id">
+                            <x-select wire:model="customer.financing_id" label="Financing" name="customer.financing_id" :wire="true">
                                 @if (old('financing') == '')
                                     <option value="" selected>None</option>
                                 @endif
@@ -75,7 +75,7 @@
 
                         @if($customer->financing_id == 1)
                             <div class="col-span-1">
-                                <x-select wire:model="customer.financer_id" label="Financer" name="customer.financer_id">
+                                <x-select wire:model="customer.financer_id" label="Financer" name="customer.financer_id" :wire="true">
                                     @if (old('financer') == '')
                                         <option value="" selected>None</option>
                                     @endif
@@ -93,7 +93,7 @@
 
                         @if($customer->financer_id == 1)
                             <div class="w-full col-span-1 md:col-span-2">
-                                <x-select wire:model="customer.term_id" label="Term" name="customer.term_id" readonly>
+                                <x-select wire:model="customer.term_id" label="Term" name="customer.term_id" :wire="true" readonly>
                                     @if (old('term_id') == '')
                                         <option value="" selected>None</option>
                                     @endif
@@ -109,7 +109,7 @@
 
                         <div class="col-span-2 md:col-span-3">
                             <x-select wire:change="getSetterRate($event.target.value)" wire:model="customer.setter_id"
-                                      label="Setter" name="customer.setter_id">
+                                      label="Setter" name="customer.setter_id" :wire="true">
                                 <option value="">None</option>
                                 @foreach($users as $setter)
                                     @if($setter->role == 'Setter')
@@ -122,12 +122,12 @@
 
                         <div class="col-span-2 md:col-span-3">
                             <x-input-currency wire:model="customer.setter_fee" label="Setter Fee" name="customer.setter_fee"
-                                              value="{{$setterFee}}" readonly/>
+                                              value="{{$setterFee}}" :wire="true" readonly/>
                         </div>
 
                         <div class="col-span-2 md:col-span-3">
                             <x-select wire:change="getSalesRepRate($event.target.value)"
-                                      wire:model="customer.sales_rep_id" label="Sales Rep" name="customer.sales_rep_id">
+                                      wire:model="customer.sales_rep_id" label="Sales Rep" name="customer.sales_rep_id" :wire="true">
                                 <option value="">None</option>
                                 @foreach($users as $rep)
                                     <option value="{{$rep->id}}">{{$rep->first_name}} {{$rep->last_name}}</option>
@@ -137,22 +137,22 @@
 
                         <div class="col-span-2 md:col-span-3">
                             <x-input-currency wire:model="customer.sales_rep_fee" label="Sales Rep Fee"
-                                              name="customer.sales_rep_fee"/>
+                                              name="customer.sales_rep_fee" :wire="true"/>
                         </div>
 
                         @if($customer->financer_id == 1)
                             <div class="col-span-1 col-start-4">
                                 <x-input-currency wire:model="customer.enium_points" label="Enium Points"
-                                                  name="customer.enium_points" readonly/>
+                                                  name="customer.enium_points" :wire="true" readonly/>
                             </div>
                             <div class="col-span-2 col-start-5">
                                 <x-input-currency wire:model="customer.sales_rep_comission" label="Sales Rep Comission"
-                                                  name="customer.sales_rep_comission"/>
+                                                  name="customer.sales_rep_comission" :wire="true"/>
                             </div>
                         @else
                             <div class="col-span-3 col-start-4">
                                 <x-input-currency wire:model="customer.sales_rep_comission" label="Sales Rep Comission"
-                                                  name="customer.sales_rep_comission"/>
+                                                  name="customer.sales_rep_comission" :wire="true"/>
                             </div>
                         @endif
 
