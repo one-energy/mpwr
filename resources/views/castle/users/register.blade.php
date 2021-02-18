@@ -95,7 +95,7 @@
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
-                            <x-input-currency :label="__('Sale Rate ($/W)')" name="pay" x-model="rate"/>
+                            <x-input-currency  :label="__('Pay Rate ($/W)')" name="pay" x-model="rate"/>
                         </div>
                     </div>
                 </div>
@@ -136,4 +136,3 @@
         </script>
     @endpush
 </x-app.auth>
-

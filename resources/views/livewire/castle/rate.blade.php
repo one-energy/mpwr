@@ -3,7 +3,7 @@
         <div class="px-4 py-5 sm:px-6">
             <div class="flex justify-between mb-4">
                 <div>
-                    <h3 class="text-lg text-gray-900">Manage Rates</h3>
+                    <h3 class="text-lg text-gray-900">Manage Compensations</h3>
                 </div>
                 <div>
                     <x-button :href="route('castle.rates.create')" color="green">
