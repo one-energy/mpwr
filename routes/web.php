@@ -140,7 +140,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/number-tracking/create', [NumberTrackingController::class, 'create'])->name('number-tracking.create');
     Route::post('/number-tracking/create', [NumberTrackingController::class, 'store'])->name('number-tracking.store');
 
-    Route::post('/get-offices-managers/{departmentId}', [UsersController::class, 'getOfficesManager'])->name('getOfficesManager');
+    Route::post('/get-offices-managers/{regionId}', [UsersController::class, 'getOfficesManager'])->name('getOfficesManager');
     Route::post('/get-regions-managers/{departmentId}', [UsersController::class, 'getRegionsManager'])->name('getRegionsManager');
     Route::post('/get-roles-per-user-role', [UsersController::class, 'getRolesPerUrserRole'])->name('getRolesPerUrserRole');
     Route::post('/get-users', [UsersController::class, 'getUsers'])->name('getUsers');
