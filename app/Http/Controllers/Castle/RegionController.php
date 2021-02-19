@@ -110,9 +110,7 @@ class RegionController extends Controller
 
     public function getRegions($departmentId = null)
     {
-        $regionsQuery = Region::query()
-            ->select("regions.*", "departments.name as departmentName")
-            ->join("departments", "regions.department_id", '=', 'departments.id');
+        $regionsQuery = Region::with('department');
 
         if (user()->role == "Admin" || user()->role == "Owner") {
             $regions = $regionsQuery->get();
