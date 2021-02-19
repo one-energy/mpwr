@@ -75,7 +75,7 @@ class Create extends Component
         ]);
     }
 
-    public function updatedFinancingId()
+    public function updatedCustomerFinancingId()
     {
         if ($this->customer->financing_id != 1) {
             $this->customer->financer_id  = null;
