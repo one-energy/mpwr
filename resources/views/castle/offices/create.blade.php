@@ -8,20 +8,21 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <x-form :route="route('castle.offices.store')" post>
                 @csrf
-                <div x-data="{ selectedRegion: null,  
-                              token: document.head.querySelector('meta[name=csrf-token]').content, 
+                <div x-data="{ selectedRegion: null,
+                              token: document.head.querySelector('meta[name=csrf-token]').content,
                               officesManagers: null,
                               regions: null }"
-                     x-init="$watch('selectedRegion', 
-                                     (region) => { 
-                                    fetch('https://' + location.hostname + '/get-offices-managers/' + region, {method: 'post',  headers: {
+                     x-init="$watch('selectedRegion',
+                                     (region) => {
+                                    const url = '{{ route('getOfficesManager', ':region') }}'.replace(':region', region);
+                                    fetch(url, {method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
                                     }}).then(res => res.json()).then((officeManagerData) => { officesManagers = officeManagerData }) }),
-                            fetch('https://' + location.hostname + '/get-regions/' + '{{user()->department_id}}' ,{method: 'post',  headers: {
+                            fetch('{{ route('getRegions', user()->department_id) }}',{method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
-                                    }}).then(res=> res.json()).then( (regionsData) => { 
+                                    }}).then(res=> res.json()).then( (regionsData) => {
                                         regions = regionsData
                                         selectedRegion = regionsData[0].id
                                     })">

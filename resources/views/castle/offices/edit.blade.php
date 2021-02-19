@@ -15,29 +15,21 @@
                               regions: null }"
                      x-init="$watch('selectedRegion',
                                      (region) => {
-                                    fetch('https://' + location.hostname + '/get-offices-managers/' + region, {method: 'post',  headers: {
+                                    const url = '{{ route('getOfficesManager', ':region') }}'.replace(':region', region);
+                                    fetch(url, {method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
                                     }}).then(res => res.json()).then((officeManagerData) => {
-                                            selectedManager = '{{$office->office_manager_id}}'
-                                            officesManagers = officeManagerData
-                                        })
-                                    }),
-                            fetch('https://' + location.hostname + '/get-regions/' + '{{user()->department_id}}' ,{method: 'post',  headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': token
-                            }}).then(res=> res.json()).then( (regionsData) => {
-                                regions = regionsData
-                                selectedRegion = '{{$office->region_id}}'
-                            }),
-
-                            fetch('https://' + location.hostname + '/get-offices-managers/' + {{$office->region_id}}, {method: 'post',  headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': token
-                            }}).then(res => res.json()).then((officeManagerData) => {
-                                    selectedManager = '{{$office->office_manager_id}}'
-                                    officesManagers = officeManagerData
-                            })">
+                                        selectedManager = '{{$office->office_manager_id}}'
+                                        officesManagers = officeManagerData }) }),
+                            fetch('{{ route('getRegions', user()->department_id) }}' ,{method: 'post',  headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': token
+                                    }}).then(res=> res.json()).then( (regionsData) => {
+                                        regions = regionsData
+                                        selectedRegion = '{{$office->region_id}}'
+                                        selectedManager = '{{$office->office_manager_id}}'
+                                    })">
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                         <div class="md:col-span-6 col-span-2">
                             <x-input label="Office Name" name="name" value="{{ $office->name }}"></x-input>

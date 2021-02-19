@@ -117,7 +117,7 @@ class RegionController extends Controller
         }
 
         if (user()->role == "Department Manager") {
-            $regions =  $regionsQuery->whereDepatmentId($departmentId)->get();
+            $regions =  $regionsQuery->whereDepartmentId($departmentId)->get();
         }
         if (user()->role == "Region Manager") {
             $regions =  $regionsQuery->whereRegionManagerId(user()->id)->get();

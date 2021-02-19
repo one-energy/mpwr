@@ -46,6 +46,7 @@ class NumberTrackerDetail extends Component
         $this->getOffices();
         $this->getRegions();
         $this->getUsers();
+        $this->setFilter();
     }
 
     public function render()
@@ -97,8 +98,8 @@ class NumberTrackerDetail extends Component
             ->leftJoin('users', function ($join) {
                 $join->on('users.id', '=', 'daily_numbers.user_id');
             })
-            ->select([DB::raw("users.first_name, users.last_name, daily_numbers.id, daily_numbers.user_id,
-                    SUM(doors) as doors,  SUM(hours) as hours,  SUM(sets) as sets,  SUM(sits) as sits,  SUM(set_closes) as set_closes, SUM(closes) as closes")]);
+            ->select([DB::raw("users.first_name, users.last_name, daily_numbers.id, daily_numbers.user_id, SUM(doors) as doors,
+                    SUM(hours) as hours,  SUM(sets) as sets,  SUM(sits) as sits,  SUM(set_closes) as set_closes, SUM(closes) as closes")]);
 
         if ($this->period == 'd') {
             $query->whereDate('date', $this->dateSelected);
@@ -110,6 +111,7 @@ class NumberTrackerDetail extends Component
             $query->whereMonth('date', '=', Carbon::createFromFormat('Y-m-d', $this->dateSelected)->month);
             $queryLast->whereMonth('date', '=', Carbon::createFromFormat('Y-m-d', $this->dateSelected)->subMonth()->month);
         }
+
 
         if (count($this->activeFilters) > 0) {
             $activeFilters = $this->activeFilters;
@@ -127,16 +129,34 @@ class NumberTrackerDetail extends Component
                     }
                 }
             });
+            $queryLast->where(function ($query) use ($activeFilters) {
+                foreach ($activeFilters as $filter) {
+                    $id = $filter['id'];
+                    if ($filter['type'] == "user") {
+                        $query->orWhere('daily_numbers.user_id', '=', $id);
+                    }
+                    if ($filter['type'] == "office") {
+                        $query->orWhere('office_id', '=', $id);
+                    }
+                    if ($filter['type'] == "region") {
+                        $query->orWhere('region_id', '=', $id);
+                    }
+                }
+            });
         }
 
-        $this->numbersTrackedLast = $queryLast->where("users.department_id", "=", user()->department_id)
+        $this->numbersTrackedLast = $queryLast->when(user()->role != "Admin" && user()->role != "Owner", function($query) {
+                    $query->where("users.department_id", "=", user()->department_id);
+                })
             ->groupBy('user_id')
             ->get();
 
         $this->graficValueLast    = $this->numbersTrackedLast->sum($this->filterBy);
 
         return $query->groupBy('daily_numbers.user_id')
-            ->where("users.department_id", "=", user()->department_id)
+            ->when(user()->role != "Admin" && user()->role != "Owner", function($query) {
+                $query->where("users.department_id", "=", user()->department_id);
+            })
             ->orderBy($this->filterBy, $this->order)
             ->get();
     }
@@ -189,5 +209,43 @@ class NumberTrackerDetail extends Component
     public function getUsers()
     {
         $this->users = User::whereDepartmentId(user()->department_id)->get();
+    }
+
+    public function setFilter()
+    {
+        $data = [];
+        if(user()->role == "Region Manager")
+        {
+            $regions = user()->managedRegions()->get();
+            foreach ($regions as $region) {
+                $data = [
+                    'name' => $region->name,
+                    'id'   => $region->id,
+                ];
+                $this->addFilter($data, 'office');
+            }
+        }
+
+        if(user()->role == "Office Manager")
+        {
+            $offices = user()->managedOffices()->get();
+            foreach ($offices as $office) {
+                $data = [
+                    'name' => $office->name,
+                    'id'   => $office->id,
+                ];
+                $this->addFilter($data, 'office');
+            }
+        }
+
+        if(user()->role == "Setter" || user()->role == "Sales Rep")
+        {
+            $data = [
+                'first_name' => user()->first_name,
+                'last_name'  => user()->last_name,
+                'id'         => user()->id
+            ];
+            $this->addFilter($data, 'user');
+        }
     }
 }
