@@ -128,19 +128,19 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-2">
-                    <x-input wire:model="grossRepComission" label="Gross Rep Comission" name="grossRepComission" type="number" readonly/>
+                    <x-input-currency wire:model="grossRepComission" label="Gross Rep Comission" name="grossRepComission" type="number" readonly/>
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
-                    <x-input wire:model="customer.adders" label="Adders Total" name="custormer.adders" step="0.01" type="number"/>
+                    <x-input-currency wire:model="customer.adders" label="Adders Total" name="custormer.adders" step="0.01" type="number"/>
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
-                    <x-input wire:model="customer.sales_rep_comission" label="Net Rep Commisson" name="customer.sales_rep_comission" step="0.01" type="number" readonly/>
+                    <x-input-currency wire:model="customer.sales_rep_comission" label="Net Rep Commisson" name="customer.sales_rep_comission" step="0.01" type="number" readonly/>
                 </div>
 
                 <div class="col-span-2">
-                    <x-input-currency  wire:model="stockPoints" label="Stock Points" name="stockPoints" readonly/>
+                    <x-input  wire:model="stockPoints" label="Stock Points" name="stockPoints" readonly/>
                 </div>
 
                 @if($customer->financer_id == 1)
