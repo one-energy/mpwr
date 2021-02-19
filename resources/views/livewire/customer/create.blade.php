@@ -145,7 +145,7 @@
 
                 @if($customer->financer_id == 1)
                     <div class="col-span-2 md:col-span-1">
-                        <x-input-currency wire:model="customer.enium_points" label="Noble Pay Points" name="customer.enium_points" readonly/>
+                        <x-input wire:model="customer.enium_points" label="Noble Pay Points" name="customer.enium_points" readonly/>
                     </div>
                 @endif
             </div>
