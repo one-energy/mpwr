@@ -2,19 +2,18 @@
 
 namespace App\Http\Livewire\Customer;
 
-use App\Models\Financing;
-use App\Models\Financer;
 use App\Models\Customer;
 use App\Models\Department;
+use App\Models\Financer;
+use App\Models\Financing;
 use App\Models\Rates;
-use App\Models\User;
 use App\Models\Term;
+use App\Models\User;
 use Carbon\Carbon;
 use Livewire\Component;
 
 class Create extends Component
 {
-
     public int $openedById;
 
     public int $departmentId;
@@ -53,7 +52,7 @@ class Create extends Component
     {
         $this->customer = new Customer();
         $this->setSelfGen();
-        if(user()->role != 'Admin' && user()->role != 'Owner'){
+        if (user()->role != 'Admin' && user()->role != 'Owner') {
             $this->departmentId = user()->department_id;
         } else {
             $this->departmentId = Department::first()->id;
@@ -65,6 +64,7 @@ class Create extends Component
         $this->customer->calcComission();
         $this->customer->calcMargin();
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
+
         return view('livewire.customer.create',[
             'departments' => Department::all(),
             'setterFee'   => $this->getSetterFee(),
@@ -73,6 +73,15 @@ class Create extends Component
             'financers'   => Financer::all(),
             'terms'       => Term::all(),
         ]);
+    }
+
+    public function updatedFinancingId()
+    {
+        if ($this->customer->financing_id != 1) {
+            $this->customer->financer_id  = null;
+            $this->customer->term_id      = null;
+            $this->customer->enium_points = null;
+        }
     }
 
     public function store()
@@ -119,7 +128,7 @@ class Create extends Component
     {
         $user = User::whereId($userId)->first();
 
-        if($user) {
+        if ($user) {
             $rate = Rates::whereRole($user->role);
             $rate->when($user->role == 'Sales Rep', function($query) use ($user) {
                 $query->where('time', '<=', $user->installs)->orderBy('time', 'desc');
@@ -137,9 +146,10 @@ class Create extends Component
 
     public function calculateGrossRepComission(Customer $customer)
     {
-        if($customer->margin && $customer->system_size) {
+        if ($customer->margin && $customer->system_size) {
             return $customer->margin * $customer->system_size * 1000;
         }
+
         return 0;
     }
 }
