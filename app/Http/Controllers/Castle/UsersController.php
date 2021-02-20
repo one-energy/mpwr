@@ -11,7 +11,6 @@ use App\Models\User;
 use App\Notifications\UserInvitation;
 use App\Rules\Castle\MasterEmailUnique;
 use App\Rules\Castle\MasterEmailYourSelf;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Ramsey\Uuid\Uuid;
@@ -30,14 +29,9 @@ class UsersController extends Controller
 
     public function create()
     {
-        $departments = Department::all();
-        $roles       = $this->getRolesPerUrserRole();
-        $offices     = $this->getOfficesPerRole();
-
-        return view('castle.users.register',[
-            'roles'       => $roles,
-            'offices'     => $offices,
-            'departments' => $departments,
+        return view('castle.users.register', [
+            'roles'       => User::getRolesPerUserRole(),
+            'departments' => Department::all(),
         ]);
     }
 
@@ -87,7 +81,7 @@ class UsersController extends Controller
     public function edit(User $user)
     {
         $departments = Department::all();
-        $roles       = $this->getRolesPerUrserRole();
+        $roles       = User::getRolesPerUserRole();
         $offices     = $this->getOfficesPerRole();
 
         return view('castle.users.edit', [
@@ -139,7 +133,7 @@ class UsersController extends Controller
         if (user()->role == 'Region Manager') {
             $offices = $officesQuery
                 ->select('offices.name', 'offices.id')
-                ->join('regions', function($join) {
+                ->join('regions', function ($join) {
                     $join->on('offices.region_id', '=', 'regions.id')
                         ->where('regions.region_manager_id', '=', user()->id);
                 })->get();
@@ -196,48 +190,8 @@ class UsersController extends Controller
         return redirect(route('castle.users.edit', compact('user')));
     }
 
-    public function getRolesPerUrserRole()
+    public function getUsers()
     {
-        if (user()->role == 'Admin') {
-            $roles = [
-                ['title' => 'Admin',            'name' => 'Admin',              'description' => 'Allows access to the Admin functionality and Manage Users, Incentives and others (Admin Tab)'],
-                ['title' => 'VP',               'name' => 'Department Manager', 'description' => 'Allows update all in departments and Region\'s Number Tracker'],
-                ['title' => 'Regional Manager', 'name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
-                ['title' => 'Manager',          'name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
-                ['title' => 'Sales Rep',        'name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
-                ['title' => 'Setter',           'name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
-            ];
-        }
-        if (user()->role == 'Department Manager') {
-            $roles = [
-                ['title' => 'Regional Manager', 'name' => 'Region Manager', 'description' => 'Allows update all Region\'s Number Tracker'],
-                ['title' => 'Manager',          'name' => 'Office Manager', 'description' => 'Allows update a Region\'s Number Tracker'],
-                ['title' => 'Sales Rep',        'name' => 'Sales Rep',      'description' => 'Allows read/add/edit/cancel Customer'],
-                ['title' => 'Setter',           'name' => 'Setter',         'description' => 'Allows see the dashboard and only read Customer'],
-            ];
-        }
-        if (user()->role == 'Region Manager') {
-            $roles = [
-                ['title' => 'Manager',   'name' => 'Office Manager', 'description' => 'Allows update a Region\'s Number Tracker'],
-                ['title' => 'Sales Rep', 'name' => 'Sales Rep',      'description' => 'Allows read/add/edit/cancel Customer'],
-                ['title' => 'Setter',    'name' => 'Setter',         'description' => 'Allows see the dashboard and only read Customer'],
-            ];
-        }
-        if (user()->role == 'Office Manager') {
-            $roles = [
-                ['title' => 'Sales Rep', 'name' => 'Sales Rep', 'description' => 'Allows read/add/edit/cancel Customer'],
-                ['title' => 'Setter',    'name' => 'Setter',    'description' => 'Allows see the dashboard and only read Customer'],
-            ];
-        }
-
-        if (user()->role == 'Owner') {
-            $roles = User::ROLES;
-        }
-
-        return $roles;
-    }
-
-    public function getUsers() {
         return User::get();
     }
 

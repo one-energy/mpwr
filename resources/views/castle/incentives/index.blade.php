@@ -26,9 +26,6 @@
                                                     @lang('Department')
                                                 </x-table.th>
                                             @endif
-                                            <x-table.th by="number_installs">
-                                                @lang('# of Installs')
-                                            </x-table.th>
                                             <x-table.th by="incentives">
                                                 @lang('Incentive')
                                             </x-table.th>
@@ -54,11 +51,10 @@
                                                 @if(user()->role == "Admin" || user()->role == "Owner")
                                                     <x-table.td>{{ $incentive->department->name }}</x-table.td>
                                                 @endif
-                                                <x-table.td>{{ $incentive->number_installs }}</x-table.td>
                                                 <x-table.td>{{ $incentive->name }}</x-table.td>
-                                                <x-table.td>{{ $incentive->installs_achieved }}</x-table.td>
+                                                <x-table.td>{{ $incentive->installs_needed == 0 ? '-' : number_format((user()->installs/$incentive->installs_needed) * 100, 2) }}%</x-table.td>
                                                 <x-table.td>{{ $incentive->installs_needed }}</x-table.td>
-                                                <x-table.td>{{ $incentive->kw_achieved }}</x-table.td>
+                                                <x-table.td>{{ $incentive->kw_needed == 0 ? '-' : number_format((user()->kw_achived/$incentive->kw_needed) * 100, 2) }}%</x-table.td>
                                                 <x-table.td>{{ $incentive->kw_needed }}</x-table.td>
                                                 <x-table.td>
                                                     <x-link :href="route('castle.incentives.edit', $incentive)" class="text-sm">Edit</x-link>
