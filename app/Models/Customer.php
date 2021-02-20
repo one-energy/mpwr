@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Financer;
-use App\Models\Financing;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -26,10 +24,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon $updated_at
  * @property Carbon $deleted_at
  */
-
 class Customer extends Model
 {
     use SoftDeletes;
+
+    protected $fillable = ['first_name', 'last_name', 'bill', 'financing_id', 'opened_by_id', 'system_size', 'adders', 'epc', 'setter_id', 'setter_fee', 'sales_rep_id', 'sales_rep_fee', 'sales_rep_comission', 'commission', 'created_at', 'updated_at', 'is_active'];
 
     protected $casts = [
         'panel_sold' => 'boolean',
@@ -47,6 +46,13 @@ class Customer extends Model
         'PPA',
         'PACE',
     ];
+
+    public function scopeInstalled($query)
+    {
+        return $query->where('opened_by_id', '=', user()->id)
+            ->where('panel_sold', '=', true)
+            ->where('is_active', '=', true);
+    }
 
     public function userOpenedBy()
     {
@@ -85,7 +91,7 @@ class Customer extends Model
 
     public function calcComission()
     {
-        if($this->epc && $this->sales_rep_fee && $this->system_size && $this->adders) {
+        if ($this->epc && $this->sales_rep_fee && $this->system_size && $this->adders) {
             $this->sales_rep_comission = (($this->epc - $this->sales_rep_fee - $this->setter_fee) * ($this->system_size * 1000)) - $this->adders;
         } else {
             $this->sales_rep_comission = 0;
@@ -94,7 +100,7 @@ class Customer extends Model
 
     public function calcMargin()
     {
-        if($this->epc) {
+        if ($this->epc) {
             $this->margin = $this->epc - $this->setter_fee;
         } else {
             $this->margin = 0;

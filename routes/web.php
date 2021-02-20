@@ -8,21 +8,21 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\Castle\DepartmentController;
-use App\Http\Controllers\Castle\UsersController;
 use App\Http\Controllers\Castle\ManageIncentivesController;
 use App\Http\Controllers\Castle\OfficeController;
 use App\Http\Controllers\Castle\PermissionController;
 use App\Http\Controllers\Castle\RatesController;
 use App\Http\Controllers\Castle\RegionController;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Castle\UsersController;
 use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\ScoreboardController;
-use App\Http\Controllers\TrainingController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IncentivesController;
 use App\Http\Controllers\NumberTrackingController;
 use App\Http\Controllers\ProfileChangePasswordController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProfilePhotoUploadController;
+use App\Http\Controllers\ScoreboardController;
+use App\Http\Controllers\TrainingController;
 use Illuminate\Support\Facades\Route;
 
 //region Authentication and Registration Routes
@@ -73,7 +73,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
 
         Route::prefix('rates')->middleware('rates')->name('rates.')->group(function () {
-            Route::get('/',[RatesController::class, 'index'])->name('index');
+            Route::get('/', [RatesController::class, 'index'])->name('index');
             Route::get('/create', [RatesController::class, 'create'])->name('create');
             Route::post('/create', [RatesController::class, 'store'])->name('store');
             Route::get('/{rate}/edit', [RatesController::class, 'edit'])->name('edit');
@@ -130,19 +130,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/profile/photo-upload', ProfilePhotoUploadController::class)->name('profile.photo-upload');
     Route::put('/profile/change-password', ProfileChangePasswordController::class)->name('profile.change-password');
 
-    Route::resource('/customers', CustomerController::class);
+    Route::resource('/customers', CustomerController::class)->except('store', 'update')->names('customers');
     Route::put('/customers/{customer}/active', [CustomerController::class, 'Active'])->name('customers.active');
     Route::delete('/customers/{customer}', [CustomerController::class, 'delete'])->name('customers.delete');
     Route::get('/scoreboard', ScoreboardController::class)->name('scoreboard');
     Route::get('/trainings/{department?}/{section?}/{search?}', [TrainingController::class, 'index'])->name('trainings.index');
-    Route::get('/incentives', IncentivesController::class)->name('incentives');
+    Route::get('/incentives', IncentivesController::class)->name('incentives.index');
     Route::get('/number-tracking', [NumberTrackingController::class, 'index'])->name('number-tracking.index');
     Route::get('/number-tracking/create', [NumberTrackingController::class, 'create'])->name('number-tracking.create');
     Route::post('/number-tracking/create', [NumberTrackingController::class, 'store'])->name('number-tracking.store');
 
     Route::post('/get-offices-managers/{regionId}', [UsersController::class, 'getOfficesManager'])->name('getOfficesManager');
     Route::post('/get-regions-managers/{departmentId}', [UsersController::class, 'getRegionsManager'])->name('getRegionsManager');
-    Route::post('/get-roles-per-user-role', [UsersController::class, 'getRolesPerUrserRole'])->name('getRolesPerUrserRole');
     Route::post('/get-users', [UsersController::class, 'getUsers'])->name('getUsers');
 
     Route::post('/get-regions/{departmentId?}', [RegionController::class, 'getRegions'])->name('getRegions');

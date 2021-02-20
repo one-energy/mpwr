@@ -11,7 +11,8 @@
                 <div class="col-span-2 md:col-span-6">
                     <x-select wire:model="departmentId" label="Department" name="departmentId">
                         @foreach($departments as $department)
-                            <option value="{{ $department->id }}" {{ old('departmentId') == $department ? 'selected' : '' }}>
+                            <option
+                                value="{{ $department->id }}" {{ old('departmentId') == $department ? 'selected' : '' }}>
                                 {{ $department->name }}
                             </option>
                         @endforeach
@@ -19,6 +20,7 @@
                 </div>
                 @endif
 
+                <input type="hidden" value="{{ $openedById }}" name="opened_by_id"/>
                 <div class="col-span-2 md:col-span-3">
                     <x-input wire:model="customer.first_name" label="Customer First Name" name="customer.first_name"/>
                 </div>
@@ -132,7 +134,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
-                    <x-input-currency wire:model="customer.adders" label="Adders Total" name="custormer.adders" step="0.01" type="number"/>
+                    <x-input-currency wire:model="customer.adders" label="Adders Total" name="customer.adders" step="0.01" type="number"/>
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
@@ -140,7 +142,7 @@
                 </div>
 
                 <div class="col-span-2">
-                    <x-input  wire:model="stockPoints" label="Stock Points" name="stockPoints" readonly/>
+                    <x-input wire:model="stockPoints" label="Stock Points" name="stockPoints" readonly/>
                 </div>
 
                 @if($customer->financer_id == 1)
@@ -149,6 +151,7 @@
                     </div>
                 @endif
             </div>
+
             <div class="pt-5 mt-8 border-t border-gray-200">
                 <div class="flex justify-start">
                     <span class="inline-flex rounded-md shadow-sm">

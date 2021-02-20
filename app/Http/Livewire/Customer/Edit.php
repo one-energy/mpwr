@@ -21,8 +21,6 @@ class Edit extends Component
 
     public int $stockPoints = 250;
 
-    public bool $panelSold;
-
     protected $rules = [
         'customer.first_name'          => ['required', 'string', 'max:255'],
         'customer.last_name'           => ['required', 'string', 'max:255'],
@@ -49,8 +47,7 @@ class Edit extends Component
     public function mount()
     {
         $this->setSelfGen();
-        $this->panelSold = $this->customer->panel_sold;
-        if(user()->role != 'Admin' && user()->role != 'Owner'){
+        if (user()->role != 'Admin' && user()->role != 'Owner') {
             $this->departmentId = user()->department_id;
         } else {
             $this->departmentId = Department::first()->id;
@@ -59,17 +56,16 @@ class Edit extends Component
 
     public function render()
     {
-        // dd($this->customer);
         $this->customer->calcComission();
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
         return view('livewire.customer.edit', [
             'departments' => Department::all(),
-            'setterFee'  => $this->getSetterFee(),
-            'users'      => User::whereDepartmentId($this->departmentId)->get(),
-            'bills'      => Customer::BILLS,
-            'financings' => Financing::all(),
-            'financers'  => Financer::all(),
-            'terms'      => Term::all(),
+            'setterFee'   => $this->getSetterFee(),
+            'users'       => User::whereDepartmentId($this->departmentId)->orderBy('first_name')->get(),
+            'bills'       => Customer::BILLS,
+            'financings'  => Financing::all(),
+            'financers'   => Financer::all(),
+            'terms'       => Term::all(),
         ]);
     }
 
@@ -77,20 +73,9 @@ class Edit extends Component
     {
         $this->validate();
 
-        if ($this->customer->panel_sold != $this->panelSold) {
-            $user = User::find($this->customer->sales_rep_id);
+        $commission = $this->calculateCommission($this->customer);
 
-            if ($this->customer->panel_sold == 1) {
-                $user->installs++;
-            }
-
-            if ($this->customer->panel_sold == 0) {
-                $user->installs--;
-            }
-
-            $user->save();
-        }
-
+        $this->customer->commission = $commission;
         $this->customer->save();
 
         alert()
@@ -98,6 +83,17 @@ class Edit extends Component
             ->send();
 
         return redirect(route('customers.show', $this->customer->id));
+    }
+
+    public function delete()
+    {
+        $this->customer->delete();
+
+        alert()
+            ->withTitle(__('Home Owner deleted!'))
+            ->send();
+
+        return redirect()->route('home');
     }
 
     public function setSelfGen()
@@ -108,6 +104,11 @@ class Edit extends Component
     public function getSetterFee()
     {
         return Rates::whereRole('Setter')->first();
+    }
+
+    public function calculateCommission($customer)
+    {
+        return (($customer->epc - ($customer->pay + $customer->setter_fee)) * ($customer->system_size * 1000)) - $customer->adders;
     }
 
     public function getSalesRepFee()
@@ -122,7 +123,7 @@ class Edit extends Component
 
     public function getSetterRate($userId)
     {
-        if($userId){
+        if ($userId) {
             $this->customer->setter_fee = $this->getUserRate($userId);
         } else {
             $this->customer->setter_fee = 0;
@@ -134,7 +135,7 @@ class Edit extends Component
         $user = User::whereId($userId)->first();
 
         $rate = Rates::whereRole($user->role);
-        $rate->when($user->role == 'Sales Rep', function($query) use ($user) {
+        $rate->when($user->role == 'Sales Rep', function ($query) use ($user) {
             $query->where('time', '<=', $user->installs)->orderBy('time', 'desc');
         });
 
@@ -147,7 +148,7 @@ class Edit extends Component
 
     public function calculateGrossRepComission(Customer $customer)
     {
-        if($customer->margin && $customer->system_size) {
+        if ($customer->margin && $customer->system_size) {
             return $customer->margin * $customer->system_size * 1000;
         }
         return 0;

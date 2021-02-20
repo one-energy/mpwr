@@ -7,31 +7,22 @@
         </div>
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <x-form :route="route('castle.incentives.store')" post>
-                @csrf
                 <div>
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                         <div class="md:col-span-3 col-span-2">
-                            <x-input label="Number of Installs" name="number_installs" type="number"></x-input>
+                            <x-input label="Number of Installs" name="number_installs" type="number"/>
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
-                            <x-input label="Incentive Name" name="name"></x-input>
+                            <x-input label="Incentive Name" name="name"/>
                         </div>
-                
+
                         <div class="md:col-span-3 col-span-1">
-                            <x-input-add-on label="Installs Achieved" name="installs_achieved" addOn="%"></x-input-add-on >
-                        </div>
-                        
-                        <div class="md:col-span-3 col-span-1">
-                            <x-input label="Installs Needed" name="installs_needed"></x-input>
+                            <x-input label="Installs Needed" name="installs_needed"/>
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
-                            <x-input-add-on label="kW Achieved" name="kw_achieved" addOn="%"></x-input-add-on>
-                        </div>
-                
-                        <div class="md:col-span-3 col-span-2">
-                            <x-input-add-on  label="kW Needed" name="kw_needed" addOn="kW"></x-input-add-on >
+                            <x-input-add-on  label="kW Needed" name="kw_needed" addOn="kW"/>
                         </div>
                         <div class="md:col-span-3 col-span-2">
                             <div class="md:col-span-3 col-span-2">

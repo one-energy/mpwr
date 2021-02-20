@@ -65,11 +65,11 @@ class Create extends Component
         $this->customer->calcMargin();
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
 
-        return view('livewire.customer.create',[
+        return view('livewire.customer.create', [
             'departments' => Department::all(),
             'setterFee'   => $this->getSetterFee(),
             'financings'  => Financing::all(),
-            'users'       => User::whereDepartmentId($this->departmentId)->get(),
+            'users'       => User::whereDepartmentId($this->departmentId)->orderBy('first_name')->get(),
             'financers'   => Financer::all(),
             'terms'       => Term::all(),
         ]);
@@ -130,7 +130,7 @@ class Create extends Component
 
         if ($user) {
             $rate = Rates::whereRole($user->role);
-            $rate->when($user->role == 'Sales Rep', function($query) use ($user) {
+            $rate->when($user->role == 'Sales Rep', function ($query) use ($user) {
                 $query->where('time', '<=', $user->installs)->orderBy('time', 'desc');
             });
 

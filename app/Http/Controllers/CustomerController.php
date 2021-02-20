@@ -27,16 +27,14 @@ class CustomerController extends Controller
         $setterFee   = $this->getSetterFee();
         $salesRepFee = $this->getSalesRepFee();
 
-        return view('customer.create',
-            [
+        return view('customer.create', [
                 'bills'       => $bills,
                 'financings'  => $financings,
                 'openedById'  => $openedById,
                 'users'       => $users,
                 'setterFee'   => $setterFee->rate ?? 0,
                 'salesRepFee' => $salesRepFee->rate ?? 0,
-            ]
-        );
+        ]);
     }
 
     public function delete(Customer $customer)
@@ -52,7 +50,7 @@ class CustomerController extends Controller
 
     public function calculateCommission($customer)
     {
-        return (($customer->epc - ( $customer->pay + $customer->setter_fee )) * ($customer->system_size * 1000)) - $customer->adders;
+        return (($customer->epc - ($customer->pay + $customer->setter_fee)) * ($customer->system_size * 1000)) - $customer->adders;
     }
 
     public function show(Customer $customer)
@@ -61,13 +59,11 @@ class CustomerController extends Controller
 
         $users = User::get();
 
-        return view('customer.show',
-        [
-            'customer'   => $customer,
-            'users'      => $users,
+        return view('customer.show', [
+            'customer' => $customer,
+            'users'    => $users,
         ]);
     }
-
 
     public function active(Customer $customer)
     {
@@ -78,12 +74,12 @@ class CustomerController extends Controller
 
         if ($customer->is_active == true) {
             alert()
-            ->withTitle(__('Home Owner set as active!'))
-            ->send();
+                ->withTitle(__('Home Owner set as active!'))
+                ->send();
         } else {
             alert()
-            ->withTitle(__('Home Owner set as canceled!'))
-            ->send();
+                ->withTitle(__('Home Owner set as canceled!'))
+                ->send();
         }
 
         return redirect(route('customers.show', $customer));
