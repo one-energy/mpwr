@@ -17,27 +17,36 @@ class Edit extends Component
 
     public int $departmentId;
 
+    public int $grossRepComission;
+
+    public int $stockPoints = 250;
+
     protected $rules = [
         'customer.first_name'          => ['required', 'string', 'max:255'],
         'customer.last_name'           => ['required', 'string', 'max:255'],
         'customer.system_size'         => 'required',
         'customer.bill'                => 'required',
         'customer.adders'              => 'required',
+        'customer.date_of_sale'        => 'required',
         'customer.epc'                 => 'required',
         'customer.financing_id'        => 'required',
         'customer.financer_id'         => 'nullable',
-        'customer.panel_sold'          => 'required',
         'customer.term_id'             => 'nullable',
-        'customer.setter_id'           => 'required',
+        'customer.setter_id'           => 'nullable',
         'customer.setter_fee'          => 'required',
         'customer.sales_rep_id'        => 'required',
         'customer.sales_rep_fee'       => 'required',
-        'customer.enium_points'        => 'required',
+        'customer.panel_sold'          => 'nullable',
+        'customer.enium_points'        => 'nullable',
         'customer.sales_rep_comission' => 'required',
+        'customer.margin'              => 'required',
+        'stockPoints'                  => 'required',
+        'grossRepComission'            => 'required',
     ];
 
     public function mount()
     {
+        $this->setSelfGen();
         if (user()->role != 'Admin' && user()->role != 'Owner') {
             $this->departmentId = user()->department_id;
         } else {
@@ -48,10 +57,11 @@ class Edit extends Component
     public function render()
     {
         $this->customer->calcComission();
+        $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
         return view('livewire.customer.edit', [
             'departments' => Department::all(),
             'setterFee'   => $this->getSetterFee(),
-            'users'       => User::whereDepartmentId($this->departmentId)->get(),
+            'users'       => User::whereDepartmentId($this->departmentId)->orderBy('first_name')->get(),
             'bills'       => Customer::BILLS,
             'financings'  => Financing::all(),
             'financers'   => Financer::all(),
@@ -63,26 +73,9 @@ class Edit extends Component
     {
         $this->validate();
 
-        if ($this->customer->panel_sold != $this->customer->panel_sold) {
-            $user = User::whereId($this->customer->sales_rep_id)->first();
-
-            if ($this->customer->panel_sold == 1) {
-                $user->installs++;
-                $user->kw_achived += $this->customer->system_size;
-            }
-
-            if ($this->customer->panel_sold == 0) {
-                $user->installs--;
-                $user->kw_achived -= $this->customer->system_size;
-            }
-
-            $user->save();
-        }
-
         $commission = $this->calculateCommission($this->customer);
 
         $this->customer->commission = $commission;
-
         $this->customer->save();
 
         alert()
@@ -101,6 +94,11 @@ class Edit extends Component
             ->send();
 
         return redirect()->route('home');
+    }
+
+    public function setSelfGen()
+    {
+        $this->customer->setter_fee = 0;
     }
 
     public function getSetterFee()
@@ -125,7 +123,11 @@ class Edit extends Component
 
     public function getSetterRate($userId)
     {
-        $this->customer->setter_fee = $this->getUserRate($userId);
+        if ($userId) {
+            $this->customer->setter_fee = $this->getUserRate($userId);
+        } else {
+            $this->customer->setter_fee = 0;
+        }
     }
 
     public function getUserRate($userId)
@@ -142,6 +144,14 @@ class Edit extends Component
         }
 
         return $rate->first()->rate;
+    }
+
+    public function calculateGrossRepComission(Customer $customer)
+    {
+        if ($customer->margin && $customer->system_size) {
+            return $customer->margin * $customer->system_size * 1000;
+        }
+        return 0;
     }
 
 }

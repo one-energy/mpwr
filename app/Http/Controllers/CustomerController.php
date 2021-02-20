@@ -34,8 +34,7 @@ class CustomerController extends Controller
                 'users'       => $users,
                 'setterFee'   => $setterFee->rate ?? 0,
                 'salesRepFee' => $salesRepFee->rate ?? 0,
-            ]
-        );
+        ]);
     }
 
     public function delete(Customer $customer)
@@ -60,11 +59,10 @@ class CustomerController extends Controller
 
         $users = User::get();
 
-        return view('customer.show',
-            [
-                'customer' => $customer,
-                'users'    => $users,
-            ]);
+        return view('customer.show', [
+            'customer' => $customer,
+            'users'    => $users,
+        ]);
     }
 
     public function active(Customer $customer)

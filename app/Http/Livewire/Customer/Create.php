@@ -9,6 +9,7 @@ use App\Models\Financing;
 use App\Models\Rates;
 use App\Models\Term;
 use App\Models\User;
+use Carbon\Carbon;
 use Livewire\Component;
 
 class Create extends Component
@@ -16,6 +17,10 @@ class Create extends Component
     public int $openedById;
 
     public int $departmentId;
+
+    public int $grossRepComission;
+
+    public int $stockPoints = 250;
 
     public Customer $customer;
 
@@ -25,17 +30,20 @@ class Create extends Component
         'customer.system_size'         => 'required',
         'customer.bill'                => 'required',
         'customer.adders'              => 'required',
+        'customer.date_of_sale'        => 'required',
         'customer.epc'                 => 'required',
         'customer.financing_id'        => 'required',
         'customer.financer_id'         => 'nullable',
         'customer.term_id'             => 'nullable',
-        'customer.setter_id'           => 'required',
+        'customer.setter_id'           => 'nullable',
         'customer.setter_fee'          => 'required',
         'customer.sales_rep_id'        => 'required',
         'customer.sales_rep_fee'       => 'required',
         'customer.enium_points'        => 'nullable',
         'customer.sales_rep_comission' => 'required',
-        'customer.opened_by_id'        => 'required',
+        'customer.margin'              => 'required',
+        'stockPoints'                  => 'required',
+        'grossRepComission'            => 'required',
     ];
 
     public $bills;
@@ -43,6 +51,7 @@ class Create extends Component
     public function mount()
     {
         $this->customer = new Customer();
+        $this->setSelfGen();
         if (user()->role != 'Admin' && user()->role != 'Owner') {
             $this->departmentId = user()->department_id;
         } else {
@@ -53,25 +62,34 @@ class Create extends Component
     public function render()
     {
         $this->customer->calcComission();
+        $this->customer->calcMargin();
+        $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
 
         return view('livewire.customer.create', [
             'departments' => Department::all(),
             'setterFee'   => $this->getSetterFee(),
             'financings'  => Financing::all(),
-            'users'       => User::whereDepartmentId($this->departmentId)->get(),
+            'users'       => User::whereDepartmentId($this->departmentId)->orderBy('first_name')->get(),
             'financers'   => Financer::all(),
             'terms'       => Term::all(),
         ]);
+    }
+
+    public function updatedCustomerFinancingId()
+    {
+        if ($this->customer->financing_id != 1) {
+            $this->customer->financer_id  = null;
+            $this->customer->term_id      = null;
+            $this->customer->enium_points = null;
+        }
     }
 
     public function store()
     {
         $this->validate();
 
-        $commission = $this->calculateCommission($this->customer);
-
-        $this->customer->commission = $commission;
-
+        $this->customer->date_of_sale = Carbon::parse($this->customer->date_of_sale);
+        $this->customer->opened_by_id = user()->id;
         $this->customer->save();
 
         alert()
@@ -79,6 +97,11 @@ class Create extends Component
             ->send();
 
         return redirect(route('home'));
+    }
+
+    public function setSelfGen()
+    {
+        $this->customer->setter_fee = 0;
     }
 
     public function getSetterFee()
@@ -116,6 +139,15 @@ class Create extends Component
             }
 
             return $rate->first()->rate;
+        }
+
+        return 0;
+    }
+
+    public function calculateGrossRepComission(Customer $customer)
+    {
+        if ($customer->margin && $customer->system_size) {
+            return $customer->margin * $customer->system_size * 1000;
         }
 
         return 0;

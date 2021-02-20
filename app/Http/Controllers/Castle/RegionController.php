@@ -42,7 +42,7 @@ class RegionController extends Controller
 
         $region->name                       = $validated['name'];
         $region->region_manager_id          = $validated['region_manager_id'];
-        
+
         $region->save();
 
         alert()
@@ -83,7 +83,7 @@ class RegionController extends Controller
         $region->name              = $validated['name'];
         $region->region_manager_id = $validated['region_manager_id'];
         $region->department_id     = $validated['department_id'];
-        
+
         $region->save();
 
         alert()
@@ -110,16 +110,14 @@ class RegionController extends Controller
 
     public function getRegions($departmentId = null)
     {
-        $regionsQuery = Region::query()
-            ->select("regions.*", "departments.name as departmentName")
-            ->join("departments", "regions.department_id", '=', 'departments.id');
+        $regionsQuery = Region::with('department');
 
         if (user()->role == "Admin" || user()->role == "Owner") {
             $regions = $regionsQuery->get();
         }
 
         if (user()->role == "Department Manager") {
-            $regions =  $regionsQuery->whereDepatmentId($departmentId)->get();
+            $regions =  $regionsQuery->whereDepartmentId($departmentId)->get();
         }
         if (user()->role == "Region Manager") {
             $regions =  $regionsQuery->whereRegionManagerId(user()->id)->get();
