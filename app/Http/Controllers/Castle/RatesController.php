@@ -36,13 +36,10 @@ class RatesController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store()
     {
-        $rate = new Rates();
         $validated = request()->validate([
             'name'          => 'required|string|min:3|max:255',
             'time'          => 'required|numeric',
@@ -51,6 +48,7 @@ class RatesController extends Controller
             'role'          => 'required',
         ]);
 
+        $rate                = new Rates();
         $rate->name          = $validated['name'];
         $rate->time          = $validated['time'];
         $rate->rate          = $validated['rate'];
@@ -76,7 +74,7 @@ class RatesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -87,7 +85,7 @@ class RatesController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit(Rates $rate)
@@ -101,14 +99,11 @@ class RatesController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update($id)
     {
-        $rate = new Rates();
         $validated = request()->validate([
             'name'          => 'required|string|min:3|max:255',
             'time'          => 'required|numeric',
@@ -143,7 +138,7 @@ class RatesController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy(Rates $rate)
@@ -159,6 +154,9 @@ class RatesController extends Controller
 
     public function getRatesPerRole($role)
     {
-        return Rates::whereRole($role)->firstOrFail();
+        $rate = Rates::whereRole($role);
+        if ($rate->exists())
+            return $rate->first();
+        return response('', 204);
     }
 }

@@ -1,4 +1,4 @@
-@props(['label', 'name', 'value', 'tooltip', 'observation', 'disabledToUser', 'disabled'])
+@props(['label', 'name', 'value', 'tooltip', 'observation', 'disabledToUser', 'disabled', 'wire' => null])
 
 @php
     $class = 'form-input block w-full pl-7 pr-12 sm:text-sm sm:leading-5';
@@ -9,6 +9,7 @@
     $observation    = $observation ?? null;
     $disabledToUser = $disabledToUser ?? null;
     $disabled       = $disabled ?? false;
+    $wire = $wire && is_bool($wire) ? $name : $wire;
 @endphp
 
 <div {{ $attributes }}>
@@ -37,6 +38,7 @@
                min="0"
                step="0.01"
                value="{{ old($name, $value ?? null) }}"
+               @if ($wire) wire:model="{{ $wire }}" @endif
                @if(($disabledToUser && user()->role == $disabledToUser) || $disabled) disabled @endif/>
 
         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">

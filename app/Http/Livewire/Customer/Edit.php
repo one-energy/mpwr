@@ -17,27 +17,37 @@ class Edit extends Component
 
     public int $departmentId;
 
+    public int $grossRepComission;
+
+    public int $stockPoints = 250;
+
     protected $rules = [
         'customer.first_name'          => ['required', 'string', 'max:255'],
         'customer.last_name'           => ['required', 'string', 'max:255'],
         'customer.system_size'         => 'required',
         'customer.bill'                => 'required',
         'customer.adders'              => 'required',
+        'customer.date_of_sale'        => 'required',
         'customer.epc'                 => 'required',
         'customer.financing_id'        => 'required',
         'customer.financer_id'         => 'nullable',
         'customer.term_id'             => 'nullable',
-        'customer.setter_id'           => 'required',
+        'customer.setter_id'           => 'nullable',
         'customer.setter_fee'          => 'required',
         'customer.sales_rep_id'        => 'required',
         'customer.sales_rep_fee'       => 'required',
-        'customer.enium_points'        => 'required',
+        'customer.panel_sold'          => 'nullable',
+        'customer.enium_points'        => 'nullable',
         'customer.sales_rep_comission' => 'required',
+        'customer.margin'              => 'required',
+        'stockPoints'                  => 'required',
+        'grossRepComission'            => 'required',
     ];
 
     public function mount()
     {
-        if(user()->role != 'Admin' && user()->role != 'Owner'){
+        $this->setSelfGen();
+        if (user()->role != 'Admin' && user()->role != 'Owner') {
             $this->departmentId = user()->department_id;
         } else {
             $this->departmentId = Department::first()->id;
@@ -47,20 +57,58 @@ class Edit extends Component
     public function render()
     {
         $this->customer->calcComission();
+        $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
         return view('livewire.customer.edit', [
             'departments' => Department::all(),
-            'setterFee'  => $this->getSetterFee(),
-            'users'      => User::whereDepartmentId($this->departmentId)->get(),
-            'bills'      => Customer::BILLS,
-            'financings' => Financing::all(),
-            'financers'  => Financer::all(),
-            'terms'      => Term::all(),
+            'setterFee'   => $this->getSetterFee(),
+            'users'       => User::whereDepartmentId($this->departmentId)->orderBy('first_name')->get(),
+            'bills'       => Customer::BILLS,
+            'financings'  => Financing::all(),
+            'financers'   => Financer::all(),
+            'terms'       => Term::all(),
         ]);
+    }
+
+    public function update()
+    {
+        $this->validate();
+
+        $commission = $this->calculateCommission($this->customer);
+
+        $this->customer->commission = $commission;
+        $this->customer->save();
+
+        alert()
+            ->withTitle(__('Home Owner updated!'))
+            ->send();
+
+        return redirect(route('customers.show', $this->customer->id));
+    }
+
+    public function delete()
+    {
+        $this->customer->delete();
+
+        alert()
+            ->withTitle(__('Home Owner deleted!'))
+            ->send();
+
+        return redirect()->route('home');
+    }
+
+    public function setSelfGen()
+    {
+        $this->customer->setter_fee = 0;
     }
 
     public function getSetterFee()
     {
         return Rates::whereRole('Setter')->first();
+    }
+
+    public function calculateCommission($customer)
+    {
+        return (($customer->epc - ($customer->pay + $customer->setter_fee)) * ($customer->system_size * 1000)) - $customer->adders;
     }
 
     public function getSalesRepFee()
@@ -75,7 +123,11 @@ class Edit extends Component
 
     public function getSetterRate($userId)
     {
-        $this->customer->setter_fee = $this->getUserRate($userId);
+        if ($userId) {
+            $this->customer->setter_fee = $this->getUserRate($userId);
+        } else {
+            $this->customer->setter_fee = 0;
+        }
     }
 
     public function getUserRate($userId)
@@ -83,7 +135,7 @@ class Edit extends Component
         $user = User::whereId($userId)->first();
 
         $rate = Rates::whereRole($user->role);
-        $rate->when($user->role == 'Sales Rep', function($query) use ($user) {
+        $rate->when($user->role == 'Sales Rep', function ($query) use ($user) {
             $query->where('time', '<=', $user->installs)->orderBy('time', 'desc');
         });
 
@@ -92,6 +144,14 @@ class Edit extends Component
         }
 
         return $rate->first()->rate;
+    }
+
+    public function calculateGrossRepComission(Customer $customer)
+    {
+        if ($customer->margin && $customer->system_size) {
+            return $customer->margin * $customer->system_size * 1000;
+        }
+        return 0;
     }
 
 }

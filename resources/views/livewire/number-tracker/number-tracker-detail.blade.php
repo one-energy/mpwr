@@ -527,8 +527,13 @@
                                             <x-table>
                                                 <x-slot name="header">
                                                     <x-table.th-tr>
+                                                        @if(user()->role == 'Admin' || user()->role == 'Owner')
+                                                            <x-table.th by="deparmtent">
+                                                                @lang('Department')
+                                                            </x-table.th>
+                                                        @endif
                                                         <x-table.th by="region_number">
-                                                            @lang('Region Member')
+                                                            @lang('Member')
                                                         </x-table.th>
                                                         <x-table.th by="doors">
                                                             @lang('Doors')
@@ -553,6 +558,9 @@
                                                 <x-slot name="body">
                                                     @foreach($numbersTracked as $row)
                                                         <x-table.tr :loop="$loop">
+                                                            @if(user()->role == 'Admin' || user()->role == 'Owner')
+                                                                <x-table.td>{{ $row->user->department->name }}</x-table.td>
+                                                            @endif
                                                             <x-table.td>{{ $row['first_name'] . ' ' .  $row['last_name']}}</x-table.td>
                                                             <x-table.td>{{ $row['doors'] ?? 0 }}</x-table.td>
                                                             <x-table.td>{{ $row['hours'] ?? 0 }}</x-table.td>

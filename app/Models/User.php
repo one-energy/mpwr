@@ -37,13 +37,13 @@ class User extends Authenticatable implements MustVerifyEmail
     use SoftDeletes;
 
     const ROLES = [
-        ['title' => 'Owner',            'name' => 'Owner',              'description' => 'System Owner'],
-        ['title' => 'Admin',            'name' => 'Admin',              'description' => 'Allows access to the Admin functionality and Manage Users, Incentives and others (Admin Tab)'],
-        ['title' => 'VP',               'name' => 'Department Manager', 'description' => 'Allows access to Manage Users, Incentives and others'],
-        ['title' => 'Regional Manager', 'name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
-        ['title' => 'Manager',          'name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
-        ['title' => 'Sales Rep',        'name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
-        ['title' => 'Setter',           'name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+        ['title' => 'Owner', 'name' => 'Owner', 'description' => 'System Owner'],
+        ['title' => 'Admin', 'name' => 'Admin', 'description' => 'Allows access to the Admin functionality and Manage Users, Incentives and others (Admin Tab)'],
+        ['title' => 'VP', 'name' => 'Department Manager', 'description' => 'Allows access to Manage Users, Incentives and others'],
+        ['title' => 'Regional Manager', 'name' => 'Region Manager', 'description' => 'Allows update all Region\'s Number Tracker'],
+        ['title' => 'Manager', 'name' => 'Office Manager', 'description' => 'Allows update a Region\'s Number Tracker'],
+        ['title' => 'Sales Rep', 'name' => 'Sales Rep', 'description' => 'Allows read/add/edit/cancel Customer'],
+        ['title' => 'Setter', 'name' => 'Setter', 'description' => 'Allows see the dashboard and only read Customer'],
     ];
 
     const TOPLEVEL_ROLES = [
@@ -63,6 +63,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public function office()
     {
         return $this->belongsTo(Office::class, 'office_id');
+    }
+
+    public function managedOffices()
+    {
+        return $this->hasMany(Office::class, 'office_manager_id');
+    }
+
+    public function managedRegions()
+    {
+        return $this->hasMany(Region::class, 'region_manager_id');
     }
 
     public function department()
@@ -114,42 +124,42 @@ class User extends Authenticatable implements MustVerifyEmail
         $this->save();
     }
 
-    public static function getRolesPerUrserRole(User $user)
+    public static function getRolesPerUserRole()
     {
-        if ($user->role == "Admin") {
+        if (user()->role == 'Admin') {
             $roles = [
-                ['title' => 'Admin',            'name' => 'Admin',              'description' => 'Allows access to the Admin functionality and Manage Users, Incentives and others (Admin Tab)'],
-                ['title' => 'VP',               'name' => 'Department Manager', 'description' => 'Allows update all in departments and Region\'s Number Tracker'],
-                ['title' => 'Regional Manager', 'name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
-                ['title' => 'Manager',          'name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
-                ['title' => 'Sales Rep',        'name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
-                ['title' => 'Setter',           'name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+                ['title' => 'Admin', 'name' => 'Admin', 'description' => 'Allows access to the Admin functionality and Manage Users, Incentives and others (Admin Tab)'],
+                ['title' => 'VP', 'name' => 'Department Manager', 'description' => 'Allows update all in departments and Region\'s Number Tracker'],
+                ['title' => 'Regional Manager', 'name' => 'Region Manager', 'description' => 'Allows update all Region\'s Number Tracker'],
+                ['title' => 'Manager', 'name' => 'Office Manager', 'description' => 'Allows update a Region\'s Number Tracker'],
+                ['title' => 'Sales Rep', 'name' => 'Sales Rep', 'description' => 'Allows read/add/edit/cancel Customer'],
+                ['title' => 'Setter', 'name' => 'Setter', 'description' => 'Allows see the dashboard and only read Customer'],
             ];
         }
-        if ($user->role == "Department Manager") {
+        if (user()->role == 'Department Manager') {
             $roles = [
-                ['title' => 'Regional Manager', 'name' => 'Region Manager',     'description' => 'Allows update all Region\'s Number Tracker'],
-                ['title' => 'Manager',          'name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
-                ['title' => 'Sales Rep',        'name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
-                ['title' => 'Setter',           'name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+                ['title' => 'Regional Manager', 'name' => 'Region Manager', 'description' => 'Allows update all Region\'s Number Tracker'],
+                ['title' => 'Manager', 'name' => 'Office Manager', 'description' => 'Allows update a Region\'s Number Tracker'],
+                ['title' => 'Sales Rep', 'name' => 'Sales Rep', 'description' => 'Allows read/add/edit/cancel Customer'],
+                ['title' => 'Setter', 'name' => 'Setter', 'description' => 'Allows see the dashboard and only read Customer'],
             ];
         }
-        if ($user->role == "Region Manager") {
+        if (user()->role == 'Region Manager') {
             $roles = [
-                ['title' => 'Manager',          'name' => 'Office Manager',     'description' => 'Allows update a Region\'s Number Tracker'],
-                ['title' => 'Sales Rep',        'name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
-                ['title' => 'Setter',           'name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+                ['title' => 'Manager', 'name' => 'Office Manager', 'description' => 'Allows update a Region\'s Number Tracker'],
+                ['title' => 'Sales Rep', 'name' => 'Sales Rep', 'description' => 'Allows read/add/edit/cancel Customer'],
+                ['title' => 'Setter', 'name' => 'Setter', 'description' => 'Allows see the dashboard and only read Customer'],
             ];
         }
-        if ($user->role == "Office Manager") {
+        if (user()->role == 'Office Manager') {
             $roles = [
-                ['title' => 'Sales Rep',        'name' => 'Sales Rep',          'description' => 'Allows read/add/edit/cancel Customer'],
-                ['title' => 'Setter',           'name' => 'Setter',             'description' => 'Allows see the dashboard and only read Customer'],
+                ['title' => 'Sales Rep', 'name' => 'Sales Rep', 'description' => 'Allows read/add/edit/cancel Customer'],
+                ['title' => 'Setter', 'name' => 'Setter', 'description' => 'Allows see the dashboard and only read Customer'],
             ];
         }
 
-        if ($user->role == "Owner") {
-            $roles   = User::ROLES;
+        if (user()->role == 'Owner') {
+            $roles = User::ROLES;
         }
 
         return $roles;
@@ -158,18 +168,21 @@ class User extends Authenticatable implements MustVerifyEmail
     public static function userManageOffices(User $user)
     {
         $offices = Office::whereOfficeManagerId($user->id)->get();
+
         return count($offices) > 0 ? $offices : false;
     }
 
     public static function userManageRegion(User $user)
     {
         $regions = Region::whereRegionManagerId($user->id)->get();
+
         return count($regions) > 0 ? $regions : false;
     }
 
     public static function userManageDepartment(User $user)
     {
         $departments = Department::whereDepartmentManagerId($user->id)->get();
+
         return count($departments) > 0 ? $departments : false;
     }
 
@@ -177,28 +190,28 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $response = [
             'status'  => true,
-            'message' => ''
+            'message' => '',
         ];
         $previous = 'This user is the manager for the';
 
-        if($offices = User::userManageOffices($user)){
+        if ($offices = User::userManageOffices($user)) {
             $response['status']  = false;
-            $previous .= ' Offices:';
-            $previous = User::getChangeRoleMessage($previous, $offices);
+            $previous            .= ' Offices:';
+            $previous            = User::getChangeRoleMessage($previous, $offices);
             $response['message'] = $previous;
         }
 
-        if($regions = User::userManageRegion($user)){
+        if ($regions = User::userManageRegion($user)) {
             $response['status']  = false;
-            $previous .= ' Regions:';
-            $previous = User::getChangeRoleMessage($previous, $regions);
+            $previous            .= ' Regions:';
+            $previous            = User::getChangeRoleMessage($previous, $regions);
             $response['message'] = $previous;
         }
 
-        if($departments = User::userManageDepartment($user)){
+        if ($departments = User::userManageDepartment($user)) {
             $response['status']  = false;
-            $previous .= ' Departments:';
-            $previous = User::getChangeRoleMessage($previous, $departments);
+            $previous            .= ' Departments:';
+            $previous            = User::getChangeRoleMessage($previous, $departments);
             $response['message'] = $previous;
         }
 
@@ -208,6 +221,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected static function getChangeRoleMessage(string $previous, Collection $content): string
     {
         $message = $previous . ' ' . $content->implode('name', ', ');
+
         return $message . '. Please disassociate the user from what was mentioned before continuing.';
     }
 
@@ -224,21 +238,21 @@ class User extends Authenticatable implements MustVerifyEmail
                 'like',
                 '%' . strtolower($search) . '%'
             )
-            ->orWhere(
-                DB::raw('lower(last_name)'),
-                'like',
-                '%' . strtolower($search) . '%'
-            )
-            ->orWhere(
-                DB::raw('lower(role)'),
-                'like',
-                '%' . strtolower($search) . '%'
-            )
-            ->orWhere(
-                DB::raw('lower(email)'),
-                'like',
-                '%' . strtolower($search) . '%'
-            );
+                ->orWhere(
+                    DB::raw('lower(last_name)'),
+                    'like',
+                    '%' . strtolower($search) . '%'
+                )
+                ->orWhere(
+                    DB::raw('lower(role)'),
+                    'like',
+                    '%' . strtolower($search) . '%'
+                )
+                ->orWhere(
+                    DB::raw('lower(email)'),
+                    'like',
+                    '%' . strtolower($search) . '%'
+                );
         });
     }
 }

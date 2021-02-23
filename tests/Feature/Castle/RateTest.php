@@ -28,7 +28,7 @@ class RateTest extends TestCase
         ]);
 
         $this->actingAs($departmentManager);
-        
+
         $response = $this->get('castle/rates');
 
         $response->assertStatus(200)
@@ -101,6 +101,31 @@ class RateTest extends TestCase
             ->assertRedirect(route('castle.rates.index'));
     }
 
+      /** @test */
+      public function it_shouldnt_store_a_repeated_rate()
+      {
+          $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
+          $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+          $departmentManager->department_id = $department->id;
+          $departmentManager->save();
+
+          $data = [
+              'name'          => 'rate',
+              'time'          => 25,
+              'rate'          => 2.5,
+              'department_id' => $department->id,
+              'role'          => 'Sales Rep',
+          ];
+
+          $this->actingAs($departmentManager);
+
+          $this->post(route('castle.rates.store'), $data);
+          $this->post(route('castle.rates.store'), $data);
+
+          $this->assertDatabaseCount('rates', 1);;
+      }
+
+
     /** @test */
     public function it_should_require_all_fields_to_store_a_new_rate()
     {
@@ -116,7 +141,7 @@ class RateTest extends TestCase
             'department_id' => '',
             'role'          => 'Sales Rep',
         ];
-        
+
         $this->actingAs($departmentManager);
 
         $response = $this->post(route('castle.rates.store'), $data);
@@ -145,7 +170,7 @@ class RateTest extends TestCase
         $this->actingAs($departmentManager);
 
         $response = $this->get('castle/rates/'. $rate->id . '/edit');
-        
+
         $response->assertStatus(200)
             ->assertViewIs('castle.rate.edit');
     }
@@ -159,7 +184,7 @@ class RateTest extends TestCase
         $departmentManager->save();
 
         $this->actingAs(factory(User::class)->create(['role' => 'Setter']));
-        
+
         $rate        = factory(Rates::class)->create([
             'department_id'         => $department->id,
             'role' => 'Sales Rep'
@@ -185,11 +210,11 @@ class RateTest extends TestCase
         ]);
         $data         = $rate->toArray();
         $updaterate = array_merge($data, ['name' => 'rate Edited']);
-        
+
         $this->actingAs($departmentManager);
 
         $response = $this->put(route('castle.rates.update', $rate->id), $updaterate);
-        
+
         $response->assertStatus(302);
         $this->assertDatabaseHas('rates',
         [
@@ -214,7 +239,7 @@ class RateTest extends TestCase
         ]);
 
         $this->actingAs($departmentManager);
-        
+
         $response = $this->delete(route('castle.rates.destroy', $rate->id));
         $deleted  = Rates::where('id', $rate->id)->get();
 

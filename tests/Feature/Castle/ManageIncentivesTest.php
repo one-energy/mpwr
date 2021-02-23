@@ -35,7 +35,7 @@ class ManageIncentiveTest extends TestCase
 
         $this->actingAs($departmentManager);
 
-        $response = $this->get('castle/incentives');
+        $response = $this->get(route('castle.incentives.index'));
 
         $response->assertStatus(200)
             ->assertViewIs('castle.incentives.index');
@@ -61,7 +61,7 @@ class ManageIncentiveTest extends TestCase
 
         $this->actingAs($setter);
 
-        $response = $this->get('/castle/incentives/create');
+        $response = $this->get(route('castle.incentives.create'));
 
         $response->assertStatus(403);
     }
@@ -76,8 +76,8 @@ class ManageIncentiveTest extends TestCase
 
         $this->actingAs($departmentManager);
 
-        $response = $this->get('castle/incentives/create');
-        
+        $response = $this->get(route('castle.incentives.create'));
+
         $response->assertStatus(200)
             ->assertViewIs('castle.incentives.create');
      }
@@ -93,9 +93,7 @@ class ManageIncentiveTest extends TestCase
         $data = [
             'number_installs'   => 48,
             'name'              => 'Incentive',
-            'installs_achieved' => 56,
             'installs_needed'   => 67,
-            'kw_achieved'       => 78,
             'kw_needed'         => 100,
             'department_id'     => $department->id
         ];
@@ -121,9 +119,7 @@ class ManageIncentiveTest extends TestCase
         $data = [
             'number_installs'   => '',
             'name'              => '',
-            'installs_achieved' => '',
             'installs_needed'   => '',
-            'kw_achieved'       => '',
             'kw_needed'         => '',
         ];
 
@@ -134,9 +130,7 @@ class ManageIncentiveTest extends TestCase
         [
             'number_installs',
             'name',
-            'installs_achieved',
             'installs_needed',
-            'kw_achieved',
             'kw_needed',
         ]);
     }
@@ -153,8 +147,8 @@ class ManageIncentiveTest extends TestCase
 
         $this->actingAs($departmentManager);
 
-        $response = $this->get('castle/incentives/'. $incentive->id . '/edit');
-        
+        $response = $this->get(route('castle.incentives.edit', $incentive->id));
+
         $response->assertStatus(200)
             ->assertViewIs('castle.incentives.edit');
     }
@@ -163,10 +157,10 @@ class ManageIncentiveTest extends TestCase
     public function it_should_block_the_edit_form_for_non_top_level_roles()
     {
         $this->actingAs(factory(User::class)->create(['role' => 'Setter']));
-        
+
         $incentive = factory(Incentive::class)->create();
 
-        $response = $this->get('castle/incentives/'. $incentive->id .'/edit');
+        $response = $this->get(route('castle.incentives.edit', $incentive->id));
 
         $response->assertStatus(403);
     }
@@ -189,7 +183,7 @@ class ManageIncentiveTest extends TestCase
         $this->actingAs($departmentManager);
 
         $response = $this->put(route('castle.incentives.update', $incentive->id), $updateIncentive);
-            
+
         $response->assertStatus(302);
 
         $this->assertDatabaseHas('incentives',
@@ -243,7 +237,7 @@ class ManageIncentiveTest extends TestCase
             ->get(route('castle.incentives.index'))
             ->assertForbidden();
     }
-    
+
     /** @test */
     public function it_should_allow_access_to_incentives()
     {
