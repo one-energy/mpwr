@@ -7,7 +7,6 @@
         </div>
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <x-form :route="route('castle.incentives.update', $incentive)" put>
-                @csrf
                 <div>
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                         <div class="md:col-span-3 col-span-2">
@@ -17,19 +16,11 @@
                         <div class="md:col-span-3 col-span-2">
                             <x-input label="Incentive Name" name="name" value="{{ $incentive->name }}"></x-input>
                         </div>
-                
-                        <div class="md:col-span-3 col-span-1">
-                            <x-input-add-on label="Installs Achieved" name="installs_achieved" addOn="%" value="{{ $incentive->installs_achieved }}"></x-input-add-on >
-                        </div>
-                        
+
                         <div class="md:col-span-3 col-span-1">
                             <x-input label="Installs Needed" name="installs_needed" type="number" value="{{ $incentive->installs_needed }}"></x-input>
                         </div>
 
-                        <div class="md:col-span-3 col-span-2">
-                            <x-input-add-on label="kW Achieved" name="kw_achieved" addOn="%" value="{{ $incentive->kw_achieved }}"></x-input-add-on>
-                        </div>
-                
                         <div class="md:col-span-3 col-span-2">
                             <x-input-add-on  label="kW Needed" name="kw_needed" addOn="kW" value="{{ $incentive->kw_needed }}"></x-input-add-on >
                         </div>
