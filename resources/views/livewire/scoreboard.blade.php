@@ -1,7 +1,9 @@
 <div>
-  <div x-data="{openModal: false, 
+  <div x-data="{openModal: false,
+                openDoorsTab: 'daily',
                 openHoursTab: 'daily',
                 openSetsTab: 'daily',
+                openSetClosesTab: 'daily',
                 openClosesTab: 'daily',
                 active: 'border-b-2 border-green-base text-green-base',
                 inactive: 'text-gray-900 hover:text-gray-800'}">
@@ -30,7 +32,76 @@
             </div>
           </div> -->
         </div>
-        
+
+        <div class="mt-6">
+          <span class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
+            Top 10 Doors
+          </span>
+
+          <ul class="flex border-b mt-3">
+            <li @click="openDoorsTab = 'daily'" class="-mb-px mr-4">
+                <a :class="openDoorsTab === 'daily' ? active: inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10DoorsPeriod('daily')">Daily</a>
+            </li>
+            <li @click="openDoorsTab = 'weekly'" class="-mb-px mr-4">
+                <a :class="openDoorsTab === 'weekly' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10DoorsPeriod('weekly')">Weekly</a>
+            </li>
+            <li @click="openDoorsTab = 'monthly'" class="-mb-px mr-4">
+                <a :class="openDoorsTab === 'monthly' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10DoorsPeriod('monthly')">Monthly</a>
+            </li>
+          </ul>
+
+          <div class="mt-6">
+            <div class="flex flex-col">
+              <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+                <div class="align-middle inline-block min-w-full overflow-hidden">
+                  @if($top10Doors->count())
+                    <x-table>
+                      <x-slot name="header">
+                        <x-table.th-tr>
+                          <x-table.th by="rank">
+                              @lang('Rank')
+                          </x-table.th>
+                          <x-table.th by="representative">
+                              @lang('Representative')
+                          </x-table.th>
+                          <x-table.th by="doors">
+                              @lang('Doors')
+                          </x-table.th>
+                          <x-table.th by="office">
+                              @lang('Office')
+                          </x-table.th>
+                        </x-table.th-tr>
+                      </x-slot>
+                      <x-slot name="body">
+                        @foreach($top10Doors as $user)
+                            <x-table.tr :loop="$loop" x-on:click="openModal = true" wire:click="setUser({{ $user->id }})" class="cursor-pointer">
+                                <x-table.td>
+                                  <span class="px-2 inline-flex rounded-full bg-green-base text-white">
+                                    {{ $loop->index+1 }}
+                                  </span>
+                                </x-table.td>
+                                <x-table.td>{{ $user->first_name }} {{ $user->last_name }}</x-table.td>
+                                <x-table.td>{{ $user->doors }}</x-table.td>
+                                <x-table.td>{{ $user->office->name }}</x-table.td>
+                            </x-table.tr>
+                        @endforeach
+                      </x-slot>
+                    </x-table>
+                  @else
+                    <div class="h-96">
+                        <div class="flex justify-center align-middle">
+                            <div class="text-sm text-center text-gray-700">
+                                No data for this period.
+                            </div>
+                        </div>
+                    </div>
+                  @endif
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="mt-6">
           <span class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
             Top 10 Hours
@@ -99,7 +170,7 @@
             </div>
           </div>
         </div>
-  
+
         <div class="mt-9">
           <span class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
             Top 10 Sets
@@ -168,21 +239,21 @@
             </div>
           </div>
         </div>
-  
+
         <div class="mt-9">
           <span class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
             Top 10 Set Closes
           </span>
 
           <ul class="flex border-b mt-3">
-            <li @click="openClosesTab = 'daily'" class="-mb-px mr-4">
-                <a :class="openClosesTab === 'daily' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10SetClosesPeriod('daily')">Daily</a>
+            <li @click="openSetClosesTab = 'daily'" class="-mb-px mr-4">
+                <a :class="openSetClosesTab === 'daily' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10SetClosesPeriod('daily')">Daily</a>
             </li>
-            <li @click="openClosesTab = 'weekly'" class="-mb-px mr-4">
-                <a :class="openClosesTab === 'weekly' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10SetClosesPeriod('weekly')">Weekly</a>
+            <li @click="openSetClosesTab = 'weekly'" class="-mb-px mr-4">
+                <a :class="openSetClosesTab === 'weekly' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10SetClosesPeriod('weekly')">Weekly</a>
             </li>
-            <li @click="openClosesTab = 'monthly'" class="-mb-px mr-4">
-                <a :class="openClosesTab === 'monthly' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10SetClosesPeriod('monthly')">Monthly</a>
+            <li @click="openSetClosesTab = 'monthly'" class="-mb-px mr-4">
+                <a :class="openSetClosesTab === 'monthly' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10SetClosesPeriod('monthly')">Monthly</a>
             </li>
           </ul>
 
@@ -237,15 +308,83 @@
             </div>
           </div>
         </div>
-      </div>
+
+        <div class="mt-6">
+            <span class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
+              Top 10 Closes
+            </span>
+
+            <ul class="flex border-b mt-3">
+              <li @click="openClosesTab = 'daily'" class="-mb-px mr-4">
+                  <a :class="openClosesTab === 'daily' ? active: inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10ClosesPeriod('daily')">Daily</a>
+              </li>
+              <li @click="openClosesTab = 'weekly'" class="-mb-px mr-4">
+                  <a :class="openClosesTab === 'weekly' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10ClosesPeriod('weekly')">Weekly</a>
+              </li>
+              <li @click="openClosesTab = 'monthly'" class="-mb-px mr-4">
+                  <a :class="openClosesTab === 'monthly' ? active : inactive" class="bg-white inline-block py-2 text-sm font-semibold cursor-pointer" wire:click.prevent="setTop10ClosesPeriod('monthly')">Monthly</a>
+              </li>
+            </ul>
+
+            <div class="mt-6">
+                <div class="flex flex-col">
+                    <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+                        <div class="align-middle inline-block min-w-full overflow-hidden">
+                            @if($top10Doors->count())
+                                <x-table>
+                                    <x-slot name="header">
+                                    <x-table.th-tr>
+                                        <x-table.th by="rank">
+                                            @lang('Rank')
+                                        </x-table.th>
+                                        <x-table.th by="representative">
+                                            @lang('Representative')
+                                        </x-table.th>
+                                        <x-table.th by="doors">
+                                            @lang('Doors')
+                                        </x-table.th>
+                                        <x-table.th by="office">
+                                            @lang('Office')
+                                        </x-table.th>
+                                    </x-table.th-tr>
+                                </x-slot>
+                                <x-slot name="body">
+                                    @foreach($top10Doors as $user)
+                                        <x-table.tr :loop="$loop" x-on:click="openModal = true" wire:click="setUser({{ $user->id }})" class="cursor-pointer">
+                                            <x-table.td>
+                                                <span class="px-2 inline-flex rounded-full bg-green-base text-white">
+                                                    {{ $loop->index+1 }}
+                                                </span>
+                                            </x-table.td>
+                                            <x-table.td>{{ $user->first_name }} {{ $user->last_name }}</x-table.td>
+                                            <x-table.td>{{ $user->doors }}</x-table.td>
+                                            <x-table.td>{{ $user->office->name }}</x-table.td>
+                                        </x-table.tr>
+                                    @endforeach
+                                    </x-slot>
+                                </x-table>
+                            @else
+                                <div class="h-96">
+                                    <div class="flex justify-center align-middle">
+                                        <div class="text-sm text-center text-gray-700">
+                                            No data for this period.
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <x-svg.spinner 
-        color="#9fa6b2" 
-        class="fixed hidden left-1/2 top-1/2 w-20" 
+    <x-svg.spinner
+        color="#9fa6b2"
+        class="fixed hidden left-1/2 top-1/2 w-20"
         wire:loading.class.remove="hidden">
     </x-svg.spinner>
-  
+
     @if($userId)
       <div x-cloak x-show="openModal" wire:loading.remove class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center z-20">
         <div x-show="openModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity">
@@ -320,7 +459,7 @@
                     </div>
                 </div>
             </div>
-        
+
             <!-- Bar Chart -->
             <div class="flex border-gray-200 border-2 m-1 h-48 rounded-lg">
               <div class="w-2/3" id="chartdiv"></div>
@@ -332,7 +471,7 @@
                 <div id="set_closes">0 set closes</div>
               </div>
             </div>
-            </div>            
+            </div>
           </div>
         </div>
       </div>

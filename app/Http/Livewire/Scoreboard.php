@@ -13,6 +13,8 @@ class Scoreboard extends Component
 
     public $top10Hours;
 
+    public $top10Doors;
+
     public $top10Sets;
 
     public $top10SetCloses;
@@ -33,7 +35,11 @@ class Scoreboard extends Component
 
     public $hoursPeriod = 'daily';
 
+    public $doorsPeriod = 'daily';
+
     public $setsPeriod = 'daily';
+
+    public $setClosesPeriod = 'daily';
 
     public $closesPeriod = 'daily';
 
@@ -129,6 +135,38 @@ class Scoreboard extends Component
             ->get();
     }
 
+    public function setTop10DoorsPeriod($doorsPeriod)
+    {
+        $this->doorsPeriod = $doorsPeriod;
+
+        $query = User::query()
+            ->leftJoin('daily_numbers', function($join) {
+                $join->on('daily_numbers.user_id', '=', 'users.id');
+            });
+
+        if ($this->doorsPeriod === "daily") {
+            $query
+                ->whereDate('daily_numbers.created_at', Carbon::today());
+        }
+        if ($this->doorsPeriod === "weekly") {
+            $query
+                ->whereBetween('daily_numbers.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+        }
+        if ($this->doorsPeriod === "monthly") {
+            $query
+                ->whereMonth('daily_numbers.created_at', '=', Carbon::now()->month);
+        }
+
+        $this->top10Doors = $query
+            ->select(DB::raw('sum(daily_numbers.doors) as doors, users.office_id, users.first_name, users.last_name, users.id'))
+            ->groupBy('users.id')
+            ->whereNotNull('daily_numbers.doors')
+            ->whereDepartmentId(user()->department_id)
+            ->orderByDesc('doors')
+            ->take(10)
+            ->get();
+    }
+
     public function setTop10SetsPeriod($setsPeriod)
     {
         $this->setsPeriod = $setsPeriod;
@@ -159,19 +197,19 @@ class Scoreboard extends Component
             ->get();
     }
 
-    public function setTop10SetClosesPeriod($closesPeriod)
+    public function setTop10SetClosesPeriod($setClosesPeriod)
     {
-        $this->closesPeriod = $closesPeriod;
+        $this->setClosesPeriod = $setClosesPeriod;
 
         $query = User::query()
             ->leftJoin('daily_numbers', function($join) {
                 $join->on('daily_numbers.user_id', '=', 'users.id');
             });
 
-        if ($this->closesPeriod === "daily") {
+        if ($this->setClosesPeriod === "daily") {
             $query
                 ->whereDate('daily_numbers.created_at', Carbon::today());
-        } elseif ($this->closesPeriod === "weekly") {
+        } elseif ($this->setClosesPeriod === "weekly") {
             $query
                 ->whereBetween('daily_numbers.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
         } else {
@@ -189,9 +227,37 @@ class Scoreboard extends Component
             ->get();
     }
 
+    public function setTop10ClosesPeriod($closesPeriod)
+    {
+        $this->closesPeriod = $closesPeriod;
+
+        $query = User::query()
+            ->leftJoin('daily_numbers', function($join) {
+                $join->on('daily_numbers.user_id', '=', 'users.id');
+            });
+
+        if ($this->closesPeriod === "daily") {
+            $query->whereDate('daily_numbers.created_at', Carbon::today());
+        } elseif ($this->closesPeriod === "weekly") {
+            $query->whereBetween('daily_numbers.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+        } else {
+            $query->whereMonth('daily_numbers.created_at', '=', Carbon::now()->month);
+        }
+
+        $this->top10SetCloses = $query
+            ->select(DB::raw('sum(daily_numbers.closes) as closes, users.office_id, users.first_name, users.last_name, users.id'))
+            ->groupBy('users.id')
+            ->whereNotNull('daily_numbers.closes')
+            ->whereDepartmentId(user()->department_id)
+            ->orderByDesc('closes')
+            ->take(10)
+            ->get();
+    }
+
     public function render()
     {
         $this->setTop10HoursPeriod($this->hoursPeriod);
+        $this->setTop10DoorsPeriod($this->hoursPeriod);
         $this->setTop10SetsPeriod($this->setsPeriod);
         $this->setTop10SetClosesPeriod($this->closesPeriod);
 
