@@ -60,14 +60,20 @@ class RatesController extends Controller
         $rate->rate          = $validated['rate'];
         $rate->department_id = $validated['department_id'];
         $rate->role          = $validated['role'];
-        dd($rate->canSave());
-        $rate->save();
+        if($rate->alreadyExists()){
+            alert()
+                ->withTitle(__('This rate already exists'))
+                ->withColor('red')
+                ->send();
+            return back();
+        } else {
+            $rate->save();
+            alert()
+                ->withTitle(__('Rate created!'))
+                ->send();
 
-        alert()
-            ->withTitle(__('Rate created!'))
-            ->send();
-
-        return redirect(route('castle.rates.index'));
+            return redirect(route('castle.rates.index'));
+        }
     }
 
     /**

@@ -23,7 +23,7 @@ class Rates extends Model
         return $this->belongsTo(Department::class);
     }
 
-    public function canSave()
+    public function alreadyExists()
     {
         return Rates::whereRole($this->role)->whereDepartmentId($this->department_id)->where('time', $this->time)->get()->count() > 0;
     }
