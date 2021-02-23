@@ -186,14 +186,8 @@
         <div class="z-40 fixed bottom-0 block bg-white w-full md:hidden overflow-x-scroll">
             <div class="flex items-center justify-between px-4 py-3 sm:px-3">
                 @if(is_active('castle.*'))
-<<<<<<< HEAD
                     <x-nav.link-mobile :href="route('home')" class="flex flex-row items-center whitespace-no-wrap">
                         <x-svg.chevron-left class="w-6 -ml-2"/> <span class="text-xs">@lang('Leave Admin')</span>
-=======
-                    <x-nav.link-mobile :href="route('home')" class="flex self-center">
-                        <x-svg.chevron-left class="w-6 -ml-2"/>
-                        <span class="text-xs">@lang('Leave Admin')</span>
->>>>>>> develop
                     </x-nav.link-mobile>
 
                     <x-nav.link-mobile :href="route('castle.dashboard')" class="mt-1"
