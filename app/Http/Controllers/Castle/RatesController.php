@@ -42,24 +42,21 @@ class RatesController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $this->validate(
-            request(),
-            [
-                'name'          => 'required|string|min:3|max:255',
-                'time'          => 'required',
-                'rate'          => 'required',
-                'department_id' => 'required',
-                'role'          => 'required',
-            ]
-        );
+        $rate = new Rates();
+        $validated = request()->validate([
+            'name'          => 'required|string|min:3|max:255',
+            'time'          => 'required|numeric',
+            'rate'          => 'required',
+            'department_id' => 'required',
+            'role'          => 'required',
+        ]);
 
-
-        $rate                = new Rates();
         $rate->name          = $validated['name'];
         $rate->time          = $validated['time'];
         $rate->rate          = $validated['rate'];
         $rate->department_id = $validated['department_id'];
         $rate->role          = $validated['role'];
+
         if($rate->alreadyExists()){
             alert()
                 ->withTitle(__('This rate already exists'))
@@ -111,16 +108,15 @@ class RatesController extends Controller
      */
     public function update($id)
     {
-        $validated = $this->validate(
-            request(),
-            [
-                'name'          => 'required|string|min:3|max:255',
-                'time'          => 'required',
-                'rate'          => 'required',
-                'department_id' => 'required',
-                'role'          => 'required',
-            ]
-        );
+        $rate = new Rates();
+        $validated = request()->validate([
+            'name'          => 'required|string|min:3|max:255',
+            'time'          => 'required|numeric',
+            'rate'          => 'required',
+            'department_id' => 'required',
+            'role'          => 'required',
+        ]);
+
         $rate                = Rates::whereId($id)->first();
         $rate->name          = $validated['name'];
         $rate->time          = $validated['time'];
@@ -128,13 +124,20 @@ class RatesController extends Controller
         $rate->department_id = $validated['department_id'];
         $rate->role          = $validated['role'];
 
-        $rate->save();
+        if($rate->alreadyExists()){
+            alert()
+                ->withTitle(__('This rate already exists'))
+                ->withColor('red')
+                ->send();
+            return back();
+        } else {
+            $rate->save();
+            alert()
+                ->withTitle(__('Rate updated!'))
+                ->send();
 
-        alert()
-            ->withTitle(__('Rate updated!'))
-            ->send();
-
-        return redirect(route('castle.rates.index'));
+            return redirect(route('castle.rates.index'));
+        }
     }
 
     /**
