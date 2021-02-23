@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\Rates;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 
 class RatesController extends Controller
 {
+    use RefreshDatabase;
     /**
      * Display a listing of the resource.
      *
