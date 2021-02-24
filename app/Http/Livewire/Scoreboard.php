@@ -19,6 +19,8 @@ class Scoreboard extends Component
 
     public $top10SetCloses;
 
+    public $top10Closes;
+
     public $userId;
 
     public $user;
@@ -49,6 +51,18 @@ class Scoreboard extends Component
             ['index' => 'leaderboards',   'value' => 'Leaderboards'],
             ['index' => 'records',        'value' => 'Records'],
         ];
+    }
+
+    public function render()
+    {
+
+        $this->setTop10DoorsPeriod($this->doorsPeriod);
+        $this->setTop10HoursPeriod($this->hoursPeriod);
+        $this->setTop10SetsPeriod($this->setsPeriod);
+        $this->setTop10SetClosesPeriod($this->setClosesPeriod);
+        $this->setTop10ClosesPeriod($this->closesPeriod);
+
+        return view('livewire.scoreboard');
     }
 
     public function setUser($userId)
@@ -105,6 +119,38 @@ class Scoreboard extends Component
         ]);
     }
 
+    public function setTop10DoorsPeriod($doorsPeriod)
+    {
+        $this->doorsPeriod = $doorsPeriod;
+
+        $userQuery = User::query()
+            ->leftJoin('daily_numbers', function($join) {
+                $join->on('daily_numbers.user_id', '=', 'users.id');
+            });
+
+        if ($this->doorsPeriod === "daily") {
+            $userQuery
+                ->whereDate('daily_numbers.created_at', Carbon::today());
+        }
+        if ($this->doorsPeriod === "weekly") {
+            $userQuery
+                ->whereBetween('daily_numbers.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+        }
+        if ($this->doorsPeriod === "monthly") {
+            $userQuery
+                ->whereMonth('daily_numbers.created_at', '=', Carbon::now()->month);
+        }
+
+        $this->top10Doors = $userQuery
+            ->select(DB::raw('sum(daily_numbers.doors) as doors, users.office_id, users.first_name, users.last_name, users.id'))
+            ->groupBy('users.id')
+            ->whereNotNull('daily_numbers.doors')
+            ->whereDepartmentId(user()->department_id)
+            ->orderByDesc('doors')
+            ->take(10)
+            ->get();
+    }
+
     public function setTop10HoursPeriod($hoursPeriod)
     {
         $this->hoursPeriod = $hoursPeriod;
@@ -131,38 +177,6 @@ class Scoreboard extends Component
             ->whereNotNull('daily_numbers.hours')
             ->whereDepartmentId(user()->department_id)
             ->orderByDesc('hours')
-            ->take(10)
-            ->get();
-    }
-
-    public function setTop10DoorsPeriod($doorsPeriod)
-    {
-        $this->doorsPeriod = $doorsPeriod;
-
-        $query = User::query()
-            ->leftJoin('daily_numbers', function($join) {
-                $join->on('daily_numbers.user_id', '=', 'users.id');
-            });
-
-        if ($this->doorsPeriod === "daily") {
-            $query
-                ->whereDate('daily_numbers.created_at', Carbon::today());
-        }
-        if ($this->doorsPeriod === "weekly") {
-            $query
-                ->whereBetween('daily_numbers.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
-        }
-        if ($this->doorsPeriod === "monthly") {
-            $query
-                ->whereMonth('daily_numbers.created_at', '=', Carbon::now()->month);
-        }
-
-        $this->top10Doors = $query
-            ->select(DB::raw('sum(daily_numbers.doors) as doors, users.office_id, users.first_name, users.last_name, users.id'))
-            ->groupBy('users.id')
-            ->whereNotNull('daily_numbers.doors')
-            ->whereDepartmentId(user()->department_id)
-            ->orderByDesc('doors')
             ->take(10)
             ->get();
     }
@@ -244,7 +258,7 @@ class Scoreboard extends Component
             $query->whereMonth('daily_numbers.created_at', '=', Carbon::now()->month);
         }
 
-        $this->top10SetCloses = $query
+        $this->top10Closes = $query
             ->select(DB::raw('sum(daily_numbers.closes) as closes, users.office_id, users.first_name, users.last_name, users.id'))
             ->groupBy('users.id')
             ->whereNotNull('daily_numbers.closes')
@@ -252,15 +266,5 @@ class Scoreboard extends Component
             ->orderByDesc('closes')
             ->take(10)
             ->get();
-    }
-
-    public function render()
-    {
-        $this->setTop10HoursPeriod($this->hoursPeriod);
-        $this->setTop10DoorsPeriod($this->hoursPeriod);
-        $this->setTop10SetsPeriod($this->setsPeriod);
-        $this->setTop10SetClosesPeriod($this->closesPeriod);
-
-        return view('livewire.scoreboard');
     }
 }
