@@ -113,6 +113,7 @@ class DailyEntry extends Component
         empty($office);
     }
 
+    //this function will be removed when OE-149 is validated
     public function save($value, $userId, $inputType)
     {
         $filteredNumbers = [

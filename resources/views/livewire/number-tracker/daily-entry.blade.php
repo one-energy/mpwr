@@ -105,12 +105,11 @@
                                 @endforeach
                                 <input name="officeSelected" id="officeSelected" value="{{ $officeSelected }}" class="hidden"/>
 
-                                {{-- after validate the change Number Number Tracker -> Auto-save this can be deleted --}}
-                                {{-- <div class="mt-6">
+                                <div class="mt-6">
                                     <x-button type="submit" color="green" class="inline-flex w-full">
                                         Save Changes
                                     </x-button>
-                                </div> --}}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -228,7 +227,7 @@
                         color="#9fa6b2"
                         class="self-center hidden w-20 mt-3"
                         wire:loading.class.remove="hidden"
-                        wire:target="setOffice, setDate">
+                        wire:target="setOffice, setDate, store">
                     </x-svg.spinner>
 
                     <div class="w-full mt-3">
@@ -236,7 +235,7 @@
                             <div class="flex flex-col">
                                 <div class="overflow-x-auto">
                                     <div class="inline-block min-w-full overflow-hidden align-middle">
-                                        <x-table wire:loading.remove wire:target="setOffice, setDate">
+                                        <x-table wire:loading.remove>
                                             <x-slot name="header">
                                                 <x-table.th-tr>
                                                     <x-table.th by="region_member">
@@ -271,7 +270,8 @@
                                                         <x-table.td>
                                                             <input
                                                                 type="number"
-                                                                x-on:focusout="$wire.save($event.target.value, {{$user->id}}, 'doors')"
+                                                                {{-- when OE-142 is validated this line will be removed --}}
+                                                                {{-- x-on:focusout="$wire.save($event.target.value, {{$user->id}}, 'doors')" --}}
                                                                 min="0"
                                                                 name="numbers[{{ $user->id }}][doors]"
                                                                 class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
@@ -282,7 +282,8 @@
                                                                 type="number"
                                                                 min="0"
                                                                 max="24"
-                                                                x-on:focusout="$wire.save($event.target.value, {{$user->id}}, 'hours')"
+                                                                {{-- when OE-142 is validated this line will be removed --}}
+                                                                {{-- x-on:focusout="$wire.save($event.target.value, {{$user->id}}, 'hours')" --}}
                                                                 oninvalid="this.setCustomValidity('Value must be less than or equal 24')"
                                                                 onchange="this.setCustomValidity('')"
                                                                 step="any"
@@ -294,7 +295,8 @@
                                                             <input
                                                                 type="number"
                                                                 min="0"
-                                                                x-on:focusout="$wire.save($event.target.value, {{$user->id}}, 'sets')"
+                                                                {{-- when OE-142 is validated this line will be removed --}}
+                                                                {{-- x-on:focusout="$wire.save($event.target.value, {{$user->id}}, 'sets')" --}}
                                                                 name="numbers[{{ $user->id }}][sets]"
                                                                 class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
                                                                 value="{{ $user->sets }}"/>
@@ -303,7 +305,8 @@
                                                             <input
                                                                 type="number"
                                                                 min="0"
-                                                                x-on:focusout="$wire.save($event.target.value, {{$user->id}}, 'sits')"
+                                                                {{-- when OE-142 is validated this line will be removed --}}
+                                                                {{-- x-on:focusout="$wire.save($event.target.value, {{$user->id}}, 'sits')" --}}
                                                                 name="numbers[{{ $user->id }}][sits]"
                                                                 class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
                                                                 value="{{ $user->sits }}"/>
@@ -312,7 +315,8 @@
                                                             <input
                                                                 type="number"
                                                                 min="0"
-                                                                x-on:focusout="$wire.save($event.target.value, {{$user->id}}, 'set_closes')"
+                                                                {{-- when OE-142 is validated this line will be removed --}}
+                                                                {{-- x-on:focusout="$wire.save($event.target.value, {{$user->id}}, 'set_closes')" --}}
                                                                 name="numbers[{{ $user->id }}][set_closes]"
                                                                 class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
                                                                 value="{{ $user->set_closes }}"/>
@@ -321,7 +325,8 @@
                                                             <input
                                                                 type="number"
                                                                 min="0"
-                                                                x-on:focusout="$wire.save($event.target.value, {{$user->id}}, 'closes')"
+                                                                {{-- when OE-142 is validated this line will be removed --}}
+                                                                {{-- x-on:focusout="$wire.save($event.target.value, {{$user->id}}, 'closes')" --}}
                                                                 name="numbers[{{ $user->id }}][closes]"
                                                                 class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
                                                                 value="{{ $user->closes }}"/>
