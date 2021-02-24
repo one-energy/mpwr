@@ -82,7 +82,7 @@ class CustomerController extends Controller
                 ->send();
         }
 
-        return redirect(route('home'));
+        return redirect(route('customers.show', $customer));
     }
 
     public function destroy(Customer $customer)
