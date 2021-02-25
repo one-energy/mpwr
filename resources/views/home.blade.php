@@ -70,7 +70,7 @@
                                         </div>
                                     </div>
                                     <div class="col-span-7 text-xs text-gray-600">
-                                        {{ number_format($customer->epc) }}kW - <i> {{ date('d/m/Y', strtotime($customer->date_of_sale))}} </i>
+                                        {{ number_format($customer->epc) }}kW - <i> {{ $customer->date_of_sale->format('d/m/Y')}} </i>
                                     </div>
                                 </div>
                             </a>
