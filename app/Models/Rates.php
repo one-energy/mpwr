@@ -25,7 +25,7 @@ class Rates extends Model
 
     public function alreadyExists()
     {
-        return Rates::where('id', '!=', $this->id)->whereRole($this->role)->whereDepartmentId($this->department_id)->where('time', $this->time)->get()->count() > 0;
+        return Rates::where('id', '!=', $this->id)->whereRole($this->role)->whereDepartmentId($this->department_id)->where('time', $this->time)->get()->count();
     }
 
     public function scopeSearch(Builder $query, $search)
