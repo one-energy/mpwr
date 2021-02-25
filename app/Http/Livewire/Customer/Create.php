@@ -50,8 +50,9 @@ class Create extends Component
 
     public function mount()
     {
-        $this->customer               = new Customer();
-        $this->customer->sales_rep_id = user()->id;
+        $this->customer                = new Customer();
+        $this->customer->sales_rep_id  = user()->id;
+        $this->customer->sales_rep_fee = $this->getUserRate(user()->id);
         $this->setSelfGen();
 
         if (user()->role != 'Admin' && user()->role != 'Owner') {
