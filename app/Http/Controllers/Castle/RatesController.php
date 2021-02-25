@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 
 class RatesController extends Controller
 {
-    use RefreshDatabase;
     /**
      * Display a listing of the resource.
      *
