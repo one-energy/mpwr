@@ -117,9 +117,10 @@ class RateTest extends TestCase
               'role'          => 'Sales Rep',
           ];
 
+          factory(Rates::class)->create($data);
+
           $this->actingAs($departmentManager);
 
-          $this->post(route('castle.rates.store'), $data);
           $this->post(route('castle.rates.store'), $data);
 
           $this->assertDatabaseCount('rates', 1);;
