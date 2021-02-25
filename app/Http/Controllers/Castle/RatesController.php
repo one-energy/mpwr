@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\Rates;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 
 class RatesController extends Controller
@@ -36,23 +37,17 @@ class RatesController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store()
     {
-        $validated = $this->validate(
-            request(),
-            [
-                'name'          => 'required|string|min:3|max:255',
-                'time'          => 'required',
-                'rate'          => 'required',
-                'department_id' => 'required',
-                'role'          => 'required',
-            ]
-        );
-
+        $validated = request()->validate([
+            'name'          => 'required|string|min:3|max:255',
+            'time'          => 'required|numeric',
+            'rate'          => 'required',
+            'department_id' => 'required',
+            'role'          => 'required',
+        ]);
 
         $rate                = new Rates();
         $rate->name          = $validated['name'];
@@ -60,13 +55,21 @@ class RatesController extends Controller
         $rate->rate          = $validated['rate'];
         $rate->department_id = $validated['department_id'];
         $rate->role          = $validated['role'];
-        $rate->save();
 
-        alert()
-            ->withTitle(__('Rate created!'))
-            ->send();
+        if($rate->alreadyExists()){
+            alert()
+                ->withTitle(__('This rate already exists'))
+                ->withColor('red')
+                ->send();
+            return back();
+        } else {
+            $rate->save();
+            alert()
+                ->withTitle(__('Rate created!'))
+                ->send();
 
-        return redirect(route('castle.rates.index'));
+            return redirect(route('castle.rates.index'));
+        }
     }
 
     /**
@@ -97,23 +100,19 @@ class RatesController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
      * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update($id)
     {
-        $validated           = $this->validate(
-            request(),
-            [
-                'name'          => 'required|string|min:3|max:255',
-                'time'          => 'required',
-                'rate'          => 'required',
-                'department_id' => 'required',
-                'role'          => 'required',
-            ]
-        );
+        $validated = request()->validate([
+            'name'          => 'required|string|min:3|max:255',
+            'time'          => 'required|numeric',
+            'rate'          => 'required',
+            'department_id' => 'required',
+            'role'          => 'required',
+        ]);
+
         $rate                = Rates::whereId($id)->first();
         $rate->name          = $validated['name'];
         $rate->time          = $validated['time'];
@@ -121,13 +120,20 @@ class RatesController extends Controller
         $rate->department_id = $validated['department_id'];
         $rate->role          = $validated['role'];
 
-        $rate->save();
+        if($rate->alreadyExists()){
+            alert()
+                ->withTitle(__('This rate already exists'))
+                ->withColor('red')
+                ->send();
+            return back();
+        } else {
+            $rate->save();
+            alert()
+                ->withTitle(__('Rate updated!'))
+                ->send();
 
-        alert()
-            ->withTitle(__('Rate updated!'))
-            ->send();
-
-        return redirect(route('castle.rates.index'));
+            return redirect(route('castle.rates.index'));
+        }
     }
 
     /**

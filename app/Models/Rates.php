@@ -23,6 +23,11 @@ class Rates extends Model
         return $this->belongsTo(Department::class);
     }
 
+    public function alreadyExists()
+    {
+        return Rates::where('id', '!=', $this->id)->whereRole($this->role)->whereDepartmentId($this->department_id)->where('time', $this->time)->get()->count();
+    }
+
     public function scopeSearch(Builder $query, $search)
     {
         $query->when($search, function (Builder $query) use ($search) {
