@@ -70,7 +70,7 @@
                                         </div>
                                     </div>
                                     <div class="col-span-7 text-xs text-gray-600">
-                                        {{ number_format($customer->epc) }}kW
+                                        {{ number_format($customer->system_size,2) }} kW
                                     </div>
                                 </div>
                             </a>
