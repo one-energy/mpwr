@@ -13,7 +13,7 @@
 @php
     $wireModel = $attributes->wire('model');
     $model     = $wireModel->value();
-    $class     = 'bg-white w-full border rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-pointer focus:outline-none focus:ring-1 sm:text-sm disabled:opacity-60';
+    $class     = 'bg-white w-full border rounded-md shadow-sm pl-3 pr-10 py-2 text-left text-black cursor-pointer focus:outline-none focus:ring-1 sm:text-sm disabled:opacity-60';
     $name      = $name ?? $model ?? $id ?? null;
     $id        = $id   ?? $name  ?? null;
     $hasError = $errors->has($name);
@@ -40,10 +40,13 @@
                 return { label: option, value: option }
             }
             return {
-                label: option[this.optionLabel],
+
+
+                label: this.optionLabel == 'twoNames' ? option['first_name'] + ' ' + option['last_name']: option[this.optionLabel],
                 value: option[this.optionValue]
             }
         })
+
     },
     getFilteredOptions() {
         if (!this.searchable) return this.options
@@ -163,7 +166,7 @@ x-init="() => {
                                duration-100 group"
                         :class="{
                             'hover:bg-red-500'   :  isSelected(option.value),
-                            'hover:bg-indigo-500': !isSelected(option.value),
+                            'hover:bg-green-500': !isSelected(option.value),
                         }"
                         tabindex="0"
                         x-on:click="select(option)"
@@ -192,5 +195,9 @@ x-init="() => {
             </ul>
         </div>
     </div>
-
+    @error($name)
+        <p class="mt-2 text-sm text-red-600">
+            {{ $message }}
+        </p>
+    @enderror
 </div>

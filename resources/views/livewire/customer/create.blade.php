@@ -130,11 +130,11 @@
                         wire:change="getSalesRepRate($event.target.value)"
                         wire:model="customer.sales_rep_id"
                         option-value="id"
-                        option-label="first_name"
+                        option-label="twoNames"
                         options="salesReps"
                         name="customer.sales_rep_id"
                         label="Sales Rep"
-                        placeholder="Select any sales rep" />
+                        placeholder="{{user()->first_name}} {{user()->last_name}}" />
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
