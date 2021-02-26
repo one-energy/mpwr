@@ -5,6 +5,7 @@
     'options'     => null, // only name of livewire property
     'optionValue' => null,
     'optionLabel' => null,
+    'noneOption'  => false,
     'label'       => null,
     'name'        => null,
     'id'          => null,
@@ -25,6 +26,7 @@
 <div x-data="{
     searchable:  @json(filter_var($searchable, FILTER_VALIDATE_BOOLEAN)),
     multiselect: @json(filter_var($multiselect, FILTER_VALIDATE_BOOLEAN)),
+    noneOption:  @json(filter_var($multiselect, FILTER_VALIDATE_BOOLEAN)),
     popover: false,
     search: '',
     name: '{{ $name }}',
@@ -63,6 +65,7 @@
             index > -1 ? model.splice(index) : model.push(option.value)
             this.model = model
         } else {
+            console.log(option.value)
             this.model       = option.value
             this.placeholder = option.label
             this.closePopover()
@@ -159,6 +162,33 @@ x-init="() => {
                 x-on:keydown.arrow-down.prevent="$event.shiftKey || nextFocusable().focus()"
                 x-on:keydown.shift.tab.prevent="prevFocusable().focus()"
                 x-on:keydown.arrow-up.prevent="prevFocusable().focus()">
+
+                @if($noneOption)
+                    <li class="focus:outline-none focus:bg-indigo-100 focus:text-indigo-800 text-gray-900
+                                cursor-pointer select-none relative py-2 pl-3 pr-9 rounded-sm
+                                transition-colors ease-in-out hover:text-white
+                                duration-100 group"
+                        :class="{
+                            'hover:bg-red-500'   :  isSelected(null),
+                            'hover:bg-green-500': !isSelected(null),
+                        }"
+                        tabindex="0"
+                        x-on:click="select([value = null, placeholder = 'Self Gen'])"
+                        x-on:keydown.enter="select([value: 0, placeholder:'Self Gen'])">
+                        <span class="block truncate" :class="{
+                                'font-semibold':  isSelected(null),
+                                'font-normal'  : !isSelected(null),
+                            }">
+                            Self Gen
+                        </span>
+
+                        <span class="absolute group-focus:text-white group-hover:text-white
+                                        inset-y-0 right-0 flex items-center pr-4 text-indigo-600"
+                            x-show="isSelected(null)">
+                            <x-icon name="check" />
+                        </span>
+                    </li>
+                @endif
                 <template x-for='(option, index) in getFilteredOptions()' :key="`${name}-item-${index}`">
                     <li class="focus:outline-none focus:bg-indigo-100 focus:text-indigo-800 text-gray-900
                                cursor-pointer select-none relative py-2 pl-3 pr-9 rounded-sm

@@ -26,6 +26,8 @@ class Create extends Component
 
     public array $salesReps;
 
+    public array $setters;
+
     public Customer $customer;
 
     protected $rules = [
@@ -64,6 +66,7 @@ class Create extends Component
         $this->customer->sales_rep_id  = user()->id;
         $this->customer->sales_rep_fee = $this->getUserRate(user()->id);
         $this->salesReps = User::whereDepartmentId($this->departmentId)->orderBy('first_name')->get()->toArray();
+        $this->setters = User::whereDepartmentId($this->departmentId)->orderBy('first_name')->get()->toArray();
         $this->setSelfGen();
     }
 
@@ -110,6 +113,15 @@ class Create extends Component
     public function updatedCustomerSalesRepId($salesRepId)
     {
         $this->getSalesRepRate($salesRepId);
+    }
+
+    public function updatedCustomerSetterId($setterId)
+    {
+        if ($setterId) {
+            $this->getSetterRate($setterId);
+        } else {
+            $this->setSelfGen();
+        }
     }
 
     public function setSelfGen()
