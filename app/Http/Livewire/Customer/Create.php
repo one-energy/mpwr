@@ -22,6 +22,8 @@ class Create extends Component
 
     public int $stockPoints = 250;
 
+    public $searchSalesRep;
+
     public Customer $customer;
 
     protected $rules = [

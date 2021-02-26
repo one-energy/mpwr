@@ -125,6 +125,15 @@
                     <x-input-currency wire:model="customer.sales_rep_fee" label="Sales Rep Pay Rate" name="customer.sales_rep_fee" readonly/>
                 </div>
 
+                <div class="col-span-2 md:col-span-3">
+                    <x-select-searchable wire:model="customer.sales_rep_id" label="Sales Rep Pay Rate" name="customer.sales_rep_id">
+                        <option value="">None</option>
+                        @foreach($users as $rep)
+                            <option value="{{$rep->id}}">{{$rep->first_name}} {{$rep->last_name}}</option>
+                        @endforeach
+                    </x-select-searchable>
+                </div>
+
                 <div class="col-span-2 md:col-span-1">
                     <x-input-currency  wire:model="customer.margin" label="Margin" name="customer.margin" readonly/>
                 </div>
