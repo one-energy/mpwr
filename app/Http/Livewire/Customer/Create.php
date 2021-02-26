@@ -107,6 +107,11 @@ class Create extends Component
         return redirect(route('home'));
     }
 
+    public function updatedCustomerSalesRepId($salesRepId)
+    {
+        $this->getSalesRepRate($salesRepId);
+    }
+
     public function setSelfGen()
     {
         $this->customer->setter_fee = 0;

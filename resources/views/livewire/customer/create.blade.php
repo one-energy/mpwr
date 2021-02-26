@@ -113,28 +113,19 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
-                    <x-select wire:change="getSalesRepRate($event.target.value)" wire:model="customer.sales_rep_id" label="Sales Rep" name="customer.sales_rep_id">
-                        <option value="">None</option>
-                        @foreach($users as $rep)
-                            <option value="{{$rep->id}}">{{$rep->first_name}} {{$rep->last_name}}</option>
-                        @endforeach
-                    </x-select>
-                </div>
-
-                <div class="col-span-2 md:col-span-3">
-                    <x-input-currency wire:model="customer.sales_rep_fee" label="Sales Rep Pay Rate" name="customer.sales_rep_fee" readonly/>
-                </div>
-
-                <div class="col-span-2 md:col-span-3">
                     <x-select-searchable
                         wire:change="getSalesRepRate($event.target.value)"
                         wire:model="customer.sales_rep_id"
                         option-value="id"
-                        option-label="twoNames"
+                        option-label="firstAndLastName"
                         options="salesReps"
                         name="customer.sales_rep_id"
                         label="Sales Rep"
                         placeholder="{{user()->first_name}} {{user()->last_name}}" />
+                </div>
+
+                <div class="col-span-2 md:col-span-3">
+                    <x-input-currency wire:model="customer.sales_rep_fee" label="Sales Rep Pay Rate" name="customer.sales_rep_fee" readonly/>
                 </div>
 
                 <div class="col-span-2 md:col-span-1">

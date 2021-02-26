@@ -42,7 +42,7 @@
             return {
 
 
-                label: this.optionLabel == 'twoNames' ? option['first_name'] + ' ' + option['last_name']: option[this.optionLabel],
+                label: this.optionLabel == 'firstAndLastName' ? option['first_name'] + ' ' + option['last_name']: option[this.optionLabel],
                 value: option[this.optionValue]
             }
         })
@@ -128,7 +128,7 @@ x-init="() => {
         <button {{ $attributes->merge(['class' => $class]) }}
             x-on:click="togglePopover"
             type="button">
-            <span class="block truncate" x-text="getLabel()"></span>
+            <span class="block truncate text-black" x-text="getLabel()"></span>
         </button>
         <span class="absolute inset-y-0 right-0 flex items-center pr-2 cursor-pointer">
             <x-icon class="text-gray-400  hover:text-red-500"
