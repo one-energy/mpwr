@@ -65,7 +65,7 @@ class Create extends Component
         $this->customer                = new Customer();
         $this->customer->sales_rep_id  = user()->id;
         $this->customer->sales_rep_fee = $this->getUserRate(user()->id);
-        $this->salesReps = User::whereDepartmentId($this->departmentId)->orderBy('first_name')->get()->toArray();
+        $this->salesReps = user()->getPermittedUsers()->toArray();
         $this->setters = User::whereDepartmentId($this->departmentId)->orderBy('first_name')->get()->toArray();
         $this->setSelfGen();
     }

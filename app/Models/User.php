@@ -124,6 +124,32 @@ class User extends Authenticatable implements MustVerifyEmail
         $this->save();
     }
 
+    public function getPermittedUsers()
+    {
+        $userQuery = User::orWhere('users.id', $this->id)
+            ->whereHas('office');
+
+        $userQuery->when($this->role == 'Department Manager', function($query) {
+            $query->whereDepartmentId($this->department_id)
+                ->orWhere('role', 'Region Manager')
+                ->orWhere('role', 'Office Manager')
+                ->orWhere('role', 'Sales Rep')
+                ->orWhere('role', 'Setter');
+        })->when($this->role == 'Region Manager', function($query) {
+            $query->whereRegionId
+                ->orWhere('role', 'Office Manager')
+                ->orWhere('role', 'Sales Rep')
+                ->orWhere('role', 'Setter');
+        })->when($this->role == 'Office Manager', function($query) {
+            $query->join('offices', 'offices.id', '=', 'users.office_id')
+                ->whereOfficeManagerId($this->id)
+                ->orWhere('role', 'Sales Rep')
+                ->orWhere('role', 'Setter');
+        });
+
+        return $userQuery->orderBy('first_name')->get();
+    }
+
     public static function getRolesPerUserRole()
     {
         if (user()->role == 'Admin') {
