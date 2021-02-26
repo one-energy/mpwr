@@ -42,8 +42,6 @@
                 return { label: option, value: option }
             }
             return {
-
-
                 label: this.optionLabel == 'firstAndLastName' ? option['first_name'] + ' ' + option['last_name']: option[this.optionLabel],
                 value: option[this.optionValue]
             }
@@ -65,7 +63,6 @@
             index > -1 ? model.splice(index) : model.push(option.value)
             this.model = model
         } else {
-            console.log(option.value)
             this.model       = option.value
             this.placeholder = option.label
             this.closePopover()

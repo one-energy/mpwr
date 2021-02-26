@@ -106,7 +106,7 @@
                         name="customer.setter_id"
                         label="Setter"
                         noneOption
-                        placeholder="Self Gen" />
+                        placeholder="Self Gen"/>
                 </div>
 
 
