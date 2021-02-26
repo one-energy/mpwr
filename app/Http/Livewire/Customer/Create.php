@@ -24,6 +24,8 @@ class Create extends Component
 
     public $searchSalesRep;
 
+    public array $salesReps;
+
     public Customer $customer;
 
     protected $rules = [
@@ -52,16 +54,17 @@ class Create extends Component
 
     public function mount()
     {
-        $this->customer                = new Customer();
-        $this->customer->sales_rep_id  = user()->id;
-        $this->customer->sales_rep_fee = $this->getUserRate(user()->id);
-        $this->setSelfGen();
-
         if (user()->role != 'Admin' && user()->role != 'Owner') {
             $this->departmentId = user()->department_id;
         } else {
             $this->departmentId = Department::first()->id;
         }
+
+        $this->customer                = new Customer();
+        $this->customer->sales_rep_id  = user()->id;
+        $this->customer->sales_rep_fee = $this->getUserRate(user()->id);
+        $this->salesReps = User::whereDepartmentId($this->departmentId)->orderBy('first_name')->get()->toArray();
+        $this->setSelfGen();
     }
 
     public function render()

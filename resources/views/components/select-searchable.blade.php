@@ -1,104 +1,196 @@
-@props(['label'])
-@php $model = $attributes->wire('model'); @endphp
-<div class="relative"
-x-data="{
-    search: null,
-    clientName: null,
-    clients: [],
-    token: document.head.querySelector('meta[name=csrf-token]').content,
-    model: @entangle($model),
-    modelName: '{{ $model->value() }}',
-    showClients: false,
-    loading: false,
-    getClientFullName(client) {
-        return `${client.last_name}, ${client.first_name}`
-    },
-    select(client) {
-        this.model      = client.id
-        this.clientName = this.getClientFullName(client)
-        this.closeShowClients()
-    },
-    clearInput() {
-        this.model = null
-    },
-    fillClients() {
-        this.loading = true
-        fetch('{{ route('getUsers') }}',{
-            method: 'post',  headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': token
-        }}).then(res=> res.json()).then( (usersData) => {
-            this.clients = usersData
+@props([
+    'placeholder' => 'Select a value',
+    'searchable'  => true,
+    'multiselect' => false,
+    'options'     => null, // only name of livewire property
+    'optionValue' => null,
+    'optionLabel' => null,
+    'label'       => null,
+    'name'        => null,
+    'id'          => null,
+])
 
+@php
+    $wireModel = $attributes->wire('model');
+    $model     = $wireModel->value();
+    $class     = 'bg-white w-full border rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-pointer focus:outline-none focus:ring-1 sm:text-sm disabled:opacity-60';
+    $name      = $name ?? $model ?? $id ?? null;
+    $id        = $id   ?? $name  ?? null;
+    $hasError = $errors->has($name);
+    $hasError
+        ? $class .= ' border-red-400 text-red-600 focus:ring-red-500 focus:border-red-500'
+        : $class .= ' border-gray-300 text-gray-600 focus:ring-indigo-500 focus:border-indigo-500';
+@endphp
+
+<div x-data="{
+    searchable:  @json(filter_var($searchable, FILTER_VALIDATE_BOOLEAN)),
+    multiselect: @json(filter_var($multiselect, FILTER_VALIDATE_BOOLEAN)),
+    popover: false,
+    search: '',
+    name: '{{ $name }}',
+    placeholder: '{{ $placeholder }}',
+    optionValue: '{{ $optionValue }}',
+    optionLabel: '{{ $optionLabel }}',
+    model: @entangle($wireModel),
+    rawOptions: @entangle($options),
+    options: [],
+    refreshOptions() {
+        this.options = this.rawOptions.map(option => {
+            if (!this.optionValue) {
+                return { label: option, value: option }
+            }
+            return {
+                label: option[this.optionLabel],
+                value: option[this.optionValue]
+            }
         })
     },
-    openShowClients() {
-        this.showClients = !this.showClients
-        if (this.showClients) {
-            this.fillClients()
-            this.$nextTick(() => { this.$refs.search?.focus() })
+    getFilteredOptions() {
+        if (!this.searchable) return this.options
+        return this.options.filter(option => {
+            return option.label.toLowerCase().includes(this.search.toLowerCase())
+        })
+    },
+    togglePopover() { this.popover = !this.popover },
+    closePopover() { this.popover = false },
+    select(option) {
+        if (this.multiselect) {
+            const model = Object.assign([], this.model)
+            const index = model.findIndex(value => value == option.value)
+            index > -1 ? model.splice(index) : model.push(option.value)
+            this.model = model
+        } else {
+            this.model       = option.value
+            this.placeholder = option.label
+            this.closePopover()
         }
     },
-    closeShowClients() {
-        this.showClients = false
-    }
+    isSelected(value) {
+        if (this.multiselect) {
+            return !!this.model?.find(option => option == value)
+        }
+        return value == this.model
+    },
+    clearModel() {
+        if (this.multiselect) {
+            return this.model = []
+        }
+        this.model = null
+     },
+    isEmptyModel() {
+        if (this.multiselect) {
+            return this.model?.length == 0
+        }
+        return this.model == null
+    },
+    getLabel() {
+        if (this.multiselect) {
+            if (!this.model?.length) return this.placeholder
+            const selecteds = this.model?.map(value => {
+                return this.options.find(option => option.value === value)?.label
+            }).join(', ')
+            return `${this.model.length}: ${selecteds}`
+        }
+        return this.placeholder
+    },
+    focusables() { return [...$el.querySelectorAll('li, input')] },
+    firstFocusable() { return this.focusables()[0] },
+    lastFocusable() { return this.focusables().slice(-1)[0] },
+    nextFocusable() { return this.focusables()[this.nextFocusableIndex()] || this.firstFocusable() },
+    prevFocusable() { return this.focusables()[this.prevFocusableIndex()] || this.lastFocusable() },
+    nextFocusableIndex() { return (this.focusables().indexOf(document.activeElement) + 1) % (this.focusables().length + 1) },
+    prevFocusableIndex() { return Math.max(0, this.focusables().indexOf(document.activeElement)) -1 },
 }"
 x-init="() => {
-    const clientId = $wire.get(modelName)
-    if (clientId) { fillClient(clientId) }
+    refreshOptions()
+    if (multiselect && !model) { model = [] }
+    $watch('rawOptions', () => refreshOptions())
     $watch('model', value => {
-        if (value) { fillClient(value) }
-        clientName = null
+        if (isEmptyModel()) {
+            placeholder = '{{ $placeholder }}'
+        }
+    })
+    $watch('popover', value => {
+        if (value) {
+            $nextTick(() => $refs.search.focus())
+        }
     })
 }">
-    <div class="relative">
-        <x-input
-            :label="$label ??  'Select a client'"
-            :name="$model->value()"
-            x-on:click="openShowClients"
-            x-model="clientName"
-            readonly
-            placeholder="Search here"
-        />
-        <div class="absolute top-9 right-0 mr-3 flex items-center bg-white">
-            <x-icon name="close" x-show="model" x-on:click="clearInput()" class="w-5 h-5 cursor-pointer text-red-500" />
-            <x-icon name="selector" x-show="!loading" class="text-gray-400" />
-            <x-svg.spinner x-show="loading" color="#666" class="w-5 h-5" />
-        </div>
-    </div>
-    <div class="absolute z-50 border-t mt-1 w-full rounded-lg bg-white shadow-lg"
-        x-show="showClients"
-        x-on:click.away="closeShowClients">
-        <div class="p-2">
-            <x-search
-                x-ref="search"
-                filled
-                x-on:input.debounce.750ms="fillClients"
-                x-model="search"
-                placeholder="Search here"
-            />
-        </div>
-        <ul tabindex="-1" class="max-h-60 overflow-auto soft-scrollbar text-base leading-6 focus:outline-none sm:text-sm sm:leading-5">
-            <template x-for="client in clients" :key="'client' + client.id">
-                <li class="text-gray-700 cursor-pointer hover:text-indigo-600 select-none relative py-2 pl-3 pr-9"
-                    x-on:click="select(client)">
-                    <span class="block truncate"
+    @if ($label)
+        <label x-on:click="togglePopover" id="{{ $id }}" class="block text-sm font-medium {{ $hasError ? 'text-red-700' : 'text-gray-700' }}">
+            {{ $label }}
+        </label>
+    @endif
+    <div class="mt-1 relative">
+        <button {{ $attributes->merge(['class' => $class]) }}
+            x-on:click="togglePopover"
+            type="button">
+            <span class="block truncate" x-text="getLabel()"></span>
+        </button>
+        <span class="absolute inset-y-0 right-0 flex items-center pr-2 cursor-pointer">
+            <x-icon class="text-gray-400  hover:text-red-500"
+                x-on:click.prevent="clearModel"
+                name="close"
+                x-show="!isEmptyModel()" />
+            <x-icon name="selector" class="text-gray-400" />
+        </span>
+
+        <div class="absolute z-50 border-t mt-1 w-full rounded-lg bg-white soft-shadow"
+            x-show="popover"
+            x-on:click.away="closePopover"
+            x-on:keydown.escape="closePopover">
+            <div x-show="searchable" class="p-2">
+                <x-input-search
+                    x-ref="search"
+                    filled
+                    x-model.debounce.750ms="search"
+                    search="search"
+                    x-on:keydown.arrow-down.prevent="$event.shiftKey || nextFocusable().focus()"
+                    placeholder="Search here"
+                />
+            </div>
+            <ul class="max-h-60 overflow-auto soft-scrollbar text-base leading-6 focus:outline-none sm:text-sm sm:leading-5"
+                x-ref="list"
+                tabindex="-1"
+                x-on:keydown.tab.prevent="$event.shiftKey || nextFocusable().focus()"
+                x-on:keydown.arrow-down.prevent="$event.shiftKey || nextFocusable().focus()"
+                x-on:keydown.shift.tab.prevent="prevFocusable().focus()"
+                x-on:keydown.arrow-up.prevent="prevFocusable().focus()">
+                <template x-for='(option, index) in getFilteredOptions()' :key="`${name}-item-${index}`">
+                    <li class="focus:outline-none focus:bg-indigo-100 focus:text-indigo-800 text-gray-900
+                               cursor-pointer select-none relative py-2 pl-3 pr-9 rounded-sm
+                               transition-colors ease-in-out hover:text-white
+                               duration-100 group"
                         :class="{
-                            'font-semibold text-indigo-600': client.id === model,
-                            'font-normal': client.id !== model
-                        }">
-                        <span x-text="client.last_name"></span>,
-                        <span x-text="client.first_name"></span>
-                        <span x-text="client.email" class="block"></span>
-                    </span>
-                    <span x-show="client.id === model" class="text-indigo-600 absolute inset-y-0 right-0 flex items-center pr-4">
-                        <x-icon name="check" />
+                            'hover:bg-red-500'   :  isSelected(option.value),
+                            'hover:bg-indigo-500': !isSelected(option.value),
+                        }"
+                        tabindex="0"
+                        x-on:click="select(option)"
+                        x-on:keydown.enter="select(option)">
+                        <span class="block truncate" :class="{
+                                'font-semibold':  isSelected(option.value),
+                                'font-normal'  : !isSelected(option.value),
+                            }"
+                            x-text="option.label">
+                        </span>
+
+                        <span class="absolute group-focus:text-white group-hover:text-white
+                                     inset-y-0 right-0 flex items-center pr-4 text-indigo-600"
+                            x-show="isSelected(option.value)">
+                            <x-icon name="check" />
+                        </span>
+                    </li>
+                </template>
+                <li class="text-gray-900 cursor-pointer select-none relative py-2 pl-3 pr-9 rounded-sm"
+                    x-show="!getFilteredOptions().length"
+                    x-on:click="closePopover">
+                    <span class="block truncate font-normal">
+                        No options
                     </span>
                 </li>
-            </template>
-            <li x-show="!clients.length" class="text-gray-900 cursor-default select-none relative py-2 pl-3 pr-9">
-                <span x-text="loading ? 'loading..':'no records'" class="font-normal block truncate"></span>
-            </li>
-        </ul>
+            </ul>
+        </div>
     </div>
+
 </div>
