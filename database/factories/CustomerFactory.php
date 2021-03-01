@@ -3,8 +3,10 @@
 use App\Models\Customer;
 use App\Models\Financing;
 use App\Models\User;
+use Carbon\Carbon;
 use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Support\Facades\Date;
 
 /** @var Factory $factory */
 $factory->define(Customer::class, function (Faker $faker) {
@@ -21,9 +23,11 @@ $factory->define(Customer::class, function (Faker $faker) {
         'bill'          => $faker->word,
         'pay'           => $pay,
         'financing'     => $faker->word,
+        'date_of_sale'  => Carbon::now(),
         'financing_id'  => factory(Financing::class)->create()->id,
         'adders'        => $adders,
         'epc'           => $epc + 100,
+        'margin'        => $epc - $setterFee,
         'commission'    => (($epc - ($pay + $setterFee)) * $systemSize) - $adders,
         'setter_fee'    => $setterFee,
         'sales_rep_fee' => 0,
