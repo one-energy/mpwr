@@ -15,6 +15,8 @@ class Edit extends Component
 {
     public Customer $customer;
 
+    public ?User $setter;
+
     public int $departmentId;
 
     public int $grossRepComission;
@@ -48,9 +50,10 @@ class Edit extends Component
         'grossRepComission'            => 'required',
     ];
 
-    public function mount()
+    public function mount(Customer $customer)
     {
         $this->setSelfGen();
+        $this->setter = User::find($customer->setter_id);
         if (user()->role != 'Admin' && user()->role != 'Owner') {
             $this->departmentId = user()->department_id;
         } else {
@@ -105,6 +108,21 @@ class Edit extends Component
     public function setSelfGen()
     {
         $this->customer->setter_fee = 0;
+    }
+
+    public function updatedCustomerSalesRepId($salesRepId)
+    {
+        $this->getSalesRepRate($salesRepId);
+    }
+
+    public function updatedCustomerSetterId($setterId)
+    {
+        if ($setterId) {
+            $this->setter = User::find($setterId);
+            $this->getSetterRate($setterId);
+        } else {
+            $this->setSelfGen();
+        }
     }
 
     public function getSetterFee()

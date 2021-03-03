@@ -113,7 +113,7 @@
                             name="customer.setter_id"
                             label="Setter"
                             noneOption
-                            placeholder="Self Gen"/>
+                            placeholder="{{$customer->setter_id ? $setter->first_name . ' ' . $setter->last_name  : 'Self Gen'}}"/>
                     </div>
 
                     <div class="col-span-2 md:col-span-3">
