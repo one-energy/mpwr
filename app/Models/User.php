@@ -75,7 +75,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Region::class, 'region_manager_id');
     }
 
-    public function usersOnRegions()
+    public function usersOnManagedRegions()
     {
         $offices = $this->hasManyThrough(Office::class, Region::class, 'region_manager_id', 'region_id')->with('users')->get();
         $users = $offices->reduce(function($users, Office $office) {
@@ -84,7 +84,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $users->sortBy('first_name');
     }
 
-    public function usersOnOffices()
+    public function usersOnManagedOffices()
     {
         return $this->hasManyThrough(User::class, Office::class, 'office_manager_id', 'office_id');
     }
@@ -154,11 +154,11 @@ class User extends Authenticatable implements MustVerifyEmail
         }
 
         if($this->role == 'Region Manager') {
-            return $this->usersOnRegions();
+            return $this->usersOnManagedRegions();
         }
 
         if($this->role == 'Office Manager') {
-            return $this->usersOnOffices()->get();
+            return $this->usersOnManagedOffices()->get();
         }
 
         return user();
