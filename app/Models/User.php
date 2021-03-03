@@ -75,6 +75,20 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Region::class, 'region_manager_id');
     }
 
+    public function usersOnRegions()
+    {
+        $offices = $this->hasManyThrough(Office::class, Region::class, 'region_manager_id', 'region_id')->with('users')->get();
+        $users = $offices->reduce(function($users, Office $office) {
+            return $users->mergeRecursive($office->users);
+        }, $users = collect([]))->unique('id');
+        return $users->sortBy('first_name');
+    }
+
+    public function usersOnOffices()
+    {
+        return $this->hasManyThrough(User::class, Office::class, 'office_manager_id', 'office_id');
+    }
+
     public function department()
     {
         return $this->belongsTo(Department::class, 'department_id');
@@ -126,28 +140,28 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function getPermittedUsers()
     {
-        $userQuery = User::orWhere('users.id', $this->id)
-            ->whereHas('office');
+        if($this->role == 'Admin' || $this->role == 'Owner') {
+            return User::whereHas('office')->get();
+        }
 
-        $userQuery->when($this->role == 'Department Manager', function($query) {
-            $query->whereDepartmentId($this->department_id)
+        if($this->role == 'Department Manager') {
+            return User::whereDepartmentId($this->department_id)
+                ->orWhere('users.id', $this->id)
                 ->orWhere('role', 'Region Manager')
                 ->orWhere('role', 'Office Manager')
                 ->orWhere('role', 'Sales Rep')
                 ->orWhere('role', 'Setter');
-        })->when($this->role == 'Region Manager', function($query) {
-            $query->whereRegionId
-                ->orWhere('role', 'Office Manager')
-                ->orWhere('role', 'Sales Rep')
-                ->orWhere('role', 'Setter');
-        })->when($this->role == 'Office Manager', function($query) {
-            $query->join('offices', 'offices.id', '=', 'users.office_id')
-                ->whereOfficeManagerId($this->id)
-                ->orWhere('role', 'Sales Rep')
-                ->orWhere('role', 'Setter');
-        });
+        }
 
-        return $userQuery->orderBy('first_name')->get();
+        if($this->role == 'Region Manager') {
+            return $this->usersOnRegions();
+        }
+
+        if($this->role == 'Office Manager') {
+            return $this->usersOnOffices()->get();
+        }
+
+        return user();
     }
 
     public static function getRolesPerUserRole()
