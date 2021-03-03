@@ -59,6 +59,11 @@ class Customer extends Model
         return $this->belongsTo(User::class, 'opened_by_id');
     }
 
+    public function userSalesRep()
+    {
+        return $this->belongsTo(User::class, 'sales_rep_id');
+    }
+
     public function userSetter()
     {
         return $this->belongsTo(User::class, 'setter_id');

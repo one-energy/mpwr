@@ -21,6 +21,10 @@ class Edit extends Component
 
     public int $stockPoints = 250;
 
+    public array $salesReps;
+
+    public array $setters;
+
     protected $rules = [
         'customer.first_name'          => ['required', 'string', 'max:255'],
         'customer.last_name'           => ['required', 'string', 'max:255'],
@@ -58,6 +62,8 @@ class Edit extends Component
     {
         $this->customer->calcComission();
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
+        $this->salesReps = user()->getPermittedUsers()->toArray();
+        $this->setters = User::whereDepartmentId($this->departmentId)->orderBy('first_name')->get()->toArray();
         return view('livewire.customer.edit', [
             'departments' => Department::all(),
             'setterFee'   => $this->getSetterFee(),

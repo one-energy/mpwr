@@ -65,8 +65,6 @@ class Create extends Component
         $this->customer                = new Customer();
         $this->customer->sales_rep_id  = user()->id;
         $this->customer->sales_rep_fee = $this->getUserRate(user()->id);
-        $this->salesReps = user()->getPermittedUsers()->toArray();
-        $this->setters = User::whereDepartmentId($this->departmentId)->orderBy('first_name')->get()->toArray();
         $this->setSelfGen();
     }
 
@@ -75,6 +73,8 @@ class Create extends Component
         $this->customer->calcComission();
         $this->customer->calcMargin();
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
+        $this->salesReps = user()->getPermittedUsers()->toArray();
+        $this->setters = User::whereDepartmentId($this->departmentId)->orderBy('first_name')->get()->toArray();
 
         return view('livewire.customer.create', [
             'departments' => Department::all(),

@@ -141,7 +141,8 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getPermittedUsers()
     {
         if($this->role == 'Admin' || $this->role == 'Owner') {
-            return User::whereHas('office')->get();
+            // dd(User::whereHas('office')->get()->sortBy('first_name'));
+            return User::whereHas('office')->get()->sortBy('first_name');
         }
 
         if($this->role == 'Department Manager') {
@@ -150,7 +151,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 ->orWhere('role', 'Region Manager')
                 ->orWhere('role', 'Office Manager')
                 ->orWhere('role', 'Sales Rep')
-                ->orWhere('role', 'Setter');
+                ->orWhere('role', 'Setter')->get()->sortBy('first_name');
         }
 
         if($this->role == 'Region Manager') {
