@@ -144,11 +144,6 @@ class OfficeController extends Controller
                 ->where("regions.department_id", "=", $department)
                 ->get();
         }
-        $department = Department::first()->id;
-
-        return Office::query()->select("offices.*")
-            ->join("regions", "offices.region_id", "=", "regions.id")
-            ->where("regions.department_id", "=", $department)
-            ->get();
+        return collect([]);
     }
 }

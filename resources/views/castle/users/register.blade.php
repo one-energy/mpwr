@@ -14,7 +14,17 @@
 
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <x-form :route="route('castle.users.store')">
-                <div x-data="register()" x-init="$watch('selectedDepartment', (department) => {
+                <div x-data="register()" x-init="
+                        fetch('{{ route('getOffices', ':department') }}'.replace(':department', selectedDepartment), {
+                            method: 'post',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': token
+                            }
+                        }).then(res => res.json()).then((officesData) => {
+                            offices = officesData
+                        })
+                        $watch('selectedDepartment', (department) => {
                             const url = '{{ route('getOffices', ':department') }}'.replace(':department', department);
 
                             fetch(url, {
@@ -88,6 +98,11 @@
                                         <option value="">None</option>
                                     </template>
                                 @endif
+                                <template
+                                    x-if="!offices.length">
+                                    <option value="">No offices in department</option>
+                                </template>
+
                                 <template x-if="offices" x-for="office in offices" :key="office.id">
                                     <option :value="office.id" x-text="office.name"></option>
                                 </template>
