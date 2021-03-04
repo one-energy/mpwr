@@ -98,6 +98,11 @@
                                         <option value="">None</option>
                                     </template>
                                 @endif
+                                <template
+                                    x-if="!offices.length">
+                                    <option value="">No one office in department</option>
+                                </template>
+
                                 <template x-if="offices" x-for="office in offices" :key="office.id">
                                     <option :value="office.id" x-text="office.name"></option>
                                 </template>
