@@ -100,7 +100,7 @@
                                 @endif
                                 <template
                                     x-if="!offices.length">
-                                    <option value="">No one office in department</option>
+                                    <option value="">No offices in department</option>
                                 </template>
 
                                 <template x-if="offices" x-for="office in offices" :key="office.id">
