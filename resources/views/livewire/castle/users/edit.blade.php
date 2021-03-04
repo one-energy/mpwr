@@ -55,6 +55,9 @@
                                         None
                                     </option>
                                 @endif
+                                @if(count($offices) == 0)
+                                    <option value="">No one office in department</option>
+                                @endif
                                 @foreach($offices as $office)
                                     <option value="{{$office->id}}">{{$office->name}}</option>
                                 @endforeach
