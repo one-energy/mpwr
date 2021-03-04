@@ -544,6 +544,9 @@
                                                         <x-table.th by="sets">
                                                             @lang('Sets')
                                                         </x-table.th>
+                                                        <x-table.th by="set_sits">
+                                                            @lang('Set Sits')
+                                                        </x-table.th>
                                                         <x-table.th by="sits">
                                                             @lang('Sits')
                                                         </x-table.th>
@@ -565,6 +568,7 @@
                                                             <x-table.td>{{ $row['doors'] ?? 0 }}</x-table.td>
                                                             <x-table.td>{{ $row['hours'] ?? 0 }}</x-table.td>
                                                             <x-table.td>{{ $row['sets'] ?? 0 }}</x-table.td>
+                                                            <x-table.td>{{ $row['set_sits'] ?? 0 }}</x-table.td>
                                                             <x-table.td>{{ $row['sits'] ?? 0 }}</x-table.td>
                                                             <x-table.td>{{ $row['set_closes'] ?? 0 }}</x-table.td>
                                                             <x-table.td>{{ $row['closes'] ?? 0 }}</x-table.td>

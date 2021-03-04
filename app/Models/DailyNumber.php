@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DailyNumber extends Model
 {
-    protected $fillable = ['user_id', 'date', 'doors', 'hours', 'sets', 'sits', 'set_closes', 'closes'];
+    protected $fillable = ['user_id', 'date', 'doors', 'hours', 'sets', 'set_sits', 'sits', 'set_closes', 'closes'];
 
     public function user()
     {

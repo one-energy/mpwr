@@ -57,6 +57,7 @@ class DailyEntry extends Component
                 'daily_numbers.doors',
                 'daily_numbers.hours',
                 'daily_numbers.sets',
+                'daily_numbers.set_sits',
                 'daily_numbers.sits',
                 'daily_numbers.set_closes',
                 'daily_numbers.closes'
