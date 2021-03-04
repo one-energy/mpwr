@@ -14,7 +14,17 @@
 
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <x-form :route="route('castle.users.store')">
-                <div x-data="register()" x-init="$watch('selectedDepartment', (department) => {
+                <div x-data="register()" x-init="
+                        fetch('{{ route('getOffices', ':department') }}'.replace(':department', selectedDepartment), {
+                            method: 'post',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': token
+                            }
+                        }).then(res => res.json()).then((officesData) => {
+                            offices = officesData
+                        })
+                        $watch('selectedDepartment', (department) => {
                             const url = '{{ route('getOffices', ':department') }}'.replace(':department', department);
 
                             fetch(url, {
