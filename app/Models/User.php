@@ -75,13 +75,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Region::class, 'region_manager_id');
     }
 
-    public function usersOnManagedRegions()
+    public function officesOnManagedRegions()
     {
-        $offices = $this->hasManyThrough(Office::class, Region::class, 'region_manager_id', 'region_id')->with('users')->get();
-        $users = $offices->reduce(function($users, Office $office) {
-            return $users->mergeRecursive($office->users);
-        }, $users = collect([]))->unique('id');
-        return $users->sortBy('first_name');
+        return $this->hasManyThrough(Office::class, Region::class, 'region_manager_id', 'region_id');
     }
 
     public function usersOnManagedOffices()
@@ -141,8 +137,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getPermittedUsers()
     {
         if($this->role == 'Admin' || $this->role == 'Owner') {
-            // dd(User::whereHas('office')->get()->sortBy('first_name'));
-            return User::whereHas('office')->get()->sortBy('first_name');
+            return User::whereHas('office')->orderBy('first_name')->get();
         }
 
         if($this->role == 'Department Manager') {
@@ -151,11 +146,15 @@ class User extends Authenticatable implements MustVerifyEmail
                 ->orWhere('role', 'Region Manager')
                 ->orWhere('role', 'Office Manager')
                 ->orWhere('role', 'Sales Rep')
-                ->orWhere('role', 'Setter')->get()->sortBy('first_name');
+                ->orWhere('role', 'Setter')->orderBy('first_name')->get();
         }
 
         if($this->role == 'Region Manager') {
-            return $this->usersOnManagedRegions();
+            $offices = $this->officesOnManagedRegions()->with('users')->get();
+            $users = $offices->reduce(function($users, Office $office) {
+                return $users->mergeRecursive($office->users);
+            }, $users = collect([]))->unique('id');
+            return $users->sortBy('first_name');
         }
 
         if($this->role == 'Office Manager') {
