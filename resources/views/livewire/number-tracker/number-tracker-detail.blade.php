@@ -322,9 +322,9 @@
                                 <div class="text-xl font-bold">{{$numbersTracked->sum('doors')}}</div>
                                 <div class="flex text-xs font-semibold text-green-base">
                                     @if($numbersTracked->sum('doors') - $numbersTrackedLast->sum('doors') >= 0)
-                                        <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
+                                        <x-svg.arrow-up class="text-green-base"/>
                                     @else
-                                        <x-svg.arrow-down class="text-red-600"></x-svg.arrow-down>
+                                        <x-svg.arrow-down class="text-red-600"/>
                                     @endif
                                     <span class="@if($numbersTracked->sum('doors') - $numbersTrackedLast->sum('doors') >= 0)
                                                     text-green-base
@@ -347,9 +347,9 @@
                                 <div class="text-xl font-bold text-gray-900">{{$numbersTracked->sum('hours')}}</div>
                                 <div class="flex text-xs font-semibold text-green-base">
                                     @if($numbersTracked->sum('hours') - $numbersTrackedLast->sum('hours') >= 0)
-                                        <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
+                                        <x-svg.arrow-up class="text-green-base"/>
                                     @else
-                                        <x-svg.arrow-down class="text-red-600"></x-svg.arrow-down>
+                                        <x-svg.arrow-down class="text-red-600"/>
                                     @endif
                                     <span class="@if($numbersTracked->sum('hours') - $numbersTrackedLast->sum('hours') >= 0)
                                                     text-green-base
@@ -372,9 +372,9 @@
                                 <div class="text-xl font-bold text-gray-900">{{$numbersTracked->sum('sets')}}</div>
                                 <div class="flex text-xs font-semibold text-green-base">
                                     @if($numbersTracked->sum('sets') - $numbersTrackedLast->sum('sets') >= 0)
-                                        <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
+                                        <x-svg.arrow-up class="text-green-base"/>
                                     @else
-                                        <x-svg.arrow-down class="text-red-600"></x-svg.arrow-down>
+                                        <x-svg.arrow-down class="text-red-600"/>
                                     @endif
                                     <span class="@if($numbersTracked->sum('sets') - $numbersTrackedLast->sum('sets') >= 0)
                                                     text-green-base
@@ -399,9 +399,9 @@
                                     <div class="text-md font-bold text-gray-900 col-span-2">{{$numbersTracked->sum('set_sits')}}</div>
                                     <div class="flex place-self-end col-span-1 items-center">
                                         @if($numbersTracked->sum('set_sits') - $numbersTrackedLast->sum('set_sits') >= 0)
-                                            <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
+                                            <x-svg.arrow-up class="text-green-base"/>
                                         @else
-                                            <x-svg.arrow-down class="text-red-600"></x-svg.arrow-down>
+                                            <x-svg.arrow-down class="text-red-600"/>
                                         @endif
                                         <span class="
                                                 @if($numbersTracked->sum('set_sits') - $numbersTrackedLast->sum('set_sits') >= 0)
@@ -418,9 +418,9 @@
                                     <div class="text-md font-bold text-gray-900 col-span-2">{{$numbersTracked->sum('sits')}}</div>
                                     <div class="flex place-self-end col-span-1 items-center">
                                         @if($numbersTracked->sum('sits') - $numbersTrackedLast->sum('sits') >= 0)
-                                            <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
+                                            <x-svg.arrow-up class="text-green-base"/>
                                         @else
-                                            <x-svg.arrow-down class="text-red-600"></x-svg.arrow-down>
+                                            <x-svg.arrow-down class="text-red-600"/>
                                         @endif
                                         <span class="
                                                 @if($numbersTracked->sum('sits') - $numbersTrackedLast->sum('sits') >= 0)
@@ -445,9 +445,9 @@
                                 <div class="text-xl font-bold text-gray-900">{{$numbersTracked->sum('set_closes')}}</div>
                                 <div class="flex text-xs font-semibold text-green-base">
                                     @if($numbersTracked->sum('set_closes') - $numbersTrackedLast->sum('set_closes') >= 0)
-                                        <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
+                                        <x-svg.arrow-up class="text-green-base"/>
                                     @else
-                                        <x-svg.arrow-down class="text-red-600"></x-svg.arrow-down>
+                                        <x-svg.arrow-down class="text-red-600"/>
                                     @endif
                                     <span class="@if($numbersTracked->sum('set_closes') - $numbersTrackedLast->sum('set_closes') >= 0)
                                                     text-green-base
@@ -472,9 +472,9 @@
                                     <div class="text-md font-bold text-gray-900 col-span-2">{{$numbersTracked->sum('set_closes')}}</div>
                                     <div class="flex place-self-end col-span-1 items-center">
                                         @if($numbersTracked->sum('set_closes') - $numbersTrackedLast->sum('set_closes') >= 0)
-                                            <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
+                                            <x-svg.arrow-up class="text-green-base"/>
                                         @else
-                                            <x-svg.arrow-down class="text-red-600"></x-svg.arrow-down>
+                                            <x-svg.arrow-down class="text-red-600"/>
                                         @endif
                                         <span class="
                                                 @if($numbersTracked->sum('set_closes') - $numbersTrackedLast->sum('set_closes') >= 0)
@@ -491,9 +491,9 @@
                                     <div class="text-md font-bold text-gray-900 col-span-2">{{$numbersTracked->sum('sits')}}</div>
                                     <div class="flex place-self-end col-span-1 items-center">
                                         @if($numbersTracked->sum('closes') - $numbersTrackedLast->sum('closes') >= 0)
-                                            <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
+                                            <x-svg.arrow-up class="text-green-base"/>
                                         @else
-                                            <x-svg.arrow-down class="text-red-600"></x-svg.arrow-down>
+                                            <x-svg.arrow-down class="text-red-600"/>
                                         @endif
                                         <span class="
                                                 @if($numbersTracked->sum('closes') - $numbersTrackedLast->sum('closes') >= 0)
@@ -522,9 +522,9 @@
                                     text-green-base
                                 @endif">
                                 @if($graficValueLast > $graficValue)
-                                    <x-svg.arrow-down class="text-red-600"></x-svg.arrow-up>
+                                    <x-svg.arrow-down class="text-red-600"/>
                                 @else
-                                    <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
+                                    <x-svg.arrow-up class="text-green-base"/>
                                 @endif
                                 <span>
                                     {{$graficValue - $graficValueLast}}

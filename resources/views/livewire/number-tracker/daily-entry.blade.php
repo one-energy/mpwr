@@ -123,12 +123,12 @@
                                 <div class="text-xl font-bold">{{$users->sum('doors')}}</div>
                                 <div class="flex font-semibold text-xs @if($users->sum('doors') >= $usersLastDayEntries->sum('doors')) text-green-base @else text-red-600 @endif">
                                     @if($users->sum('doors') >= $usersLastDayEntries->sum('doors'))
-                                        <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
+                                        <x-svg.arrow-up class="text-green-base"/>
                                         <span>
                                             +{{$users->sum('doors') - $usersLastDayEntries->sum('doors')}}
                                         </span>
                                     @else
-                                        <x-svg.arrow-down class="text-red-600"></x-svg.arrow-up>
+                                        <x-svg.arrow-down class="text-red-600"/>
                                         <span>
                                             {{$users->sum('doors') - $usersLastDayEntries->sum('doors')}}
                                         </span>
@@ -140,12 +140,12 @@
                                 <div class="text-xl font-bold text-gray-900">{{$users->sum('hours')}}</div>
                                 <div class="flex font-semibold text-xs @if($users->sum('hours') >= $usersLastDayEntries->sum('hours')) text-green-base @else text-red-600 @endif">
                                     @if($users->sum('hours') >= $usersLastDayEntries->sum('hours'))
-                                        <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
+                                        <x-svg.arrow-up class="text-green-base"/>
                                         <span>
                                             +{{$users->sum('hours') - $usersLastDayEntries->sum('hours')}}
                                         </span>
                                     @else
-                                        <x-svg.arrow-down class="text-red-600"></x-svg.arrow-up>
+                                        <x-svg.arrow-down class="text-red-600"/>
                                         <span>
                                             {{$users->sum('hours') - $usersLastDayEntries->sum('hours')}}
                                         </span>
@@ -157,12 +157,12 @@
                                 <div class="text-xl font-bold text-gray-900">{{$users->sum('sets')}}</div>
                                 <div class="flex font-semibold text-xs @if($users->sum('sets') >= $usersLastDayEntries->sum('sets')) text-green-base @else text-red-600 @endif">
                                     @if($users->sum('sets') >= $usersLastDayEntries->sum('sets'))
-                                        <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
+                                        <x-svg.arrow-up class="text-green-base"/>
                                         <span>
                                             +{{$users->sum('sets') - $usersLastDayEntries->sum('sets')}}
                                         </span>
                                     @else
-                                        <x-svg.arrow-down class="text-red-600"></x-svg.arrow-up>
+                                        <x-svg.arrow-down class="text-red-600"/>
                                         <span>
                                             {{$users->sum('sets') - $usersLastDayEntries->sum('sets')}}
                                         </span>
@@ -176,9 +176,9 @@
                                     <div class="text-md font-bold text-gray-900 col-span-2">{{$users->sum('set_sits')}}</div>
                                     <div class="flex place-self-end col-span-1 items-center">
                                         @if($users->sum('set_sits') - $usersLastDayEntries->sum('set_sits') >= 0)
-                                            <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
+                                            <x-svg.arrow-up class="text-green-base"/>
                                         @else
-                                            <x-svg.arrow-down class="text-red-600"></x-svg.arrow-down>
+                                            <x-svg.arrow-down class="text-red-600"/>
                                         @endif
                                         <span class="
                                                 @if($users->sum('set_sits') - $usersLastDayEntries->sum('set_sits') >= 0)
@@ -195,9 +195,9 @@
                                     <div class="text-md font-bold text-gray-900 col-span-2">{{$users->sum('sits')}}</div>
                                     <div class="flex place-self-end col-span-1 items-center">
                                         @if($users->sum('sits') - $usersLastDayEntries->sum('sits') >= 0)
-                                            <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
+                                            <x-svg.arrow-up class="text-green-base"/>
                                         @else
-                                            <x-svg.arrow-down class="text-red-600"></x-svg.arrow-down>
+                                            <x-svg.arrow-down class="text-red-600"/>
                                         @endif
                                         <span class="
                                                 @if($users->sum('sits') - $usersLastDayEntries->sum('sits') >= 0)
@@ -215,12 +215,12 @@
                                 <div class="text-xl font-bold text-gray-900">{{$users->sum('set_closes')}}</div>
                                 <div class="flex font-semibold text-xs @if($users->sum('set_closes') >= $usersLastDayEntries->sum('set_closes')) text-green-base @else text-red-600 @endif">
                                     @if($users->sum('set_closes') >= $usersLastDayEntries->sum('set_closes'))
-                                        <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
+                                        <x-svg.arrow-up class="text-green-base"/>
                                         <span>
                                             +{{$users->sum('set_closes') - $usersLastDayEntries->sum('set_closes')}}
                                         </span>
                                     @else
-                                        <x-svg.arrow-down class="text-red-600"></x-svg.arrow-up>
+                                        <x-svg.arrow-down class="text-red-600"/>
                                         <span>
                                             {{$users->sum('set_closes') - $usersLastDayEntries->sum('set_closes')}}
                                         </span>
@@ -234,9 +234,9 @@
                                     <div class="text-md font-bold text-gray-900 col-span-2">{{$users->sum('set_closes')}}</div>
                                     <div class="flex place-self-end col-span-1 items-center">
                                         @if($users->sum('set_closes') - $usersLastDayEntries->sum('set_closes') >= 0)
-                                            <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
+                                            <x-svg.arrow-up class="text-green-base"/>
                                         @else
-                                            <x-svg.arrow-down class="text-red-600"></x-svg.arrow-down>
+                                            <x-svg.arrow-down class="text-red-600"/>
                                         @endif
                                         <span class="
                                                 @if($users->sum('set_closes') - $usersLastDayEntries->sum('set_closes') >= 0)
@@ -253,9 +253,9 @@
                                     <div class="text-md font-bold text-gray-900 col-span-2">{{$users->sum('sits')}}</div>
                                     <div class="flex place-self-end col-span-1 items-center">
                                         @if($users->sum('closes') - $usersLastDayEntries->sum('closes') >= 0)
-                                            <x-svg.arrow-up class="text-green-base"></x-svg.arrow-up>
+                                            <x-svg.arrow-up class="text-green-base"/>
                                         @else
-                                            <x-svg.arrow-down class="text-red-600"></x-svg.arrow-down>
+                                            <x-svg.arrow-down class="text-red-600"/>
                                         @endif
                                         <span class="
                                                 @if($users->sum('closes') - $usersLastDayEntries->sum('closes') >= 0)
