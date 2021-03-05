@@ -114,7 +114,7 @@
                 let day = this.datepickerValue ? new Date(this.datepickerValue) : new Date();
                 this.month = day.getMonth();
                 this.year = day.getFullYear();
-                this.datepickerValue = new Date(this.year, this.month, day.getDate()).toDateString();
+                this.datepickerValue = new Date(this.year, this.month, day.getUTCDate()).toDateString();
             },
 
             isToday(date) {
