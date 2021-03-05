@@ -250,7 +250,7 @@
                                 </div>
                                 <div class="grid grid-cols-4 gap-1">
                                     <div class="text-sm self-center col-span-1">SG</div>
-                                    <div class="text-md font-bold text-gray-900 col-span-2">{{$users->sum('sits')}}</div>
+                                    <div class="text-md font-bold text-gray-900 col-span-2">{{$users->sum('closes')}}</div>
                                     <div class="flex place-self-end col-span-1 items-center">
                                         @if($users->sum('closes') - $usersLastDayEntries->sum('closes') >= 0)
                                             <x-svg.arrow-up class="text-green-base"/>
