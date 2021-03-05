@@ -120,51 +120,51 @@
                         <div class="grid grid-cols-6 row-gap-2 col-gap-1 xl:grid-cols-7 md:col-gap-4">
                             <div class="col-span-2 xl:col-span-1 p-3 border-2 border-gray-200 rounded-lg">
                                 <div class="text-xs font-semibold uppercase">Doors</div>
-                                <div class="text-xl font-bold">{{$users->sum('doors')}}</div>
-                                <div class="flex font-semibold text-xs @if($users->sum('doors') >= $usersLastDayEntries->sum('doors')) text-green-base @else text-red-600 @endif">
-                                    @if($users->sum('doors') >= $usersLastDayEntries->sum('doors'))
+                                <div class="text-xl font-bold">{{$users->sum('dailyNumbers.0.doors')}}</div>
+                                <div class="flex font-semibold text-xs @if($users->sum('dailyNumbers.0.doors') >= $usersLastDayEntries->sum('dailyNumbers.0.doors')) text-green-base @else text-red-600 @endif">
+                                    @if($users->sum('dailyNumbers.0.doors') >= $usersLastDayEntries->sum('dailyNumbers.0.doors'))
                                         <x-svg.arrow-up class="text-green-base"/>
                                         <span>
-                                            +{{$users->sum('doors') - $usersLastDayEntries->sum('doors')}}
+                                            +{{$users->sum('dailyNumbers.0.doors') - $usersLastDayEntries->sum('dailyNumbers.0.doors')}}
                                         </span>
                                     @else
                                         <x-svg.arrow-down class="text-red-600"/>
                                         <span>
-                                            {{$users->sum('doors') - $usersLastDayEntries->sum('doors')}}
+                                            {{$users->sum('dailyNumbers.0.doors') - $usersLastDayEntries->sum('dailyNumbers.0.doors')}}
                                         </span>
                                     @endif
                                 </div>
                             </div>
                             <div class="col-span-2 xl:col-span-1 p-3 border-2 border-gray-200 rounded-lg">
                                 <div class="text-xs font-semibold text-gray-900 uppercase">Hours</div>
-                                <div class="text-xl font-bold text-gray-900">{{$users->sum('hours')}}</div>
-                                <div class="flex font-semibold text-xs @if($users->sum('hours') >= $usersLastDayEntries->sum('hours')) text-green-base @else text-red-600 @endif">
-                                    @if($users->sum('hours') >= $usersLastDayEntries->sum('hours'))
+                                <div class="text-xl font-bold text-gray-900">{{$users->sum('dailyNumber.0.hours')}}</div>
+                                <div class="flex font-semibold text-xs @if($users->sum('dailyNumber.0.hours') >= $usersLastDayEntries->sum('dailyNumber.0.hours')) text-green-base @else text-red-600 @endif">
+                                    @if($users->sum('dailyNumber.0.hours') >= $usersLastDayEntries->sum('dailyNumber.0.hours'))
                                         <x-svg.arrow-up class="text-green-base"/>
                                         <span>
-                                            +{{$users->sum('hours') - $usersLastDayEntries->sum('hours')}}
+                                            +{{$users->sum('dailyNumber.0.hours') - $usersLastDayEntries->sum('dailyNumber.0.hours')}}
                                         </span>
                                     @else
                                         <x-svg.arrow-down class="text-red-600"/>
                                         <span>
-                                            {{$users->sum('hours') - $usersLastDayEntries->sum('hours')}}
+                                            {{$users->sum('dailyNumber.0.hours') - $usersLastDayEntries->sum('dailyNumber.0.hours')}}
                                         </span>
                                     @endif
                                 </div>
                             </div>
                             <div class="col-span-2 xl:col-span-1 p-3 border-2 border-gray-200 rounded-lg">
                                 <div class="text-xs font-semibold text-gray-900 uppercase">Sets</div>
-                                <div class="text-xl font-bold text-gray-900">{{$users->sum('sets')}}</div>
-                                <div class="flex font-semibold text-xs @if($users->sum('sets') >= $usersLastDayEntries->sum('sets')) text-green-base @else text-red-600 @endif">
-                                    @if($users->sum('sets') >= $usersLastDayEntries->sum('sets'))
+                                <div class="text-xl font-bold text-gray-900">{{$users->sum('dailyNumbers.0.sets')}}</div>
+                                <div class="flex font-semibold text-xs @if($users->sum('dailyNumbers.0.sets') >= $usersLastDayEntries->sum('dailyNumbers.0.sets')) text-green-base @else text-red-600 @endif">
+                                    @if($users->sum('dailyNumbers.0.sets') >= $usersLastDayEntries->sum('dailyNumbers.0.sets'))
                                         <x-svg.arrow-up class="text-green-base"/>
                                         <span>
-                                            +{{$users->sum('sets') - $usersLastDayEntries->sum('sets')}}
+                                            +{{$users->sum('dailyNumbers.0.sets') - $usersLastDayEntries->sum('dailyNumbers.0.sets')}}
                                         </span>
                                     @else
                                         <x-svg.arrow-down class="text-red-600"/>
                                         <span>
-                                            {{$users->sum('sets') - $usersLastDayEntries->sum('sets')}}
+                                            {{$users->sum('dailyNumbers.0.sets') - $usersLastDayEntries->sum('dailyNumbers.0.sets')}}
                                         </span>
                                     @endif
                                 </div>
@@ -173,39 +173,39 @@
                                 <div class="text-xs font-semibold text-gray-900 uppercase">Sits</div>
                                 <div class="grid grid-cols-4 gap-1">
                                     <div class="text-sm self-center col-span-1">Set</div>
-                                    <div class="text-md font-bold text-gray-900 col-span-2">{{$users->sum('set_sits')}}</div>
+                                    <div class="text-md font-bold text-gray-900 col-span-2">{{$users->sum('dailyNumbers.0.set_sits')}}</div>
                                     <div class="flex place-self-end col-span-1 items-center">
-                                        @if($users->sum('set_sits') - $usersLastDayEntries->sum('set_sits') >= 0)
+                                        @if($users->sum('dailyNumbers.0.set_sits') - $usersLastDayEntries->sum('dailyNumbers.0.set_sits') >= 0)
                                             <x-svg.arrow-up class="text-green-base"/>
                                         @else
                                             <x-svg.arrow-down class="text-red-600"/>
                                         @endif
                                         <span class="
-                                                @if($users->sum('set_sits') - $usersLastDayEntries->sum('set_sits') >= 0)
+                                                @if($users->sum('dailyNumbers.0.set_sits') - $usersLastDayEntries->sum('dailyNumbers.0.set_sits') >= 0)
                                                     text-green-base
                                                 @else
                                                     text-red-600
                                                 @endif">
-                                            {{$users->sum('set_sits') - $usersLastDayEntries->sum('set_sits')}}
+                                            {{$users->sum('dailyNumbers.0.set_sits') - $usersLastDayEntries->sum('dailyNumbers.0.set_sits')}}
                                         </span>
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-4 gap-1">
                                     <div class="text-sm self-center col-span-1">SG</div>
-                                    <div class="text-md font-bold text-gray-900 col-span-2">{{$users->sum('sits')}}</div>
+                                    <div class="text-md font-bold text-gray-900 col-span-2">{{$users->sum('dailyNumbers.0.sits')}}</div>
                                     <div class="flex place-self-end col-span-1 items-center">
-                                        @if($users->sum('sits') - $usersLastDayEntries->sum('sits') >= 0)
+                                        @if($users->sum('dailyNumbers.0.sits') - $usersLastDayEntries->sum('dailyNumbers.0.sits') >= 0)
                                             <x-svg.arrow-up class="text-green-base"/>
                                         @else
                                             <x-svg.arrow-down class="text-red-600"/>
                                         @endif
                                         <span class="
-                                                @if($users->sum('sits') - $usersLastDayEntries->sum('sits') >= 0)
+                                                @if($users->sum('dailyNumbers.0.sits') - $usersLastDayEntries->sum('dailyNumbers.0.sits') >= 0)
                                                     text-green-base
                                                 @else
                                                     text-red-600
                                                 @endif">
-                                            {{$users->sum('sits') - $usersLastDayEntries->sum('sits')}}
+                                            {{$users->sum('dailyNumbers.0.sits') - $usersLastDayEntries->sum('dailyNumbers.0.sits')}}
                                         </span>
                                     </div>
                                 </div>
@@ -231,39 +231,39 @@
                                 <div class="text-xs font-semibold text-gray-900 uppercase">Closes</div>
                                 <div class="grid grid-cols-4 gap-1">
                                     <div class="text-sm self-center col-span-1">Set</div>
-                                    <div class="text-md font-bold text-gray-900 col-span-2">{{$users->sum('set_closes')}}</div>
+                                    <div class="text-md font-bold text-gray-900 col-span-2">{{$users->sum('dailyNumbers.0.set_closes')}}</div>
                                     <div class="flex place-self-end col-span-1 items-center">
-                                        @if($users->sum('set_closes') - $usersLastDayEntries->sum('set_closes') >= 0)
+                                        @if($users->sum('dailyNumbers.0.set_closes') - $usersLastDayEntries->sum('dailyNumbers.0.set_closes') >= 0)
                                             <x-svg.arrow-up class="text-green-base"/>
                                         @else
                                             <x-svg.arrow-down class="text-red-600"/>
                                         @endif
                                         <span class="
-                                                @if($users->sum('set_closes') - $usersLastDayEntries->sum('set_closes') >= 0)
+                                                @if($users->sum('dailyNumbers.0.set_closes') - $usersLastDayEntries->sum('dailyNumbers.0.set_closes') >= 0)
                                                     text-green-base
                                                 @else
                                                     text-red-600
                                                 @endif">
-                                            {{$users->sum('set_closes') - $usersLastDayEntries->sum('set_closes')}}
+                                            {{$users->sum('dailyNumbers.0.set_closes') - $usersLastDayEntries->sum('dailyNumbers.0.set_closes')}}
                                         </span>
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-4 gap-1">
                                     <div class="text-sm self-center col-span-1">SG</div>
-                                    <div class="text-md font-bold text-gray-900 col-span-2">{{$users->sum('closes')}}</div>
+                                    <div class="text-md font-bold text-gray-900 col-span-2">{{$users->sum('dailyNumbers.0.closes')}}</div>
                                     <div class="flex place-self-end col-span-1 items-center">
-                                        @if($users->sum('closes') - $usersLastDayEntries->sum('closes') >= 0)
+                                        @if($users->sum('dailyNumbers.0.closes') - $usersLastDayEntries->sum('dailyNumbers.0.closes') >= 0)
                                             <x-svg.arrow-up class="text-green-base"/>
                                         @else
                                             <x-svg.arrow-down class="text-red-600"/>
                                         @endif
                                         <span class="
-                                                @if($users->sum('closes') - $usersLastDayEntries->sum('closes') >= 0)
+                                                @if($users->sum('dailyNumbers.0.closes') - $usersLastDayEntries->sum('dailyNumbers.0.closes') >= 0)
                                                     text-green-base
                                                 @else
                                                     text-red-600
                                                 @endif">
-                                            {{$users->sum('closes') - $usersLastDayEntries->sum('closes')}}
+                                            {{$users->sum('dailyNumbers.0.closes') - $usersLastDayEntries->sum('dailyNumbers.0.closes')}}
                                         </span>
                                     </div>
                                 </div>
@@ -324,7 +324,7 @@
                                                                 min="0"
                                                                 name="numbers[{{ $user->id }}][doors]"
                                                                 class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
-                                                                value="{{ $user->doors }}"/>
+                                                                value="{{ $user->dailyNumbers->sum('doors') }}"/>
                                                         </x-table.td>
                                                         <x-table.td>
                                                             <input
@@ -336,7 +336,7 @@
                                                                 step="any"
                                                                 name="numbers[{{ $user->id }}][hours]"
                                                                 class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
-                                                                value="{{ $user->hours }}"/>
+                                                                value="{{ $user->dailyNumbers->sum('hours') }}"/>
                                                         </x-table.td>
                                                         <x-table.td>
                                                             <input
@@ -344,7 +344,7 @@
                                                                 min="0"
                                                                 name="numbers[{{ $user->id }}][sets]"
                                                                 class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
-                                                                value="{{ $user->sets }}"/>
+                                                                value="{{ $user->dailyNumbers->sum('sets') }}"/>
                                                         </x-table.td>
                                                         <x-table.td>
                                                             <input
@@ -352,7 +352,7 @@
                                                                 min="0"
                                                                 name="numbers[{{ $user->id }}][set_sits]"
                                                                 class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
-                                                                value="{{ $user->set_sits }}"/>
+                                                                value="{{ $user->dailyNumbers->sum('set_sits') }}"/>
                                                         </x-table.td>
                                                         <x-table.td>
                                                             <input
@@ -360,7 +360,7 @@
                                                                 min="0"
                                                                 name="numbers[{{ $user->id }}][sits]"
                                                                 class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
-                                                                value="{{ $user->sits }}"/>
+                                                                value="{{ $user->dailyNumbers->sum('sits') }}"/>
                                                         </x-table.td>
                                                         <x-table.td>
                                                             <input
@@ -368,7 +368,7 @@
                                                                 min="0"
                                                                 name="numbers[{{ $user->id }}][set_closes]"
                                                                 class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
-                                                                value="{{ $user->set_closes }}"/>
+                                                                value="{{ $user->dailyNumbers->sum('set_closes') }}"/>
                                                         </x-table.td>
                                                         <x-table.td>
                                                             <input
@@ -376,7 +376,7 @@
                                                                 min="0"
                                                                 name="numbers[{{ $user->id }}][closes]"
                                                                 class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
-                                                                value="{{ $user->closes }}"/>
+                                                                value="{{ $user->dailyNumbers->sum('closes') }}"/>
                                                         </x-table.td>
                                                     </x-table.tr>
                                                 @endforeach

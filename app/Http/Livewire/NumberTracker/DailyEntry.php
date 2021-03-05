@@ -5,6 +5,7 @@ namespace App\Http\Livewire\NumberTracker;
 use App\Models\DailyNumber;
 use App\Models\Office;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
 
 class DailyEntry extends Component
@@ -47,21 +48,10 @@ class DailyEntry extends Component
 
         return $usersQuery
             ->whereOfficeId($this->officeSelected)
-            ->leftJoin('daily_numbers', function($join) use ($dateSelected) {
-                $join->on('daily_numbers.user_id', '=', 'users.id')
-                    ->where('daily_numbers.date', '=', $dateSelected);
-            })
-            ->orderBy($this->sortBy())
-            ->select(
-                'users.*',
-                'daily_numbers.doors',
-                'daily_numbers.hours',
-                'daily_numbers.sets',
-                'daily_numbers.set_sits',
-                'daily_numbers.sits',
-                'daily_numbers.set_closes',
-                'daily_numbers.closes'
-            )
+            ->with(['dailyNumbers' => function($query) use ($dateSelected) {
+                $query->whereDate('date', $dateSelected);
+            }])
+            ->orderBy('first_name')
             ->get();
     }
 
