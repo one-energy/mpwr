@@ -92,7 +92,7 @@ class NumberTrackerDetail extends Component
             })
             ->join('offices', 'users.office_id', '=', 'offices.id')
             ->select([DB::raw("users.first_name, users.last_name, daily_numbers.id, daily_numbers.user_id, SUM(doors) as doors,
-                    SUM(hours) as hours,  SUM(sets) as sets,  SUM(sits) as sits,  SUM(set_closes) as set_closes, SUM(closes) as closes")]);
+                    SUM(hours) as hours,  SUM(sets) as sets, SUM(set_sits) as set_sits,  SUM(sits) as sits,  SUM(set_closes) as set_closes, SUM(closes) as closes")]);
 
         $queryLast = clone $query;
 
