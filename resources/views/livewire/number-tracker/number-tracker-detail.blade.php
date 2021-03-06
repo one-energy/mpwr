@@ -608,7 +608,7 @@
                                                     @foreach($numbersTracked as $row)
                                                         <x-table.tr :loop="$loop">
                                                             @if(user()->role == 'Admin' || user()->role == 'Owner')
-                                                                <x-table.td>{{ $row->user->department->name }}</x-table.td>
+                                                                <x-table.td>{{ $row->user->department_id->name }}</x-table.td>
                                                             @endif
                                                             <x-table.td>{{ $row['first_name'] . ' ' .  $row['last_name']}}</x-table.td>
                                                             <x-table.td>{{ $row['doors'] ?? 0 }}</x-table.td>
