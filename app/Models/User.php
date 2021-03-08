@@ -164,7 +164,7 @@ class User extends Authenticatable implements MustVerifyEmail
             return $this->usersOnManagedOffices()->get();
         }
 
-        return user();
+        return collect([user()]);
     }
 
     public static function getRolesPerUserRole()
