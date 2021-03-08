@@ -33,6 +33,7 @@ class Customer extends Model
     protected $casts = [
         'panel_sold' => 'boolean',
         'is_active'  => 'boolean',
+        'date_of_sale' => 'datetime:Y-m-d',
     ];
 
     const BILLS = [

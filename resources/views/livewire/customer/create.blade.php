@@ -30,7 +30,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
-                    <x-input-calendar wire:model="customer.date_of_sale" label="Date of Sale" name="customer.date_of_sale"/>
+                    <x-input-calendar wire label="Date of Sale" name="customer.date_of_sale"/>
                 </div>
 
                 <div class="col-span-1 md:col-span-2">

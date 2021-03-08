@@ -1,4 +1,4 @@
-@props(['label', 'name', 'value', 'disabledToUser', 'disabled'])
+@props(['label', 'name', 'value', 'disabledToUser', 'disabled', 'wire' => null])
 
 @php
     $class = 'form-input block w-full pr-10 sm:text-sm sm:leading-5';
@@ -7,12 +7,15 @@
     }
     $disabledToUser = $disabledToUser ?? null;
     $disabled = $disabled ?? false;
+    $wire = $wire && is_bool($wire) ? $name : $wire;
+    $value = old($name, $value ?? null);
 @endphp
 
 <div {{ $attributes }} x-data="app()" x-init="[initDate(), getNoOfDays()]" x-cloak>
     <label for="{{ $name }}" class="block text-sm font-medium leading-5 text-gray-700">{{ $label }}</label>
     <div class="mt-1 relative rounded-md shadow-sm">
-        <input type="datetime" {{ $attributes->except('class')->merge(['class' => $class]) }} x-model="datepickerValue"
+        <input type="datetime" {{ $attributes->except('class')->merge(['class' => $class]) }}
+            x-model="datepickerValue"
             @click="showDatepicker = !showDatepicker" @keydown.escape="showDatepicker = false"
             @if(($disabledToUser && user()->role == $disabledToUser) || $disabled) disabled @endif
             readonly>
@@ -103,7 +106,7 @@
     function app() {
         return {
             showDatepicker: false,
-            datepickerValue: @entangle($attributes->wire('model')),
+            datepickerValue: "{{$value}}",
             month: '',
             year: '',
             no_of_days: [],
@@ -114,7 +117,7 @@
                 let day = this.datepickerValue ? new Date(this.datepickerValue) : new Date();
                 this.month = day.getMonth();
                 this.year = day.getFullYear();
-                this.datepickerValue = new Date(this.year, this.month, day.getDate()).toDateString();
+                this.datepickerValue = new Date(this.year, this.month, day.getUTCDate()).toDateString();
             },
 
             isToday(date) {
@@ -131,6 +134,7 @@
             getDateValue(date) {
                 let selectedDate = new Date(this.year, this.month, date);
                 this.datepickerValue = selectedDate.toDateString();
+                @this.set('{{$wire}}', this.datepickerValue);
                 this.showDatepicker = false;
             },
 

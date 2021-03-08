@@ -23,17 +23,17 @@
                     @endif
 
                     <div class="col-span-2 md:col-span-3">
-                        <x-input wire:model="customer.first_name" label="Customer First Name"
+                        <x-input wire label="Customer First Name"
                                  name="customer.first_name"/>
                     </div>
 
                     <div class="col-span-2 md:col-span-3">
-                        <x-input wire:model="customer.last_name" label="Customer Last Name" name="customer.last_name"/>
+                        <x-input wire label="Customer Last Name" name="customer.last_name"/>
                     </div>
 
                     <div class="col-span-2 md:col-span-3">
-                        <x-input-calendar wire:model="customer.date_of_sale" label="Date of Sale"
-                                          name="customer.date_of_sale"/>
+                        <x-input-calendar wire label="Date of Sale"
+                                          name="customer.date_of_sale" :value="$customer->date_of_sale"/>
                     </div>
 
                     <div class="col-span-1 md:col-span-2">
