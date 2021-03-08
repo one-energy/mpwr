@@ -170,7 +170,7 @@ x-init="() => {
                             'hover:bg-green-500': !isSelected(null),
                         }"
                         tabindex="0"
-                        x-on:click="select([value = null, placeholder = 'Self Gen'])"
+                        x-on:click="select(new Object({ label: 'Self Gen', value: null }))"
                         x-on:keydown.enter="select([value: 0, placeholder:'Self Gen'])">
                         <span class="block truncate" :class="{
                                 'font-semibold':  isSelected(null),
