@@ -75,6 +75,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Region::class, 'region_manager_id');
     }
 
+    public function officesOnManagedRegions()
+    {
+        return $this->hasManyThrough(Office::class, Region::class, 'region_manager_id', 'region_id');
+    }
+
+    public function usersOnManagedOffices()
+    {
+        return $this->hasManyThrough(User::class, Office::class, 'office_manager_id', 'office_id');
+    }
+
     public function department()
     {
         return $this->belongsTo(Department::class, 'department_id');
@@ -122,6 +132,39 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $this->forceFill(['master' => false]);
         $this->save();
+    }
+
+    public function getPermittedUsers($departmentId = null)
+    {
+        if($this->role == 'Admin' || $this->role == 'Owner') {
+            return User::has('office')->whereDepartmentId($departmentId)->orderBy('first_name')->get();
+        }
+
+        if($this->role == 'Department Manager') {
+            return User::has('office')
+                ->whereDepartmentId($this->department_id)
+                ->where(function($query) {
+                    return $query->orWhere('users.id', $this->id)
+                        ->orWhere('role', 'Region Manager')
+                        ->orWhere('role', 'Office Manager')
+                        ->orWhere('role', 'Sales Rep')
+                        ->orWhere('role', 'Setter');
+                })->orderBy('first_name')->get();
+        }
+
+        if($this->role == 'Region Manager') {
+            $offices = $this->officesOnManagedRegions()->with('users')->get();
+            $users = $offices->reduce(function($users, Office $office) {
+                return $users->mergeRecursive($office->users);
+            }, $users = collect([]))->unique('id');
+            return $users->sortBy('first_name');
+        }
+
+        if($this->role == 'Office Manager') {
+            return $this->usersOnManagedOffices()->get();
+        }
+
+        return collect([user()]);
     }
 
     public static function getRolesPerUserRole()

@@ -22,6 +22,16 @@ class Create extends Component
 
     public int $stockPoints = 250;
 
+    public $searchSalesRep;
+
+    public User $salesRep;
+
+    public User $setter;
+
+    public array $salesReps;
+
+    public array $setters;
+
     public Customer $customer;
 
     protected $rules = [
@@ -50,13 +60,19 @@ class Create extends Component
 
     public function mount()
     {
-        $this->customer = new Customer();
-        $this->setSelfGen();
         if (user()->role != 'Admin' && user()->role != 'Owner') {
             $this->departmentId = user()->department_id;
         } else {
             $this->departmentId = Department::first()->id;
         }
+
+        $this->customer = new Customer();
+        if (user()->role == 'Office Manager' || user()->role == 'Sales Rep' || user()->role == 'Setter') {
+            $this->customer->sales_rep_id  = user()->id;
+            $this->salesRep = user();
+        }
+        $this->customer->sales_rep_fee = $this->getUserRate(user()->id);
+        $this->setSelfGen();
     }
 
     public function render()
@@ -64,6 +80,10 @@ class Create extends Component
         $this->customer->calcComission();
         $this->customer->calcMargin();
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
+        $this->salesReps = user()->getPermittedUsers($this->departmentId)->toArray();
+        $this->setters = User::whereDepartmentId($this->departmentId)
+                                ->where('id', '!=', user()->id)
+                                ->orderBy('first_name')->get()->toArray();
 
         return view('livewire.customer.create', [
             'departments' => Department::all(),
@@ -97,6 +117,21 @@ class Create extends Component
             ->send();
 
         return redirect(route('home'));
+    }
+
+    public function updatedCustomerSalesRepId($salesRepId)
+    {
+        $this->getSalesRepRate($salesRepId);
+        $this->salesRep = User::whereId($salesRepId)->first();
+    }
+
+    public function updatedCustomerSetterId($setterId)
+    {
+        if ($setterId) {
+            $this->getSetterRate($setterId);
+        } else {
+            $this->setSelfGen();
+        }
     }
 
     public function setSelfGen()
