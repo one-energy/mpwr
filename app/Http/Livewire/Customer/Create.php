@@ -24,6 +24,10 @@ class Create extends Component
 
     public $searchSalesRep;
 
+    public User $salesRep;
+
+    public User $setter;
+
     public array $salesReps;
 
     public array $setters;
@@ -62,8 +66,11 @@ class Create extends Component
             $this->departmentId = Department::first()->id;
         }
 
-        $this->customer                = new Customer();
-        $this->customer->sales_rep_id  = user()->id;
+        $this->customer = new Customer();
+        if (user()->role == 'Office Manager' || user()->role == 'Sales Rep' || user()->role == 'Setter') {
+            $this->customer->sales_rep_id  = user()->id;
+            $this->salesRep = user();
+        }
         $this->customer->sales_rep_fee = $this->getUserRate(user()->id);
         $this->setSelfGen();
     }
@@ -73,7 +80,7 @@ class Create extends Component
         $this->customer->calcComission();
         $this->customer->calcMargin();
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
-        $this->salesReps = user()->getPermittedUsers()->toArray();
+        $this->salesReps = user()->getPermittedUsers($this->departmentId)->toArray();
         $this->setters = User::whereDepartmentId($this->departmentId)->orderBy('first_name')->get()->toArray();
 
         return view('livewire.customer.create', [
@@ -113,6 +120,7 @@ class Create extends Component
     public function updatedCustomerSalesRepId($salesRepId)
     {
         $this->getSalesRepRate($salesRepId);
+        $this->salesRep = User::whereId($salesRepId)->first();
     }
 
     public function updatedCustomerSetterId($setterId)

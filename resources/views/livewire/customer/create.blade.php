@@ -122,7 +122,7 @@
                         options="salesReps"
                         name="customer.sales_rep_id"
                         label="Sales Rep"
-                        placeholder="{{user()->role != 'Admin' ? user()->first_name . ' ' . user()->last_name : 'Select an user'}}" />
+                        placeholder="{{$customer->sales_rep_id ? $salesRep->first_name . ' ' . $salesRep->last_name : 'Select an user'}}" />
                 </div>
 
                 <div class="col-span-2 md:col-span-3">

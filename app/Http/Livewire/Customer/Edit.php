@@ -65,7 +65,7 @@ class Edit extends Component
     {
         $this->customer->calcComission();
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
-        $this->salesReps = user()->getPermittedUsers()->toArray();
+        $this->salesReps = user()->getPermittedUsers($this->departmentId)->toArray();
         $this->setters = User::whereDepartmentId($this->departmentId)->orderBy('first_name')->get()->toArray();
         return view('livewire.customer.edit', [
             'departments' => Department::all(),
