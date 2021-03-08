@@ -15,11 +15,19 @@ class Edit extends Component
 {
     public Customer $customer;
 
+    public ?User $setter;
+
     public int $departmentId;
 
     public int $grossRepComission;
 
+    public bool $isSelfGen;
+
     public int $stockPoints = 250;
+
+    public array $salesReps;
+
+    public array $setters;
 
     protected $rules = [
         'customer.first_name'          => ['required', 'string', 'max:255'],
@@ -44,9 +52,10 @@ class Edit extends Component
         'grossRepComission'            => 'required',
     ];
 
-    public function mount()
+    public function mount(Customer $customer)
     {
         $this->setSelfGen();
+        $this->setter = User::find($customer->setter_id);
         if (user()->role != 'Admin' && user()->role != 'Owner') {
             $this->departmentId = user()->department_id;
         } else {
@@ -58,6 +67,10 @@ class Edit extends Component
     {
         $this->customer->calcComission();
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
+        $this->salesReps = user()->getPermittedUsers($this->departmentId)->toArray();
+        $this->setters = User::whereDepartmentId($this->departmentId)
+                                ->where('id', '!=', user()->id)
+                                ->orderBy('first_name')->get()->toArray();
         return view('livewire.customer.edit', [
             'departments' => Department::all(),
             'setterFee'   => $this->getSetterFee(),
@@ -99,6 +112,23 @@ class Edit extends Component
     public function setSelfGen()
     {
         $this->customer->setter_fee = 0;
+        $this->isSelfGen = true;
+    }
+
+    public function updatedCustomerSalesRepId($salesRepId)
+    {
+        $this->getSalesRepRate($salesRepId);
+    }
+
+    public function updatedCustomerSetterId($setterId)
+    {
+        if ($setterId) {
+            $this->isSelfGen = false;
+            $this->setter = User::find($setterId);
+            $this->getSetterRate($setterId);
+        } else {
+            $this->setSelfGen();
+        }
     }
 
     public function getSetterFee()

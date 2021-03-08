@@ -30,7 +30,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
-                    <x-input-calendar wire:model="customer.date_of_sale" label="Date of Sale" name="customer.date_of_sale"/>
+                    <x-input-calendar wire label="Date of Sale" name="customer.date_of_sale"/>
                 </div>
 
                 <div class="col-span-1 md:col-span-2">
@@ -97,28 +97,32 @@
                     <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc" observation="Sold Price"/>
                 </div>
 
-                <div class="col-span-2 md:col-span-3 md:col-start-1">
-                    <x-select wire:change="getSetterRate($event.target.value)" wire:model="customer.setter_id" label="Setter" name="customer.setter_id">
-                        <option wire:click="setSelfGen" value="">Self Gen</option>
-                        @foreach($users as $setter)
-                            @if($setter->role == 'Setter')
-                                <option value="{{$setter->id}}">{{$setter->first_name}} {{$setter->last_name}}</option>
-                            @endif
-                        @endforeach
-                    </x-select>
+                <div class="col-span-2 md:col-span-3">
+                    <x-select-searchable
+                        wire:model="customer.setter_id"
+                        option-value="id"
+                        option-label="firstAndLastName"
+                        options="setters"
+                        name="customer.setter_id"
+                        label="Setter"
+                        noneOption
+                        placeholder="Self Gen"/>
                 </div>
+
 
                 <div class="col-span-2 md:col-span-3">
                     <x-input-currency wire:model="customer.setter_fee" label="Setter Comission Rate" name="customer.setter_fee" disabled="{{!$customer->setter_id}}"/>
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
-                    <x-select wire:change="getSalesRepRate($event.target.value)" wire:model="customer.sales_rep_id" label="Sales Rep" name="customer.sales_rep_id">
-                        <option value="">None</option>
-                        @foreach($users as $rep)
-                            <option value="{{$rep->id}}">{{$rep->first_name}} {{$rep->last_name}}</option>
-                        @endforeach
-                    </x-select>
+                    <x-select-searchable
+                        wire:model="customer.sales_rep_id"
+                        option-value="id"
+                        option-label="firstAndLastName"
+                        options="salesReps"
+                        name="customer.sales_rep_id"
+                        label="Sales Rep"
+                        placeholder="{{$customer->sales_rep_id ? $salesRep->first_name . ' ' . $salesRep->last_name : 'Select an user'}}" />
                 </div>
 
                 <div class="col-span-2 md:col-span-3">

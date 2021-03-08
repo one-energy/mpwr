@@ -23,17 +23,17 @@
                     @endif
 
                     <div class="col-span-2 md:col-span-3">
-                        <x-input wire:model="customer.first_name" label="Customer First Name"
+                        <x-input wire label="Customer First Name"
                                  name="customer.first_name"/>
                     </div>
 
                     <div class="col-span-2 md:col-span-3">
-                        <x-input wire:model="customer.last_name" label="Customer Last Name" name="customer.last_name"/>
+                        <x-input wire label="Customer Last Name" name="customer.last_name"/>
                     </div>
 
                     <div class="col-span-2 md:col-span-3">
-                        <x-input-calendar wire:model="customer.date_of_sale" label="Date of Sale"
-                                          name="customer.date_of_sale"/>
+                        <x-input-calendar wire label="Date of Sale"
+                                          name="customer.date_of_sale" :value="$customer->date_of_sale"/>
                     </div>
 
                     <div class="col-span-1 md:col-span-2">
@@ -104,32 +104,32 @@
                                           observation="Sold Price"/>
                     </div>
 
-                    <div class="col-span-2 md:col-span-3 md:col-start-1">
-                        <x-select wire:change="getSetterRate($event.target.value)" wire:model="customer.setter_id"
-                                  label="Setter" name="customer.setter_id">
-                            <option value="">Self Gen</option>
-                            @foreach($users as $setter)
-                                @if($setter->role == 'Setter')
-                                    <option
-                                        value="{{$setter->id}}">{{$setter->first_name}} {{$setter->last_name}}</option>
-                                @endif
-                            @endforeach
-                        </x-select>
+                    <div class="col-span-2 md:col-span-3">
+                        <x-select-searchable
+                            wire:model="customer.setter_id"
+                            option-value="id"
+                            option-label="firstAndLastName"
+                            options="setters"
+                            name="customer.setter_id"
+                            label="Setter"
+                            noneOption
+                            placeholder="{{$customer->setter_id ? $setter->first_name . ' ' . $setter->last_name  : 'Self Gen'}}"/>
                     </div>
 
                     <div class="col-span-2 md:col-span-3">
                         <x-input-currency wire:model="customer.setter_fee" label="Setter Comission Rate"
-                                          name="customer.setter_fee" disabled="{{$customer->setter_fee == 0}}"/>
+                                          name="customer.setter_fee" disabled="{{$isSelfGen}}"/>
                     </div>
 
                     <div class="col-span-2 md:col-span-3">
-                        <x-select wire:change="getSalesRepRate($event.target.value)" wire:model="customer.sales_rep_id"
-                                  label="Sales Rep" name="customer.sales_rep_id">
-                            <option value="">None</option>
-                            @foreach($users as $rep)
-                                <option value="{{$rep->id}}">{{$rep->first_name}} {{$rep->last_name}}</option>
-                            @endforeach
-                        </x-select>
+                        <x-select-searchable
+                            wire:model="customer.sales_rep_id"
+                            option-value="id"
+                            option-label="firstAndLastName"
+                            options="salesReps"
+                            name="customer.sales_rep_id"
+                            label="Sales Rep"
+                            placeholder="{{$customer->userSalesRep->first_name}} {{$customer->userSalesRep->last_name}}" />
                     </div>
 
                     <div class="col-span-2 md:col-span-3">
@@ -182,7 +182,7 @@
                         <div class="mt-3">
                         <span
                             class="block w-full font-bold transition duration-150 ease-in-out sm:text-sm sm:leading-5">
-                            ${{ number_format($customer->setter_fee, 2) }}
+                            ${{ number_format(floatval($customer->setter_fee), 2) }}
                         </span>
                         </div>
                     </div>
