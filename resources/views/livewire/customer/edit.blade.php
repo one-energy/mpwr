@@ -118,7 +118,7 @@
 
                     <div class="col-span-2 md:col-span-3">
                         <x-input-currency wire:model="customer.setter_fee" label="Setter Comission Rate"
-                                          name="customer.setter_fee" disabled="{{$customer->setter_fee == 0}}"/>
+                                          name="customer.setter_fee" disabled="{{$isSelfGen}}"/>
                     </div>
 
                     <div class="col-span-2 md:col-span-3">
