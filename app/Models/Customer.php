@@ -96,7 +96,7 @@ class Customer extends Model
 
     public function calcComission()
     {
-        if ($this->epc && $this->sales_rep_fee && $this->setter_fee && $this->system_size && $this->adders) {
+        if ($this->epc >= 0 && $this->sales_rep_fee >= 0 && $this->setter_fee >= 0 && $this->system_size && $this->adders >= 0) {
             $this->sales_rep_comission = (($this->epc - $this->sales_rep_fee - $this->setter_fee) * ($this->system_size * 1000)) - $this->adders;
         } else {
             $this->sales_rep_comission = 0;
