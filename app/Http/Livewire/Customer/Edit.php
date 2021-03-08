@@ -21,6 +21,8 @@ class Edit extends Component
 
     public int $grossRepComission;
 
+    public bool $isSelfGen;
+
     public int $stockPoints = 250;
 
     public array $salesReps;
@@ -110,6 +112,7 @@ class Edit extends Component
     public function setSelfGen()
     {
         $this->customer->setter_fee = 0;
+        $this->isSelfGen = true;
     }
 
     public function updatedCustomerSalesRepId($salesRepId)
@@ -120,6 +123,7 @@ class Edit extends Component
     public function updatedCustomerSetterId($setterId)
     {
         if ($setterId) {
+            $this->isSelfGen = false;
             $this->setter = User::find($setterId);
             $this->getSetterRate($setterId);
         } else {

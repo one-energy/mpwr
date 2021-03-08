@@ -118,7 +118,7 @@
 
                     <div class="col-span-2 md:col-span-3">
                         <x-input-currency wire:model="customer.setter_fee" label="Setter Comission Rate"
-                                          name="customer.setter_fee" disabled="{{$customer->setter_fee == 0}}"/>
+                                          name="customer.setter_fee" disabled="{{$isSelfGen}}"/>
                     </div>
 
                     <div class="col-span-2 md:col-span-3">
@@ -182,7 +182,7 @@
                         <div class="mt-3">
                         <span
                             class="block w-full font-bold transition duration-150 ease-in-out sm:text-sm sm:leading-5">
-                            ${{ number_format(floatval($customer->setter_fee), 2) }}
+                            ${{ number_format(floatVal($customer->setter_fee), 2) }}
                         </span>
                         </div>
                     </div>
