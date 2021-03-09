@@ -125,10 +125,10 @@ class Create extends Component
         $this->salesRep = User::whereId($salesRepId)->first();
     }
 
-    public function updatedCustomerSetterId($setterId)
+    public function updatedCustomerSetterId()
     {
-        if ($setterId) {
-            $this->getSetterRate($setterId);
+        if ($this->customer->setter_id) {
+            $this->getSetterRate($this->customer->setter_id);
         } else {
             $this->setSelfGen();
         }

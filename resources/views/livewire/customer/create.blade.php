@@ -97,8 +97,9 @@
                     <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc" observation="Sold Price"/>
                 </div>
 
-                <div class="col-span-2 md:col-span-3">
+                <div class="col-span-2 md:col-span-3" wire:ignore>
                     <x-select-searchable
+                        x-on:popup-close="$wire.updatedCustomerSetterId"
                         wire:model="customer.setter_id"
                         option-value="id"
                         option-label="firstAndLastName"
@@ -114,8 +115,9 @@
                     <x-input-currency wire:model="customer.setter_fee" label="Setter Comission Rate" name="customer.setter_fee" disabled="{{!$customer->setter_id}}"/>
                 </div>
 
-                <div class="col-span-2 md:col-span-3">
+                <div class="col-span-2 md:col-span-3" wire:ignore>
                     <x-select-searchable
+                        x-on:popup-close="$wire.updatedCustomerSalesRepId"
                         wire:model="customer.sales_rep_id"
                         option-value="id"
                         option-label="firstAndLastName"
