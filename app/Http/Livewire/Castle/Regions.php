@@ -10,6 +10,10 @@ class Regions extends Component
 {
     use FullTable;
 
+    public ?Region $deletingRegion;
+
+    public string $deleteMessage = "Are you sure you want to delete this office?";
+
     public function sortBy()
     {
         return 'name';
@@ -36,5 +40,15 @@ class Regions extends Component
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage),
         ]);
+    }
+
+    public function setDeletingRegion($regionId = null)
+    {
+        $this->deletingRegion = Region::find($regionId);
+        if ($this->deletingRegion  && count($this->deletingRegion->offices)) {
+            $this->deleteMessage = 'This region is NOT empty. By deleting this region you will also be deleting all other organizations or users in it. To continue, please type the name of the region below and press confirm:';
+        } else {
+            $this->deleteMessage = 'Are you sure you want to delete this region?';
+        }
     }
 }

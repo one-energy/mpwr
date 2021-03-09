@@ -130,7 +130,7 @@ class OfficeController extends Controller
         $request = request()->all();
         $office  = Office::find($id);
         if(count($office->users)){
-            if ($request['confirmDelete'] == $office->name) {
+            if (strtoupper($request['confirmDelete']) == strtoupper($office->name)) {
                 Office::destroy($office->id);
                 alert()
                     ->withTitle(__('Office has been deleted!'))

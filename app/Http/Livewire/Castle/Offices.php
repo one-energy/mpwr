@@ -52,7 +52,6 @@ class Offices extends Component
     public function setDeletingOffice($officeId = null)
     {
         $this->deletingOffice = Office::find($officeId);
-        // dd($officeId);
         if ($this->deletingOffice  && count($this->deletingOffice->users)) {
             $this->deleteMessage = 'This office is NOT empty. By deleting this office you will also be deleting all other organizations or users in it. To continue, please type the name of the office below and press confirm:';
         } else {

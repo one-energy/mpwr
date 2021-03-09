@@ -83,7 +83,7 @@
                             </div>
                         </div>
 
-                        <x-modal x-cloak :title="__('Delete office')"
+                        <x-modal x-cloak :title="__('Delete Office')"
                             :description="$deleteMessage">
 
                             <x-form :route="route('castle.offices.destroy', $deletingOffice->id ?? 0)" delete class="w-full p-2">
@@ -108,8 +108,6 @@
                             </x-form>
 
                         </x-modal>
-                        {{-- <x-confirm x-cloak :title="__('Delete Office')"
-                            :description="__('Are you sure you want to delete this office?')"></x-confirm> --}}
                     </div>
                 </div>
             </div>

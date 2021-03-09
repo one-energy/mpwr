@@ -54,11 +54,24 @@ class RegionController extends Controller
 
     public function destroy($id)
     {
-        Region::destroy($id);
+        $request = request()->all();
+        $region  = Region::find($id);
+        if(count($region->offices)){
+            if (strtoupper($request['confirmDelete']) == strtoupper($region->name)) {
+                Region::destroy($region->id);
+                alert()
+                    ->withTitle(__('Region has been deleted!'))
+                    ->send();
+            } else {
+                alert()->withTitle(__("The name of the region doesn't match"))->send();
+            }
 
-        alert()
-            ->withTitle(__('Region has been deleted!'))
-            ->send();
+        } else {
+            Region::destroy($region->id);
+            alert()
+                ->withTitle(__('Region has been deleted!'))
+                ->send();
+        }
 
         return back();
     }
