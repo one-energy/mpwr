@@ -55,7 +55,10 @@
         })
     },
     togglePopover() { this.popover = !this.popover },
-    closePopover() { this.popover = false },
+    closePopover() {
+        this.popover = false
+        this.$refs.select.dispatchEvent(new Event('popup-close'))
+    },
     select(option) {
         if (this.multiselect) {
             const model = Object.assign([], this.model)
