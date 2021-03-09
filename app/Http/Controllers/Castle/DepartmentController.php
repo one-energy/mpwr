@@ -19,7 +19,7 @@ class DepartmentController extends Controller
     {
         $users      = User::query()->where('role', 'Department Manager')->get();
         $department = Department::query()->whereId($department)->first();
-        
+
         return view('castle.departments.edit', compact('department', 'users'));
     }
 
@@ -40,7 +40,7 @@ class DepartmentController extends Controller
 
         $department->name                           = $validated['name'];
         $department->department_manager_id          = $validated['department_manager_id'];
-        
+
         $department->save();
 
         alert()
@@ -50,9 +50,27 @@ class DepartmentController extends Controller
         return redirect(route('castle.departments.index'));
     }
 
-    public function destroy($id)
+    public function destroy($departmentId)
     {
-        $department          = Department::query()->whereId($id)->first();
+        $request = request()->all();
+        $department = Department::find($departmentId);
+        if(count($department->regions)){
+            if (strtoupper($request['confirmDelete']) == strtoupper($department->name)) {
+                $this->deleteDepartment($department);
+            } else {
+                alert()->withTitle(__("The name of the department doesn't match"))->send();
+            }
+
+        } else {
+            $this->deleteDepartment($department);
+        }
+
+        return back();
+    }
+
+    public function deleteDepartment($department)
+    {
+
         $user                = User::query()->whereId($department->department_manager_id)->first();
         $user->department_id = null;
         $user->save();
@@ -66,14 +84,13 @@ class DepartmentController extends Controller
         foreach ($users as $user) {
             User::destroy($user->id);
         }
-        
+
         Department::destroy($department->id);
 
         alert()
             ->withTitle(__('Department has been deleted!'))
             ->send();
 
-        return back();
     }
 
     public function store()
@@ -95,7 +112,7 @@ class DepartmentController extends Controller
         $department->department_manager_id = $validated['department_manager_id'];
 
         $department->save();
-        
+
         $trainingPage                = new TrainingPageSection();
         $trainingPage->title         = "Training Page";
         $trainingPage->parent_id     = null;
