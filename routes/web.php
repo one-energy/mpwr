@@ -38,8 +38,6 @@ Route::get('password/reset/{token}', [ResetPasswordController::class, 'showReset
 Route::get('email/verify', [VerificationController::class, 'show'])->name('verification.notice');
 Route::get('email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->name('verification.verify');
 Route::post('email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
-Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('register', [RegisterController::class, 'register']);
 Route::get('register/{token}', [InvitationController::class, 'invite'])->name('register.with-invitation');
 Route::post('register/{token}', [InvitationController::class, 'register']);
 //endregion
