@@ -8,12 +8,6 @@
             <h2 class="mt-6 text-center text-3xl leading-9 font-extrabold text-gray-900">
                 {{ __('Sign in to your account') }}
             </h2>
-            <p class="mt-2 text-center text-sm leading-5 text-gray-600 max-w">
-                {{ __('Or') }}
-                <x-link :href="route('register')">
-                    {{ __('Start your 14-day free trial') }}
-                </x-link>
-            </p>
         </div>
 
         <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
