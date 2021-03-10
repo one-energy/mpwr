@@ -8,16 +8,16 @@
         <form wire:submit.prevent="store">
             <div class="grid grid-cols-2 gap-4 sm:col-gap-4 md:grid-cols-6">
                 @if(user()->role == 'Admin' || user()->role == 'Owner')
-                <div class="col-span-2 md:col-span-6">
-                    <x-select wire:model="departmentId" label="Department" name="departmentId">
-                        @foreach($departments as $department)
-                            <option
-                                value="{{ $department->id }}" {{ old('departmentId') == $department ? 'selected' : '' }}>
-                                {{ $department->name }}
-                            </option>
-                        @endforeach
-                    </x-select>
-                </div>
+                    <div class="col-span-2 md:col-span-6">
+                        <x-select wire:model="departmentId" label="Department" name="departmentId">
+                            @foreach($departments as $department)
+                                <option
+                                    value="{{ $department->id }}" {{ old('departmentId') == $department ? 'selected' : '' }}>
+                                    {{ $department->name }}
+                                </option>
+                            @endforeach
+                        </x-select>
+                    </div>
                 @endif
 
                 <input type="hidden" value="{{ $openedById }}" name="opened_by_id"/>
@@ -78,20 +78,16 @@
                     </div>
                 @endif
 
-                @if($customer->financer_id == 1)
-                    <div class="col-span-1 md:col-span-2">
-                        <x-select wire:model="customer.term_id" label="Term" name="customer.term_id" readonly>
-                            @if (old('term_id') == '')
-                                <option value="" selected>None</option>
-                            @endif
-                            @foreach($terms as $term)
-                                <option value="{{ $term->id }}" {{ old('term_id') == $term->id ? 'selected' : '' }}>
-                                    {{ $term->value }}
-                                </option>
-                            @endforeach
-                        </x-select>
-                    </div>
-                @endif
+                <div class="col-span-1 md:col-span-2 @if($customer->financer_id != 1) hidden @endif">
+                    <x-select wire:model="customer.term_id" label="Term" name="customer.term_id">
+                        <option value="" selected>None</option>
+                        @foreach($terms as $term)
+                            <option value="{{ $term->id }}" >
+                                {{ $term->value }}
+                            </option>
+                        @endforeach
+                    </x-select>
+                </div>
 
                 <div class="col-span-2 md:col-span-6">
                     <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc" observation="Sold Price" maxSize="1000"/>
