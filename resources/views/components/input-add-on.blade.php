@@ -1,4 +1,4 @@
-@props(['label', 'name', 'value', 'addOn', 'disabledToUser', 'wire' => null])
+@props(['label', 'name', 'value', 'addOn', 'disabledToUser', 'maxSize' => 10000, 'wire' => null])
 
 @php
     $class = 'form-input block w-full pr-12 sm:text-sm sm:leading-5';
@@ -9,7 +9,7 @@
     $wire = $wire && is_bool($wire) ? $name : $wire;
 @endphp
 
-<div {{ $attributes }}>
+<div {{ $attributes }} x-data="register()">
     <label for="{{ $name }}" class="block text-sm font-medium leading-5 text-gray-700">{{ $label }}</label>
 
     <div class="mt-1 relative rounded-md shadow-sm">
@@ -18,6 +18,7 @@
                type="number"
                min="0"
                step="0.01"
+               x-on:input="validateSize($event, {{$maxSize}})"
                value="{{ old($name, $value ?? null) }}"
                @if ($wire) wire:model="{{ $wire }}" @endif
                @if($disabledToUser && user()->role == $disabledToUser) disabled @endif/>
@@ -40,4 +41,21 @@
         {{ $message }}
     </p>
     @enderror
+
+    @push('scripts')
+        <script>
+            function register() {
+                var oldValue = 0;
+                return {
+                    validateSize($event, $maxSize) {
+                        if($event.target.value > $maxSize){
+                            $event.target.value = this.oldValue
+                        } else {
+                            this.oldValue = $event.target.value
+                        }
+                    },
+                }
+            }
+        </script>
+    @endpush
 </div>
