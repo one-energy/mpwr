@@ -181,8 +181,10 @@ class Create extends Component
 
     public function calculateGrossRepComission(Customer $customer)
     {
-        if ($customer->margin && $customer->system_size) {
-            return $customer->margin * $customer->system_size * 1000;
+        if ( $customer->margin >= 0 && $customer->system_size >= 0 ) {
+            return intval($customer->margin) * intval($customer->system_size) * 1000;
+        } else {
+            return 0;
         }
 
         return 0;
