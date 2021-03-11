@@ -59,7 +59,7 @@
                     <x-modal x-cloak :title="__('Delete Department')"
                              :description="$deleteMessage">
 
-                        <x-form wire:submit.prevent="delete()" class="w-full p-2">
+                        <x-form wire:submit.prevent="destroy()" class="w-full p-2">
                             <input type="hidden" name="currentName" wire:model="deletingDepartment.name"
                                    value="{{ optional($deletingDepartment)->name }}">
 

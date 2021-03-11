@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Castle;
 
 use App\Http\Controllers\Controller;
 use App\Models\Department;
-use App\Models\TrainingPageSection;
 use App\Models\User;
 
 class DepartmentController extends Controller
@@ -23,22 +22,20 @@ class DepartmentController extends Controller
     {
         $users = User::query()->where('role', 'Department Manager')->get();
 
-        return view('castle.departments.create', compact('users'));
+        return view('castle.departments.create', [
+            'users' => $users,
+        ]);
     }
 
     public function store()
     {
-        $validated = $this->validate(
-            request(),
-            [
-                'name'                  => 'required|string|min:3|max:255',
-                'department_manager_id' => 'required',
-            ],
-            [
-                'department_id.required'         => 'The department field is required.',
-                'department_manager_id.required' => 'The department manager field is required.',
-            ],
-        );
+        $validated = request()->validate([
+            'name'                  => 'required|string|min:3|max:255',
+            'department_manager_id' => 'required',
+        ], [
+            'department_id.required'         => 'The department field is required.',
+            'department_manager_id.required' => 'The department manager field is required.',
+        ]);
 
         $department                        = new Department();
         $department->name                  = $validated['name'];
@@ -46,21 +43,19 @@ class DepartmentController extends Controller
 
         $department->save();
 
-        $trainingPage                = new TrainingPageSection();
-        $trainingPage->title         = "Training Page";
-        $trainingPage->parent_id     = null;
-        $trainingPage->department_id = $department->id;
-        $trainingPage->save();
+        $department->trainingPageSections()->create([
+            'Training Page',
+        ]);
 
-        $user                = User::query()->whereId($department->department_manager_id)->first();
-        $user->department_id = $department->id;
-        $user->save();
+        $departmentAdmin                = $department->departmentAdmin;
+        $departmentAdmin->department_id = $department->id;
+        $departmentAdmin->save();
 
         alert()
             ->withTitle(__('Department Created!'))
             ->send();
 
-        return redirect(route('castle.departments.index'));
+        return redirect()->route('castle.departments.index');
     }
 
     public function edit(Department $department)

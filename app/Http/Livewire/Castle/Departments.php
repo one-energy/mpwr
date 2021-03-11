@@ -46,7 +46,7 @@ class Departments extends Component
         }
     }
 
-    public function delete()
+    public function destroy()
     {
         $department = $this->deletingDepartment;
 
@@ -65,7 +65,6 @@ class Departments extends Component
         $department->delete();
 
         $this->dispatchBrowserEvent('close-modal');
-
         $this->deletingDepartment = null;
 
         alert()

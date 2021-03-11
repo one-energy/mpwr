@@ -17,9 +17,8 @@ use Illuminate\Support\Facades\DB;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read mixed $office_manager
+ * @property-read \App\Models\User $officeManager
  * @property-read \App\Models\Region $region
- * @property-read \App\Models\User $officeManger
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Office newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Office newQuery()
@@ -34,7 +33,7 @@ class Office extends Model
 {
     use SoftDeletes;
 
-    public function officeManger()
+    public function officeManager()
     {
         return $this->belongsTo(User::class, 'office_manager_id');
     }
@@ -49,14 +48,9 @@ class Office extends Model
         return $this->hasMany(User::class);
     }
 
-    public function getOfficeManagerAttribute()
+    public function departments()
     {
-        return User::find($this->office_manager_id);
-    }
-
-    public function getRegionAttribute()
-    {
-        return Region::find($this->region_id);
+        return $this->hasManyThrough(Department::class, Region::class);
     }
 
     public function scopeSearch(Builder $query, $search)
