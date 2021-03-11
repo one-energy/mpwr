@@ -8,14 +8,27 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
 /**
+ * App\Models\Office
+ *
  * @property int $id
  * @property string $name
- * @property int $office_manager_id
  * @property int $region_id
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property Carbon $deleted_at
- * @property-read User $owner
+ * @property int $office_manager_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read mixed $office_manager
+ * @property-read \App\Models\Region $region
+ * @property-read \App\Models\User $officeManger
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Office newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Office newQuery()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Office onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Office query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Office search($search)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Office withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Office withoutTrashed()
+ * @mixin \Eloquent
  */
 class Office extends Model
 {

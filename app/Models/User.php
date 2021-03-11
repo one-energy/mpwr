@@ -13,23 +13,45 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 /**
+ * App\Models\User
+ *
  * @property int $id
  * @property string $first_name
  * @property string $last_name
  * @property string $email
- * @property Carbon $email_verified_at
+ * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property string $password
- * @property string $role
+ * @property string|null $role
+ * @property string|null $pay
  * @property string $timezone
- * @property string $photo_url
- * @property string $remember_token
- * @property string $master
- * @property int $office_id
- * @property int $department_id
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property Carbon $deleted_at
- * @property-read Department $department
+ * @property bool $master
+ * @property string|null $photo_url
+ * @property string|null $remember_token
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property int $kw_achived
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property int|null $office_id
+ * @property int|null $department_id
+ * @property int $installs
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\DailyNumber[] $dailyNumbers
+ * @property-read \App\Models\Department|null $department
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invitation[] $invitations
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Office[] $managedOffices
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Region[] $managedRegions
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ * @property-read \App\Models\Office|null $office
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Office[] $officesOnManagedRegions
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $usersOnManagedOffices
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User masters()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newQuery()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\User onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User search($search)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\User withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\User withoutTrashed()
+ * @mixin \Eloquent
  */
 class User extends Authenticatable implements MustVerifyEmail
 {

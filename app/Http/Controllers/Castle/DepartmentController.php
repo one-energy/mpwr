@@ -6,91 +6,24 @@ use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\TrainingPageSection;
 use App\Models\User;
-use Illuminate\Http\Request;
 
 class DepartmentController extends Controller
 {
+    public function getDepartments()
+    {
+        return Department::all();
+    }
+
     public function index()
     {
         return view('castle.departments.index');
     }
 
-    public function edit($department)
+    public function create()
     {
-        $users      = User::query()->where('role', 'Department Manager')->get();
-        $department = Department::query()->whereId($department)->first();
+        $users = User::query()->where('role', 'Department Manager')->get();
 
-        return view('castle.departments.edit', compact('department', 'users'));
-    }
-
-    public function update($department)
-    {
-        $department = Department::query()->whereId($department)->first();
-        $validated  = $this->validate(
-            request(),
-            [
-                'name'                  => 'required|string|min:3|max:255',
-                'department_manager_id' => 'required',
-            ],
-            [
-                'department_id.required'         => 'The department field is required.',
-                'department_manager_id.required' => 'The department manager field is required.',
-            ],
-        );
-
-        $department->name                           = $validated['name'];
-        $department->department_manager_id          = $validated['department_manager_id'];
-
-        $department->save();
-
-        alert()
-            ->withTitle(__('Department Updated!'))
-            ->send();
-
-        return redirect(route('castle.departments.index'));
-    }
-
-    public function destroy($departmentId)
-    {
-        $request = request()->all();
-        $department = Department::find($departmentId);
-        if(count($department->regions)){
-            if (strtoupper($request['confirmDelete']) == strtoupper($department->name)) {
-                $this->deleteDepartment($department);
-            } else {
-                alert()->withTitle(__("The name of the department doesn't match"))->send();
-            }
-
-        } else {
-            $this->deleteDepartment($department);
-        }
-
-        return back();
-    }
-
-    public function deleteDepartment($department)
-    {
-
-        $user                = User::query()->whereId($department->department_manager_id)->first();
-        $user->department_id = null;
-        $user->save();
-
-        $trainingPages = TrainingPageSection::query()->whereDepartmentId($department->id)->get();
-        foreach ($trainingPages as $trainingPage) {
-            TrainingPageSection::destroy($trainingPage->id);
-        }
-
-        $users = User::query()->whereDepartmentId($department->id)->get();
-        foreach ($users as $user) {
-            User::destroy($user->id);
-        }
-
-        Department::destroy($department->id);
-
-        alert()
-            ->withTitle(__('Department has been deleted!'))
-            ->send();
-
+        return view('castle.departments.create', compact('users'));
     }
 
     public function store()
@@ -130,15 +63,35 @@ class DepartmentController extends Controller
         return redirect(route('castle.departments.index'));
     }
 
-    public function create()
+    public function edit(Department $department)
     {
-        $users   = User::query()->where('role', 'Department Manager')->get();
+        $users = User::query()->where('role', 'Department Manager')->get();
 
-        return view('castle.departments.create', compact('users'));
+        return view('castle.departments.edit', [
+            'department' => $department,
+            'users'      => $users,
+        ]);
     }
 
-    public function getDepartments()
+    public function update(Department $department)
     {
-        return Department::all();
+        $validated = request()->validate([
+            'name'                  => 'required|string|min:3|max:255',
+            'department_manager_id' => 'required',
+        ], [
+            'department_id.required'         => 'The department field is required.',
+            'department_manager_id.required' => 'The department manager field is required.',
+        ]);
+
+        $department->name                  = $validated['name'];
+        $department->department_manager_id = $validated['department_manager_id'];
+
+        $department->save();
+
+        alert()
+            ->withTitle(__('Department Updated!'))
+            ->send();
+
+        return redirect(route('castle.departments.index'));
     }
 }

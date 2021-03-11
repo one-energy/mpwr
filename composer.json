@@ -23,6 +23,7 @@
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.5",
+        "barryvdh/laravel-ide-helper": "2.8.2",
         "beyondcode/laravel-dump-server": "^1.4",
         "friendsofphp/php-cs-fixer": "^2.16",
         "fzaninotto/faker": "^1.4",
@@ -41,7 +42,8 @@
     "extra": {
         "laravel": {
             "dont-discover": [
-                "laravel/telescope"
+                "laravel/telescope",
+                "barryvdh/laravel-ide-helper"
             ]
         }
     },

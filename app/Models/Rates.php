@@ -7,14 +7,22 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 /**
+ * App\Models\Rates
+ *
  * @property int $id
  * @property string $name
- * @property string $role
  * @property int $time
- * @property decimal $rate
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property-read Department $department
+ * @property int|null $department_id
+ * @property string $role
+ * @property string|null $rate
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Department|null $department
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Rates newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Rates newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Rates query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Rates search($search)
+ * @mixin \Eloquent
  */
 class Rates extends Model
 {
