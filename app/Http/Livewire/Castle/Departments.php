@@ -33,7 +33,7 @@ class Departments extends Component
     public function setDeletingDepartment($departmentId = null)
     {
         $this->deletingDepartment = Department::find($departmentId);
-        if ($this->deletingDepartment  && count($this->deletingDepartment->regions)) {
+        if ($this->deletingDepartment  && (count($this->deletingDepartment->regions) || count($this->deletingDepartment->users))) {
             $this->deleteMessage = 'This department is NOT empty. By deleting this department you will also be deleting all other organizations or users in it. To continue, please type the name of the department below and press confirm:';
         } else {
             $this->deleteMessage = 'Are you sure you want to delete this Department?';
