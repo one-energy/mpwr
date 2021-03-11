@@ -63,20 +63,18 @@
                     </x-select>
                 </div>
 
-                @if($customer->financing_id == 1)
-                    <div class="col-span-1 md:col-span-1 md:col-start-4">
-                        <x-select wire:model="customer.financer_id" label="Financer" name="customer.financer_id">
-                            @if (old('financer') == '')
-                                <option value="" selected>None</option>
-                            @endif
-                            @foreach($financers as $financer)
-                                <option value="{{ $financer->id }}" {{ old('financing') == $financer->id ? 'selected' : '' }}>
-                                    {{ $financer ->name }}
-                                </option>
-                            @endforeach
-                        </x-select>
-                    </div>
-                @endif
+                <div class="col-span-1 md:col-span-1 md:col-start-4 @if($customer->financing_id != 1) hidden @endif">
+                    <x-select wire:model="customer.financer_id" label="Financer" name="customer.financer_id">
+                        @if (old('financer') == '')
+                            <option value="" selected>None</option>
+                        @endif
+                        @foreach($financers as $financer)
+                            <option value="{{ $financer->id }}" {{ old('financing') == $financer->id ? 'selected' : '' }}>
+                                {{ $financer ->name }}
+                            </option>
+                        @endforeach
+                    </x-select>
+                </div>
 
                 <div class="col-span-1 md:col-span-2 @if($customer->financer_id != 1) hidden @endif">
                     <x-select wire:model="customer.term_id" label="Term" name="customer.term_id">
@@ -147,11 +145,9 @@
                     <x-input wire:model="stockPoints" label="Stock Points" name="stockPoints" readonly/>
                 </div>
 
-                @if($customer->financer_id == 1)
-                    <div class="col-span-2 md:col-span-1">
-                        <x-input wire:model="customer.enium_points" label="Noble Pay Points" name="customer.enium_points" readonly/>
-                    </div>
-                @endif
+                <div class="col-span-2 md:col-span-1 @if($customer->financer_id != 1) hidden @endif ">
+                    <x-input wire:model="customer.enium_points" label="Noble Pay Points" name="customer.enium_points" readonly/>
+                </div>
             </div>
 
             <div class="pt-5 mt-8 border-t border-gray-200">
