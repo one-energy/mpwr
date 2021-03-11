@@ -1,7 +1,8 @@
 <x-app.auth :title="__('Edit Region')">
     <div>
         <div class="max-w-6xl mx-auto py-5 sm:px-6 lg:px-8">
-            <a href="{{ route('castle.regions.index') }}" class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
+            <a href="{{ route('castle.regions.index') }}"
+               class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
                 < Edit Region
             </a>
         </div>
@@ -24,7 +25,7 @@
                                         'X-CSRF-TOKEN': token
                                     }}).then(res=> res.json()).then( (departmentsData) => {
                                             departments = departmentsData
-                                            selectedRegionManager = '{{ $region->regionManger->id ?? 1}}'
+                                            selectedRegionManager = '{{ $region->regionManager->id ?? 1}}'
                                             selectedDepartment = '{{$region->department_id ?? 1}}'
                                     })">
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
@@ -35,7 +36,7 @@
                             <div class="md:col-span-3 col-span-2 hidden">
                                 <x-select x-model="selectedDepartment" label="Department" name="department_id">
                                     <template x-for="department in departments" :key="department.id">
-                                        <option :value="department.id" x-text="department.name" ></option>
+                                        <option :value="department.id" x-text="department.name"></option>
                                     </template>
                                 </x-select>
                             </div>
@@ -43,7 +44,7 @@
                             <div class="md:col-span-3 col-span-2">
                                 <x-select x-model="selectedDepartment" label="Department" name="department_id">
                                     <template x-for="department in departments" :key="department.id">
-                                        <option :value="department.id" x-text="department.name" ></option>
+                                        <option :value="department.id" x-text="department.name"></option>
                                     </template>
                                 </x-select>
                             </div>
@@ -51,17 +52,21 @@
 
                         @if(user()->role != "Admin" && user()->role != "Owner")
                             <div class="md:col-span-3 col-span-2 @if(user()->role == 'Region Manager') hidden @endif">
-                                <x-select x-model="selectedRegionManager" label="Region Manager" name="region_manager_id">
+                                <x-select x-model="selectedRegionManager" label="Region Manager"
+                                          name="region_manager_id">
                                     <template x-for="manager in regionsManager" :key="manager.id">
-                                        <option :value="manager.id" x-text="manager.first_name + ' ' + manager.last_name"></option>
+                                        <option :value="manager.id"
+                                                x-text="manager.first_name + ' ' + manager.last_name"></option>
                                     </template>
                                 </x-select>
                             </div>
                         @else
                             <div class="md:col-span-3 col-span-2">
-                                <x-select x-model="selectedRegionManager" label="Region Manager" name="region_manager_id">
+                                <x-select x-model="selectedRegionManager" label="Region Manager"
+                                          name="region_manager_id">
                                     <template x-for="manager in regionsManager" :key="manager.id">
-                                        <option :value="manager.id" x-text="manager.first_name + ' ' + manager.last_name"></option>
+                                        <option :value="manager.id"
+                                                x-text="manager.first_name + ' ' + manager.last_name"></option>
                                     </template>
                                 </x-select>
                             </div>
@@ -70,18 +75,20 @@
                 </div>
 
                 <div class="mt-8 border-t border-gray-200 pt-5">
-                <div class="flex justify-start">
+                    <div class="flex justify-start">
                     <span class="inline-flex rounded-md shadow-sm">
-                        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
+                        <button type="submit"
+                                class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
                             Update
                         </button>
                     </span>
-                    <span class="ml-3 inline-flex rounded-md shadow-sm">
-                        <a href="{{route('castle.regions.index')}}" class="py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-gray-800 hover:bg-gray-300 focus:outline-none focus:border-gray-300 focus:shadow-outline-gray transition duration-150 ease-in-out">
+                        <span class="ml-3 inline-flex rounded-md shadow-sm">
+                        <a href="{{route('castle.regions.index')}}"
+                           class="py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-gray-800 hover:bg-gray-300 focus:outline-none focus:border-gray-300 focus:shadow-outline-gray transition duration-150 ease-in-out">
                             Cancel
                         </a>
                     </span>
-                </div>
+                    </div>
                 </div>
             </x-form>
         </div>

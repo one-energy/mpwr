@@ -7,19 +7,38 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 /**
+ * App\Models\TrainingPageSection
+ *
  * @property int $id
- * @property int $parent_id
- * @property int $training_page_section_id
  * @property string $title
- * @property Carbon $created_at
- * @property Carbon $updated_at
+ * @property int|null $parent_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int|null $department_id
+ * @property-read \App\Models\TrainingPageContent|null $content
+ * @property-read \App\Models\Department|null $department
+ * @property-read \App\Models\TrainingPageSection|null $parent
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\TrainingPageSection newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\TrainingPageSection newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\TrainingPageSection query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\TrainingPageSection search($search)
+ * @mixin \Eloquent
  */
 class TrainingPageSection extends Model
 {
-    //
     public function content()
     {
         return $this->hasOne(TrainingPageContent::class);
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(TrainingPageSection::class);
     }
 
     public function scopeSearch(Builder $query, $search)
