@@ -23,7 +23,90 @@
         : $class .= ' border-gray-300 text-gray-600 focus:ring-indigo-500 focus:border-indigo-500';
 @endphp
 
-<div x-data="register()"
+<div x-data="{
+    searchable:  @json(filter_var($searchable, FILTER_VALIDATE_BOOLEAN)),
+    multiselect: @json(filter_var($multiselect, FILTER_VALIDATE_BOOLEAN)),
+    noneOption:  @json(filter_var($multiselect, FILTER_VALIDATE_BOOLEAN)),
+    popover: false,
+    search: '',
+    name: '{{ $name }}',
+    placeholder: '{{ $placeholder }}',
+    optionValue: '{{ $optionValue }}',
+    optionLabel: '{{ $optionLabel }}',
+    model: @entangle($wireModel),
+    rawOptions: @entangle($options),
+    options: [],
+    refreshOptions() {
+        this.options = this.rawOptions.map(option => {
+            if (!this.optionValue) {
+                return { label: option, value: option }
+            }
+            return {
+                label: this.optionLabel == 'firstAndLastName' ? option['first_name'] + ' ' + option['last_name']: option[this.optionLabel],
+                value: option[this.optionValue]
+            }
+        })
+
+    },
+    getFilteredOptions() {
+        if (!this.searchable) return this.options
+        return this.options.filter(option => {
+            return option.label.toLowerCase().includes(this.search.toLowerCase())
+        })
+    },
+    togglePopover() { this.popover = !this.popover },
+    closePopover() {
+        this.popover = false
+        this.$refs.select.dispatchEvent(new Event('popup-close'))
+    },
+    select(option) {
+        if (this.multiselect) {
+            const model = Object.assign([], this.model)
+            const index = model.findIndex(value => value == option.value)
+            index > -1 ? model.splice(index) : model.push(option.value)
+            this.model = model
+        } else {
+            this.model       = option.value
+            this.placeholder = option.label
+            this.closePopover()
+        }
+    },
+    isSelected(value) {
+        if (this.multiselect) {
+            return !!this.model?.find(option => option == value)
+        }
+        return value == this.model
+    },
+    clearModel() {
+        if (this.multiselect) {
+            return this.model = []
+        }
+        this.model = null
+    },
+    isEmptyModel() {
+        if (this.multiselect) {
+            return this.model?.length == 0
+        }
+        return this.model == null
+    },
+    getLabel() {
+        if (this.multiselect) {
+            if (!this.model?.length) return this.placeholder
+            const selecteds = this.model?.map(value => {
+                return this.options.find(option => option.value === value)?.label
+            }).join(', ')
+            return `${this.model.length}: ${selecteds}`
+        }
+        return this.placeholder
+    },
+    focusables() { return [...$el.querySelectorAll('li, input')] },
+    firstFocusable() { return this.focusables()[0] },
+    lastFocusable() { return this.focusables().slice(-1)[0] },
+    nextFocusable() { return this.focusables()[this.nextFocusableIndex()] || this.firstFocusable() },
+    prevFocusable() { return this.focusables()[this.prevFocusableIndex()] || this.lastFocusable() },
+    nextFocusableIndex() { return (this.focusables().indexOf(document.activeElement) + 1) % (this.focusables().length + 1) },
+    prevFocusableIndex() { return Math.max(0, this.focusables().indexOf(document.activeElement)) -1 },
+}"
 x-init="() => {
     refreshOptions()
     if (multiselect && !model) { model = [] }
@@ -142,100 +225,10 @@ x-init="() => {
             </ul>
         </div>
     </div>
+
     @error($name)
         <p class="mt-2 text-sm text-red-600">
             {{ $message }}
         </p>
     @enderror
-
-    @push('scripts')
-        <script>
-            function register() {
-                return {
-                    searchable:  @json(filter_var($searchable, FILTER_VALIDATE_BOOLEAN)),
-                    multiselect: @json(filter_var($multiselect, FILTER_VALIDATE_BOOLEAN)),
-                    noneOption:  @json(filter_var($multiselect, FILTER_VALIDATE_BOOLEAN)),
-                    popover: false,
-                    search: '',
-                    name: '{{ $name }}',
-                    placeholder: '{{ $placeholder }}',
-                    optionValue: '{{ $optionValue }}',
-                    optionLabel: '{{ $optionLabel }}',
-                    model: @entangle($wireModel),
-                    rawOptions: @entangle($options),
-                    options: [],
-                    refreshOptions() {
-                        this.options = this.rawOptions.map(option => {
-                            if (!this.optionValue) {
-                                return { label: option, value: option }
-                            }
-                            return {
-                                label: this.optionLabel == 'firstAndLastName' ? option['first_name'] + ' ' + option['last_name']: option[this.optionLabel],
-                                value: option[this.optionValue]
-                            }
-                        })
-
-                    },
-                    getFilteredOptions() {
-                        if (!this.searchable) return this.options
-                        return this.options.filter(option => {
-                            return option.label.toLowerCase().includes(this.search.toLowerCase())
-                        })
-                    },
-                    togglePopover() { this.popover = !this.popover },
-                    closePopover() {
-                        this.popover = false
-                        this.$refs.select.dispatchEvent(new Event('popup-close'))
-                    },
-                    select(option) {
-                        if (this.multiselect) {
-                            const model = Object.assign([], this.model)
-                            const index = model.findIndex(value => value == option.value)
-                            index > -1 ? model.splice(index) : model.push(option.value)
-                            this.model = model
-                        } else {
-                            this.model       = option.value
-                            this.placeholder = option.label
-                            this.closePopover()
-                        }
-                    },
-                    isSelected(value) {
-                        if (this.multiselect) {
-                            return !!this.model?.find(option => option == value)
-                        }
-                        return value == this.model
-                    },
-                    clearModel() {
-                        if (this.multiselect) {
-                            return this.model = []
-                        }
-                        this.model = null
-                    },
-                    isEmptyModel() {
-                        if (this.multiselect) {
-                            return this.model?.length == 0
-                        }
-                        return this.model == null
-                    },
-                    getLabel() {
-                        if (this.multiselect) {
-                            if (!this.model?.length) return this.placeholder
-                            const selecteds = this.model?.map(value => {
-                                return this.options.find(option => option.value === value)?.label
-                            }).join(', ')
-                            return `${this.model.length}: ${selecteds}`
-                        }
-                        return this.placeholder
-                    },
-                    focusables() { return [...$el.querySelectorAll('li, input')] },
-                    firstFocusable() { return this.focusables()[0] },
-                    lastFocusable() { return this.focusables().slice(-1)[0] },
-                    nextFocusable() { return this.focusables()[this.nextFocusableIndex()] || this.firstFocusable() },
-                    prevFocusable() { return this.focusables()[this.prevFocusableIndex()] || this.lastFocusable() },
-                    nextFocusableIndex() { return (this.focusables().indexOf(document.activeElement) + 1) % (this.focusables().length + 1) },
-                    prevFocusableIndex() { return Math.max(0, this.focusables().indexOf(document.activeElement)) -1 },
-                }
-            }
-        </script>
-    @endpush
 </div>

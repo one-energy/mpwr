@@ -1,4 +1,4 @@
-@props(['label', 'name', 'value', 'addOn', 'disabledToUser', 'maxSize' => 10000, 'wire' => null])
+@props(['label', 'name', 'value', 'addOn', 'disabledToUser', 'maxSize' => 100000, 'wire' => null])
 
 @php
     $class = 'form-input block w-full pr-12 sm:text-sm sm:leading-5';

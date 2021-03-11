@@ -84,20 +84,18 @@
                         </div>
                     @endif
 
-                    @if($customer->financer_id == 1)
-                        <div class="col-span-1 md:col-span-2">
-                            <x-select wire:model="customer.term_id" label="Term" name="customer.term_id" readonly>
-                                @if (old('term_id') == '')
-                                    <option value="" selected>None</option>
-                                @endif
-                                @foreach($terms as $term)
-                                    <option value="{{ $term->id }}" {{ old('term_id') == $term->id ? 'selected' : '' }}>
-                                        {{ $term->value }}
-                                    </option>
-                                @endforeach
-                            </x-select>
-                        </div>
-                    @endif
+                    <div class="col-span-1 md:col-span-2 @if($customer->financer_id != 1) hidden @endif">
+                        <x-select wire:model="customer.term_id" label="Term" name="customer.term_id" readonly>
+                            @if (old('term_id') == '')
+                                <option value="" selected>None</option>
+                            @endif
+                            @foreach($terms as $term)
+                                <option value="{{ $term->id }}" {{ old('term_id') == $term->id ? 'selected' : '' }}>
+                                    {{ $term->value }}
+                                </option>
+                            @endforeach
+                        </x-select>
+                    </div>
 
                     <div class="col-span-2 md:col-span-6">
                         <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc"
