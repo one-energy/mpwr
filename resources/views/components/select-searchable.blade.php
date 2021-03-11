@@ -82,7 +82,7 @@
             return this.model = []
         }
         this.model = null
-     },
+    },
     isEmptyModel() {
         if (this.multiselect) {
             return this.model?.length == 0
@@ -225,6 +225,7 @@ x-init="() => {
             </ul>
         </div>
     </div>
+
     @error($name)
         <p class="mt-2 text-sm text-red-600">
             {{ $message }}

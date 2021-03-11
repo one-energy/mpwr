@@ -66,6 +66,7 @@ class Edit extends Component
     public function render()
     {
         $this->customer->calcComission();
+        $this->customer->calcMargin();
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
         $this->salesReps = user()->getPermittedUsers($this->departmentId)->toArray();
         $this->setters = User::whereDepartmentId($this->departmentId)
@@ -113,6 +114,16 @@ class Edit extends Component
     {
         $this->customer->setter_fee = 0;
         $this->isSelfGen = true;
+    }
+
+
+    public function updatedCustomerFinancingId()
+    {
+        if ($this->customer->financing_id != 1) {
+            $this->customer->financer_id  = null;
+            $this->customer->term_id      = null;
+            $this->customer->enium_points = null;
+        }
     }
 
     public function updatedCustomerSalesRepId($salesRepId)

@@ -1,4 +1,4 @@
-@props(['label', 'name', 'value', 'tooltip', 'observation', 'disabledToUser', 'disabled', 'wire' => null])
+@props(['label', 'name', 'value', 'tooltip', 'observation', 'disabledToUser', 'maxSize' => 100000, 'disabled', 'wire' => null])
 
 @php
     $class = 'form-input block w-full pl-7 pr-12 sm:text-sm sm:leading-5';
@@ -12,7 +12,7 @@
     $wire = $wire && is_bool($wire) ? $name : $wire;
 @endphp
 
-<div {{ $attributes }}>
+<div {{ $attributes }} x-data="registerValidate()">
     <div class="flex">
         <label for="{{ $name }}" class="block text-sm font-medium leading-5 text-gray-700">{{ $label }}</label>
         @if($tooltip)
@@ -37,6 +37,7 @@
                type="number"
                min="0"
                step="0.01"
+               x-on:input="validateSize($event, {{$maxSize}})"
                value="{{ old($name, $value ?? null) }}"
                @if ($wire) wire:model="{{ $wire }}" @endif
                @if(($disabledToUser && user()->role == $disabledToUser) || $disabled) disabled @endif/>
@@ -55,8 +56,8 @@
     </div>
 
     @error($name)
-    <p class="mt-2 text-sm text-red-600">
-        {{ $message }}
-    </p>
+        <p class="mt-2 text-sm text-red-600">
+            {{ $message }}
+        </p>
     @enderror
 </div>
