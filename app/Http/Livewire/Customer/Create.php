@@ -67,11 +67,11 @@ class Create extends Component
         }
 
         $this->customer = new Customer();
-        if (user()->role == 'Office Manager' || user()->role == 'Sales Rep' || user()->role == 'Setter') {
+        if ((user()->role == 'Office Manager' || user()->role == 'Sales Rep' || user()->role == 'Setter') && user()->office_id != null) {
             $this->customer->sales_rep_id  = user()->id;
+            $this->customer->sales_rep_fee = $this->getUserRate(user()->id);
             $this->salesRep = user();
         }
-        $this->customer->sales_rep_fee = $this->getUserRate(user()->id);
         $this->setSelfGen();
     }
 
