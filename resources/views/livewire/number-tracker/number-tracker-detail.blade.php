@@ -308,8 +308,8 @@
                     </div>
 
                     <div class="flex justify-between mt-3">
-                        <div class="grid w-full grid-cols-6 row-gap-2 col-gap-1 xl:grid-cols-7 md:col-gap-4">
-                            <div class="col-span-2 xl:col-span-1 border-2
+                        <div class="grid w-full grid-cols-6 row-gap-2 col-gap-1 xl:grid-cols-12 md:col-gap-4">
+                            <div class="col-span-2 xl:col-span-2 border-2
                                 @if($filterBy == 'doors')
                                     border-green-base bg-green-light
                                 @else
@@ -335,7 +335,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="col-span-2 xl:col-span-1 border-2 @if($filterBy == 'hours')
+                            <div class="col-span-2 xl:col-span-2 border-2 @if($filterBy == 'hours')
                                     border-green-base bg-green-light
                                 @else
                                     border-gray-200
@@ -360,7 +360,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="col-span-2 xl:col-span-1 border-2 @if($filterBy == 'sets')
+                            <div class="col-span-2 xl:col-span-2 border-2 @if($filterBy == 'sets')
                                     border-green-base bg-green-light
                                 @else
                                     border-gray-200
@@ -385,7 +385,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="col-span-3 xl:col-span-2 border-2 @if($filterBy == 'sits')
+                            <div class="col-span-3 xl:col-span-3 border-2 @if($filterBy == 'sits')
                                     border-green-base bg-green-light
                                 @else
                                     border-gray-200
@@ -458,7 +458,7 @@
                                     </span>
                                 </div>
                             </div> --}}
-                            <div class="col-span-3 xl:col-span-2 border-2 @if($filterBy == 'closes')
+                            <div class="col-span-3 xl:col-span-3 border-2 @if($filterBy == 'closes')
                                     border-green-base bg-green-light
                                 @else
                                     border-gray-200
