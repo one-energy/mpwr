@@ -105,7 +105,6 @@
 
     function app() {
         return {
-            isInit: true,
             showDatepicker: false,
             datepickerValue: "{{$value}}",
             month: '',
@@ -118,12 +117,11 @@
                 let day = this.datepickerValue ? new Date(this.datepickerValue) : new Date();
                 this.month = day.getMonth();
                 this.year = day.getFullYear();
-                if(this.isInit){
-                    console.log(this.isInit)
-                    this.datepickerValue = new Date(this.year, this.month, day.getUTCDate()).toDateString();
+                if (!this.datepickerValue) {
                     this.getDateValue(day.getUTCDate());
-                    this.isInit = false;
                 }
+                this.datepickerValue = new Date(this.year, this.month, day.getUTCDate()).toDateString();
+
             },
 
             isToday(date) {
