@@ -2,17 +2,25 @@
 
 namespace App\Http\Livewire\Castle;
 
+use App\Models\Department;
 use App\Models\Region;
 use App\Traits\Livewire\FullTable;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
 class Regions extends Component
 {
     use FullTable;
 
+    public $deletingName;
+
     public ?Region $deletingRegion;
 
     public string $deleteMessage = "Are you sure you want to delete this office?";
+
+    protected $rules = [
+        'deletingRegion.name' => 'nullable',
+    ];
 
     public function sortBy()
     {
@@ -21,34 +29,58 @@ class Regions extends Component
 
     public function render()
     {
-        if (user()->role == "Department Manager") {
-            $regions = Region::query()->select('regions.*')
-                ->join('departments', 'regions.department_id', '=', 'departments.id')
-                ->where('departments.department_manager_id', '=', user()->id);
-        }
-        if (user()->role == "Region Manager") {
-            $regions = Region::query()->select('regions.*')
-                ->where('region_manager_id', '=', user()->id);
-        }
-        if (user()->role == "Admin" || user()->role == "Owner") {
-            $regions = Region::query();
-        }
+        $regions = Region::query()
+            ->when(user()->role == "Department Manager", function (Builder $query) {
+                $departmentIds = Department::query()
+                    ->where('department_manager_id', '=', user()->id)
+                    ->pluck('id');
+
+                $query->whereIn('department_id', $departmentIds);
+            })
+            ->when(user()->role == "Region Manager", function (Builder $query) {
+                $query->where('region_manager_id', '=', user()->id);
+            })
+            ->search($this->search)
+            ->orderBy($this->sortBy, $this->sortDirection)
+            ->paginate($this->perPage);
 
         return view('livewire.castle.regions', [
-            'regions' => $regions
-                ->search($this->search)
-                ->orderBy($this->sortBy, $this->sortDirection)
-                ->paginate($this->perPage),
+            'regions' => $regions,
         ]);
     }
 
-    public function setDeletingRegion($regionId = null)
+    public function setDeletingRegion(?Region $region)
     {
-        $this->deletingRegion = Region::find($regionId);
-        if ($this->deletingRegion  && count($this->deletingRegion->offices)) {
+        $this->resetValidation();
+        $this->deletingRegion       = $region;
+        $this->deletingRegion->name = trim($region->name);
+        if ($this->deletingRegion && $region->offices()->count()) {
             $this->deleteMessage = 'This region is NOT empty. By deleting this region you will also be deleting all other organizations or users in it. To continue, please type the name of the region below and press confirm:';
         } else {
             $this->deleteMessage = 'Are you sure you want to delete this region?';
         }
+    }
+
+    public function destroy()
+    {
+        $region = $this->deletingRegion;
+
+        if ($region->offices()->count()) {
+            $this->validate([
+                'deletingName' => 'same:deletingRegion.name',
+            ], [
+                'deletingName.same' => 'The name of the region doesn\'t match',
+            ]);
+        }
+
+        $region->delete();
+
+        $this->dispatchBrowserEvent('close-modal');
+        $this->deletingRegion = null;
+
+        alert()
+            ->withTitle(__('Region has been deleted!'))
+            ->livewire($this)
+            ->send();
     }
 }

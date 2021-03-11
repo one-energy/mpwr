@@ -24,12 +24,12 @@
                                         <x-table.th-searchable by="departments.name" :sortedBy="$sortBy"
                                                                :direction="$sortDirection">
                                             @lang('Department')
-                                            </x-table.th>
-                                            <x-table.th>
-                                                @lang('Vp')
-                                            </x-table.th>
-                                            <x-table.th></x-table.th>
-                                            <x-table.th></x-table.th>
+                                        </x-table.th-searchable>
+                                        <x-table.th>
+                                            @lang('Vp')
+                                        </x-table.th>
+                                        <x-table.th></x-table.th>
+                                        <x-table.th></x-table.th>
                                     </x-table.th-tr>
                                 </x-slot>
                                 <x-slot name="body">
@@ -58,12 +58,11 @@
 
                     <x-modal x-cloak :title="__('Delete Department')"
                              :description="$deleteMessage">
-
                         <x-form wire:submit.prevent="destroy()" class="w-full p-2">
                             <input type="hidden" name="currentName" wire:model="deletingDepartment.name"
                                    value="{{ optional($deletingDepartment)->name }}">
 
-                            @if (optional(optional($deletingDepartment)->regions)->count() || optional(optional($deletingDepartment)->users)->count())
+                            @if (optional(optional($deletingDepartment)->regions())->count() || optional(optional($deletingDepartment)->users())->count())
                                 <x-input class="pb-2" label="Department Name" name="deletingName" wire/>
                             @endif
                             <div class="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto justify-end space-x-2">

@@ -1,7 +1,7 @@
-@if ($alert = session('alert'))
-    <x-alert
-        :color="$alert->color"
-        :title="$alert->title"
-        :description="$alert->description"
-     />
-@endif
+@php($alert = session('alert'))
+
+<x-alert
+    :color="optional($alert)->color"
+    :title="optional($alert)->title"
+    :description="optional($alert)->description"
+/>

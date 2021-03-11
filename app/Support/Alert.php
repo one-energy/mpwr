@@ -10,6 +10,8 @@ class Alert
 
     public $description = '';
 
+    public $livewire;
+
     public function withColor($color)
     {
         $this->color = $color;
@@ -31,8 +33,19 @@ class Alert
         return $this;
     }
 
+    public function livewire($livewire)
+    {
+        $this->livewire = $livewire;
+
+        return $this;
+    }
+
     public function send()
     {
-        session()->flash('alert', $this);
+        if ($this->livewire) {
+            $this->livewire->dispatchBrowserEvent('show-alert', $this);
+        } else {
+            session()->flash('alert', $this);
+        }
     }
 }

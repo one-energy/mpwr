@@ -56,6 +56,7 @@ class Offices extends Component
 
     public function setDeletingOffice(?Office $office)
     {
+        $this->resetValidation();
         $this->deletingOffice = $office;
         if ($this->deletingOffice && $office->users()->count()) {
             $this->deleteMessage = 'This office is NOT empty. By deleting this office you will also be deleting all other organizations or users in it. To continue, please type the name of the office below and press confirm:';
@@ -72,7 +73,7 @@ class Offices extends Component
             $this->validate([
                 'deletingName' => 'same:deletingOffice.name',
             ], [
-                'deletingName.same' => 'The name of the department doesn\'t match',
+                'deletingName.same' => 'The name of the office doesn\'t match',
             ]);
         }
 
@@ -83,8 +84,7 @@ class Offices extends Component
 
         alert()
             ->withTitle(__('Office has been deleted!'))
+            ->livewire($this)
             ->send();
-
-        return back();
     }
 }

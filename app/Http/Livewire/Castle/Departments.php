@@ -38,6 +38,7 @@ class Departments extends Component
 
     public function setDeletingDepartment(?Department $department)
     {
+        $this->resetValidation();
         $this->deletingDepartment = $department;
         if ($this->deletingDepartment && ($department->regions()->count() || $department->users()->count())) {
             $this->deleteMessage = 'This department is NOT empty. By deleting this department you will also be deleting all other organizations or users in it. To continue, please type the name of the department below and press confirm:';
@@ -69,6 +70,7 @@ class Departments extends Component
 
         alert()
             ->withTitle(__('Department has been deleted!'))
+            ->livewire($this)
             ->send();
     }
 }
