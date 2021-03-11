@@ -9,7 +9,7 @@
     $wire = $wire && is_bool($wire) ? $name : $wire;
 @endphp
 
-<div {{ $attributes }} x-data="register()">
+<div {{ $attributes }} x-data="registerValidate()">
     <label for="{{ $name }}" class="block text-sm font-medium leading-5 text-gray-700">{{ $label }}</label>
 
     <div class="mt-1 relative rounded-md shadow-sm">
@@ -44,7 +44,7 @@
 
     @push('scripts')
         <script>
-            function register() {
+            function registerValidate() {
                 var oldValue = 0;
                 return {
                     validateSize($event, $maxSize) {

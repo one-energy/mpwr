@@ -12,7 +12,7 @@
     $wire = $wire && is_bool($wire) ? $name : $wire;
 @endphp
 
-<div {{ $attributes }} x-data="register()">
+<div {{ $attributes }} x-data="registerValidate()">
     <div class="flex">
         <label for="{{ $name }}" class="block text-sm font-medium leading-5 text-gray-700">{{ $label }}</label>
         @if($tooltip)

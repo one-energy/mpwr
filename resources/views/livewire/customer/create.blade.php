@@ -34,7 +34,7 @@
                 </div>
 
                 <div class="col-span-1 md:col-span-2">
-                    <x-input-add-on wire:model="customer.system_size" label="System Size" name="system_size" maxSize="10000" addOn="kW" name="customer.system_size"/>
+                    <x-input-add-on wire:model="customer.system_size" label="System Size" name="system_size" maxSize="100000" addOn="kW" name="customer.system_size"/>
                 </div>
 
                 <div class="col-span-1">
@@ -90,7 +90,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-6">
-                    <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc" observation="Sold Price" maxSize="1000"/>
+                    <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc" observation="Sold Price" maxSize="100000"/>
                 </div>
 
                 <div class="col-span-2 md:col-span-3" wire:ignore>
