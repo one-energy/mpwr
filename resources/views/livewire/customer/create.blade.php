@@ -8,16 +8,16 @@
         <form wire:submit.prevent="store">
             <div class="grid grid-cols-2 gap-4 sm:col-gap-4 md:grid-cols-6">
                 @if(user()->role == 'Admin' || user()->role == 'Owner')
-                <div class="col-span-2 md:col-span-6">
-                    <x-select wire:model="departmentId" label="Department" name="departmentId">
-                        @foreach($departments as $department)
-                            <option
-                                value="{{ $department->id }}" {{ old('departmentId') == $department ? 'selected' : '' }}>
-                                {{ $department->name }}
-                            </option>
-                        @endforeach
-                    </x-select>
-                </div>
+                    <div class="col-span-2 md:col-span-6">
+                        <x-select wire:model="departmentId" label="Department" name="departmentId">
+                            @foreach($departments as $department)
+                                <option
+                                    value="{{ $department->id }}" {{ old('departmentId') == $department ? 'selected' : '' }}>
+                                    {{ $department->name }}
+                                </option>
+                            @endforeach
+                        </x-select>
+                    </div>
                 @endif
 
                 <input type="hidden" value="{{ $openedById }}" name="opened_by_id"/>
@@ -34,7 +34,7 @@
                 </div>
 
                 <div class="col-span-1 md:col-span-2">
-                    <x-input-add-on wire:model="customer.system_size" label="System Size" name="system_size" addOn="kW" name="customer.system_size"/>
+                    <x-input-add-on wire:model="customer.system_size" label="System Size" name="system_size" maxSize="100000" addOn="kW" name="customer.system_size"/>
                 </div>
 
                 <div class="col-span-1">
@@ -63,38 +63,32 @@
                     </x-select>
                 </div>
 
-                @if($customer->financing_id == 1)
-                    <div class="col-span-1 md:col-span-1 md:col-start-4">
-                        <x-select wire:model="customer.financer_id" label="Financer" name="customer.financer_id">
-                            @if (old('financer') == '')
-                                <option value="" selected>None</option>
-                            @endif
-                            @foreach($financers as $financer)
-                                <option value="{{ $financer->id }}" {{ old('financing') == $financer->id ? 'selected' : '' }}>
-                                    {{ $financer ->name }}
-                                </option>
-                            @endforeach
-                        </x-select>
-                    </div>
-                @endif
+                <div class="col-span-1 md:col-span-1 md:col-start-4 @if($customer->financing_id != 1) hidden @endif">
+                    <x-select wire:model="customer.financer_id" label="Financer" name="customer.financer_id">
+                        @if (old('financer') == '')
+                            <option value="" selected>None</option>
+                        @endif
+                        @foreach($financers as $financer)
+                            <option value="{{ $financer->id }}" {{ old('financing') == $financer->id ? 'selected' : '' }}>
+                                {{ $financer ->name }}
+                            </option>
+                        @endforeach
+                    </x-select>
+                </div>
 
-                @if($customer->financer_id == 1)
-                    <div class="col-span-1 md:col-span-2">
-                        <x-select wire:model="customer.term_id" label="Term" name="customer.term_id" readonly>
-                            @if (old('term_id') == '')
-                                <option value="" selected>None</option>
-                            @endif
-                            @foreach($terms as $term)
-                                <option value="{{ $term->id }}" {{ old('term_id') == $term->id ? 'selected' : '' }}>
-                                    {{ $term->value }}
-                                </option>
-                            @endforeach
-                        </x-select>
-                    </div>
-                @endif
+                <div class="col-span-1 md:col-span-2 @if($customer->financer_id != 1) hidden @endif">
+                    <x-select wire:model="customer.term_id" label="Term" name="customer.term_id">
+                        <option value="" selected>None</option>
+                        @foreach($terms as $term)
+                            <option value="{{ $term->id }}" >
+                                {{ $term->value }}
+                            </option>
+                        @endforeach
+                    </x-select>
+                </div>
 
                 <div class="col-span-2 md:col-span-6">
-                    <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc" observation="Sold Price"/>
+                    <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc" observation="Sold Price" maxSize="100000"/>
                 </div>
 
                 <div class="col-span-2 md:col-span-3" wire:ignore>
@@ -151,11 +145,9 @@
                     <x-input wire:model="stockPoints" label="Stock Points" name="stockPoints" readonly/>
                 </div>
 
-                @if($customer->financer_id == 1)
-                    <div class="col-span-2 md:col-span-1">
-                        <x-input wire:model="customer.enium_points" label="Noble Pay Points" name="customer.enium_points" readonly/>
-                    </div>
-                @endif
+                <div class="col-span-2 md:col-span-1 @if($customer->financer_id != 1) hidden @endif ">
+                    <x-input wire:model="customer.enium_points" label="Noble Pay Points" name="customer.enium_points" readonly/>
+                </div>
             </div>
 
             <div class="pt-5 mt-8 border-t border-gray-200">

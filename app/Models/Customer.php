@@ -6,23 +6,51 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
+ * App\Models\Customer
+ *
  * @property int $id
+ * @property int|null $financing_id
+ * @property int|null $financer_id
+ * @property int|null $term_id
  * @property string $first_name
  * @property string $last_name
- * @property string $setter_id
- * @property string $pay
- * @property float $system_size
- * @property float $bill
- * @property float $financing
- * @property float $adders
- * @property float $epc
- * @property float $commission
- * @property float $setter_fee
- * @property boolean $panel_sold
- * @property boolean $is_active
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property Carbon $deleted_at
+ * @property string|null $system_size
+ * @property string $bill
+ * @property string|null $pay
+ * @property \App\Models\Financing|null $financing
+ * @property string|null $adders
+ * @property string|null $epc
+ * @property float|null $commission
+ * @property string|null $setter_fee
+ * @property bool $is_active
+ * @property bool $panel_sold
+ * @property int|null $setter_id
+ * @property int $opened_by_id
+ * @property float $margin
+ * @property \datetime $date_of_sale
+ * @property int $sales_rep_comission
+ * @property int|null $enium_points
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property int|null $rate_id
+ * @property string|null $sales_rep_fee
+ * @property int|null $sales_rep_id
+ * @property-read \App\Models\Financer|null $financer
+ * @property-read mixed $opened_by
+ * @property-read mixed $setter
+ * @property-read \App\Models\Term|null $term
+ * @property-read \App\Models\User $userOpenedBy
+ * @property-read \App\Models\User|null $userSalesRep
+ * @property-read \App\Models\User|null $userSetter
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer installed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer newQuery()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Customer onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer query()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Customer withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Customer withoutTrashed()
+ * @mixin \Eloquent
  */
 class Customer extends Model
 {
@@ -98,8 +126,10 @@ class Customer extends Model
     public function calcComission()
     {
         if ($this->epc >= 0 && $this->sales_rep_fee >= 0 && $this->setter_fee >= 0 && $this->system_size && $this->adders >= 0) {
-            $this->sales_rep_comission = (($this->epc - $this->sales_rep_fee - $this->setter_fee) * ($this->system_size * 1000)) - $this->adders;
+            // dd((float)((floatval($this->epc) - floatval($this->sales_rep_fee) - floatval($this->setter_fee)) * (intval($this->system_size) * 1000)) - floatval($this->adders));
+            $this->sales_rep_comission = ((floatval($this->epc) - floatval($this->sales_rep_fee) - floatval($this->setter_fee)) * (floatval($this->system_size) * 1000)) - floatval($this->adders);
         } else {
+            // dd('test');
             $this->sales_rep_comission = 0;
         }
     }
@@ -107,7 +137,7 @@ class Customer extends Model
     public function calcMargin()
     {
         if ($this->epc) {
-            $this->margin = $this->epc - $this->setter_fee;
+            $this->margin = floatval($this->epc) - floatval($this->setter_fee);
         } else {
             $this->margin = 0;
         }

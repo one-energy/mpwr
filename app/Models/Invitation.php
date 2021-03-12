@@ -7,13 +7,20 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 
 /**
+ * App\Models\Invitation
+ *
  * @property int $id
+ * @property int|null $user_id
  * @property string $token
  * @property string $email
- * @property boolean $master
- * @property Carbon $created_at
- * @property Carbon $deleted_at
- * @property int|null $user_id
+ * @property int $master
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Invitation newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Invitation newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Invitation query()
+ * @mixin \Eloquent
  */
 class Invitation extends Model
 {

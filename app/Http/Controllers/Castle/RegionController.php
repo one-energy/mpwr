@@ -6,78 +6,59 @@ use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\Region;
 use App\Models\User;
-use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
 
 class RegionController extends Controller
 {
-    //
+    public function getRegions(Department $department)
+    {
+        return Region::query()
+            ->with('department')
+            ->when(user()->role == "Department Manager", function (Builder $query) use ($department) {
+                $query->where('department_id', '=', $department->id);
+            })
+            ->when(user()->role == "Region Manager", function (Builder $query) {
+                $query->where('region_manager_id', '=', user()->id);
+            })
+            ->when(user()->role == "Office Manager", function (Builder $query) {
+                $query->where('id', '=', user()->office->region->id);
+            })
+            ->get();
+    }
+
     public function index()
     {
-        $regions = Region::all();
-
-        return view('castle.regions.index', compact('regions'));
+        return view('castle.regions.index', [
+            'regions' => Region::all(),
+        ]);
     }
 
-    public function edit(Region $region)
+    public function create()
     {
-        $users       = User::query()->where('role', 'Region Manager')->get();
-        $departments = Department::all();
+        $users = User::query()
+            ->where('role', '=', "Region Manager")
+            ->when(user()->role == "Department Manager", function (Builder $query) {
+                $query->where('department_id', '=', user()->department_id);
+            })
+            ->get();
 
-        return view('castle.regions.edit', compact('region', 'users', 'departments'));
-    }
-
-    public function update(Region $region)
-    {
-        $validated = $this->validate(
-            request(),
-            [
-                'name'              => 'required|string|min:3|max:255',
-                'region_manager_id' => 'required',
-            ],
-            [
-                'region_id.required'         => 'The region field is required.',
-                'region_manager_id.required' => 'The region manager field is required.',
-            ],
-        );
-
-        $region->name                       = $validated['name'];
-        $region->region_manager_id          = $validated['region_manager_id'];
-
-        $region->save();
-
-        alert()
-            ->withTitle(__('Region updated!'))
-            ->send();
-
-        return redirect(route('castle.regions.index'));
-    }
-
-    public function destroy($id)
-    {
-        Region::destroy($id);
-
-        alert()
-            ->withTitle(__('Region has been deleted!'))
-            ->send();
-
-        return back();
+        return view('castle.regions.create', [
+            'departments' => Department::all(),
+            'users'       => $users,
+        ]);
     }
 
     public function store()
     {
-        $validated = $this->validate(
-            request(),
-            [
-                'name'              => 'required|string|min:3|max:255',
-                'region_manager_id' => 'required',
-                'department_id'     => 'required',
-            ],
-            [
-                'region_id.required'         => 'The region field is required.',
-                'region_manager_id.required' => 'The region manager field is required.',
-                'department_id.required'     => 'The department field is required.',
-            ],
-        );
+        $validated = request()->validate([
+            'name'              => 'required|string|min:3|max:255',
+            'region_manager_id' => 'required',
+            'department_id'     => 'required',
+        ], [
+            'region_id.required'         => 'The region field is required.',
+            'region_manager_id.required' => 'The region manager field is required.',
+            'department_id.required'     => 'The department field is required.',
+        ]);
 
         $region                    = new Region();
         $region->name              = $validated['name'];
@@ -93,40 +74,34 @@ class RegionController extends Controller
         return redirect(route('castle.regions.index'));
     }
 
-    public function create()
+    public function edit(Region $region)
     {
-        $usersQuery   = User::query()->whereRole("Region Manager");
-
-        if (user()->role == "Admin" || user()->role == "Owner") {
-            $users = $usersQuery->get();
-        }
-        if (user()->role == "Department Manager") {
-            $users = $usersQuery->whereDepartmentId(user()->department_id)->get();
-        }
-        $departments = Department::all();
-
-        return view('castle.regions.create', compact('users', 'departments'));
+        return view('castle.regions.edit', [
+            'region'      => $region,
+            'users'       => User::query()->where('role', 'Region Manager')->get(),
+            'departments' => Department::all(),
+        ]);
     }
 
-    public function getRegions($departmentId = null)
+    public function update(Region $region)
     {
-        $regionsQuery = Region::with('department');
+        $validated = request()->validate([
+            'name'              => 'required|string|min:3|max:255',
+            'region_manager_id' => 'required',
+        ], [
+            'region_id.required'         => 'The region field is required.',
+            'region_manager_id.required' => 'The region manager field is required.',
+        ]);
 
-        if (user()->role == "Admin" || user()->role == "Owner") {
-            $regions = $regionsQuery->get();
-        }
+        $region->name              = $validated['name'];
+        $region->region_manager_id = $validated['region_manager_id'];
 
-        if (user()->role == "Department Manager") {
-            $regions =  $regionsQuery->whereDepartmentId($departmentId)->get();
-        }
-        if (user()->role == "Region Manager") {
-            $regions =  $regionsQuery->whereRegionManagerId(user()->id)->get();
-        }
+        $region->save();
 
-        if (user()->role == "Office Manager") {
-            $regions =  $regionsQuery->where("regions.id", "=", user()->office->region->id)->get();
-        }
+        alert()
+            ->withTitle(__('Region updated!'))
+            ->send();
 
-        return $regions;
+        return redirect(route('castle.regions.index'));
     }
 }

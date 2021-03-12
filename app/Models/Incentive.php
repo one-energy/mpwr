@@ -6,13 +6,25 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
+ * App\Models\Incentive
+ *
  * @property int $id
- * @property string $name
  * @property int $number_installs
- * @property int $installs_achieved
+ * @property string $name
  * @property int $installs_needed
- * @property int $kw_achieved
  * @property int $kw_needed
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property int|null $department_id
+ * @property-read \App\Models\Department|null $department
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Incentive newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Incentive newQuery()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Incentive onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Incentive query()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Incentive withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Incentive withoutTrashed()
+ * @mixin \Eloquent
  */
 class Incentive extends Model
 {

@@ -4,7 +4,9 @@
     $color = $color ?? 'green';
 @endphp
 
-<div x-data="{ open: false }" x-init="setTimeout(()=> {open = true; setTimeout(()=> {open = false}, 3000)}, 300)"
+<div x-data="alert()" x-cloak
+     x-init="init()"
+     x-on:show-alert.window="showEvent($event.detail)"
      class="fixed inset-0 flex items-end justify-center px-4 py-6 pointer-events-none sm:p-6 sm:items-start sm:justify-end"
      x-show="open"
      x-transition:enter="transform ease-out duration-300 transition"
@@ -19,21 +21,18 @@
             <div class="p-4">
                 <div class="flex items-start">
                     <div class="flex-shrink-0">
-                        @if($color == 'green')
+                        <template x-if="color == 'green'">
                             <x-svg.check :class='"h-6 w-6 text-green-base mr-2"'/>
-                        @else
-                            <x-svg.check :class='"h-6 w-6 text-{$color}-500 mr-2"'/>
-                        @endif
+                        </template>
+                        <template x-if="color != 'green'">
+                            <x-svg.check :class='"h-6 w-6 mr-2"' x-bind:class="'text-' + color + '-500'"/>
+                        </template>
                     </div>
                     <div class="ml-3 w-0 flex-1 pt-0.5">
-                        <p class="text-sm font-medium leading-5 text-gray-900">
-                            {{ $title }}
-                        </p>
-                        @if($description ?? false )
-                            <p class="mt-1 text-sm leading-5 text-gray-500">
-                                {{ $description }}
-                            </p>
-                        @endif
+                        <p class="text-sm font-medium leading-5 text-gray-900" x-text="title"/>
+                        <template x-if="description">
+                            <p class="mt-1 text-sm leading-5 text-gray-500" x-text="description"/>
+                        </template>
                     </div>
                     <div class="flex flex-shrink-0 ml-4">
                         <button
@@ -46,3 +45,36 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+    <script>
+        function alert() {
+            return {
+                open: false,
+                title: '{{ $title }}',
+                description: '{{ $description ?? '' }}',
+                color: '{{ $color }}',
+                shouldInit: {{ $title ? 'true' : 'false' }},
+                show() {
+                    setTimeout(() => {
+                        this.open = true;
+                        setTimeout(() => {
+                            this.open = false
+                        }, 3000);
+                    }, 300);
+                },
+                showEvent(detail) {
+                    this.title = detail.title;
+                    this.description = detail.description;
+                    this.color = detail.color;
+                    this.show();
+                },
+                init() {
+                    if (this.shouldInit) {
+                        this.show();
+                    }
+                }
+            }
+        }
+    </script>
+@endpush
