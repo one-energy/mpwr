@@ -156,9 +156,11 @@ class NumberTrackerDetail extends Component
         if($this->filterBy == 'sits'){
             return $query->orderBy(DB::raw("`sits` + `set_sits`"), $this->order)->get();
         }
+
         if($this->filterBy == 'closes'){
             return $query->orderBy(DB::raw("`closes` + `set_closes`"), $this->order)->get();
         }
+
         return $query->orderBy($this->filterBy, $this->order)->get();
     }
 
