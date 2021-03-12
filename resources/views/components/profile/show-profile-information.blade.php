@@ -85,7 +85,7 @@
                 @if(user()->dailyNumbers->sum('sits') > 0)
                 {{number_format(user()->dailyNumbers->sum('set_closes') / user()->dailyNumbers->sum('sits'), 2) * 100}}%
                 @else
-                0
+                -
                 @endif
             </div>
         </div>
