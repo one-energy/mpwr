@@ -508,39 +508,6 @@
                             </div>
                         </div>
                     </div>
-<!--
-
-                    <div class="flex justify-between w-full mt-6">
-                        <div>
-                            <div class="text-lg font-bold">
-                                {{$graficValue}}
-                            </div>
-                            <div class="flex font-semibold text-xs
-                                @if($graficValueLast > $graficValue)
-                                    text-red-600
-                                @else
-                                    text-green-base
-                                @endif">
-                                @if($graficValueLast > $graficValue)
-                                    <x-svg.arrow-down class="text-red-600"/>
-                                @else
-                                    <x-svg.arrow-up class="text-green-base"/>
-                                @endif
-                                <span>
-                                    {{$graficValue - $graficValueLast}}
-                                    @if($numbersTrackedLast->sum('closes') != 0 )
-                                        ({{number_format((($graficValue - $graficValueLast)/$graficValueLast)*100, 2)}}%)
-                                    @else
-                                        (0%)
-                                    @endif
-                                </span>
-                            </div>
-                        </div>
-                        <a href="#">
-                            <x-svg.panel></x-svg.panel>
-                        </a>
-                    </div>
-                    <div class="flex w-full md:justify-between" id="chart_div"></div> -->
 
                     <div class="flex justify-start gap-4 mt-6">
                         <div class="col-span-1 border-2
