@@ -8,9 +8,7 @@
 
 @section('content')
     @if (session('resent'))
-        <x-alert class="mb-4">
-            {{ __('A fresh verification link has been sent to your email address.') }}
-        </x-alert>
+        <x-alert class="mb-4" title="{{ __('A fresh verification link has been sent to your email address.') }}"></x-alert>
     @endif
 
     <x-card class="h-96 ">
