@@ -2,9 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\DailyNumber;
 use Illuminate\Database\Eloquent\Factories\Factory;
 class DailyNumberFactory extends Factory
 {
+    protected $model = DailyNumber::class;
+
     public function definition()
     {
         return [

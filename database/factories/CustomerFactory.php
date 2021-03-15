@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Customer;
 use App\Models\Financing;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -9,6 +10,8 @@ use Illuminate\Support\Carbon;
 
 class CustomerFactory extends Factory
 {
+    protected $model = Customer::class;
+
     public function definition()
     {
         $epc        = $this->faker->randomFloat(2, 1, 1000);

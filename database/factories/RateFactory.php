@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class RateFactory extends Factory
 {
+    protected $model = Rate::class;
     public function definition()
     {
         return [

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class OfficeFactory extends Factory
 {
+    protected $model = Office::class;
     public function definition()
     {
         return [

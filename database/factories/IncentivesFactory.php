@@ -2,10 +2,13 @@
 
 namespace Database\Factories;
 
+use App\Models\Incentive;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class IncentivesFactory extends Factory
 {
+    protected $model = Incentive::class;
+
     public function definition()
     {
         $incentives = [
