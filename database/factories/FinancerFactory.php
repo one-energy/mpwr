@@ -1,12 +1,14 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use App\Models\Financer;
-use Faker\Generator as Faker;
-
-$factory->define(Financer::class, function (Faker $faker) {
-    return [
-        'name' => 'Enium'
-    ];
-});
+use Illuminate\Database\Eloquent\Factories\Factory;
+class FinancerFactory extends Factory
+{
+    public function definition()
+    {
+        return [
+            'name' => 'Enium'
+        ];
+    }
+}

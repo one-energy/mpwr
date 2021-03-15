@@ -1,16 +1,20 @@
 <?php
 
-use App\Models\DailyNumber;
-use Faker\Generator as Faker;
+namespace Database\Factories;
 
-$factory->define(DailyNumber::class, function (Faker $faker) {
-    return [
-        'date'       => $faker->date($format = 'Y-m-d', $max = 'now'),
-        'doors'      => rand(1, 100),
-        'hours'      => rand(1, 100),
-        'sets'       => rand(1, 100),
-        'sits'       => rand(1, 100),
-        'set_closes' => rand(1, 100),
-        'closes'     => rand(1, 100)
-    ];
-});
+use Illuminate\Database\Eloquent\Factories\Factory;
+class DailyNumberFactory extends Factory
+{
+    public function definition()
+    {
+        return [
+            'date'       => $this->faker->date($format = 'Y-m-d', $max = 'now'),
+            'doors'      => rand(1, 100),
+            'hours'      => rand(1, 100),
+            'sets'       => rand(1, 100),
+            'sits'       => rand(1, 100),
+            'set_closes' => rand(1, 100),
+            'closes'     => rand(1, 100)
+        ];
+    }
+}

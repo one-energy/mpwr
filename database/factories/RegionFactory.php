@@ -1,11 +1,16 @@
 <?php
 
-use App\Models\Region;
-use Faker\Generator as Faker;
+namespace Database\Factories;
 
-/** @var Factory $factory */
-$factory->define(Region::class, function (Faker $faker) {
-    return [
-        'name' => $faker->city,
-    ];
-});
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class RegionFactory extends Factory
+{
+    public function definition()
+    {
+        return [
+            'name' => $this->faker->city,
+        ];
+    }
+
+}

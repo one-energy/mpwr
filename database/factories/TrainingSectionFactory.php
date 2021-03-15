@@ -1,12 +1,15 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use App\Models\TrainingPageSection;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(TrainingPageSection::class, function (Faker $faker) {
-    return [
-        'title' => $faker->name
-    ];
-});
+class TrainingSectionFactory extends Factory
+{
+    public function definition()
+    {
+        return [
+            'title' => $this->faker->name
+        ];
+    }
+}

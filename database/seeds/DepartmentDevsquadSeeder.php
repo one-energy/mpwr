@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Models\Department;
 use App\Models\TrainingPageSection;
 use App\Models\User;
@@ -14,9 +16,9 @@ class DepartmentDevsquadSeeder extends Seeder
      */
     public function run()
     {
-        $department  = factory(Department::class)->create(['name' => 'Devsquad Department']);
+        $department  = Department::factory()->create(['name' => 'Devsquad Department']);
 
-        $userDepartmentOne = factory(User::class)->create([
+        $userDepartmentOne = User::factory()->create([
             'first_name'    => 'Devsquad',
             'last_name'     => 'Department Manager',
             'email'         => 'devsquadmanager@devsquad.com',
@@ -28,7 +30,7 @@ class DepartmentDevsquadSeeder extends Seeder
         $department->department_manager_id = $userDepartmentOne->id;
         $department->save();
 
-        factory(TrainingPageSection::class)->create([
+        TrainingPageSection::factory()->create([
             'title' => 'Training Page',
             'department_id' => $department->id
         ]);

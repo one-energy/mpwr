@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Models\DailyNumber;
 use App\Models\Department;
 use App\Models\Office;
@@ -16,9 +18,9 @@ class DepartmentTwo extends Seeder
      */
     public function run()
     {
-        $department  = factory(Department::class)->create();
+        $department  = Department::factory()->create();
 
-        $userDepartmentOne = factory(User::class)->create([
+        $userDepartmentOne = User::factory()->create([
             'first_name'    => 'Department two',
             'last_name'     => 'Manager',
             'email'         => '2.departmentmanager@devsquad.com',
@@ -28,9 +30,9 @@ class DepartmentTwo extends Seeder
         ]);
         $department->department_manager_id = $userDepartmentOne->id;
         $department->save();
-        
+
         //Region
-        factory(User::class)->create([
+        User::factory()->create([
             'first_name'    => 'Region two',
             'last_name'     => 'Manager',
             'email'         => '2.regionmanager@devsquad.com',
@@ -38,7 +40,7 @@ class DepartmentTwo extends Seeder
             'role'          => 'Region Manager',
             'master'        => true,
         ]);
-        factory(User::class)->create([
+        User::factory()->create([
             'first_name'    => 'Other Region two',
             'last_name'     => 'Manager',
             'email'         => '2.region2manager@devsquad.com',
@@ -48,7 +50,7 @@ class DepartmentTwo extends Seeder
         ]);
 
         //Office
-        factory(User::class)->create([
+        User::factory()->create([
             'first_name'    => 'Office two',
             'last_name'     => 'Manager',
             'email'         => '2.officemanager@devsquad.com',
@@ -56,7 +58,7 @@ class DepartmentTwo extends Seeder
             'role'          => 'Office Manager',
             'master'        => true,
         ]);
-        factory(User::class)->create([
+        User::factory()->create([
             'first_name'    => 'Other Office two',
             'last_name'     => 'Manager',
             'email'         => '2.office2manager@devsquad.com',
@@ -74,33 +76,33 @@ class DepartmentTwo extends Seeder
             'East',
             'West',
         );
-    
+
         array_map(function ($region) use ($department, $officesName){
-            $regionManager = factory(User::class)->create([
+            $regionManager = User::factory()->create([
                 'master'        => false,
                 'role'          => 'Region Manager',
                 'department_id' => $department->id
             ]);
 
-            $region = factory(Region::class)->create([
+            $region = Region::factory()->create([
                 'name'              => $region,
                 'region_manager_id' => $regionManager->id,
                 'department_id'     => $regionManager->department_id
             ]);
             array_map(function ($office) use ($department, $region){
-                $testOfficeManager = factory(User::class)->create([
+                $testOfficeManager = User::factory()->create([
                     'master'        => false,
                     'role'          => 'Office Manager',
                     'department_id' => $department
                 ]);
-                $office = factory(Office::class)->create([
+                $office = Office::factory()->create([
                     'name'              => $office,
                     'office_manager_id' => $testOfficeManager->id,
                     'region_id'         => $region->id,
                 ]);
 
                 for ($x = 0; $x < 10; $x++) {
-                    $member = factory(User::class)->create([
+                    $member = User::factory()->create([
                         'role'          => ($x & 1) ? "Setter" : "Sales rep",
                         'office_id'     => $office->id,
                         'department_id' => $department
@@ -108,7 +110,7 @@ class DepartmentTwo extends Seeder
                     $today  = date('d');
                     $date   = date('Y-m-01');
                     for($y = 0; $y < ($today - 1); $y++){
-                        factory(DailyNumber::class)->create([
+                        DailyNumber::factory()->create([
                             'date'    => date('Y-m-d', strtotime($date . '+' . $y . 'day')),
                             'user_id' => $member->id,
                             'hours'   => rand(0,24)
