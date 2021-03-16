@@ -36,13 +36,13 @@
                                           name="customer.date_of_sale" :value="$customer->date_of_sale"/>
                     </div>
 
-                    <div class="col-span-1 md:col-span-2">
+                    <div class="col-span-1 md:col-span-2 @if($customer->setter_id == user()->id) md:col-span-3 @endif">
                         <x-input-add-on wire:model="customer.system_size" label="System Size" name="system_size"
                                         addOn="kW" name="customer.system_size"/>
                     </div>
 
-                    <div class="col-span-1">
-                        <x-select wire:model="customer.bill" label="Bill" name="customer.bill">
+                    <div class="col-span-1 @if($customer->setter_id == user()->id) hidden @endif">
+                        <x-select  wire:model="customer.bill" label="Bill" name="customer.bill">
                             @if (old('bill') == '')
                                 <option value="" selected>None</option>
                             @endif
@@ -54,7 +54,7 @@
                         </x-select>
                     </div>
 
-                    <div class="col-span-2 md:col-span-3">
+                    <div class="col-span-2 md:col-span-3 @if($customer->setter_id == user()->id) hidden @endif">
                         <x-select wire:model="customer.financing_id" label="Financing" name="customer.financing_id">
                             @if (old('financing') == '')
                                 <option value="" selected>None</option>
@@ -69,7 +69,7 @@
                     </div>
 
                     @if($customer->financing_id == 1)
-                        <div class="col-span-1 md:col-span-1 md:col-start-4">
+                        <div class="col-span-1 md:col-span-1 md:col-start-4 @if($customer->setter_id == user()->id) hidden @endif">
                             <x-select wire:model="customer.financer_id" label="Financer" name="customer.financer_id">
                                 @if (old('financer') == '')
                                     <option value="" selected>None</option>
@@ -84,7 +84,7 @@
                         </div>
                     @endif
 
-                    <div class="col-span-1 md:col-span-2 @if($customer->financer_id != 1) hidden @endif">
+                    <div class="col-span-1 md:col-span-2 @if($customer->financer_id != 1 || $customer->setter_id == user()->id) hidden @endif">
                         <x-select wire:model="customer.term_id" label="Term" name="customer.term_id" readonly>
                             @if (old('term_id') == '')
                                 <option value="" selected>None</option>
@@ -97,7 +97,7 @@
                         </x-select>
                     </div>
 
-                    <div class="col-span-2 md:col-span-6">
+                    <div class="col-span-2 md:col-span-6 @if($customer->setter_id == user()->id) hidden @endif">
                         <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc"
                                           observation="Sold Price"/>
                     </div>
@@ -130,37 +130,37 @@
                             placeholder="{{$customer->userSalesRep->first_name}} {{$customer->userSalesRep->last_name}}" />
                     </div>
 
-                    <div class="col-span-2 md:col-span-3">
+                    <div class="col-span-2 md:col-span-3 @if($customer->setter_id == user()->id) hidden @endif">
                         <x-input-currency wire:model="customer.sales_rep_fee" label="Sales Rep Pay Rate"
                                           name="customer.sales_rep_fee" readonly/>
                     </div>
 
-                    <div class="col-span-2 md:col-span-1">
+                    <div class="col-span-2 md:col-span-1 @if($customer->setter_id == user()->id) hidden @endif">
                         <x-input-currency wire:model="customer.margin" label="Margin" name="customer.margin"
                                           readonly></x-input-currency>
                     </div>
 
-                    <div class="col-span-2 md:col-span-2">
+                    <div class="col-span-2 md:col-span-2 @if($customer->setter_id == user()->id) hidden @endif">
                         <x-input wire:model="grossRepComission" label="Gross Rep Comission" name="grossRepComission"
                                  type="number" readonly/>
                     </div>
 
-                    <div class="col-span-2 md:col-span-3">
+                    <div class="col-span-2 md:col-span-3 @if($customer->setter_id == user()->id) hidden @endif">
                         <x-input wire:model="customer.adders" label="Adders Total" name="custormer.adders" step="0.01"
                                  type="number"/>
                     </div>
 
-                    <div class="col-span-2 md:col-span-3">
+                    <div class="col-span-2 md:col-span-3 @if($customer->setter_id == user()->id) hidden @endif">
                         <x-input-currency wire:model="customer.sales_rep_comission" label="Net Rep Commisson"
                                           name="customer.sales_rep_comission" readonly/>
                     </div>
 
-                    <div class="col-span-2">
+                    <div class="col-span-2 @if($customer->setter_id == user()->id) hidden @endif">
                         <x-input-currency wire:model="stockPoints" label="Stock Points" name="stockPoints" readonly/>
                     </div>
 
                     @if($customer->financer_id == 1)
-                        <div class="col-span-2 md:col-span-1">
+                        <div class="col-span-2 md:col-span-1 @if($customer->setter_id == user()->id) hidden @endif">
                             <x-input-currency wire:model="customer.enium_points" label="Noble Pay Points"
                                               name="customer.enium_points" readonly/>
                         </div>
@@ -185,7 +185,7 @@
                         </div>
                     </div>
 
-                    <div class="sm:col-span-1">
+                    <div class="sm:col-span-1 @if($customer->setter_id == user()->id) hidden @endif">
                         <label class="block text-sm font-medium leading-5 text-gray-700">
                             Your Commission
                         </label>
