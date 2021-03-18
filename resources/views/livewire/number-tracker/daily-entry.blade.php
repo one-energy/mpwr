@@ -12,10 +12,6 @@
                                     </x-link>
                                 </div>
 
-                                <!-- component -->
-                                <link rel="stylesheet" href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css">
-                                <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.js" defer></script>
-
                                 <div class="antialiased sans-serif">
                                     <div x-data="app()" x-init="[initDate(), getNoOfDays()]">
                                         <div class="container mx-auto">
@@ -411,7 +407,6 @@
             getMissingDates() {
                 let component = window.livewire.find("daily-entry-tracker");
                 this.missingDates = @this.get('missingDates');
-                debugger;
                 window.livewire.emit('getMissingDates', 'Y-m-01');
                 window.livewire.on('responseMissingDate', (missingDates) => {
                     this.missingDates = missingDates;
@@ -450,7 +445,6 @@
                 for ( var i=1; i <= daysInMonth; i++) {
                     daysArray.push(i);
                 }
-
                 this.no_of_days = daysArray;
             },
 
@@ -461,7 +455,6 @@
                     let month = (this.month < 9) ? '0' + (this.month + 1).toString() : (this.month + 1).toString()
                     let searchDate = this.year + '-' + month + '-' + date;
                     let response;
-                    console.log(this.month);
                     for(let missingDate of missingDates) {
                         response = missingDate == searchDate
                         if (response == true){
