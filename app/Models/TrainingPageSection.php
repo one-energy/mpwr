@@ -29,6 +29,8 @@ class TrainingPageSection extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['title'];
+
     public function content()
     {
         return $this->hasOne(TrainingPageContent::class);
