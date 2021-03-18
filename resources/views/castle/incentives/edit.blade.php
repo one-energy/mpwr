@@ -25,32 +25,14 @@
                             <x-input-add-on  label="kW Needed" name="kw_needed" addOn="kW" value="{{ $incentive->kw_needed }}"></x-input-add-on >
                         </div>
 
-                        <div class="md:col-span-3 col-span-2">
-                            <div class="md:col-span-3 col-span-2">
-                                @if(user()->role != "Admin" && user()->role != "Owner")
-                                    <x-select label="Department" name="department_id" hidden>
-                                        @if (old('department') == '')
-                                            <option value="" selected>None</option>
-                                        @endif
-                                        @foreach($departments as $department)
-                                            <option value="{{ $department->id }}" {{ old('department', $incentive->department_id) == $department->id ? 'selected' : '' }}>
-                                                {{ $department['name'] }}
-                                            </option>
-                                        @endforeach
-                                    </x-select>
-                                @else
-                                    <x-select label="Department" name="department_id">
-                                        @if (old('department') == '')
-                                            <option None</option>
-                                        @endif
-                                        @foreach($departments as $department)
-                                            <option value="{{ $department->id }}" {{ old('department', $incentive->department_id) == $department->id ? 'selected' : '' }}>
-                                                {{ $department['name'] }}
-                                            </option>
-                                        @endforeach
-                                    </x-select>
-                                @endif
-                            </div>
+                        <div class="md:col-span-3 col-span-2 @if(user()->role != "Admin" && user()->role != "Owner") hidden @endif">
+                            <x-select label="Department" name="department_id" >
+                                @foreach($departments as $department)
+                                    <option value="{{ $department->id }}" {{ old('department', user()->department_id) == $department->id ? 'selected' : '' }}>
+                                        {{ $department['name'] }}
+                                    </option>
+                                @endforeach
+                            </x-select>
                         </div>
                     </div>
                 </div>
