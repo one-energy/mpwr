@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Models\Department;
 use App\Models\Incentive;
 use App\Models\User;
@@ -18,7 +20,7 @@ class IncentivesTableSeeder extends Seeder
             ['number_installs' => 100, 'name' => 'Model S',     'installs_achieved' => 70,  'installs_needed' => 25, 'kw_achieved' => 30,  'kw_needed' => 100, 'department_id' => $department->id],
             ['number_installs' => 150, 'name' => 'Model X',     'installs_achieved' => 60,  'installs_needed' => 30, 'kw_achieved' => 20,  'kw_needed' => 120, 'department_id' => $department->id],
         ];
-        
+
         Incentive::unguard();
         Incentive::query()->insert($incentives);
         Incentive::reguard();

@@ -3,31 +3,36 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 
 /**
+ * App\Models\Region
+ *
  * @property int $id
- * @property string $name
  * @property int $region_manager_id
- * @property int $department_id
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property-read User $regionManager
- * @property-read Department $department
+ * @property string $name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int|null $department_id
+ * @property-read \App\Models\Department|null $department
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Office[] $offices
+ * @property-read \App\Models\User $regionManager
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Region newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Region newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Region query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Region search($search)
+ * @mixin \Eloquent
  */
 class Region extends Model
 {
-    public function regionManger()
+    use HasFactory;
+
+    public function regionManager()
     {
         return $this->belongsTo(User::class, 'region_manager_id');
-    }
-
-    public function users()
-    {
-        return $this->hasOne(User::class, 'foreign_key', 'user_id')->withTimestamps();
     }
 
     public function department()

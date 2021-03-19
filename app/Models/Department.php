@@ -3,21 +3,35 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 
 /**
+ * App\Models\Department
+ *
  * @property int $id
+ * @property int|null $department_manager_id
  * @property string $name
- * @property int $department_manager_id
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property-read User $departmentManager
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User|null $departmentAdmin
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Office[] $offices
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Region[] $regions
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\TrainingPageSection[] $trainingPageSections
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Department newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Department newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Department query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Department search($search)
+ * @mixin \Eloquent
  */
 class Department extends Model
 {
+    use HasFactory;
+
     public function departmentAdmin()
     {
         return $this->belongsTo(User::class, 'department_manager_id');
@@ -36,6 +50,11 @@ class Department extends Model
     public function offices()
     {
         return $this->hasManyThrough(Office::class, Region::class);
+    }
+
+    public function trainingPageSections()
+    {
+        return $this->hasMany(TrainingPageSection::class);
     }
 
     public function scopeSearch(Builder $query, $search)

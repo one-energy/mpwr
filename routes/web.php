@@ -4,7 +4,6 @@ use App\Http\Controllers\Auth\ConfirmPasswordController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\InvitationController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\Castle\DepartmentController;
@@ -92,9 +91,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/', [DepartmentController::class, 'index'])->name('index');
             Route::get('/create', [DepartmentController::class, 'create'])->name('create');
             Route::post('/create', [DepartmentController::class, 'store'])->name('store');
-            Route::get('/{deparment}/edit', [DepartmentController::class, 'edit'])->name('edit');
-            Route::put('/{deparment}', [DepartmentController::class, 'update'])->name('update');
-            Route::delete('/{deparment}', [DepartmentController::class, 'destroy'])->name('destroy');
+            Route::get('/{department}/edit', [DepartmentController::class, 'edit'])->name('edit');
+            Route::put('/{department}', [DepartmentController::class, 'update'])->name('update');
         });
 
         Route::prefix('incentives')->middleware('incentives')->name('incentives.')->group(function () {
