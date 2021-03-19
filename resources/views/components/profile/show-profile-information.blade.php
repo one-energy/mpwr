@@ -47,9 +47,9 @@
             </div>
             <div class="col-span-4 text-xl font-bold text-gray-900">
                 @if(user()->dailyNumbers->sum('sets') > 0)
-                {{number_format(user()->dailyNumbers->sum('doors') / user()->dailyNumbers->sum('sets'), 2)}}
+                {{number_format(user()->dailyNumbers->sum('doors') / user()->dailyNumbers->sum('sets'), 0)}}
                 @else
-                0
+                -
                 @endif
             </div>
         </div>
@@ -61,7 +61,7 @@
                 @if(user()->dailyNumbers->sum('sets') > 0)
                 {{number_format(user()->dailyNumbers->sum('hours') / user()->dailyNumbers->sum('sets'), 2)}}
                 @else
-                0
+                -
                 @endif
             </div>
         </div>
@@ -71,9 +71,9 @@
             </div>
             <div class="col-span-4 text-xl font-bold text-gray-900">
                 @if(user()->dailyNumbers->sum('sets') > 0)
-                {{number_format((user()->dailyNumbers->sum('set_sits') + user()->dailyNumbers->sum('sits')) / user()->dailyNumbers->sum('sets'), 2)}}
+                {{number_format((user()->dailyNumbers->sum('set_sits') + user()->dailyNumbers->sum('sits')) / user()->dailyNumbers->sum('sets') * 100, 2)}}%
                 @else
-                0
+                -
                 @endif
             </div>
         </div>
@@ -83,9 +83,9 @@
             </div>
             <div class="col-span-4 text-xl font-bold text-gray-900">
                 @if(user()->dailyNumbers->sum('set_sits') || user()->dailyNumbers->sum('sits') > 0)
-                {{number_format((user()->dailyNumbers->sum('set_closes') + user()->dailyNumbers->sum('closes')) / (user()->dailyNumbers->sum('set_sits') + user()->dailyNumbers->sum('sits')) * 100, 2)}}
+                {{number_format((user()->dailyNumbers->sum('set_closes') + user()->dailyNumbers->sum('closes')) / (user()->dailyNumbers->sum('set_sits') + user()->dailyNumbers->sum('sits')) * 100, 2)}}%
                 @else
-                0
+                -
                 @endif
             </div>
         </div>
