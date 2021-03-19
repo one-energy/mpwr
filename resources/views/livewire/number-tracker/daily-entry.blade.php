@@ -1,6 +1,6 @@
 <div>
     <x-form :route="route('number-tracking.store')">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8" x-data>
+        <div class="mx-auto max-w-8xl sm:px-6 lg:px-8" x-data>
             <div class="md:flex">
                 <div class="py-5 md:w-1/3 LG:1/4">
                     <div class="flex-row">
