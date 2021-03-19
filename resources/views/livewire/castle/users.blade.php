@@ -79,7 +79,7 @@
                                                 @else
                                                     <x-table.td>Without Office</x-table.td>
                                                 @endif
-                                                <x-table.td>{{ $user->pay }}</x-table.td>
+                                                <x-table.td></x-table.td>
                                                 <x-table.td>
                                                     @if($this->canEditUser($user))
                                                         <x-link class="text-sm" :href="route('castle.users.edit', $user->id)">
