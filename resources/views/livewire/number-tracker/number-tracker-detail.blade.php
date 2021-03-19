@@ -483,39 +483,6 @@
                             </div>
                         </div>
                     </div>
-<!--
-
-                    <div class="flex justify-between w-full mt-6">
-                        <div>
-                            <div class="text-lg font-bold">
-                                {{$graficValue}}
-                            </div>
-                            <div class="flex font-semibold text-xs
-                                @if($graficValueLast > $graficValue)
-                                    text-red-600
-                                @else
-                                    text-green-base
-                                @endif">
-                                @if($graficValueLast > $graficValue)
-                                    <x-svg.arrow-down class="text-red-600"/>
-                                @else
-                                    <x-svg.arrow-up class="text-green-base"/>
-                                @endif
-                                <span>
-                                    {{$graficValue - $graficValueLast}}
-                                    @if($numbersTrackedLast->sum('closes') != 0 )
-                                        ({{number_format((($graficValue - $graficValueLast)/$graficValueLast)*100, 2)}}%)
-                                    @else
-                                        (0%)
-                                    @endif
-                                </span>
-                            </div>
-                        </div>
-                        <a href="#">
-                            <x-svg.panel></x-svg.panel>
-                        </a>
-                    </div>
-                    <div class="flex w-full md:justify-between" id="chart_div"></div> -->
 
                     <div class="flex justify-start gap-4 mt-6">
                         <div class="col-span-1 border-2
@@ -674,32 +641,4 @@
             }
         }
     }
-  google.charts.load("current", {packages:["corechart"]});
-  google.charts.setOnLoadCallback(drawChart);
-  function drawChart() {
-    var data = google.visualization.arrayToDataTable
-        ([['Week', 'Sales', {'type': 'string', 'role': 'style'}],
-          [1, 3, null],
-          [2, 24.5, null],
-          [3, 2, null],
-          [4, 3, null],
-          [5, 14.5, null],
-          [6, 6.5, null],
-          [7, 9, null],
-          [8, 12, null],
-          [9, 55, null],
-          [10, 34, null],
-          [11, 46, 'point { size: 3; shape-type: circle; fill-color: #46A049; }']
-    ]);
-    var options = {
-      legend: 'none',
-      colors: ['#46A049'],
-      pointSize: 1,
-      vAxis: { gridlines: { count: 0 }, textPosition: 'none', baselineColor: '#FFFFFF' },
-      hAxis: { gridlines: { count: 0 }, textPosition: 'none' },
-      chartArea:{left:0,top:0,width:"99%",height:"100%"}
-    };
-    var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
-    chart.draw(data, options);
-  }
 </script>
