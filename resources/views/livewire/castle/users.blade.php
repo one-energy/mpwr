@@ -55,11 +55,9 @@
                                                 <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
                                                 <x-table.td>{{ $user->pay }}</x-table.td>
                                                 <x-table.td>
-                                                    @if($this->canEditUser($user))
-                                                        <x-link class="text-sm" :href="route('castle.users.edit', $user->id)">
-                                                            Edit
-                                                        </x-link>
-                                                    @endif
+                                                    <x-link class="text-sm" :href="route('castle.users.edit', $user->id)">
+                                                        Edit
+                                                    </x-link>
                                                 </x-table.td>
                                             </x-table.tr>
                                         @else
@@ -71,14 +69,8 @@
                                                 <x-table.td>{{ $user->email }}</x-table.td>
                                                 <x-table.td>{{ $this->userRole($user->role) }}</x-table.td>
                                                 <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
-                                                <x-table.td>{{ $user->pay }}</x-table.td>
-                                                <x-table.td>
-                                                    @if($this->canEditUser($user))
-                                                        <x-link class="text-sm" :href="route('castle.users.edit', $user->id)">
-                                                            Edit
-                                                        </x-link>
-                                                    @endif
-                                                </x-table.td>
+                                                <x-table.td></x-table.td>
+                                                <x-table.td></x-table.td>
                                             </x-table.tr>
                                         @endif
                                     @endforeach
