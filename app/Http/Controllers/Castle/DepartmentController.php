@@ -44,7 +44,7 @@ class DepartmentController extends Controller
         $department->save();
 
         $department->trainingPageSections()->create([
-            'Training Page',
+            "title" => 'Training Page',
         ]);
 
         $departmentAdmin                = $department->departmentAdmin;

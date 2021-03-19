@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -23,8 +24,10 @@ use Illuminate\Database\Eloquent\Model;
  */
 class TrainingPageContent extends Model
 {
+    use HasFactory;
+
     protected $guarded = [];
-  
+
     public function section()
     {
         return $this->belongsTo(TrainingPageSection::class, 'training_page_section_id');

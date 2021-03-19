@@ -1,12 +1,16 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use App\Models\Office;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Office::class, function (Faker $faker) {
-    return [
-        'name' => $faker->company,
-    ];
-});
+class OfficeFactory extends Factory
+{
+    protected $model = Office::class;
+    public function definition()
+    {
+        return [
+            'name' => $this->faker->company,
+        ];
+    }
+}

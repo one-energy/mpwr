@@ -1,12 +1,17 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
 use App\Models\Term;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Term::class, function (Faker $faker) {
-    return [
-        'value' => '25Y $15/mo. 3.99%'
-    ];
-});
+class TermFactory extends Factory
+{
+    protected $model = Term::class;
+    public function definition()
+    {
+        return [
+            'value' => '25Y $15/mo. 3.99%'
+        ];
+    }
+}

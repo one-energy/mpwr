@@ -636,6 +636,7 @@
 
             days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
             initDate() {
+                console.log('start');
                 let today = new Date();
                 this.month = today.getMonth();
                 this.year = today.getFullYear();
@@ -669,6 +670,7 @@
                     daysArray.push(i);
                 }
                 this.no_of_days = daysArray;
+                console.log(daysArray);
             }
         }
     }
