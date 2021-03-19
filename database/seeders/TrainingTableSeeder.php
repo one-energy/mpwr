@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Models\Department;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
@@ -18,7 +20,7 @@ class TrainingTableSeeder extends Seeder
     {
         $departments = Department::all();
         foreach ($departments as $department) {
-            factory(TrainingPageSection::class)->create([
+            TrainingPageSection::factory()->create([
                 'title' => 'Training Page',
                 'department_id' => $department->id
             ]);
@@ -26,13 +28,13 @@ class TrainingTableSeeder extends Seeder
         $inicialTrainingPages = TrainingPageSection::all();
 
         foreach ($inicialTrainingPages as $trainingPage) {
-            factory(TrainingPageSection::class, rand(0,3))->create([
+            TrainingPageSection::factory()->count(rand(0,3))->create([
                 'parent_id'     => $trainingPage->id,
                 'department_id' => $trainingPage->department_id
             ]);
             $trueOrFalse = rand(0,1);
             if($trueOrFalse == 1){
-                factory(TrainingPageContent::class, rand(0,3))->create([
+                TrainingPageContent::factory()->count(rand(0,3))->create([
                     'title'                    => $faker->name,
                     'description'              => $faker->text,
                     'training_page_section_id' => $trainingPage->id,

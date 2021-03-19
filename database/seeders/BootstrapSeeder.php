@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Models\Department;
 use App\Models\Office;
 use App\Models\Region;
@@ -16,7 +18,7 @@ class BootstrapSeeder extends Seeder
      */
     public function run()
     {
-        factory(User::class)->create([
+        User::factory()->create([
             "first_name"    => "Brandon",
             "last_name"     => "Andra",
             "email"         => "brandonrandra@gmail.com",
@@ -25,7 +27,7 @@ class BootstrapSeeder extends Seeder
             'master'        => true,
         ]);
 
-        factory(User::class)->create([
+        User::factory()->create([
             "first_name"    => "Jake",
             "last_name"     => "Ebert",
             "email"         => "admin@californiarenewableenergy.org",
@@ -34,15 +36,15 @@ class BootstrapSeeder extends Seeder
             'master'        => true,
         ]);
 
-        $departmentManager = factory(User::class)->create([
+        $departmentManager = User::factory()->create([
             "first_name"    => "Jake",
             "last_name"     => "Ebert",
             "email"         => "jake.department@californiarenewableenergy.org",
             'role'          => 'Department Manager',
             'master'        => true,
         ]);
-        
-        $department    = factory(Department::class)->create([
+
+        $department    = Department::factory()->create([
             "name" => "California Renewable Energy",
             "department_manager_id" => $departmentManager->id
         ]);
@@ -50,14 +52,14 @@ class BootstrapSeeder extends Seeder
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
-        factory(TrainingPageSection::class)->create([
+        TrainingPageSection::factory()->create([
             'title' => 'Training Page',
             'department_id' => $department->id
         ]);
 
         //Region
         //Kyden Hansen Region
-        $kydenRegionManager = factory(User::class)->create([
+        $kydenRegionManager = User::factory()->create([
             "first_name"    => "Kyden",
             "last_name"     => "Hansen",
             "email"         => "kyden@californiarenewableenergy.org",
@@ -66,14 +68,14 @@ class BootstrapSeeder extends Seeder
             'master'        => true,
         ]);
 
-        $region        = factory(Region::class)->create([
+        $region        = Region::factory()->create([
             "name"              => "Kyden Hansen Region",
             "department_id"     => $department->id,
             "region_manager_id" => $kydenRegionManager->id
         ]);
 
-        //Palmdale Office        
-        $vacavilleOffice = factory(Office::class)->create([
+        //Palmdale Office
+        $vacavilleOffice = Office::factory()->create([
             'name'              => "Palmdale Office",
             'office_manager_id' => $kydenRegionManager->id,
             'region_id'         => $region->id,
@@ -82,8 +84,8 @@ class BootstrapSeeder extends Seeder
         $kydenRegionManager->office_id = $vacavilleOffice->id;
         $kydenRegionManager->save();
 
-        //Victorville Office      
-        $victorvilleOfficeManager = factory(User::class)->create([
+        //Victorville Office
+        $victorvilleOfficeManager = User::factory()->create([
             "first_name" => "Jacob",
             "last_name"  => "McCord",
             "email"      => "jacobm@californiarenewableenergy.org",
@@ -91,8 +93,8 @@ class BootstrapSeeder extends Seeder
             'department_id' => $department->id,
             'master'        => true,
         ]);
-        
-        $victorvilleOffice = factory(Office::class)->create([
+
+        $victorvilleOffice = Office::factory()->create([
             "name"              => "Victorville Office",
             "office_manager_id" => $victorvilleOfficeManager->id,
             "region_id"         => $region->id,
@@ -100,9 +102,9 @@ class BootstrapSeeder extends Seeder
 
         $victorvilleOfficeManager->office_id = $victorvilleOffice->id;
         $victorvilleOfficeManager->save();
-        
-        //San Bernardino Office      
-        $sanBernardinoOfficeManager = factory(User::class)->create([
+
+        //San Bernardino Office
+        $sanBernardinoOfficeManager = User::factory()->create([
             "first_name" => "Hunter",
             "last_name"  => "Clark",
             "email"      => "hunter@californiarenewableenergy.org",
@@ -110,8 +112,8 @@ class BootstrapSeeder extends Seeder
             'department_id' => $department->id,
             'master'        => true,
         ]);
-        
-        $sanBernardinoOffice = factory(Office::class)->create([
+
+        $sanBernardinoOffice = Office::factory()->create([
             "name"              => "San Bernardino Office",
             "office_manager_id" => $sanBernardinoOfficeManager->id,
             "region_id"         => $region->id,
@@ -120,8 +122,8 @@ class BootstrapSeeder extends Seeder
         $sanBernardinoOfficeManager->office_id = $sanBernardinoOffice->id;
         $sanBernardinoOfficeManager->save();
 
-        //Stockton Office      
-        $stocktonOfficeManager = factory(User::class)->create([
+        //Stockton Office
+        $stocktonOfficeManager = User::factory()->create([
             "first_name" => "Cade",
             "last_name"  => "Cloward",
             "email"      => "cade@californiarenewableenergy.org",
@@ -129,8 +131,8 @@ class BootstrapSeeder extends Seeder
             'department_id' => $department->id,
             'master'        => true,
         ]);
-        
-        $stocktonOffice = factory(Office::class)->create([
+
+        $stocktonOffice = Office::factory()->create([
             "name"              => "Stockton Office",
             "office_manager_id" => $stocktonOfficeManager->id,
             "region_id"         => $region->id,
@@ -139,7 +141,7 @@ class BootstrapSeeder extends Seeder
         $stocktonOfficeManager->office_id = $stocktonOffice->id;
         $stocktonOfficeManager->save();
 
-        $carsonOfficeManager = factory(User::class)->create([
+        $carsonOfficeManager = User::factory()->create([
             "first_name"    => "Carson",
             "last_name"     => "Law",
             "email"         => "carson@californiarenewableenergy.org",
@@ -149,8 +151,8 @@ class BootstrapSeeder extends Seeder
             'master'        => true,
         ]);
 
-        //Pittsburg Office      
-        $pittsburgOfficeManager = factory(User::class)->create([
+        //Pittsburg Office
+        $pittsburgOfficeManager = User::factory()->create([
             "first_name"    => "Mana",
             "last_name"     => "Niu",
             "email"         => "mana@californiarenewableenergy.org",
@@ -158,8 +160,8 @@ class BootstrapSeeder extends Seeder
             'department_id' => $department->id,
             'master'        => true,
         ]);
-        
-        $pittsburgOffice = factory(Office::class)->create([
+
+        $pittsburgOffice = Office::factory()->create([
             "name"              => "Pittsburg Office",
             "office_manager_id" => $pittsburgOfficeManager->id,
             "region_id"         => $region->id,
@@ -169,8 +171,8 @@ class BootstrapSeeder extends Seeder
         $pittsburgOfficeManager->save();
 
         //Region
-        //Jake Meyer Region 
-        $jakeRegionManager = factory(User::class)->create([
+        //Jake Meyer Region
+        $jakeRegionManager = User::factory()->create([
             "first_name"    => "Jake",
             "last_name"     => "Meyen",
             "email"         => "jakemeyer@californiarenewableenergy.org",
@@ -179,14 +181,14 @@ class BootstrapSeeder extends Seeder
             'master'        => true,
         ]);
 
-        $region        = factory(Region::class)->create([
+        $region        = Region::factory()->create([
             "name"              => "Jake Meyer Region ",
             "department_id"     => $department->id,
             "region_manager_id" => $jakeRegionManager->id
         ]);
-        
+
         //Fairfield Office
-        $fairfieldOffice = factory(Office::class)->create([
+        $fairfieldOffice = Office::factory()->create([
             'name'              => "Fairfield Office",
             'office_manager_id' => $jakeRegionManager->id,
             'region_id'         => $region->id,
@@ -194,9 +196,9 @@ class BootstrapSeeder extends Seeder
 
         $jakeRegionManager->office_id = $fairfieldOffice->id;
         $jakeRegionManager->save();
-        
+
         //Vacaville Office
-        $vacavilleManager = factory(User::class)->create([
+        $vacavilleManager = User::factory()->create([
             'first_name'    => "Brandyn",
             'last_name'     => "Bailey",
             "email"         => "brandyn@californiarenewableenergy.org",
@@ -204,8 +206,8 @@ class BootstrapSeeder extends Seeder
             'department_id' => $department->id,
             'master'        => false,
         ]);
-        
-        $vacavilleOffice = factory(Office::class)->create([
+
+        $vacavilleOffice = Office::factory()->create([
             'name'              => "Vacaville Office",
             'office_manager_id' => $vacavilleManager->id,
             'region_id'         => $region->id,
@@ -215,7 +217,7 @@ class BootstrapSeeder extends Seeder
         $vacavilleManager->save();
 
         //Cordelia Office
-        $cordellaManager = factory(User::class)->create([
+        $cordellaManager = User::factory()->create([
             'first_name'    => "Sara",
             'last_name'     => "Meyer",
             "email"         => "sara@californiarenewableenergy.org",
@@ -223,8 +225,8 @@ class BootstrapSeeder extends Seeder
             'department_id' => $department->id,
             'master'        => false,
         ]);
-        
-        $cordellaOffice = factory(Office::class)->create([
+
+        $cordellaOffice = Office::factory()->create([
             'name'              => "Cordella Office",
             'office_manager_id' => $cordellaManager->id,
             'region_id'         => $region->id,
@@ -233,7 +235,7 @@ class BootstrapSeeder extends Seeder
         $cordellaManager->office_id = $cordellaOffice->id;
         $cordellaManager->save();
 
-        $jacksonManager = factory(User::class)->create([
+        $jacksonManager = User::factory()->create([
             'first_name'    => "Jackson",
             'last_name'     => "Meyer",
             "email"         => "jackson@californiarenewableenergy.org",
@@ -244,7 +246,7 @@ class BootstrapSeeder extends Seeder
         ]);
 
         //vallejo Office
-        $vallejoManager = factory(User::class)->create([
+        $vallejoManager = User::factory()->create([
             'first_name'    => "Sean",
             'last_name'     => "Thatcher",
             "email"         => "sean@californiarenewableenergy.org",
@@ -252,8 +254,8 @@ class BootstrapSeeder extends Seeder
             'department_id' => $department->id,
             'master'        => false,
         ]);
-        
-        $vallejoOffice = factory(Office::class)->create([
+
+        $vallejoOffice = Office::factory()->create([
             'name'              => "Vallejo Office",
             'office_manager_id' => $vallejoManager->id,
             'region_id'         => $region->id,
@@ -262,7 +264,7 @@ class BootstrapSeeder extends Seeder
         $vallejoManager->office_id = $vallejoOffice->id;
         $vallejoManager->save();
 
-        $tagenManager = factory(User::class)->create([
+        $tagenManager = User::factory()->create([
             'first_name'    => "Tagen",
             'last_name'     => "Wolf",
             "email"         => "tagen@californiarenewableenergy.org",
@@ -274,7 +276,7 @@ class BootstrapSeeder extends Seeder
 
         //Region
         //Jake Ebert Region
-        $ebertRegionManager = factory(User::class)->create([
+        $ebertRegionManager = User::factory()->create([
             "first_name"    => "Jake",
             "last_name"     => "Ebert",
             "email"         => "jake@californiarenewableenergy.org",
@@ -283,14 +285,14 @@ class BootstrapSeeder extends Seeder
             'master'        => true,
         ]);
 
-        $region        = factory(Region::class)->create([
+        $region        = Region::factory()->create([
             "name"              => "Jake Ebert Region ",
             "department_id"     => $department->id,
             "region_manager_id" => $ebertRegionManager->id
         ]);
 
         //Fresno Office
-        $fresnoManager = factory(User::class)->create([
+        $fresnoManager = User::factory()->create([
             'first_name'    => "Brandon",
             'last_name'     => "Reeves",
             "email"         => "brandonreeves@californiarenewableenergy.org",
@@ -298,8 +300,8 @@ class BootstrapSeeder extends Seeder
             'department_id' => $department->id,
             'master'        => false,
         ]);
-        
-        $fresnoOffice = factory(Office::class)->create([
+
+        $fresnoOffice = Office::factory()->create([
             'name'              => "Fresno Office",
             'office_manager_id' => $fresnoManager->id,
             'region_id'         => $region->id,
@@ -308,7 +310,7 @@ class BootstrapSeeder extends Seeder
         $fresnoManager->office_id = $fresnoOffice->id;
         $fresnoManager->save();
 
-        $jacksonManager = factory(User::class)->create([
+        $jacksonManager = User::factory()->create([
             'first_name'    => "Zach",
             'last_name'     => "Murdoch",
             "email"         => "zach@californiarenewableenergy.org",
