@@ -9,16 +9,16 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^7.4",
+        "php": "^8.0",
         "ext-json": "*",
         "ext-pdo": "*",
         "doctrine/dbal": "^2.10",
-        "facade/ignition": "^2.0",
+        "facade/ignition": "^2.3.6",
         "fideloper/proxy": "^4.0",
-        "guzzlehttp/guzzle": "^6.3",
-        "laravel/framework": "^7.0",
+        "guzzlehttp/guzzle": "^7.0.1",
+        "laravel/framework": "^8.0",
         "laravel/tinker": "^2.0",
-        "laravel/ui": "^2.0",
+        "laravel/ui": "^3.0",
         "livewire/livewire": "^2.0"
     },
     "require-dev": {
@@ -26,15 +26,18 @@
         "barryvdh/laravel-ide-helper": "2.8.2",
         "beyondcode/laravel-dump-server": "^1.4",
         "friendsofphp/php-cs-fixer": "^2.16",
-        "fzaninotto/faker": "^1.4",
-        "laravel/telescope": "^3.5",
+        "fakerphp/faker" :"^1.9.1",
+        "laravel/telescope": "^4.0",
         "mockery/mockery": "^1.0",
-        "nunomaduro/collision": "^4.1",
+        "nunomaduro/collision": "^5.0",
         "phpmd/phpmd": "@stable",
-        "phpunit/phpunit": "^8.5",
+        "phpunit/phpunit": "^9.0",
         "squizlabs/php_codesniffer": "^3.5"
     },
     "config": {
+        "platform": {
+            "php": "^8.0"
+        },
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "sort-packages": true
@@ -49,14 +52,12 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/"
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
             "app/Support/helpers.php"
-        ],
-        "classmap": [
-            "database/seeds",
-            "database/factories"
         ]
     },
     "autoload-dev": {

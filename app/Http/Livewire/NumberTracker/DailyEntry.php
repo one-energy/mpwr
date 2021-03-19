@@ -39,6 +39,18 @@ class DailyEntry extends Component
         $this->setOffice($this->getOfficeQuery()->first());
     }
 
+    public function render()
+    {
+        $this->getMissingOffices();
+        $this->users               = $this->getUsers($this->dateSelected);
+        $this->usersLastDayEntries = $this->getUsers($this->lastDateSelected);
+        $offices                   = $this->getOfficeQuery();
+
+        return view('livewire.number-tracker.daily-entry',[
+            'offices' => $offices->get(),
+        ]);
+    }
+
     public function getUsers($dateSelected)
     {
         $usersQuery = User::query();
@@ -122,18 +134,6 @@ class DailyEntry extends Component
     public function sortBy()
     {
         return 'first_name';
-    }
-
-    public function render()
-    {
-        $this->getMissingOffices();
-        $this->users               = $this->getUsers($this->dateSelected);
-        $this->usersLastDayEntries = $this->getUsers($this->lastDateSelected);
-        $offices                   = $this->getOfficeQuery();
-
-        return view('livewire.number-tracker.daily-entry',[
-            'offices' => $offices->get(),
-        ]);
     }
 
     public function getOfficeQuery()
