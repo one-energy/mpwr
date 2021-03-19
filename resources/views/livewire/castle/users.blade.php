@@ -52,11 +52,7 @@
                                                 <x-table.td>{{ $user->first_name . ' ' . $user->last_name }}</x-table.td>
                                                 <x-table.td>{{ $user->email }}</x-table.td>
                                                 <x-table.td>{{ $this->userRole($user->role) }}</x-table.td>
-                                                @if($user->office)
-                                                    <x-table.td>{{ $user->office->name }}</x-table.td>
-                                                @else
-                                                    <x-table.td>Without Office</x-table.td>
-                                                @endif
+                                                <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
                                                 <x-table.td>{{ $user->pay }}</x-table.td>
                                                 <x-table.td>
                                                     @if($this->canEditUser($user))
@@ -74,11 +70,7 @@
                                                 <x-table.td>{{ $user->first_name . ' ' . $user->last_name }}</x-table.td>
                                                 <x-table.td>{{ $user->email }}</x-table.td>
                                                 <x-table.td>{{ $this->userRole($user->role) }}</x-table.td>
-                                                @if($user->office)
-                                                    <x-table.td>{{ $user->office->name }}</x-table.td>
-                                                @else
-                                                    <x-table.td>Without Office</x-table.td>
-                                                @endif
+                                                <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
                                                 <x-table.td>{{ $user->pay }}</x-table.td>
                                                 <x-table.td>
                                                     @if($this->canEditUser($user))
