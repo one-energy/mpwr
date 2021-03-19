@@ -58,9 +58,11 @@
                                             @endif
                                             <x-table.td>{{ $user->pay }}</x-table.td>
                                             <x-table.td>
-                                                <x-link class="text-sm" :href="route('castle.users.edit', $user->id)">
-                                                    Edit
-                                                </x-link>
+                                                @if($this->canEditUser($user))
+                                                    <x-link class="text-sm" :href="route('castle.users.edit', $user->id)">
+                                                        Edit
+                                                    </x-link>
+                                                @endif
                                             </x-table.td>
                                         </x-table.tr>
                                     @endforeach
