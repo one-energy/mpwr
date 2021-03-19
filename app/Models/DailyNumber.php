@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -27,6 +28,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class DailyNumber extends Model
 {
+    use HasFactory;
+
     protected $fillable = ['user_id', 'date', 'doors', 'hours', 'sets', 'set_sits', 'sits', 'set_closes', 'closes'];
 
     public function user()

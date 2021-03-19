@@ -1,14 +1,20 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
 use App\Models\TrainingPageContent;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(TrainingPageContent::class, function (Faker $faker) {
-    return [
-        'title' => $faker->name,
-        'description' => $faker->text,
-        'video_url' => 'https://youtu.be/cu9lJvjERPQ'
-    ];
-});
+class TrainingContentFactory extends Factory
+{
+    protected $model = TrainingPageContent::class;
+
+    public function definition()
+    {
+        return [
+            'title' => $this->faker->name,
+            'description' => $this->faker->text,
+            'video_url' => 'https://youtu.be/cu9lJvjERPQ'
+        ];
+    }
+}
