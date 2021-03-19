@@ -121,7 +121,6 @@
                     this.getDateValue(day.getUTCDate());
                 }
                 this.datepickerValue = new Date(this.year, this.month, day.getUTCDate()).toDateString();
-
             },
 
             isToday(date) {
