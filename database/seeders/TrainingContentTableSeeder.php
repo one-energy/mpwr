@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
 use Illuminate\Database\Seeder;
@@ -14,6 +16,6 @@ class TrainingContentTableSeeder extends Seeder
      */
     public function run(Faker $faker)
     {
-  
+
     }
 }
