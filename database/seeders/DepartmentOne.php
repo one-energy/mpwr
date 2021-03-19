@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Models\DailyNumber;
 use App\Models\Department;
 use App\Models\Office;
@@ -7,7 +9,7 @@ use App\Models\Region;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
-class DepartmentTwo extends Seeder
+class DepartmentOne extends Seeder
 {
     /**
      * Run the database seeds.
@@ -16,67 +18,68 @@ class DepartmentTwo extends Seeder
      */
     public function run()
     {
-        $department  = factory(Department::class)->create();
+        $department  = Department::factory()->create();
 
-        $userDepartmentOne = factory(User::class)->create([
-            'first_name'    => 'Department two',
+        $userDepartmentOne = User::factory()->create([
+            'first_name'    => 'Department one',
             'last_name'     => 'Manager',
-            'email'         => '2.departmentmanager@devsquad.com',
+            'email'         => '1.departmentmanager@devsquad.com',
             'role'          => 'Department Manager',
             'department_id' => $department->id,
             'master'        => true,
         ]);
         $department->department_manager_id = $userDepartmentOne->id;
         $department->save();
-        
+
         //Region
-        factory(User::class)->create([
-            'first_name'    => 'Region two',
+        User::factory()->create([
+            'first_name'    => 'Region one',
             'last_name'     => 'Manager',
-            'email'         => '2.regionmanager@devsquad.com',
+            'email'         => '1.regionmanager@devsquad.com',
             'department_id' => $department->id,
             'role'          => 'Region Manager',
             'master'        => true,
         ]);
-        factory(User::class)->create([
-            'first_name'    => 'Other Region two',
+        User::factory()->create([
+            'first_name'    => 'Other Region one',
             'last_name'     => 'Manager',
-            'email'         => '2.region2manager@devsquad.com',
+            'email'         => '1.region2manager@devsquad.com',
             'department_id' => $department->id,
             'role'          => 'Region Manager',
             'master'        => true,
         ]);
 
         //Office
-        factory(User::class)->create([
-            'first_name'    => 'Office two',
+        User::factory()->create([
+            'first_name'    => 'Office one',
             'last_name'     => 'Manager',
-            'email'         => '2.officemanager@devsquad.com',
+            'email'         => '1.officemanager@devsquad.com',
             'department_id' => $department->id,
             'role'          => 'Office Manager',
             'master'        => true,
         ]);
-        factory(User::class)->create([
-            'first_name'    => 'Other Office two',
+        User::factory()->create([
+            'first_name'    => 'Other Office one',
             'last_name'     => 'Manager',
-            'email'         => '2.office2manager@devsquad.com',
+            'email'         => '1office2manager@devsquad.com',
             'department_id' => $department->id,
             'role'          => 'Office Manager',
             'master'        => true,
         ]);
 
         $officesName = array(
-            'NY',
-            'Miami',
+            'Palmdale',
+            'Victorville',
+
         );
 
         $regionsName = array(
-            'East',
-            'West',
+            'South',
+            'North',
         );
-    
+
         array_map(function ($region) use ($department, $officesName){
-            $regionManager = factory(User::class)->create([
+            $regionManager = User::factory()->create([
                 'master'        => false,
                 'role'          => 'Region Manager',
                 'department_id' => $department->id
@@ -88,7 +91,7 @@ class DepartmentTwo extends Seeder
                 'department_id'     => $regionManager->department_id
             ]);
             array_map(function ($office) use ($department, $region){
-                $testOfficeManager = factory(User::class)->create([
+                $testOfficeManager = User::factory()->create([
                     'master'        => false,
                     'role'          => 'Office Manager',
                     'department_id' => $department
@@ -100,7 +103,7 @@ class DepartmentTwo extends Seeder
                 ]);
 
                 for ($x = 0; $x < 10; $x++) {
-                    $member = factory(User::class)->create([
+                    $member = User::factory()->create([
                         'role'          => ($x & 1) ? "Setter" : "Sales rep",
                         'office_id'     => $office->id,
                         'department_id' => $department
