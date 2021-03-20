@@ -291,13 +291,13 @@
                             <div class="col-span-1 p-3 rounded-lg bg-green-light">
                                 <div class="text-xs font-semibold uppercase text-green-base">Sit Ratio</div>
                                 <div class="text-xl font-bold text-green-base">
-                                    {{$numbersTracked->sum('sets') ? (number_format($numbersTracked->sum('sits')/$numbersTracked->sum('sets'), 2) * 100) . '%' : '-'}}
+                                    {{$numbersTracked->sum('sets') ? (number_format(($numbersTracked->sum('sits') + $numbersTracked->sum('set_sits'))/$numbersTracked->sum('sets'), 2) * 100) . '%' : '-'}}
                                 </div>
                             </div>
                             <div class="col-span-1 p-3 rounded-lg bg-green-light">
                                 <div class="text-xs font-semibold uppercase text-green-base">Close Ratio</div>
                                 <div class="text-xl font-bold text-green-base">
-                                    {{$numbersTracked->sum('sets') ? (number_format($numbersTracked->sum('closes')/$numbersTracked->sum('sets'), 2) * 100) . '%' : '-'}}
+                                    {{ $numbersTracked->sum('sits') || $numbersTracked->sum('set_sits')  ? ( number_format(($numbersTracked->sum('closes') + $numbersTracked->sum('set_closes') ) / ($numbersTracked->sum('set_sits') + $numbersTracked->sum('sits')), 2) * 100) . '%' : '-' }}
                                 </div>
                             </div>
                         </div>
@@ -308,8 +308,8 @@
                     </div>
 
                     <div class="flex justify-between mt-3">
-                        <div class="grid w-full grid-cols-6 row-gap-2 col-gap-1 xl:grid-cols-7 md:col-gap-4">
-                            <div class="col-span-2 xl:col-span-1 border-2
+                        <div class="grid w-full grid-cols-6 row-gap-2 col-gap-1 xl:grid-cols-12 md:col-gap-4">
+                            <div class="col-span-2 xl:col-span-2 border-2
                                 @if($filterBy == 'doors')
                                     border-green-base bg-green-light
                                 @else
@@ -335,7 +335,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="col-span-2 xl:col-span-1 border-2 @if($filterBy == 'hours')
+                            <div class="col-span-2 xl:col-span-2 border-2 @if($filterBy == 'hours')
                                     border-green-base bg-green-light
                                 @else
                                     border-gray-200
@@ -360,7 +360,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="col-span-2 xl:col-span-1 border-2 @if($filterBy == 'sets')
+                            <div class="col-span-2 xl:col-span-2 border-2 @if($filterBy == 'sets')
                                     border-green-base bg-green-light
                                 @else
                                     border-gray-200
@@ -385,7 +385,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="col-span-3 xl:col-span-2 border-2 @if($filterBy == 'sits')
+                            <div class="col-span-3 xl:col-span-3 border-2 @if($filterBy == 'sits')
                                     border-green-base bg-green-light
                                 @else
                                     border-gray-200
@@ -397,7 +397,7 @@
                                 <div class="grid grid-cols-4 gap-1">
                                     <div class="text-sm self-center col-span-1">Set</div>
                                     <div class="text-md font-bold text-gray-900 col-span-2">{{$numbersTracked->sum('set_sits')}}</div>
-                                    <div class="flex place-self-end col-span-1 items-center">
+                                    <div class="flex text-xs place-self-end col-span-1 items-center">
                                         @if($numbersTracked->sum('set_sits') - $numbersTrackedLast->sum('set_sits') >= 0)
                                             <x-svg.arrow-up class="text-green-base"/>
                                         @else
@@ -416,7 +416,7 @@
                                 <div class="grid grid-cols-4 gap-1">
                                     <div class="text-sm self-center col-span-1">SG</div>
                                     <div class="text-md font-bold text-gray-900 col-span-2">{{$numbersTracked->sum('sits')}}</div>
-                                    <div class="flex place-self-end col-span-1 items-center">
+                                    <div class="flex text-xs place-self-end col-span-1 items-center">
                                         @if($numbersTracked->sum('sits') - $numbersTrackedLast->sum('sits') >= 0)
                                             <x-svg.arrow-up class="text-green-base"/>
                                         @else
@@ -433,32 +433,7 @@
                                     </div>
                                 </div>
                             </div>
-                            {{-- <div class="col-span-1 border-2 @if($filterBy == 'set_closes')
-                                    border-green-base bg-green-light
-                                @else
-                                    border-gray-200
-                                @endif
-                                cursor-pointer
-                                rounded-lg p-3"
-                                wire:click="setFilterBy('set_closes')">
-                                <div class="text-xs font-semibold text-gray-900 uppercase">Set closes</div>
-                                <div class="text-xl font-bold text-gray-900">{{$numbersTracked->sum('set_closes')}}</div>
-                                <div class="flex text-xs font-semibold text-green-base">
-                                    @if($numbersTracked->sum('set_closes') - $numbersTrackedLast->sum('set_closes') >= 0)
-                                        <x-svg.arrow-up class="text-green-base"/>
-                                    @else
-                                        <x-svg.arrow-down class="text-red-600"/>
-                                    @endif
-                                    <span class="@if($numbersTracked->sum('set_closes') - $numbersTrackedLast->sum('set_closes') >= 0)
-                                                    text-green-base
-                                                @else
-                                                    text-red-600
-                                                @endif">
-                                        {{$numbersTracked->sum('set_closes') - $numbersTrackedLast->sum('set_closes')}}
-                                    </span>
-                                </div>
-                            </div> --}}
-                            <div class="col-span-3 xl:col-span-2 border-2 @if($filterBy == 'closes')
+                            <div class="col-span-3 xl:col-span-3 border-2 @if($filterBy == 'closes')
                                     border-green-base bg-green-light
                                 @else
                                     border-gray-200
@@ -470,7 +445,7 @@
                                 <div class="grid grid-cols-4 gap-1">
                                     <div class="text-sm self-center col-span-1">Set</div>
                                     <div class="text-md font-bold text-gray-900 col-span-2">{{$numbersTracked->sum('set_closes')}}</div>
-                                    <div class="flex place-self-end col-span-1 items-center">
+                                    <div class="flex text-xs place-self-end col-span-1 items-center">
                                         @if($numbersTracked->sum('set_closes') - $numbersTrackedLast->sum('set_closes') >= 0)
                                             <x-svg.arrow-up class="text-green-base"/>
                                         @else
@@ -489,7 +464,7 @@
                                 <div class="grid grid-cols-4 gap-1">
                                     <div class="text-sm self-center col-span-1">SG</div>
                                     <div class="text-md font-bold text-gray-900 col-span-2">{{$numbersTracked->sum('closes')}}</div>
-                                    <div class="flex place-self-end col-span-1 items-center">
+                                    <div class="flex text-xs place-self-end col-span-1 items-center">
                                         @if($numbersTracked->sum('closes') - $numbersTrackedLast->sum('closes') >= 0)
                                             <x-svg.arrow-up class="text-green-base"/>
                                         @else
@@ -508,39 +483,6 @@
                             </div>
                         </div>
                     </div>
-<!--
-
-                    <div class="flex justify-between w-full mt-6">
-                        <div>
-                            <div class="text-lg font-bold">
-                                {{$graficValue}}
-                            </div>
-                            <div class="flex font-semibold text-xs
-                                @if($graficValueLast > $graficValue)
-                                    text-red-600
-                                @else
-                                    text-green-base
-                                @endif">
-                                @if($graficValueLast > $graficValue)
-                                    <x-svg.arrow-down class="text-red-600"/>
-                                @else
-                                    <x-svg.arrow-up class="text-green-base"/>
-                                @endif
-                                <span>
-                                    {{$graficValue - $graficValueLast}}
-                                    @if($numbersTrackedLast->sum('closes') != 0 )
-                                        ({{number_format((($graficValue - $graficValueLast)/$graficValueLast)*100, 2)}}%)
-                                    @else
-                                        (0%)
-                                    @endif
-                                </span>
-                            </div>
-                        </div>
-                        <a href="#">
-                            <x-svg.panel></x-svg.panel>
-                        </a>
-                    </div>
-                    <div class="flex w-full md:justify-between" id="chart_div"></div> -->
 
                     <div class="flex justify-start gap-4 mt-6">
                         <div class="col-span-1 border-2
@@ -661,6 +603,7 @@
 
             days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
             initDate() {
+                console.log('start');
                 let today = new Date();
                 this.month = today.getMonth();
                 this.year = today.getFullYear();
@@ -694,35 +637,8 @@
                     daysArray.push(i);
                 }
                 this.no_of_days = daysArray;
+                console.log(daysArray);
             }
         }
     }
-  google.charts.load("current", {packages:["corechart"]});
-  google.charts.setOnLoadCallback(drawChart);
-  function drawChart() {
-    var data = google.visualization.arrayToDataTable
-        ([['Week', 'Sales', {'type': 'string', 'role': 'style'}],
-          [1, 3, null],
-          [2, 24.5, null],
-          [3, 2, null],
-          [4, 3, null],
-          [5, 14.5, null],
-          [6, 6.5, null],
-          [7, 9, null],
-          [8, 12, null],
-          [9, 55, null],
-          [10, 34, null],
-          [11, 46, 'point { size: 3; shape-type: circle; fill-color: #46A049; }']
-    ]);
-    var options = {
-      legend: 'none',
-      colors: ['#46A049'],
-      pointSize: 1,
-      vAxis: { gridlines: { count: 0 }, textPosition: 'none', baselineColor: '#FFFFFF' },
-      hAxis: { gridlines: { count: 0 }, textPosition: 'none' },
-      chartArea:{left:0,top:0,width:"99%",height:"100%"}
-    };
-    var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
-    chart.draw(data, options);
-  }
 </script>

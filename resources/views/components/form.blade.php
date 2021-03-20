@@ -1,4 +1,4 @@
-@props(['route', 'put', 'patch', 'delete', 'get'])
+@props(['route' => '', 'put', 'patch', 'delete', 'get'])
 
 <form {{ $attributes }} method="POST" action="{{ $route }}">
     @csrf

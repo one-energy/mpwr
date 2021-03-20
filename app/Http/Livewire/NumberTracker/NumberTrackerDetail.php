@@ -148,12 +148,20 @@ class NumberTrackerDetail extends Component
 
         $this->graficValueLast    = $this->numbersTrackedLast->sum($this->filterBy);
 
-        return $query->groupBy('daily_numbers.user_id')
+        $query->groupBy('daily_numbers.user_id')
             ->when(user()->role != "Admin" && user()->role != "Owner", function($query) {
                 $query->where("users.department_id", "=", user()->department_id);
-            })
-            ->orderBy($this->filterBy, $this->order)
-            ->get();
+            });
+
+        if($this->filterBy == 'sits'){
+            return $query->orderByRaw('sits + set_sits ' . $this->order)->get();
+        }
+
+        if($this->filterBy == 'closes'){
+            return $query->orderByRaw('closes + set_closes ' . $this->order)->get();
+        }
+
+        return $query->orderBy($this->filterBy, $this->order)->get();
     }
 
     public function addFilter($data, $type)

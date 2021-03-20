@@ -57,9 +57,9 @@
             <div class="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto">
                 <button type="button"
                         x-on:click="target.dispatchEvent(new CustomEvent('confirmed')); open = false;"
-                        class="inline-flex justify-center w-full px-4 py-2 text-base font-medium leading-6 border-2 
-                        @if($color == 'red') text-red-500 border-red-500 hover:text-red-600 hover:border-red-600 focus:border-red-500 focus:shadow-outline-red active:bg-red-50 
-                        @else border-green-base text-green-base hover:text-green-dark hover:border-green-dark focus:border-green-500 focus:shadow-outline-green active:bg-green-50 
+                        class="inline-flex justify-center w-full px-4 py-2 text-base font-medium leading-6 border-2
+                        @if($color == 'red') text-red-500 border-red-500 hover:text-red-600 hover:border-red-600 focus:border-red-500 focus:shadow-outline-red active:bg-red-50
+                        @else border-green-base text-green-base hover:text-green-dark hover:border-green-dark focus:border-green-500 focus:shadow-outline-green active:bg-green-50
                         @endif focus:outline-none transition duration-150 ease-in-out sm:text-sm sm:leading-5 rounded-md">
                     {{ $confirmButtonLabel ?? 'Confirm' }}
                 </button>

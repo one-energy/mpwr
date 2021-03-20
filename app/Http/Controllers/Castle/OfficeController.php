@@ -3,13 +3,24 @@
 namespace App\Http\Controllers\Castle;
 
 use App\Http\Controllers\Controller;
-use App\Models\Department;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 
 class OfficeController extends Controller
 {
+    public function getOffices($department = null)
+    {
+        if ($department) {
+            return Office::query()->select("offices.*")
+                ->join("regions", "offices.region_id", "=", "regions.id")
+                ->where("regions.department_id", "=", $department)
+                ->get();
+        }
+        return collect([]);
+    }
+
     public function index()
     {
         return view('castle.offices.index');
@@ -26,16 +37,16 @@ class OfficeController extends Controller
         }
 
         if (user()->role == "Department Manager") {
-            $regions =  $regionsQuery
+            $regions = $regionsQuery
                 ->join('departments', function ($join) {
                     $join->on("regions.department_id", '=', 'departments.id')
                         ->where('departments.department_manager_id', '=', user()->id);
                 })->get();
-            $users =  $usersQuery->whereDepartmentId(user()->department_id)->get();
+            $users   = $usersQuery->whereDepartmentId(user()->department_id)->get();
         }
         if (user()->role == "Region Manager") {
-            $regions =  $regionsQuery->whereRegionManagerId(user()->id)->get();
-            $users   =  $usersQuery->whereDepartmentId(user()->department_id)->get();
+            $regions = $regionsQuery->whereRegionManagerId(user()->id)->get();
+            $users   = $usersQuery->whereDepartmentId(user()->department_id)->get();
         }
 
         return view('castle.offices.create', compact('regions', 'users'));
@@ -43,18 +54,14 @@ class OfficeController extends Controller
 
     public function store()
     {
-        $validated = $this->validate(
-            request(),
-            [
-                'name'              => 'required|string|min:3|max:255',
-                'region_id'         => 'required',
-                'office_manager_id' => 'required',
-            ],
-            [
-                'region_id.required'         => 'The region field is required.',
-                'office_manager_id.required' => 'The office manager field is required.',
-            ],
-        );
+        $validated = request()->validate([
+            'name'              => 'required|string|min:3|max:255',
+            'region_id'         => 'required',
+            'office_manager_id' => 'required',
+        ], [
+            'region_id.required'         => 'The region field is required.',
+            'office_manager_id.required' => 'The office manager field is required.',
+        ]);
 
         $office                    = new Office();
         $office->name              = $validated['name'];
@@ -72,45 +79,40 @@ class OfficeController extends Controller
 
     public function edit(Office $office)
     {
-        $regionsQuery = Region::query();
-        if (user()->role == "Department Manager") {
-            $regions = $regionsQuery->whereDepartmentId(user()->department_id)->get();
-        }
+        $regions = Region::query()
+            ->when(user()->role == "Department Manager", function (Builder $query) {
+                $query->where('department_id', '=', user()->department_id);
+            })
+            ->when(user()->role == "Region Manager", function (Builder $query) {
+                $query->where('region_manager_id', '=', user()->id);
+            })
+            ->when(user()->role == "Office Manager", function (Builder $query) use ($office) {
+                $query->where('id', '=', $office->region_id);
+            })
+            ->get();
 
-        if (user()->role == "Region Manager") {
-            $regions = $regionsQuery->whereRegionManagerId(user()->id)->get();
-        }
-
-        if (user()->role == "Office Manager") {
-            $regions = $regionsQuery->whereId($office->region_id)->get();
-        }
-
-        if (user()->role == "Owner" || user()->role == "Admin") {
-            $regions = $regionsQuery->get();
-        }
-
-        $users   = User::query()
-            ->whereDepartmentId($office->region->department->id)
+        $users = User::query()
+            ->where('department_id', '=', $office->region->department->id)
             ->orderBy("first_name")
             ->get();
 
-        return view('castle.offices.edit', compact('office', 'regions', 'users'));
+        return view('castle.offices.edit', [
+            'office'  => $office,
+            'regions' => $regions,
+            'users'   => $users,
+        ]);
     }
 
     public function update(Office $office)
     {
-        $validated = $this->validate(
-            request(),
-            [
-                'name'              => 'required|string|min:3|max:255',
-                'region_id'         => 'required',
-                'office_manager_id' => 'required',
-            ],
-            [
-                'region_id.required'         => 'The region field is required.',
-                'office_manager_id.required' => 'The office manager field is required.',
-            ],
-        );
+        $validated = request()->validate([
+            'name'              => 'required|string|min:3|max:255',
+            'region_id'         => 'required',
+            'office_manager_id' => 'required',
+        ], [
+            'region_id.required'         => 'The region field is required.',
+            'office_manager_id.required' => 'The office manager field is required.',
+        ]);
 
         $office->name              = $validated['name'];
         $office->region_id         = $validated['region_id'];
@@ -123,27 +125,5 @@ class OfficeController extends Controller
             ->send();
 
         return redirect(route('castle.offices.index'));
-    }
-
-    public function destroy($id)
-    {
-        Office::destroy($id);
-
-        alert()
-            ->withTitle(__('Office has been deleted!'))
-            ->send();
-
-        return back();
-    }
-
-    public function getOffices($department = null)
-    {
-        if ($department) {
-            return Office::query()->select("offices.*")
-                ->join("regions", "offices.region_id", "=", "regions.id")
-                ->where("regions.department_id", "=", $department)
-                ->get();
-        }
-        return collect([]);
     }
 }
