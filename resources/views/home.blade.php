@@ -2,7 +2,7 @@
     <div>
         <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
             <div class="md:flex">
-                <div class="px-4 py-5 overflow-y-auto sm:px-6 sm:w-full md:w-2/3">
+                <div class="px-4 py-5 overflow-y-auto sm:px-6 sm:w-full md:w-2/3 xl:w-4/5">
 
                     <livewire:area-chart/>
 
@@ -88,7 +88,7 @@
                 </div>
 
                 <!-- Personal Data -->
-                <div class="hidden md:block">
+                <div class="hidden md:block md:w-1/3 xl:w-1/5 break-words">
                     <x-profile.show-profile-information/>
                 </div>
             </div>
