@@ -36,7 +36,7 @@
                                           name="customer.date_of_sale" :value="$customer->date_of_sale"/>
                     </div>
 
-                    <div class="col-span-1 md:col-span-2 @if($customer->setter_id == user()->id) md:col-span-3 @endif">
+                    <div class="col-span-1 @if($customer->setter_id == user()->id) md:col-span-3 @else md:col-span-2 @endif">
                         <x-input-add-on wire:model="customer.system_size" label="System Size" name="system_size"
                                         addOn="kW" name="customer.system_size"/>
                     </div>
