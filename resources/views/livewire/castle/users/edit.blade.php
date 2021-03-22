@@ -1,12 +1,12 @@
 <div>
     <div x-data="{openModal: false}">
-        <div class="max-w-6xl mx-auto py-5 sm:px-6 lg:px-8">
+        <div class="max-w-8xl mx-auto py-5 sm:px-6 lg:px-8">
             <x-link :href="route('castle.users.index')" color="gray" class="inline-flex items-center border-b-2 border-green-base hover:border-green-500 text-sm font-medium leading-5">
                 <x-svg.chevron-left class="w-6 -ml-2"/> @lang('User Info')
             </x-link>
         </div>
 
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
             <x-form :route="route('castle.users.update', $user->id)" put>
                 <div>
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
