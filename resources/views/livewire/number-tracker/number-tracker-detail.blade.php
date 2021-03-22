@@ -1,7 +1,7 @@
 <div>
-    <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-8xl sm:px-6 lg:px-8">
         <div class="md:flex">
-            <div class="py-5 overflow-hidden md:w-1/3">
+            <div class="py-5 overflow-hidden md:w-1/3 xl:w-1/4">
                 <div class="flex justify-start">
                     <h3 class="text-lg text-gray-900">Number Tracker</h3>
                 </div>
@@ -272,7 +272,7 @@
                 </div>
             </div>
 
-            <div class="px-4 py-5 sm:p-6 md:w-2/3">
+            <div class="px-4 py-5 sm:p-6 md:w-2/3 xl:w-3/4">
                 <div class="justify-center w-full">
                     <div class="flex justify-between mt-6 md:mt-12">
                         <div class="grid w-full grid-cols-2 row-gap-2 col-gap-1 md:grid-cols-4 md:col-gap-4">
