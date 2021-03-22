@@ -1,6 +1,6 @@
 <x-app.auth :title="__('Dashboard')">
     <div>
-        <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
             <div class="md:flex">
                 <div class="px-4 py-5 overflow-y-auto sm:px-6 sm:w-full md:w-2/3 xl:w-4/5">
 
