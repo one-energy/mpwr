@@ -1,5 +1,5 @@
 <div>
-    <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
+    <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
         <div class="px-4 py-5 sm:px-6">
             <div class="grid md:grid-cols-4 sm:grid-cols-2 gap-4">
                 <div class="md:flex justify-start col-span-1 w-auto">
@@ -143,7 +143,7 @@
                         @endif
                     @endif
                 </div>
-                <div class="col-span-2 md:col-span-1 sm:col-span-2">
+                <div class="col-span-2 md:col-span-1">
                     <x-search :search="$search" :perPage="false"/>
                 </div>
             </div>
@@ -316,15 +316,15 @@
   };
 
   var content = <?=$content->description ?? 'null'?>
-  
+
   var quill = new Quill('#editor', options);
   var reader = new Quill('#reader', readerOption);
-  
+
   if(content){
     quill.setContents(content);
     reader.setContents(content);
   }
-  
+
   var form = document.getElementById("formContent");
   form.onsubmit = function() { // onsubmit do this first
     var description = document.querySelector('textarea[name="description"]'); // set name input var
