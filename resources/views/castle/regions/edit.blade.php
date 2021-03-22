@@ -6,8 +6,8 @@
                 < Edit Region
             </a>
         </div>
-        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8 px-8">
-            <x-form :route="route('castle.regions.update', $region)" put>
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
+            <x-form class="px-8" :route="route('castle.regions.update', $region)" put>
                 @csrf
                 <div x-data="{ selectedDepartment: null,
                               selectedRegionManager: null,
@@ -16,11 +16,12 @@
                               regionsManager: null }"
                      x-init="$watch('selectedDepartment',
                                      (department) => {
-                                    fetch('https://' + location.hostname + '/get-regions-managers/' + department, {method: 'post',  headers: {
+                                    const url = '{{ route('getRegionsManager', ':department') }}'.replace(':department', department);
+                                    fetch(url, {method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
                                     }}).then(res => res.json()).then((regionManagerData) => { regionsManager = regionManagerData }) }),
-                            fetch('https://' + location.hostname + '/get-departments',{method: 'post',  headers: {
+                            fetch('{{ route('getDepartments') }}',{method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
                                     }}).then(res=> res.json()).then( (departmentsData) => {
