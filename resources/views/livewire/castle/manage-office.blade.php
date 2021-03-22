@@ -1,10 +1,10 @@
 <div>
-    <div class="max-w-6xl mx-auto py-5 sm:px-6 lg:px-8">
+    <div class="max-w-8xl mx-auto py-5 sm:px-6 lg:px-8">
         <h3 class="text-lg text-gray-900">Manage offices</h3>
-        <div class="mt-6 max-w-4xl mx-auto px-6">
+        <div class="mt-6 max-w-6xl mx-auto px-6">
             <x-search :search="$search" :perPage="false"/>
         </div>
-        <div class="grid grid-cols-2 gap-4 max-w-4xl mx-auto px-6">
+        <div class="grid grid-cols-2 gap-4 max-w-6xl mx-auto px-6">
             <div class="col-span-1">
                 <div class="inline-flex grid-cols-6 gap-4 h-8">
                     <div class="col-span-1 py-2">

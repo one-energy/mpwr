@@ -1,12 +1,12 @@
 <x-app.auth :title="__('Edit Region')">
     <div>
-        <div class="max-w-6xl mx-auto py-5 sm:px-6 lg:px-8">
+        <div class="max-w-8xl mx-auto py-5 sm:px-6 lg:px-8">
             <a href="{{ route('castle.regions.index') }}"
                class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
                 < Edit Region
             </a>
         </div>
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8 px-8">
             <x-form :route="route('castle.regions.update', $region)" put>
                 @csrf
                 <div x-data="{ selectedDepartment: null,
