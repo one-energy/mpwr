@@ -63,7 +63,7 @@
                                         @else
                                             <x-table.tr :loop="$loop" class="cursor-pointer">
                                                 @if(user()->role == "Admin")
-                                                    <x-table.td>{{ $user->department->name ?? 'Whitout Department' }}</x-table.td>
+                                                    <x-table.td>{{ $user->department->name ?? 'Without Department' }}</x-table.td>
                                                 @endif
                                                 <x-table.td>{{ $user->first_name . ' ' . $user->last_name }}</x-table.td>
                                                 <x-table.td>{{ $user->email }}</x-table.td>
