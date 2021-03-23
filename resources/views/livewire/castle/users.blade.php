@@ -33,7 +33,7 @@
                                         <x-table.th-searchable by="role" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Role')
                                         </x-table.th>
-                                        <x-table.th-searchable by="role" :sortedBy="$sortBy" :direction="$sortDirection">
+                                        <x-table.th-searchable by="team" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Team')
                                         </x-table.th>
                                         <x-table.th-searchable by="role" :sortedBy="$sortBy" :direction="$sortDirection">
