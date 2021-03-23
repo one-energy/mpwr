@@ -234,6 +234,8 @@ class UsersController extends Controller
 
         return $usersQuery->whereRole('Office Manager')
             ->whereDepartmentId($region->department_id)
+            ->orderBy('first_name', 'ASC')
+            ->orderBy('last_name', 'ASC')
             ->get();
     }
 }
