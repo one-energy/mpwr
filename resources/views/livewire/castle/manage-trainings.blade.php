@@ -33,7 +33,7 @@
                                                             'section' => $actualSection->id
                                                             ])">
                                                         <div class="flex space-x-2">
-                                                            <x-input label="Title" name="title" type="text"></x-input>
+                                                            <x-input label="Title" name="title" type="text"/>
                                                             <div class="mt-6">
                                                                 <span class="block w-full rounded-md shadow-sm">
                                                                     <x-button class="w-full flex" type="submit" color="green">
@@ -74,8 +74,8 @@
                                                         <h3>Add a new content to {{$actualSection->title}}</h3>
                                                         <x-form id="formContent" :route="route('castle.manage-trainings.storeContent', $actualSection->id)">
                                                             <div class="grid grid-cols-2 mt-8 gap-2 mb-4">
-                                                                <x-input class="col-span-1" label="Title" name="content_title"></x-input>
-                                                                <x-input class="col-span-1" label="Video Url" name="video_url"></x-input>
+                                                                <x-input class="col-span-1" label="Title" name="content_title"/>
+                                                                <x-input class="col-span-1" label="Video Url" name="video_url"/>
                                                                 <x-text-area class="col-span-2" label="Description" name="description" hidden></x-text-area>
                                                             </div>
                                                             <div class="grid" id="editor"></div>
@@ -120,8 +120,8 @@
                                                         <h3>Edit the content to {{$actualSection->title}}</h3>
                                                         <x-form id="formContent" :route="route('castle.manage-trainings.updateContent', $content->id)">
                                                             <div class="grid grid-cols-2 mt-8 mb-4 gap-2">
-                                                                <x-input class="col-span-1" label="Title" name="content_title" value="{{$content->title}}"></x-input>
-                                                                <x-input class="col-span-1" label="Video Url" name="video_url" value="{{$content->video_url}}"></x-input>
+                                                                <x-input class="col-span-1" label="Title" name="content_title" value="{{$content->title}}"/>
+                                                                <x-input class="col-span-1" label="Video Url" name="video_url" value="{{$content->video_url}}"/>
                                                                 <x-text-area id="description" class="col-span-2" label="Description" name="description" value="{{$content->description}}" hidden></x-text-area>
                                                             </div>
                                                             <div class="grid" id="editor"></div>
@@ -176,7 +176,7 @@
                                             <h3>Edit the section {{$actualSection->title}}</h3>
                                             <x-form class="mt-8 inline-flex" :route="route('castle.manage-trainings.updateSection', $actualSection->id)" put>
                                                 <div class="flex space-x-2">
-                                                    <x-input label="Title" name="title" type="text" value="{{$actualSection->title}}"></x-input>
+                                                    <x-input label="Title" name="title" type="text" value="{{$actualSection->title}}"/>
                                                     <div class="mt-6">
                                                         <span class="block w-full rounded-md shadow-sm">
                                                             <x-button class="w-full flex" type="submit" color="green">

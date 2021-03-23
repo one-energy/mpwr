@@ -30,7 +30,7 @@
                                     })">
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                         <div class="md:col-span-3 col-span-2">
-                            <x-input label="Region Name" name="name" value="{{ $region->name }}"></x-input>
+                            <x-input label="Region Name" name="name" value="{{ $region->name }}"/>
                         </div>
                         @if(user()->role != "Admin" && user()->role != "Owner")
                             <div class="md:col-span-3 col-span-2 hidden">

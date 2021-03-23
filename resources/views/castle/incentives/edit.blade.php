@@ -10,19 +10,19 @@
                 <div class="px-8">
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                         <div class="md:col-span-3 col-span-2">
-                            <x-input label="Number of Installs" name="number_installs" type="number" value="{{ $incentive->number_installs }}"></x-input>
+                            <x-input label="Number of Installs" name="number_installs" type="number" value="{{ $incentive->number_installs }}"/>
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
-                            <x-input label="Incentive Name" name="name" value="{{ $incentive->name }}"></x-input>
+                            <x-input label="Incentive Name" name="name" value="{{ $incentive->name }}"/>
                         </div>
 
                         <div class="md:col-span-3 col-span-1">
-                            <x-input label="Installs Needed" name="installs_needed" type="number" value="{{ $incentive->installs_needed }}"></x-input>
+                            <x-input label="Installs Needed" name="installs_needed" type="number" value="{{ $incentive->installs_needed }}"/>
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
-                            <x-input-add-on  label="kW Needed" name="kw_needed" addOn="kW" value="{{ $incentive->kw_needed }}"></x-input-add-on >
+                            <x-input-add-on  label="kW Needed" name="kw_needed" addOn="kW" value="{{ $incentive->kw_needed }}"/>
                         </div>
 
                         <div class="md:col-span-3 col-span-2 @if(user()->role != "Admin" && user()->role != "Owner") hidden @endif">

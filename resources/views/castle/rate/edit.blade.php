@@ -9,7 +9,7 @@
             <x-form :route="route('castle.rates.update', $rate->id)" put>
                 <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6 px-8">
                     <div class="md:col-span-6 col-span-2">
-                        <x-input label="Title" name="name" value="{{$rate->name}}"></x-input>
+                        <x-input label="Title" name="name" value="{{$rate->name}}"/>
                     </div>
                     @if(user()->role != "Admin" && user()->role != "Owner")
                         <div class="md:col-span-3 col-span-2 hidden">
@@ -33,10 +33,10 @@
                         </div>
                     @endif
                     <div class="md:col-span-3 col-span-2">
-                        <x-input label="Systems Installed" name="time" value="{{$rate->time}}"></x-input>
+                        <x-input label="Systems Installed" name="time" value="{{$rate->time}}"/>
                     </div>
                     <div class="md:col-span-3 col-span-2">
-                        <x-input-currency :label="__('Pay Rate ($/W)')" name="rate" value="{{$rate->rate}}"></x-input>
+                        <x-input-currency :label="__('Pay Rate ($/W)')" name="rate" value="{{$rate->rate}}"/>
                     </div>
                     <div class="md:col-span-3 col-span-2">
                         <x-select label="Role" name="role">
