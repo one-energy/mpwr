@@ -20,6 +20,7 @@ use App\Http\Controllers\NumberTrackingController;
 use App\Http\Controllers\ProfileChangePasswordController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProfilePhotoUploadController;
+use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\ScoreboardController;
 use App\Http\Controllers\TrainingController;
 use Illuminate\Support\Facades\Route;
@@ -132,6 +133,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/scoreboard', ScoreboardController::class)->name('scoreboard');
     Route::get('/trainings/{department?}/{section?}/{search?}', [TrainingController::class, 'index'])->name('trainings.index');
     Route::get('/incentives', IncentivesController::class)->name('incentives.index');
+    Route::get('/reports', [ReportsController::class, 'index'])->name('reports.index');
     Route::get('/number-tracking', [NumberTrackingController::class, 'index'])->name('number-tracking.index');
     Route::get('/number-tracking/create', [NumberTrackingController::class, 'create'])->name('number-tracking.create');
     Route::post('/number-tracking/create', [NumberTrackingController::class, 'store'])->name('number-tracking.store');
