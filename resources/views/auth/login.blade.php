@@ -13,7 +13,6 @@
         <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
             <x-card>
                 <x-form :route="route('login')">
-                    @csrf
                     <x-input label="E-Mail Address" name="email"></x-input>
 
                     <x-input class="mt-6" type="password" label="Password" name="password"></x-input>

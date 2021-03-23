@@ -8,7 +8,6 @@
         </div>
         <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
             <x-form class="px-8" :route="route('castle.regions.update', $region)" put>
-                @csrf
                 <div x-data="{ selectedDepartment: null,
                               selectedRegionManager: null,
                               token: document.head.querySelector('meta[name=csrf-token]').content,

@@ -250,7 +250,6 @@
                  x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                  class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
                 <x-form :route="route('customers.active', $customer->id)" put>
-                    @csrf
                     <input type="hidden" id="active" name="active"
                            value="{{ $customer->is_active ? true : false }}">
                     <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">

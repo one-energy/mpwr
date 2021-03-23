@@ -7,7 +7,6 @@
         </div>
         <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
             <x-form :route="route('castle.departments.update', $department->id)" put>
-                @csrf
                 <div class="px-8">
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                         <div class="md:col-span-3 col-span-2">

@@ -7,7 +7,6 @@
         </div>
         <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
             <x-form :route="route('castle.offices.store')" post>
-                @csrf
                 <div class="px-8" x-data="{ selectedRegion: null,
                               token: document.head.querySelector('meta[name=csrf-token]').content,
                               officesManagers: null,

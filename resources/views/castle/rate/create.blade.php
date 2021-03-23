@@ -7,7 +7,6 @@
         </div>
         <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
             <x-form :route="route('castle.rates.store')" post>
-                @csrf
                 <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6 px-8">
                     <div class="md:col-span-6 col-span-2">
                         <x-input label="Title" name="name"></x-input>
