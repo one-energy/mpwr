@@ -16,11 +16,12 @@
                               regionsManager: null }"
                      x-init="$watch('selectedDepartment',
                                      (department) => {
-                                    fetch('https://' + location.hostname + '/get-regions-managers/' + department, {method: 'post',  headers: {
+                                    const url = '{{ route('getRegionsManager', ':department') }}'.replace(':department', department);
+                                    fetch(url, {method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
                                     }}).then(res => res.json()).then((regionManagerData) => { regionsManager = regionManagerData }) }),
-                            fetch('https://' + location.hostname + '/get-departments',{method: 'post',  headers: {
+                            fetch('{{ route('getDepartments') }}',{method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
                                     }}).then(res=> res.json()).then( (departmentsData) => {

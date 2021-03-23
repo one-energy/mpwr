@@ -223,6 +223,8 @@ class UsersController extends Controller
     {
         return User::whereDepartmentId($departmentId)
             ->whereRole('Region Manager')
+            ->orderBy('first_name', 'ASC')
+            ->orderBy('last_name', 'ASC')
             ->get();
     }
 
