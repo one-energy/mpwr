@@ -7,10 +7,15 @@ use Livewire\Component;
 
 class UserInfoTab extends Component
 {
+    public User $user;
+
     public $openedTab = 'userInfo';
+
+    public $teams;
 
     public function render()
     {
+        $this->getAssignedTeams();
         return view('livewire.castle.users.user-info-tab');
     }
 
@@ -29,5 +34,20 @@ class UserInfoTab extends Component
             }
         }
         return $roleTitle;
+    }
+
+    public function getAssignedTeams()
+    {
+        if ($this->user->role == "Department Manager" || $this->user->role == "Admin" || $this->user->role == "Owner" || $this->user->role == "Sales Rep" || $this->user->role == "Setter" ) {
+            $this->teams = collect([$this->user->office]);
+        }
+
+        if ($this->user->role == "Region Manager") {
+            $this->teams = $this->user->managedRegions;
+        }
+
+        if ($this->user->role == "Office Manager") {
+            $this->teams = $this->user->managedOffices;
+        }
     }
 }

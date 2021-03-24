@@ -27,6 +27,6 @@
                 </div>
             </div>
         </div>
-        <livewire:castle.users.user-info-tab/>
+        <livewire:castle.users.user-info-tab :user="$user"/>
     </div>
 </x-app.auth>
