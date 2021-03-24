@@ -265,7 +265,7 @@
                     </div>
                     <div>
                         <span class="ml-3 inline-flex rounded-md shadow-sm">
-                            <a href="{{route('castle.users.index')}}" class="py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-gray-800 hover:bg-gray-300 focus:outline-none focus:border-gray-300 focus:shadow-outline-gray transition duration-150 ease-in-out">
+                            <a href="{{route('castle.users.show', $user->id)}}" class="py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-gray-800 hover:bg-gray-300 focus:outline-none focus:border-gray-300 focus:shadow-outline-gray transition duration-150 ease-in-out">
                                 Cancel
                             </a>
                         </span>
@@ -282,7 +282,7 @@
         </div>
         <div class="@if($openedTab != 'payEdit') hidden @endif">
             <div class="grid grid-cols-3 justify-between">
-                <x-form class="col-span-3">
+                <x-form class="col-span-3" wire:submit.prevent="saveOverride">
                     <div class="grid col-span-3 grid-cols-3 gap-x-4 p-4">
                         <div>
                             <x-input-currency wire:model="userOverride.pay" name="userOverride.pay" label="Pay"/>
@@ -290,8 +290,8 @@
                         <div>
                             <x-select name="referred_by" label="Referred By">
                                 <option value="">None</option>
-                                @foreach($departmentUsers as $user)
-                                    <option value="{{$user->id}}">{{$user->first_name}} {{$user->first_name}}</option>
+                                @foreach($departmentUsers as $userOnDepartment)
+                                    <option value="{{$userOnDepartment->id}}">{{$userOnDepartment->first_name}} {{$userOnDepartment->first_name}}</option>
                                 @endforeach
                             </x-select>
                         </div>
@@ -299,28 +299,28 @@
                             <x-input-currency wire:model="userOverride.referral_override" name="userOverride.referral_override" label="Referral Override"/>
                         </div>
                     </div>
-                    <div class="grid col-span-3 grid-cols-3 gap-x-4 p-4 border border-gray-400 rounded-md bg-gray-100">
+                    <div class="grid col-span-3 grid-cols-3 gap-x-4 gap-y-1 p-4 border border-gray-400 rounded-md bg-gray-100">
                         <div>
                             <x-select name="referred_by" label="Referred By">
                                 <option value="">None</option>
-                                @foreach($officeManagerUsers as $user)
-                                    <option value="{{$user->id}}">{{$user->first_name}} {{$user->first_name}}</option>
+                                @foreach($officeManagerUsers as $officeManager)
+                                    <option value="{{$officeManager->id}}">{{$officeManager->first_name}} {{$officeManager->first_name}}</option>
                                 @endforeach
                             </x-select>
                         </div>
                         <div>
                             <x-select name="referred_by" label="Referred By">
                                 <option value="">None</option>
-                                @foreach($regionManagerUsers as $user)
-                                    <option value="{{$user->id}}">{{$user->first_name}} {{$user->first_name}}</option>
+                                @foreach($regionManagerUsers as $regionManager)
+                                    <option value="{{$regionManager->id}}">{{$regionManager->first_name}} {{$regionManager->first_name}}</option>
                                 @endforeach
                             </x-select>
                         </div>
                         <div>
                             <x-select name="referred_by" label="Referred By">
                                 <option value="">None</option>
-                                @foreach($departmentManagerUsers as $user)
-                                    <option value="{{$user->id}}">{{$user->first_name}} {{$user->first_name}}</option>
+                                @foreach($departmentManagerUsers as $departmentManager)
+                                    <option value="{{$departmentManager->id}}">{{$departmentManager->first_name}} {{$departmentManager->first_name}}</option>
                                 @endforeach
                             </x-select>
                         </div>
@@ -338,14 +338,53 @@
                         <div>
                             <x-input-currency wire:model="userOverride.misc_override_one" name="userOverride.misc_override_one" label="Misc Override 1"/>
                         </div>
-                        <div class="col-span-2">
+                        <div>
+                            <x-input wire:model="userOverride.payee_one" name="userOverride.payee_one" label="Payee"></x-input>
+                        </div>
+                        <div>
                             <x-input wire:model="userOverride.note_one" name="userOverride.note_one" label="Note"></x-input>
                         </div>
                         <div>
                             <x-input-currency wire:model="userOverride.misc_override_two" name="userOverride.misc_override_two" label="Misc Override 2"/>
                         </div>
-                        <div class="col-span-2">
+                        <div>
+                            <x-input wire:model="userOverride.payee_two" name="userOverride.payee_two" label="Payee"></x-input>
+                        </div>
+                        <div>
                             <x-input wire:model="userOverride.note_two" name="userOverride.note_two" label="Note"></x-input>
+                        </div>
+                    </div>
+                    <div class="mt-8 pt-2 flex justify-between">
+                        <div>
+                            @if(user()->id != $user->id)
+                                <span class="ml-3 inline-flex rounded-md shadow-sm">
+                                    <a href="#"
+                                        x-on:click="$dispatch('confirm', {from: $event.target})"
+                                        x-on:confirmed=""
+                                        class="inline-flex justify-center py-2 px-4 border-2 border-red-500 text-sm leading-5 font-medium rounded-md text-red-500 hover:text-red-600 hover:border-red-600 focus:outline-none focus:border-red-500 focus:shadow-outline-red active:bg-red-50 transition duration-150 ease-in-out">
+                                        Delete User
+                                    </a>
+                                </span>
+                            @endif
+                            <span class="ml-3 inline-flex rounded-md shadow-sm">
+                                <a href="{{route('castle.users.request-reset-password', $user->id)}}" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-500 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
+                                    Reset Password
+                                </a>
+                            </span>
+                        </div>
+                        <div>
+                            <span class="ml-3 inline-flex rounded-md shadow-sm">
+                                <a href="{{route('castle.users.show', $user->id)}}" class="py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-gray-800 hover:bg-gray-300 focus:outline-none focus:border-gray-300 focus:shadow-outline-gray transition duration-150 ease-in-out">
+                                    Cancel
+                                </a>
+                            </span>
+                            @if(user()->id != $user->id)
+                                <span class="inline-flex rounded-md shadow-sm">
+                                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-base hover:bg-green-700 focus:outline-none focus:border-green-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
+                                        Update User
+                                    </button>
+                                </span>
+                            @endif
                         </div>
                     </div>
                 </x-form>

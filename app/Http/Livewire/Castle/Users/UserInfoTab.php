@@ -13,6 +13,8 @@ class UserInfoTab extends Component
 {
     public User $user;
 
+    public User $userOverride;
+
     public Collection $departmentUsers;
 
     public Collection $departmentManagerUsers;
@@ -73,12 +75,14 @@ class UserInfoTab extends Component
             'userOverride.region_manager_id'           => 'nullable',
             'userOverride.department_manager_id'       => 'nullable',
             'userOverride.department_manager_override' => 'nullable',
-            'userOverride.department_manager_override' => 'nullable',
-            'userOverride.department_manager_override' => 'nullable',
+            'userOverride.region_manager_override'     => 'nullable',
+            'userOverride.office_manager_override'     => 'nullable',
             'userOverride.misc_override_one'           => 'nullable',
             'userOverride.misc_override_two'           => 'nullable',
             'userOverride.note_one'                    => 'nullable',
             'userOverride.note_two'                    => 'nullable',
+            'userOverride.payee_one'                   => 'nullable',
+            'userOverride.payee_two'                   => 'nullable',
         ];
     }
 
@@ -87,6 +91,20 @@ class UserInfoTab extends Component
         $this->validate();
 
         $this->user->save();
+
+        alert()
+            ->withTitle(__('User has been updated!'))
+            ->livewire($this)
+            ->send();
+
+        $this->openedTab = 'userInfo';
+    }
+
+    public function saveOverride()
+    {
+        $this->validate();
+
+        $this->userOverride->save();
 
         alert()
             ->withTitle(__('User has been updated!'))
