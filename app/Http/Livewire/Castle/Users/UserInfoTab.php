@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Castle\Users;
 
+use App\Models\Department;
 use App\Models\User;
 use Livewire\Component;
 
@@ -11,10 +12,39 @@ class UserInfoTab extends Component
 
     public $openedTab = 'userInfo';
 
+    public $selectedDepartmentId;
+
+    public $roles;
+
+    public $departments;
+
     public $teams;
+
+    public $offices;
+
+    protected $queryString = ['openedTab'];
+
+    protected $rules = [
+        'user.first_name'    => ['required', 'string', 'max:255'],
+        'user.last_name'     => ['required', 'string', 'max:255'],
+        'user.role'          => ['nullable', 'string', 'max:255'],
+        'user.office_id'     => 'nullable',
+        'user.pay'           => 'nullable',
+        'user.department_id' => 'nullable',
+        'user.email'         => 'required',
+    ];
+
+    public function mount($user)
+    {
+        $this->selectedDepartmentId = $user->department_id;
+    }
 
     public function render()
     {
+        $department    = Department::find($this->selectedDepartmentId);
+        $this->departments = Department::get();
+        $this->roles   = User::getRolesPerUserRole(user());
+        $this->offices = $department ? $department->offices()->get() : [];
         $this->getAssignedTeams();
         return view('livewire.castle.users.user-info-tab');
     }

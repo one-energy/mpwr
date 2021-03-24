@@ -1,16 +1,16 @@
 <div>
     <div>
         <div class="bg-white">
-            <nav class="flex flex-col sm:flex-row">
-                <button class="text-gray-600 py-4 px-6 block hover:text-green-base focus:outline-none @if($openedTab == 'userInfo') text-green-base border-b-2 font-medium border-green-500 @endif"
+            <nav class="flex justify-center flex-col sm:flex-row">
+                <button class="text-gray-600 py-4 px-6 block hover:text-green-base focus:outline-none @if($openedTab == 'userInfo' || $openedTab == 'userEdit') text-green-base border-b-2 font-medium border-green-500 @endif"
                         wire:click="changeTab('userInfo')">
                     User Info
                 </button>
-                <button class="text-gray-600 py-4 px-6 block hover:text-green-base focus:outline-none @if($openedTab == 'orgInfo') text-green-base border-b-2 font-medium border-green-500 @endif"
+                <button class="text-gray-600 py-4 px-6 block hover:text-green-base focus:outline-none @if($openedTab == 'orgInfo' || $openedTab == 'userEdit') text-green-base border-b-2 font-medium border-green-500 @endif"
                         wire:click="changeTab('orgInfo')">
                     Org. Assignments
                 </button>
-                <button class="text-gray-600 py-4 px-6 block hover:text-green-base focus:outline-none @if($openedTab == 'payInfo') text-green-base border-b-2 font-medium border-green-500 @endif"
+                <button class="text-gray-600 py-4 px-6 block hover:text-green-base focus:outline-none @if($openedTab == 'payInfo' || $openedTab == 'payEdit') text-green-base border-b-2 font-medium border-green-500 @endif"
                         wire:click="changeTab('payInfo')">
                     Pay Rate
                 </button>
@@ -39,6 +39,9 @@
                         <span class="text-gray-600">Role</span>
                         <p>{{$this->userRole($user->role)}}</p>
                     </div>
+                </div>
+                <div class="flex justify-end">
+                    <x-button wire:click="changeTab('userEdit')" class="place-self-end">Edit</x-button>
                 </div>
             </div>
             <div class="@if($openedTab != 'orgInfo') hidden @endif">
@@ -114,10 +117,176 @@
                         </div>
                     @endif
                 </div>
+                <div class="flex justify-end mt-4">
+                    <x-button wire:click="changeTab('userEdit')" class="place-self-end">Edit</x-button>
+                </div>
             </div>
             <div class="@if($openedTab != 'payInfo') hidden @endif">
-                teste
+                <div class="grid grid-cols-3 justify-between">
+                    <div class="grid col-span-3 grid-cols-3 gap-x-4 p-4">
+                        <div>
+                            <label class="text-gray-600">Pay Rate</label>
+                            <p>${{$user->pay}}</p>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Referred By</span>
+                            <p>{{$user->last_name}}</p>
+                        </div>
+                        <div>
+                            <label class="text-gray-600">Referral Override</label>
+                            <p>{{$user->email}}</p>
+                        </div>
+                    </div>
+                    <div class="grid col-span-3 grid-cols-3 gap-x-4 p-4 border border-gray-400 rounded-md bg-gray-100">
+                        <div>
+                            <span class="text-gray-600">Manager</span>
+                            <p>{{$user->last_name}}</p>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Regional</span>
+                            <p>{{$this->userRole($user->role)}}</p>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">VP</span>
+                            <p>{{$this->userRole($user->role)}}</p>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Manager Override</span>
+                            <p>{{$user->last_name}}</p>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Regional Override</span>
+                            <p>{{$this->userRole($user->role)}}</p>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">VP Override</span>
+                            <p>{{$this->userRole($user->role)}}</p>
+                        </div>
+                    </div>
+                    <div class="grid col-span-3 grid-cols-3 gap-4 p-4">
+                        <div>
+                            <span class="text-gray-600">Misc. Override 1</span>
+                            <p>{{$user->last_name}}</p>
+                        </div>
+                        <div class="col-span-2">
+                            <span class="text-gray-600">Note</span>
+                            <p>{{$this->userRole($user->role)}}</p>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Misc. Override 2</span>
+                            <p>{{$user->last_name}}</p>
+                        </div>
+                        <div class="col-span-2">
+                            <span class="text-gray-600">Note</span>
+                            <p>{{$this->userRole($user->role)}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end">
+                    <x-button wire:click="changeTab('payEdit')" class="place-self-end">Edit</x-button>
+                </div>
             </div>
+            <div class="@if($openedTab != 'userEdit') hidden @endif">
+                <x-form :route="route('castle.users.update', $user->id)" put>
+                    <div>
+                        <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
+                            <div class="md:col-span-3 col-span-2">
+                                <x-input label="First Name" name="first_name" wire:model="user.first_name" disabled="{{user()->id == $user->id}}"/>
+                            </div>
+
+                            <div class="md:col-span-3 col-span-2">
+                                <x-input label="Last Name" name="last_name" wire:model="user.last_name" disabled="{{user()->id == $user->id}}" />
+                            </div>
+
+                            <div class="md:col-span-3 col-span-2">
+                                <x-input label="Email" name="email" wire:model="user.email" disabled="{{user()->id == $user->id}}"/>
+                            </div>
+
+                            <div class="md:col-span-3 col-span-2">
+                                <x-select wire:change="changeRole($event.target.value)" wire:model="user.role" label="Role" name="role" disabled="{{user()->id == $user->id}}">
+                                        @foreach ($roles as $role)
+                                            <option value="{{$role['name']}}" > {{$role['title']}}</option>
+                                        @endforeach
+                                </x-select>
+                            </div>
+
+                            @if(user()->role != "Admin" && user()->role != "Owner")
+                                <div class="md:col-span-3 col-span-2 hidden">
+                                    <x-select wire:model="user.department_id" label="Department" name="department_id" disabled="{{user()->id == $user->id}}">
+                                        @foreach($departments as $department)
+                                            <option value="{{$user->department_id}}">{{$department->name}}</option>
+                                        @endforeach
+                                    </x-select>
+                                </div>
+                            @else
+                                <div class="md:col-span-3 col-span-2">
+                                    <x-select wire:change="changeDepartment($event.target.value)" wire:model="user.department_id" label="Department" name="department_id" disabled="{{user()->id == $user->id}}">
+                                        @foreach($departments as $department)
+                                            <option value="{{$department->id}}">{{$department->name}}</option>
+                                        @endforeach
+                                    </x-select>
+                                </div>
+                            @endif
+
+                            <div class="md:col-span-3 col-span-2">
+                                <x-select wire:model="user.office_id" label="Office" name="office_id" disabled="{{user()->id == $user->id}}">
+                                    @if($user->role != "Office Manager" && $user->role != "Sales Rep" && $user->role != "Setter")
+                                        <option value="">
+                                            None
+                                        </option>
+                                    @endif
+                                    @if($offices->count())
+                                        <option value="">No offices in department</option>
+                                    @endif
+                                    @foreach($offices as $office)
+                                        <option value="{{$office->id}}">{{$office->name}}</option>
+                                    @endforeach
+                                </x-select>
+                            </div>
+
+                            <div class="md:col-span-3 col-span-2">
+                                <x-input-currency wire:model="user.pay" label="Pay Rate ($/W)" name="pay" disabled="{{user()->id == $user->id}}"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-2 flex justify-end">
+
+                        @if(user()->id != $user->id)
+                            <span class="inline-flex rounded-md shadow-sm">
+                                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
+                                    Update User
+                                </button>
+                            </span>
+                        @endif
+                        <span class="ml-3 inline-flex rounded-md shadow-sm">
+                            <a href="{{route('castle.users.request-reset-password', $user->id)}}" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
+                                Reset Password
+                            </a>
+                        </span>
+
+
+                        @if(user()->id != $user->id)
+                            <span class="ml-3 inline-flex rounded-md shadow-sm">
+                                <a href="#"
+                                    x-on:click="$dispatch('confirm', {from: $event.target})"
+                                    x-on:confirmed=""
+                                    class="inline-flex justify-center py-2 px-4 border-2 border-red-500 text-sm leading-5 font-medium rounded-md text-red-500 hover:text-red-600 hover:border-red-600 focus:outline-none focus:border-red-500 focus:shadow-outline-red active:bg-red-50 transition duration-150 ease-in-out"
+
+                                >
+                                    Delete User
+                                </a>
+                            </span>
+                        @endif
+                        <span class="ml-3 inline-flex rounded-md shadow-sm">
+                            <a href="{{route('castle.users.index')}}" class="py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-gray-800 hover:bg-gray-300 focus:outline-none focus:border-gray-300 focus:shadow-outline-gray transition duration-150 ease-in-out">
+                                Cancel
+                            </a>
+                        </span>
+                    </div>
+                </x-form>
+            </div>
+            <div class="@if($openedTab != 'payEdit') hidden @endif">Edit Pay</div>
         </div>
     </div>
 </div>
