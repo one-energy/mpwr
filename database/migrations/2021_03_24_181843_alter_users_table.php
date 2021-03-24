@@ -24,9 +24,11 @@ class AlterUsersTable extends Migration
             $table->integer('region_manager_override')->nullable()->after('office_manager_override');
             $table->integer('department_manager_override')->nullable()->after('office_manager_override');
             $table->integer('misc_override_one')->nullable()->after('department_manager_override');
-            $table->string('note_one')->nullable()->after('misc_override_one');
+            $table->integer('payee_one')->nullable()->after('misc_override_one');
+            $table->string('note_one')->nullable()->after('payee_one');
             $table->integer('misc_override_two')->nullable()->after('note_one');
-            $table->string('note_two')->nullable()->after('misc_override_two');
+            $table->integer('payee_two')->nullable()->after('misc_override_two');
+            $table->string('note_two')->nullable()->after('payee_two');
         });
     }
 
