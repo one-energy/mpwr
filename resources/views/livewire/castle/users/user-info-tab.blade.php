@@ -6,7 +6,7 @@
                         wire:click="changeTab('userInfo')">
                     User Info
                 </button>
-                <button class="text-gray-600 py-4 px-6 block hover:text-green-base focus:outline-none @if($openedTab == 'orgInfo' || $openedTab == 'userEdit') text-green-base border-b-2 font-medium border-green-500 @endif"
+                <button class="text-gray-600 py-4 px-6 block hover:text-green-base focus:outline-none @if($openedTab == 'orgInfo') text-green-base border-b-2 font-medium border-green-500 @endif"
                         wire:click="changeTab('orgInfo')">
                     Org. Assignments
                 </button>
@@ -187,7 +187,7 @@
                 </div>
             </div>
             <div class="@if($openedTab != 'userEdit') hidden @endif">
-                <x-form :route="route('castle.users.update', $user->id)" put>
+                <x-form>
                     <div>
                         <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                             <div class="md:col-span-3 col-span-2">
@@ -235,7 +235,7 @@
                                             None
                                         </option>
                                     @endif
-                                    @if($offices->count())
+                                    @if(!$offices->count())
                                         <option value="">No offices in department</option>
                                     @endif
                                     @foreach($offices as $office)
@@ -243,50 +243,64 @@
                                     @endforeach
                                 </x-select>
                             </div>
-
-                            <div class="md:col-span-3 col-span-2">
-                                <x-input-currency wire:model="user.pay" label="Pay Rate ($/W)" name="pay" disabled="{{user()->id == $user->id}}"/>
-                            </div>
                         </div>
                     </div>
 
-                    <div class="mt-8 pt-2 flex justify-end">
-
-                        @if(user()->id != $user->id)
-                            <span class="inline-flex rounded-md shadow-sm">
-                                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
-                                    Update User
-                                </button>
-                            </span>
-                        @endif
-                        <span class="ml-3 inline-flex rounded-md shadow-sm">
-                            <a href="{{route('castle.users.request-reset-password', $user->id)}}" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
-                                Reset Password
-                            </a>
-                        </span>
-
-
-                        @if(user()->id != $user->id)
+                    <div class="mt-8 pt-2 flex justify-between">
+                        <div>
+                            @if(user()->id != $user->id)
+                                <span class="ml-3 inline-flex rounded-md shadow-sm">
+                                    <a href="#"
+                                        x-on:click="$dispatch('confirm', {from: $event.target})"
+                                        x-on:confirmed=""
+                                        class="inline-flex justify-center py-2 px-4 border-2 border-red-500 text-sm leading-5 font-medium rounded-md text-red-500 hover:text-red-600 hover:border-red-600 focus:outline-none focus:border-red-500 focus:shadow-outline-red active:bg-red-50 transition duration-150 ease-in-out">
+                                        Delete User
+                                    </a>
+                                </span>
+                            @endif
                             <span class="ml-3 inline-flex rounded-md shadow-sm">
-                                <a href="#"
-                                    x-on:click="$dispatch('confirm', {from: $event.target})"
-                                    x-on:confirmed=""
-                                    class="inline-flex justify-center py-2 px-4 border-2 border-red-500 text-sm leading-5 font-medium rounded-md text-red-500 hover:text-red-600 hover:border-red-600 focus:outline-none focus:border-red-500 focus:shadow-outline-red active:bg-red-50 transition duration-150 ease-in-out"
-
-                                >
-                                    Delete User
+                                <a href="{{route('castle.users.request-reset-password', $user->id)}}" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-500 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
+                                    Reset Password
                                 </a>
                             </span>
-                        @endif
-                        <span class="ml-3 inline-flex rounded-md shadow-sm">
-                            <a href="{{route('castle.users.index')}}" class="py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-gray-800 hover:bg-gray-300 focus:outline-none focus:border-gray-300 focus:shadow-outline-gray transition duration-150 ease-in-out">
-                                Cancel
-                            </a>
-                        </span>
+                        </div>
+                        <div>
+                            <span class="ml-3 inline-flex rounded-md shadow-sm">
+                                <a href="{{route('castle.users.index')}}" class="py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-gray-800 hover:bg-gray-300 focus:outline-none focus:border-gray-300 focus:shadow-outline-gray transition duration-150 ease-in-out">
+                                    Cancel
+                                </a>
+                            </span>
+                            @if(user()->id != $user->id)
+                                <span class="inline-flex rounded-md shadow-sm">
+                                    <button wire:click="update" type="button" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-base hover:bg-green-700 focus:outline-none focus:border-green-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
+                                        Update User
+                                    </button>
+                                </span>
+                            @endif
+                        </div>
                     </div>
                 </x-form>
             </div>
             <div class="@if($openedTab != 'payEdit') hidden @endif">Edit Pay</div>
         </div>
     </div>
+    <x-modal x-cloak :title="__('Delete user')"
+            :description="__('Are you sure you want to delete this user?')">
+        <div class="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto">
+            <x-form :route="route('castle.users.destroy', $user->id)" delete>
+
+                <button type="submit"
+                        class=" rounded-md inline-flex justify-center w-full px-4 py-2 text-base font-medium leading-6 border-2 text-red-500 border-red-500 hover:text-red-600 hover:border-red-600 focus:border-red-500 focus:shadow-outline-red active:bg-red-50">
+                    Confirm
+                </button>
+            </x-form>
+        </div>
+        <div class="flex w-full mt-3 rounded-md shadow-sm sm:mt-0 sm:w-auto">
+            <button type="button"
+                    x-on:click="open = false"
+                    class="inline-flex justify-center w-full px-4 py-2 text-base font-medium leading-6 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md shadow-sm hover:text-gray-500 focus:outline-none focus:border-green-300 focus:shadow-outline-green sm:text-sm sm:leading-5">
+                Cancel
+            </button>
+        </div>
+    </x-modal>
 </div>
