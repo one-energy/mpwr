@@ -16,7 +16,7 @@ class ScoreboardTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create(['role' => 'Admin']);
+        $this->user = User::factory()->create(['role' => 'Admin']);
 
         $this->actingAs($this->user);
     }
@@ -24,7 +24,7 @@ class ScoreboardTest extends TestCase
     /** @test */
     public function it_should_show_the_scoreboard()
     {
-        $users = factory(User::class, 5)->create();
+        $users = User::factory()->count(5)->create();
 
         $response = $this->get('scoreboard');
 

@@ -11,21 +11,30 @@ use Tests\Feature\FeatureTest;
 
 class UserDetailsTest extends FeatureTest
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = User::factory()->create(['role' => 'Admin']);
+
+        $this->actingAs($this->user);
+    }
+
     /** @test */
     public function only_master_users_can_see_user_details()
     {
-        $departmentManager = factory(User::class)->create([
+        $departmentManager = User::factory()->create([
             'role' => 'Department Manager',
         ]);
 
-        $department = factory(Department::class)->create([
+        $department = Department::factory()->create([
             'department_manager_id' => $departmentManager->id,
         ]);
 
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
-        $setter = factory(User::class)->create([
+        $setter = User::factory()->create([
             'role'          => 'Setter',
             'department_id' => $department->id,
         ]);
@@ -42,15 +51,15 @@ class UserDetailsTest extends FeatureTest
     /** @test */
     public function it_should_show_the_details_for_a_user()
     {
-        $department = factory(Department::class)->create([
+        $department = Department::factory()->create([
             'name' => 'Department One',
         ]);
 
-        $master = factory(User::class)->create([
+        $master = User::factory()->create([
             'role' => 'Admin',
         ]);
 
-        $nonMaster = factory(User::class)->create([
+        $nonMaster = User::factory()->create([
             'role'          => 'Department Manager',
             'department_id' => $department->id,
         ]);
@@ -93,8 +102,8 @@ class UserDetailsTest extends FeatureTest
     {
         $this->withoutExceptionHandling();
 
-        $master      = factory(User::class)->create(['role' => 'admin']);
-        $user        = factory(User::class)->create(['password' => '123456789']);
+        $master      = User::factory()->create(['role' => 'admin']);
+        $user        = User::factory()->create(['password' => '123456789']);
         $data        = $user->toArray();
         $newPassword = array_merge($data, [
             'new_password'              => '123456789',
@@ -109,7 +118,7 @@ class UserDetailsTest extends FeatureTest
     /** @test */
     public function it_shouldnt_show_index_page()
     {
-        $setterManager = factory(User::class)->create(['role' => 'Setter']);
+        $setterManager = User::factory()->create(['role' => 'Setter']);
 
         $this->actingAs($setterManager)
             ->get(route('castle.users.index'))

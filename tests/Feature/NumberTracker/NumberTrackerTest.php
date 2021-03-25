@@ -11,14 +11,14 @@ use Tests\Builders\UserBuilder;
 
 class NumberTrackerTest extends FeatureTest
 {
-    
+
     /** @test */
     public function it_should_change_pariod()
     {
         $today = date("Y-m-d", time());
 
         $master = (new UserBuilder)->asMaster()->save()->get();
-        $users = factory(User::class, 5)->create();
+        $users = User::factory()->count(5)->create();
 
         $this->actingAs($master);
 
@@ -35,17 +35,17 @@ class NumberTrackerTest extends FeatureTest
         Livewire::test(NumberTrackerDetail::class)
             ->call('setPeriod', 'd')
             ->assertSet('period', 'd');
-        
+
         Livewire::test(NumberTrackerDetail::class)
             ->call('setPeriod', 'm')
             ->assertSet('period', 'm');
-    
+
     }
 
     public function it_should_show_top_five()
     {
-        $users = factory(User:: class, 5)->create();
+        $users = User::factory()->count(5)->create();
 
     }
-   
+
 }
