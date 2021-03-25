@@ -2,14 +2,28 @@
 
 namespace App\Http\Livewire\Reports;
 
+use App\Models\Customer;
+use App\Traits\Livewire\FullTable;
+use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
 
 class ReportsOverview extends Component
 {
-    public $search = "";
+    use FullTable;
 
     public function render()
     {
-        return view('livewire.reports.reports-overview');
+        // $this->customers = ;
+        return view('livewire.reports.reports-overview', [
+            'customers' => Customer::query()
+                            ->search($this->search)
+                            ->orderBy($this->sortBy)
+                            ->paginate($this->perPage),
+        ]);
+    }
+
+    public function sortBy()
+    {
+        return 'first_name';
     }
 }

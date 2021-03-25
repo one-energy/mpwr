@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 /**
  * App\Models\Customer
@@ -143,5 +145,12 @@ class Customer extends Model
         } else {
             $this->margin = 0;
         }
+    }
+
+    public function scopeSearch(Builder $query, $search)
+    {
+        $query->when($search, function (Builder $query) use ($search) {
+            $query->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%".$search."%"]);
+        });
     }
 }
