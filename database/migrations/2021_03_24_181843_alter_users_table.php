@@ -15,8 +15,8 @@ class AlterUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->bigInteger('phone_number')->nullable()->after('email');
-            $table->foreignId('referred_by')->nullable()->after('pay')->constrained('users');
-            $table->integer('referral_override')->nullable()->after('referred_by');
+            $table->foreignId('recruiter_id')->nullable()->after('pay')->constrained('users');
+            $table->integer('referral_override')->nullable()->after('recruiter_id');
             $table->foreignId('office_manager_id')->nullable()->after('referral_override')->constrained('users');
             $table->foreignId('region_manager_id')->nullable()->after('office_manager_id')->constrained('users');
             $table->foreignId('department_manager_id')->nullable()->after('region_manager_id')->constrained('users');
@@ -41,7 +41,7 @@ class AlterUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('phone_number');
-            $table->dropForeign(['referred_by']);
+            $table->dropForeign(['recruiter_id']);
             $table->dropColumn('referral_override');
             $table->dropForeign(['office_manager_id']);
             $table->dropForeign(['region_manager_id']);

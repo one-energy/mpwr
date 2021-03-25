@@ -69,7 +69,7 @@ class UserInfoTab extends Component
             'user.department_id'                       => 'nullable',
             'user.email'                               => 'required|unique:users,email,' . $this->user->id,
             'userOverride.pay'                         => 'nullable',
-            'userOverride.referred_by'                 => 'nullable',
+            'userOverride.recruiter_id'                 => 'nullable',
             'userOverride.referral_override'           => 'nullable',
             'userOverride.office_manager_id'           => 'nullable',
             'userOverride.region_manager_id'           => 'nullable',
@@ -134,7 +134,7 @@ class UserInfoTab extends Component
     public function getAssignedTeams()
     {
         if ($this->user->role == "Department Manager" || $this->user->role == "Admin" || $this->user->role == "Owner" || $this->user->role == "Sales Rep" || $this->user->role == "Setter" ) {
-            $this->teams = collect([$this->user->office]);
+            $this->teams = $this->user->office ? collect([$this->user->office]) : null;
         }
 
         if ($this->user->role == "Region Manager") {

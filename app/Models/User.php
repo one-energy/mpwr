@@ -114,6 +114,46 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo(Department::class, 'department_id');
     }
 
+    public function recruitedBy()
+    {
+        return $this->belongsTo(User::class, 'recruiter_id');
+    }
+
+    public function recruiteds()
+    {
+        return $this->hasMany(User::class, 'recruiter_id');
+    }
+
+    public function officeManager()
+    {
+        return $this->belongsTo(User::class, 'office_manager_id');
+    }
+
+    public function usersManagedOffice()
+    {
+        return $this->hasMany(User::class, 'office_manager_id');
+    }
+
+    public function regionManager()
+    {
+        return $this->belongsTo(User::class, 'region_manager_id');
+    }
+
+    public function usersManagedRegion()
+    {
+        return $this->hasMany(User::class, 'region_manager_id');
+    }
+
+    public function departmentManager()
+    {
+        return $this->belongsTo(User::class, 'department_manager_id');
+    }
+
+    public function usersManagedDepartment()
+    {
+        return $this->hasMany(User::class, 'department_manager_id');
+    }
+
     public function invitations()
     {
         return $this->hasMany(Invitation::class);
