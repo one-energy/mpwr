@@ -299,7 +299,7 @@
                             <x-select wire:model="userOverride.recruiter_id" name="userOverride.recruiter_id" label="Recuited By">
                                 <option value="">None</option>
                                 @foreach($departmentUsers as $userOnDepartment)
-                                    <option value="{{$userOnDepartment->id}}">{{$userOnDepartment->first_name}} {{$userOnDepartment->first_name}}</option>
+                                    <option value="{{$userOnDepartment->id}}">{{$userOnDepartment->first_name}} {{$userOnDepartment->last_name}}</option>
                                 @endforeach
                             </x-select>
                         </div>

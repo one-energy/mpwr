@@ -49,10 +49,10 @@ class UserInfoTab extends Component
         $this->departments            = Department::get();
         $this->roles                  = User::getRolesPerUserRole(user());
         $this->offices                = $department ? $department->offices()->get() : [];
-        $this->departmentUsers        = $this->user->department->users()->get();
-        $this->departmentManagerUsers = $this->user->department->users()->whereRole('Department Manager')->get();
-        $this->regionManagerUsers     = $this->user->department->users()->whereRole('Region Manager')->get();
-        $this->officeManagerUsers     = $this->user->department->users()->whereRole('Office Manager')->get();
+        $this->departmentUsers        = $this->user->department->users()->orderBy('first_name')->orderBy('last_name')->get();
+        $this->departmentManagerUsers = $this->user->department->users()->whereRole('Department Manager')->orderBy('first_name')->orderBy('last_name')->get();
+        $this->regionManagerUsers     = $this->user->department->users()->whereRole('Region Manager')->orderBy('first_name')->orderBy('last_name')->get();
+        $this->officeManagerUsers     = $this->user->department->users()->whereRole('Office Manager')->orderBy('first_name')->orderBy('last_name')->get();
         $this->getAssignedTeams();
 
         return view('livewire.castle.users.user-info-tab');
