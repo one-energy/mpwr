@@ -11,13 +11,15 @@ class ReportsOverview extends Component
 {
     use FullTable;
 
+    public $startDate;
+
+    public $endDate;
+
     public function render()
     {
-        // $this->customers = ;
         return view('livewire.reports.reports-overview', [
             'customers' => Customer::query()
                             ->search($this->search)
-                            ->orderBy($this->sortBy)
                             ->paginate($this->perPage),
         ]);
     }

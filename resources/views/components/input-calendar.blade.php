@@ -31,7 +31,7 @@
         </div>
 
         <div
-            class="bg-white mt-12 rounded-lg shadow p-4 absolute top-0 left-0 z-10"
+            class="bg-white mt-12 rounded-lg shadow p-4 absolute top-0 left-0 z-10 w-64"
             x-show.transition="showDatepicker"
             @click.away="showDatepicker = false">
 
