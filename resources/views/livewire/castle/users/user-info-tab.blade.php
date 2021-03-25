@@ -32,7 +32,7 @@
                 </div>
                 <div>
                     <span class="text-gray-600">Phone Number</span>
-                    <p>{{$user->last_name}}</p>
+                    <p>{{$user->phone_number ?? '-'}}</p>
                 </div>
                 <div>
                     <span class="text-gray-600">Role</span>
@@ -207,6 +207,10 @@
 
                         <div class="md:col-span-3 col-span-2">
                             <x-input label="Email" name="email" wire:model="user.email" disabled="{{user()->id == $user->id}}"/>
+                        </div>
+
+                        <div class="md:col-span-3 col-span-2">
+                            <x-input-phone label="Phone Number" name="phone_number" wire:model="user.phone_number" disabled="{{user()->id == $user->id}}"/>
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
