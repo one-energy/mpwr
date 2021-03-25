@@ -24,7 +24,7 @@ class RegionBuilder
         ], $attributes));
     }
 
-    public function withDepartment($department) 
+    public function withDepartment($department)
     {
         $this->region->department_id = $department->id;
         return $this;
@@ -33,8 +33,8 @@ class RegionBuilder
     public function save()
     {
         if (!$this->region->region_manager_id) {
-            $this->region->region_manager_id = factory(User::class)->create()->id;
-            $this->region->department_id = factory(Department::class)->create()->id;
+            $this->region->region_manager_id = User::factory()->create()->id;
+            $this->region->department_id = Department::factory()->create()->id;
         }
         $this->region->save();
 

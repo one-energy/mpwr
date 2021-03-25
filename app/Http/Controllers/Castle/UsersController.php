@@ -187,7 +187,7 @@ class UsersController extends Controller
 
         alert()->withTitle(__('Password reset successfully!'))->send();
 
-        return redirect(route('castle.users.edit', compact('user')));
+        return redirect(route('castle.users.show', compact('user')));
     }
 
     public function getUsers()

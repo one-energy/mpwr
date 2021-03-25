@@ -16,13 +16,13 @@ class RateTest extends TestCase
     /** @test */
     public function it_should_list_all_rates()
     {
-        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
-        $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
+        $department        = Department::factory()->create(["department_manager_id" => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
 
-        $rates       = factory(Rates::class, 6)->create([
+        $rates       = Rates::factory()->count(6)->create([
             'department_id' => $department->id,
             'role'          => 'Sales Rep',
         ]);
@@ -42,11 +42,11 @@ class RateTest extends TestCase
     /** @test */
     public function it_should_block_the_create_form_for_non_top_level_roles_in_rates()
     {
-        $setter = factory(User::class)->create([
+        $setter = User::factory()->create([
             "role" => "Setter"
         ]);
 
-        $department = factory(Department::class)->create([
+        $department = Department::factory()->create([
             "department_manager_id" => $setter->id
         ]);
 
@@ -63,8 +63,8 @@ class RateTest extends TestCase
      /** @test */
      public function it_should_show_the_create_form_for_top_level_roles_in_rates()
      {
-        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
-        $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
+        $department        = Department::factory()->create(["department_manager_id" => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
@@ -78,8 +78,8 @@ class RateTest extends TestCase
     /** @test */
     public function it_should_store_a_new_rate()
     {
-        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
-        $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
+        $department        = Department::factory()->create(["department_manager_id" => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
@@ -104,8 +104,8 @@ class RateTest extends TestCase
       /** @test */
       public function it_shouldnt_store_a_repeated_rate()
       {
-          $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
-          $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+          $departmentManager = User::factory()->create(["role" => "Department Manager"]);
+          $department        = Department::factory()->create(["department_manager_id" => $departmentManager->id]);
           $departmentManager->department_id = $department->id;
           $departmentManager->save();
 
@@ -117,7 +117,7 @@ class RateTest extends TestCase
               'role'          => 'Sales Rep',
           ];
 
-          factory(Rates::class)->create($data);
+          Rates::factory()->create($data);
 
           $this->actingAs($departmentManager);
 
@@ -130,8 +130,8 @@ class RateTest extends TestCase
     /** @test */
     public function it_should_require_all_fields_to_store_a_new_rate()
     {
-        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
-        $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
+        $department        = Department::factory()->create(["department_manager_id" => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
@@ -158,12 +158,12 @@ class RateTest extends TestCase
     /** @test */
     public function it_should_show_the_edit_form_for_top_level_roles()
     {
-        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
-        $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
+        $department        = Department::factory()->create(["department_manager_id" => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
-        $rate        = factory(Rates::class)->create([
+        $rate        = Rates::factory()->create([
             'department_id'   => $department->id,
             'role' => 'Sales Rep'
         ]);
@@ -179,14 +179,14 @@ class RateTest extends TestCase
     /** @test */
     public function it_should_block_the_edit_form_for_non_top_level_roles()
     {
-        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
-        $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
+        $department        = Department::factory()->create(["department_manager_id" => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
-        $this->actingAs(factory(User::class)->create(['role' => 'Setter']));
+        $this->actingAs(User::factory()->create(['role' => 'Setter']));
 
-        $rate        = factory(Rates::class)->create([
+        $rate        = Rates::factory()->create([
             'department_id'         => $department->id,
             'role' => 'Sales Rep'
         ]);
@@ -199,12 +199,12 @@ class RateTest extends TestCase
     /** @test */
     public function it_should_update_an_rate()
     {
-        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
-        $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
+        $department        = Department::factory()->create(["department_manager_id" => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
-        $rate        = factory(Rates::class)->create([
+        $rate        = Rates::factory()->create([
             'department_id' => $department->id,
             'rate'          => 2.1,
             'role' => 'Sales Rep'
@@ -227,14 +227,14 @@ class RateTest extends TestCase
     /** @test */
     public function it_should_destroy_an_rate()
     {
-        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
-        $salesRep = factory(User::class)->create(["role" => "Sales Rep"]);
-        $setter = factory(User::class)->create(["role" => "Setter"]);
-        $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
+        $salesRep = User::factory()->create(["role" => "Sales Rep"]);
+        $setter = User::factory()->create(["role" => "Setter"]);
+        $department        = Department::factory()->create(["department_manager_id" => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
-        $rate        = factory(Rates::class)->create([
+        $rate        = Rates::factory()->create([
             'department_id' => $department->id,
             'role' => 'Sales Rep'
         ]);
