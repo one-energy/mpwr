@@ -50,19 +50,19 @@
                         <x-slot name="body">
                             <x-table.tr >
                                 <x-table.td>Average</x-table.td>
-                                <x-table.td></x-table.td>
-                                <x-table.td></x-table.td>
-                                <x-table.td>Average</x-table.td>
-                                <x-table.td>Average</x-table.td>
-                                <x-table.td>Average</x-table.td>
+                                <x-table.td>{{user()->pay}}</x-table.td>
+                                <x-table.td>-</x-table.td>
+                                <x-table.td>-</x-table.td>
+                                <x-table.td>-</x-table.td>
+                                <x-table.td>-</x-table.td>
                             </x-table.tr>
                             <x-table.tr class="bg-gray-100">
                                 <x-table.td>Total</x-table.td>
                                 <x-table.td>-</x-table.td>
-                                <x-table.td>Total</x-table.td>
-                                <x-table.td>Total</x-table.td>
-                                <x-table.td>Total</x-table.td>
-                                <x-table.td>Total</x-table.td>
+                                <x-table.td>-</x-table.td>
+                                <x-table.td>-</x-table.td>
+                                <x-table.td>-</x-table.td>
+                                <x-table.td>-</x-table.td>
                             </x-table.tr>
                         </x-slot>
                     </x-table>
