@@ -65,7 +65,7 @@
                                     </div>
                                     <div class="col-span-1 row-span-2 md:col-span-2">
                                         <div
-                                            class="@if($customer->is_active && $customer->panel_sold) bg-green-base @elseif($customer->is_active == false) bg-red-500 @else bg-gray-700 @endif text-white rounded-md py-1 px-1 text-center">
+                                            class="@if($customer->is_active && $customer->panel_sold) bg-green-base @elseif($customer->is_active == false) bg-red-500 @else bg-gray-700 @endif text-white @if($customer->setter_id == user()->id) rounded-full @else rounded-md @endif py-1 px-1 text-center">
                                             $ {{ number_format($customer->sales_rep_comission, 2) }}
                                         </div>
                                     </div>
