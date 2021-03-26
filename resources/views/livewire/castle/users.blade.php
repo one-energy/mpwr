@@ -44,25 +44,35 @@
                                 </x-slot>
                                 <x-slot name="body">
                                     @foreach($users as $user)
-                                        <x-table.tr :loop="$loop" onclick="window.location='{{route('castle.users.show', $user->id)}}';" class="cursor-pointer">
-                                            @if(user()->role == "Admin")
-                                                <x-table.td>{{ $user->department->name ?? 'Whitout Department' }}</x-table.td>
-                                            @endif
-                                            <x-table.td>{{ $user->first_name . ' ' . $user->last_name }}</x-table.td>
-                                            <x-table.td>{{ $user->email }}</x-table.td>
-                                            <x-table.td>{{ $this->userRole($user->role) }}</x-table.td>
-                                            @if($user->office)
-                                                <x-table.td>{{ $user->office->name }}</x-table.td>
-                                            @else
-                                                <x-table.td>Without Office</x-table.td>
-                                            @endif
-                                            <x-table.td>{{ $user->pay }}</x-table.td>
-                                            <x-table.td>
-                                                <x-link class="text-sm" :href="route('castle.users.edit', $user->id)">
-                                                    Edit
-                                                </x-link>
-                                            </x-table.td>
-                                        </x-table.tr>
+                                        @if($this->canEditUser($user))
+                                            <x-table.tr :loop="$loop" onclick="window.location='{{route('castle.users.show', $user->id)}}';" class="cursor-pointer">
+                                                @if(user()->role == "Admin")
+                                                    <x-table.td>{{ $user->department->name ?? 'Without Department' }}</x-table.td>
+                                                @endif
+                                                <x-table.td>{{ $user->first_name . ' ' . $user->last_name }}</x-table.td>
+                                                <x-table.td>{{ $user->email }}</x-table.td>
+                                                <x-table.td>{{ $this->userRole($user->role) }}</x-table.td>
+                                                <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
+                                                <x-table.td>{{ $user->pay }}</x-table.td>
+                                                <x-table.td>
+                                                    <x-link class="text-sm" :href="route('castle.users.edit', $user->id)">
+                                                        Edit
+                                                    </x-link>
+                                                </x-table.td>
+                                            </x-table.tr>
+                                        @else
+                                            <x-table.tr :loop="$loop" class="cursor-pointer">
+                                                @if(user()->role == "Admin")
+                                                    <x-table.td>{{ $user->department->name ?? 'Without Department' }}</x-table.td>
+                                                @endif
+                                                <x-table.td>{{ $user->first_name . ' ' . $user->last_name }}</x-table.td>
+                                                <x-table.td>{{ $user->email }}</x-table.td>
+                                                <x-table.td>{{ $this->userRole($user->role) }}</x-table.td>
+                                                <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
+                                                <x-table.td></x-table.td>
+                                                <x-table.td></x-table.td>
+                                            </x-table.tr>
+                                        @endif
                                     @endforeach
                                 </x-slot>
                             </x-table>
