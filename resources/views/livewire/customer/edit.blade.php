@@ -1,14 +1,14 @@
 <div>
     <div x-data="{openModal: false, loading: false, tooltipShow: false}">
-        <div class="max-w-6xl mx-auto py-5 sm:px-6 lg:px-8">
+        <div class="max-w-8xl mx-auto py-5 sm:px-6 lg:px-8">
             <x-link :href="route('home')" color="gray"
                     class="inline-flex items-center border-b-2 border-green-base hover:border-green-500 text-sm font-medium leading-5">
                 <x-svg.chevron-left class="w-6 -ml-2"/> @lang('Dashboard')
             </x-link>
         </div>
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
             <form wire:submit.prevent="update">
-                <div class="grid grid-cols-2 gap-4 sm:col-gap-4 md:grid-cols-6">
+                <div class="grid grid-cols-2 gap-4 sm:col-gap-4 md:grid-cols-6 px-8">
                     @if(user()->role == 'Admin' || user()->role == 'Owner')
                         <div class="col-span-2 md:col-span-6">
                             <x-select wire:model="departmentId" label="Department" name="departmentId">
@@ -137,7 +137,7 @@
 
                     <div class="col-span-2 md:col-span-1 @if($customer->setter_id == user()->id) hidden @endif">
                         <x-input-currency wire:model="customer.margin" label="Margin" name="customer.margin"
-                                          readonly></x-input-currency>
+                                          readonly/>
                     </div>
 
                     <div class="col-span-2 md:col-span-2 @if($customer->setter_id == user()->id) hidden @endif">
@@ -198,7 +198,7 @@
                     </div>
                 </div>
 
-                <div class="mt-8 border-t border-gray-200 pt-5">
+                <div class="mt-6 px-8 border-gray-200">
                     @if(user()->role != 'Setter')
                         <div class="flex justify-start">
                             <span class="inline-flex rounded-md shadow-sm">
@@ -250,7 +250,6 @@
                  x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                  class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
                 <x-form :route="route('customers.active', $customer->id)" put>
-                    @csrf
                     <input type="hidden" id="active" name="active"
                            value="{{ $customer->is_active ? true : false }}">
                     <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
