@@ -34,7 +34,7 @@
                                     @lang('Setter Rate')
                                 </x-table.th>
                                 <x-table.th by="system_size">
-                                    @lang('System Size')
+                                    @lang('My Set System Size')
                                 </x-table.th>
                                 <x-table.th by="my_setter_commission">
                                     @lang('My Setter Comission')
@@ -50,19 +50,19 @@
                         <x-slot name="body">
                             <x-table.tr >
                                 <x-table.td>Average</x-table.td>
-                                <x-table.td>{{user()->pay}}</x-table.td>
-                                <x-table.td>-</x-table.td>
+                                <x-table.td>{{$userCustomers->count() ? '$ ' . $userCustomers->sum('userSetter.pay')/$userCustomers->count() : '-'}}</x-table.td>
+                                <x-table.td>{{$userCustomers->count() ? $userCustomers->sum('system_size')/$userCustomers->count() : '-'}}</x-table.td>
                                 <x-table.td>-</x-table.td>
                                 <x-table.td>-</x-table.td>
                                 <x-table.td>-</x-table.td>
                             </x-table.tr>
                             <x-table.tr class="bg-gray-100">
                                 <x-table.td>Total</x-table.td>
-                                <x-table.td>-</x-table.td>
-                                <x-table.td>-</x-table.td>
-                                <x-table.td>-</x-table.td>
-                                <x-table.td>-</x-table.td>
-                                <x-table.td>-</x-table.td>
+                                <x-table.td class="font-bold">$ {{$userCustomers->sum('userSetter.pay')}}</x-table.td>
+                                <x-table.td class="font-bold">{{$userCustomers->sum('system_size')}}</x-table.td>
+                                <x-table.td class="font-bold">-</x-table.td>
+                                <x-table.td class="font-bold">-</x-table.td>
+                                <x-table.td class="font-bold">-</x-table.td>
                             </x-table.tr>
                         </x-slot>
                     </x-table>
@@ -85,8 +85,8 @@
                                 <x-table.th by="setter">
                                     @lang('Setter')
                                 </x-table.th>
-                                <x-table.th by="setter_date">
-                                    @lang('Setter Date')
+                                <x-table.th by="setter_rate">
+                                    @lang('Setter Rate')
                                 </x-table.th>
                                 <x-table.th by="closer">
                                     @lang('Closer')

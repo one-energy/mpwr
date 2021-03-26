@@ -18,10 +18,16 @@ class ReportsOverview extends Component
     public function render()
     {
         return view('livewire.reports.reports-overview', [
+            'userCustomers' => $this->getUserCustomers(),
             'customers' => Customer::query()
                             ->search($this->search)
                             ->paginate($this->perPage),
         ]);
+    }
+
+    public function getUserCustomers()
+    {
+        return Customer::whereSetterId(user()->id)->get();
     }
 
     public function sortBy()
