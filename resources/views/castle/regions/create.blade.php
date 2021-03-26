@@ -12,12 +12,13 @@
                               departments: null,
                               regionsManager: null }"
                      x-init="$watch('selectedDepartment',
-                                     (department) => {
-                                    fetch('https://' + location.hostname + '/get-regions-managers/' + department, {method: 'post',  headers: {
+                                    (department) => {
+                                    const url = '{{ route('getRegionsManager', ':department') }}'.replace(':department', department);
+                                    fetch(url, {method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
                                     }}).then(res => res.json()).then((regionManagerData) => { regionsManager = regionManagerData }) }),
-                            fetch('https://' + location.hostname + '/get-departments',{method: 'post',  headers: {
+                            fetch('{{ route('getDepartments') }}',{method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
                                     }}).then(res=> res.json()).then( (departmentsData) => {
@@ -32,7 +33,7 @@
                         @if(user()->role != "Admin" && user()->role != "Owner")
                             <div class="md:col-span-3 col-span-2 hidden">
                                 <x-select x-model="selectedDepartment" label="Department" name="department_id">
-                                    <template x-for="department in departments" :key="department.id">
+                                    <template x-if="departments" x-for="department in departments" :key="department.id">
                                         <option :value="department.id" x-text="department.name" ></option>
                                     </template>
                                 </x-select>
@@ -40,7 +41,7 @@
                         @else
                             <div class="md:col-span-3 col-span-2">
                                 <x-select x-model="selectedDepartment" label="Department" name="department_id">
-                                    <template x-for="department in departments" :key="department.id">
+                                    <template x-if="departments" x-for="department in departments" :key="department.id">
                                         <option :value="department.id" x-text="department.name" ></option>
                                     </template>
                                 </x-select>
@@ -48,7 +49,7 @@
                         @endif
                         <div class="md:col-span-3 col-span-2">
                             <x-select label="Regional Manager" name="region_manager_id">
-                                <template x-for="manager in regionsManager" :key="manager.id">
+                                <template x-if="regionsManager" x-for="manager in regionsManager" :key="manager.id">
                                     <option :value="manager.id" x-text="manager.first_name + ' ' + manager.last_name"></option>
                                 </template>
                             </x-select>
