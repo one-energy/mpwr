@@ -11,14 +11,18 @@ class ReportsOverview extends Component
 {
     use FullTable;
 
+    public Collection $customersSetter;
+
+    public Collection $customersSalesRep;
+
     public $startDate;
 
     public $endDate;
 
     public function render()
     {
+        $this->getUserCustomers();
         return view('livewire.reports.reports-overview', [
-            'userCustomers' => $this->getUserCustomers(),
             'customers' => Customer::query()
                             ->search($this->search)
                             ->paginate($this->perPage),
@@ -27,7 +31,9 @@ class ReportsOverview extends Component
 
     public function getUserCustomers()
     {
-        return Customer::whereSetterId(user()->id)->get();
+        $this->customersSetter   = Customer::whereSetterId(user()->id)->get();
+        $this->customersSalesRep = Customer::whereSalesRepId(user()->id)->get();
+        $this->customersSalesRep = Customer::whereSalesRepId(user()->id)->get();
     }
 
     public function sortBy()
