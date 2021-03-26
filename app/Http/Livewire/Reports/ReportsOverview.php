@@ -11,9 +11,9 @@ class ReportsOverview extends Component
 {
     use FullTable;
 
-    public Collection $customersSetter;
+    public Collection $customersOfUser;
 
-    public Collection $customersSalesRep;
+    public Collection $customersOfSalesRepsRecuited;
 
     public $startDate;
 
@@ -31,9 +31,31 @@ class ReportsOverview extends Component
 
     public function getUserCustomers()
     {
-        $this->customersSetter   = Customer::whereSetterId(user()->id)->get();
-        $this->customersSalesRep = Customer::whereSalesRepId(user()->id)->get();
-        $this->customersSalesRep = Customer::whereSalesRepId(user()->id)->get();
+        $this->customersOfUser              = Customer::whereSetterId(user()->id)->get();
+        $this->customersOfSalesRepsRecuited = user()->customersOfSalesRepsRecuited;
+    }
+
+    public function getAvgSetterCommission (Collection $customers)
+    {
+        return $customers->avg(function ($customer) {
+            return $this->getSetterCommission($customer);
+        });
+    }
+
+    public function getSetterCommission (Customer $customer) {
+        return $customer->setter_fee * ($customer->system_size * 1000);
+    }
+
+    public function getAvgRecruiterCommission (Collection $customers)
+    {
+        dd($customers);
+        return $customers->avg(function ($customer) {
+            return $this->getRecruiterCommission($customer);
+        });
+    }
+
+    public function getRecruiterCommission (Customer $customer) {
+        return $customer->referral_override * ($customer->system_size * 1000);
     }
 
     public function sortBy()

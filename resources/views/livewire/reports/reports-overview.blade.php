@@ -35,7 +35,7 @@
                                 </x-table.th>
                                 @if (user()->role == "Setter")
                                     <x-table.th by="system_size">
-                                        @lang('My Set System Size')
+                                        @lang('My Set System Size (kW)')
                                     </x-table.th>
                                 @endif
                                 <x-table.th by="my_setter_commission">
@@ -52,23 +52,23 @@
                         <x-slot name="body">
                             <x-table.tr >
                                 <x-table.td>Average</x-table.td>
-                                <x-table.td>{{user()->pay ?? '-'}}</x-table.td>
+                                <x-table.td>$ {{$customersOfUser->avg('setter_fee')}}</x-table.td>
                                 @if (user()->role == "Setter")
-                                    <x-table.td>$ {{$customersSetter->count() ? $customersSetter->sum('system_size')/$customersSetter->count() : '-'}}</x-table.td>
+                                    <x-table.td>{{ $customersOfUser->avg('system_size') }}</x-table.td>
                                 @endif
-                                <x-table.td>$ {{$customersSetter->count() ? $customersSetter->sum('setter_fee')/$customersSetter->count() : '-'}}</x-table.td>
-                                <x-table.td>$ {{$customersSalesRep->where('recruiter_id', user()->id)->avg('referral_override') ?? '-'}}</x-table.td>
+                                <x-table.td>$ {{$this->getAvgSetterCommission($customersOfUser)}}</x-table.td>
+                                <x-table.td>$ {{$this->getAvgRecruiterCommission($customersOfSalesRepsRecuited)}}</x-table.td>
                                 <x-table.td>-</x-table.td>
                             </x-table.tr>
                             <x-table.tr class="bg-gray-100">
                                 <x-table.td>Total</x-table.td>
                                 <x-table.td class="font-bold">-</x-table.td>
                                 @if (user()->role == "Setter")
-                                    <x-table.td class="font-bold">{{ $customersSetter->sum('system_size')}}</x-table.td>
+                                    <x-table.td class="font-bold">{{ $customersOfUser->sum('system_size')}}</x-table.td>
                                 @endif
-                                <x-table.td class="font-bold">$ {{ $customersSetter->sum('setter_fee')}}</x-table.td>
-                                <x-table.td class="font-bold">$ {{$customersSalesRep->where('recruiter_id', user()->id)->sum('referral_override') ?? '-'}}</x-table.td>
-                                <x-table.td class="font-bold">$ {{$customersSa}}</x-table.td>
+                                <x-table.td class="font-bold">$ {{ $customersOfUser->sum('setter_fee')}}</x-table.td>
+                                <x-table.td class="font-bold">$ {{ $customersOfSalesRepsRecuited->sum('referral_override') }}</x-table.td>
+                                <x-table.td class="font-bold">$ </x-table.td>
                             </x-table.tr>
                         </x-slot>
                     </x-table>
@@ -118,7 +118,7 @@
                                     <x-table.td>{{$customer->userSalesRep?->first_name}} {{$customer->userSalesRep?->last_name}}</x-table.td>
                                     <x-table.td>{{$customer->userSalesRep?->pay ? '$' : '-'}}{{$customer->userSalesRep?->pay}}</x-table.td>
                                     <x-table.td>{{$customer->system_size}}</x-table.td>
-                                    <x-table.td>${{$customer->userSetter?->pay * ($customer->system_size * 1000)}}</x-table.td>
+                                    <x-table.td>${{$this->getSetterCommission($customer)}}</x-table.td>
                                 </x-table.tr>
                             @endforeach
                         </x-slot>
