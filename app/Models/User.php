@@ -332,6 +332,19 @@ class User extends Authenticatable implements MustVerifyEmail
         return $message . '. Please disassociate the user from what was mentioned before continuing.';
     }
 
+    public function getPhoneNumberAttribute($value)
+    {
+        if($value){
+            $cleaned = preg_replace('/[^[:digit:]]/', '', $value);
+            preg_match('/(\d{1,5})(\d{3})(\d{3})(\d{4})/', $cleaned, $matches);
+            if ($matches) {
+                return "+{$matches[1]} ({$matches[2]}) {$matches[3]}-{$matches[4]}";
+            } else {
+                return $cleaned;
+            }
+        }
+    }
+
     public function scopeMasters(Builder $query)
     {
         return $query->where('master', true);

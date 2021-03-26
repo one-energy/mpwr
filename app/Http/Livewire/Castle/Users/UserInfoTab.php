@@ -90,6 +90,7 @@ class UserInfoTab extends Component
     public function update()
     {
         $this->validate();
+        $this->user->phone_number = preg_replace('/\D/', '', $this->user->phone_number);
 
         $this->user->save();
 
