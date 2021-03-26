@@ -111,7 +111,7 @@
                     </div>
                 </div>
 
-                <div class="flex flex-wrap justify-center px-4 py-5 h-1/2 sm:p-6 md:w-2/3 xl:w-1/4">
+                <div class="flex flex-wrap justify-center px-4 py-5 h-1/2 sm:p-6 md:w-2/3 xl:w-3/4">
                     <div class="w-full mt-11 xl:px-0 lg:px-24 md:px-0">
                         <div class="grid grid-cols-6 row-gap-2 col-gap-1 xl:grid-cols-12 md:col-gap-4">
                             <div class="col-span-2 xl:col-span-2 p-3 border-2 border-gray-200 rounded-lg">
