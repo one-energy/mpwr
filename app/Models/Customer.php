@@ -117,6 +117,26 @@ class Customer extends Model
         return $this->hasOne(Term::class);
     }
 
+    public function recuiterOfSalesRep()
+    {
+        return $this->belongsTo(User::class, 'sales_rep_recruiter_id');
+    }
+
+    public function officeManager()
+    {
+        return $this->belongsTo(User::class, 'office_manager_id');
+    }
+
+    public function regionManager()
+    {
+        return $this->belongsTo(User::class, 'region_manager_id');
+    }
+
+    public function departmentManager()
+    {
+        return $this->belongsTo(User::class, 'department_manager_id');
+    }
+
     public function getOpenedByAttribute()
     {
         return User::find($this->opened_by_id);
