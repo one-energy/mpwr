@@ -26,8 +26,8 @@ class CustomerTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create(['role' => 'Admin']);
-        factory(Department::class, 6)->create();
+        $this->user = User::factory()->create(['role' => 'Admin']);
+        Department::factory()->count(6)->create();
 
         $this->actingAs($this->user);
     }
@@ -35,7 +35,7 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_list_all_customers_on_dashboard()
     {
-        $customers = factory(Customer::class, 5)->create(['opened_by_id' => $this->user->id]);
+        $customers = Customer::factory()->count(5)->create(['opened_by_id' => $this->user->id]);
 
         $response = $this->get('/');
 
@@ -51,26 +51,26 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_filter_by_active_customers()
     {
-        $departmentManager                = factory(User::class)->create(['role' => 'Department Manager']);
-        $department                       = factory(Department::class)->create(['department_manager_id' => $departmentManager->id]);
+        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
+        $department                       = User::factory()->create(['department_manager_id' => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
-        factory(Financing::class)->create();
-        factory(Financer::class)->create();
-        factory(Term::class)->create();
-        factory(Rates::class)->create();
+        Financing::factory()->create();
+        Financer::factory()->create();
+        Term::factory()->create();
+        Rates::factory()->create();
         $departmentManager->save();
 
-        $setter = factory(User::class)->create([
+        $setter = User::factory()->create([
             'role'          => 'Setter',
             'department_id' => $department->id,
         ]);
 
-        $activeCustomers = factory(Customer::class, 3)->create([
+        $activeCustomers = Customer::factory()->count(3)->create([
             'is_active'    => true,
             'opened_by_id' => $setter->id,
         ]);
 
-        $inactiveCustomers = factory(Customer::class, 3)->create([
+        $inactiveCustomers = Customer::factory()->count(3)->create([
             'is_active'    => false,
             'opened_by_id' => $setter->id,
         ]);
@@ -91,20 +91,20 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_filter_by_inactive_customers()
     {
-        $departmentManager                = factory(User::class)->create(['role' => 'Department Manager']);
-        $department                       = factory(Department::class)->create(['department_manager_id' => $departmentManager->id]);
+        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
+        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
-        $setter = factory(User::class)->create([
+        $setter = User::factory()->create([
             'role'          => 'Setter',
             'department_id' => $department->id,
         ]);
-        $activeCustomers   = factory(Customer::class, 3)->create([
+        $activeCustomers   = Customer::factory()->count(3)->create([
             'is_active'    => true,
             'opened_by_id' => $setter->id,
         ]);
-        $inactiveCustomers = factory(Customer::class, 3)->create([
+        $inactiveCustomers = Customer::factory()->count(3)->create([
             'is_active'    => false,
             'opened_by_id' => $setter->id,
         ]);
@@ -125,7 +125,7 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_block_the_create_form_for_non_top_level_roles()
     {
-        $this->actingAs(factory(User::class)->create(['role' => 'Setter']));
+        $this->actingAs(User::factory()->create(['role' => 'Setter']));
 
         $response = $this->get(route('customers.create'));
 
@@ -135,8 +135,8 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_show_the_create_form_for_top_level_roles()
     {
-        $departmentManager                = factory(User::class)->create(['role' => 'Department Manager']);
-        $department                       = factory(Department::class)->create(['department_manager_id' => $departmentManager->id]);
+        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
+        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
@@ -150,10 +150,10 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_store_a_new_customer()
     {
-        $user     = factory(User::class)->create();
-        $userOne  = factory(User::class)->create(['role' => 'Setter']);
-        $userTwo  = factory(User::class)->create(['role' => 'Sales Rep']);
-        $customer = factory(Customer::class)->make([
+        $user     = User::factory()->create();
+        $userOne  = User::factory()->create(['role' => 'Setter']);
+        $userTwo  = User::factory()->create(['role' => 'Sales Rep']);
+        $customer = Customer::factory()->make([
             'first_name'          => 'First Name',
             'last_name'           => 'Last Name',
             'bill'                => 'Bill',
@@ -191,7 +191,7 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_require_some_fields_to_store_a_new_customer()
     {
-        $customer = factory(Customer::class)->make();
+        $customer = Customer::factory()->make();
 
         Livewire::test(Create::class, [
             'bills' => Customer::BILLS,
@@ -207,7 +207,7 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_show_the_edit_form()
     {
-        $customer = factory(Customer::class)->create();
+        $customer = Customer::factory()->create();
 
         Livewire::test(Edit::class, [
             'customer' => $customer
@@ -218,7 +218,7 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_update_a_customer()
     {
-        $customer       = factory(Customer::class)->create(['adders' => 30.5]);
+        $customer       = Customer::factory()->create(['adders' => 30.5]);
 
         Livewire::test(Edit::class, [
             'customer' => $customer
@@ -235,12 +235,12 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_block_updating_a_form_for_non_top_level_roles()
     {
-        $this->actingAs(factory(User::class)->create([
+        $this->actingAs(User::factory()->create([
             'role' => 'Setter',
-            'department_id' => factory(Department::class)->create()
+            'department_id' => Department::factory()->create()
             ]));
 
-        $customer       = factory(Customer::class)->create(['adders' => 30.5]);
+        $customer       = Customer::factory()->create(['adders' => 30.5]);
 
         Livewire::test(Edit::class, [
             'customer' => $customer
@@ -251,7 +251,7 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_inactivate_a_customer()
     {
-        $customer = factory(Customer::class)->create(['is_active' => true]);
+        $customer = Customer::factory()->create(['is_active' => true]);
 
         $response = $this->put(route('customers.active', $customer));
 
@@ -266,7 +266,7 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_activate_a_customer()
     {
-        $customer = factory(Customer::class)->create(['is_active' => false]);
+        $customer = Customer::factory()->create(['is_active' => false]);
 
         $response = $this->put(route('customers.active', $customer));
 
@@ -281,7 +281,7 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_delete_a_customer()
     {
-        $customer = factory(Customer::class)->create();
+        $customer = Customer::factory()->create();
 
         $response = $this->delete(route('customers.delete', $customer));
 
@@ -309,11 +309,11 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_show_sales_rep_and_setter_fees()
     {
-        $saleRepRate = factory(Rates::class)->create([
+        $saleRepRate = Rates::factory()->create([
             'role' => 'Sales Rep',
             'rate' => 3,
         ]);
-        $setterRate  = factory(Rates::class)->create([
+        $setterRate  = Rates::factory()->create([
             'role' => 'Setter',
             'rate' => 6,
         ]);

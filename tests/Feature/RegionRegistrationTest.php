@@ -56,9 +56,9 @@ class RegionRegistrationTest extends FeatureTest
             'first_name' => '',
             'last_name'  => '',
         ];
-        
+
         $response = $this->post(route('register'), $data);
-    
+
         $response->assertSessionHasErrors(
         [
             'first_name',
@@ -73,9 +73,9 @@ class RegionRegistrationTest extends FeatureTest
             'first_name' => '12',
             'last_name'  => '12',
         ];
-        
+
         $response = $this->post(route('register'), $data);
-    
+
         $response->assertSessionHasErrors(
         [
             'first_name',
@@ -90,9 +90,9 @@ class RegionRegistrationTest extends FeatureTest
             'first_name' => str_repeat('*', 256),
             'last_name'  => str_repeat('*', 256),
         ];
-        
+
         $response = $this->post(route('register'), $data);
-    
+
         $response->assertSessionHasErrors(
         [
             'first_name',
@@ -121,7 +121,7 @@ class RegionRegistrationTest extends FeatureTest
     /** @test */
     public function email_should_be_unique()
     {
-        factory(User::class)->create(['email' => 'joe@doe.com']);
+        User::factory()->create(['email' => 'joe@doe.com']);
 
         $this->post(route('register'), ['email' => 'joe@doe.com'])
             ->assertSessionHasErrors([
