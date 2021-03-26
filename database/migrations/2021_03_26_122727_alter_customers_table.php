@@ -14,8 +14,8 @@ class AlterCustomersTable extends Migration
     public function up()
     {
         Schema::table('customers', function (Blueprint $table) {
-            $table->foreignId('recruiter_id')->nullable()->after('margin')->constrained('users');
-            $table->integer('referral_override')->nullable()->after('recruiter_id');
+            $table->foreignId('sales_rep_recruiter_id')->nullable()->after('margin')->constrained('users');
+            $table->integer('referral_override')->nullable()->after('sales_rep_recruiter_id');
             $table->foreignId('office_manager_id')->nullable()->after('referral_override')->constrained('users');
             $table->foreignId('region_manager_id')->nullable()->after('office_manager_id')->constrained('users');
             $table->foreignId('department_manager_id')->nullable()->after('region_manager_id')->constrained('users');
@@ -39,17 +39,23 @@ class AlterCustomersTable extends Migration
     public function down()
     {
         Schema::table('customers', function (Blueprint $table) {
-            $table->dropForeign(['recruiter_id']);
+            $table->dropForeign(['sales_rep_recruiter_id']);
+            $table->dropColumn('sales_rep_recruiter_id');
             $table->dropColumn('referral_override');
             $table->dropForeign(['office_manager_id']);
+            $table->dropColumn('office_manager_id');
             $table->dropForeign(['region_manager_id']);
+            $table->dropColumn('region_manager_id');
             $table->dropForeign(['department_manager_id']);
+            $table->dropColumn('department_manager_id');
             $table->dropColumn('office_manager_override');
             $table->dropColumn('region_manager_override');
             $table->dropColumn('department_manager_override');
             $table->dropColumn('misc_override_one');
+            $table->dropColumn('payee_one');
             $table->dropColumn('note_one');
             $table->dropColumn('misc_override_two');
+            $table->dropColumn('payee_two');
             $table->dropColumn('note_two');
         });
     }
