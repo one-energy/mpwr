@@ -117,9 +117,9 @@ class Create extends Component
         $this->customer->office_manager_id           = $salesRep->office_manager_id;
         $this->customer->region_manager_id           = $salesRep->region_manager_id;
         $this->customer->department_manager_id       = $salesRep->department_manager_id;
-        $this->customer->office_manager_override     = $salesRep->officeManager->office_manager_override;
-        $this->customer->region_manager_override     = $salesRep->regionManager->region_manager_override;
-        $this->customer->department_manager_override = $salesRep->departmentManager->department_manager_override;
+        $this->customer->office_manager_override     = $salesRep->office_manager_override;
+        $this->customer->region_manager_override     = $salesRep->region_manager_override;
+        $this->customer->department_manager_override = $salesRep->department_manager_override;
         $this->customer->misc_override_one           = $salesRep->misc_override_one;
         $this->customer->payee_one                   = $salesRep->payee_one;
         $this->customer->note_one                    = $salesRep->note_one;

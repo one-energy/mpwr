@@ -21,7 +21,7 @@ class AlterCustomersTable extends Migration
             $table->foreignId('department_manager_id')->nullable()->after('region_manager_id')->constrained('users');
             $table->integer('office_manager_override')->nullable()->after('department_manager_id');
             $table->integer('region_manager_override')->nullable()->after('office_manager_override');
-            $table->integer('department_manager_override')->nullable()->after('office_manager_override');
+            $table->integer('department_manager_override')->nullable()->after('region_manager_override');
             $table->integer('misc_override_one')->nullable()->after('department_manager_override');
             $table->string('payee_one')->nullable()->after('misc_override_one');
             $table->string('note_one')->nullable()->after('payee_one');
