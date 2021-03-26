@@ -81,7 +81,7 @@
                                         @lang('Training')
                                     </x-nav.link>
                                     <x-nav.link :href="route('incentives.index')" class="ml-8"
-                                                :active="is_active('incentives')">
+                                                :active="is_active('incentives.*')">
                                         @lang('Incentives')
                                     </x-nav.link>
 
