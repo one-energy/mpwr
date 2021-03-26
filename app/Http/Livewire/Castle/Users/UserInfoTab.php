@@ -49,10 +49,10 @@ class UserInfoTab extends Component
         $this->departments            = Department::get();
         $this->roles                  = User::getRolesPerUserRole(user());
         $this->offices                = $department ? $department->offices()->get() : [];
-        $this->departmentUsers        = $this->user->department->users()->get();
-        $this->departmentManagerUsers = $this->user->department->users()->whereRole('Department Manager')->get();
-        $this->regionManagerUsers     = $this->user->department->users()->whereRole('Region Manager')->get();
-        $this->officeManagerUsers     = $this->user->department->users()->whereRole('Office Manager')->get();
+        $this->departmentUsers        = $this->user->department->users()->orderBy('first_name')->orderBy('last_name')->get();
+        $this->departmentManagerUsers = $this->user->department->users()->whereRole('Department Manager')->orderBy('first_name')->orderBy('last_name')->get();
+        $this->regionManagerUsers     = $this->user->department->users()->whereRole('Region Manager')->orderBy('first_name')->orderBy('last_name')->get();
+        $this->officeManagerUsers     = $this->user->department->users()->whereRole('Office Manager')->orderBy('first_name')->orderBy('last_name')->get();
         $this->getAssignedTeams();
 
         return view('livewire.castle.users.user-info-tab');
@@ -65,11 +65,12 @@ class UserInfoTab extends Component
             'user.last_name'                           => ['required', 'string', 'max:255'],
             'user.role'                                => ['nullable', 'string', 'max:255'],
             'user.office_id'                           => 'nullable',
+            'user.phone_number'                        => 'nullable',
             'user.pay'                                 => 'nullable',
             'user.department_id'                       => 'nullable',
             'user.email'                               => 'required|unique:users,email,' . $this->user->id,
             'userOverride.pay'                         => 'nullable',
-            'userOverride.referred_by'                 => 'nullable',
+            'userOverride.recruiter_id'                => 'nullable',
             'userOverride.referral_override'           => 'nullable',
             'userOverride.office_manager_id'           => 'nullable',
             'userOverride.region_manager_id'           => 'nullable',
@@ -89,6 +90,7 @@ class UserInfoTab extends Component
     public function update()
     {
         $this->validate();
+        $this->user->phone_number = preg_replace('/\D/', '', $this->user->phone_number);
 
         $this->user->save();
 
@@ -134,7 +136,7 @@ class UserInfoTab extends Component
     public function getAssignedTeams()
     {
         if ($this->user->role == "Department Manager" || $this->user->role == "Admin" || $this->user->role == "Owner" || $this->user->role == "Sales Rep" || $this->user->role == "Setter" ) {
-            $this->teams = collect([$this->user->office]);
+            $this->teams = $this->user->office ? collect([$this->user->office]) : null;
         }
 
         if ($this->user->role == "Region Manager") {

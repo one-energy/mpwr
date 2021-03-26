@@ -32,7 +32,7 @@
                 </div>
                 <div>
                     <span class="text-gray-600">Phone Number</span>
-                    <p>{{$user->last_name}}</p>
+                    <p>{{$user->phone_number ?? '-'}}</p>
                 </div>
                 <div>
                     <span class="text-gray-600">Role</span>
@@ -128,56 +128,64 @@
                         <p>${{$user->pay}}</p>
                     </div>
                     <div>
-                        <span class="text-gray-600">Referred By</span>
-                        <p>{{$user->last_name}}</p>
+                        <span class="text-gray-600">Recuited By</span>
+                        <p>{{$user->recruitedBy ? $user->recruitedBy?->first_name : '-'}} {{$user->recruitedBy?->last_name}}</p>
                     </div>
                     <div>
                         <label class="text-gray-600">Referral Override</label>
-                        <p>{{$user->email}}</p>
+                        <p>${{$user->referral_override}}</p>
                     </div>
                 </div>
                 <div class="grid col-span-3 grid-cols-3 gap-x-4 p-4 border border-gray-400 rounded-md bg-gray-100">
                     <div>
                         <span class="text-gray-600">Manager</span>
-                        <p>{{$user->last_name}}</p>
+                        <p>{{$user->officeManager ? $user->officeManager?->first_name : '-'}} {{$user->officeManager?->last_name}}</p>
                     </div>
                     <div>
                         <span class="text-gray-600">Regional</span>
-                        <p>{{$this->userRole($user->role)}}</p>
+                        <p>{{$user->regionManager ? $user->regionManager?->first_name : '-'}} {{$user->regionManager?->last_name}}</p>
                     </div>
                     <div>
                         <span class="text-gray-600">VP</span>
-                        <p>{{$this->userRole($user->role)}}</p>
+                        <p>{{$user->departmentManager ? $user->departmentManager?->first_name : '-'}} {{$user->departmentManager?->last_name}}</p>
                     </div>
                     <div>
                         <span class="text-gray-600">Manager Override</span>
-                        <p>{{$user->last_name}}</p>
+                        <p>{{$user->office_manager_override ?? '-'}}</p>
                     </div>
                     <div>
                         <span class="text-gray-600">Regional Override</span>
-                        <p>{{$this->userRole($user->role)}}</p>
+                        <p>{{$user->region_manager_override ?? '-'}}</p>
                     </div>
                     <div>
                         <span class="text-gray-600">VP Override</span>
-                        <p>{{$this->userRole($user->role)}}</p>
+                        <p>{{$user->department_manager_override ?? '-'}}</p>
                     </div>
                 </div>
                 <div class="grid col-span-3 grid-cols-3 gap-4 p-4">
                     <div>
                         <span class="text-gray-600">Misc. Override 1</span>
-                        <p>{{$user->last_name}}</p>
+                        <p>{{$user->misc_override_one ?? '-'}}</p>
                     </div>
-                    <div class="col-span-2">
+                    <div>
+                        <span class="text-gray-600">Payee</span>
+                        <p>{{$user->payee_one ?? '-'}}</p>
+                    </div>
+                    <div>
                         <span class="text-gray-600">Note</span>
-                        <p>{{$this->userRole($user->role)}}</p>
+                        <p>{{$user->note_one ?? '-'}}</p>
                     </div>
                     <div>
                         <span class="text-gray-600">Misc. Override 2</span>
-                        <p>{{$user->last_name}}</p>
+                        <p>{{$user->misc_override_two ?? '-'}}</p>
                     </div>
-                    <div class="col-span-2">
+                    <div>
+                        <span class="text-gray-600">Payee</span>
+                        <p>{{$user->payee_two ?? '-'}}</p>
+                    </div>
+                    <div>
                         <span class="text-gray-600">Note</span>
-                        <p>{{$this->userRole($user->role)}}</p>
+                        <p>{{$user->note_two ?? '-'}}</p>
                     </div>
                 </div>
             </div>
@@ -199,6 +207,10 @@
 
                         <div class="md:col-span-3 col-span-2">
                             <x-input label="Email" name="email" wire:model="user.email" disabled="{{user()->id == $user->id}}"/>
+                        </div>
+
+                        <div class="md:col-span-3 col-span-2">
+                            <x-input-phone label="Phone Number" name="phone_number" wire:model="user.phone_number" disabled="{{user()->id == $user->id}}"/>
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
@@ -288,10 +300,10 @@
                             <x-input-currency wire:model="userOverride.pay" name="userOverride.pay" label="Pay"/>
                         </div>
                         <div>
-                            <x-select name="referred_by" label="Referred By">
+                            <x-select wire:model="userOverride.recruiter_id" name="userOverride.recruiter_id" label="Recuited By">
                                 <option value="">None</option>
                                 @foreach($departmentUsers as $userOnDepartment)
-                                    <option value="{{$userOnDepartment->id}}">{{$userOnDepartment->first_name}} {{$userOnDepartment->first_name}}</option>
+                                    <option value="{{$userOnDepartment->id}}">{{$userOnDepartment->first_name}} {{$userOnDepartment->last_name}}</option>
                                 @endforeach
                             </x-select>
                         </div>
@@ -301,26 +313,26 @@
                     </div>
                     <div class="grid col-span-3 grid-cols-3 gap-x-4 gap-y-1 p-4 border border-gray-400 rounded-md bg-gray-100">
                         <div>
-                            <x-select name="referred_by" label="Referred By">
+                            <x-select wire:model="userOverride.office_manager_id" name="userOverride.office_manager_id" label="Manager">
                                 <option value="">None</option>
                                 @foreach($officeManagerUsers as $officeManager)
-                                    <option value="{{$officeManager->id}}">{{$officeManager->first_name}} {{$officeManager->first_name}}</option>
+                                    <option value="{{$officeManager->id}}">{{$officeManager->first_name}} {{$officeManager->last_name}}</option>
                                 @endforeach
                             </x-select>
                         </div>
                         <div>
-                            <x-select name="referred_by" label="Referred By">
+                            <x-select wire:model="userOverride.region_manager_id" name="userOverride.region_manager_id" label="Regional Manager">
                                 <option value="">None</option>
                                 @foreach($regionManagerUsers as $regionManager)
-                                    <option value="{{$regionManager->id}}">{{$regionManager->first_name}} {{$regionManager->first_name}}</option>
+                                    <option value="{{$regionManager->id}}">{{$regionManager->first_name}} {{$regionManager->last_name}}</option>
                                 @endforeach
                             </x-select>
                         </div>
                         <div>
-                            <x-select name="referred_by" label="Referred By">
+                            <x-select wire:model="userOverride.department_manager_id" name="department_manager_id" label="VP">
                                 <option value="">None</option>
                                 @foreach($departmentManagerUsers as $departmentManager)
-                                    <option value="{{$departmentManager->id}}">{{$departmentManager->first_name}} {{$departmentManager->first_name}}</option>
+                                    <option value="{{$departmentManager->id}}">{{$departmentManager->first_name}} {{$departmentManager->last_name}}</option>
                                 @endforeach
                             </x-select>
                         </div>

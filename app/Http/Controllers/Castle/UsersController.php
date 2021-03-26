@@ -163,6 +163,7 @@ class UsersController extends Controller
         $user->office_id         = $data['office_id'];
         $user->department_id     = $data['department_id'];
         $user->pay               = $data['pay'];
+        $user->photo_url         = asset('storage/profiles/profile.png');
         $user->save();
 
         return $user;

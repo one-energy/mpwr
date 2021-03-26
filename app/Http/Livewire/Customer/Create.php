@@ -108,8 +108,24 @@ class Create extends Component
     {
         $this->validate();
 
-        $this->customer->date_of_sale = Carbon::parse($this->customer->date_of_sale);
-        $this->customer->opened_by_id = user()->id;
+        $salesRep = User::find($this->customer->sales_rep_id);
+
+        $this->customer->date_of_sale                = Carbon::parse($this->customer->date_of_sale);
+        $this->customer->opened_by_id                = user()->id;
+        $this->customer->sales_rep_recruiter_id      = $salesRep->recruiter_id;
+        $this->customer->referral_override           = $salesRep->referral_override;
+        $this->customer->office_manager_id           = $salesRep->office_manager_id;
+        $this->customer->region_manager_id           = $salesRep->region_manager_id;
+        $this->customer->department_manager_id       = $salesRep->department_manager_id;
+        $this->customer->office_manager_override     = $salesRep->office_manager_override;
+        $this->customer->region_manager_override     = $salesRep->region_manager_override;
+        $this->customer->department_manager_override = $salesRep->department_manager_override;
+        $this->customer->misc_override_one           = $salesRep->misc_override_one;
+        $this->customer->payee_one                   = $salesRep->payee_one;
+        $this->customer->note_one                    = $salesRep->note_one;
+        $this->customer->misc_override_two           = $salesRep->misc_override_two;
+        $this->customer->payee_two                   = $salesRep->payee_two;
+        $this->customer->note_two                    = $salesRep->note_two;
         $this->customer->save();
 
         alert()
