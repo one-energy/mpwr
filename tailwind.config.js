@@ -6,6 +6,9 @@ module.exports = {
             fontFamily: {
                 sans: ['Inter var', ...defaultTheme.fontFamily.sans],
             },
+            screens: {
+                '8xl': '1800px',
+            }
         },
     },
     plugins: [
