@@ -8,20 +8,15 @@
                     </x-select>
                 </div>
                 <div class="justify-self-end col-span-2 grid grid-cols-2 gap-2 md:col-span-1 md:w-1/2">
-                    <x-select class="col-span-2" name="range_date" labelInside>
-                        <option value="0">Today</option>
-                        <option value="1">Week to Date</option>
-                        <option value="2">Last Week</option>
-                        <option value="3">Month to Date</option>
-                        <option value="4">Last Month</option>
-                        <option value="5">Quarter to Date</option>
-                        <option value="6">Last Quarter</option>
-                        <option value="7" selected>Year to Date</option>
-                        <option value="8">Last Year</option>
-                        <option value="9">Custom</option>
+                    <x-select class="col-span-2" name="range_date" wire:model="rangeType" labelInside>
+                        @foreach($ranges as $range)
+                            <option value="{{$range['value']}}">{{$range['title']}}</option>
+                        @endforeach
                     </x-select>
-                    <x-input-calendar class="w-full" wire name="startDate" label="From" labelInside/>
-                    <x-input-calendar wire name="endDate" label="To" labelInside/>
+                    <div class="grid grid-cols-2 gap-2 col-span-2 @if($rangeType != "custom") hidden @endif">
+                        <x-input-calendar key="startDate" wire name="startDate" label="From" :value="$startDate"/>
+                        <x-input-calendar key="finalDate" wire name="finalDate" label="From" :value="$finalDate"/>
+                    </div>
                 </div>
             </div>
             <div class="grid justify-items-center mt-6 overflow-x-auto">

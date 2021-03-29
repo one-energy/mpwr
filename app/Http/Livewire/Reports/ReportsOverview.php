@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Reports;
 
 use App\Models\Customer;
 use App\Traits\Livewire\FullTable;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
 
@@ -15,9 +16,20 @@ class ReportsOverview extends Component
 
     public Collection $customersOfSalesRepsRecuited;
 
-    public $startDate;
+    public array $ranges = Customer::RANGE_DATES;
 
-    public $endDate;
+    public string $rangeType = 'year_to_date';
+
+    public $startDate = '';
+
+    public $finalDate = '';
+
+    public function mount()
+    {
+        $this->startDate = Carbon::create($this->startDate)->firstOfYear()->toString();
+        $this->finalDate   = Carbon::create($this->finalDate)->toString();
+        // dd($this->endDate);
+    }
 
     public function render()
     {

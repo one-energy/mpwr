@@ -68,6 +68,19 @@ class Customer extends Model
         'date_of_sale' => 'datetime:Y-m-d',
     ];
 
+    const RANGE_DATES = [
+        ['title' => 'Today', 'value' => 'today'],
+        ['title' => 'Week to Date', 'value' => 'week_to_date'],
+        ['title' => 'Last Week', 'value' => 'last_week'],
+        ['title' => 'Month to Date', 'value' => 'month_to_date'],
+        ['title' => 'Last Month', 'value' => 'last_month'],
+        ['title' => 'Quarter to Date', 'value' => 'quarter_to_date'],
+        ['title' => 'Last Quarter', 'value' => 'last_quarter'],
+        ['title' => 'Year to Date', 'value' => 'year_to_date'],
+        ['title' => 'Last Year', 'value' => 'last_year'],
+        ['title' => 'Custom', 'value' => 'custom'],
+    ];
+
     const BILLS = [
         'Domestic',
         'CARE',
