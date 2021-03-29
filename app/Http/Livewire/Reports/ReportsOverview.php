@@ -27,8 +27,7 @@ class ReportsOverview extends Component
     public function mount()
     {
         $this->startDate = Carbon::create($this->startDate)->firstOfYear()->toString();
-        $this->finalDate   = Carbon::create($this->finalDate)->toString();
-        // dd($this->endDate);
+        $this->finalDate = Carbon::create($this->finalDate)->toString();
     }
 
     public function render()
@@ -86,6 +85,47 @@ class ReportsOverview extends Component
 
     public function getRecruiterCommission (Customer $customer) {
         return $customer->referral_override * ($customer->system_size * 1000);
+    }
+
+    public function updatedRangeType($value)
+    {
+        $this->finalDate = Carbon::now()->toString();
+
+        if ($value == 'today') {
+            $this->startDate = Carbon::now()->toString();
+        }
+        if ($value == 'week_to_date') {
+            $this->startDate = Carbon::now()->startOfWeek()->toString();
+        }
+        if ($value == 'last_week') {
+            $this->startDate = Carbon::now()->subWeek()->startOfWeek()->toString();
+            $this->finalDate = Carbon::now()->subWeek()->endOfWeek()->toString();
+        }
+        if ($value == 'month_to_date') {
+            $this->startDate = Carbon::now()->startOfMonth()->toString();
+        }
+        if ($value == 'last_month') {
+            $this->startDate = Carbon::now()->startOfMonth()->subMonth()->toString();
+            $this->finalDate = Carbon::now()->startOfMonth()->subMonth()->endOfMonth()->toString();
+        }
+        if ($value == 'quarter_to_date') {
+            $this->startDate = Carbon::now()->startOfQuarter()->toString();
+        }
+        if ($value == 'last_quarter') {
+            $this->startDate = Carbon::now()->startOfQuarter()->subQuarter()->toString();
+            $this->finalDate = Carbon::now()->startOfQuarter()->subQuarter()->endOfQuarter()->toString();
+        }
+        if ($value == 'year_to_date') {
+            $this->startDate = Carbon::now()->startOfYear()->toString();
+        }
+        if ($value == 'last_year') {
+            $this->startDate = Carbon::now()->startOfYear()->subYear()->toString();
+            $this->finalDate = Carbon::now()->startOfYear()->subYear()->endOfYear()->toString();
+        }
+        if ($value == 'custom') {
+            $this->startDate = Carbon::create($this->startDate)->toString();
+            $this->finalDate = Carbon::create($this->finalDate)->toString();
+        }
     }
 
     public function sortBy()
