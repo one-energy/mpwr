@@ -33,11 +33,11 @@
                                 <x-table.th by="setter_rate">
                                     @lang('Setter Rate')
                                 </x-table.th>
-                                @if (user()->role == "Setter")
-                                    <x-table.th by="system_size">
-                                        @lang('My Set System Size (kW)')
+                                <x-table.th by="system_size">
+                                        @if (user()->role == "Setter")
+                                            @lang('My Set System Size (kW)')
+                                        @endif
                                     </x-table.th>
-                                @endif
                                 <x-table.th by="my_setter_commission">
                                     @lang('My Setter Comission')
                                 </x-table.th>
@@ -52,12 +52,18 @@
                         <x-slot name="body">
                             <x-table.tr >
                                 <x-table.td>Average</x-table.td>
-                                <x-table.td>$ {{$customersOfUser->avg('setter_fee')}}</x-table.td>
-                                @if (user()->role == "Setter")
-                                    <x-table.td>{{ $customersOfUser->avg('system_size') }}</x-table.td>
-                                @endif
-                                <x-table.td>$ {{$this->getAvgSetterCommission($customersOfUser)}}</x-table.td>
-                                <x-table.td>$ {{$this->getAvgRecruiterCommission($customersOfSalesRepsRecuited)}}</x-table.td>
+                                <x-table.td>
+                                    {{$customersOfUser->avg('setter_fee') ? '$ ' . $customersOfUser->avg('setter_fee') : '-' }}
+                                </x-table.td>
+                                <x-table.td>
+                                    {{ $customersOfUser->avg('system_size') ? $customersOfUser->avg('system_size') : '-' }}
+                                </x-table.td>
+                                <x-table.td>
+                                    {{$this->getAvgSetterCommission($customersOfUser) ? '$ ' . $this->getAvgSetterCommission($customersOfUser) : '-'}}
+                                </x-table.td>
+                                <x-table.td>
+                                    {{$this->getAvgRecruiterCommission($customersOfSalesRepsRecuited) ? '$ ' . $this->getAvgRecruiterCommission($customersOfSalesRepsRecuited) : '-'}}
+                                </x-table.td>
                                 <x-table.td>-</x-table.td>
                             </x-table.tr>
                             <x-table.tr class="bg-gray-100">
@@ -66,9 +72,15 @@
                                 @if (user()->role == "Setter")
                                     <x-table.td class="font-bold">{{ $customersOfUser->sum('system_size')}}</x-table.td>
                                 @endif
-                                <x-table.td class="font-bold">$ {{ $customersOfUser->sum('setter_fee')}}</x-table.td>
-                                <x-table.td class="font-bold">$ {{ $customersOfSalesRepsRecuited->sum('referral_override') }}</x-table.td>
-                                <x-table.td class="font-bold">$ </x-table.td>
+                                <x-table.td class="font-bold"> {{
+                                    $this->getSumSetterCommission($customersOfUser) ? '$ ' . $this->getSumSetterCommission($customersOfUser) : '-'}}
+                                </x-table.td>
+                                <x-table.td class="font-bold">
+                                    {{  $this->getSumRecruiterCommission($customersOfSalesRepsRecuited) ? '$ ' . $this->getSumRecruiterCommission($customersOfSalesRepsRecuited) : '-'}}
+                                </x-table.td>
+                                <x-table.td class="font-bold">
+                                    {{  $this->getUserTotalCommission() ? '$ ' . $this->getUserTotalCommission() : '-'}}
+                                </x-table.td>
                             </x-table.tr>
                         </x-slot>
                     </x-table>
@@ -113,11 +125,11 @@
                                 <x-table.tr >
                                     <x-table.td>{{$customer->first_name}} {{$customer->last_name}}</x-table.td>
                                     <x-table.td>{{$customer->date_of_sale->format('M-d')}}</x-table.td>
-                                    <x-table.td>{{$customer->userSetter?->first_name}} {{$customer->userSetter?->last_name}}</x-table.td>
+                                    <x-table.td>{{$customer->userSetter?->first_name ?? '-'}} {{$customer->userSetter?->last_name}}</x-table.td>
                                     <x-table.td>{{$customer->setter_fee ? '$' : '-'}}{{$customer->setter_fee}}</x-table.td>
-                                    <x-table.td>{{$customer->userSalesRep?->first_name}} {{$customer->userSalesRep?->last_name}}</x-table.td>
+                                    <x-table.td>{{$customer->userSalesRep?->first_name ?? '-'}} {{$customer->userSalesRep?->last_name}}</x-table.td>
                                     <x-table.td>{{$customer->userSalesRep?->pay ? '$' : '-'}}{{$customer->userSalesRep?->pay}}</x-table.td>
-                                    <x-table.td>{{$customer->system_size}}</x-table.td>
+                                    <x-table.td>{{$customer->system_size ?? '-'}}</x-table.td>
                                     <x-table.td>${{$this->getSetterCommission($customer)}}</x-table.td>
                                 </x-table.tr>
                             @endforeach

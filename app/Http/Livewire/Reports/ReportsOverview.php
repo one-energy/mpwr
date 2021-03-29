@@ -35,6 +35,18 @@ class ReportsOverview extends Component
         $this->customersOfSalesRepsRecuited = user()->customersOfSalesRepsRecuited;
     }
 
+    public function getUserTotalCommission()
+    {
+        return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecuited) + $this->getSumSetterCommission($this->customersOfUser);
+    }
+
+    public function getSumSetterCommission (Collection $customers)
+    {
+        return $customers->sum(function ($customer) {
+            return $this->getSetterCommission($customer);
+        });
+    }
+
     public function getAvgSetterCommission (Collection $customers)
     {
         return $customers->avg(function ($customer) {
@@ -46,9 +58,15 @@ class ReportsOverview extends Component
         return $customer->setter_fee * ($customer->system_size * 1000);
     }
 
+    public function getSumRecruiterCommission (Collection $customers)
+    {
+        return $customers->sum(function ($customer) {
+            return $this->getRecruiterCommission($customer);
+        });
+    }
+
     public function getAvgRecruiterCommission (Collection $customers)
     {
-        dd($customers);
         return $customers->avg(function ($customer) {
             return $this->getRecruiterCommission($customer);
         });
