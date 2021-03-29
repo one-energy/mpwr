@@ -1,6 +1,6 @@
 <div>
     <div>
-        <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
             <div class="px-4 py-5 sm:px-6">
                 <div class="flex justify-between mb-4">
                     <div>
@@ -51,9 +51,9 @@
                                                 @endif
                                                 <x-table.td>{{ $office->name }}</x-table.td>
                                                 <x-table.td>{{ $office->region->name }}</x-table.td>
-                                                @if ($office->office_manager)
-                                                    <x-table.td>{{ $office->office_manager->first_name }}
-                                                        {{ $office->office_manager->last_name }}</x-table.td>
+                                                @if ($office->officeManager)
+                                                    <x-table.td>{{ $office->officeManager->first_name }}
+                                                        {{ $office->officeManager->last_name }}</x-table.td>
                                                 @else
                                                     <x-table.td>Without Manager</x-table.td>
                                                 @endif

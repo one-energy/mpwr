@@ -19,7 +19,7 @@
                 @endif
 
                 <x-form :route="route('password.email')">
-                    <x-input label="E-Mail Address" name="email"></x-input>
+                    <x-input label="E-Mail Address" name="email"/>
 
                     <div class="mt-6 flex items-center justify-end">
                         <div class="text-sm leading-5">

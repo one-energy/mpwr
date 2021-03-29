@@ -1,16 +1,14 @@
 <x-app.auth :title="__('Edit Office')">
     <div>
-        <div class="max-w-6xl mx-auto py-5 sm:px-6 lg:px-8">
+        <div class="max-w-8xl mx-auto py-5 sm:px-6 lg:px-8">
             <a href="{{ route('castle.offices.index') }}"
                class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
                 < Edit Office
             </a>
         </div>
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
             <x-form :route="route('castle.offices.update', $office)" put>
-                @csrf
-
-                <div x-data="{ selectedRegion: null,
+                <div class="px-8" x-data="{ selectedRegion: null,
                               selectedManager: null,
                               token: document.head.querySelector('meta[name=csrf-token]').content,
                               officesManagers: null,
@@ -38,7 +36,7 @@
 
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                         <div class="md:col-span-6 col-span-2">
-                            <x-input label="Office Name" name="name" value="{{ $office->name }}"></x-input>
+                            <x-input label="Office Name" name="name" value="{{ $office->name }}"/>
                         </div>
 
                         @if(user()->role != "Admin" && user()->role != "Owner" )
@@ -64,13 +62,13 @@
                             <x-select x-model="selectedManager" label="Manager" name="office_manager_id">
                                 <template x-if="officesManagers" x-for="manager in officesManagers" :key="manager.id">
                                     <option :value="manager.id"
-                                            x-text="manager.first_name + ' - ' + manager.last_name"></option>
+                                            x-text="manager.first_name + ' ' + manager.last_name"></option>
                                 </template>
                             </x-select>
                         </div>
                     </div>
                 </div>
-                <div class="mt-8 border-t border-gray-200 pt-5">
+                <div class="mt-4 border-b border-gray-200 py-2 px-8">
                     <div class="flex justify-start">
                         <span class="inline-flex rounded-md shadow-sm">
                             <button type="submit"

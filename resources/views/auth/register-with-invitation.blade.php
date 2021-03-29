@@ -11,17 +11,17 @@
                 <x-form :route="route('register.with-invitation', $invitation)">
 
                     <x-input class="mt-6" :label="__('First Name')"
-                             name="first_name"></x-input>
+                             name="first_name"/>
 
                     <x-input class="mt-6" :label="__('Last Name')"
-                             name="last_name"></x-input>        
+                             name="last_name"/>
 
-                    <x-input class="mt-6" :label="__('E-mail Address')" name="email" :value="$email" disabled></x-input>
+                    <x-input class="mt-6" :label="__('E-mail Address')" name="email" :value="$email" disabled/>
 
                     <x-input class="mt-6" :label="__('E-mail Address Confirmation')"
-                             name="email_confirmation"></x-input>
+                             name="email_confirmation"/>
 
-                    <x-input class="mt-6" type="password" :label="__('Password')" name="password"></x-input>
+                    <x-input class="mt-6" type="password" :label="__('Password')" name="password"/>
 
                     <div class="mt-6">
                         <span class="block w-full rounded-md shadow-sm">

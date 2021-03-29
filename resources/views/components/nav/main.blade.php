@@ -1,7 +1,7 @@
 <div class="bg-white">
     <nav x-data="{ open: false }" @keydown.window.escape="open = false" class="bg-white border-b border-gray-200"
          xmlns:x-bind="http://www.w3.org/1999/xhtml" xmlns:x-transition="http://www.w3.org/1999/xhtml">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 hidden md:block">
+        <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 hidden md:block">
             <div class="flex items-center justify-between h-16 px-4 sm:px-0">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -81,7 +81,7 @@
                                         @lang('Training')
                                     </x-nav.link>
                                     <x-nav.link :href="route('incentives.index')" class="ml-8"
-                                                :active="is_active('incentives')">
+                                                :active="is_active('incentives.*')">
                                         @lang('Incentives')
                                     </x-nav.link>
                                     <x-nav.link :href="route('reports.index')" class="ml-8"
