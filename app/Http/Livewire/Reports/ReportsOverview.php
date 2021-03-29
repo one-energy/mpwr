@@ -63,7 +63,10 @@ class ReportsOverview extends Component
     public function getUserCustomers()
     {
 
-        $this->customersOfUser = Customer::whereSetterId(user()->id)
+        $this->customersOfUser = Customer::where(function($query) {
+                $query->orWhere('setter_id', user()->id)
+                      ->orWhere('sales_rep_id', user()->id);
+            })
             ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
             ->when($this->selectedStatus == 'installed', function ($query) {
                 $query->whereIsActive(true)
@@ -101,6 +104,7 @@ class ReportsOverview extends Component
 
     public function getSumSetterCommission (Collection $customers)
     {
+        $customers->where('setter_id', user()->id);
         return $customers->sum(function ($customer) {
             return $this->getSetterCommission($customer);
         });
@@ -108,12 +112,39 @@ class ReportsOverview extends Component
 
     public function getAvgSetterCommission (Collection $customers)
     {
+        $customers->where('setter_id', user()->id);
         return $customers->avg(function ($customer) {
             return $this->getSetterCommission($customer);
         });
     }
 
     public function getSetterCommission (Customer $customer) {
+        return $customer->setter_fee * ($customer->system_size * 1000);
+    }
+
+    public function getAvgSalesRepEpc (Collection $customers)
+    {
+        $customers->where('sales_rep_id', user()->id);
+        return $customers->avg('epc');
+    }
+
+    public function getSumSalesRepCommission (Collection $customers)
+    {
+        $customers->where('sales_rep_id', user()->id);
+        return $customers->sum(function ($customer) {
+            return $this->getSalesRepCommission($customer);
+        });
+    }
+
+    public function getAvgSalesRepCommission (Collection $customers)
+    {
+        $customers->where('sales_rep_id', user()->id);
+        return $customers->avg(function ($customer) {
+            return $this->getSalesRepCommission($customer);
+        });
+    }
+
+    public function getSalesRepCommission (Customer $customer) {
         return $customer->setter_fee * ($customer->system_size * 1000);
     }
 

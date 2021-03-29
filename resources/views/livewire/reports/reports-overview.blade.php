@@ -30,13 +30,18 @@
                             <x-table.th-tr>
                                 <x-table.th></x-table.th>
                                 <x-table.th by="setter_rate">
-                                    @lang('Setter Rate')
+                                    @lang('My Setter Rate')
                                 </x-table.th>
-                                <x-table.th by="system_size">
-                                        @if (user()->role == "Setter")
-                                            @lang('My Set System Size (kW)')
-                                        @endif
+                                @if(user()->role == "Sales Rep")
+                                    <x-table.th>
+                                        @lang('My Closed PPW')
                                     </x-table.th>
+                                @endif
+                                <x-table.th by="system_size">
+                                    @if (user()->role == "Setter" || user()->role == "Sales Rep")
+                                        @lang('My Set System Size (kW)')
+                                    @endif
+                                </x-table.th>
                                 <x-table.th by="my_setter_commission">
                                     @lang('My Setter Comission')
                                 </x-table.th>
@@ -54,6 +59,11 @@
                                 <x-table.td>
                                     {{$customersOfUser?->avg('setter_fee') ? '$ ' . $customersOfUser?->avg('setter_fee') : '-' }}
                                 </x-table.td>
+                                @if(user()->role == "Sales Rep")
+                                    <x-table.th>
+                                        {{$this->getAvgSalesRepEpc($customersOfUser) ? '$ ' . $this->getAvgSalesRepEpc($customersOfUser) : '-'}}
+                                    </x-table.th>
+                                @endif
                                 <x-table.td>
                                     {{$customersOfUser?->avg('system_size') ? $customersOfUser?->avg('system_size') : '-' }}
                                 </x-table.td>
@@ -68,6 +78,9 @@
                             <x-table.tr class="bg-gray-100">
                                 <x-table.td>Total</x-table.td>
                                 <x-table.td class="font-bold">-</x-table.td>
+                                @if(user()->role == "Sales Rep")
+                                    <x-table.td class="font-bold">-</x-table.td>
+                                @endif
                                 <x-table.td class="font-bold">
                                     {{$customersOfUser->sum('system_size') > 0 ? $customersOfUser->sum('system_size') : '-' }}
                                 </x-table.td>
