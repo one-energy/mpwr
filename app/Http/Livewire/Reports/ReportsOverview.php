@@ -26,8 +26,8 @@ class ReportsOverview extends Component
 
     public function mount()
     {
-        $this->startDate = Carbon::create($this->startDate)->firstOfYear()->toString();
-        $this->finalDate = Carbon::create($this->finalDate)->toString();
+        $this->startDate = Carbon::create($this->startDate)->firstOfYear()->startOfDay()->toString();
+        $this->finalDate = Carbon::create($this->finalDate)->endOfDay()->toString();
     }
 
     public function render()
@@ -35,6 +35,7 @@ class ReportsOverview extends Component
         $this->getUserCustomers();
         return view('livewire.reports.reports-overview', [
             'customers' => Customer::query()
+                            ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
                             ->search($this->search)
                             ->paginate($this->perPage),
         ]);
@@ -89,43 +90,44 @@ class ReportsOverview extends Component
 
     public function updatedRangeType($value)
     {
-        $this->finalDate = Carbon::now()->toString();
-
-        if ($value == 'today') {
-            $this->startDate = Carbon::now()->toString();
-        }
-        if ($value == 'week_to_date') {
-            $this->startDate = Carbon::now()->startOfWeek()->toString();
-        }
-        if ($value == 'last_week') {
-            $this->startDate = Carbon::now()->subWeek()->startOfWeek()->toString();
-            $this->finalDate = Carbon::now()->subWeek()->endOfWeek()->toString();
-        }
-        if ($value == 'month_to_date') {
-            $this->startDate = Carbon::now()->startOfMonth()->toString();
-        }
-        if ($value == 'last_month') {
-            $this->startDate = Carbon::now()->startOfMonth()->subMonth()->toString();
-            $this->finalDate = Carbon::now()->startOfMonth()->subMonth()->endOfMonth()->toString();
-        }
-        if ($value == 'quarter_to_date') {
-            $this->startDate = Carbon::now()->startOfQuarter()->toString();
-        }
-        if ($value == 'last_quarter') {
-            $this->startDate = Carbon::now()->startOfQuarter()->subQuarter()->toString();
-            $this->finalDate = Carbon::now()->startOfQuarter()->subQuarter()->endOfQuarter()->toString();
-        }
-        if ($value == 'year_to_date') {
-            $this->startDate = Carbon::now()->startOfYear()->toString();
-        }
-        if ($value == 'last_year') {
-            $this->startDate = Carbon::now()->startOfYear()->subYear()->toString();
-            $this->finalDate = Carbon::now()->startOfYear()->subYear()->endOfYear()->toString();
-        }
-        if ($value == 'custom') {
-            $this->startDate = Carbon::create($this->startDate)->toString();
-            $this->finalDate = Carbon::create($this->finalDate)->toString();
-        }
+        $this->finalDate = Carbon::now()->endOfDay()->toString();
+        switch ($value) {
+            case 'today':
+                $this->startDate = Carbon::now()->startOfDay()->toString();
+                break;
+            case 'week_to_date':
+                $this->startDate = Carbon::now()->startOfWeek()->startOfDay()->toString();
+                break;
+            case 'last_week':
+                $this->startDate = Carbon::now()->subWeek()->startOfWeek()->startOfDay()->toString();
+                $this->finalDate = Carbon::now()->subWeek()->endOfWeek()->endOfDay()->toString();
+                break;
+            case 'month_to_date':
+                $this->startDate = Carbon::now()->startOfMonth()->startOfDay()->toString();
+                break;
+            case 'last_month':
+                $this->startDate = Carbon::now()->startOfMonth()->subMonth()->startOfDay()->toString();
+                $this->finalDate = Carbon::now()->startOfMonth()->subMonth()->endOfMonth()->endOfDay()->toString();
+                break;
+            case 'quarter_to_date':
+                $this->startDate = Carbon::now()->startOfQuarter()->startOfDay()->toString();
+                break;
+            case 'last_quarter':
+                $this->startDate = Carbon::now()->startOfQuarter()->subQuarter()->startOfDay()->toString();
+                $this->finalDate = Carbon::now()->startOfQuarter()->subQuarter()->endOfQuarter()->endOfDay()->toString();
+                break;
+            case 'year_to_date':
+                $this->startDate = Carbon::now()->startOfYear()->startOfDay()->toString();
+                break;
+            case 'last_year':
+                $this->startDate = Carbon::now()->startOfYear()->subYear()->startOfDay()->toString();
+                $this->finalDate = Carbon::now()->startOfYear()->subYear()->endOfYear()->endOfDay()->toString();
+                break;
+            case 'custom':
+                $this->startDate = Carbon::create($this->startDate)->startOfDay()->toString();
+                $this->finalDate = Carbon::create($this->finalDate)->endOfDay()->toString();
+                break;
+         }
     }
 
     public function sortBy()

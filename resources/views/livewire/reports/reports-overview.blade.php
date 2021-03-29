@@ -48,10 +48,10 @@
                             <x-table.tr >
                                 <x-table.td>Average</x-table.td>
                                 <x-table.td>
-                                    {{$customersOfUser->avg('setter_fee') ? '$ ' . $customersOfUser->avg('setter_fee') : '-' }}
+                                    {{$customersOfUser?->avg('setter_fee') ? '$ ' . $customersOfUser?->avg('setter_fee') : '-' }}
                                 </x-table.td>
                                 <x-table.td>
-                                    {{ $customersOfUser->avg('system_size') ? $customersOfUser->avg('system_size') : '-' }}
+                                    {{ $customersOfUser?->avg('system_size') ? $customersOfUser?->avg('system_size') : '-' }}
                                 </x-table.td>
                                 <x-table.td>
                                     {{$this->getAvgSetterCommission($customersOfUser) ? '$ ' . $this->getAvgSetterCommission($customersOfUser) : '-'}}
