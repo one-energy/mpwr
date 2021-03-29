@@ -3,8 +3,10 @@
         <div class="px-4 py-5 sm:px-6">
             <div class="grid grid-cols-2 mt-5 gap-4">
                 <div class="col-span-2 md:col-span-1 md:w-1/2">
-                    <x-select name="pending_customer" labelInside>
-                        <option value="0" selected>Pending Customer</option>
+                    <x-select wire:model="selectedStatus" name="pending_customer" labelInside>
+                        @foreach($status as $key => $selectStatus)
+                            <option value="{{$key}}">{{$selectStatus}}</option>
+                        @endforeach
                     </x-select>
                 </div>
                 <div class="justify-self-end col-span-2 grid grid-cols-2 gap-2 md:col-span-1 md:w-1/2">
@@ -13,10 +15,12 @@
                             <option value="{{$range['value']}}">{{$range['title']}}</option>
                         @endforeach
                     </x-select>
-                    <div class="grid grid-cols-2 gap-2 col-span-2 @if($rangeType != "custom") hidden @endif">
-                        <x-input-calendar key="startDate" wire name="startDate" label="From" :value="$startDate"/>
-                        <x-input-calendar key="finalDate" wire name="finalDate" label="From" :value="$finalDate"/>
-                    </div>
+                    @if($rangeType == "custom")
+                        <div class="grid grid-cols-2 gap-2 col-span-2 ">
+                            <x-input-calendar key="startDate" wire name="startDate" label="From" :value="$startDate"/>
+                            <x-input-calendar key="finalDate" wire name="finalDate" label="From" :value="$finalDate"/>
+                        </div>
+                    @endif()
                 </div>
             </div>
             <div class="grid justify-items-center mt-6 overflow-x-auto">
@@ -51,7 +55,7 @@
                                     {{$customersOfUser?->avg('setter_fee') ? '$ ' . $customersOfUser?->avg('setter_fee') : '-' }}
                                 </x-table.td>
                                 <x-table.td>
-                                    {{ $customersOfUser?->avg('system_size') ? $customersOfUser?->avg('system_size') : '-' }}
+                                    {{$customersOfUser?->avg('system_size') ? $customersOfUser?->avg('system_size') : '-' }}
                                 </x-table.td>
                                 <x-table.td>
                                     {{$this->getAvgSetterCommission($customersOfUser) ? '$ ' . $this->getAvgSetterCommission($customersOfUser) : '-'}}
@@ -64,11 +68,11 @@
                             <x-table.tr class="bg-gray-100">
                                 <x-table.td>Total</x-table.td>
                                 <x-table.td class="font-bold">-</x-table.td>
-                                @if (user()->role == "Setter")
-                                    <x-table.td class="font-bold">{{ $customersOfUser->sum('system_size')}}</x-table.td>
-                                @endif
-                                <x-table.td class="font-bold"> {{
-                                    $this->getSumSetterCommission($customersOfUser) ? '$ ' . $this->getSumSetterCommission($customersOfUser) : '-'}}
+                                <x-table.td class="font-bold">
+                                    {{$customersOfUser->sum('system_size') > 0 ? $customersOfUser->sum('system_size') : '-' }}
+                                </x-table.td>
+                                <x-table.td class="font-bold">
+                                    {{$this->getSumSetterCommission($customersOfUser) ? '$ ' . $this->getSumSetterCommission($customersOfUser) : '-'}}
                                 </x-table.td>
                                 <x-table.td class="font-bold">
                                     {{  $this->getSumRecruiterCommission($customersOfSalesRepsRecuited) ? '$ ' . $this->getSumRecruiterCommission($customersOfSalesRepsRecuited) : '-'}}

@@ -81,6 +81,12 @@ class Customer extends Model
         ['title' => 'Custom', 'value' => 'custom'],
     ];
 
+    const STATUS = [
+        'pending'   => 'Pending Customers',
+        'installed' => 'Installed Customers',
+        'canceled'  => 'Canceled',
+    ];
+
     const BILLS = [
         'Domestic',
         'CARE',

@@ -18,6 +18,10 @@ class ReportsOverview extends Component
 
     public array $ranges = Customer::RANGE_DATES;
 
+    public array $status = Customer::STATUS;
+
+    public string $selectedStatus = 'pending';
+
     public string $rangeType = 'year_to_date';
 
     public $startDate = '';
@@ -36,6 +40,21 @@ class ReportsOverview extends Component
         return view('livewire.reports.reports-overview', [
             'customers' => Customer::query()
                             ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
+                            ->where(function($query) {
+                                $query->orWhere('setter_id', user()->id)
+                                      ->orWhere('sales_rep_id', user()->id);
+                            })
+                            ->when($this->selectedStatus == 'installed', function ($query) {
+                                $query->whereIsActive(true)
+                                      ->wherePanelSold(true);
+                            })
+                            ->when($this->selectedStatus == 'pending', function ($query) {
+                                $query->whereIsActive(true)
+                                      ->wherePanelSold(false);
+                            })
+                            ->when($this->selectedStatus == 'canceled', function ($query) {
+                                $query->whereIsActive(false);
+                            })
                             ->search($this->search)
                             ->paginate($this->perPage),
         ]);
@@ -43,8 +62,36 @@ class ReportsOverview extends Component
 
     public function getUserCustomers()
     {
-        $this->customersOfUser              = Customer::whereSetterId(user()->id)->get();
-        $this->customersOfSalesRepsRecuited = user()->customersOfSalesRepsRecuited;
+
+        $this->customersOfUser = Customer::whereSetterId(user()->id)
+            ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
+            ->when($this->selectedStatus == 'installed', function ($query) {
+                $query->whereIsActive(true)
+                      ->wherePanelSold(true);
+            })
+            ->when($this->selectedStatus == 'pending', function ($query) {
+                $query->whereIsActive(true)
+                      ->wherePanelSold(false);
+            })
+            ->when($this->selectedStatus == 'canceled', function ($query) {
+                $query->whereIsActive(false);
+            })
+            ->get();
+
+        $this->customersOfSalesRepsRecuited = user()->customersOfSalesRepsRecuited()
+            ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
+            ->when($this->selectedStatus == 'installed', function ($query) {
+                $query->whereIsActive(true)
+                      ->wherePanelSold(true);
+            })
+            ->when($this->selectedStatus == 'pending', function ($query) {
+                $query->whereIsActive(true)
+                      ->wherePanelSold(false);
+            })
+            ->when($this->selectedStatus == 'canceled', function ($query) {
+                $query->whereIsActive(false);
+            })
+            ->get();
     }
 
     public function getUserTotalCommission()

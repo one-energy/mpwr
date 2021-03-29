@@ -24,6 +24,7 @@
 
             initDate() {
                 let day = this.datepickerValue ? new Date(this.datepickerValue) : new Date();
+                console.log(this.datepickerValue)
                 this.month = day.getUTCMonth();
                 this.year = day.getUTCFullYear();
                 if (!this.datepickerValue) {
