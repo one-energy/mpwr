@@ -15,12 +15,12 @@
                 <x-form :route="route('password.update')">
                     <input type="hidden" name="token" value="{{ $token }}">
 
-                    <x-input label="E-Mail Address" name="email"></x-input>
+                    <x-input label="E-Mail Address" name="email"/>
 
-                    <x-input class="mt-6" type="password" label="Password" name="password"></x-input>
+                    <x-input class="mt-6" type="password" label="Password" name="password"/>
 
                     <x-input class="mt-6" type="password" label="Password Confirmation"
-                             name="password_confirmation"></x-input>
+                             name="password_confirmation"/>
 
 
                     <div class="mt-6">

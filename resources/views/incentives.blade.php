@@ -1,6 +1,6 @@
 <x-app.auth :title="__('Incentives')">
     <div>
-        <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
             <div class="px-4 py-5 sm:px-6">
                 <div class="flex justify-start">
                     <h3 class="text-lg text-gray-900">Incentives</h3>

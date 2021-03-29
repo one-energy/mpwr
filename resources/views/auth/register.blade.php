@@ -20,16 +20,16 @@
             <x-card>
                 <x-form :route="route('register')">
 
-                    <x-input class="mt-6" :label="__('First Name')" name="first_name"></x-input>
+                    <x-input class="mt-6" :label="__('First Name')" name="first_name"/>
 
-                    <x-input class="mt-6" :label="__('Last Name')" name="last_name"></x-input>
+                    <x-input class="mt-6" :label="__('Last Name')" name="last_name"/>
 
-                    <x-input class="mt-6" :label="__('E-mail Address')" name="email"></x-input>
+                    <x-input class="mt-6" :label="__('E-mail Address')" name="email"/>
 
                     <x-input class="mt-6" :label="__('E-mail Address Confirmation')"
-                             name="email_confirmation"></x-input>
+                             name="email_confirmation"/>
 
-                    <x-input class="mt-6" type="password" :label="__('Password')" name="password"></x-input>
+                    <x-input class="mt-6" type="password" :label="__('Password')" name="password"/>
 
                     <div class="mt-6 flex items-center justify-between">
                         <x-checkbox :label="__('Remember me')" name="remember" :checked="old('remember')"></x-checkbox>

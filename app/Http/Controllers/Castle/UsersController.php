@@ -163,6 +163,7 @@ class UsersController extends Controller
         $user->office_id         = $data['office_id'];
         $user->department_id     = $data['department_id'];
         $user->pay               = $data['pay'];
+        $user->photo_url         = asset('storage/profiles/profile.png');
         $user->save();
 
         return $user;
@@ -223,6 +224,8 @@ class UsersController extends Controller
     {
         return User::whereDepartmentId($departmentId)
             ->whereRole('Region Manager')
+            ->orderBy('first_name', 'ASC')
+            ->orderBy('last_name', 'ASC')
             ->get();
     }
 
@@ -234,6 +237,8 @@ class UsersController extends Controller
 
         return $usersQuery->whereRole('Office Manager')
             ->whereDepartmentId($region->department_id)
+            ->orderBy('first_name', 'ASC')
+            ->orderBy('last_name', 'ASC')
             ->get();
     }
 }
