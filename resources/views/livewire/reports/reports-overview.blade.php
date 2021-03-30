@@ -139,15 +139,34 @@
                                 <x-table.th by="closer">
                                     @lang('Closer')
                                 </x-table.th>
-                                <x-table.th by="closer_rate">
-                                    @lang('Closer Rate')
-                                </x-table.th>
+                                @if(user()->role != "Setter")
+                                    <x-table.th by="pay_rate">
+                                        @lang('Pay Rate')
+                                    </x-table.th>
+                                    <x-table.th by="pay_rate">
+                                        @lang('PPW')
+                                    </x-table.th>
+                                    <x-table.th by="pay_rate">
+                                        @lang('Adders')
+                                    </x-table.th>
+                                @endif
                                 <x-table.th by="system_size">
                                     @lang('System Size')
                                 </x-table.th>
                                 <x-table.th by="setter_commission">
                                     @lang('Setter Commission')
                                 </x-table.th>
+                                @if(user()->role != "Setter")
+                                    <x-table.th by="closer_commission">
+                                        @lang('Closer Commission')
+                                    </x-table.th>
+                                    <x-table.th by="financing_type">
+                                        @lang('Financing Type')
+                                    </x-table.th>
+                                    <x-table.th by="financer_type">
+                                        @lang('Financer Type')
+                                    </x-table.th>
+                                @endif
                             </x-table.th-tr>
                         </x-slot>
                         <x-slot name="body">
@@ -158,9 +177,18 @@
                                     <x-table.td>{{$customer->userSetter?->first_name ?? '-'}} {{$customer->userSetter?->last_name}}</x-table.td>
                                     <x-table.td>{{$customer->setter_fee ? '$' : '-'}}{{$customer->setter_fee}}</x-table.td>
                                     <x-table.td>{{$customer->userSalesRep?->first_name ?? '-'}} {{$customer->userSalesRep?->last_name}}</x-table.td>
-                                    <x-table.td>{{$customer->userSalesRep?->pay ? '$' : '-'}}{{$customer->userSalesRep?->pay}}</x-table.td>
+                                    @if(user()->role != "Setter")
+                                        <x-table.td>{{$customer->userSalesRep?->pay ? '$' : '-'}}{{$customer->userSalesRep?->pay}}</x-table.td>
+                                        <x-table.td>{{$customer->userSalesRep?->epc ? '$' : '-'}}{{$customer->userSalesRep?->epc}}</x-table.td>
+                                        <x-table.td>{{$customer->userSalesRep?->adders ? '$' : '-'}}{{$customer->userSalesRep?->adders}}</x-table.td>
+                                    @endif
                                     <x-table.td>{{$customer->system_size ?? '-'}}</x-table.td>
                                     <x-table.td>${{$this->getSetterCommission($customer)}}</x-table.td>
+                                    @if(user()->role != "Setter")
+                                        <x-table.td>${{$this->getSalesRepCommission($customer)}}</x-table.td>
+                                        <x-table.td>{{$customer->financingtype?->name ?? '-'}}</x-table.td>
+                                        <x-table.td>{{$customer->financer?->name ?? '-'}}</x-table.td>
+                                    @endif
                                 </x-table.tr>
                             @endforeach
                         </x-slot>

@@ -123,17 +123,17 @@ class Customer extends Model
 
     public function financer()
     {
-        return $this->hasOne(Financer::class);
+        return $this->belongsTo(Financer::class);
     }
 
-    public function financing()
+    public function financingType()
     {
-        return $this->hasOne(Financing::class);
+        return $this->belongsTo(Financing::class, 'financing_id');
     }
 
     public function term()
     {
-        return $this->hasOne(Term::class);
+        return $this->belongsTo(Term::class);
     }
 
     public function recuiterOfSalesRep()
