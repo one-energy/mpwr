@@ -24,6 +24,8 @@ class ReportsOverview extends Component
 
     public string $rangeType = 'year_to_date';
 
+    public bool $personalCustomers = true;
+
     public $startDate = '';
 
     public $finalDate = '';
@@ -41,8 +43,19 @@ class ReportsOverview extends Component
             'customers' => Customer::query()
                             ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
                             ->where(function($query) {
-                                $query->orWhere('setter_id', user()->id)
-                                      ->orWhere('sales_rep_id', user()->id);
+                                $query->when($this->personalCustomers, function ($query) {
+                                    $query->orWhere('setter_id', user()->id)
+                                          ->orWhere('sales_rep_id', user()->id);
+                                })
+                                ->when(user()->role == "Office Manager", function ($query) {
+                                    $query->orWhere('office_manager_id', user()->id);
+                                })
+                                ->when(user()->role == "Region Manager", function ($query) {
+                                    $query->orWhere('region_manager_id', user()->id);
+                                })
+                                ->when(user()->role == "Department Manager", function ($query) {
+                                    $query->orWhere('department_manager_id', user()->id);
+                                });
                             })
                             ->when($this->selectedStatus == 'installed', function ($query) {
                                 $query->whereIsActive(true)
@@ -65,7 +78,16 @@ class ReportsOverview extends Component
 
         $this->customersOfUser = Customer::where(function($query) {
                 $query->orWhere('setter_id', user()->id)
-                      ->orWhere('sales_rep_id', user()->id);
+                      ->orWhere('sales_rep_id', user()->id)
+                      ->when(user()->role == "Office Manager", function ($query) {
+                            $query->orWhere('office_manager_id', user()->id);
+                      })
+                      ->when(user()->role == "Region Manager", function ($query) {
+                          $query->orWhere('region_manager_id', user()->id);
+                      })
+                      ->when(user()->role == "Department Manager", function ($query) {
+                          $query->orWhere('department_manager_id', user()->id);
+                      });
             })
             ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
             ->when($this->selectedStatus == 'installed', function ($query) {
@@ -81,6 +103,7 @@ class ReportsOverview extends Component
             })
             ->get();
 
+            // dd($this->customersOfUser);
         $this->customersOfSalesRepsRecuited = user()->customersOfSalesRepsRecuited()
             ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
             ->when($this->selectedStatus == 'installed', function ($query) {
@@ -99,7 +122,15 @@ class ReportsOverview extends Component
 
     public function getUserTotalCommission()
     {
-        return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecuited) + $this->getSumSetterCommission($this->customersOfUser);
+        if (user()->role == "Setter") {
+            return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecuited) + $this->getSumSetterCommission($this->customersOfUser);
+        }
+        if (user()->role == "Sales Rep") {
+            return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecuited) + $this->getSumSetterCommission($this->customersOfUser) + $this->getSumSalesRepCommission($this->customersOfUser);
+        }
+        if (user()->role != "Admin" || user()->role != "Owner") {
+            return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecuited) + $this->getSumSetterCommission($this->customersOfUser) + $this->getSumSalesRepCommission($this->customersOfUser) + $this->getSumOverrideCommission($this->customersOfUser);
+        }
     }
 
     public function getAvgSystemSize (Collection $customers)
@@ -156,7 +187,7 @@ class ReportsOverview extends Component
     }
 
     public function getSalesRepCommission (Customer $customer) {
-        return $customer->setter_fee * ($customer->system_size * 1000);
+        return $customer->sales_rep_fee * ($customer->system_size * 1000);
     }
 
     public function getSumRecruiterCommission (Collection $customers)
@@ -176,6 +207,43 @@ class ReportsOverview extends Component
     public function getRecruiterCommission (Customer $customer) {
         return $customer->referral_override * ($customer->system_size * 1000);
     }
+
+    public function getAvgOverrideCommission (Collection $customers)
+    {
+        $customers = $customers->filter(function($customer) {
+            if (user()->role == "Office Manager") {
+                return $customer->office_manager_id == user()->id;
+            }
+            if (user()->role == "Region Manager") {
+                return $customer->office_manager_id == user()->id || $customer->region_manager_id == user()->id;
+            }
+            if (user()->role == "Department Manager") {
+                return $customer->office_manager_id == user()->id || $customer->region_manager_id == user()->id || $customer->department_manager_id == user()->id;
+            }
+        });
+        return $customers?->avg(function ($customer) {
+            return $customer->office_manager_override ?? 0;
+        });
+    }
+
+    public function getSumOverrideCommission (Collection $customers)
+    {
+        $customers = $customers->filter(function($customer) {
+            if (user()->role == "Office Manager") {
+                return $customer->office_manager_id == user()->id;
+            }
+            if (user()->role == "Region Manager") {
+                return $customer->office_manager_id == user()->id || $customer->region_manager_id == user()->id;
+            }
+            if (user()->role == "Department Manager") {
+                return $customer->office_manager_id == user()->id || $customer->region_manager_id == user()->id || $customer->department_manager_id == user()->id;
+            }
+        });
+        return $customers?->sum(function ($customer) {
+            return $customer->office_manager_override ?? 0;
+        });
+    }
+
 
     public function updatedRangeType($value)
     {
