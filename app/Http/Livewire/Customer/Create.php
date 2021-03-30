@@ -143,9 +143,7 @@ class Create extends Component
 
     public function updatedCustomerSetterId()
     {
-        if ($this->customer->setter_id) {
-            $this->getSetterRate($this->customer->setter_id);
-        } else {
+        if (!$this->customer->setter_id) {
             $this->setSelfGen();
         }
     }

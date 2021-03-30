@@ -102,6 +102,17 @@ class ReportsOverview extends Component
         return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecuited) + $this->getSumSetterCommission($this->customersOfUser);
     }
 
+    public function getAvgSystemSize (Collection $customers)
+    {
+        $customers->when(user()->role == "Setter", function ($query) {
+            $query->where('setter_id', user()->id);
+        })
+        ->when(user()->role != "Setter", function ($query) {
+            $query->where('setter_id', user()->id);
+        });
+        return $customers->avg('system_size');
+    }
+
     public function getSumSetterCommission (Collection $customers)
     {
         $customers->where('setter_id', user()->id);

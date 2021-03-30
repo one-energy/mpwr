@@ -59,7 +59,7 @@ class Edit extends Component
         if (user()->role != 'Admin' && user()->role != 'Owner') {
             $this->departmentId = user()->department_id;
         } else {
-            $this->departmentId = Department::first()->id;
+            $this->departmentId = $customer->userSalesRep->department_id;
         }
     }
 
@@ -150,8 +150,6 @@ class Edit extends Component
     {
         if ($setterId) {
             $this->isSelfGen = false;
-            $this->setter = User::find($setterId);
-            $this->getSetterRate($setterId);
         } else {
             $this->setSelfGen();
         }

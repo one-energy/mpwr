@@ -38,13 +38,21 @@
                                     </x-table.th>
                                 @endif
                                 <x-table.th by="system_size">
-                                    @if (user()->role == "Setter" || user()->role == "Sales Rep")
+                                    @if (user()->role == "Setter")
                                         @lang('My Set System Size (kW)')
+                                    @endif
+                                    @if (user()->role == "Sales Rep")
+                                        @lang('My Closed System Size (kW)')
                                     @endif
                                 </x-table.th>
                                 <x-table.th by="my_setter_commission">
                                     @lang('My Setter Comission')
                                 </x-table.th>
+                                @if(user()->role != "Setter")
+                                    <x-table.th by="my_closer_commission">
+                                        @lang('My Closer Comission')
+                                    </x-table.th>
+                                @endif
                                 <x-table.th by="my_recruter_commission">
                                     @lang('My Recruter Comission')
                                 </x-table.th>
@@ -65,11 +73,16 @@
                                     </x-table.th>
                                 @endif
                                 <x-table.td>
-                                    {{$customersOfUser?->avg('system_size') ? $customersOfUser?->avg('system_size') : '-' }}
+                                    {{$this->getAvgSystemSize($customersOfUser) ?? '-'}}
                                 </x-table.td>
                                 <x-table.td>
                                     {{$this->getAvgSetterCommission($customersOfUser) ? '$ ' . $this->getAvgSetterCommission($customersOfUser) : '-'}}
                                 </x-table.td>
+                                @if(user()->role != "Setter")
+                                    <x-table.td>
+                                        {{$this->getAvgSalesRepCommission($customersOfUser) ? '$ ' . $this->getAvgSalesRepCommission($customersOfUser) : '-'}}
+                                    </x-table.td>
+                                @endif
                                 <x-table.td>
                                     {{$this->getAvgRecruiterCommission($customersOfSalesRepsRecuited) ? '$ ' . $this->getAvgRecruiterCommission($customersOfSalesRepsRecuited) : '-'}}
                                 </x-table.td>
@@ -87,6 +100,11 @@
                                 <x-table.td class="font-bold">
                                     {{$this->getSumSetterCommission($customersOfUser) ? '$ ' . $this->getSumSetterCommission($customersOfUser) : '-'}}
                                 </x-table.td>
+                                @if(user()->role != "Setter")
+                                    <x-table.td class="font-bold">
+                                        {{$this->getSumSetterCommission($customersOfUser) ? '$ ' . $this->getSumSetterCommission($customersOfUser) : '-'}}
+                                    </x-table.td>
+                                @endif
                                 <x-table.td class="font-bold">
                                     {{  $this->getSumRecruiterCommission($customersOfSalesRepsRecuited) ? '$ ' . $this->getSumRecruiterCommission($customersOfSalesRepsRecuited) : '-'}}
                                 </x-table.td>
