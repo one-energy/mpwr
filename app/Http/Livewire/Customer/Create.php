@@ -43,7 +43,7 @@ class Create extends Component
         'customer.date_of_sale'        => 'required',
         'customer.epc'                 => 'required',
         'customer.financing_id'        => 'required',
-        'customer.financer_id'         => 'nullable',
+        'customer.financer_id'         => 'required_if:customer.financing_id,1',
         'customer.term_id'             => 'nullable',
         'customer.setter_id'           => 'nullable',
         'customer.setter_fee'          => 'required',
