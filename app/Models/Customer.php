@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
 
 /**
  * App\Models\Customer
@@ -63,8 +62,8 @@ class Customer extends Model
     protected $fillable = ['first_name', 'last_name', 'bill', 'financing_id', 'opened_by_id', 'system_size', 'adders', 'epc', 'setter_id', 'setter_fee', 'sales_rep_id', 'sales_rep_fee', 'sales_rep_comission', 'commission', 'created_at', 'updated_at', 'is_active'];
 
     protected $casts = [
-        'panel_sold' => 'boolean',
-        'is_active'  => 'boolean',
+        'panel_sold'   => 'boolean',
+        'is_active'    => 'boolean',
         'date_of_sale' => 'datetime:Y-m-d',
     ];
 
@@ -189,7 +188,7 @@ class Customer extends Model
     public function scopeSearch(Builder $query, $search)
     {
         $query->when($search, function (Builder $query) use ($search) {
-            $query->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%".$search."%"]);
+            $query->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $search . '%']);
         });
     }
 }

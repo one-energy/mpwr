@@ -9,7 +9,17 @@
                         @endforeach
                     </x-select>
                 </div>
-                <div class="justify-self-end col-span-2 grid grid-cols-2 gap-2 md:col-span-1 md:w-1/2">
+
+                <div class="md:justify-self-end col-span-2 grid grid-cols-2 gap-2 md:col-span-1 md:w-1/2">
+                    @if (user()->role == "Admin" || user()->role == "Owner")
+                        <div class="col-span-2">
+                            <x-select wire:model="departmentId" name="selectedDepartment">
+                                @foreach($departments as $department)
+                                    <option value="{{$department->id}}">{{$department->name}}</option>
+                                @endforeach
+                            </x-select>
+                        </div>
+                    @endif
                     <x-select class="col-span-2" name="range_date" wire:model="rangeType" labelInside>
                         @foreach($ranges as $range)
                             <option value="{{$range['value']}}">{{$range['title']}}</option>
@@ -140,9 +150,11 @@
             </div>
             <div class="mt-6">
                 <x-search :search="$search"/>
-                @if (user()->role != "Setter" && user()->role != "Sales Rep")
-                    <x-toggle wire:model="personalCustomers" class="items-end" label="Include Personal Sales"/>
-                @endif
+                <div class="justify-items-end">
+                    @if (user()->role != "Setter" && user()->role != "Sales Rep")
+                        <x-toggle wire:model="personalCustomers" class="items-end" label="Include Personal Sales"/>
+                    @endif
+                </div>
             </div>
             <div class="mt-6 overflow-x-auto ">
                 <div class="flex flex-col">

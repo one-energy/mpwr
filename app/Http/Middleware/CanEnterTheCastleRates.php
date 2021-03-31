@@ -16,7 +16,7 @@ class CanEnterTheCastleRates
      */
     public function handle($request, Closure $next)
     {
-        abort_unless((user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager"), Response::HTTP_FORBIDDEN);
+        abort_unless((user()->role == 'Admin' || user()->role == 'Owner' || user()->role == 'Department Manager'), Response::HTTP_FORBIDDEN);
         
         return $next($request);
     }

@@ -16,7 +16,7 @@ class Regions extends Component
 
     public ?Region $deletingRegion;
 
-    public string $deleteMessage = "Are you sure you want to delete this office?";
+    public string $deleteMessage = 'Are you sure you want to delete this office?';
 
     protected $rules = [
         'deletingRegion.name' => 'nullable',
@@ -30,14 +30,14 @@ class Regions extends Component
     public function render()
     {
         $regions = Region::query()
-            ->when(user()->role == "Department Manager", function (Builder $query) {
+            ->when(user()->role == 'Department Manager', function (Builder $query) {
                 $departmentIds = Department::query()
                     ->where('department_manager_id', '=', user()->id)
                     ->pluck('id');
 
                 $query->whereIn('department_id', $departmentIds);
             })
-            ->when(user()->role == "Region Manager", function (Builder $query) {
+            ->when(user()->role == 'Region Manager', function (Builder $query) {
                 $query->where('region_manager_id', '=', user()->id);
             })
             ->search($this->search)

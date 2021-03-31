@@ -16,7 +16,7 @@ class Offices extends Component
 
     public ?Office $deletingOffice;
 
-    public string $deleteMessage = "Are you sure you want to delete this office?";
+    public string $deleteMessage = 'Are you sure you want to delete this office?';
 
     protected $rules = [
         'deletingOffice.name' => 'nullable',
@@ -30,19 +30,19 @@ class Offices extends Component
     public function render()
     {
         $offices = Office::query()
-            ->when(user()->role == "Region Manager", function (Builder $query) {
+            ->when(user()->role == 'Region Manager', function (Builder $query) {
                 $query->whereHas('region', function (Builder $query) {
                     $query->where('region_manager_id', '=', user()->id);
                 });
             })
-            ->when(user()->role == "Department Manager", function (Builder $query) {
+            ->when(user()->role == 'Department Manager', function (Builder $query) {
                 $regionIds = Region::query()
                     ->where('department_id', '=', user()->department_id)
                     ->pluck('id');
 
                 $query->whereIn('region_id', $regionIds);
             })
-            ->when(user()->role == "Office Manager", function (Builder $query) {
+            ->when(user()->role == 'Office Manager', function (Builder $query) {
                 $query->where('office_manager_id', '=', user()->id);
             })
             ->search($this->search)

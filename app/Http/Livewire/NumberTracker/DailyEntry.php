@@ -5,7 +5,6 @@ namespace App\Http\Livewire\NumberTracker;
 use App\Models\DailyNumber;
 use App\Models\Office;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
 
 class DailyEntry extends Component
@@ -54,8 +53,8 @@ class DailyEntry extends Component
     public function getUsers($dateSelected)
     {
         $usersQuery = User::query();
-        if (user()->role == "Setter" || user()->role == "Sales Rep") {
-            $usersQuery->where("users.id", "=", user()->id);
+        if (user()->role == 'Setter' || user()->role == 'Sales Rep') {
+            $usersQuery->where('users.id', '=', user()->id);
         }
 
         return $usersQuery
@@ -120,7 +119,7 @@ class DailyEntry extends Component
     public function save($value, $userId, $inputType)
     {
         $filteredNumbers = [
-            $inputType => $value
+            $inputType => $value,
         ];
         DailyNumber::updateOrCreate(
             [
@@ -139,27 +138,27 @@ class DailyEntry extends Component
     public function getOfficeQuery()
     {
         $query = Office::query()
-            ->select("offices.*")
-            ->join("regions", "region_id", "=", "regions.id");
+            ->select('offices.*')
+            ->join('regions', 'region_id', '=', 'regions.id');
 
-        if (user()->role == "Admin" || user()->role == "Owner") {
-            $query->where("regions.department_id", "=", 0);
+        if (user()->role == 'Admin' || user()->role == 'Owner') {
+            $query->where('regions.department_id', '=', 0);
         }
 
-        if (user()->role == "Department Manager") {
-            $query->where("regions.department_id", "=", user()->department_id);
+        if (user()->role == 'Department Manager') {
+            $query->where('regions.department_id', '=', user()->department_id);
         }
 
-        if (user()->role == "Region Manager") {
-            $query->where("regions.region_manager_id", "=", user()->id);
+        if (user()->role == 'Region Manager') {
+            $query->where('regions.region_manager_id', '=', user()->id);
         }
 
-        if (user()->role == "Office Manager") {
-            $query->where("offices.office_manager_id", "=", user()->id);
+        if (user()->role == 'Office Manager') {
+            $query->where('offices.office_manager_id', '=', user()->id);
         }
 
-        if (user()->role == "Setter" || user()->role == "Sales Rep") {
-            $query->where("offices.id", "=", user()->office_id);
+        if (user()->role == 'Setter' || user()->role == 'Sales Rep') {
+            $query->where('offices.id', '=', user()->office_id);
         }
 
         return $query;

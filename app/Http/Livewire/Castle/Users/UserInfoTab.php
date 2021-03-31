@@ -6,7 +6,6 @@ use App\Models\Department;
 use App\Models\Rates;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class UserInfoTab extends Component
@@ -39,7 +38,7 @@ class UserInfoTab extends Component
 
     public function mount(User $user)
     {
-        $this->userOverride = clone $user;
+        $this->userOverride         = clone $user;
         $this->selectedDepartmentId = $user->department_id;
     }
 
@@ -123,27 +122,28 @@ class UserInfoTab extends Component
 
     public function userRole($userRole)
     {
-        $roles =  User::ROLES;
+        $roles     =  User::ROLES;
         $roleTitle = '';
         foreach ($roles as $role) {
             if ($role['name'] == $userRole) {
                 $roleTitle = $role['title'];
             }
         }
+
         return $roleTitle;
     }
 
     public function getAssignedTeams()
     {
-        if ($this->user->role == "Department Manager" || $this->user->role == "Admin" || $this->user->role == "Owner" || $this->user->role == "Sales Rep" || $this->user->role == "Setter" ) {
+        if ($this->user->role == 'Department Manager' || $this->user->role == 'Admin' || $this->user->role == 'Owner' || $this->user->role == 'Sales Rep' || $this->user->role == 'Setter' ) {
             $this->teams = $this->user->office ? collect([$this->user->office]) : null;
         }
 
-        if ($this->user->role == "Region Manager") {
+        if ($this->user->role == 'Region Manager') {
             $this->teams = $this->user->managedRegions;
         }
 
-        if ($this->user->role == "Office Manager") {
+        if ($this->user->role == 'Office Manager') {
             $this->teams = $this->user->managedOffices;
         }
     }

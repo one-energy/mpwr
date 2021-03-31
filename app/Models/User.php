@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -220,11 +219,11 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function getPermittedUsers($departmentId = null)
     {
-        if($this->role == 'Admin' || $this->role == 'Owner') {
+        if ($this->role == 'Admin' || $this->role == 'Owner') {
             return User::has('office')->whereDepartmentId($departmentId)->orderBy('first_name')->get();
         }
 
-        if($this->role == 'Department Manager') {
+        if ($this->role == 'Department Manager') {
             return User::has('office')
                 ->whereDepartmentId($this->department_id)
                 ->where(function($query) {
@@ -236,15 +235,16 @@ class User extends Authenticatable implements MustVerifyEmail
                 })->orderBy('first_name')->get();
         }
 
-        if($this->role == 'Region Manager') {
+        if ($this->role == 'Region Manager') {
             $offices = $this->officesOnManagedRegions()->with('users')->get();
-            $users = $offices->reduce(function($users, Office $office) {
+            $users   = $offices->reduce(function($users, Office $office) {
                 return $users->mergeRecursive($office->users);
             }, $users = collect([]))->unique('id');
+
             return $users->sortBy('first_name');
         }
 
-        if($this->role == 'Office Manager') {
+        if ($this->role == 'Office Manager') {
             return $this->usersOnManagedOffices()->get();
         }
 
@@ -354,14 +354,14 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function getPhoneNumberAttribute($value)
     {
-        if($value){
+        if ($value) {
             $cleaned = preg_replace('/[^[:digit:]]/', '', $value);
             preg_match('/(\d{1,5})(\d{3})(\d{3})(\d{4})/', $cleaned, $matches);
             if ($matches) {
                 return "+{$matches[1]} ({$matches[2]}) {$matches[3]}-{$matches[4]}";
-            } else {
-                return $cleaned;
             }
+  
+            return $cleaned;
         }
     }
 
