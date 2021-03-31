@@ -111,33 +111,32 @@
                                 <x-table.td>Average</x-table.td>
                                 @if(user()->role == "Setter" || user()->role == "Sales Rep")
                                     <x-table.td>
-                                        {{-- @dd($customersOfUser) --}}
-                                        {{$customersOfUser?->avg('setter_fee') ? '$ ' . $customersOfUser?->avg('setter_fee') : '-' }}
+                                        {{$customersOfUser?->avg('setter_fee') ? '$ ' . number_format($customersOfUser?->avg('setter_fee'),2) : '-' }}
                                     </x-table.td>
                                 @endif
                                 @if(user()->role != "Setter")
                                     <x-table.th>
-                                        {{$this->getAvgSalesRepEpc($customersOfUser) ? '$ ' . $this->getAvgSalesRepEpc($customersOfUser) : '-'}}
+                                        {{$this->getAvgSalesRepEpc($customersOfUser) ? '$ ' . number_format($this->getAvgSalesRepEpc($customersOfUser),2) : '-'}}
                                     </x-table.th>
                                 @endif
                                 <x-table.td>
-                                    {{$this->getAvgSystemSize($customersOfUser) ?? '-'}}
+                                    {{number_format($this->getAvgSystemSize($customersOfUser),2) ?? '-'}}
                                 </x-table.td>
                                 <x-table.td>
-                                    {{$this->getAvgSetterCommission($customersOfUser) ? '$ ' . $this->getAvgSetterCommission($customersOfUser) : '-'}}
+                                    {{$this->getAvgSetterCommission($customersOfUser) ? '$ ' . number_format($this->getAvgSetterCommission($customersOfUser),2) : '-'}}
                                 </x-table.td>
                                 @if(user()->role != "Setter")
                                     <x-table.td>
-                                        {{$this->getAvgSalesRepCommission($customersOfUser) ? '$ ' . $this->getAvgSalesRepCommission($customersOfUser) : '-'}}
+                                        {{$this->getAvgSalesRepCommission($customersOfUser) ? '$ ' . number_format($this->getAvgSalesRepCommission($customersOfUser),2) : '-'}}
                                     </x-table.td>
                                 @endif
                                 @if(user()->role != "Setter" && user()->role != "Sales Rep")
                                     <x-table.td>
-                                        {{$this->getAvgOverrideCommission($customersOfUser) ? '$ ' . $this->getAvgOverrideCommission($customersOfUser) : '-'}}
+                                        {{$this->getAvgOverrideCommission($customersOfUser) ? '$ ' . number_format($this->getAvgOverrideCommission($customersOfUser),2) : '-'}}
                                     </x-table.td>
                                 @endif
                                 <x-table.td>
-                                    {{$this->getAvgRecruiterCommission($customersOfSalesRepsRecuited) ? '$ ' . $this->getAvgRecruiterCommission($customersOfSalesRepsRecuited) : '-'}}
+                                    {{$this->getAvgRecruiterCommission($customersOfSalesRepsRecuited) ? '$ ' . number_format($this->getAvgRecruiterCommission($customersOfSalesRepsRecuited),2) : '-'}}
                                 </x-table.td>
                                 <x-table.td>-</x-table.td>
                             </x-table.tr>
@@ -150,26 +149,26 @@
                                     <x-table.td class="font-bold">-</x-table.td>
                                 @endif
                                 <x-table.td class="font-bold">
-                                    {{$customersOfUser->sum('system_size') > 0 ? $customersOfUser->sum('system_size') : '-' }}
+                                    {{$customersOfUser->sum('system_size') > 0 ? number_format($customersOfUser->sum('system_size'),2) : '-' }}
                                 </x-table.td>
                                 <x-table.td class="font-bold">
-                                    {{$this->getSumSetterCommission($customersOfUser) ? '$ ' . $this->getSumSetterCommission($customersOfUser) : '-'}}
+                                    {{$this->getSumSetterCommission($customersOfUser) ? '$ ' . number_format($this->getSumSetterCommission($customersOfUser),2) : '-'}}
                                 </x-table.td>
                                 @if(user()->role != "Setter")
                                     <x-table.td class="font-bold">
-                                        {{$this->getSumSalesRepCommission($customersOfUser) ? '$ ' . $this->getSumSalesRepCommission($customersOfUser) : '-'}}
+                                        {{$this->getSumSalesRepCommission($customersOfUser) ? '$ ' . number_format($this->getSumSalesRepCommission($customersOfUser),2) : '-'}}
                                     </x-table.td>
                                 @endif
                                 @if(user()->role != "Setter" && user()->role != "Sales Rep")
                                     <x-table.td>
-                                        {{$this->getSumOverrideCommission($customersOfUser) ? '$ ' . $this->getSumOverrideCommission($customersOfUser) : '-'}}
+                                        {{$this->getSumOverrideCommission($customersOfUser) ? '$ ' . number_format($this->getSumOverrideCommission($customersOfUser),2) : '-'}}
                                     </x-table.td>
                                 @endif
                                 <x-table.td class="font-bold">
-                                    {{  $this->getSumRecruiterCommission($customersOfSalesRepsRecuited) ? '$ ' . $this->getSumRecruiterCommission($customersOfSalesRepsRecuited) : '-'}}
+                                    {{  $this->getSumRecruiterCommission($customersOfSalesRepsRecuited) ? '$ ' . number_format($this->getSumRecruiterCommission($customersOfSalesRepsRecuited),2) : '-'}}
                                 </x-table.td>
                                 <x-table.td class="font-bold">
-                                    {{  $this->getUserTotalCommission() ? '$ ' . $this->getUserTotalCommission() : '-'}}
+                                    {{  $this->getUserTotalCommission() ? '$ ' . number_format($this->getUserTotalCommission(),2) : '-'}}
                                 </x-table.td>
                             </x-table.tr>
                         </x-slot>
@@ -208,10 +207,10 @@
                                     <x-table.th by="pay_rate">
                                         @lang('Pay Rate')
                                     </x-table.th>
-                                    <x-table.th by="pay_rate">
+                                    <x-table.th by="ppw">
                                         @lang('PPW')
                                     </x-table.th>
-                                    <x-table.th by="pay_rate">
+                                    <x-table.th by="adders">
                                         @lang('Adders')
                                     </x-table.th>
                                 @endif
@@ -270,6 +269,20 @@
                                                 <x-table.th by="vp_type">
                                                     @lang('VP Ovr')
                                                 </x-table.th>
+                                                @if(user()->role != "Department Manager")
+                                                    <x-table.th by="misc_one">
+                                                        @lang('Misc One')
+                                                    </x-table.th>
+                                                    <x-table.th by="payee_one">
+                                                        @lang('Payee One')
+                                                    </x-table.th>
+                                                    <x-table.th by="misc_override_two">
+                                                        @lang('Misc Two')
+                                                    </x-table.th>
+                                                    <x-table.th by="payee_two">
+                                                        @lang('Payee two')
+                                                    </x-table.th>
+                                                @endif
                                             @endif
                                         @endif
                                     @endif
@@ -310,6 +323,12 @@
                                                     <x-table.td>{{$customer->departmentManager?->first_name ?? '-'}} {{$customer->departmentManager?->last_name}}</x-table.td>
                                                     <x-table.td>{{$customer->departmentManager?->pay ?? '-'}}</x-table.td>
                                                     <x-table.td>{{$customer->department_manager_override ?? '-'}}</x-table.td>
+                                                    @if(user()->role != "Department Manager")/
+                                                        <x-table.td>{{$customer->misc_override_one ?? '-'}}<x-table.td>
+                                                        <x-table.td>{{$customer->payee_one ?? '-'}}</x-table.td>
+                                                        <x-table.td>{{$customer->misc_override_two ?? '-'}}</x-table.td>
+                                                        <x-table.td>{{$customer->payee_two ?? '-'}}</x-table.td>
+                                                    @endif
                                                 @endif
                                             @endif
                                         @endif
