@@ -46,7 +46,11 @@
                                 @endif
                                 @if(user()->role != "Setter")
                                     <x-table.th>
-                                        @lang('My Closed PPW')
+                                        @if (user()->role == "Admin" || user()->role == "Owner")
+                                            @lang('PPW')
+                                        @else
+                                            @lang('My Closed PPW')
+                                        @endif
                                     </x-table.th>
                                 @endif
                                 <x-table.th by="system_size">
@@ -54,27 +58,51 @@
                                         @lang('My Set System Size (kW)')
                                     @endif
                                     @if (user()->role != "Setter")
-                                        @lang('My Closed System Size (kW)')
+                                        @if (user()->role == "Admin" || user()->role == "Owner")
+                                            @lang('System Size (kW)')
+                                        @else
+                                            @lang('My Closed System Size (kW)')
+                                        @endif
                                     @endif
                                 </x-table.th>
                                 <x-table.th by="my_setter_commission">
-                                    @lang('My Setter Comission')
+                                    @if(user()->role == "Admin" || user()->role == "Owner")
+                                        @lang('Setter Comission')
+                                    @else
+                                        @lang('My Setter Comission')
+                                    @endif
                                 </x-table.th>
                                 @if(user()->role != "Setter")
                                     <x-table.th by="my_closer_commission">
-                                        @lang('My Closer Comission')
+                                        @if (user()->role == "Admin" || user()->role == "Owner")
+                                            @lang('Closer Comission')
+                                        @else
+                                            @lang('My Closer Comission')
+                                        @endif
                                     </x-table.th>
                                 @endif
                                 @if(user()->role != "Setter" && user()->role != "Sales Rep")
                                     <x-table.th by="my_override_commission">
-                                        @lang('My Override Comission')
+                                        @if (user()->role == "Admin" || user()->role == "Owner")
+                                            @lang('Override Comission')
+                                        @else
+                                            @lang('My Override Comission')
+                                        @endif
                                     </x-table.th>
                                 @endif
                                 <x-table.th by="my_recruter_commission">
-                                    @lang('My Recruter Comission')
+                                    @if (user()->role == "Admin" || user()->role == "Owner")
+                                        @lang('Recruter Comission')
+                                    @else
+                                        @lang('My Recruter Comission')
+                                    @endif
                                 </x-table.th>
                                 <x-table.th by="my_total_commission">
-                                    @lang('My Total Comission')
+                                    @if (user()->role == "Admin" || user()->role == "Owner")
+                                        @lang('Total Comission')
+                                    @else
+                                        @lang('My Total Comission')
+                                    @endif
                                 </x-table.th>
                             </x-table.th-tr>
                         </x-slot>
@@ -151,7 +179,7 @@
             <div class="mt-6">
                 <x-search :search="$search"/>
                 <div class="justify-items-end">
-                    @if (user()->role != "Setter" && user()->role != "Sales Rep")
+                    @if (user()->role == "Office Manager" || user()->role == "Region Manager" || user()->role == "Department Manager")
                         <x-toggle wire:model="personalCustomers" class="items-end" label="Include Personal Sales"/>
                     @endif
                 </div>

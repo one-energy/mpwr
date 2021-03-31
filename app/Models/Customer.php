@@ -188,7 +188,12 @@ class Customer extends Model
     public function scopeSearch(Builder $query, $search)
     {
         $query->when($search, function (Builder $query) use ($search) {
-            $query->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $search . '%']);
+            $query->where(function ($query) use ($search) {
+                $query->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $search . '%'])
+                    ->orWhereHas("userSetter", function ($query) use ($search) {
+                        $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
+                    });
+            });
         });
     }
 }
