@@ -156,11 +156,11 @@ class DailyEntry extends Component
             ->join("regions", "region_id", "=", "regions.id");
 
         if (user()->role == "Admin" || user()->role == "Owner") {
-            $query->where("regions.department_id", "=", 0);
+            $query->orWhere("regions.department_id", "=", 0);
         }
 
         if (user()->role == "Department Manager") {
-            $query->where("regions.department_id", "=", user()->department_id);
+            $query->orWhere("regions.department_id", "=", user()->department_id);
         }
 
         if (user()->role == "Region Manager") {
@@ -168,7 +168,7 @@ class DailyEntry extends Component
         }
 
         if (user()->role == "Office Manager") {
-            $query->where("offices.office_manager_id", "=", user()->id);
+            $query->orWhere("offices.office_manager_id", "=", user()->id);
         }
 
             $query->orWhere("offices.id", "=", user()->office_id);
