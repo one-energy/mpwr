@@ -160,7 +160,7 @@ class DailyEntry extends Component
         }
 
         if (user()->role == "Department Manager") {
-            $query->orWhere("regions.department_id", "=", user()->department_id);
+            $query->orWhere("region.department.department_manager_id", "=", user()->id);
         }
 
         if (user()->role == "Region Manager") {
