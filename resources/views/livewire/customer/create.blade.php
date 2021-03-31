@@ -66,7 +66,7 @@
                 <div class="col-span-1 md:col-span-1 md:col-start-4 @if($customer->financing_id != 1) hidden @endif">
                     <x-select wire:model="customer.financer_id" label="Financer" name="customer.financer_id">
                         @if (old('financer') == '')
-                            <option selected>None</option>
+                            <option value="" selected>None</option>
                         @endif
                         @foreach($financers as $financer)
                             <option value="{{ $financer->id }}" {{ old('financing') == $financer->id ? 'selected' : '' }}>
