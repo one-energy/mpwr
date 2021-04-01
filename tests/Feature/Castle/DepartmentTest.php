@@ -5,7 +5,6 @@ namespace Tests\Feature\Castle;
 use App\Http\Livewire\Castle\Departments;
 use App\Models\Department;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
