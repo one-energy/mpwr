@@ -13,10 +13,11 @@ class HomeController extends Controller
     {
         $userId = Auth::user()->id;
 
-        $query = Customer::query()
-            ->orWhere('opened_by_id', $userId)
+        $query = Customer::query()->where(function ($query) use ($userId) {
+            $query->orWhere('opened_by_id', $userId)
             ->orWhere('sales_rep_id',$userId)
             ->orWhere('setter_id', $userId);
+        });
 
         $sortTypes = [
             ['index' => 'all', 'value' => 'All'],
@@ -26,12 +27,11 @@ class HomeController extends Controller
 
         $query
             ->when(request()->has('sort_by') && request()->sort_by == 'is_active', function (Builder $query) {
-                $query->where('is_active', true);
+                $query->whereIsActive(true);
             })
             ->when(request()->has('sort_by') && request()->sort_by == 'is_inactive', function (Builder $query) {
-                $query->where('is_active', false);
-            })
-            ->orderByDesc('is_active');
+                $query->whereIsActive(false);
+            });
 
         return view('home', [
             'customers' => $query->get(),

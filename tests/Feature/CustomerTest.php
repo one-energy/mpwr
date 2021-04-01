@@ -12,13 +12,14 @@ use App\Models\Rates;
 use App\Models\Term;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
 class CustomerTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     public User $user;
 
@@ -52,7 +53,7 @@ class CustomerTest extends TestCase
     public function it_should_filter_by_active_customers()
     {
         $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
-        $department                       = User::factory()->create(['department_manager_id' => $departmentManager->id]);
+        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         Financing::factory()->create();
         Financer::factory()->create();
