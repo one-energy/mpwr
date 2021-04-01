@@ -93,12 +93,12 @@ class ReportsOverview extends Component
 
     public function getUserCustomers()
     {
-        $departmentId = $this->departmentId;
+        $departmentId          = $this->departmentId;
         $this->customersOfUser = Customer::where(function($query) use ($departmentId) {
-            $query->when(user()->role != "Admin" && user()->role != "Owner", function ($query) {
-                    $query->orWhere('setter_id', user()->id)
+            $query->when(user()->role != 'Admin' && user()->role != 'Owner', function ($query) {
+                $query->orWhere('setter_id', user()->id)
                         ->orWhere('sales_rep_id', user()->id);
-                    })
+            })
                     ->when(user()->role == 'Office Manager', function ($query) {
                         $query->orWhere('office_manager_id', user()->id);
                     })
@@ -116,7 +116,7 @@ class ReportsOverview extends Component
                             $query->where('department_id', $departmentId);
                         });
                     });
-                })
+        })
                 ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
                 ->when($this->selectedStatus == 'installed', function ($query) {
                     $query->whereIsActive(true)
@@ -155,6 +155,7 @@ class ReportsOverview extends Component
         if (user()->role == 'Sales Rep') {
             return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecuited) + $this->getSumSetterCommission($this->customersOfUser) + $this->getSumSalesRepCommission($this->customersOfUser);
         }
+
         return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecuited) + $this->getSumSetterCommission($this->customersOfUser) + $this->getSumSalesRepCommission($this->customersOfUser) + $this->getSumOverrideCommission($this->customersOfUser);
     }
 
@@ -168,7 +169,7 @@ class ReportsOverview extends Component
             $query->where('sales_rep_id', user()->id);
         })
         ->when(user()->role == 'Admin' || user()->role == 'Owner', function ($query) use ($departmentId) {
-            $query->filter(function ($customer) use($departmentId) {
+            $query->filter(function ($customer) use ($departmentId) {
                 return $customer->userSalesRep->department_id == $departmentId;
             });
         });
@@ -259,7 +260,6 @@ class ReportsOverview extends Component
 
     public function getSumOverrideCommission (Collection $customers)
     {
-
         $customers = $this->filterCustomersWithOverrides($customers);
 
         return $customers?->sum(function ($customer) {
@@ -284,6 +284,7 @@ class ReportsOverview extends Component
                 return $customer->userSalesRep->department_id == $departmentId;
             }
         });
+
         return $customers;
     }
 

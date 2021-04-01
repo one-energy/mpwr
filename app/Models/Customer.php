@@ -190,9 +190,42 @@ class Customer extends Model
         $query->when($search, function (Builder $query) use ($search) {
             $query->where(function ($query) use ($search) {
                 $query->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $search . '%'])
-                    ->orWhereHas("userSetter", function ($query) use ($search) {
-                        $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
+                ->orWhereHas('userSetter', function ($query) use ($search) {
+                    $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
+                })
+                ->orWhereHas('userSalesRep', function ($query) use ($search) {
+                    $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
+                })
+                ->when(user()->role != 'Setter', function ($query) use ($search) {
+                    $query->orWhereHas('financingType', function ($query) use ($search) {
+                        $query->where('name', 'LIKE', '%' . $search . '%');
+                    })
+                    ->orWhereHas('financer', function ($query) use ($search) {
+                        $query->where('name', 'LIKE', '%' . $search . '%');
+                    })
+                    ->when(user()->role != 'Sales Rep', function ($query) use ($search) {
+                        $query->orWhereHas('recuiterOfSalesRep', function ($query) use ($search) {
+                            $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
+                        })
+                        ->orWhereHas('officeManager', function ($query) use ($search) {
+                            $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
+                        })
+                        ->when(user()->role != 'Office Manager', function ($query) use ($search) {
+                            $query->orWhereHas('regionManager', function ($query) use ($search) {
+                                $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
+                            })
+                            ->when(user()->role != 'Region Manager', function ($query) use ($search) {
+                                $query->orWhereHas('departmentManager', function ($query) use ($search) {
+                                    $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
+                                })
+                                ->when(user()->role != 'Department Manager', function ($query) use ($search) {
+                                    $query->orWhere('payee_one', 'LIKE', '%' . $search . '%')
+                                        ->orWhere('payee_two', 'LIKE', '%' . $search . '%');
+                                });
+                            });
+                        });
                     });
+                });
             });
         });
     }

@@ -271,16 +271,22 @@
                                                 </x-table.th>
                                                 @if(user()->role != "Department Manager")
                                                     <x-table.th by="misc_one">
-                                                        @lang('Misc One')
+                                                        @lang('Misc 1')
                                                     </x-table.th>
-                                                    <x-table.th by="payee_one">
-                                                        @lang('Payee One')
+                                                    <x-table.th by="mis_rate_one">
+                                                        @lang('M1 Rate')
                                                     </x-table.th>
-                                                    <x-table.th by="misc_override_two">
-                                                        @lang('Misc Two')
+                                                    <x-table.th by="misc_override_one">
+                                                        @lang('M1 OVR')
                                                     </x-table.th>
-                                                    <x-table.th by="payee_two">
-                                                        @lang('Payee two')
+                                                    <x-table.th by="misc_one">
+                                                        @lang('Misc 2')
+                                                    </x-table.th>
+                                                    <x-table.th by="mis_rate">
+                                                        @lang('M2 Rate')
+                                                    </x-table.th>
+                                                    <x-table.th by="misc_override_one">
+                                                        @lang('M2 OVR')
                                                     </x-table.th>
                                                 @endif
                                             @endif
@@ -323,11 +329,13 @@
                                                     <x-table.td>{{$customer->departmentManager?->first_name ?? '-'}} {{$customer->departmentManager?->last_name}}</x-table.td>
                                                     <x-table.td>{{$customer->departmentManager?->pay ?? '-'}}</x-table.td>
                                                     <x-table.td>{{$customer->department_manager_override ?? '-'}}</x-table.td>
-                                                    @if(user()->role != "Department Manager")/
-                                                        <x-table.td>{{$customer->misc_override_one ?? '-'}}<x-table.td>
+                                                    @if(user()->role != "Department Manager")
                                                         <x-table.td>{{$customer->payee_one ?? '-'}}</x-table.td>
-                                                        <x-table.td>{{$customer->misc_override_two ?? '-'}}</x-table.td>
+                                                        <x-table.td>{{$customer->misc_override_one ?? '-'}}</x-table.td>
+                                                        <x-table.td>{{($customer->misc_override_one * $customer->system_size) > 0 ? $customer->misc_override_one * $customer->system_size : '-'}}</x-table.td>
                                                         <x-table.td>{{$customer->payee_two ?? '-'}}</x-table.td>
+                                                        <x-table.td>{{$customer->misc_override_two ?? '-'}}</x-table.td>
+                                                        <x-table.td>{{($customer->misc_override_two * $customer->system_size) > 0 ? $customer->misc_override_two * $customer->system_size : '-'}}</x-table.td>
                                                     @endif
                                                 @endif
                                             @endif
