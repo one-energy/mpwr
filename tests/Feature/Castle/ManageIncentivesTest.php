@@ -8,7 +8,7 @@ use App\Models\User;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class ManageIncentiveTest extends TestCase
+class ManageIncentivesTest extends TestCase
 {
     use RefreshDatabase;
 
