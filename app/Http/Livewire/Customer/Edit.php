@@ -38,7 +38,7 @@ class Edit extends Component
         'customer.date_of_sale'        => 'required',
         'customer.epc'                 => 'required',
         'customer.financing_id'        => 'required',
-        'customer.financer_id'         => 'nullable',
+        'customer.financer_id'         => 'required_if:customer.financing_id,1',
         'customer.term_id'             => 'nullable',
         'customer.setter_id'           => 'nullable',
         'customer.setter_fee'          => 'required',
@@ -85,11 +85,14 @@ class Edit extends Component
 
     public function update()
     {
-        $this->validate();
 
         $commission = $this->calculateCommission($this->customer);
 
         $this->customer->commission = $commission;
+        $this->customer->financing_id = $this->customer->financing_id != "" ? $this->customer->financing_id : null;
+        $this->customer->financer_id = $this->customer->financer_id != "" ? $this->customer->financer_id : null;
+        $this->customer->term_id = $this->customer->term_id != "" ? $this->customer->term_id : null;
+        $this->validate();
         $this->customer->save();
 
         alert()
