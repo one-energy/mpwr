@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Livewire;
 
 use App\Models\Customer;
 use App\Models\User;
