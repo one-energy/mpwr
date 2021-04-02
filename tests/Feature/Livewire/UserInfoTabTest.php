@@ -20,7 +20,7 @@ class UserInfoTabTest extends TestCase
     public function it_should_require_user_first_name()
     {
         $john = User::factory()->create(['role' => 'Admin']);
-        $mary = User::factory()->create(['role' => 'Manager']);
+        $mary = User::factory()->create(['role' => 'Office Manager']);
 
         $this->actingAs($john);
 
@@ -34,7 +34,7 @@ class UserInfoTabTest extends TestCase
     public function it_should_require_user_last_name()
     {
         $john = User::factory()->create(['role' => 'Admin']);
-        $mary = User::factory()->create(['role' => 'Manager']);
+        $mary = User::factory()->create(['role' => 'Office Manager']);
 
         $this->actingAs($john);
 
@@ -48,7 +48,7 @@ class UserInfoTabTest extends TestCase
     public function it_should_require_a_valid_user_role()
     {
         $john = User::factory()->create(['role' => 'Admin']);
-        $mary = User::factory()->create(['role' => 'Manager']);
+        $mary = User::factory()->create(['role' => 'Office Manager']);
 
         $this->actingAs($john);
 
@@ -62,7 +62,7 @@ class UserInfoTabTest extends TestCase
     public function it_should_require_an_office_id_that_department_has()
     {
         $john = User::factory()->create(['role' => 'Admin']);
-        $mary = User::factory()->create(['role' => 'Manager']);
+        $mary = User::factory()->create(['role' => 'Office Manager']);
 
         $manager = User::factory()->create(['role' => 'Manager']);
 
@@ -89,7 +89,7 @@ class UserInfoTabTest extends TestCase
     public function it_should_require_an_existent_department_id()
     {
         $john = User::factory()->create(['role' => 'Admin']);
-        $mary = User::factory()->create(['role' => 'Manager']);
+        $mary = User::factory()->create(['role' => 'Office Manager']);
 
         $this->actingAs($john);
 
@@ -103,7 +103,7 @@ class UserInfoTabTest extends TestCase
     public function it_should_require_an_user_email()
     {
         $john = User::factory()->create(['role' => 'Admin']);
-        $mary = User::factory()->create(['role' => 'Manager']);
+        $mary = User::factory()->create(['role' => 'Office Manager']);
 
         $this->actingAs($john);
 
@@ -117,7 +117,7 @@ class UserInfoTabTest extends TestCase
     public function it_should_require_a_valid_user_email()
     {
         $john = User::factory()->create(['role' => 'Admin']);
-        $mary = User::factory()->create(['role' => 'Manager']);
+        $mary = User::factory()->create(['role' => 'Office Manager']);
 
         $this->actingAs($john);
 
@@ -133,7 +133,7 @@ class UserInfoTabTest extends TestCase
         User::factory()->create(['email' => 'sample@mail.com']);
 
         $john = User::factory()->create(['role' => 'Admin']);
-        $mary = User::factory()->create(['role' => 'Manager']);
+        $mary = User::factory()->create(['role' => 'Office Manager']);
 
         $this->actingAs($john);
 
