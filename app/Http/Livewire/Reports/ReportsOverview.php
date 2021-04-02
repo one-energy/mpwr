@@ -76,15 +76,15 @@ class ReportsOverview extends Component
                                 });
                             });
                 })
-                ->when($this->selectedStatus == 'installed', function ($query) {
+                ->when($this->installedStatus(), function ($query) {
                     $query->whereIsActive(true)
                         ->wherePanelSold(true);
                 })
-                ->when($this->selectedStatus == 'pending', function ($query) {
+                ->when($this->pendingStatus(), function ($query) {
                     $query->whereIsActive(true)
                         ->wherePanelSold(false);
                 })
-                ->when($this->selectedStatus == 'canceled', function ($query) {
+                ->when($this->cancelledStatus(), function ($query) {
                     $query->whereIsActive(false);
                 })
                 ->search($this->search)
@@ -119,30 +119,30 @@ class ReportsOverview extends Component
                 });
         })
             ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
-            ->when($this->selectedStatus == 'installed', function ($query) {
+            ->when($this->installedStatus(), function ($query) {
                 $query->whereIsActive(true)
                     ->wherePanelSold(true);
             })
-            ->when($this->selectedStatus == 'pending', function ($query) {
+            ->when($this->pendingStatus(), function ($query) {
                 $query->whereIsActive(true)
                     ->wherePanelSold(false);
             })
-            ->when($this->selectedStatus == 'canceled', function ($query) {
+            ->when($this->cancelledStatus(), function ($query) {
                 $query->whereIsActive(false);
             })
             ->get();
 
         $this->customersOfSalesRepsRecuited = user()->customersOfSalesRepsRecuited()
             ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
-            ->when($this->selectedStatus == 'installed', function ($query) {
+            ->when($this->installedStatus(), function ($query) {
                 $query->whereIsActive(true)
                     ->wherePanelSold(true);
             })
-            ->when($this->selectedStatus == 'pending', function ($query) {
+            ->when($this->pendingStatus(), function ($query) {
                 $query->whereIsActive(true)
                     ->wherePanelSold(false);
             })
-            ->when($this->selectedStatus == 'canceled', function ($query) {
+            ->when($this->cancelledStatus(), function ($query) {
                 $query->whereIsActive(false);
             })
             ->get();
@@ -351,5 +351,20 @@ class ReportsOverview extends Component
     public function sortBy()
     {
         return 'first_name';
+    }
+
+    private function cancelledStatus()
+    {
+        return $this->selectedStatus === 'canceled';
+    }
+
+    private function installedStatus()
+    {
+        return $this->selectedStatus === 'installed';
+    }
+
+    private function pendingStatus()
+    {
+        return $this->selectedStatus === 'pending';
     }
 }
