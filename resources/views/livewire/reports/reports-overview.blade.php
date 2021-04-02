@@ -111,32 +111,32 @@
                                 <x-table.td>Average</x-table.td>
                                 @if(user()->role == "Setter" || user()->role == "Sales Rep")
                                     <x-table.td>
-                                        {{$customersOfUser?->avg('setter_fee') ? '$ ' . number_format($customersOfUser?->avg('setter_fee'),2) : '-' }}
+                                        {{ $this->formatNumber($customersOfUser?->avg('setter_fee')) }}
                                     </x-table.td>
                                 @endif
                                 @if(user()->role != "Setter")
                                     <x-table.th>
-                                        {{$this->getAvgSalesRepEpc($customersOfUser) ? '$ ' . number_format($this->getAvgSalesRepEpc($customersOfUser),2) : '-'}}
+                                        {{ $this->formatNumber($this->getAvgSalesRepEpc($customersOfUser)) }}
                                     </x-table.th>
                                 @endif
                                 <x-table.td>
-                                    {{number_format($this->getAvgSystemSize($customersOfUser),2) ?? '-'}}
+                                    {{ $this->formatNumber($this->getAvgSystemSize($customersOfUser)) }}
                                 </x-table.td>
                                 <x-table.td>
-                                    {{$this->getAvgSetterCommission($customersOfUser) ? '$ ' . number_format($this->getAvgSetterCommission($customersOfUser),2) : '-'}}
+                                    {{ $this->formatNumber($this->getAvgSetterCommission($customersOfUser)) }}
                                 </x-table.td>
                                 @if(user()->role != "Setter")
                                     <x-table.td>
-                                        {{$this->getAvgSalesRepCommission($customersOfUser) ? '$ ' . number_format($this->getAvgSalesRepCommission($customersOfUser),2) : '-'}}
+                                        {{ $this->formatNumber($this->getAvgSalesRepCommission($customersOfUser)) }}
                                     </x-table.td>
                                 @endif
                                 @if(user()->role != "Setter" && user()->role != "Sales Rep")
                                     <x-table.td>
-                                        {{$this->getAvgOverrideCommission($customersOfUser) ? '$ ' . number_format($this->getAvgOverrideCommission($customersOfUser),2) : '-'}}
+                                        {{ $this->formatNumber($this->getAvgOverrideCommission($customersOfUser)) }}
                                     </x-table.td>
                                 @endif
                                 <x-table.td>
-                                    {{$this->getAvgRecruiterCommission($customersOfSalesRepsRecuited) ? '$ ' . number_format($this->getAvgRecruiterCommission($customersOfSalesRepsRecuited),2) : '-'}}
+                                    {{ $this->formatNumber($this->getAvgRecruiterCommission($customersOfSalesRepsRecuited)) }}
                                 </x-table.td>
                                 <x-table.td>-</x-table.td>
                             </x-table.tr>
@@ -149,26 +149,26 @@
                                     <x-table.td class="font-bold">-</x-table.td>
                                 @endif
                                 <x-table.td class="font-bold">
-                                    {{$customersOfUser->sum('system_size') > 0 ? number_format($customersOfUser->sum('system_size'),2) : '-' }}
+                                    {{ $this->formatNumber($customersOfUser->sum('system_size')) }}
                                 </x-table.td>
                                 <x-table.td class="font-bold">
-                                    {{$this->getSumSetterCommission($customersOfUser) ? '$ ' . number_format($this->getSumSetterCommission($customersOfUser),2) : '-'}}
+                                    {{ $this->formatNumber($this->getSumSetterCommission($customersOfUser)) }}
                                 </x-table.td>
                                 @if(user()->role != "Setter")
                                     <x-table.td class="font-bold">
-                                        {{$this->getSumSalesRepCommission($customersOfUser) ? '$ ' . number_format($this->getSumSalesRepCommission($customersOfUser),2) : '-'}}
+                                        {{ $this->formatNumber($this->getSumSalesRepCommission($customersOfUser)) }}
                                     </x-table.td>
                                 @endif
                                 @if(user()->role != "Setter" && user()->role != "Sales Rep")
                                     <x-table.td>
-                                        {{$this->getSumOverrideCommission($customersOfUser) ? '$ ' . number_format($this->getSumOverrideCommission($customersOfUser),2) : '-'}}
+                                        {{ $this->formatNumber($this->getSumOverrideCommission($customersOfUser)) }}
                                     </x-table.td>
                                 @endif
                                 <x-table.td class="font-bold">
-                                    {{  $this->getSumRecruiterCommission($customersOfSalesRepsRecuited) ? '$ ' . number_format($this->getSumRecruiterCommission($customersOfSalesRepsRecuited),2) : '-'}}
+                                    {{ $this->formatNumber($this->getSumRecruiterCommission($customersOfSalesRepsRecuited)) }}
                                 </x-table.td>
                                 <x-table.td class="font-bold">
-                                    {{  $this->getUserTotalCommission() ? '$ ' . number_format($this->getUserTotalCommission(),2) : '-'}}
+                                    {{ $this->formatNumber($this->getUserTotalCommission()) }}
                                 </x-table.td>
                             </x-table.tr>
                         </x-slot>
