@@ -36,7 +36,7 @@ class ReportsOverview extends Component
     public function mount()
     {
         $this->departmentId = Department::first()->id;
-        if (user()->role == 'Admin' || user()->role == 'Owner') {
+        if (user()->hasAnyRole(['Admin', 'Owner'])) {
             $this->personalCustomers = false;
         }
         $this->startDate = Carbon::create($this->startDate)->firstOfYear()->startOfDay()->toString();
@@ -57,19 +57,19 @@ class ReportsOverview extends Component
                         $query->orWhere('setter_id', user()->id)
                             ->orWhere('sales_rep_id', user()->id);
                     })
-                        ->when(user()->role == 'Office Manager', function ($query) {
+                        ->when(user()->hasRole('Office Manager'), function ($query) {
                             $query->orWhere('office_manager_id', user()->id);
                         })
-                        ->when(user()->role == 'Region Manager', function ($query) {
+                        ->when(user()->hasRole('Region Manager'), function ($query) {
                             $query->orWhere('region_manager_id', user()->id)
                                 ->orWhere('office_manager_id', user()->id);
                         })
-                        ->when(user()->role == 'Department Manager', function ($query) {
+                        ->when(user()->hasRole('Department Manager'), function ($query) {
                             $query->orWhere('department_manager_id', user()->id)
                                 ->orWhere('region_manager_id', user()->id)
                                 ->orWhere('office_manager_id', user()->id);
                         })
-                        ->when(user()->role == 'Admin' || user()->role == 'Owner',
+                        ->when(user()->hasAnyRole(['Admin', 'Owner']),
                             function ($query) use ($departmentId) {
                                 $query->whereHas('userSalesRep', function ($query) use ($departmentId) {
                                     $query->where('department_id', $departmentId);
@@ -96,23 +96,23 @@ class ReportsOverview extends Component
     {
         $departmentId          = $this->departmentId;
         $this->customersOfUser = Customer::where(function ($query) use ($departmentId) {
-            $query->when(user()->role != 'Admin' && user()->role != 'Owner', function ($query) {
+            $query->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
                 $query->orWhere('setter_id', user()->id)
                     ->orWhere('sales_rep_id', user()->id);
             })
-                ->when(user()->role == 'Office Manager', function ($query) {
+                ->when(user()->hasRole('Office Manager'), function ($query) {
                     $query->orWhere('office_manager_id', user()->id);
                 })
-                ->when(user()->role == 'Region Manager', function ($query) {
+                ->when(user()->hasRole('Region Manager'), function ($query) {
                     $query->orWhere('region_manager_id', user()->id)
                         ->orWhere('office_manager_id', user()->id);
                 })
-                ->when(user()->role == 'Department Manager', function ($query) {
+                ->when(user()->hasRole('Department Manager'), function ($query) {
                     $query->orWhere('department_manager_id', user()->id)
                         ->orWhere('region_manager_id', user()->id)
                         ->orWhere('office_manager_id', user()->id);
                 })
-                ->when(user()->role == 'Admin' || user()->role == 'Owner', function ($query) use ($departmentId) {
+                ->when(user()->hasAnyRole(['Admin', 'Owner']), function ($query) use ($departmentId) {
                     $query->whereHas('userSalesRep', function ($query) use ($departmentId) {
                         $query->where('department_id', $departmentId);
                     });
@@ -159,10 +159,10 @@ class ReportsOverview extends Component
 
     public function getUserTotalCommission()
     {
-        if (user()->role == 'Setter') {
+        if (user()->hasRole('Setter')) {
             return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecuited) + $this->getSumSetterCommission($this->customersOfUser);
         }
-        if (user()->role == 'Sales Rep') {
+        if (user()->hasRole('Sales Rep')) {
             return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecuited) + $this->getSumSetterCommission($this->customersOfUser) + $this->getSumSalesRepCommission($this->customersOfUser);
         }
 
@@ -177,7 +177,7 @@ class ReportsOverview extends Component
             ->when(user()->notHaveRoles(['Setter', 'Admin', 'Owner']), function ($customer) {
                 return $customer->where('sales_rep_id', user()->id);
             })
-            ->when(user()->role === 'Admin' || user()->role === 'Owner', function ($customer) {
+            ->when(user()->hasAnyRole(['Admin', 'Owner']), function ($customer) {
                 return $customer->filter(function ($customer) {
                     return $customer->userSalesRep->department_id === $this->departmentId;
                 });
@@ -279,16 +279,16 @@ class ReportsOverview extends Component
     {
         $departmentId = $this->departmentId;
         $customers->filter(function ($customer) use ($departmentId) {
-            if (user()->role == 'Office Manager') {
+            if (user()->hasRole('Office Manager')) {
                 return $customer->office_manager_id == user()->id;
             }
-            if (user()->role == 'Region Manager') {
+            if (user()->hasRole('Region Manager')) {
                 return $customer->office_manager_id == user()->id || $customer->region_manager_id == user()->id;
             }
-            if (user()->role == 'Department Manager') {
+            if (user()->hasRole('Department Manager')) {
                 return $customer->office_manager_id == user()->id || $customer->region_manager_id == user()->id || $customer->department_manager_id == user()->id;
             }
-            if (user()->role == 'Admin' || user()->role == 'Owner') {
+            if (user()->hasAnyRole(['Admin', 'Owner'])) {
                 return $customer->userSalesRep->department_id == $departmentId;
             }
         });
