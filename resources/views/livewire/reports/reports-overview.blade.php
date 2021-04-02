@@ -309,9 +309,9 @@
                                         <x-table.td>{{$customer->adders ? '$ ' . $customer->adders : '-'}}</x-table.td>
                                     @endif
                                     <x-table.td>{{$customer->system_size ?? '-'}}</x-table.td>
-                                    <x-table.td>{{$this->getSetterCommission($customer) > 0 ? '$ ' . $this->getSetterCommission($customer) : '-'}}</x-table.td>
+                                    <x-table.td>{{ $this->formatNumber($this->getSetterCommission($customer)) }}</x-table.td>
                                     @if(user()->role != "Setter")
-                                        <x-table.td>{{$this->getSalesRepCommission($customer) > 0 ? '$ ' . $this->getSalesRepCommission($customer) : '-'}}</x-table.td>
+                                        <x-table.td>{{ $this->formatNumber($this->getSalesRepCommission($customer)) }}</x-table.td>
                                         <x-table.td>{{$customer->financingtype?->name ?? '-'}}</x-table.td>
                                         <x-table.td>{{$customer->financer?->name ?? '-'}}</x-table.td>
                                         @if(user()->role != "Sales Rep")
