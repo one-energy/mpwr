@@ -125,7 +125,7 @@
                 <div class="grid col-span-3 grid-cols-3 gap-x-4 p-4">
                     <div>
                         <label class="text-gray-600">Pay Rate</label>
-                        <p>${{$user->pay}}</p>
+                        <p>{{$user->pay ? '$ ' . $user->pay : '-'}}</p>
                     </div>
                     <div>
                         <span class="text-gray-600">Recuited By</span>
@@ -133,7 +133,7 @@
                     </div>
                     <div>
                         <label class="text-gray-600">Referral Override</label>
-                        <p>${{$user->referral_override}}</p>
+                        <p>{{$user->referral_override ? '$ ' . $user->referral_override : '-'}}</p>
                     </div>
                 </div>
                 <div class="grid col-span-3 grid-cols-3 gap-x-4 p-4 border border-gray-400 rounded-md bg-gray-100">
@@ -151,21 +151,21 @@
                     </div>
                     <div>
                         <span class="text-gray-600">Manager Override</span>
-                        <p>{{$user->office_manager_override ?? '-'}}</p>
+                        <p>{{$user->office_manager_override ? '$ ' . $user->office_manager_override : '-'}}</p>
                     </div>
                     <div>
                         <span class="text-gray-600">Regional Override</span>
-                        <p>{{$user->region_manager_override ?? '-'}}</p>
+                        <p>{{$user->region_manager_override ? '$ ' . $user->region_manager_override : '-'}}</p>
                     </div>
                     <div>
                         <span class="text-gray-600">VP Override</span>
-                        <p>{{$user->department_manager_override ?? '-'}}</p>
+                        <p>{{$user->department_manager_override ? '$ ' . $user->department_manager_override : '-'}}</p>
                     </div>
                 </div>
                 <div class="grid col-span-3 grid-cols-3 gap-4 p-4">
                     <div>
                         <span class="text-gray-600">Misc. Override 1</span>
-                        <p>{{$user->misc_override_one ?? '-'}}</p>
+                        <p>{{$user->misc_override_one ? '$ ' . $user->misc_override_one : '-'}}</p>
                     </div>
                     <div>
                         <span class="text-gray-600">Payee</span>
@@ -177,7 +177,7 @@
                     </div>
                     <div>
                         <span class="text-gray-600">Misc. Override 2</span>
-                        <p>{{$user->misc_override_two ?? '-'}}</p>
+                        <p>{{$user->misc_override_two ? '$ ' . $user->misc_override_two : '-'}}</p>
                     </div>
                     <div>
                         <span class="text-gray-600">Payee</span>
