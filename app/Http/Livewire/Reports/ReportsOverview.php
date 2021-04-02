@@ -15,7 +15,7 @@ class ReportsOverview extends Component
 
     public Collection $customersOfUser;
 
-    public Collection $customersOfSalesRepsRecuited;
+    public Collection $customersOfSalesRepsRecruited;
 
     public array $ranges = Customer::RANGE_DATES;
 
@@ -132,7 +132,7 @@ class ReportsOverview extends Component
             })
             ->get();
 
-        $this->customersOfSalesRepsRecuited = user()->customersOfSalesRepsRecuited()
+        $this->customersOfSalesRepsRecruited = user()->customersOfSalesRepsRecuited()
             ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
             ->when($this->installedStatus(), function ($query) {
                 $query->whereIsActive(true)
@@ -160,13 +160,13 @@ class ReportsOverview extends Component
     public function getUserTotalCommission()
     {
         if (user()->hasRole('Setter')) {
-            return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecuited) + $this->getSumSetterCommission($this->customersOfUser);
+            return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecruited) + $this->getSumSetterCommission($this->customersOfUser);
         }
         if (user()->hasRole('Sales Rep')) {
-            return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecuited) + $this->getSumSetterCommission($this->customersOfUser) + $this->getSumSalesRepCommission($this->customersOfUser);
+            return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecruited) + $this->getSumSetterCommission($this->customersOfUser) + $this->getSumSalesRepCommission($this->customersOfUser);
         }
 
-        return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecuited) + $this->getSumSetterCommission($this->customersOfUser) + $this->getSumSalesRepCommission($this->customersOfUser) + $this->getSumOverrideCommission($this->customersOfUser);
+        return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecruited) + $this->getSumSetterCommission($this->customersOfUser) + $this->getSumSalesRepCommission($this->customersOfUser) + $this->getSumOverrideCommission($this->customersOfUser);
     }
 
     public function getAvgSystemSize(Collection $customers)

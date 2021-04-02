@@ -136,7 +136,7 @@
                                     </x-table.td>
                                 @endif
                                 <x-table.td>
-                                    {{ $this->formatNumber($this->getAvgRecruiterCommission($customersOfSalesRepsRecuited)) }}
+                                    {{ $this->formatNumber($this->getAvgRecruiterCommission($customersOfSalesRepsRecruited)) }}
                                 </x-table.td>
                                 <x-table.td>-</x-table.td>
                             </x-table.tr>
@@ -165,7 +165,7 @@
                                     </x-table.td>
                                 @endif
                                 <x-table.td class="font-bold">
-                                    {{ $this->formatNumber($this->getSumRecruiterCommission($customersOfSalesRepsRecuited)) }}
+                                    {{ $this->formatNumber($this->getSumRecruiterCommission($customersOfSalesRepsRecruited)) }}
                                 </x-table.td>
                                 <x-table.td class="font-bold">
                                     {{ $this->formatNumber($this->getUserTotalCommission()) }}
