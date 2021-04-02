@@ -147,6 +147,15 @@ class ReportsOverview extends Component
             ->get();
     }
 
+    public function formatNumber(?int $value, int $decimals = 2)
+    {
+        if ($value === null) {
+            return '-';
+        }
+
+        return $value > 0 ? '$ ' . number_format($value, $decimals) : '-';
+    }
+
     public function getUserTotalCommission()
     {
         if (user()->role == 'Setter') {
