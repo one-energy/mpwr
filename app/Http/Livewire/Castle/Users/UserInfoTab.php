@@ -69,14 +69,14 @@ class UserInfoTab extends Component
     protected function rules()
     {
         return [
-            'user.first_name'                          => ['required', 'string', 'max:255'],
-            'user.last_name'                           => ['required', 'string', 'max:255'],
-            'user.role'                                => ['nullable', 'string', 'max:255'],
-            'user.office_id'                           => 'nullable',
+            'user.first_name'                          => 'required|string|max:255',
+            'user.last_name'                           => 'required|string|max:255',
+            'user.role'                                => 'nullable|in:' . implode(',', User::getRoleByNames()),
+            'user.office_id'                           => ['nullable', new DepartmentHasOffice($this->user['department_id'])],
             'user.phone_number'                        => 'nullable',
             'user.pay'                                 => 'nullable',
-            'user.department_id'                       => 'nullable',
-            'user.email'                               => 'required|unique:users,email,' . $this->user->id,
+            'user.department_id'                       => 'nullable|exists:departments,id',
+            'user.email'                               => 'required|email:rfc,filter|unique:users,email,' . $this->user->id,
             'userOverride.pay'                         => 'nullable',
             'userOverride.recruiter_id'                => 'nullable',
             'userOverride.referral_override'           => 'nullable',
