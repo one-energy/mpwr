@@ -360,7 +360,7 @@ class User extends Authenticatable implements MustVerifyEmail
             if ($matches) {
                 return "+{$matches[1]} ({$matches[2]}) {$matches[3]}-{$matches[4]}";
             }
-  
+
             return $cleaned;
         }
     }
@@ -394,5 +394,20 @@ class User extends Authenticatable implements MustVerifyEmail
                     '%' . strtolower($search) . '%'
                 );
         });
+    }
+
+    public function hasRole(string $role): bool
+    {
+        return $this->role === $role;
+    }
+
+    public function hasAnyRole(array $roles): bool
+    {
+        return collect($roles)->some(fn ($role) => $role === $this->role);
+    }
+
+    public function notHaveRoles(array $roles): bool
+    {
+        return collect($roles)->every(fn ($role) => $role !== $this->role);
     }
 }
