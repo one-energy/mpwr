@@ -171,21 +171,18 @@ class ReportsOverview extends Component
 
     public function getAvgSystemSize(Collection $customers)
     {
-        $departmentId = $this->departmentId;
-
-        $customers->when(user()->role == 'Setter', function ($query) {
-            $query->where('setter_id', user()->id);
+        return $customers->when(user()->hasRole('Setter'), function ($customer) {
+            return $customer->where('setter_id', user()->id);
         })
-            ->when(user()->role != 'Setter' && user()->role != 'Admin' && user()->role != 'Owner', function ($query) {
-                $query->where('sales_rep_id', user()->id);
+            ->when(user()->notHaveRoles(['Setter', 'Admin', 'Owner']), function ($customer) {
+                return $customer->where('sales_rep_id', user()->id);
             })
-            ->when(user()->role == 'Admin' || user()->role == 'Owner', function ($query) use ($departmentId) {
-                $query->filter(function ($customer) use ($departmentId) {
-                    return $customer->userSalesRep->department_id == $departmentId;
+            ->when(user()->role === 'Admin' || user()->role === 'Owner', function ($customer) {
+                return $customer->filter(function ($customer) {
+                    return $customer->userSalesRep->department_id === $this->departmentId;
                 });
-            });
-
-        return $customers->avg('system_size');
+            })
+            ->avg('system_size');
     }
 
     public function getSumSetterCommission(Collection $customers)
