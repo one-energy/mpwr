@@ -39,7 +39,6 @@
                                         <x-table.th-searchable by="role" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Pay')
                                         </x-table.th>
-                                        <x-table.th></x-table.th>
                                     </tr>
                                 </x-slot>
                                 <x-slot name="body">
@@ -57,11 +56,6 @@
                                                 <x-table.td>Without Office</x-table.td>
                                             @endif
                                             <x-table.td>{{ $user->pay }}</x-table.td>
-                                            <x-table.td>
-                                                <x-link class="text-sm" :href="route('castle.users.edit', $user->id)">
-                                                    Edit
-                                                </x-link>
-                                            </x-table.td>
                                         </x-table.tr>
                                     @endforeach
                                 </x-slot>
