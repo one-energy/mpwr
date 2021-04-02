@@ -59,7 +59,7 @@ class UserInfoTab extends Component
         $this->offices     = optional($department)->offices ?? collect();
 
         if ($this->user->department !== null) {
-            $this->departmentUsers        = $this->user->department->users()->orderBy('first_name')->orderBy('last_name')->get();
+            $this->departmentUsers        = $this->user->department->users()->where('id', '!=', $this->user->id)->orderBy('first_name')->orderBy('last_name')->get();
             $this->departmentManagerUsers = $this->user->department->users()->whereRole('Department Manager')->orderBy('first_name')->orderBy('last_name')->get();
             $this->regionManagerUsers     = $this->user->department->users()->whereRole('Region Manager')->orderBy('first_name')->orderBy('last_name')->get();
             $this->officeManagerUsers     = $this->user->department->users()->whereRole('Office Manager')->orderBy('first_name')->orderBy('last_name')->get();
