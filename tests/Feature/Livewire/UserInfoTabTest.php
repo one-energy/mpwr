@@ -142,4 +142,39 @@ class UserInfoTabTest extends TestCase
             ->call('update')
             ->assertHasErrors(['user.email' => 'unique']);
     }
+
+    /** @test */
+    public function it_should_prevent_that_recruiter_id_has_the_same_id_of_edited_user()
+    {
+        $john = User::factory()->create(['role' => 'Admin']);
+        $mary = User::factory()->create(['role' => 'Office Manager']);
+
+        $this->actingAs($john);
+
+        Livewire::test(UserInfoTab::class, ['user' => $mary])
+            ->set('userOverride.recruiter_id', $mary->id)
+            ->call('update')
+            ->assertHasErrors(['userOverride.recruiter_id' => 'not_in']);
+    }
+
+    /** @test */
+    public function it_should_prevent_update_if_office_manager_id_is_from_another_department()
+    {
+        $john = User::factory()->create(['role' => 'Admin']);
+        $mary = User::factory()->create([
+            'role'          => 'Office Manager',
+            'department_id' => Department::factory()->create()->id,
+        ]);
+        $zack = User::factory()->create([
+            'role'          => 'Office Manager',
+            'department_id' => Department::factory()->create()->id,
+        ]);
+
+        $this->actingAs($john);
+
+        Livewire::test(UserInfoTab::class, ['user' => $mary])
+            ->set('userOverride.office_manager_id', $zack->id)
+            ->call('update')
+            ->assertHasErrors(['userOverride.office_manager_id' => 'in']);
+    }
 }
