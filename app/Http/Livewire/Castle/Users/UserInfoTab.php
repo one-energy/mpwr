@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Castle\Users;
 use App\Models\Department;
 use App\Models\Rates;
 use App\Models\User;
+use App\Rules\Castle\DepartmentHasOffice;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
