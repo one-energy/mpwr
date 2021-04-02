@@ -6,11 +6,14 @@ use App\Models\Department;
 use App\Models\Rates;
 use App\Models\User;
 use App\Rules\Castle\DepartmentHasOffice;
+use App\Traits\Livewire\Actions;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
 class UserInfoTab extends Component
 {
+    use Actions;
+
     public User $user;
 
     public User $userOverride;
