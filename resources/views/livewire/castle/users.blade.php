@@ -39,7 +39,6 @@
                                         <x-table.th-searchable by="role" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Pay')
                                         </x-table.th>
-                                        <x-table.th></x-table.th>
                                     </tr>
                                 </x-slot>
                                 <x-slot name="body">
@@ -55,20 +54,15 @@
                                                 <x-table.td>-</x-table.td>
                                             @endif
                                             @if($user->role == 'Department Manager')
-                                                <x-table.td>{{ $user->department->name }}</x-table.td>
+                                                <x-table.td>{{ $user->department->name ?? '-' }}</x-table.td>
                                             @endif
                                             @if($user->role == 'Region Manager')
-                                                <x-table.td>{{ $user->managedRegions()->first()->name }}</x-table.td>
+                                                <x-table.td>{{ $user->managedRegions()->first()->name ?? '-' }}</x-table.td>
                                             @endif
                                             @if($user->role == 'Office Manager' || $user->role == 'Sales Rep' || $user->role == 'Setter')
                                                 <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
                                             @endif
                                             <x-table.td>{{ $user->pay }}</x-table.td>
-                                            <x-table.td>
-                                                <x-link class="text-sm" :href="route('castle.users.edit', $user->id)">
-                                                    Edit
-                                                </x-link>
-                                            </x-table.td>
                                         </x-table.tr>
                                     @endforeach
                                 </x-slot>
