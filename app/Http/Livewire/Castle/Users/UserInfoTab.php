@@ -38,20 +38,29 @@ class UserInfoTab extends Component
 
     public function mount(User $user)
     {
-        $this->userOverride = clone $user;
-        $this->selectedDepartmentId = $user->department_id;
+        $this->userOverride           = clone $user;
+        $this->selectedDepartmentId   = $user->department_id;
+        $this->departmentUsers        = collect();
+        $this->departmentManagerUsers = collect();
+        $this->regionManagerUsers     = collect();
+        $this->officeManagerUsers     = collect();
     }
 
     public function render()
     {
-        $department                   = Department::find($this->selectedDepartmentId);
-        $this->departments            = Department::get();
-        $this->roles                  = User::getRolesPerUserRole(user());
-        $this->offices                = $department ? $department->offices()->get() : [];
-        $this->departmentUsers        = $this->user->department->users()->orderBy('first_name')->orderBy('last_name')->get();
-        $this->departmentManagerUsers = $this->user->department->users()->whereRole('Department Manager')->orderBy('first_name')->orderBy('last_name')->get();
-        $this->regionManagerUsers     = $this->user->department->users()->whereRole('Region Manager')->orderBy('first_name')->orderBy('last_name')->get();
-        $this->officeManagerUsers     = $this->user->department->users()->whereRole('Office Manager')->orderBy('first_name')->orderBy('last_name')->get();
+        $department = Department::find($this->selectedDepartmentId);
+
+        $this->departments = Department::get();
+        $this->roles       = User::getRolesPerUserRole(user());
+        $this->offices     = optional($department)->offices ?? collect();
+
+        if ($this->user->department !== null) {
+            $this->departmentUsers        = $this->user->department->users()->orderBy('first_name')->orderBy('last_name')->get();
+            $this->departmentManagerUsers = $this->user->department->users()->whereRole('Department Manager')->orderBy('first_name')->orderBy('last_name')->get();
+            $this->regionManagerUsers     = $this->user->department->users()->whereRole('Region Manager')->orderBy('first_name')->orderBy('last_name')->get();
+            $this->officeManagerUsers     = $this->user->department->users()->whereRole('Office Manager')->orderBy('first_name')->orderBy('last_name')->get();
+        }
+
         $this->getAssignedTeams();
 
         return view('livewire.castle.users.user-info-tab');
