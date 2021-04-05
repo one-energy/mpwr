@@ -43,7 +43,7 @@ class Create extends Component
         'customer.date_of_sale'        => 'required',
         'customer.epc'                 => 'required',
         'customer.financing_id'        => 'required',
-        'customer.financer_id'         => 'nullable',
+        'customer.financer_id'         => 'required_if:customer.financing_id,1',
         'customer.term_id'             => 'nullable',
         'customer.setter_id'           => 'nullable',
         'customer.setter_fee'          => 'required',
@@ -106,7 +106,6 @@ class Create extends Component
 
     public function store()
     {
-        $this->validate();
 
         $salesRep = User::find($this->customer->sales_rep_id);
 
@@ -126,6 +125,10 @@ class Create extends Component
         $this->customer->misc_override_two           = $salesRep->misc_override_two;
         $this->customer->payee_two                   = $salesRep->payee_two;
         $this->customer->note_two                    = $salesRep->note_two;
+        $this->customer->financing_id = $this->customer->financing_id != "" ? $this->customer->financing_id : null;
+        $this->customer->financer_id = $this->customer->financer_id != "" ? $this->customer->financer_id : null;
+        $this->customer->term_id = $this->customer->term_id != "" ? $this->customer->term_id : null;
+        $this->validate();
         $this->customer->save();
 
         alert()

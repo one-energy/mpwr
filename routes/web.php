@@ -129,7 +129,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('/customers', CustomerController::class)->except('store', 'update')->names('customers');
     Route::put('/customers/{customer}/active', [CustomerController::class, 'Active'])->name('customers.active');
     Route::delete('/customers/{customer}', [CustomerController::class, 'delete'])->name('customers.delete');
-    Route::get('/scoreboard', ScoreboardController::class)->name('scoreboard');
+    Route::get('/leaderboard', ScoreboardController::class)->name('leaderboard');
     Route::get('/trainings/{department?}/{section?}/{search?}', [TrainingController::class, 'index'])->name('trainings.index');
     Route::get('/incentives', IncentivesController::class)->name('incentives.index');
     Route::get('/number-tracking', [NumberTrackingController::class, 'index'])->name('number-tracking.index');

@@ -14,7 +14,7 @@
             <x-card>
                 <x-form :route="route('password.confirm')">
 
-                    <x-input class="mt-6" type="password" label="Password" name="password"></x-input>
+                    <x-input class="mt-6" type="password" label="Password" name="password"/>
 
                     <div class="mt-6 flex items-center justify-end">
                         <div class="text-sm leading-5">

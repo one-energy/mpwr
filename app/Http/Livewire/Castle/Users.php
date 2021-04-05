@@ -63,4 +63,25 @@ class Users extends Component
         }
         return $roleTitle;
     }
+
+    public function canEditUser($editableUser)
+    {
+        if (user()->role == "Office Manager") {
+            return $editableUser->role == "Sales Rep" || $editableUser->role == "Setter" || $editableUser->role == "Office Manager";
+        }
+
+        if (user()->role == "Region Manager") {
+            return $editableUser->role != "Department Manager" && $editableUser->role != "Admin" && $editableUser->role != "Owner";
+        }
+
+        if (user()->role == "Department Manager") {
+            return $editableUser->role != "Admin" && $editableUser->role != "Owner";
+        }
+
+        if (user()->role == "Admin") {
+            return $editableUser->role != "Owner";
+        }
+
+        return true;
+    }
 }

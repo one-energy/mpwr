@@ -155,5 +155,12 @@ return [
     */
 
     'attributes' => [],
+    'values' => [
+        'customer' => [
+            'financing_id' => [
+                '1' => 'Purchase'
+            ],
+        ],
+    ],
 
 ];

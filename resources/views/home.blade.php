@@ -1,8 +1,8 @@
 <x-app.auth :title="__('Dashboard')">
     <div>
-        <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
             <div class="md:flex">
-                <div class="px-4 py-5 overflow-y-auto sm:px-6 sm:w-full md:w-2/3">
+                <div class="px-4 py-5 overflow-y-auto sm:px-6 sm:w-full md:w-2/3 xl:w-4/5">
 
                     <livewire:area-chart/>
 
@@ -65,7 +65,7 @@
                                     </div>
                                     <div class="col-span-1 row-span-2 md:col-span-2">
                                         <div
-                                            class="@if($customer->is_active && $customer->panel_sold) bg-green-base @elseif($customer->is_active == false) bg-red-500 @else bg-gray-700 @endif text-white rounded-md py-1 px-1 text-center">
+                                            class="@if($customer->is_active && $customer->panel_sold) bg-green-base @elseif($customer->is_active == false) bg-red-500 @else bg-gray-700 @endif text-white @if($customer->setter_id == user()->id) rounded-full @else rounded-md @endif py-1 px-1 text-center">
                                             $ {{ number_format($customer->sales_rep_comission, 2) }}
                                         </div>
                                     </div>
@@ -88,7 +88,7 @@
                 </div>
 
                 <!-- Personal Data -->
-                <div class="hidden md:block">
+                <div class="hidden md:block md:w-1/3 xl:w-1/5 break-words">
                     <x-profile.show-profile-information/>
                 </div>
             </div>
