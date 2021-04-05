@@ -43,7 +43,7 @@ class Create extends Component
         'customer.date_of_sale'        => 'required',
         'customer.epc'                 => 'required',
         'customer.financing_id'        => 'required',
-        'customer.financer_id'         => 'nullable',
+        'customer.financer_id'         => 'required_if:customer.financing_id,1',
         'customer.term_id'             => 'nullable',
         'customer.setter_id'           => 'nullable',
         'customer.setter_fee'          => 'required',
@@ -106,10 +106,13 @@ class Create extends Component
 
     public function store()
     {
-        $this->validate();
 
         $this->customer->date_of_sale = Carbon::parse($this->customer->date_of_sale);
         $this->customer->opened_by_id = user()->id;
+        $this->customer->financing_id = $this->customer->financing_id != "" ? $this->customer->financing_id : null;
+        $this->customer->financer_id = $this->customer->financer_id != "" ? $this->customer->financer_id : null;
+        $this->customer->term_id = $this->customer->term_id != "" ? $this->customer->term_id : null;
+        $this->validate();
         $this->customer->save();
 
         alert()

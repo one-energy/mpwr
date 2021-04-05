@@ -12,7 +12,7 @@ class FinancerFactory extends Factory
     public function definition()
     {
         return [
-            'name' => 'Enium'
+            'name' => 'Enium',
         ];
     }
 }
