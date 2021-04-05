@@ -86,7 +86,7 @@
                                     </x-nav.link>
                                     <x-nav.link :href="route('reports.index')" class="ml-8"
                                                 :active="is_active('reports.*')">
-                                        @lang('Reports')
+                                        @lang('Commission Tracker')
                                     </x-nav.link>
                                     <x-nav.link :href="route('number-tracking.index')" class="ml-8"
                                                 :active="is_active('number-tracking.*')">
