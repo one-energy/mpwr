@@ -15,7 +15,7 @@ class ReportsOverview extends Component
 
     public Collection $customersOfUser;
 
-    public Collection $customersOfSalesRepsRecuited;
+    public Collection $customersOfSalesRepsRecruited;
 
     public array $ranges = Customer::RANGE_DATES;
 
@@ -36,7 +36,7 @@ class ReportsOverview extends Component
     public function mount()
     {
         $this->departmentId = Department::first()->id;
-        if (user()->role == 'Admin' || user()->role == 'Owner') {
+        if (user()->hasAnyRole(['Admin', 'Owner'])) {
             $this->personalCustomers = false;
         }
         $this->startDate = Carbon::create($this->startDate)->firstOfYear()->startOfDay()->toString();
@@ -51,133 +51,141 @@ class ReportsOverview extends Component
         return view('livewire.reports.reports-overview', [
             'departments' => Department::get(),
             'customers'   => Customer::query()
-                            ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
-                            ->where(function($query) use ($departmentId) {
-                                $query->when($this->personalCustomers, function ($query) {
-                                    $query->orWhere('setter_id', user()->id)
-                                          ->orWhere('sales_rep_id', user()->id);
-                                })
-                                ->when(user()->role == 'Office Manager', function ($query) {
-                                    $query->orWhere('office_manager_id', user()->id);
-                                })
-                                ->when(user()->role == 'Region Manager', function ($query) {
-                                    $query->orWhere('region_manager_id', user()->id)
-                                          ->orWhere('office_manager_id', user()->id);
-                                })
-                                ->when(user()->role == 'Department Manager', function ($query) {
-                                    $query->orWhere('department_manager_id', user()->id)
-                                          ->orWhere('region_manager_id', user()->id)
-                                          ->orWhere('office_manager_id', user()->id);
-                                })
-                                ->when(user()->role == 'Admin' || user()->role == 'Owner', function($query) use ($departmentId) {
-                                    $query->whereHas('userSalesRep', function ($query) use ($departmentId) {
-                                        $query->where('department_id', $departmentId);
-                                    });
+                ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
+                ->where(function ($query) use ($departmentId) {
+                    $query->when($this->personalCustomers, function ($query) {
+                        $query->orWhere('setter_id', user()->id)
+                            ->orWhere('sales_rep_id', user()->id);
+                    })
+                        ->when(user()->hasRole('Office Manager'), function ($query) {
+                            $query->orWhere('office_manager_id', user()->id);
+                        })
+                        ->when(user()->hasRole('Region Manager'), function ($query) {
+                            $query->orWhere('region_manager_id', user()->id)
+                                ->orWhere('office_manager_id', user()->id);
+                        })
+                        ->when(user()->hasRole('Department Manager'), function ($query) {
+                            $query->orWhere('department_manager_id', user()->id)
+                                ->orWhere('region_manager_id', user()->id)
+                                ->orWhere('office_manager_id', user()->id);
+                        })
+                        ->when(user()->hasAnyRole(['Admin', 'Owner']),
+                            function ($query) use ($departmentId) {
+                                $query->whereHas('userSalesRep', function ($query) use ($departmentId) {
+                                    $query->where('department_id', $departmentId);
                                 });
-                            })
-                            ->when($this->selectedStatus == 'installed', function ($query) {
-                                $query->whereIsActive(true)
-                                      ->wherePanelSold(true);
-                            })
-                            ->when($this->selectedStatus == 'pending', function ($query) {
-                                $query->whereIsActive(true)
-                                      ->wherePanelSold(false);
-                            })
-                            ->when($this->selectedStatus == 'canceled', function ($query) {
-                                $query->whereIsActive(false);
-                            })
-                            ->search($this->search)
-                            ->paginate($this->perPage),
+                            });
+                })
+                ->when($this->installedStatus(), function ($query) {
+                    $query->whereIsActive(true)
+                        ->wherePanelSold(true);
+                })
+                ->when($this->pendingStatus(), function ($query) {
+                    $query->whereIsActive(true)
+                        ->wherePanelSold(false);
+                })
+                ->when($this->cancelledStatus(), function ($query) {
+                    $query->whereIsActive(false);
+                })
+                ->search($this->search)
+                ->paginate($this->perPage),
         ]);
     }
 
     public function getUserCustomers()
     {
         $departmentId          = $this->departmentId;
-        $this->customersOfUser = Customer::where(function($query) use ($departmentId) {
-            $query->when(user()->role != 'Admin' && user()->role != 'Owner', function ($query) {
+        $this->customersOfUser = Customer::where(function ($query) use ($departmentId) {
+            $query->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
                 $query->orWhere('setter_id', user()->id)
-                        ->orWhere('sales_rep_id', user()->id);
+                    ->orWhere('sales_rep_id', user()->id);
             })
-                    ->when(user()->role == 'Office Manager', function ($query) {
-                        $query->orWhere('office_manager_id', user()->id);
-                    })
-                    ->when(user()->role == 'Region Manager', function ($query) {
-                        $query->orWhere('region_manager_id', user()->id)
-                              ->orWhere('office_manager_id', user()->id);
-                    })
-                    ->when(user()->role == 'Department Manager', function ($query) {
-                        $query->orWhere('department_manager_id', user()->id)
-                              ->orWhere('region_manager_id', user()->id)
-                              ->orWhere('office_manager_id', user()->id);
-                    })
-                    ->when(user()->role == 'Admin' || user()->role == 'Owner', function ($query) use ($departmentId) {
-                        $query->whereHas('userSalesRep', function ($query) use ($departmentId) {
-                            $query->where('department_id', $departmentId);
-                        });
+                ->when(user()->hasRole('Office Manager'), function ($query) {
+                    $query->orWhere('office_manager_id', user()->id);
+                })
+                ->when(user()->hasRole('Region Manager'), function ($query) {
+                    $query->orWhere('region_manager_id', user()->id)
+                        ->orWhere('office_manager_id', user()->id);
+                })
+                ->when(user()->hasRole('Department Manager'), function ($query) {
+                    $query->orWhere('department_manager_id', user()->id)
+                        ->orWhere('region_manager_id', user()->id)
+                        ->orWhere('office_manager_id', user()->id);
+                })
+                ->when(user()->hasAnyRole(['Admin', 'Owner']), function ($query) use ($departmentId) {
+                    $query->whereHas('userSalesRep', function ($query) use ($departmentId) {
+                        $query->where('department_id', $departmentId);
                     });
+                });
         })
-                ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
-                ->when($this->selectedStatus == 'installed', function ($query) {
-                    $query->whereIsActive(true)
-                        ->wherePanelSold(true);
-                })
-                ->when($this->selectedStatus == 'pending', function ($query) {
-                    $query->whereIsActive(true)
-                        ->wherePanelSold(false);
-                })
-                ->when($this->selectedStatus == 'canceled', function ($query) {
-                    $query->whereIsActive(false);
-                })
-                ->get();
-
-        $this->customersOfSalesRepsRecuited = user()->customersOfSalesRepsRecuited()
             ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
-            ->when($this->selectedStatus == 'installed', function ($query) {
+            ->when($this->installedStatus(), function ($query) {
                 $query->whereIsActive(true)
-                      ->wherePanelSold(true);
+                    ->wherePanelSold(true);
             })
-            ->when($this->selectedStatus == 'pending', function ($query) {
+            ->when($this->pendingStatus(), function ($query) {
                 $query->whereIsActive(true)
-                      ->wherePanelSold(false);
+                    ->wherePanelSold(false);
             })
-            ->when($this->selectedStatus == 'canceled', function ($query) {
+            ->when($this->cancelledStatus(), function ($query) {
+                $query->whereIsActive(false);
+            })
+            ->get();
+
+        $this->customersOfSalesRepsRecruited = user()->customersOfSalesRepsRecuited()
+            ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
+            ->when($this->installedStatus(), function ($query) {
+                $query->whereIsActive(true)
+                    ->wherePanelSold(true);
+            })
+            ->when($this->pendingStatus(), function ($query) {
+                $query->whereIsActive(true)
+                    ->wherePanelSold(false);
+            })
+            ->when($this->cancelledStatus(), function ($query) {
                 $query->whereIsActive(false);
             })
             ->get();
     }
 
+    public function formatNumber(?int $value, int $decimals = 2)
+    {
+        if ($value === null) {
+            return '-';
+        }
+
+        return $value > 0 ? '$ ' . number_format($value, $decimals) : '-';
+    }
+
     public function getUserTotalCommission()
     {
-        if (user()->role == 'Setter') {
-            return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecuited) + $this->getSumSetterCommission($this->customersOfUser);
+        if (user()->hasRole('Setter')) {
+            return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecruited) + $this->getSumSetterCommission($this->customersOfUser);
         }
-        if (user()->role == 'Sales Rep') {
-            return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecuited) + $this->getSumSetterCommission($this->customersOfUser) + $this->getSumSalesRepCommission($this->customersOfUser);
+        if (user()->hasRole('Sales Rep')) {
+            return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecruited) + $this->getSumSetterCommission($this->customersOfUser) + $this->getSumSalesRepCommission($this->customersOfUser);
         }
 
-        return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecuited) + $this->getSumSetterCommission($this->customersOfUser) + $this->getSumSalesRepCommission($this->customersOfUser) + $this->getSumOverrideCommission($this->customersOfUser);
+        return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecruited) + $this->getSumSetterCommission($this->customersOfUser) + $this->getSumSalesRepCommission($this->customersOfUser) + $this->getSumOverrideCommission($this->customersOfUser);
     }
 
-    public function getAvgSystemSize (Collection $customers)
+    public function getAvgSystemSize(Collection $customers)
     {
-        $departmentId = $this->departmentId;
-        $customers->when(user()->role == 'Setter', function ($query) {
-            $query->where('setter_id', user()->id);
+        return $customers->when(user()->hasRole('Setter'), function ($customer) {
+            return $customer->where('setter_id', user()->id);
         })
-        ->when(user()->role != 'Setter' && user()->role != 'Admin' && user()->role != 'Owner', function ($query) {
-            $query->where('sales_rep_id', user()->id);
-        })
-        ->when(user()->role == 'Admin' || user()->role == 'Owner', function ($query) use ($departmentId) {
-            $query->filter(function ($customer) use ($departmentId) {
-                return $customer->userSalesRep->department_id == $departmentId;
-            });
-        });
-
-        return $customers->avg('system_size');
+            ->when(user()->notHaveRoles(['Setter', 'Admin', 'Owner']), function ($customer) {
+                return $customer->where('sales_rep_id', user()->id);
+            })
+            ->when(user()->hasAnyRole(['Admin', 'Owner']), function ($customer) {
+                return $customer->filter(function ($customer) {
+                    return $customer->userSalesRep->department_id === $this->departmentId;
+                });
+            })
+            ->avg('system_size');
     }
 
-    public function getSumSetterCommission (Collection $customers)
+    public function getSumSetterCommission(Collection $customers)
     {
         $customers->where('setter_id', user()->id);
 
@@ -186,7 +194,7 @@ class ReportsOverview extends Component
         });
     }
 
-    public function getAvgSetterCommission (Collection $customers)
+    public function getAvgSetterCommission(Collection $customers)
     {
         $customers->where('setter_id', user()->id);
 
@@ -195,19 +203,19 @@ class ReportsOverview extends Component
         });
     }
 
-    public function getSetterCommission (Customer $customer)
+    public function getSetterCommission(Customer $customer)
     {
         return $customer->setter_fee * ($customer->system_size * 1000);
     }
 
-    public function getAvgSalesRepEpc (Collection $customers)
+    public function getAvgSalesRepEpc(Collection $customers)
     {
         $customers->where('sales_rep_id', user()->id);
 
         return $customers->avg('epc');
     }
 
-    public function getSumSalesRepCommission (Collection $customers)
+    public function getSumSalesRepCommission(Collection $customers)
     {
         $customers->where('sales_rep_id', user()->id);
 
@@ -216,7 +224,7 @@ class ReportsOverview extends Component
         });
     }
 
-    public function getAvgSalesRepCommission (Collection $customers)
+    public function getAvgSalesRepCommission(Collection $customers)
     {
         $customers->where('sales_rep_id', user()->id);
 
@@ -225,31 +233,31 @@ class ReportsOverview extends Component
         });
     }
 
-    public function getSalesRepCommission (Customer $customer)
+    public function getSalesRepCommission(Customer $customer)
     {
         return $customer->sales_rep_fee * ($customer->system_size * 1000);
     }
 
-    public function getSumRecruiterCommission (Collection $customers)
+    public function getSumRecruiterCommission(Collection $customers)
     {
         return $customers->sum(function ($customer) {
             return $this->getRecruiterCommission($customer);
         });
     }
 
-    public function getAvgRecruiterCommission (Collection $customers)
+    public function getAvgRecruiterCommission(Collection $customers)
     {
         return $customers->avg(function ($customer) {
             return $this->getRecruiterCommission($customer);
         });
     }
 
-    public function getRecruiterCommission (Customer $customer)
+    public function getRecruiterCommission(Customer $customer)
     {
         return $customer->referral_override * ($customer->system_size * 1000);
     }
 
-    public function getAvgOverrideCommission (Collection $customers)
+    public function getAvgOverrideCommission(Collection $customers)
     {
         $customers = $this->filterCustomersWithOverrides($customers);
 
@@ -258,7 +266,7 @@ class ReportsOverview extends Component
         });
     }
 
-    public function getSumOverrideCommission (Collection $customers)
+    public function getSumOverrideCommission(Collection $customers)
     {
         $customers = $this->filterCustomersWithOverrides($customers);
 
@@ -267,20 +275,20 @@ class ReportsOverview extends Component
         });
     }
 
-    public function filterCustomersWithOverrides (Collection $customers)
+    public function filterCustomersWithOverrides(Collection $customers)
     {
         $departmentId = $this->departmentId;
-        $customers->filter(function($customer) use ($departmentId) {
-            if (user()->role == 'Office Manager') {
+        $customers->filter(function ($customer) use ($departmentId) {
+            if (user()->hasRole('Office Manager')) {
                 return $customer->office_manager_id == user()->id;
             }
-            if (user()->role == 'Region Manager') {
+            if (user()->hasRole('Region Manager')) {
                 return $customer->office_manager_id == user()->id || $customer->region_manager_id == user()->id;
             }
-            if (user()->role == 'Department Manager') {
+            if (user()->hasRole('Department Manager')) {
                 return $customer->office_manager_id == user()->id || $customer->region_manager_id == user()->id || $customer->department_manager_id == user()->id;
             }
-            if (user()->role == 'Admin' || user()->role == 'Owner') {
+            if (user()->hasAnyRole(['Admin', 'Owner'])) {
                 return $customer->userSalesRep->department_id == $departmentId;
             }
         });
@@ -337,11 +345,26 @@ class ReportsOverview extends Component
                 $this->finalDate = Carbon::create($this->finalDate)->endOfDay()->toString();
 
                 break;
-         }
+        }
     }
 
     public function sortBy()
     {
         return 'first_name';
+    }
+
+    private function cancelledStatus()
+    {
+        return $this->selectedStatus === 'canceled';
+    }
+
+    private function installedStatus()
+    {
+        return $this->selectedStatus === 'installed';
+    }
+
+    private function pendingStatus()
+    {
+        return $this->selectedStatus === 'pending';
     }
 }
