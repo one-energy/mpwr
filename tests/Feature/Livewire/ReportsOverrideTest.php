@@ -41,7 +41,7 @@ class ReportsOverrideTest extends TestCase
             'department_id' => $this->department->id
         ]);
         $this->salesRep = User::factory()->create([
-            'role' => 'Sales_Rep',
+            'role' => 'Sales Rep',
             'department_id' => $this->department->id
         ]);
         $this->setter = User::factory()->create([
@@ -50,17 +50,20 @@ class ReportsOverrideTest extends TestCase
         ]);
 
         $this->customer = Customer::factory()->create([
-            'setter_id' => $this->setter,
-            'sales_rep_id' => $this->salesRep->id,
-            'department_manager_id' => $this->departmentManager->id,
-            'region_manager_id' => $this->regionManager->id,
-            'office_manager_id' => $this->officeManager->id,
-            'panel_sold' => false,
-            'is_active' => true,
+            'system_size'                 => 10,
+            'setter_id'                   => $this->setter->id,
+            'setter_fee'                  => 10,
+            'sales_rep_id'                => $this->salesRep->id,
+            'sales_rep_fee'               => 20,
+            'department_manager_id'       => $this->departmentManager->id,
+            'region_manager_id'           => $this->regionManager->id,
+            'office_manager_id'           => $this->officeManager->id,
+            'department_manager_override' => 10,
+            'region_manager_override'     => 20,
+            'office_manager_override'     => 30,
+            'panel_sold'                  => false,
+            'is_active'                   => true,
         ]);
-        $this->customerTwo = Customer::factory()->create(
-
-        );
     }
 
     /** @test */
@@ -68,36 +71,30 @@ class ReportsOverrideTest extends TestCase
     {
         $response = $this->get('/reports');
 
-        $response->assertStatus(302);
+        $response->assertStatus(200);
     }
 
     /** @test */
     public function it_should_see_canceled_customers()
     {
+        $customer = $this->makeCustomer([
+            'panel_sold' => false,
+            'is_active' => false,
+        ]);
 
-    $customer = Customer::factory()->create([
-        'setter_id' => $this->setter,
-        'sales_rep_id' => $this->salesRep->id,
-        'department_manager_id' => $this->departmentManager->id,
-        'region_manager_id' => $this->regionManager->id,
-        'office_manager_id' => $this->officeManager->id,
-        'panel_sold' => false,
-        'is_active' => false,
-    ]);
-
-    Livewire::test(ReportsOverview::class)
-        ->set('departmentId', $this->department->id)
-        ->set('selectedStatus', 'canceled')
-        ->assertDontSee($this->customer->first_name)
-        ->assertSee($customer->first_name);
+        Livewire::test(ReportsOverview::class)
+            ->set('departmentId', $this->department->id)
+            ->set('selectedStatus', 'canceled')
+            ->assertDontSee($this->customer->first_name)
+            ->assertSee($customer->first_name);
     }
 
     /** @test */
     public function it_should_see_pending_customers()
     {
         Livewire::test(ReportsOverview::class)
-        ->set('departmentId', $this->department->id)
-        ->assertSee($this->customer->first_name);
+            ->set('departmentId', $this->department->id)
+            ->assertSee($this->customer->first_name);
     }
 
     /** @test */
@@ -114,17 +111,48 @@ class ReportsOverrideTest extends TestCase
         ->assertSee($customer->first_name);
     }
 
-     /** @test */
-     public function it_should_calculate_total_commission()
-     {
+    /** @test */
+    public function it_should_calculate_total_commission()
+    {
+        $this->actingAs($this->setter);
+        $component = Livewire::test(ReportsOverview::class)->call('getUserTotalCommission');
+        $this->assertSame(100000.0, $component->payload['effects']['returns']['getUserTotalCommission']);
+    }
 
-         Livewire::test(ReportsOverview::class)
-            ->set('departmentId', $this->department->id)
-            ->assertSee($this->customer->first_name);
-     }
+    /** @test */
+    public function it_should_calculate_sales_rep_total_commission()
+    {
+        $this->actingAs($this->salesRep);
+        $component = Livewire::test(ReportsOverview::class)->call('getUserTotalCommission');
+        $this->assertSame(200000.0, $component->payload['effects']['returns']['getUserTotalCommission']);
+    }
 
-     private function makeCustomer($attr)
-     {
+    /** @test */
+    public function it_should_calculate_office_manager_total_commission()
+    {
+        $this->actingAs($this->officeManager);
+        $component = Livewire::test(ReportsOverview::class)->call('getUserTotalCommission');
+        $this->assertSame(300000.0, $component->payload['effects']['returns']['getUserTotalCommission']);
+    }
+
+    /** @test */
+    public function it_should_calculate_region_manager_total_commission()
+    {
+        $this->actingAs($this->regionManager);
+        $component = Livewire::test(ReportsOverview::class)->call('getUserTotalCommission');
+        $this->assertSame(200000.0, $component->payload['effects']['returns']['getUserTotalCommission']);
+    }
+
+    /** @test */
+    public function it_should_calculate_department_manager_total_commission()
+    {
+        $this->actingAs($this->departmentManager);
+        $component = Livewire::test(ReportsOverview::class)->call('getUserTotalCommission');
+        $this->assertSame(100000.0, $component->payload['effects']['returns']['getUserTotalCommission']);
+    }
+
+    private function makeCustomer($attr)
+    {
         return Customer::factory()->create(array_merge(
             [
                 'setter_id' => $this->setter,
@@ -137,5 +165,5 @@ class ReportsOverrideTest extends TestCase
             ],
             $attr
         ));
-     }
+    }
 }
