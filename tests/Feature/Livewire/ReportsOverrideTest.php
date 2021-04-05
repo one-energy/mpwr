@@ -2,19 +2,17 @@
 
 namespace Tests\Feature\Livewire;
 
-use App\Http\Livewire\Castle\Departments;
 use App\Http\Livewire\Reports\ReportsOverview;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
 class ReportsOverrideTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
