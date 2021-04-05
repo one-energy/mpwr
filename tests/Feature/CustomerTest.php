@@ -12,13 +12,14 @@ use App\Models\Rates;
 use App\Models\Term;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
 class CustomerTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     public User $user;
 
@@ -323,4 +324,71 @@ class CustomerTest extends TestCase
         $response->assertSee($saleRepRate->rate)
             ->assertSee($setterRate->rate);
     }
+
+     /** @test */
+     public function it_should_save_user_overrides_on_customer()
+     {
+        $user      = User::factory()->create(['role' => 'Department Manager']);
+        $regionMng = User::factory()->create(['role' => 'Region Manager']);
+        $officeMng = User::factory()->create(['role' => 'Office Manager']);
+        $userOne   = User::factory()->create(['role' => 'Setter']);
+        $userTwo   = User::factory()->create([
+            'sales_rep_recruiter_id'      => $userOne->id,
+            'referral_override'           => 10,
+            'office_manager_id'           => $officeMng->id,
+            'region_manager_id'           => $regionMng->id,
+            'department_manager_id'       => $user->id,
+            'office_manager_override'     => 10,
+            'region_manager_override'     => 20,
+            'department_manager_override' => 30,
+            'misc_override_one'           => 10,
+            'payee_one'                   => 'payee one',
+            'note_one'                    => 'note one',
+            'payee_two'                   => 'payee two',
+            'note_two'                    => 'note two',
+        ]);
+
+        $customer = Customer::factory()->make([
+            'first_name'          => 'First Name',
+            'last_name'           => 'Last Name',
+            'bill'                => 'Bill',
+            'financing_id'        => 1,
+            'opened_by_id'        => $user->id,
+            'system_size'         => 0,
+            'adders'              => '',
+            'epc'                 => '',
+            'setter_id'           => $userOne->id,
+            'setter_fee'          => 20,
+            'sales_rep_id'        => $userTwo->id,
+            'sales_rep_fee'       => 20,
+            'sales_rep_comission' => 0,
+            'commission'          => '',
+            'created_at'          => Carbon::now()->timestamp,
+            'updated_at'          => Carbon::now()->timestamp,
+            'is_active'           => true,
+        ]);
+
+        // $response = $this->post(route('customers.store'), $data);
+
+        Livewire::test(Create::class, [
+            'bills' => Customer::BILLS,
+            'customer' => $customer
+        ])->call('store');
+
+        $this->assertDatabaseHas('customers', [
+            'sales_rep_recruiter_id'      => $userOne->id,
+            'referral_override'           => 10,
+            'office_manager_id'           => $officeMng->id,
+            'region_manager_id'           => $regionMng->id,
+            'department_manager_id'       => $user->id,
+            'office_manager_override'     => 10,
+            'region_manager_override'     => 20,
+            'department_manager_override' => 30,
+            'misc_override_one'           => 10,
+            'payee_one'                   => 'payee one',
+            'note_one'                    => 'note one',
+            'payee_two'                   => 'payee two',
+            'note_two'                    => 'note two',
+        ]);
+     }
 }
