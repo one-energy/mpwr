@@ -111,7 +111,7 @@ class UserInfoTab extends Component
             ->livewire($this)
             ->send();
 
-        $this->openedTab = 'userInfo';
+        return redirect(route('castle.users.show', $this->user->id));
     }
 
     public function saveOverride()
@@ -125,7 +125,7 @@ class UserInfoTab extends Component
             ->livewire($this)
             ->send();
 
-        $this->openedTab = 'userInfo';
+        $this->openedTab = 'payInfo';
     }
 
     public function changeTab($selectedTab)
