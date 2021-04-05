@@ -62,7 +62,7 @@
                                                 <x-table.td>{{ $user->first_name . ' ' . $user->last_name }}</x-table.td>
                                                 <x-table.td>{{ $user->email }}</x-table.td>
                                                 <x-table.td>{{ $this->userRole($user->role) }}</x-table.td>
-                                                <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
+                                                <x-table.td>{{ $user->office->name ?? html_entity_decode('&#8212;') }}</x-table.td>
                                                 <x-table.td></x-table.td>
                                             </x-table.tr>
                                         @endif
