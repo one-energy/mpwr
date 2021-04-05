@@ -108,7 +108,6 @@ class UserInfoTab extends Component
 
         alert()
             ->withTitle(__('User has been updated!'))
-            ->livewire($this)
             ->send();
 
         return redirect(route('castle.users.show', $this->user->id));
