@@ -7,6 +7,7 @@ use App\Models\Office;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Livewire\Testing\TestableLivewire;
 use Tests\TestCase;
 
 class UsersTest extends TestCase
@@ -72,5 +73,27 @@ class UsersTest extends TestCase
         Livewire::test(Users::class)
             ->assertSee($john->full_name)
             ->assertSee(html_entity_decode('&#8212;'));
+    }
+
+    /** @test */
+    public function only_users_that_have_manager_or_regional_manager_or_department_manager_role_can_see_offices_list()
+    {
+        $mary = User::factory()->create(['role' => 'Admin']);
+        $john = User::factory()->create(['role' => 'Office Manager']);
+        $zack = User::factory()->create(['role' => 'Setter']);
+
+        $this->actingAs($mary);
+
+        /** @var TestableLivewire $livewire */
+        $livewire = Livewire::test(Users::class)
+            ->call('canSeeOffices', $john);
+
+        $this->assertTrue($livewire->payload['effects']['returns']['canSeeOffices']);
+
+        /** @var TestableLivewire $livewire */
+        $livewire = Livewire::test(Users::class)
+            ->call('canSeeOffices', $zack);
+
+        $this->assertFalse($livewire->payload['effects']['returns']['canSeeOffices']);
     }
 }
