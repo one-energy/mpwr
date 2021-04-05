@@ -198,23 +198,23 @@
                 <div>
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                         <div class="md:col-span-3 col-span-2">
-                            <x-input label="First Name" name="first_name" wire:model="user.first_name" disabled="{{user()->id == $user->id}}"/>
+                            <x-input label="First Name" name="user.first_name" wire:model="user.first_name" disabled="{{user()->id == $user->id}}"/>
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
-                            <x-input label="Last Name" name="last_name" wire:model="user.last_name" disabled="{{user()->id == $user->id}}" />
+                            <x-input label="Last Name" name="user.last_name" wire:model="user.last_name" disabled="{{user()->id == $user->id}}" />
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
-                            <x-input label="Email" name="email" wire:model="user.email" disabled="{{user()->id == $user->id}}"/>
+                            <x-input label="Email" name="user.email" wire:model="user.email" disabled="{{user()->id == $user->id}}"/>
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
-                            <x-input-phone label="Phone Number" name="phone_number" wire:model="user.phone_number" disabled="{{user()->id == $user->id}}"/>
+                            <x-input-phone label="Phone Number" name="user.phone_number" wire:model="user.phone_number" disabled="{{user()->id == $user->id}}"/>
                         </div>
 
                         <div class="md:col-span-3 col-span-2">
-                            <x-select wire:change="changeRole($event.target.value)" wire:model="user.role" label="Role" name="role" disabled="{{user()->id == $user->id}}">
+                            <x-select wire:change="changeRole($event.target.value)" wire:model="user.role" label="Role" name="user.role" disabled="{{user()->id == $user->id}}">
                                     @foreach ($roles as $role)
                                         <option value="{{$role['name']}}" > {{$role['title']}}</option>
                                     @endforeach
@@ -223,7 +223,7 @@
 
                         @if(user()->role != "Admin" && user()->role != "Owner")
                             <div class="md:col-span-3 col-span-2 hidden">
-                                <x-select wire:model="user.department_id" label="Department" name="department_id" disabled="{{user()->id == $user->id}}">
+                                <x-select wire:model="user.department_id" label="Department" name="user.department_id" disabled="{{user()->id == $user->id}}">
                                     @foreach($departments as $department)
                                         <option value="{{$user->department_id}}">{{$department->name}}</option>
                                     @endforeach
@@ -240,7 +240,7 @@
                         @endif
 
                         <div class="md:col-span-3 col-span-2">
-                            <x-select wire:model="user.office_id" label="Office" name="office_id" disabled="{{user()->id == $user->id}}">
+                            <x-select wire:model="user.office_id" label="Office" name="user.office_id" disabled="{{user()->id == $user->id}}">
                                 @if($user->role != "Office Manager" && $user->role != "Sales Rep" && $user->role != "Setter")
                                     <option value="">
                                         None
