@@ -328,12 +328,14 @@ class CustomerTest extends TestCase
      /** @test */
      public function it_should_save_user_overrides_on_customer()
      {
+        $financing = Financing::factory()->create();
+        $financer  = FInancer::factory()->create();
         $user      = User::factory()->create(['role' => 'Department Manager']);
         $regionMng = User::factory()->create(['role' => 'Region Manager']);
         $officeMng = User::factory()->create(['role' => 'Office Manager']);
         $userOne   = User::factory()->create(['role' => 'Setter']);
         $userTwo   = User::factory()->create([
-            'sales_rep_recruiter_id'      => $userOne->id,
+            'recruiter_id'                => $userOne->id,
             'referral_override'           => 10,
             'office_manager_id'           => $officeMng->id,
             'region_manager_id'           => $regionMng->id,
@@ -348,32 +350,22 @@ class CustomerTest extends TestCase
             'note_two'                    => 'note two',
         ]);
 
-        $customer = Customer::factory()->make([
-            'first_name'          => 'First Name',
-            'last_name'           => 'Last Name',
-            'bill'                => 'Bill',
-            'financing_id'        => 1,
-            'opened_by_id'        => $user->id,
-            'system_size'         => 0,
-            'adders'              => '',
-            'epc'                 => '',
-            'setter_id'           => $userOne->id,
-            'setter_fee'          => 20,
-            'sales_rep_id'        => $userTwo->id,
-            'sales_rep_fee'       => 20,
-            'sales_rep_comission' => 0,
-            'commission'          => '',
-            'created_at'          => Carbon::now()->timestamp,
-            'updated_at'          => Carbon::now()->timestamp,
-            'is_active'           => true,
-        ]);
-
-        // $response = $this->post(route('customers.store'), $data);
-
         Livewire::test(Create::class, [
             'bills' => Customer::BILLS,
-            'customer' => $customer
-        ])->call('store');
+        ])  ->set('customer.first_name', 'First Name')
+            ->set('customer.last_name', 'Last Name')
+            ->set('customer.adders', 10)
+            ->set('customer.epc', 10)
+            ->set('customer.financing_id', $financing->id)
+            ->set('customer.financer_id', $financer->id)
+            ->set('customer.bill', 'Bill')
+            ->set('customer.system_size', 4)
+            ->set('customer.setter_id', $userOne->id)
+            ->set('customer.setter_fee', 20)
+            ->set('customer.sales_rep_id', $userTwo->id)
+            ->set('customer.sales_rep_fee', 20)
+            ->set('customer.sales_rep_comission', 0)
+            ->call('store');
 
         $this->assertDatabaseHas('customers', [
             'sales_rep_recruiter_id'      => $userOne->id,
