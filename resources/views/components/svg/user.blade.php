@@ -1,4 +1,4 @@
-<svg {{ $attributes }} id="svgUser" xmlns="http://www.w3.org/2000/svg" version="1.1" width="512" height="512" x="0" y="0" viewBox="0 0 512 512"
+<svg {{ $attributes }} xmlns="http://www.w3.org/2000/svg" version="1.1" width="512" height="512" x="0" y="0" viewBox="0 0 512 512"
      style="enable-background:new 0 0 512 512" xml:space="preserve"><g>
         <g xmlns="http://www.w3.org/2000/svg">
             <g>
