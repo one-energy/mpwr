@@ -151,6 +151,16 @@ class ReportsOverrideTest extends TestCase
         $this->assertSame(100000.0, $component->payload['effects']['returns']['getUserTotalCommission']);
     }
 
+    /** @test */
+    public function it_should_calculate_all_department_total_commission()
+    {
+        $this->actingAs($this->admin);
+        $component = Livewire::test(ReportsOverview::class)
+            ->set('departmentId', $this->department->id)
+            ->call('getUserTotalCommission');
+        $this->assertSame(600000.0, $component->payload['effects']['returns']['getUserTotalCommission']);
+    }
+
     private function makeCustomer($attr)
     {
         return Customer::factory()->create(array_merge(

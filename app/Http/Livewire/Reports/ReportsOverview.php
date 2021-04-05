@@ -277,13 +277,13 @@ class ReportsOverview extends Component
     public function getOverrideCommission(Customer $customer)
     {
         $overrideCommission = 0;
-        if($customer->office_manager_id == user()->id){
+        if($customer->office_manager_id == user()->id || user()->hasAnyRole(["Admin", "Owner"])){
             $overrideCommission += $customer->office_manager_override * ($customer->system_size * 1000);
         }
-        if($customer->region_manager_id == user()->id){
+        if($customer->region_manager_id == user()->id || user()->hasAnyRole(["Admin", "Owner"])){
             $overrideCommission += $customer->region_manager_override * ($customer->system_size * 1000);
         }
-        if($customer->department_manager_id == user()->id){
+        if($customer->department_manager_id == user()->id || user()->hasAnyRole(["Admin", "Owner"])){
             $overrideCommission += $customer->department_manager_override * ($customer->system_size * 1000);
         }
         return $overrideCommission;
