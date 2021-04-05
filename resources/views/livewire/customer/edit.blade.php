@@ -1,14 +1,14 @@
 <div>
     <div x-data="{openModal: false, loading: false, tooltipShow: false}">
-        <div class="max-w-6xl mx-auto py-5 sm:px-6 lg:px-8">
+        <div class="max-w-8xl mx-auto py-5 sm:px-6 lg:px-8">
             <x-link :href="route('home')" color="gray"
                     class="inline-flex items-center border-b-2 border-green-base hover:border-green-500 text-sm font-medium leading-5">
                 <x-svg.chevron-left class="w-6 -ml-2"/> @lang('Dashboard')
             </x-link>
         </div>
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
             <form wire:submit.prevent="update">
-                <div class="grid grid-cols-2 gap-4 sm:col-gap-4 md:grid-cols-6">
+                <div class="grid grid-cols-2 gap-4 sm:col-gap-4 md:grid-cols-6 px-8">
                     @if(user()->role == 'Admin' || user()->role == 'Owner')
                         <div class="col-span-2 md:col-span-6">
                             <x-select wire:model="departmentId" label="Department" name="departmentId">
@@ -36,13 +36,13 @@
                                           name="customer.date_of_sale" :value="$customer->date_of_sale"/>
                     </div>
 
-                    <div class="col-span-1 md:col-span-2">
+                    <div class="col-span-1 @if($customer->setter_id == user()->id) md:col-span-3 @else md:col-span-2 @endif">
                         <x-input-add-on wire:model="customer.system_size" label="System Size" name="system_size"
                                         addOn="kW" name="customer.system_size"/>
                     </div>
 
-                    <div class="col-span-1">
-                        <x-select wire:model="customer.bill" label="Bill" name="customer.bill">
+                    <div class="col-span-1 @if($customer->setter_id == user()->id) hidden @endif">
+                        <x-select  wire:model="customer.bill" label="Bill" name="customer.bill">
                             @if (old('bill') == '')
                                 <option value="" selected>None</option>
                             @endif
@@ -54,7 +54,7 @@
                         </x-select>
                     </div>
 
-                    <div class="col-span-2 md:col-span-3">
+                    <div class="col-span-2 md:col-span-3 @if($customer->setter_id == user()->id) hidden @endif">
                         <x-select wire:model="customer.financing_id" label="Financing" name="customer.financing_id">
                             @if (old('financing') == '')
                                 <option value="" selected>None</option>
@@ -69,7 +69,7 @@
                     </div>
 
                     @if($customer->financing_id == 1)
-                        <div class="col-span-1 md:col-span-1 md:col-start-4">
+                        <div class="col-span-1 md:col-span-1 md:col-start-4 @if($customer->setter_id == user()->id) hidden @endif">
                             <x-select wire:model="customer.financer_id" label="Financer" name="customer.financer_id">
                                 @if (old('financer') == '')
                                     <option value="" selected>None</option>
@@ -84,7 +84,7 @@
                         </div>
                     @endif
 
-                    <div class="col-span-1 md:col-span-2 @if($customer->financer_id != 1) hidden @endif">
+                    <div class="col-span-1 md:col-span-2 @if($customer->financer_id != 1 || $customer->setter_id == user()->id) hidden @endif">
                         <x-select wire:model="customer.term_id" label="Term" name="customer.term_id" readonly>
                             @if (old('term_id') == '')
                                 <option value="" selected>None</option>
@@ -97,7 +97,7 @@
                         </x-select>
                     </div>
 
-                    <div class="col-span-2 md:col-span-6">
+                    <div class="col-span-2 md:col-span-6 @if($customer->setter_id == user()->id) hidden @endif">
                         <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc"
                                           observation="Sold Price"/>
                     </div>
@@ -130,37 +130,37 @@
                             placeholder="{{$customer->userSalesRep->first_name}} {{$customer->userSalesRep->last_name}}" />
                     </div>
 
-                    <div class="col-span-2 md:col-span-3">
+                    <div class="col-span-2 md:col-span-3 @if($customer->setter_id == user()->id) hidden @endif">
                         <x-input-currency wire:model="customer.sales_rep_fee" label="Sales Rep Pay Rate"
                                           name="customer.sales_rep_fee" readonly/>
                     </div>
 
-                    <div class="col-span-2 md:col-span-1">
+                    <div class="col-span-2 md:col-span-1 @if($customer->setter_id == user()->id) hidden @endif">
                         <x-input-currency wire:model="customer.margin" label="Margin" name="customer.margin"
-                                          readonly></x-input-currency>
+                                          readonly/>
                     </div>
 
-                    <div class="col-span-2 md:col-span-2">
+                    <div class="col-span-2 md:col-span-2 @if($customer->setter_id == user()->id) hidden @endif">
                         <x-input wire:model="grossRepComission" label="Gross Rep Comission" name="grossRepComission"
                                  type="number" readonly/>
                     </div>
 
-                    <div class="col-span-2 md:col-span-3">
+                    <div class="col-span-2 md:col-span-3 @if($customer->setter_id == user()->id) hidden @endif">
                         <x-input wire:model="customer.adders" label="Adders Total" name="custormer.adders" step="0.01"
                                  type="number"/>
                     </div>
 
-                    <div class="col-span-2 md:col-span-3">
+                    <div class="col-span-2 md:col-span-3 @if($customer->setter_id == user()->id) hidden @endif">
                         <x-input-currency wire:model="customer.sales_rep_comission" label="Net Rep Commisson"
                                           name="customer.sales_rep_comission" readonly/>
                     </div>
 
-                    <div class="col-span-2">
+                    <div class="col-span-2 @if($customer->setter_id == user()->id) hidden @endif">
                         <x-input-currency wire:model="stockPoints" label="Stock Points" name="stockPoints" readonly/>
                     </div>
 
                     @if($customer->financer_id == 1)
-                        <div class="col-span-2 md:col-span-1">
+                        <div class="col-span-2 md:col-span-1 @if($customer->setter_id == user()->id) hidden @endif">
                             <x-input-currency wire:model="customer.enium_points" label="Noble Pay Points"
                                               name="customer.enium_points" readonly/>
                         </div>
@@ -185,7 +185,7 @@
                         </div>
                     </div>
 
-                    <div class="sm:col-span-1">
+                    <div class="sm:col-span-1 @if($customer->setter_id == user()->id) hidden @endif">
                         <label class="block text-sm font-medium leading-5 text-gray-700">
                             Your Commission
                         </label>
@@ -198,7 +198,7 @@
                     </div>
                 </div>
 
-                <div class="mt-8 border-t border-gray-200 pt-5">
+                <div class="mt-6 px-8 border-gray-200">
                     @if(user()->role != 'Setter')
                         <div class="flex justify-start">
                             <span class="inline-flex rounded-md shadow-sm">
@@ -250,7 +250,6 @@
                  x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                  class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
                 <x-form :route="route('customers.active', $customer->id)" put>
-                    @csrf
                     <input type="hidden" id="active" name="active"
                            value="{{ $customer->is_active ? true : false }}">
                     <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">

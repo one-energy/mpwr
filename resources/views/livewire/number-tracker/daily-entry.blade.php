@@ -1,8 +1,8 @@
 <div>
     <x-form :route="route('number-tracking.store')">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8" x-data>
+        <div class="mx-auto max-w-8xl sm:px-6 lg:px-8" x-data>
             <div class="md:flex">
-                <div class="py-5 md:w-1/3 LG:1/4">
+                <div class="py-5 md:w-1/3 xl:w-1/4">
                     <div class="flex-row">
                         <div class="overflow-y-auto">
                             <div class="overflow-hidden">
@@ -111,7 +111,7 @@
                     </div>
                 </div>
 
-                <div class="flex flex-wrap justify-center px-4 py-5 h-1/2 sm:p-6 md:w-2/3 lg:3/4">
+                <div class="flex flex-wrap justify-center px-4 py-5 h-1/2 sm:p-6 md:w-2/3 xl:w-3/4">
                     <div class="w-full mt-11 xl:px-0 lg:px-24 md:px-0">
                         <div class="grid grid-cols-6 row-gap-2 col-gap-1 xl:grid-cols-12 md:col-gap-4">
                             <div class="col-span-2 xl:col-span-2 p-3 border-2 border-gray-200 rounded-lg">

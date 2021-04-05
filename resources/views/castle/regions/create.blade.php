@@ -1,24 +1,24 @@
 <x-app.auth :title="__('New Office')">
     <div>
-        <div class="max-w-6xl mx-auto py-5 sm:px-6 lg:px-8">
+        <div class="max-w-8xl mx-auto py-5 sm:px-6 lg:px-8">
             <a href="{{ route('castle.regions.index') }}" class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
                 < New Region
             </a>
         </div>
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <x-form :route="route('castle.regions.store')" post>
-                @csrf
-                <div x-data="{ selectedDepartment: null,
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
+            <x-form :route="route('castle.regions.store')">
+                <div class="px-8" x-data="{ selectedDepartment: null,
                               token: document.head.querySelector('meta[name=csrf-token]').content,
                               departments: null,
                               regionsManager: null }"
                      x-init="$watch('selectedDepartment',
-                                     (department) => {
-                                    fetch('https://' + location.hostname + '/get-regions-managers/' + department, {method: 'post',  headers: {
+                                    (department) => {
+                                    const url = '{{ route('getRegionsManager', ':department') }}'.replace(':department', department);
+                                    fetch(url, {method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
                                     }}).then(res => res.json()).then((regionManagerData) => { regionsManager = regionManagerData }) }),
-                            fetch('https://' + location.hostname + '/get-departments',{method: 'post',  headers: {
+                            fetch('{{ route('getDepartments') }}',{method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
                                     }}).then(res=> res.json()).then( (departmentsData) => {
@@ -28,12 +28,12 @@
                     >
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                         <div class="md:col-span-3 col-span-2">
-                            <x-input label="Region Name" name="name"></x-input>
+                            <x-input label="Region Name" name="name"/>
                         </div>
                         @if(user()->role != "Admin" && user()->role != "Owner")
                             <div class="md:col-span-3 col-span-2 hidden">
                                 <x-select x-model="selectedDepartment" label="Department" name="department_id">
-                                    <template x-for="department in departments" :key="department.id">
+                                    <template x-if="departments" x-for="department in departments" :key="department.id">
                                         <option :value="department.id" x-text="department.name" ></option>
                                     </template>
                                 </x-select>
@@ -41,7 +41,7 @@
                         @else
                             <div class="md:col-span-3 col-span-2">
                                 <x-select x-model="selectedDepartment" label="Department" name="department_id">
-                                    <template x-for="department in departments" :key="department.id">
+                                    <template x-if="departments" x-for="department in departments" :key="department.id">
                                         <option :value="department.id" x-text="department.name" ></option>
                                     </template>
                                 </x-select>
@@ -49,14 +49,14 @@
                         @endif
                         <div class="md:col-span-3 col-span-2">
                             <x-select label="Regional Manager" name="region_manager_id">
-                                <template x-for="manager in regionsManager" :key="manager.id">
+                                <template x-if="regionsManager" x-for="manager in regionsManager" :key="manager.id">
                                     <option :value="manager.id" x-text="manager.first_name + ' ' + manager.last_name"></option>
                                 </template>
                             </x-select>
                         </div>
                     </div>
                 </div>
-                <div class="mt-8 border-t border-gray-200 pt-5">
+                <div class="mt-8 border-t border-gray-200 pt-5 px-8">
                     <div class="flex justify-start">
                         <span class="inline-flex rounded-md shadow-sm">
                             <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">

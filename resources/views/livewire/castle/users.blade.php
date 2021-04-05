@@ -1,5 +1,5 @@
 <div>
-    <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
+    <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
         <div class="px-4 py-5 sm:px-6">
             <div class="flex justify-between mb-4">
                 <div>
@@ -20,50 +20,58 @@
                                 <x-slot name="header">
                                     <tr class="sm:border-gray-200 border-b-2">
                                         @if(user()->role == "Admin")
-                                            <x-table.th-searchable by="first_name" :sortedBy="$sortBy" :direction="$sortDirection">
+                                            <x-table.th by="first_name">
                                                 @lang('Department')
                                             </x-table.th>
                                         @endif
                                         <x-table.th-searchable by="first_name" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Name')
-                                        </x-table.th>
+                                        </x-table.th-searchable>
                                         <x-table.th-searchable by="email" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Email')
-                                        </x-table.th>
+                                        </x-table.th-searchable>
                                         <x-table.th-searchable by="role" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Role')
-                                        </x-table.th>
+                                        </x-table.th-searchable>
                                         <x-table.th-searchable by="role" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Team')
-                                        </x-table.th>
+                                        </x-table.th-searchable>
                                         <x-table.th-searchable by="role" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Pay')
-                                        </x-table.th>
+                                        </x-table.th-searchable>
                                     </tr>
                                 </x-slot>
                                 <x-slot name="body">
                                     @foreach($users as $user)
-                                        <x-table.tr :loop="$loop" onclick="window.location='{{route('castle.users.show', $user->id)}}';" class="cursor-pointer">
-                                            @if(user()->role == "Admin")
-                                                <x-table.td>{{ $user->department->name ?? 'Whitout Department' }}</x-table.td>
-                                            @endif
-                                            <x-table.td>{{ $user->first_name . ' ' . $user->last_name }}</x-table.td>
-                                            <x-table.td>{{ $user->email }}</x-table.td>
-                                            <x-table.td>{{ $this->userRole($user->role) }}</x-table.td>
-                                            @if($user->role == 'Admin' || $user->role == 'Owner')
-                                                <x-table.td>-</x-table.td>
-                                            @endif
-                                            @if($user->role == 'Department Manager')
-                                                <x-table.td>{{ $user->department->name ?? '-' }}</x-table.td>
-                                            @endif
-                                            @if($user->role == 'Region Manager')
-                                                <x-table.td>{{ $user->managedRegions()->first()->name ?? '-' }}</x-table.td>
-                                            @endif
-                                            @if($user->role == 'Office Manager' || $user->role == 'Sales Rep' || $user->role == 'Setter')
+                                        @if($this->canEditUser($user))
+                                            <x-table.tr :loop="$loop" onclick="window.location='{{route('castle.users.show', $user->id)}}';" class="cursor-pointer">
+                                                @if(user()->role == "Admin")
+                                                    <x-table.td>{{ $user->department->name ?? 'Without Department' }}</x-table.td>
+                                                @endif
+                                                <x-table.td>{{ $user->first_name . ' ' . $user->last_name }}</x-table.td>
+                                                <x-table.td>{{ $user->email }}</x-table.td>
+                                                <x-table.td>{{ $this->userRole($user->role) }}</x-table.td>
                                                 <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
-                                            @endif
-                                            <x-table.td>{{ $user->pay }}</x-table.td>
-                                        </x-table.tr>
+                                                <x-table.td>{{ $user->pay }}</x-table.td>
+                                                <x-table.td>
+                                                    <x-link class="text-sm" :href="route('castle.users.edit', $user->id)">
+                                                        Edit
+                                                    </x-link>
+                                                </x-table.td>
+                                            </x-table.tr>
+                                        @else
+                                            <x-table.tr :loop="$loop" class="cursor-pointer">
+                                                @if(user()->role == "Admin")
+                                                    <x-table.td>{{ $user->department->name ?? 'Without Department' }}</x-table.td>
+                                                @endif
+                                                <x-table.td>{{ $user->first_name . ' ' . $user->last_name }}</x-table.td>
+                                                <x-table.td>{{ $user->email }}</x-table.td>
+                                                <x-table.td>{{ $this->userRole($user->role) }}</x-table.td>
+                                                <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
+                                                <x-table.td></x-table.td>
+                                                <x-table.td></x-table.td>
+                                            </x-table.tr>
+                                        @endif
                                     @endforeach
                                 </x-slot>
                             </x-table>
