@@ -85,4 +85,17 @@ class Users extends Component
 
         return true;
     }
+
+    public function canSeeOffices(User $user)
+    {
+        if ($user->notHaveRoles(['Office Manager', 'Region Manager', 'Department Manager'])) {
+            return false;
+        }
+
+        if ($user->hasRole('Department Manager')) {
+            return false;
+        }
+
+        return true;
+    }
 }
