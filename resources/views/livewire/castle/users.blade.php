@@ -31,11 +31,11 @@
                                             @lang('Email')
                                         </x-table.th-searchable>
                                         <x-table.th-searchable by="role" :sortedBy="$sortBy" :direction="$sortDirection">
-                                            @lang('Role')
+                                            @lang('Name')
                                         </x-table.th-searchable>
                                         <x-table.th-searchable by="role" :sortedBy="$sortBy" :direction="$sortDirection">
-                                            @lang('Team')
-                                        </x-table.th-searchable>
+                                            @lang('Office')
+                                        </x-table.th>
                                         <x-table.th-searchable by="role" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Pay')
                                         </x-table.th-searchable>
@@ -51,7 +51,7 @@
                                                 <x-table.td>{{ $user->first_name . ' ' . $user->last_name }}</x-table.td>
                                                 <x-table.td>{{ $user->email }}</x-table.td>
                                                 <x-table.td>{{ $this->userRole($user->role) }}</x-table.td>
-                                                <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
+                                                <x-table.td>{{ $user->office->name ?? html_entity_decode('&#8212;') }}</x-table.td>
                                                 <x-table.td>{{ $user->pay }}</x-table.td>
                                             </x-table.tr>
                                         @else
