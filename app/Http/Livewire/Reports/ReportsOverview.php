@@ -45,14 +45,13 @@ class ReportsOverview extends Component
 
     public function render()
     {
-        $departmentId = $this->departmentId;
         $this->getUserCustomers();
 
         return view('livewire.reports.reports-overview', [
             'departments' => Department::get(),
             'customers'   => Customer::query()
                 ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
-                ->where(function ($query) use ($departmentId) {
+                ->where(function ($query) {
                     $query->when($this->personalCustomers, function ($query) {
                         $query->orWhere('setter_id', user()->id)
                             ->orWhere('sales_rep_id', user()->id);
@@ -70,9 +69,9 @@ class ReportsOverview extends Component
                                 ->orWhere('office_manager_id', user()->id);
                         })
                         ->when(user()->hasAnyRole(['Admin', 'Owner']),
-                            function ($query) use ($departmentId) {
-                                $query->whereHas('userSalesRep', function ($query) use ($departmentId) {
-                                    $query->where('department_id', $departmentId);
+                            function ($query) {
+                                $query->whereHas('userSalesRep', function ($query) {
+                                    $query->where('department_id', $this->departmentId);
                                 });
                             });
                 })
