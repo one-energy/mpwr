@@ -13,7 +13,10 @@ class HomeController extends Controller
     {
         $userId = Auth::user()->id;
 
-        $query = Customer::query()->where('opened_by_id', $userId)->orWhere('sales_rep_id',$userId);
+        $query = Customer::query()
+            ->orWhere('opened_by_id', $userId)
+            ->orWhere('sales_rep_id',$userId)
+            ->orWhere('setter_id', $userId);
 
         $sortTypes = [
             ['index' => 'all', 'value' => 'All'],

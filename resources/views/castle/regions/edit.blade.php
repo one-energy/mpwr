@@ -1,14 +1,13 @@
 <x-app.auth :title="__('Edit Region')">
     <div>
-        <div class="max-w-6xl mx-auto py-5 sm:px-6 lg:px-8">
+        <div class="max-w-8xl mx-auto py-5 sm:px-6 lg:px-8">
             <a href="{{ route('castle.regions.index') }}"
                class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
                 < Edit Region
             </a>
         </div>
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <x-form :route="route('castle.regions.update', $region)" put>
-                @csrf
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
+            <x-form class="px-8" :route="route('castle.regions.update', $region)" put>
                 <div x-data="{ selectedDepartment: null,
                               selectedRegionManager: null,
                               token: document.head.querySelector('meta[name=csrf-token]').content,
@@ -16,11 +15,12 @@
                               regionsManager: null }"
                      x-init="$watch('selectedDepartment',
                                      (department) => {
-                                    fetch('https://' + location.hostname + '/get-regions-managers/' + department, {method: 'post',  headers: {
+                                    const url = '{{ route('getRegionsManager', ':department') }}'.replace(':department', department);
+                                    fetch(url, {method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
                                     }}).then(res => res.json()).then((regionManagerData) => { regionsManager = regionManagerData }) }),
-                            fetch('https://' + location.hostname + '/get-departments',{method: 'post',  headers: {
+                            fetch('{{ route('getDepartments') }}',{method: 'post',  headers: {
                                         'Content-Type': 'application/json',
                                         'X-CSRF-TOKEN': token
                                     }}).then(res=> res.json()).then( (departmentsData) => {
@@ -30,7 +30,7 @@
                                     })">
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                         <div class="md:col-span-3 col-span-2">
-                            <x-input label="Region Name" name="name" value="{{ $region->name }}"></x-input>
+                            <x-input label="Region Name" name="name" value="{{ $region->name }}"/>
                         </div>
                         @if(user()->role != "Admin" && user()->role != "Owner")
                             <div class="md:col-span-3 col-span-2 hidden">

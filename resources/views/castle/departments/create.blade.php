@@ -1,18 +1,17 @@
 <x-app.auth :title="__('New Departments')">
     <div>
-        <div class="max-w-6xl mx-auto py-5 sm:px-6 lg:px-8">
+        <div class="max-w-8xl mx-auto py-5 sm:px-6 lg:px-8">
             <a href="{{ route('castle.departments.index') }}" class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
                 < New Department
             </a>
         </div>
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <x-form :route="route('castle.departments.store')" post>
-                @csrf
-                <div>
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
+            <x-form :route="route('castle.departments.store')">
+                <div class="px-8">
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                         <div class="md:col-span-3 col-span-2">
-                            <x-input label="Department Name" name="name"></x-input>
-                        </div>                    
+                            <x-input label="Department Name" name="name"/>
+                        </div>
                         <div class="md:col-span-3 col-span-2">
                             <x-select label="Department Manager" name="department_manager_id">
                                 @if (old('department_manager_id') == '')
@@ -31,8 +30,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="mt-8 border-t border-gray-200 pt-5">
-                <div class="flex justify-start">
+                <div class="flex justify-start mt-6 border-gray-200 px-8">
                     <span class="inline-flex rounded-md shadow-sm">
                         <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
                             Add Department
@@ -43,7 +41,6 @@
                             Cancel
                         </a>
                     </span>
-                </div>
                 </div>
             </x-form>
         </div>

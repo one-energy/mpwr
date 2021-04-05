@@ -54,7 +54,7 @@ class DailyEntry extends Component
     public function getUsers($dateSelected)
     {
         $usersQuery = User::query();
-        if (user()->role == "Setter" || user()->role == "Sales Rep") {
+        if (user()->role == "Setter" || user()->role == "Sales Rep" || $this->isNotManager()) {
             $usersQuery->where("users.id", "=", user()->id);
         }
 
@@ -136,6 +136,19 @@ class DailyEntry extends Component
         return 'first_name';
     }
 
+    public function isNotManager(){
+        if (user()->id != Office::find($this->officeSelected)->office_manager_id) {
+            return true;
+        }
+        if (user()->id != Office::find($this->officeSelected)->region->region_manager_id) {
+            return true;
+        }
+        if (user()->id != Office::find($this->officeSelected)->region->deparment->department_manager_id) {
+            return true;
+        }
+        return false;
+    }
+
     public function getOfficeQuery()
     {
         $query = Office::query()
@@ -143,24 +156,22 @@ class DailyEntry extends Component
             ->join("regions", "region_id", "=", "regions.id");
 
         if (user()->role == "Admin" || user()->role == "Owner") {
-            $query->where("regions.department_id", "=", 0);
+            $query->orWhere("regions.department_id", "=", 0);
         }
 
         if (user()->role == "Department Manager") {
-            $query->where("regions.department_id", "=", user()->department_id);
+            $query->orWhere("regions.department_id", "=", user()->department_id);
         }
 
         if (user()->role == "Region Manager") {
-            $query->where("regions.region_manager_id", "=", user()->id);
+            $query->orWhere("regions.region_manager_id", "=", user()->id);
         }
 
         if (user()->role == "Office Manager") {
-            $query->where("offices.office_manager_id", "=", user()->id);
+            $query->orWhere("offices.office_manager_id", "=", user()->id);
         }
 
-        if (user()->role == "Setter" || user()->role == "Sales Rep") {
-            $query->where("offices.id", "=", user()->office_id);
-        }
+            $query->orWhere("offices.id", "=", user()->office_id);
 
         return $query;
     }

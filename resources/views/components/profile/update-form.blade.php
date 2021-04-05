@@ -15,7 +15,7 @@
                 <div class="mt-5 md:mt-0 md:col-span-2">
                     <div class="px-4 sm:px-0">
                         <x-input :label="__('First Name')" name="first_name" autofocus :value="user()->first_name"/>
-                            
+
                         <x-input :label="__('Last Name')" name="last_name" class="mt-6" autofocus :value="user()->last_name"/>
 
                         <x-input :label="__('Email')" name="email" class="mt-6" :value="user()->email"/>
@@ -41,11 +41,11 @@
                                         :src="photoUrl"
                                         alt=""/>
                                 </div>
-                                
+
                                 <input type="file" name="photo" id="photo" accept="image/png, image/jpeg"
                                         class="hidden" x-on:change="convertImage(event)">
 
-                                <x-input name="photo_url" label="" class="hidden"></x-input>
+                                <x-input name="photo_url" label="" class="hidden"/>
 
                                 <span class="ml-5 rounded-md shadow-sm">
                                     <label for="photo"
@@ -76,7 +76,7 @@
 </div>
 <script>
     function pasteImage() {
-        
+
         var url = <?php echo json_encode(user()->photo_url); ?>;
 
         return {
