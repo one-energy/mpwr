@@ -3,6 +3,7 @@
 namespace Tests\Feature\Livewire\Castle\Department;
 
 use App\Http\Livewire\Castle\Departments;
+use App\Models\DailyNumber;
 use App\Models\Department;
 use App\Models\Office;
 use App\Models\Region;
@@ -102,5 +103,57 @@ class DestroyDepartmentTest extends TestCase
 
         $this->assertNull($dummyRegion->deleted_at);
         $this->assertNull($dummyOffice->deleted_at);
+    }
+
+    /** @test */
+    public function it_should_soft_delete_daily_numbers_when_delete_a_department()
+    {
+        $john       = User::factory()->create(['role' => 'Admin']);
+        $mary       = User::factory()->create(['role' => 'Department Manager']);
+        $department = Department::factory()->create([
+            'department_manager_id' => $mary->id,
+        ]);
+
+        [$firstRegion, $secondRegion] = Region::factory()
+            ->times(2)
+            ->create(['department_id' => $department->id]);
+
+        $officeFromFirstRegion  = Office::factory()->create(['region_id' => $firstRegion->id]);
+        $officeFromSecondRegion = Office::factory()->create(['region_id' => $secondRegion->id]);
+
+        $zack = User::factory()->create([
+            'role'      => 'Setter',
+            'office_id' => $officeFromFirstRegion->id,
+        ]);
+
+        $zackDailyNumbers = DailyNumber::factory()
+            ->times(2)
+            ->create(['user_id' => $zack->id]);
+
+        $jack = User::factory()->create([
+            'role'      => 'Setter',
+            'office_id' => $officeFromSecondRegion->id,
+        ]);
+
+        $jackDailyNumbers = DailyNumber::factory()
+            ->times(2)
+            ->create(['user_id' => $jack->id]);
+
+        $this->actingAs($john);
+
+        Livewire::test(Departments::class)
+            ->set('deletingName', $department->name)
+            ->call('setDeletingDepartment', $department)
+            ->call('destroy');
+
+        $this
+            ->assertSoftDeleted($department)
+            ->assertSoftDeleted($firstRegion)
+            ->assertSoftDeleted($officeFromFirstRegion)
+            ->assertSoftDeleted($officeFromSecondRegion)
+            ->assertSoftDeleted($secondRegion);
+
+        $zackDailyNumbers->each(fn(DailyNumber $dailyNumber) => $this->assertSoftDeleted($dailyNumber));
+        $jackDailyNumbers->each(fn(DailyNumber $dailyNumber) => $this->assertSoftDeleted($dailyNumber));
     }
 }

@@ -3,6 +3,7 @@
 namespace Tests\Feature\Livewire\Castle\Region;
 
 use App\Http\Livewire\Castle\Regions;
+use App\Models\DailyNumber;
 use App\Models\Department;
 use App\Models\Office;
 use App\Models\Region;
@@ -192,5 +193,31 @@ class DestroyRegionTest extends TestCase
             ->assertSoftDeleted($secondOffice->fresh());
 
         $this->assertNull($dummyOffice->deleted_at);
+    }
+
+    /** @test */
+    public function it_should_soft_delete_daily_numbers_when_delete_a_region()
+    {
+        $office = Office::factory()->create(['region_id' => $this->region->id]);
+
+        $mary = User::factory()->create([
+            'role'      => 'Setter',
+            'office_id' => $office->id,
+        ]);
+
+        $dailyNumbers = DailyNumber::factory()
+            ->times(2)
+            ->create(['user_id' => $mary->id]);
+
+        $this->actingAs($this->admin);
+
+        Livewire::test(Regions::class)
+            ->set('deletingName', $this->region->name)
+            ->call('setDeletingRegion', $this->region)
+            ->call('destroy');
+
+        $this->assertSoftDeleted($this->region->fresh());
+
+        $dailyNumbers->each(fn(DailyNumber $dailyNumber) => $this->assertSoftDeleted($dailyNumber));
     }
 }
