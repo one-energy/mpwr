@@ -16,16 +16,24 @@ class DestroyDepartmentTest extends TestCase
 {
     use RefreshDatabase;
 
+    private User $admin;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->admin = User::factory()->create(['role' => 'Admin']);
+    }
+
     /** @test */
     public function it_should_soft_delete_a_department()
     {
-        $john       = User::factory()->create(['role' => 'Admin']);
         $mary       = User::factory()->create(['role' => 'Department Manager']);
         $department = Department::factory()->create([
             'department_manager_id' => $mary->id,
         ]);
 
-        $this->actingAs($john);
+        $this->actingAs($this->admin);
 
         Livewire::test(Departments::class)
             ->call('setDeletingDepartment', $department)
@@ -37,7 +45,6 @@ class DestroyDepartmentTest extends TestCase
     /** @test */
     public function it_should_soft_delete_regions_when_delete_a_department()
     {
-        $john       = User::factory()->create(['role' => 'Admin']);
         $mary       = User::factory()->create(['role' => 'Department Manager']);
         $department = Department::factory()->create([
             'department_manager_id' => $mary->id,
@@ -47,11 +54,9 @@ class DestroyDepartmentTest extends TestCase
 
         [$firstRegion, $secondRegion] = Region::factory()
             ->times(2)
-            ->create([
-                'department_id' => $department->id,
-            ]);
+            ->create(['department_id' => $department->id]);
 
-        $this->actingAs($john);
+        $this->actingAs($this->admin);
 
         Livewire::test(Departments::class)
             ->set('deletingName', $department->name)
@@ -69,7 +74,6 @@ class DestroyDepartmentTest extends TestCase
     /** @test */
     public function it_should_soft_delete_offices_and_regions_when_delete_a_department()
     {
-        $john       = User::factory()->create(['role' => 'Admin']);
         $mary       = User::factory()->create(['role' => 'Department Manager']);
         $department = Department::factory()->create([
             'department_manager_id' => $mary->id,
@@ -80,14 +84,12 @@ class DestroyDepartmentTest extends TestCase
 
         [$firstRegion, $secondRegion] = Region::factory()
             ->times(2)
-            ->create([
-                'department_id' => $department->id,
-            ]);
+            ->create(['department_id' => $department->id]);
 
         $officeFromFirstRegion  = Office::factory()->create(['region_id' => $firstRegion->id]);
         $officeFromSecondRegion = Office::factory()->create(['region_id' => $secondRegion->id]);
 
-        $this->actingAs($john);
+        $this->actingAs($this->admin);
 
         Livewire::test(Departments::class)
             ->set('deletingName', $department->name)
@@ -121,23 +123,11 @@ class DestroyDepartmentTest extends TestCase
         $officeFromFirstRegion  = Office::factory()->create(['region_id' => $firstRegion->id]);
         $officeFromSecondRegion = Office::factory()->create(['region_id' => $secondRegion->id]);
 
-        $zack = User::factory()->create([
-            'role'      => 'Setter',
-            'office_id' => $officeFromFirstRegion->id,
-        ]);
+        $zack = $this->makeUserFromOffice($officeFromFirstRegion);
+        $jack = $this->makeUserFromOffice($officeFromSecondRegion);
 
-        $zackDailyNumbers = DailyNumber::factory()
-            ->times(2)
-            ->create(['user_id' => $zack->id]);
-
-        $jack = User::factory()->create([
-            'role'      => 'Setter',
-            'office_id' => $officeFromSecondRegion->id,
-        ]);
-
-        $jackDailyNumbers = DailyNumber::factory()
-            ->times(2)
-            ->create(['user_id' => $jack->id]);
+        $zackDailyNumbers = $this->makeDailyNumberForUser($zack);
+        $jackDailyNumbers = $this->makeDailyNumberForUser($jack);
 
         $this->actingAs($john);
 
@@ -155,5 +145,20 @@ class DestroyDepartmentTest extends TestCase
 
         $zackDailyNumbers->each(fn(DailyNumber $dailyNumber) => $this->assertSoftDeleted($dailyNumber));
         $jackDailyNumbers->each(fn(DailyNumber $dailyNumber) => $this->assertSoftDeleted($dailyNumber));
+    }
+
+    private function makeDailyNumberForUser(User $user, int $times = 2)
+    {
+        return DailyNumber::factory()
+            ->times($times)
+            ->create(['user_id' => $user->id]);
+    }
+
+    public function makeUserFromOffice(Office $office)
+    {
+        return User::factory()->create([
+            'role'      => 'Setter',
+            'office_id' => $office->id,
+        ]);
     }
 }
