@@ -54,7 +54,7 @@ class DailyEntry extends Component
     public function getUsers($dateSelected)
     {
         $usersQuery = User::query();
-        if (user()->role == "Setter" || user()->role == "Sales Rep" || $this->isNotManager()) {
+        if (user()->role == "Setter" || user()->role == "Sales Rep" || !$this->isManager()) {
             $usersQuery->where("users.id", "=", user()->id);
         }
 
@@ -136,14 +136,14 @@ class DailyEntry extends Component
         return 'first_name';
     }
 
-    public function isNotManager(){
-        if (user()->id != Office::find($this->officeSelected)->office_manager_id) {
+    public function isManager(){
+        if (user()->id == Office::find($this->officeSelected)->office_manager_id) {
             return true;
         }
-        if (user()->id != Office::find($this->officeSelected)->region->region_manager_id) {
+        if (user()->id == Office::find($this->officeSelected)->region->region_manager_id) {
             return true;
         }
-        if (user()->id != Office::find($this->officeSelected)->region->deparment->department_manager_id) {
+        if (user()->id == Office::find($this->officeSelected)->region->department->department_manager_id) {
             return true;
         }
         return false;
