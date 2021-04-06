@@ -61,3 +61,17 @@
         </p>
     @enderror
 </div>
+<script>
+    function registerValidate() {
+        var oldValue = 0;
+        return {
+            validateSize($event, $maxSize) {
+                if($event.target.value > $maxSize){
+                    $event.target.value = this.oldValue
+                } else {
+                    this.oldValue = $event.target.value
+                }
+            },
+        }
+    }
+</script>
