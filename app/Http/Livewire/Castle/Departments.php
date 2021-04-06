@@ -3,7 +3,9 @@
 namespace App\Http\Livewire\Castle;
 
 use App\Models\Department;
+use App\Models\Office;
 use App\Traits\Livewire\FullTable;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Departments extends Component
@@ -49,6 +51,7 @@ class Departments extends Component
 
     public function destroy()
     {
+        /** @var Department $department */
         $department = $this->deletingDepartment;
 
         if ($department->regions()->count() || $department->users()->count()) {
@@ -59,11 +62,16 @@ class Departments extends Component
             ]);
         }
 
-        $departmentManager                = $department->departmentAdmin;
-        $departmentManager->department_id = null;
-        $departmentManager->save();
+        DB::transaction(function () use ($department) {
+            $departmentManager = $department->departmentAdmin;
+            $departmentManager->update(['department_id' => null]);
 
-        $department->delete();
+            Office::whereIn('region_id', $department->regions->pluck('id'))->delete();
+
+            $department->regions()->delete();
+
+            $department->delete();
+        });
 
         $this->dispatchBrowserEvent('close-modal');
         $this->deletingDepartment = null;
