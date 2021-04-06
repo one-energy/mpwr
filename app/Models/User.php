@@ -65,6 +65,24 @@ class User extends Authenticatable implements MustVerifyEmail
         'department_id',
     ];
 
+    protected $fillable = [
+        'first_name',
+        'last_name',
+        'email',
+        'email_verified_at',
+        'password',
+        'role',
+        'pay',
+        'timezone',
+        'master',
+        'photo_url',
+        'remember_token',
+        'kw_achived',
+        'office_id',
+        'department_id',
+        'install'
+    ];
+
     const ROLES = [
         ['title' => 'Owner', 'name' => 'Owner', 'description' => 'System Owner'],
         ['title' => 'Admin', 'name' => 'Admin', 'description' => 'Allows access to the Admin functionality and Manage Users, Incentives and others (Admin Tab)'],
