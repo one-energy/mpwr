@@ -82,6 +82,8 @@ class UsersTest extends TestCase
         $john = User::factory()->create(['role' => 'Office Manager']);
         $zack = User::factory()->create(['role' => 'Setter']);
 
+        Office::factory()->create(['office_manager_id' => $john->id]);
+
         $this->actingAs($mary);
 
         /** @var TestableLivewire $livewire */
