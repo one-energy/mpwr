@@ -23,23 +23,23 @@ class Users extends Component
         $query       = User::with('office')->select('users.*');
         if (user()->role == 'Office Manager') {
             $userOfficeId = user()->id;
-            $query->join('offices', function($join) use ($userOfficeId) {
+            $query->join('offices', function ($join) use ($userOfficeId) {
                 $join->on('users.office_id', '=', 'offices.id')
-                        ->where('offices.office_manager_id', '=', $userOfficeId);
+                    ->where('offices.office_manager_id', '=', $userOfficeId);
             });
         }
         if (user()->role == 'Region Manager') {
             $userRegionId = user()->id;
             $query->join('offices', 'users.office_id', '=', 'offices.id');
-            $query->join('regions', function($join) use ($userRegionId) {
+            $query->join('regions', function ($join) use ($userRegionId) {
                 $join->on('offices.region_id', '=', 'regions.id')
-                        ->where('regions.region_manager_id', '=', $userRegionId);
+                    ->where('regions.region_manager_id', '=', $userRegionId);
             });
         }
         if (user()->role == 'Department Manager') {
             $query->whereDepartmentId(user()->department_id)
-                    ->where('role', '!=', 'Admin')
-                    ->where('role', '!=', 'Owner');
+                ->where('role', '!=', 'Admin')
+                ->where('role', '!=', 'Owner');
         }
         if (user()->role == 'Admin') {
             $query->where('role', '!=', 'Owner');
