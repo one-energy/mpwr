@@ -99,6 +99,10 @@ class Regions extends Component
                 ->whereNotNull('parent_id')
                 ->where('department_folder', false)
                 ->delete();
+
+            $region->offices()->delete();
+
+            $region->delete();
         });
 
         $this->dispatchBrowserEvent('close-modal');
