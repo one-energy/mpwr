@@ -70,11 +70,10 @@ class Offices extends Component
         $office = $this->deletingOffice;
 
         if ($office->users()->count()) {
-            $this->validate([
-                'deletingName' => 'same:deletingOffice.name',
-            ], [
-                'deletingName.same' => 'The name of the office doesn\'t match',
-            ]);
+            $this->validate(
+                ['deletingName' => 'same:deletingOffice.name'],
+                ['deletingName.same' => "The name of the office doesn't match"]
+            );
         }
 
         $office->delete();
