@@ -509,7 +509,7 @@
 
                         <div class="w-full mt-6"wire:loading.remove wire:target="setDate, setPeriod, addFilter, removeFilter">
                             <div class="flex flex-col">
-                                <div class="overflow-x-auto">
+                                <div class="overflow-x-auto" x-data="{tooltipShow: false}">
                                     <div class="inline-block min-w-full overflow-hidden align-middle">
                                         @if(count($numbersTracked))
                                             <x-table>
@@ -552,7 +552,15 @@
                                                             @if(user()->role == 'Admin' || user()->role == 'Owner')
                                                                 <x-table.td>{{ $row->user->department->name }}</x-table.td>
                                                             @endif
-                                                            <x-table.td>{{ $row['first_name'] . ' ' .  $row['last_name']}}</x-table.td>
+                                                            <x-table.td class="flex center items-center	">
+                                                                @if($row['deleted_at'] != null)
+                                                                    <x-icon class="w-6 h-auto" icon="user-blocked" x-on:mouseenter="tooltipShow = true" x-on:mouseleave="tooltipShow = false"></x-icon>
+                                                                    <div class="relative">
+                                                                        <div x-show="tooltipShow" class="absolute left-1 bottom-1 px-2 py-1 bg-gray-700 text-xs text-white bg-white shadow border-0 block z-50 text-center break-words rounded-md">This user has been deleted</div>
+                                                                    </div>
+                                                                @endif
+                                                                {{ $row['first_name'] . ' ' .  $row['last_name']}}
+                                                            </x-table.td>
                                                             <x-table.td>{{ $row['doors'] ?? 0 }}</x-table.td>
                                                             <x-table.td>{{ $row['hours'] ?? 0 }}</x-table.td>
                                                             <x-table.td>{{ $row['sets'] ?? 0 }}</x-table.td>
@@ -603,7 +611,6 @@
 
             days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
             initDate() {
-                console.log('start');
                 let today = new Date();
                 this.month = today.getMonth();
                 this.year = today.getFullYear();
@@ -637,7 +644,6 @@
                     daysArray.push(i);
                 }
                 this.no_of_days = daysArray;
-                console.log(daysArray);
             }
         }
     }
