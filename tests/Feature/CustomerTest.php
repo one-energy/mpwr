@@ -328,7 +328,7 @@ class CustomerTest extends TestCase
      public function it_should_save_user_overrides_on_customer()
      {
         $financing = Financing::factory()->create();
-        $financer  = FInancer::factory()->create();
+        $financer  = Financer::factory()->create();
         $user      = User::factory()->create(['role' => 'Department Manager']);
         $regionMng = User::factory()->create(['role' => 'Region Manager']);
         $officeMng = User::factory()->create(['role' => 'Office Manager']);
