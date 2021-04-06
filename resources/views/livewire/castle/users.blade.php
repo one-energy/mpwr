@@ -19,7 +19,7 @@
                             <x-table :pagination="$users->links()">
                                 <x-slot name="header">
                                     <tr class="sm:border-gray-200 border-b-2">
-                                        @if(user()->role == "Admin")
+                                        @if(user()->hasRole('Admin'))
                                             <x-table.th by="first_name">
                                                 @lang('Department')
                                             </x-table.th>
@@ -45,10 +45,10 @@
                                     @foreach($users as $user)
                                         @if($this->canEditUser($user))
                                         <x-table.tr :loop="$loop" class="cursor-pointer">
-                                            @if(user()->role == "Admin"))
+                                            @if(user()->hasRole('Admin'))
                                                     <x-table.td>{{ $user->department->name ?? 'Without Department' }}</x-table.td>
                                                 @endif
-                                                <x-table.td>{{ $user->first_name . ' ' . $user->last_name }}</x-table.td>
+                                                <x-table.td>{{ $user->full_name }}</x-table.td>
                                                 <x-table.td>{{ $user->email }}</x-table.td>
                                                 <x-table.td x-data="{ open: false }" class="relative">
                                                     <div class="flex items-center">
@@ -102,7 +102,7 @@
                                             </x-table.tr>
                                         @else
                                             <x-table.tr :loop="$loop" class="cursor-pointer">
-                                                @if(user()->role == "Admin")
+                                                @if(user()->hasRole('Admin'))
                                                     <x-table.td>{{ $user->department->name ?? 'Without Department' }}</x-table.td>
                                                 @endif
                                                 <x-table.td>{{ $user->first_name . ' ' . $user->last_name }}</x-table.td>
