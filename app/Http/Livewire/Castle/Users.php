@@ -11,6 +11,7 @@ class Users extends Component
     use FullTable;
 
     public $roles;
+
     public string $userOffices;
 
     public function sortBy()
@@ -108,6 +109,7 @@ class Users extends Component
     {
         if ($user->hasRole('Office Manager')) {
             $this->userOffices = implode('<br />', $user->managedOffices->pluck('name')->toArray());
+
             return;
         }
 
