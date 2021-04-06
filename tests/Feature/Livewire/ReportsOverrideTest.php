@@ -6,18 +6,28 @@ use App\Http\Livewire\Reports\ReportsOverview;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\User;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Response;
 use Livewire\Livewire;
 use Tests\TestCase;
 
 class ReportsOverrideTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
+
+    private User $admin;
+    private User $departmentManager;
+    private User $regionManager;
+    private User $officeManager;
+    private User $salesRep;
+    private User $setter;
+    private Customer $customer;
+    private Department $department;
 
     protected function setUp(): void
     {
         parent::setUp();
-
 
         $this->admin = User::factory()->create([
             'role' => 'Admin',
@@ -47,29 +57,20 @@ class ReportsOverrideTest extends TestCase
             'department_id' => $this->department->id
         ]);
 
-        $this->customer = Customer::factory()->create([
+        $this->customer = $this->makeCustomer([
             'system_size'                 => 10,
-            'setter_id'                   => $this->setter->id,
             'setter_fee'                  => 10,
-            'sales_rep_id'                => $this->salesRep->id,
             'sales_rep_fee'               => 20,
-            'department_manager_id'       => $this->departmentManager->id,
-            'region_manager_id'           => $this->regionManager->id,
-            'office_manager_id'           => $this->officeManager->id,
             'department_manager_override' => 10,
             'region_manager_override'     => 20,
-            'office_manager_override'     => 30,
-            'panel_sold'                  => false,
-            'is_active'                   => true,
+            'office_manager_override'     => 30
         ]);
     }
 
     /** @test */
     public function it_should_open_commission_reports()
     {
-        $response = $this->get('/reports');
-
-        $response->assertStatus(200);
+        $this->get('/reports')->assertStatus(Response::HTTP_OK);
     }
 
     /** @test */
@@ -96,7 +97,7 @@ class ReportsOverrideTest extends TestCase
     }
 
     /** @test */
-    public function it_should_see_instaled_customers()
+    public function it_should_see_installed_customers()
     {
         $customer = $this->makeCustomer([
             'is_active'  => true,
@@ -169,7 +170,7 @@ class ReportsOverrideTest extends TestCase
                 'region_manager_id' => $this->regionManager->id,
                 'office_manager_id' => $this->officeManager->id,
                 'panel_sold' => true,
-                'is_active' => true,
+                'is_active' => true
             ],
             $attr
         ));
