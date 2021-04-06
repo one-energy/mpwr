@@ -2,9 +2,11 @@
 
 namespace App\Http\Livewire\Castle;
 
+use App\Models\DailyNumber;
 use App\Models\Department;
 use App\Models\Office;
 use App\Traits\Livewire\FullTable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -66,7 +68,16 @@ class Departments extends Component
             $departmentManager = $department->departmentAdmin;
             $departmentManager->update(['department_id' => null]);
 
-            Office::whereIn('region_id', $department->regions->pluck('id'))->delete();
+            $officeIds = Office::whereIn('region_id', $department->regions->pluck('id'))
+                ->select('id')
+                ->get();
+
+            DailyNumber::whereHas(
+                'user.office',
+                fn(Builder $query) => $query->whereIn('id', $officeIds)
+            )->delete();
+
+            Office::whereIn('id', $officeIds)->delete();
 
             $department->regions()->delete();
 

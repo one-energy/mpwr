@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Castle;
 
+use App\Models\DailyNumber;
 use App\Models\Department;
 use App\Models\Region;
 use App\Models\SectionFile;
@@ -99,6 +100,11 @@ class Regions extends Component
                 ->whereNotNull('parent_id')
                 ->where('department_folder', false)
                 ->delete();
+
+            DailyNumber::whereHas(
+                'user.office',
+                fn (Builder $query) => $query->whereIn('id', $region->offices->pluck('id'))
+            )->delete();
 
             $region->offices()->delete();
 
