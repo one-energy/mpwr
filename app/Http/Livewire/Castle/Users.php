@@ -92,7 +92,11 @@ class Users extends Component
             return false;
         }
 
-        if ($user->hasRole('Department Manager')) {
+        if ($user->hasRole('Office Manager') && $user->managedOffices->isEmpty()) {
+            return false;
+        }
+
+        if ($user->hasAnyRole(['Region Manager', 'Department Manager']) && $user->office === null) {
             return false;
         }
 
