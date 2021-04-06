@@ -4,6 +4,7 @@ namespace Tests\Feature\Livewire\Castle\Region;
 
 use App\Http\Livewire\Castle\Regions;
 use App\Models\Department;
+use App\Models\Office;
 use App\Models\Region;
 use App\Models\TrainingPageSection;
 use App\Models\User;
@@ -15,6 +16,21 @@ use Tests\TestCase;
 class DestroyRegionTest extends TestCase
 {
     use RefreshDatabase;
+
+    private User $admin;
+
+    private Department $department;
+
+    private Region $region;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->admin      = User::factory()->create(['role' => 'Admin']);
+        $this->department = Department::factory()->create();
+        $this->region     = Region::factory()->create(['department_id' => $this->department->id]);
+    }
 
     /** @test */
     public function it_should_soft_delete_a_region()
@@ -152,5 +168,29 @@ class DestroyRegionTest extends TestCase
 
         $this->assertSame($root->id, $content01->fresh()->training_page_section_id);
         $this->assertSame($root->id, $content02->fresh()->training_page_section_id);
+    }
+
+    /** @test */
+    public function it_should_soft_delete_related_offices_when_delete_a_region()
+    {
+        $dummyOffice = Office::factory()->create();
+
+        [$firstOffice, $secondOffice] = Office::factory()
+            ->times(2)
+            ->create(['region_id' => $this->region->id]);
+
+        $this->actingAs($this->admin);
+
+        Livewire::test(Regions::class)
+            ->set('deletingName', $this->region->name)
+            ->call('setDeletingRegion', $this->region)
+            ->call('destroy');
+
+        $this
+            ->assertSoftDeleted($this->region->fresh())
+            ->assertSoftDeleted($firstOffice->fresh())
+            ->assertSoftDeleted($secondOffice->fresh());
+
+        $this->assertNull($dummyOffice->deleted_at);
     }
 }
