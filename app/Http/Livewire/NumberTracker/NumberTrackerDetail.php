@@ -89,7 +89,8 @@ class NumberTrackerDetail extends Component
     {
         $query = DailyNumber::query()
             ->leftJoin('users', function ($join) {
-                $join->on('users.id', '=', 'daily_numbers.user_id');
+                $join->on('users.id', '=', 'daily_numbers.user_id')
+                    ->on('users.office_id', '=', 'daily_numbers.office_id');
             })
             ->join('offices', 'users.office_id', '=', 'offices.id')
             ->select([DB::raw('users.first_name, users.last_name, daily_numbers.id, daily_numbers.user_id, SUM(doors) as doors,
