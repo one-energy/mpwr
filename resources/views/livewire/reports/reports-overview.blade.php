@@ -27,10 +27,10 @@
                     </x-select>
                     @if($rangeType == "custom")
                         <div class="grid grid-cols-2 gap-2 col-span-2 ">
-                            <x-input-calendar key="startDate" wire name="startDate" label="From" :value="$startDate"/>
-                            <x-input-calendar key="finalDate" wire name="finalDate" label="From" :value="$finalDate"/>
+                            <x-input-calendar wire label="From" name="startDate" />
+                            <x-input-calendar wire label="To" name="finalDate" />
                         </div>
-                    @endif()
+                    @endif
                 </div>
             </div>
             <div class="grid justify-items-center mt-6 overflow-x-auto">

@@ -146,7 +146,7 @@ class ReportsOverview extends Component
             ->get();
     }
 
-    public function formatNumber(?int $value, int $decimals = 2)
+    public function formatNumber(?float $value, int $decimals = 2)
     {
         if ($value === null) {
             return '-';
