@@ -17,7 +17,7 @@ use Tests\Builders\DailyEntryBuilder;
 
 class DailyEntryTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private User $dptManager;
     private User $regionManager;
