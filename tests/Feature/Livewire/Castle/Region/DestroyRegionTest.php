@@ -10,6 +10,7 @@ use App\Models\Region;
 use App\Models\TrainingPageSection;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -219,5 +220,27 @@ class DestroyRegionTest extends TestCase
         $this->assertSoftDeleted($this->region->fresh());
 
         $dailyNumbers->each(fn(DailyNumber $dailyNumber) => $this->assertSoftDeleted($dailyNumber));
+    }
+
+    /** @test */
+    public function it_should_soft_delete_all_users_from_the_region_that_is_being_deleted()
+    {
+        $office = Office::factory()->create(['region_id' => $this->region->id]);
+
+        /** @var Collection */
+        $dummyUsers = User::factory()
+            ->times(5)
+            ->create(['office_id' => $office->id]);
+
+        $this->actingAs($this->admin);
+
+        Livewire::test(Regions::class)
+            ->set('deletingName', $this->region->name)
+            ->call('setDeletingRegion', $this->region)
+            ->call('destroy');
+
+        $this->assertSoftDeleted($this->region->fresh());
+
+        $dummyUsers->each(fn (User $user) => $this->assertSoftDeleted($user));
     }
 }

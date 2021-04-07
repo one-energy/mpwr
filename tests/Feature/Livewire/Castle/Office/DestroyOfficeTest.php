@@ -58,7 +58,31 @@ class DestroyOfficeTest extends TestCase
             ->call('destroy');
 
         $this->assertSoftDeleted($office);
+
         $dailyNumbers->each(fn(DailyNumber $dailyNumber) => $this->assertSoftDeleted($dailyNumber));
         $dummyNumbers->each(fn(DailyNumber $dailyNumber) => $this->assertNull($dailyNumber->deleted_at));
+    }
+
+    /** @test */
+    public function it_should_soft_delete_all_users_from_the_office_that_is_being_deleted()
+    {
+        $john   = User::factory()->create(['role' => 'Admin']);
+        $office = Office::factory()->create();
+
+        /** @var Collection */
+        $dummyUsers = User::factory()
+            ->times(5)
+            ->create(['office_id' => $office->id]);
+
+        $this->actingAs($john);
+
+        Livewire::test(Offices::class)
+            ->set('deletingName', $office->name)
+            ->call('setDeletingOffice', $office)
+            ->call('destroy');
+
+        $this->assertSoftDeleted($office);
+
+        $dummyUsers->each(fn (User $user) => $this->assertSoftDeleted($user));
     }
 }

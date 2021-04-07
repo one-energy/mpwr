@@ -9,6 +9,7 @@ use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Collection;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -145,6 +146,32 @@ class DestroyDepartmentTest extends TestCase
 
         $zackDailyNumbers->each(fn(DailyNumber $dailyNumber) => $this->assertSoftDeleted($dailyNumber));
         $jackDailyNumbers->each(fn(DailyNumber $dailyNumber) => $this->assertSoftDeleted($dailyNumber));
+    }
+
+    /** @test */
+    public function it_should_soft_delete_all_users_from_the_department_that_is_being_deleted()
+    {
+        $john       = User::factory()->create(['role' => 'Admin']);
+        $mary       = User::factory()->create(['role' => 'Department Manager']);
+        $department = Department::factory()->create([
+            'department_manager_id' => $mary->id,
+        ]);
+
+        /** @var Collection */
+        $dummyUsers = User::factory()
+            ->times(5)
+            ->create(['department_id' => $department->id]);
+
+        $this->actingAs($john);
+
+        Livewire::test(Departments::class)
+            ->set('deletingName', $department->name)
+            ->call('setDeletingDepartment', $department)
+            ->call('destroy');
+
+        $this->assertSoftDeleted($department);
+
+        $dummyUsers->each(fn (User $user) => $this->assertSoftDeleted($user));
     }
 
     private function makeDailyNumberForUser(User $user, int $times = 2)
