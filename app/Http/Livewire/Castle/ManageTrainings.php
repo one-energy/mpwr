@@ -37,7 +37,8 @@ class ManageTrainings extends Component
 
     public function render()
     {
-        $index               = 0;
+        $index         = 0;
+
         $this->actualSection = new TrainingPageSection();
 
         if (!$this->department->id && (user()->role == 'Owner' || user()->role == 'Admin')) {
