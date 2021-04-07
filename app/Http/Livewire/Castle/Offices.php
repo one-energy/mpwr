@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Castle;
 use App\Models\DailyNumber;
 use App\Models\Office;
 use App\Models\Region;
+use App\Models\User;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -84,6 +85,7 @@ class Offices extends Component
                 fn(Builder $query) => $query->whereIn('id', [$office->id])
             )->delete();
 
+            $office->users()->delete();
             $office->delete();
         });
 

@@ -8,6 +8,7 @@ use App\Models\Region;
 use App\Models\SectionFile;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
+use App\Models\User;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -105,6 +106,8 @@ class Regions extends Component
                 'user.office',
                 fn (Builder $query) => $query->whereIn('id', $region->offices->pluck('id'))
             )->delete();
+
+            User::whereIn('office_id', $region->offices->pluck('id'))->delete();
 
             $region->offices()->delete();
 

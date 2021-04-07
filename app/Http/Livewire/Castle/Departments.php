@@ -80,7 +80,7 @@ class Departments extends Component
             Office::whereIn('id', $officeIds)->delete();
 
             $department->regions()->delete();
-
+            $department->users()->delete();
             $department->delete();
         });
 
