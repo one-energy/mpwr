@@ -53,7 +53,8 @@ class NumberTrackerDetail extends Component
     {
         $this->numbersTracked = $this->getTrackerNumbers();
         $this->graficValue    = $this->numbersTracked->sum($this->filterBy);
-        $showOptions          = [
+
+        $showOptions = [
             'Daily Total',
             'Weekly Total',
             'Monthly Total',
