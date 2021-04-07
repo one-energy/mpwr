@@ -22,9 +22,16 @@ class StoreNumberTrackingRequest extends FormRequest
     public function rules()
     {
         return [
-            'officeSelected' => 'required|integer',
-            'date'           => 'nullable|date',
-            'numbers'        => 'required|array',
+            'officeSelected'       => 'required|integer',
+            'date'                 => 'nullable|date',
+            'numbers'              => 'required|array',
+            'numbers.*.doors'      => 'required|integer|min:0|gte:numbers.*.sets',
+            'numbers.*.hours'      => 'required|integer|min:0|max:24',
+            'numbers.*.sets'       => 'required|integer|min:0|gte:numbers.*.closes',
+            'numbers.*.set_sits'   => 'required|integer|min:0',
+            'numbers.*.sits'       => 'required|integer|min:0',
+            'numbers.*.set_closes' => 'required|integer|min:0',
+            'numbers.*.closes'     => 'required|integer|min:0',
         ];
     }
 }
