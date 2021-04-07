@@ -4,6 +4,7 @@ namespace Tests\Feature\NumberTracker;
 
 use App\Models\User;
 use App\Http\Livewire\NumberTracker\NumberTrackerDetail;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Livewire\Livewire;
 use Tests\Feature\FeatureTest;
 use Tests\Builders\DailyEntryBuilder;
@@ -11,7 +12,8 @@ use Tests\Builders\UserBuilder;
 
 class NumberTrackerTest extends FeatureTest
 {
-    
+
+    use DatabaseTransactions;
     /** @test */
     public function it_should_change_pariod()
     {
@@ -35,17 +37,19 @@ class NumberTrackerTest extends FeatureTest
         Livewire::test(NumberTrackerDetail::class)
             ->call('setPeriod', 'd')
             ->assertSet('period', 'd');
-        
+
         Livewire::test(NumberTrackerDetail::class)
             ->call('setPeriod', 'm')
             ->assertSet('period', 'm');
-    
+
     }
 
-    public function it_should_show_top_five()
+    public function it_should_show_icon_when_user_is_deleted()
     {
-        $users = factory(User:: class, 5)->create();
 
+        $view = $this->component(Icon::class, ['icon' => "user-blocked"]);
+        Livewire::test(DailyEntry::class);
+        $view->assertSee("user-blocked");
     }
-   
+
 }

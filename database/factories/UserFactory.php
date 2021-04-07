@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Department;
+use App\Models\Office;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Storage;
@@ -28,7 +30,9 @@ class UserFactory extends Factory
             'remember_token'    => Str::random(10),
             'role'              => $role,
             'pay'               => rand(10, 100),
-            'installs'          => 0
+            'installs'          => 0,
+            'department_id'     => null,
+            'office_id'         => null
         ];
     }
 }

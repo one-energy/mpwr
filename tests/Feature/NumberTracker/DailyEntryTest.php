@@ -3,107 +3,136 @@
 namespace Tests\Feature\NumberTracker;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Livewire\Livewire;
-use Tests\Unit\UnitTest;
 use App\Http\Livewire\NumberTracker\DailyEntry;
+use App\Models\DailyNumber;
 use App\Models\Department;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
-use Tests\Builders\UserBuilder;
+use Carbon\Carbon;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\Builders\DailyEntryBuilder;
-use Tests\Builders\OfficeBuilder;
-use Tests\Builders\RegionBuilder;
-use Tests\Feature\FeatureTest;
 
-
-class DailyEntryTest extends FeatureTest
+class DailyEntryTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
+
+    private User $dptManager;
+    private User $regionManager;
+    private User $officeManager;
+    private User $john;
+
+    private Department $department;
+    private Region $region;
+    private Office $office;
+
+    private DailyNumber $officeManagerEntry;
+    private DailyNumber $johnManagerEntry;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create(['master' => true]);
+        $this->dptManager = User::factory()->create([
+            'department_id' => null,
+            'office_id'     => null
+        ]);
 
-        $this->actingAs($this->user);
+        $this->regionManager = User::factory()->create([
+            'department_id' => null,
+            'office_id'     => null
+        ]);
+        $this->officeManager = User::factory()->create([
+            'department_id' => null,
+            'office_id'     => null
+        ]);
+
+        $this->department = Department::factory()->create([
+            'department_manager_id' => $this->dptManager->id
+        ]);
+
+        $this->region     = Region::factory()->create([
+            'department_id'     => $this->department->id,
+            'region_manager_id' => $this->regionManager->id
+        ]);
+
+        $this->office     = Office::factory()->create([
+            'region_id'         => $this->region->id,
+            'office_manager_id' => $this->officeManager->id,
+        ]);
+
+        $this->john       = User::factory()->create([
+            'role'          => "Sales Rep",
+            'department_id' => $this->department->id,
+            'office_id'     => $this->office->id
+        ]);
+
+        $this->dptManager->department_id = $this->department->id;
+        $this->dptManager->office_id = $this->office->id;
+        $this->dptManager->save();
+        $this->regionManager->department_id = $this->department->id;
+        $this->regionManager->office_id = $this->office->id;
+        $this->regionManager->save();
+        $this->officeManager->department_id = $this->department->id;
+        $this->officeManager->office_id = $this->office->id;
+        $this->officeManager->save();
+
+        $this->actingAs($this->dptManager);
+
+        $this->officeManagerEntry = DailyNumber::factory()->create([
+            'user_id' => $this->officeManager->id,
+            'date'    => Carbon::now(),
+            'doors'   => 15
+        ]);
+        $this->johnEntry = DailyNumber::factory()->create([
+            'user_id' => $this->john->id,
+            'date'    => Carbon::now(),
+            'doors'   => 15
+        ]);
     }
 
     /** @test */
-    public function it_should_sum_kpi_users_entries () 
+    public function it_should_show_user_daily_entry()
     {
-        $departmentManager = factory(User::class)->create([
-            'role' => 'Department Manager'
-        ]);
-        $department        = factory(Department::class)->create([
-            'department_manager_id' => $departmentManager->id
-        ]);
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
-
-        $region        = factory(Region::class)->create([
-            'region_manager_id' => $this->user->id,
-            'department_id' => $department->id
-        ]);
-        $officeManager = factory(User::class)->create([
-            'role' => 'Office Manager',
-            'department_id' => $department->id
-        ]);
-        $office         = factory(Office::class)->create([
-            'region_id' => $region->id,
-            'office_manager_id' => $officeManager->id
-        ]);
-
-        $userOne    = factory(User::class)->create([
-            "office_id" => $office->id,
-            "department_id" => $department->id
-        ]);
-        $userTwo    = factory(User::class)->create([
-            "office_id" => $office->id,
-            "department_id" => $department->id
-        ]);
-        $userThree    = factory(User::class)->create([
-            "office_id" => $office->id,
-            "department_id" => $department->id
-        ]);
-        $userFour    = factory(User::class)->create([
-            "office_id" => $office->id,
-            "department_id" => $department->id
-        ]);
-
-        $dailyEntryOne   = (new DailyEntryBuilder)->withUser($userOne->id)->withDate(date("Y-m-d", time()))->save()->get();
-        $dailyEntryTwo   = (new DailyEntryBuilder)->withUser($userTwo->id)->withDate(date("Y-m-d", time()))->save()->get();
-        $dailyEntryThree = (new DailyEntryBuilder)->withUser($userThree->id)->withDate(date("Y-m-d", time()))->save()->get();
-        $dailyEntryFour  = (new DailyEntryBuilder)->withUser($userFour->id)->withDate(date("Y-m-d", time()))->save()->get();
-        
-        $lastDailyEntryOne   = (new DailyEntryBuilder)->withUser($userOne->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
-        $lastDailyEntryTwo   = (new DailyEntryBuilder)->withUser($userTwo->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
-        $lastDailyEntryThree = (new DailyEntryBuilder)->withUser($userThree->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
-        $lastDailyEntryFour  = (new DailyEntryBuilder)->withUser($userFour->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
-        
-        $this->actingAs($departmentManager);
-
-        //test if sum its right
         Livewire::test(DailyEntry::class)
-            ->assertSee( $dailyEntryOne->doors + $dailyEntryTwo->doors + $dailyEntryThree->doors + $dailyEntryFour->doors)
-            ->assertSee( $dailyEntryOne->hours + $dailyEntryTwo->hours + $dailyEntryThree->hours + $dailyEntryFour->hours)
-            ->assertSee( $dailyEntryOne->sets + $dailyEntryTwo->sets + $dailyEntryThree->sets + $dailyEntryFour->sets)
-            ->assertSee( $dailyEntryOne->sits + $dailyEntryTwo->sits + $dailyEntryThree->sits + $dailyEntryFour->sits)
-            ->assertSee( $dailyEntryOne->set_closes + $dailyEntryTwo->set_closes + $dailyEntryThree->set_closes + $dailyEntryFour->set_closes)
-            ->assertSee( $dailyEntryOne->closes + $dailyEntryTwo->closes + $dailyEntryThree->closes + $dailyEntryFour->closes);
-        
-        //test if sum its right
-        Livewire::test(DailyEntry::class)
-            ->assertSee( ($dailyEntryOne->doors + $dailyEntryTwo->doors + $dailyEntryThree->doors + $dailyEntryFour->doors)                     - ($lastDailyEntryOne->doors + $lastDailyEntryTwo->doors + $lastDailyEntryThree->doors + $lastDailyEntryFour->doors))
-            ->assertSee( ($dailyEntryOne->hours + $dailyEntryTwo->hours + $dailyEntryThree->hours + $dailyEntryFour->hours)                     - ($lastDailyEntryOne->hours + $lastDailyEntryTwo->hours + $lastDailyEntryThree->hours + $lastDailyEntryFour->hours))
-            ->assertSee( ($dailyEntryOne->sets + $dailyEntryTwo->sets + $dailyEntryThree->sets + $dailyEntryFour->sets)                         - ($lastDailyEntryOne->sets + $lastDailyEntryTwo->sets + $lastDailyEntryThree->sets + $lastDailyEntryFour->sets))
-            ->assertSee( ($dailyEntryOne->sits + $dailyEntryTwo->sits + $dailyEntryThree->sits + $dailyEntryFour->sits)                         - ($lastDailyEntryOne->sits + $lastDailyEntryTwo->sits + $lastDailyEntryThree->sits + $lastDailyEntryFour->sits))
-            ->assertSee( ($dailyEntryOne->set_closes + $dailyEntryTwo->set_closes + $dailyEntryThree->set_closes + $dailyEntryFour->set_closes) - ($lastDailyEntryOne->set_closes + $lastDailyEntryTwo->set_closes + $lastDailyEntryThree->set_closes + $lastDailyEntryFour->set_closes))
-            ->assertSee( ($dailyEntryOne->closes + $dailyEntryTwo->closes + $dailyEntryThree->closes + $dailyEntryFour->closes)                 - ($lastDailyEntryOne->closes + $lastDailyEntryTwo->closes + $lastDailyEntryThree->closes + $lastDailyEntryFour->closes));
+            ->set('officeSelected', $this->office->id)
+            ->assertSee($this->john->first_name)
+            ->assertSee(15);
     }
 
-       
+     /** @test */
+     public function it_should_show_sum_of_daily_entry()
+     {
+         Livewire::test(DailyEntry::class)
+             ->set('officeSelected', $this->office->id)
+             ->set('dateSelected', Carbon::now())
+             ->assertSee($this->officeManager->first_name)
+             ->assertSee($this->john->first_name)
+             ->assertSee($this->johnEntry->doors + $this->officeManagerEntry->doors);
+     }
+
+    /** @test */
+    public function it_should_show_deleted_user_that_has_a_daily_entry()
+    {
+        $user = User::factory()->create([
+            'role'          => "Sales Rep",
+            'department_id' => $this->department->id,
+            'office_id'     => $this->office->id,
+            'deleted_at'    => Carbon::now()
+        ]);
+
+        DailyNumber::factory()->create([
+            'user_id' => $user->id,
+            'date'    => Carbon::yesterday(),
+            'doors'   => 15
+        ]);
+        Livewire::test(DailyEntry::class)
+            ->set('officeSelected', $this->office->id)
+            ->set('dateSelected', Carbon::now())
+            ->assertDontSee($user->first_name)
+            ->set('dateSelected', Carbon::yesterday())
+            ->assertSee($user->first_name);
+    }
 }
