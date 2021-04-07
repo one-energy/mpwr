@@ -26,7 +26,7 @@ class StoreNumberTrackingRequest extends FormRequest
             'date'                 => 'nullable|date',
             'numbers'              => 'required|array',
             'numbers.*.doors'      => 'required|integer|min:0|gte:numbers.*.sets',
-            'numbers.*.hours'      => 'required|integer|min:0|max:24',
+            'numbers.*.hours'      => 'required|numeric|between:0,24',
             'numbers.*.sets'       => 'required|integer|min:0|gte:numbers.*.closes',
             'numbers.*.set_sits'   => 'required|integer|min:0',
             'numbers.*.sits'       => 'required|integer|min:0',
