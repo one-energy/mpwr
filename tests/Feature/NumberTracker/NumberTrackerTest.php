@@ -11,7 +11,7 @@ use App\Models\Office;
 use App\Models\Region;
 use App\View\Components\Icon;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\Builders\DailyEntryBuilder;
 use Tests\Builders\UserBuilder;
@@ -20,7 +20,7 @@ use Tests\TestCase;
 class NumberTrackerTest extends TestCase
 {
 
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
