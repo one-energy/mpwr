@@ -27,7 +27,7 @@ class OfficeBuilder
     public function save()
     {
         if (!$this->office->office_manager_id) {
-            $this->office->office_manager_id = factory(User::class)->create()->id;
+            $this->office->office_manager_id = User::factory()->create()->id;
         }
         $this->office->save();
 
@@ -56,7 +56,7 @@ class OfficeBuilder
 
     public function addMembers(int $qty)
     {
-        $users = factory(User::class, $qty)->create();
+        $users = User::factory()->count($qty)->create();
 
         foreach ($users as $user) {
             $this->office->users()->attach($user, ['role' => array_search('Setter', User::ROLES)]);

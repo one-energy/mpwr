@@ -12,7 +12,7 @@
     $wire = $wire && is_bool($wire) ? $name : $wire;
 @endphp
 
-<div {{ $attributes }} x-data="registerValidate()">
+<div {{ $attributes }} x-data="registerCurrencyValidate()">
     <div class="flex">
         <label for="{{ $name }}" class="block text-sm font-medium leading-5 text-gray-700">{{ $label }}</label>
         @if($tooltip)
@@ -61,3 +61,20 @@
         </p>
     @enderror
 </div>
+
+@push('scripts')
+    <script>
+        function registerCurrencyValidate() {
+            var oldValue = 0;
+            return {
+                validateSize($event, $maxSize) {
+                    if($event.target.value > $maxSize){
+                        $event.target.value = this.oldValue
+                    } else {
+                        this.oldValue = $event.target.value
+                    }
+                },
+            }
+        }
+    </script>
+@endpush
