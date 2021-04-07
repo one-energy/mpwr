@@ -28,9 +28,9 @@ class NumberTrackerDetail extends Component
 
     public $date;
 
-    public $graficValue;
+    public $graphicValue;
 
-    public $graficValueLast;
+    public $graphicValueLast;
 
     public $filterBy = 'doors';
 
@@ -51,8 +51,8 @@ class NumberTrackerDetail extends Component
 
     public function render()
     {
-        $this->numbersTracked = $this->getTrackerNumbers();
-        $this->graficValue    = $this->numbersTracked->sum($this->filterBy);
+        $this->numbersTracked  = $this->getTrackerNumbers();
+        $this->graphicValue    = $this->numbersTracked->sum($this->filterBy);
 
         $showOptions = [
             'Daily Total',
@@ -147,7 +147,7 @@ class NumberTrackerDetail extends Component
             ->groupBy('user_id')
             ->get();
 
-        $this->graficValueLast    = $this->numbersTrackedLast->sum($this->filterBy);
+        $this->graphicValueLast    = $this->numbersTrackedLast->sum($this->filterBy);
 
         $query->groupBy('daily_numbers.user_id')
             ->when(user()->role != 'Admin' && user()->role != 'Owner', function($query) {
