@@ -23,11 +23,7 @@ class NumberTrackingController extends Controller
 
     public function store(StoreNumberTrackingRequest $request, NumberTrackingService $service)
     {
-        $data = $request->validated();
-
-        $numbers = collect($data['numbers']);
-
-        if ($numbers->isEmpty()) {
+        if (collect($request->numbers)->isEmpty()) {
             alert()
                 ->withTitle(__('Nothing was saved :('))
                 ->withColor('red')
