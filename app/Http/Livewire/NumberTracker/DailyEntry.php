@@ -60,7 +60,8 @@ class DailyEntry extends Component
         return $usersQuery
             ->whereOfficeId($this->officeSelected)
             ->with(['dailyNumbers' => function($query) use ($dateSelected) {
-                $query->whereDate('date', $dateSelected);
+                $query->whereDate('date', $dateSelected)
+                    ->where('office_id', $this->officeSelected);
             }])
             ->orderBy('first_name')
             ->get();
