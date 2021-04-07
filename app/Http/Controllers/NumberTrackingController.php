@@ -32,7 +32,7 @@ class NumberTrackingController extends Controller
             return back();
         }
 
-        $service->updateOrCreate($request->validated());
+        $service->updateOrCreateNumberTracking($request->validated());
 
         alert()
             ->withTitle(__('Daily Numbers saved!'))

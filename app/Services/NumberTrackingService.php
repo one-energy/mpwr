@@ -8,7 +8,7 @@ use Illuminate\Support\Carbon;
 
 final class NumberTrackingService
 {
-    public function updateOrCreate(array $validatedFields)
+    public function updateOrCreateNumberTracking(array $validatedFields)
     {
         $user = User::findOrFail(array_keys($validatedFields['numbers'])[0]);
 
