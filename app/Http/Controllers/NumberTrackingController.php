@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\NumberTracking\StoreNumberTrackingRequest;
 use App\Models\DailyNumber;
+use App\Services\NumberTrackingService;
 use Illuminate\Http\Request;
 
 class NumberTrackingController extends Controller
@@ -19,48 +21,26 @@ class NumberTrackingController extends Controller
         return view('number-tracking.create');
     }
 
-    public function store()
+    public function store(StoreNumberTrackingRequest $request, NumberTrackingService $service)
     {
-        $data = request()->all();
+        $data = $request->validated();
 
-        // $this->authorize('update', [DailyNumber::class, $data['officeSelected']]);
+        $numbers = collect($data['numbers']);
 
-        if (!empty($data['numbers'])) {
-            $date = ($data['date']) ? date('Y-m-d', strtotime($data['date'])) : date('Y-m-d', time());
-
-            foreach ($data['numbers'] as $userId => $numbers) {
-                $filteredNumbers = array_filter($numbers, function ($element) {
-                    return ($element >= 0);
-                });
-
-                $isEmpty = empty(array_filter($filteredNumbers, function($item) {
-                    return $item !== null;
-                }));
-
-                if (!$isEmpty) {
-                    DailyNumber::updateOrCreate(
-                        [
-                            'user_id' => $userId,
-                            'date'    => $date,
-                        ],
-                        $filteredNumbers
-                    );
-                } else {
-                    $dailyNumber = DailyNumber::whereDate('date', $date)->whereUserId($userId)->first();
-                    if (!empty($dailyNumber)) {
-                        DailyNumber::destroy($dailyNumber->id);
-                    }
-                }
-            }
-            alert()
-                ->withTitle(__('Daily Numbers saved!'))
-                ->send();
-        } else {
+        if ($numbers->isEmpty()) {
             alert()
                 ->withTitle(__('Nothing was saved :('))
                 ->withColor('red')
                 ->send();
+
+            return back();
         }
+
+        $service->updateOrCreate($request->validated());
+
+        alert()
+            ->withTitle(__('Daily Numbers saved!'))
+            ->send();
 
         return back();
     }
