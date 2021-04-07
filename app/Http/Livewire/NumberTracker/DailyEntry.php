@@ -58,20 +58,19 @@ class DailyEntry extends Component
             $usersQuery->where("users.id", "=", user()->id);
         }
 
-        $users = $usersQuery
-        ->withTrashed()
-        ->whereOfficeId($this->officeSelected)
-        ->with(['dailyNumbers' => function($query) use ($dateSelected) {
-            $query->whereDate('date', $dateSelected);
-        }])
-        ->orderBy('first_name')
-        ->get();
-        return $users->filter(function (User $user) {
-            if($user->deleted_at != null && $user->dailyNumbers->isEmpty()){
-                return false;
-            }
-            return true;
-        });
+        return $usersQuery
+            ->withTrashed()
+            ->whereOfficeId($this->officeSelected)
+            ->with(['dailyNumbers' => function($query) use ($dateSelected) {
+                $query->whereDate('date', $dateSelected);
+            }])
+            ->orderBy('first_name')
+            ->get()->filter(function (User $user) {
+                if($user->deleted_at != null && $user->dailyNumbers->isEmpty()){
+                    return false;
+                }
+                return true;
+            });
     }
 
     public function getMissingDate($initialDate, $officeSelected)

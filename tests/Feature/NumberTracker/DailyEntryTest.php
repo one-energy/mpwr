@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\NumberTracker;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Livewire\Livewire;
 use App\Http\Livewire\NumberTracker\DailyEntry;
@@ -12,6 +11,8 @@ use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class DailyEntryTest extends TestCase
 {
@@ -33,19 +34,9 @@ class DailyEntryTest extends TestCase
     {
         parent::setUp();
 
-        $this->dptManager = User::factory()->create([
-            'department_id' => null,
-            'office_id'     => null
-        ]);
-
-        $this->regionManager = User::factory()->create([
-            'department_id' => null,
-            'office_id'     => null
-        ]);
-        $this->officeManager = User::factory()->create([
-            'department_id' => null,
-            'office_id'     => null
-        ]);
+        $this->dptManager    = User::factory()->create(['role' => 'Department Manager']);
+        $this->regionManager = User::factory()->create(['role' => 'Region Manager']);
+        $this->officeManager = User::factory()->create(['role' => 'Office Manager']);
 
         $this->department = Department::factory()->create([
             'department_manager_id' => $this->dptManager->id
@@ -67,15 +58,18 @@ class DailyEntryTest extends TestCase
             'office_id'     => $this->office->id
         ]);
 
-        $this->dptManager->department_id = $this->department->id;
-        $this->dptManager->office_id = $this->office->id;
-        $this->dptManager->save();
-        $this->regionManager->department_id = $this->department->id;
-        $this->regionManager->office_id = $this->office->id;
-        $this->regionManager->save();
-        $this->officeManager->department_id = $this->department->id;
-        $this->officeManager->office_id = $this->office->id;
-        $this->officeManager->save();
+        $this->dptManager->update([
+            'department_id' => $this->department->id,
+            'office_id'     => $this->office->id
+        ]);
+        $this->regionManager->update([
+            'department_id' => $this->department->id,
+            'office_id'     => $this->office->id
+        ]);
+        $this->officeManager->update([
+            'department_id' => $this->department->id,
+            'office_id'     => $this->office->id
+        ]);
 
         $this->actingAs($this->dptManager);
 

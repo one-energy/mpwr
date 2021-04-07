@@ -130,7 +130,6 @@ class NumberTrackerTest extends TestCase
             'doors'   => 15
         ]);
 
-        // $view = $this->component(Icon::class, ['icon' => "user-blocked"]);
         $view = new Icon($icon = 'user-blocked');
         Livewire::test(NumberTrackerDetail::class)
             ->set('dateSelected', Carbon::yesterday())

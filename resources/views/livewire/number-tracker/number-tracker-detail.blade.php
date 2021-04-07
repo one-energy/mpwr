@@ -550,7 +550,7 @@
                                                     @foreach($numbersTracked as $row)
                                                         <x-table.tr :loop="$loop">
                                                             @if(user()->role == 'Admin' || user()->role == 'Owner')
-                                                                <x-table.td>{{ $row->user->department?->name }}</x-table.td>
+                                                                <x-table.td>{{ $row->user->department?->name ?? 'Without department' }}</x-table.td>
                                                             @endif
                                                             <x-table.td class="flex center items-center	">
                                                                 @if($row['deleted_at'] != null)

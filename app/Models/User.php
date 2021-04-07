@@ -84,6 +84,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'master'            => 'boolean',
     ];
 
+    protected $fillable = ['department_id'];
+
     public function office()
     {
         return $this->belongsTo(Office::class, 'office_id');
