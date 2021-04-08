@@ -143,7 +143,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(User::class, 'region_manager_id');
     }
 
-    public function usersDepartmentManager()
+    public function departmentManager()
     {
         return $this->belongsTo(User::class, 'department_manager_id');
     }
