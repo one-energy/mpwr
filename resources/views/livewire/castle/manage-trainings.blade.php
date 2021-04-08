@@ -243,9 +243,11 @@
                 </div> --}}
                 <div class="grid grid-cols-1 gap-y-3 sm:gap-x-3 lg:gap-x-5 md:grid-cols-3">
                     @foreach ([1, 2, 3, 4] as $item)
-                        <div class="border-cool-gray-300 border-2 p-5 flex items-center">
+                        <div class="border-cool-gray-300 border-2 p-3 cursor-pointer flex items-center">
                             <div class="text-center flex flex-1 items-center space-x-3.5 text-base">
-                                <x-svg.trash class="w-5 h-5 text-red-600 fill-current" />
+                                <button class="hover:bg-red-200 p-2 rounded-full">
+                                    <x-svg.trash class="w-5 h-5  text-red-600 fill-current" />
+                                </button>
                                 <p class="">Folder</p>
                             </div>
                             <div>
