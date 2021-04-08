@@ -323,4 +323,63 @@ class CustomerTest extends TestCase
         $response->assertSee($saleRepRate->rate)
             ->assertSee($setterRate->rate);
     }
+
+     /** @test */
+     public function it_should_save_user_overrides_on_customer()
+     {
+        $financing = Financing::factory()->create();
+        $financer  = Financer::factory()->create();
+        $user      = User::factory()->create(['role' => 'Department Manager']);
+        $regionMng = User::factory()->create(['role' => 'Region Manager']);
+        $officeMng = User::factory()->create(['role' => 'Office Manager']);
+        $userOne   = User::factory()->create(['role' => 'Setter']);
+        $userTwo   = User::factory()->create([
+            'recruiter_id'                => $userOne->id,
+            'referral_override'           => 10,
+            'office_manager_id'           => $officeMng->id,
+            'region_manager_id'           => $regionMng->id,
+            'department_manager_id'       => $user->id,
+            'office_manager_override'     => 10,
+            'region_manager_override'     => 20,
+            'department_manager_override' => 30,
+            'misc_override_one'           => 10,
+            'payee_one'                   => 'payee one',
+            'note_one'                    => 'note one',
+            'payee_two'                   => 'payee two',
+            'note_two'                    => 'note two',
+        ]);
+
+        Livewire::test(Create::class, [
+            'bills' => Customer::BILLS,
+        ])  ->set('customer.first_name', 'First Name')
+            ->set('customer.last_name', 'Last Name')
+            ->set('customer.adders', 10)
+            ->set('customer.epc', 10)
+            ->set('customer.financing_id', $financing->id)
+            ->set('customer.financer_id', $financer->id)
+            ->set('customer.bill', 'Bill')
+            ->set('customer.system_size', 4)
+            ->set('customer.setter_id', $userOne->id)
+            ->set('customer.setter_fee', 20)
+            ->set('customer.sales_rep_id', $userTwo->id)
+            ->set('customer.sales_rep_fee', 20)
+            ->set('customer.sales_rep_comission', 0)
+            ->call('store');
+
+        $this->assertDatabaseHas('customers', [
+            'sales_rep_recruiter_id'      => $userOne->id,
+            'referral_override'           => 10,
+            'office_manager_id'           => $officeMng->id,
+            'region_manager_id'           => $regionMng->id,
+            'department_manager_id'       => $user->id,
+            'office_manager_override'     => 10,
+            'region_manager_override'     => 20,
+            'department_manager_override' => 30,
+            'misc_override_one'           => 10,
+            'payee_one'                   => 'payee one',
+            'note_one'                    => 'note one',
+            'payee_two'                   => 'payee two',
+            'note_two'                    => 'note two',
+        ]);
+     }
 }
