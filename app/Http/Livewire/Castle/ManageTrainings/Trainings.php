@@ -30,12 +30,6 @@ class Trainings extends Component
 
     public ?TrainingPageSection $section;
 
-    public string $sectionDestroyRoute = '';
-
-    protected $listeners = [
-        'onDestroySection' => 'openDeleteModal',
-    ];
-
     public function sortBy()
     {
         return 'title';
@@ -114,11 +108,5 @@ class Trainings extends Component
         });
 
         return $trainingsQuery->get();
-    }
-
-    public function openDeleteModal($section)
-    {
-        $this->sectionDestroyRoute = route('castle.manage-trainings.deleteSection', $section['id']);
-        $this->dispatchBrowserEvent('on-destroy-section', ['section' => $section]);
     }
 }
