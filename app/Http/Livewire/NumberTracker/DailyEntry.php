@@ -5,7 +5,6 @@ namespace App\Http\Livewire\NumberTracker;
 use App\Models\DailyNumber;
 use App\Models\Office;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
 
 class DailyEntry extends Component
@@ -120,7 +119,7 @@ class DailyEntry extends Component
     public function save($value, $userId, $inputType)
     {
         $filteredNumbers = [
-            $inputType => $value
+            $inputType => $value,
         ];
         DailyNumber::updateOrCreate(
             [
@@ -152,8 +151,8 @@ class DailyEntry extends Component
     public function getOfficeQuery()
     {
         $query = Office::query()
-            ->select("offices.*")
-            ->join("regions", "region_id", "=", "regions.id");
+            ->select('offices.*')
+            ->join('regions', 'region_id', '=', 'regions.id');
 
         if (user()->role == "Admin" || user()->role == "Owner") {
             $query->orWhere("regions.department_id", "=", 0);

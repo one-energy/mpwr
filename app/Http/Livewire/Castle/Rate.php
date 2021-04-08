@@ -19,11 +19,11 @@ class Rate extends Component
     {
         $ratesQuery = Rates::query();
 
-        if (user()->role == "Department Manager") {
+        if (user()->role == 'Department Manager') {
             $ratesQuery->where('rates.department_id', '=', user()->department_id);
         }
 
-        if (user()->role == "Owner" || user()->role == "Admin") {
+        if (user()->role == 'Owner' || user()->role == 'Admin') {
             $ratesQuery;
         }
 

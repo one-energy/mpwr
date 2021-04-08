@@ -70,7 +70,7 @@ class Create extends Component
         if ((user()->role == 'Office Manager' || user()->role == 'Sales Rep' || user()->role == 'Setter') && user()->office_id != null) {
             $this->customer->sales_rep_id  = user()->id;
             $this->customer->sales_rep_fee = $this->getUserRate(user()->id);
-            $this->salesRep = user();
+            $this->salesRep                = user();
         }
         $this->setSelfGen();
     }
@@ -80,8 +80,8 @@ class Create extends Component
         $this->customer->calcComission();
         $this->customer->calcMargin();
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
-        $this->salesReps = user()->getPermittedUsers($this->departmentId)->toArray();
-        $this->setters = User::whereDepartmentId($this->departmentId)
+        $this->salesReps         = user()->getPermittedUsers($this->departmentId)->toArray();
+        $this->setters           = User::whereDepartmentId($this->departmentId)
                                 ->where('id', '!=', user()->id)
                                 ->orderBy('first_name')->get()->toArray();
 
@@ -146,9 +146,7 @@ class Create extends Component
 
     public function updatedCustomerSetterId()
     {
-        if ($this->customer->setter_id) {
-            $this->getSetterRate($this->customer->setter_id);
-        } else {
+        if (!$this->customer->setter_id) {
             $this->setSelfGen();
         }
     }
@@ -202,10 +200,10 @@ class Create extends Component
     {
         if ( $customer->margin >= 0 && $customer->system_size >= 0 ) {
             return floatval($customer->margin) * floatval($customer->system_size) * 1000;
-        } else {
-            return 0;
         }
-
+  
+        return 0;
+        
         return 0;
     }
 }

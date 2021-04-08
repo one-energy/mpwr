@@ -12,6 +12,7 @@ use App\Models\Department;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\Builders\UserBuilder;
 use Tests\Builders\DailyEntryBuilder;
 use Tests\Builders\OfficeBuilder;
@@ -21,7 +22,7 @@ use Tests\Feature\FeatureTest;
 
 class DailyEntryTest extends FeatureTest
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     protected function setUp(): void
     {
@@ -29,20 +30,14 @@ class DailyEntryTest extends FeatureTest
 
         $this->user = User::factory()->create(['master' => true]);
 
-        $this->actingAs($this->user);
-    }
-
-    /** @test */
-    public function it_should_sum_kpi_users_entries ()
-    {
-        $departmentManager = User::factory()->create([
+        $this->departmentManager = User::factory()->create([
             'role' => 'Department Manager'
         ]);
         $department        = Department::factory()->create([
-            'department_manager_id' => $departmentManager->id
+            'department_manager_id' => $this->departmentManager->id
         ]);
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
+        $this->departmentManager->department_id = $department->id;
+        $this->departmentManager->save();
 
         $region        = Region::factory()->create([
             'region_manager_id' => $this->user->id,
@@ -57,34 +52,42 @@ class DailyEntryTest extends FeatureTest
             'office_manager_id' => $officeManager->id
         ]);
 
-        $userOne    = User::factory()->create([
+        $this->userOne    = User::factory()->create([
             "office_id" => $office->id,
             "department_id" => $department->id
         ]);
-        $userTwo    = User::factory()->create([
+        $this->userTwo    = User::factory()->create([
             "office_id" => $office->id,
             "department_id" => $department->id
         ]);
-        $userThree    = User::factory()->create([
+        $this->userThree    = User::factory()->create([
             "office_id" => $office->id,
             "department_id" => $department->id
         ]);
-        $userFour    = User::factory()->create([
+        $this->userFour    = User::factory()->create([
             "office_id" => $office->id,
             "department_id" => $department->id
         ]);
 
-        $dailyEntryOne   = (new DailyEntryBuilder)->withUser($userOne->id)->withDate(date("Y-m-d", time()))->save()->get();
-        $dailyEntryTwo   = (new DailyEntryBuilder)->withUser($userTwo->id)->withDate(date("Y-m-d", time()))->save()->get();
-        $dailyEntryThree = (new DailyEntryBuilder)->withUser($userThree->id)->withDate(date("Y-m-d", time()))->save()->get();
-        $dailyEntryFour  = (new DailyEntryBuilder)->withUser($userFour->id)->withDate(date("Y-m-d", time()))->save()->get();
+        $this->actingAs($this->user);
+    }
 
-        $lastDailyEntryOne   = (new DailyEntryBuilder)->withUser($userOne->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
-        $lastDailyEntryTwo   = (new DailyEntryBuilder)->withUser($userTwo->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
-        $lastDailyEntryThree = (new DailyEntryBuilder)->withUser($userThree->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
-        $lastDailyEntryFour  = (new DailyEntryBuilder)->withUser($userFour->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
+    /** @test */
+    public function it_should_sum_kpi_users_entries ()
+    {
 
-        $this->actingAs($departmentManager);
+
+        $dailyEntryOne   = (new DailyEntryBuilder)->withUser($this->userOne->id)->withDate(date("Y-m-d", time()))->save()->get();
+        $dailyEntryTwo   = (new DailyEntryBuilder)->withUser($this->userTwo->id)->withDate(date("Y-m-d", time()))->save()->get();
+        $dailyEntryThree = (new DailyEntryBuilder)->withUser($this->userThree->id)->withDate(date("Y-m-d", time()))->save()->get();
+        $dailyEntryFour  = (new DailyEntryBuilder)->withUser($this->userFour->id)->withDate(date("Y-m-d", time()))->save()->get();
+
+        $lastDailyEntryOne   = (new DailyEntryBuilder)->withUser($this->userOne->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
+        $lastDailyEntryTwo   = (new DailyEntryBuilder)->withUser($this->userTwo->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
+        $lastDailyEntryThree = (new DailyEntryBuilder)->withUser($this->userThree->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
+        $lastDailyEntryFour  = (new DailyEntryBuilder)->withUser($this->userFour->id)->withDate(date("Y-m-d", strtotime('-1 day')))->save()->get();
+
+        $this->actingAs($this->departmentManager);
 
         //test if sum its right
         Livewire::test(DailyEntry::class)

@@ -13,11 +13,12 @@ class OfficeController extends Controller
     public function getOffices($department = null)
     {
         if ($department) {
-            return Office::query()->select("offices.*")
-                ->join("regions", "offices.region_id", "=", "regions.id")
-                ->where("regions.department_id", "=", $department)
+            return Office::query()->select('offices.*')
+                ->join('regions', 'offices.region_id', '=', 'regions.id')
+                ->where('regions.department_id', '=', $department)
                 ->get();
         }
+
         return collect([]);
     }
 
@@ -28,23 +29,23 @@ class OfficeController extends Controller
 
     public function create()
     {
-        $regionsQuery = Region::query()->select("regions.*");
-        $usersQuery   = User::query()->whereRole("Office Manager");
+        $regionsQuery = Region::query()->select('regions.*');
+        $usersQuery   = User::query()->whereRole('Office Manager');
 
-        if (user()->role == "Admin" || user()->role == "Owner") {
+        if (user()->role == 'Admin' || user()->role == 'Owner') {
             $users   = $usersQuery->get();
             $regions = $regionsQuery->get();
         }
 
-        if (user()->role == "Department Manager") {
+        if (user()->role == 'Department Manager') {
             $regions = $regionsQuery
                 ->join('departments', function ($join) {
-                    $join->on("regions.department_id", '=', 'departments.id')
+                    $join->on('regions.department_id', '=', 'departments.id')
                         ->where('departments.department_manager_id', '=', user()->id);
                 })->get();
             $users   = $usersQuery->whereDepartmentId(user()->department_id)->get();
         }
-        if (user()->role == "Region Manager") {
+        if (user()->role == 'Region Manager') {
             $regions = $regionsQuery->whereRegionManagerId(user()->id)->get();
             $users   = $usersQuery->whereDepartmentId(user()->department_id)->get();
         }
@@ -80,20 +81,20 @@ class OfficeController extends Controller
     public function edit(Office $office)
     {
         $regions = Region::query()
-            ->when(user()->role == "Department Manager", function (Builder $query) {
+            ->when(user()->role == 'Department Manager', function (Builder $query) {
                 $query->where('department_id', '=', user()->department_id);
             })
-            ->when(user()->role == "Region Manager", function (Builder $query) {
+            ->when(user()->role == 'Region Manager', function (Builder $query) {
                 $query->where('region_manager_id', '=', user()->id);
             })
-            ->when(user()->role == "Office Manager", function (Builder $query) use ($office) {
+            ->when(user()->role == 'Office Manager', function (Builder $query) use ($office) {
                 $query->where('id', '=', $office->region_id);
             })
             ->get();
 
         $users = User::query()
             ->where('department_id', '=', $office->region->department->id)
-            ->orderBy("first_name")
+            ->orderBy('first_name')
             ->get();
 
         return view('castle.offices.edit', [

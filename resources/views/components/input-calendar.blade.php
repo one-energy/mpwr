@@ -11,7 +11,66 @@
     $value = old($name, $value ?? null);
 @endphp
 
-<div {{ $attributes }} x-data="app()" x-init="[initDate(), getNoOfDays()]" x-cloak>
+<div {{ $attributes }} x-data="{
+            MONTH_NAMES: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            DAYS: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+            showDatepicker: false,
+            datepickerValue: '{{$value}}',
+            month: '',
+            year: '',
+            no_of_days: [],
+            blankdays: [],
+            days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+
+            initDate() {
+                let day = this.datepickerValue ? new Date(this.datepickerValue) : new Date();
+                console.log(this.datepickerValue)
+                this.month = day.getUTCMonth();
+                this.year = day.getUTCFullYear();
+                if (!this.datepickerValue) {
+                    this.getDateValue(day.getUTCDate());
+                }
+                this.datepickerValue = new Date(this.year, this.month, day.getUTCDate()).toDateString();
+            },
+
+            isToday(date) {
+                const today = new Date();
+                const d = new Date(this.year, this.month, date);
+                return today.toDateString() === d.toDateString() ? true : false;
+            },
+
+            isSelectedDate(date) {
+                const d = new Date(this.year, this.month, date);
+                return this.datepickerValue === d.toDateString() ? true : false;
+            },
+
+            getDateValue(date) {
+                let selectedDate = new Date(this.year, this.month, date);
+                this.datepickerValue = selectedDate.toDateString();
+                @this.set('{{$wire}}', this.datepickerValue);
+                this.showDatepicker = false;
+            },
+
+            getNoOfDays() {
+                let daysInMonth = new Date(this.year, this.month + 1, 0).getDate();
+
+                // find where to start calendar day of week
+                let dayOfWeek = new Date(this.year, this.month).getDay();
+                let blankdaysArray = [];
+
+                for ( var i=1; i <= dayOfWeek; i++) {
+                    blankdaysArray.push(i);
+                }
+
+                let daysArray = [];
+                for ( var i=1; i <= daysInMonth; i++) {
+                    daysArray.push(i);
+                }
+
+                this.blankdays = blankdaysArray;
+                this.no_of_days = daysArray;
+            }
+}" x-init="[initDate(), getNoOfDays()]" x-cloak>
     <label for="{{ $name }}" class="block text-sm font-medium leading-5 text-gray-700">{{ $label }}</label>
     <div class="mt-1 relative rounded-md shadow-sm">
         <input type="datetime" {{ $attributes->except('class')->merge(['class' => $class]) }}
@@ -31,7 +90,7 @@
         </div>
 
         <div
-            class="bg-white mt-12 rounded-lg shadow p-4 absolute top-0 left-0 z-10"
+            class="bg-white mt-12 rounded-lg shadow p-4 absolute top-0 left-0 z-10 w-64"
             x-show.transition="showDatepicker"
             @click.away="showDatepicker = false">
 
@@ -99,67 +158,3 @@
         </div>
     </div>
 </div>
-<script>
-    const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-    function app() {
-        return {
-            showDatepicker: false,
-            datepickerValue: "{{$value}}",
-            month: '',
-            year: '',
-            no_of_days: [],
-            blankdays: [],
-            days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-
-            initDate() {
-                let day = this.datepickerValue ? new Date(this.datepickerValue) : new Date();
-                this.month = day.getMonth();
-                this.year = day.getFullYear();
-                if (!this.datepickerValue) {
-                    this.getDateValue(day.getUTCDate());
-                }
-                this.datepickerValue = new Date(this.year, this.month, day.getUTCDate()).toDateString();
-            },
-
-            isToday(date) {
-                const today = new Date();
-                const d = new Date(this.year, this.month, date);
-                return today.toDateString() === d.toDateString() ? true : false;
-            },
-
-            isSelectedDate(date) {
-                const d = new Date(this.year, this.month, date);
-                return this.datepickerValue === d.toDateString() ? true : false;
-            },
-
-            getDateValue(date) {
-                let selectedDate = new Date(this.year, this.month, date);
-                this.datepickerValue = selectedDate.toDateString();
-                @this.set('{{$wire}}', this.datepickerValue);
-                this.showDatepicker = false;
-            },
-
-            getNoOfDays() {
-                let daysInMonth = new Date(this.year, this.month + 1, 0).getDate();
-
-                // find where to start calendar day of week
-                let dayOfWeek = new Date(this.year, this.month).getDay();
-                let blankdaysArray = [];
-
-                for ( var i=1; i <= dayOfWeek; i++) {
-                    blankdaysArray.push(i);
-                }
-
-                let daysArray = [];
-                for ( var i=1; i <= daysInMonth; i++) {
-                    daysArray.push(i);
-                }
-
-                this.blankdays = blankdaysArray;
-                this.no_of_days = daysArray;
-            }
-        }
-    }
-</script>

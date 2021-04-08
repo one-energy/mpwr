@@ -37,13 +37,12 @@ class ManageTrainings extends Component
 
     public function render()
     {
-        $index         = 0;
+        $index               = 0;
         $this->actualSection = new TrainingPageSection();
 
-        if (!$this->department->id && (user()->role == "Owner" || user()->role == "Admin")) {
+        if (!$this->department->id && (user()->role == 'Owner' || user()->role == 'Admin')) {
             $this->department = Department::first();
         }
-
 
         if ($this->department->id) {
             $this->actualSection = $this->section ?? TrainingPageSection::whereDepartmentId($this->department->id)->first();
@@ -57,7 +56,6 @@ class ManageTrainings extends Component
             }
 
             $this->path = $this->getPath($this->actualSection);
-
         }
         $this->videoId      = $this->videoId[$index - 1] ?? null;
         $this->sections     = $this->department->id ? $this->getParentSections($this->actualSection) : [];
@@ -98,14 +96,14 @@ class ManageTrainings extends Component
             ->whereDepartmentId($this->department->id)
             ->leftJoin('training_page_contents', 'training_page_sections.id', '=', 'training_page_contents.training_page_section_id' );
 
-        $trainingsQuery->when($search == "", function ($query) use ($section) {
+        $trainingsQuery->when($search == '', function ($query) use ($section) {
             $query->where('training_page_sections.parent_id', $section->id ?? 1);
         });
 
-        $trainingsQuery->when($search != "", function ($query) use ($search) {
+        $trainingsQuery->when($search != '', function ($query) use ($search) {
             $query->where(function ($query) use ($search) {
-                $query->orWhere('training_page_sections.title', "like", "%" . $this->search . "%")
-                    ->orWhere('training_page_contents.description', 'like', "%" . $search . "%");
+                $query->orWhere('training_page_sections.title', 'like', '%' . $this->search . '%')
+                    ->orWhere('training_page_contents.description', 'like', '%' . $search . '%');
             });
         });
 

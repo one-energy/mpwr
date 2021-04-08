@@ -21,7 +21,7 @@ class TrainingsPolicy
 
     public function viewList(User $user, ?int $departmentId)
     {
-        if ($user->role == "Admin" || $user->role == "Owner") {
+        if ($user->role == 'Admin' || $user->role == 'Owner') {
             return true;
         }
 

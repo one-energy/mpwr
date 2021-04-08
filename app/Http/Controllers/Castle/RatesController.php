@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\Rates;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 
 class RatesController extends Controller
@@ -56,20 +55,20 @@ class RatesController extends Controller
         $rate->department_id = $validated['department_id'];
         $rate->role          = $validated['role'];
 
-        if($rate->alreadyExists()){
+        if ($rate->alreadyExists()) {
             alert()
                 ->withTitle(__('This rate already exists'))
                 ->withColor('red')
                 ->send();
+
             return back();
-        } else {
-            $rate->save();
-            alert()
+        }  
+        $rate->save();
+        alert()
                 ->withTitle(__('Rate created!'))
                 ->send();
 
-            return redirect(route('castle.rates.index'));
-        }
+        return redirect(route('castle.rates.index'));
     }
 
     /**
@@ -120,20 +119,20 @@ class RatesController extends Controller
         $rate->department_id = $validated['department_id'];
         $rate->role          = $validated['role'];
 
-        if($rate->alreadyExists()){
+        if ($rate->alreadyExists()) {
             alert()
                 ->withTitle(__('This rate already exists'))
                 ->withColor('red')
                 ->send();
+
             return back();
-        } else {
-            $rate->save();
-            alert()
+        }  
+        $rate->save();
+        alert()
                 ->withTitle(__('Rate updated!'))
                 ->send();
 
-            return redirect(route('castle.rates.index'));
-        }
+        return redirect(route('castle.rates.index'));
     }
 
     /**
@@ -156,8 +155,10 @@ class RatesController extends Controller
     public function getRatesPerRole($role)
     {
         $rate = Rates::whereRole($role);
-        if ($rate->exists())
+        if ($rate->exists()) {
             return $rate->first();
+        }
+
         return response('', 204);
     }
 }

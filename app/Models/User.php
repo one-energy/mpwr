@@ -396,6 +396,21 @@ class User extends Authenticatable implements MustVerifyEmail
         });
     }
 
+    public function hasRole(string $role): bool
+    {
+        return $this->role === $role;
+    }
+
+    public function hasAnyRole(array $roles): bool
+    {
+        return collect($roles)->some(fn ($role) => $role === $this->role);
+    }
+
+    public function notHaveRoles(array $roles): bool
+    {
+        return collect($roles)->every(fn ($role) => $role !== $this->role);
+    }
+
     public static function getRoleByNames()
     {
         return collect(self::ROLES)

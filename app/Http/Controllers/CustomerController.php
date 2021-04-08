@@ -28,12 +28,12 @@ class CustomerController extends Controller
         $salesRepFee = $this->getSalesRepFee();
 
         return view('customer.create', [
-                'bills'       => $bills,
-                'financings'  => $financings,
-                'openedById'  => $openedById,
-                'users'       => $users,
-                'setterFee'   => $setterFee->rate ?? 0,
-                'salesRepFee' => $salesRepFee->rate ?? 0,
+            'bills'       => $bills,
+            'financings'  => $financings,
+            'openedById'  => $openedById,
+            'users'       => $users,
+            'setterFee'   => $setterFee->rate ?? 0,
+            'salesRepFee' => $salesRepFee->rate ?? 0,
         ]);
     }
 

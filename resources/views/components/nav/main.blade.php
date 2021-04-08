@@ -84,7 +84,10 @@
                                                 :active="is_active('incentives.*')">
                                         @lang('Incentives')
                                     </x-nav.link>
-
+                                    <x-nav.link :href="route('reports.index')" class="ml-8"
+                                                :active="is_active('reports.*')">
+                                        @lang('Commission Tracker')
+                                    </x-nav.link>
                                     <x-nav.link :href="route('number-tracking.index')" class="ml-8"
                                                 :active="is_active('number-tracking.*')">
                                         @lang('Number Tracker')
@@ -328,6 +331,13 @@
                             <path
                                 d="M12 5.173l2.335 4.817 5.305.732-3.861 3.71.942 5.27-4.721-2.524-4.721 2.525.942-5.27-3.861-3.71 5.305-.733 2.335-4.817zm0-4.586l-3.668 7.568-8.332 1.151 6.064 5.828-1.48 8.279 7.416-3.967 7.416 3.966-1.48-8.279 6.064-5.827-8.332-1.15-3.668-7.569z"/>
                         </svg>
+                    </x-nav.link-mobile>
+
+                    <x-nav.link-mobile :href="route('reports.index')" class="mt-1"
+                                       :active="is_active('reports')">
+                                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                            <path d="M5 20v2h-2v-2h2zm2-2h-6v6h6v-6zm6-1v5h-2v-5h2zm2-2h-6v9h6v-9zm6-2v9h-2v-9h2zm2-2h-6v13h6v-13zm0-11l-6 1.221 1.716 1.708-6.85 6.733-3.001-3.002-7.841 7.797 1.41 1.418 6.427-6.39 2.991 2.993 8.28-8.137 1.667 1.66 1.201-6.001z"/>
+                                        </svg>
                     </x-nav.link-mobile>
 
                     <x-nav.link-mobile :href="route('number-tracking.index')" class="mt-1"

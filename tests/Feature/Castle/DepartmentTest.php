@@ -2,9 +2,11 @@
 
 namespace Tests\Feature\Castle;
 
+use App\Http\Livewire\Castle\Departments;
 use App\Models\Department;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class DepartmentTest extends TestCase
@@ -91,7 +93,7 @@ class DepartmentTest extends TestCase
         $response->assertStatus(302);
 
         $this->assertDatabaseHas(
-            'Departments',
+            'departments',
             [
                 'id'   => $department->id,
                 'name' => 'Department Edited'
@@ -112,12 +114,10 @@ class DepartmentTest extends TestCase
 
         $this->actingAs($admin);
 
-        $response = $this->delete(route('castle.departments.destroy', $department->id));
-        $deleted  = Department::where('id', $department->id)->get();
-
-        $response->assertStatus(302);
-
-        $this->assertNotNull($deleted);
+        Livewire::test(Departments::class)->call('setDeletingDepartment', $department)
+        ->set('deletingName', $department->name)
+        ->call('destroy')
+        ->assertDontSee($department->name);
     }
 
     /** @test */

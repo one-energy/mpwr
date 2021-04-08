@@ -59,7 +59,7 @@ class Edit extends Component
         if (user()->role != 'Admin' && user()->role != 'Owner') {
             $this->departmentId = user()->department_id;
         } else {
-            $this->departmentId = Department::first()->id;
+            $this->departmentId = $customer->userSalesRep->department_id;
         }
     }
 
@@ -68,10 +68,11 @@ class Edit extends Component
         $this->customer->calcComission();
         $this->customer->calcMargin();
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
-        $this->salesReps = user()->getPermittedUsers($this->departmentId)->toArray();
-        $this->setters = User::whereDepartmentId($this->departmentId)
+        $this->salesReps         = user()->getPermittedUsers($this->departmentId)->toArray();
+        $this->setters           = User::whereDepartmentId($this->departmentId)
                                 ->where('id', '!=', user()->id)
                                 ->orderBy('first_name')->get()->toArray();
+
         return view('livewire.customer.edit', [
             'departments' => Department::all(),
             'setterFee'   => $this->getSetterFee(),
@@ -89,7 +90,7 @@ class Edit extends Component
         $salesRep   = User::find($this->customer->sales_rep_id);
         $commission = $this->calculateCommission($this->customer);
 
-        $this->customer->commission = $commission;
+        $this->customer->commission                  = $commission;
         $this->customer->sales_rep_recruiter_id      = $salesRep->recruiter_id;
         $this->customer->referral_override           = $salesRep->referral_override;
         $this->customer->office_manager_id           = $salesRep->office_manager_id;
@@ -131,9 +132,8 @@ class Edit extends Component
     public function setSelfGen()
     {
         $this->customer->setter_fee = 0;
-        $this->isSelfGen = true;
+        $this->isSelfGen            = true;
     }
-
 
     public function updatedCustomerFinancingId()
     {
@@ -153,8 +153,6 @@ class Edit extends Component
     {
         if ($setterId) {
             $this->isSelfGen = false;
-            $this->setter = User::find($setterId);
-            $this->getSetterRate($setterId);
         } else {
             $this->setSelfGen();
         }
@@ -210,7 +208,7 @@ class Edit extends Component
         if ($customer->margin && $customer->system_size) {
             return $customer->margin * $customer->system_size * 1000;
         }
+
         return 0;
     }
-
 }
