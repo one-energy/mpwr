@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Castle;
+namespace App\Http\Livewire\Castle\ManageTrainings;
 
 use App\Models\Department;
 use App\Models\TrainingPageContent;
@@ -8,7 +8,7 @@ use App\Models\TrainingPageSection;
 use App\Traits\Livewire\FullTable;
 use Livewire\Component;
 
-class ManageTrainings extends Component
+class Trainings extends Component
 {
     use FullTable;
 
@@ -29,6 +29,12 @@ class ManageTrainings extends Component
     public Department $department;
 
     public ?TrainingPageSection $section;
+
+    public string $sectionDestroyRoute = '';
+
+    protected $listeners = [
+        'onDestroySection' => 'openDeleteModal',
+    ];
 
     public function sortBy()
     {
@@ -62,7 +68,7 @@ class ManageTrainings extends Component
         $this->sections     = $this->department->id ? $this->getParentSections($this->actualSection) : [];
         $this->departmentId = $this->department->id ?? 0;
 
-        return view('livewire.castle.manage-trainings');
+        return view('livewire.castle.manage-trainings.trainings');
     }
 
     public function getPath($section)
@@ -109,5 +115,11 @@ class ManageTrainings extends Component
         });
 
         return $trainingsQuery->get();
+    }
+
+    public function openDeleteModal($section)
+    {
+        $this->sectionDestroyRoute = route('castle.manage-trainings.deleteSection', $section['id']);
+        $this->dispatchBrowserEvent('on-destroy-section', ['section' => $section]);
     }
 }
