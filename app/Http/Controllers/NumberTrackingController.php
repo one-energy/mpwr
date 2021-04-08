@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\NumberTracking\StoreNumberTrackingRequest;
+use App\Facades\Actions\UpdateOrCreateNumberTracking;
 use App\Models\DailyNumber;
-use App\Services\NumberTrackingService;
 use Illuminate\Http\Request;
 
 class NumberTrackingController extends Controller
@@ -21,9 +20,9 @@ class NumberTrackingController extends Controller
         return view('number-tracking.create');
     }
 
-    public function store(StoreNumberTrackingRequest $request, NumberTrackingService $service)
+    public function store()
     {
-        if (collect($request->numbers)->isEmpty()) {
+        if (collect(request()->numbers)->isEmpty()) {
             alert()
                 ->withTitle(__('Nothing was saved :('))
                 ->withColor('red')
@@ -32,7 +31,7 @@ class NumberTrackingController extends Controller
             return back();
         }
 
-        $service->updateOrCreateNumberTracking($request->validated());
+        UpdateOrCreateNumberTracking::execute(request()->all());
 
         alert()
             ->withTitle(__('Daily Numbers saved!'))
