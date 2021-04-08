@@ -15,9 +15,7 @@
                     @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
                         <div class="inline-flex" x-data="{ 'editSectionModal': false }" @keydown.escape="editSectionModal = false" x-cloak>
                             <button class="p-3 rounded-full  hover:bg-gray-200" @click="editSectionModal = true">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                    <path d="M18.363 8.464l1.433 1.431-12.67 12.669-7.125 1.436 1.439-7.127 12.665-12.668 1.431 1.431-12.255 12.224-.726 3.584 3.584-.723 12.224-12.257zm-.056-8.464l-2.815 2.817 5.691 5.692 2.817-2.821-5.693-5.688zm-12.318 18.718l11.313-11.316-.705-.707-11.313 11.314.705.709z"/>
-                                </svg>
+                                <x-svg.pencil class="w-4 h-4 fill-current text-cool-gray-800" />
                             </button>
                             <div x-show="editSectionModal" wire:loading.remove class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center z-20">
                                 <div x-show="editSectionModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity">
@@ -247,15 +245,11 @@
                     @foreach ([1, 2, 3, 4] as $item)
                         <div class="border-cool-gray-300 border-2 p-5 flex items-center">
                             <div class="text-center flex flex-1 items-center space-x-3.5 text-base">
-                                <svg class="inline-flex" fill="red" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                    <path d="M9 19c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm4 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm4 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5-17v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.315c0 .901.73 2 1.631 2h5.712zm-3 4v16h-14v-16h-2v18h18v-18h-2z" />
-                                </svg>
+                                <x-svg.trash class="w-5 h-5 text-red-600 fill-current" />
                                 <p class="">Folder</p>
                             </div>
                             <div>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-500 font-bold h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                                </svg>
+                                <x-svg.chevron-right class="text-gray-500 font-bold h-6 w-6" />
                             </div>
                         </div>
                     @endforeach
