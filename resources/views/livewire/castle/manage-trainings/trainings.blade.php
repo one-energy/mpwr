@@ -99,7 +99,7 @@
                                 </div>
                             </div>
                         </div>
-                        @if(!$content)
+                        @if(!$contents)
                             <div class="col-span-1" x-data="{ 'showContentModal': false }" @keydown.escape="showContentModal = false" x-cloak>
                                 <button style="background-color: #1AAE9F" class="text-white focus:outline-none font-medium text-sm rounded shadow-md px-4 md:px-5 py-2.5" @click="showContentModal = true">
                                     Add Section
@@ -144,7 +144,7 @@
                                 </div>
                             </div>
                         @endif
-                        @if($content)
+                        @if($contents)
                             <div class="col-span-1 sm:col-span-3" x-data="{ 'showContentModal':false }" x-on:keydown.escape="alert($event.target.value)" @keydown.escape="showContentModal = false" x-cloak>
                                 <button style="background-color: #1AAE9F" class="text-white font-medium text-sm rounded shadow-md px-4 md:px-5 py-2.5" @click="showContentModal = true">
                                     Edit Content
@@ -166,12 +166,12 @@
                                             <div class="flex justify-between">
                                                 <div class="flex justify-start">
                                                     <div class="inline-grid items-center">
-                                                        <h3>Edit the content to {{$actualSection->title}}</h3>
-                                                        <x-form id="formContent" :route="route('castle.manage-trainings.updateContent', $content->id)">
+                                                        {{-- <h3>Edit the content to {{$actualSection->title}}</h3> --}}
+                                                        <x-form id="formContent" route="">
                                                             <div class="grid grid-cols-2 mt-8 mb-4 gap-2">
-                                                                <x-input class="col-span-1" label="Title" name="content_title" value="{{$content->title}}"/>
-                                                                <x-input class="col-span-1" label="Video Url" name="video_url" value="{{$content->video_url}}"/>
-                                                                <x-text-area id="description" class="col-span-2" label="Description" name="description" value="{{$content->description}}" hidden></x-text-area>
+                                                                {{-- <x-input class="col-span-1" label="Title" name="content_title" value="{{$content->title}}"/> --}}
+                                                                {{-- <x-input class="col-span-1" label="Video Url" name="video_url" value="{{$content->video_url}}"/> --}}
+                                                                {{-- <x-text-area id="description" class="col-span-2" label="Description" name="description" value="{{$content->description}}" hidden></x-text-area> --}}
                                                             </div>
                                                             <div class="grid" id="editor"></div>
                                                             <div class="mt-6">
@@ -217,7 +217,7 @@
             @endif --}}
 
             <div class="mt-15">
-                @if(!$path || ($content == null && $sections->isEmpty()) )
+                @if(!$path || ($contents == null && $sections->isEmpty()) )
                     <div class="h-96">
                         <div class="flex justify-center align-middle">
                             <div class="text-sm text-center text-gray-700">
@@ -228,47 +228,14 @@
                     </div>
                 @endif
 
-                <livewire:castle.manage-trainings.folders :currentSection="$actualSection" :sections="$sections" />
+                <div>
+                    <livewire:castle.manage-trainings.folders :currentSection="$actualSection" :sections="$sections" />
+                </div>
 
                 <div class="mt-10">
-                    <h3 class="text-xl text-cool-gray-700 font-medium mb-3.5">Videos</h3>
-
-                    <div class="grid grid-cols-1 gap-y-3 sm:gap-x-3 lg:gap-x-5 md:grid-cols-2 xl:grid-cols-3">
-                        @foreach ([1, 2, 3, 4, 5] as $item)
-                            <livewire:castle.manage-trainings.videos :videoId="$videoId" :key="$item" />
-                        @endforeach
-                    </div>
+                    <livewire:castle.manage-trainings.videos :contents="$contents" />
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-
-<script>
-  var readerOption = {
-    readOnly: true
-  }
-
-  var options = {
-    height: "200px",
-    theme: 'snow'
-  };
-
-  var content = <?=$content->description ?? 'null'?>
-
-  var quill = new Quill('#editor', options);
-  var reader = new Quill('#reader', readerOption);
-
-  if(content){
-    quill.setContents(content);
-    reader.setContents(content);
-  }
-
-  var form = document.getElementById("formContent");
-  form.onsubmit = function() { // onsubmit do this first
-    var description = document.querySelector('textarea[name="description"]'); // set name input var
-    description.value = JSON.stringify(quill.getContents()); // populate name input with quill data
-    return true; // submit form
-  }
-</script>
