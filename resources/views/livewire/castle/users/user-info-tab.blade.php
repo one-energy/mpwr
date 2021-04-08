@@ -297,7 +297,7 @@
                 <x-form class="col-span-3" wire:submit.prevent="saveOverride">
                     <div class="grid col-span-3 grid-cols-3 gap-x-4 p-4">
                         <div>
-                            <x-input-currency wire:model="user.pay" name="user.pay" label="Pay"/>
+                            <x-input-currency wire:model="userOverride.pay" name="user.pay" label="Pay"/>
                         </div>
                         <div>
                             <x-select wire:model="userOverride.recruiter_id" name="userOverride.recruiter_id" label="Recuited By">
