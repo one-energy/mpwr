@@ -90,29 +90,19 @@ class StoreNumberTrackerTest extends TestCase
     /** @test */
     public function it_should_require_officeSelected()
     {
+        $mary = User::factory()->create(['role' => 'Setter']);
+
         $data = [
             'date'    => now(),
-            'numbers' => [],
+            'numbers' => [
+                $mary->id => [],
+            ],
         ];
 
         $this
             ->actingAs($this->admin)
             ->post(route('number-tracking.store'), $data)
             ->assertSessionHasErrors('officeSelected');
-    }
-
-    /** @test */
-    public function it_should_require_numbers()
-    {
-        $data = [
-            'officeSelected' => 1,
-            'date'           => now(),
-        ];
-
-        $this
-            ->actingAs($this->admin)
-            ->post(route('number-tracking.store'), $data)
-            ->assertSessionHasErrors('numbers');
     }
 
     /** @test */
