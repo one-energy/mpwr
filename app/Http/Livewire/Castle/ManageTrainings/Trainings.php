@@ -12,7 +12,7 @@ class Trainings extends Component
 {
     use FullTable;
 
-    public $content       = [];
+    public $contents      = [];
 
     public $sections      = [];
 
@@ -41,11 +41,14 @@ class Trainings extends Component
         return 'title';
     }
 
+    public function mount()
+    {
+        $this->actualSection = new TrainingPageSection();
+    }
+
     public function render()
     {
-        $index         = 0;
-
-        $this->actualSection = new TrainingPageSection();
+        $index = 0;
 
         if (!$this->department->id && (user()->role == 'Owner' || user()->role == 'Admin')) {
             $this->department = Department::first();
@@ -53,14 +56,10 @@ class Trainings extends Component
 
         if ($this->department->id) {
             $this->actualSection = $this->section ?? TrainingPageSection::whereDepartmentId($this->department->id)->first();
-            $this->content       = $this->getContent($this->actualSection);
+            $this->contents      = $this->getContents($this->actualSection);
+
             $this->departments   = Department::all();
             $index               = 0;
-
-            if ($this->content) {
-                $this->videoId = explode('/', $this->content->video_url);
-                $index         = count($this->videoId);
-            }
 
             $this->path = $this->getPath($this->actualSection);
         }
@@ -85,9 +84,9 @@ class Trainings extends Component
         return array_reverse($path);
     }
 
-    public function getContent($section)
+    public function getContents($section)
     {
-        return TrainingPageContent::whereTrainingPageSectionId($section->id)->first();
+        return TrainingPageContent::whereTrainingPageSectionId($section->id)->get();
     }
 
     public function changeDepartment()
