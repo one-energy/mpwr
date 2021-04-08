@@ -33,7 +33,7 @@ class TrainingPageSection extends Model
 
     public function content()
     {
-        return $this->hasOne(TrainingPageContent::class);
+        return $this->hasMany(TrainingPageContent::class);
     }
 
     public function department()
