@@ -242,79 +242,38 @@
                     @endif
                 </div> --}}
                 <div class="grid grid-cols-1 gap-y-3 sm:gap-x-3 lg:gap-x-5 md:grid-cols-3">
-                    @foreach ([1, 2, 3, 4] as $item)
-                        <div class="border-cool-gray-300 border-2 p-3 cursor-pointer flex items-center">
-                            <div class="text-center flex flex-1 items-center space-x-3.5 text-base">
-                                <button class="hover:bg-red-200 p-2 rounded-full">
-                                    <x-svg.trash class="w-5 h-5  text-red-600 fill-current" />
-                                </button>
-                                <p class="">Folder</p>
-                            </div>
-                            <div>
-                                <x-svg.chevron-right class="text-gray-500 font-bold h-6 w-6" />
-                            </div>
-                        </div>
+                    @foreach($sections as $section)
+                        <livewire:castle.manage-trainings.folder :section="$section" :key="$section->id" />
                     @endforeach
                 </div>
-                {{-- <div class="md:grid-cols-2 sm:grid-cols-1 md:row-gap-4 sm:row-gap-0 col-gap-4 inline-grid w-full mt-4 max-w-full">
-                    @foreach($sections as $section)
-                    <div class="col-span-1">
-                        <div class="grid grid-cols-10">
-                            <div class="inline-flex hover:bg-gray-50 text-center md:border-2 border-t-2 md:border-r-0 md:rounded-l-lg " x-data="{ 'confirmDeleteModal': false }" @keydown.escape="confirmDeleteModal = false" x-cloak>
-                                <button class="w-full text-center h-full py-2 px-2" @click="confirmDeleteModal = true">
-                                    <div class="text-center">
-                                        <svg class="inline-flex" fill="red" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                            <path d="M9 19c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm4 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm4 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5-17v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.315c0 .901.73 2 1.631 2h5.712zm-3 4v16h-14v-16h-2v18h18v-18h-2z" /></svg>
-                                    </div>
+                <div x-data="modal()" @on-destroy-section.window="open">
+                    <div x-show="isOpen()" wire:loading.remove class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center z-20">
+                        <div x-show="isOpen()" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity">
+                            <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+                        </div>
+                        <div x-show="isOpen()" @click.away="close" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
+                            <div class="absolute top-0 right-0 pt-4 pr-4">
+                                <button type="button" @click="close" class="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150" aria-label="Close">
+                                    <x-svg.x class="w-5 h-5" />
                                 </button>
-                                <div x-show="confirmDeleteModal" wire:loading.remove class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center z-20">
-                                    <div x-show="confirmDeleteModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity">
-                                        <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-                                    </div>
-                                    <div x-show="confirmDeleteModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
-                                        <div class="absolute top-0 right-0 pt-4 pr-4">
-                                            <button type="button" x-on:click="confirmDeleteModal = false; setTimeout(() => open = true, 1000)" class="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150" aria-label="Close">
-                                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                        <div class="px-4 py-5 sm:p-6">
-                                            <h3 class="text-left">Do you want to delete {{$section->title}} section?</h3>
-                                            <p class="text-left mt-4 text-base text-gray-700">If you delete this section all content into {{$section->title}} will be pass to {{$actualSection->title}}</p>
-                                            <div class="mr-4 mb-4 inline-flex space-x-4 float-right mt-8">
-                                                <x-button class="w-full flex ml-4" @click="confirmDeleteModal = false">
-                                                    {{ __('No') }}
-                                                </x-button>
-                                                <x-form :route="route('castle.manage-trainings.deleteSection', $section->id)" delete x-data="{deleting: false}">
-                                                    <x-button class="w-full flex ml-4" type="submit" color="green">
-                                                        {{ __('Yes') }}
-                                                    </x-button>
-                                                </x-form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
-                            <div class="col-span-9 hover:bg-gray-50">
-                                <a href="{{route('castle.manage-trainings.index',[
-                        'department' => $departmentId,
-                        'section'    => $section->id
-                      ])}}">
-                                    <div class="grid grid-cols-10 row-gap-4 col-gap-4 border-gray-200 md:border-2 border-t-2 p-4 md:rounded-r-lg ">
-                                        <div class="col-span-9 inline-flex">
-                                            <p class="self-center">{{$section->title}}</p>
-                                        </div>
-                                        <div class="col-span-1 self-center">
-                                            <x-svg.chevron-right class="w-7 text-gray-500" />
-                                        </div>
-                                    </div>
-                                </a>
+                            <div class="px-4 py-5 sm:p-6">
+                                <h3 class="text-left" x-text="`Do you want to delete ${section.title} section?`"></h3>
+                                <p class="text-left mt-4 text-base text-gray-700" x-text="`If you delete this section all content into ${section.title} will be pass to {{$actualSection->title}}`"></p>
+                                <div class="mr-4 mb-4 inline-flex space-x-4 float-right mt-8">
+                                    <x-button class="w-full flex ml-4" @click="close()">
+                                        {{ __('No') }}
+                                    </x-button>
+                                    <x-form :route="$sectionDestroyRoute" delete x-data="{deleting: false}">
+                                        <x-button class="w-full flex ml-4" type="submit" color="green">
+                                            {{ __('Yes') }}
+                                        </x-button>
+                                    </x-form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    @endforeach
-                </div> --}}
+                </div>
             </div>
         </div>
     </div>
@@ -322,6 +281,17 @@
 
 
 <script>
+    const modal = () => ({
+        section: {},
+        show: false,
+        open(event) {
+            this.section = {...event.detail.section};
+            this.show = true;
+        },
+        close() { this.show = false },
+        isOpen() { return this.show === true },
+    })
+
   var readerOption = {
     readOnly: true
   }
