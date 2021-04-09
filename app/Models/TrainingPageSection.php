@@ -46,6 +46,11 @@ class TrainingPageSection extends Model
         return $this->belongsTo(TrainingPageSection::class);
     }
 
+    public function files()
+    {
+        return $this->hasMany(SectionFile::class, 'training_page_section_id');
+    }
+
     public function scopeSearch(Builder $query, $search)
     {
         $query->when($search, function (Builder $query) use ($search) {
