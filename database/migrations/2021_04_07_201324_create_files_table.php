@@ -13,11 +13,14 @@ class CreateFilesTable extends Migration
      */
     public function up()
     {
-        Schema::create('files', function (Blueprint $table) {
+        Schema::create('section_files', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('training_page_section_id')->cascade();
             $table->string('name');
+            $table->string('original_name');
             $table->string('type');
             $table->integer('size');
+            $table->string('path');
             $table->timestamps();
         });
     }
@@ -29,6 +32,6 @@ class CreateFilesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('files');
+        Schema::dropIfExists('section_files');
     }
 }
