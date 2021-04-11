@@ -6,19 +6,14 @@ use App\Models\Department;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
 use App\Traits\Livewire\FullTable;
+use Illuminate\Support\Collection;
 use Livewire\Component;
 
 class Trainings extends Component
 {
     use FullTable;
 
-    public $contents      = [];
-
     public $sections      = [];
-
-    public $videoId       = [];
-
-    public $actualSection = [];
 
     public $path          = [];
 
@@ -26,9 +21,21 @@ class Trainings extends Component
 
     public $departmentId  = 0;
 
+    public Collection $contents;
+
+    public TrainingPageSection $actualSection;
+
     public Department $department;
 
     public ?TrainingPageSection $section;
+
+    public TrainingPageContent $video;
+
+    public string $selectedTab = 'files';
+
+    protected $listeners = [
+        'contentAdded' => '$refresh',
+    ];
 
     public function sortBy()
     {
@@ -37,13 +44,23 @@ class Trainings extends Component
 
     public function mount()
     {
+        $this->video         = new TrainingPageContent();
         $this->actualSection = new TrainingPageSection();
+        $this->contents      = collect();
+    }
+
+    public function getFilesTabSelectedProperty()
+    {
+        return $this->selectedTab === 'files';
+    }
+
+    public function getTrainingTabSelectedProperty()
+    {
+        return $this->selectedTab === 'training';
     }
 
     public function render()
     {
-        $index = 0;
-
         if (!$this->department->id && (user()->role == 'Owner' || user()->role == 'Admin')) {
             $this->department = Department::first();
         }
@@ -51,13 +68,10 @@ class Trainings extends Component
         if ($this->department->id) {
             $this->actualSection = $this->section ?? TrainingPageSection::whereDepartmentId($this->department->id)->first();
             $this->contents      = $this->getContents($this->actualSection);
-
             $this->departments   = Department::all();
-            $index               = 0;
-
-            $this->path = $this->getPath($this->actualSection);
+            $this->path          = $this->getPath($this->actualSection);
         }
-        $this->videoId      = $this->videoId[$index - 1] ?? null;
+
         $this->sections     = $this->department->id ? $this->getParentSections($this->actualSection) : [];
         $this->departmentId = $this->department->id ?? 0;
 
@@ -78,7 +92,7 @@ class Trainings extends Component
         return array_reverse($path);
     }
 
-    public function getContents($section)
+    public function getContents(TrainingPageSection $section): Collection
     {
         return TrainingPageContent::whereTrainingPageSectionId($section->id)->get();
     }
@@ -108,5 +122,14 @@ class Trainings extends Component
         });
 
         return $trainingsQuery->get();
+    }
+
+    public function changeTab(string $tabName)
+    {
+        if ($this->selectedTab === $tabName) {
+            return;
+        }
+
+        $this->selectedTab = $tabName;
     }
 }
