@@ -258,11 +258,19 @@
                 @endif
 
                 <div>
-                    <livewire:castle.manage-trainings.folders key="folders-list-{{ $sections->count() }}" :currentSection="$actualSection" :sections="$sections" />
+                    <livewire:castle.manage-trainings.folders
+                        key="folders-list-{{ $sections->count() }}"
+                        :currentSection="$actualSection"
+                        :sections="$sections"
+                    />
                 </div>
 
                 <div class="mt-10 @if ($this->filesTabSelected) hidden @endif">
-                    <livewire:castle.manage-trainings.videos key="videos-list-{{ $contents->count() }}"  :currentSection="$actualSection" :contents="$contents" />
+                    <livewire:castle.manage-trainings.videos
+                        key="videos-list-{{ $contents->count() }}"
+                        :currentSection="$actualSection"
+                        :contents="$contents"
+                    />
                 </div>
             </div>
         </div>
