@@ -9,7 +9,7 @@ use Livewire\Component;
 
 class Videos extends Component
 {
-    /** @var Collection[TrainingPageContent] */
+    /** @var Collection TrainingPageContent[] */
     public Collection $contents;
 
     public TrainingPageSection $currentSection;
@@ -18,15 +18,32 @@ class Videos extends Component
 
     public ?TrainingPageContent $selectedContent;
 
+    public bool $showVideoModal = false;
+
     public function mount(Collection $contents, TrainingPageSection $currentSection)
     {
-        $this->contents       = $contents;
-        $this->currentSection = $currentSection;
+        $this->contents        = $contents;
+        $this->currentSection  = $currentSection;
+        $this->selectedContent = new TrainingPageContent();
     }
 
     public function render()
     {
         return view('livewire.castle.manage-trainings.videos');
+    }
+
+    public function makeVideoUrl(TrainingPageContent $content)
+    {
+        $videoId = explode('/', $content->video_url);
+        $videoId = $videoId[count($videoId) - 1] ?? null;
+
+        return sprintf('https://www.youtube.com/embed/%s', $videoId);
+    }
+
+    public function openShowVideoModal(TrainingPageContent $content)
+    {
+        $this->showVideoModal  = true;
+        $this->selectedContent = $content;
     }
 
     public function onEdit(TrainingPageContent $content)
@@ -46,7 +63,7 @@ class Videos extends Component
         $content->delete();
 
         $this->contents = $this->contents->filter(
-            fn (TrainingPageContent $c) => $c->id !== $content->id
+            fn(TrainingPageContent $c) => $c->id !== $content->id
         );
 
         $this->selectedContent = null;
