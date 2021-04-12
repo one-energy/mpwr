@@ -139,9 +139,9 @@ class Trainings extends Component
     public function rules()
     {
         return [
-            'video.title'       => 'required',
-            'video.video_url'   => 'required',
-            'video.description' => 'required',
+            'video.title'       => 'required|string|max:100',
+            'video.video_url'   => 'required|string|max:100',
+            'video.description' => 'required|string|string',
         ];
     }
 
