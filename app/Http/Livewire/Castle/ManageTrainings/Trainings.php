@@ -7,6 +7,7 @@ use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Trainings extends Component
@@ -32,6 +33,8 @@ class Trainings extends Component
     public TrainingPageContent $video;
 
     public string $selectedTab = 'files';
+
+    public bool $showAddContentModal = false;
 
     protected $listeners = [
         'contentAdded' => '$refresh',
@@ -131,5 +134,35 @@ class Trainings extends Component
         }
 
         $this->selectedTab = $tabName;
+    }
+
+    public function rules()
+    {
+        return [
+            'video.title'       => 'required',
+            'video.video_url'   => 'required',
+            'video.description' => 'required',
+        ];
+    }
+
+    public function storeVideo()
+    {
+        $this->validate();
+
+        DB::transaction(function () {
+            $this->video->training_page_section_id = $this->actualSection->id;
+
+            $this->video->save();
+            $this->contents->push($this->video);
+
+            alert()
+                ->withTitle(__('Video has been added!'))
+                ->livewire($this)
+                ->send();
+
+            $this->video = new TrainingPageContent();
+
+            $this->showAddContentModal = false;
+        });
     }
 }
