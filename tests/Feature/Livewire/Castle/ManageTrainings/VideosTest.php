@@ -20,7 +20,7 @@ class VideosTest extends TestCase
     {
         $section = TrainingPageSection::factory()->create();
 
-        /** @var Collection[TrainingPageContent] */
+        /** @var Collection TrainingPageContent[] */
         $contents = TrainingPageContent::factory()->times(2)->create([
             'training_page_section_id' => $section->id,
             'description'              => Str::random('50'),
@@ -40,7 +40,7 @@ class VideosTest extends TestCase
     {
         $section = TrainingPageSection::factory()->create();
 
-        /** @var Collection[TrainingPageContent] */
+        /** @var Collection TrainingPageContent[] */
         $contents = TrainingPageContent::factory()->times(2)->create([
             'training_page_section_id' => $section->id,
         ]);
