@@ -57,23 +57,3 @@
               </div>
             </a>
           </div>
-          @endforeach
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-  var readerOption = {
-    readOnly: true
-  }
-
-  var content = <?= $content->description ?? 'null' ?>
-
-  var reader = new Quill('#reader', readerOption);
-
-  if (content) {
-    reader.setContents(content);
-  }
-</script>
