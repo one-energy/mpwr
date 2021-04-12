@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Livewire\Castle\ManageTrainings;
+namespace Tests\Feature\Livewire\Castle\ManageTrainings\Trainings;
 
 use App\Http\Livewire\Castle\ManageTrainings\Trainings;
 use App\Models\Department;
@@ -11,27 +11,9 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
-class TrainingsTest extends TestCase
+class StoreTrainingsTest extends TestCase
 {
     use RefreshDatabase;
-
-    /** @test */
-    public function it_should_be_possible_change_tabs()
-    {
-        $john = User::factory()->create(['role' => 'Admin']);
-
-        $department = Department::factory()->create();
-        TrainingPageSection::factory()->create(['department_id' => $department->id]);
-
-        $this->actingAs($john);
-
-        Livewire::test(Trainings::class, ['department' => $department])
-            ->assertSet('filesTabSelected', true)
-            ->assertSet('trainingTabSelected', false)
-            ->call('changeTab', 'training')
-            ->assertSet('filesTabSelected', false)
-            ->assertSet('trainingTabSelected', true);
-    }
 
     /** @test */
     public function it_should_be_possible_store_a_video()
