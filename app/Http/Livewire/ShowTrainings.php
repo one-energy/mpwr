@@ -11,17 +11,17 @@ class ShowTrainings extends Component
 {
     use FullTable;
 
-    public $content       = [];
+    public $content = [];
 
-    public $sections      = [];
+    public $sections = [];
 
-    public $videoId       = [];
+    public $videoId = [];
 
     public $actualSection = [];
 
-    public $path          = [];
+    public $path = [];
 
-    public $section       = [];
+    public $section = [];
 
     public $department;
 
@@ -32,13 +32,13 @@ class ShowTrainings extends Component
 
     public function render()
     {
-        $index         = 0;
+        $index = 0;
         if ($this->department->id) {
             $actualSection = $this->section ?? TrainingPageSection::whereDepartmentId($this->department->id)->first();
             $index         = 0;
 
-            $this->content       = $this->getContent($actualSection);
-            $this->sections      = $this->department->id ? $this->getParentSections($actualSection) : [];
+            $this->content  = $this->getContent($actualSection);
+            $this->sections = $this->department->id ? $this->getParentSections($actualSection) : [];
             // dd($this->sections);
             if ($this->content) {
                 $this->videoId = explode('/', $this->content->video_url);
@@ -74,16 +74,17 @@ class ShowTrainings extends Component
 
     public function changeDepartment()
     {
-        return redirect(route('castle.manage-trainings.index',  ['department' => request()->all()['department']] ));
+        return redirect(route('castle.manage-trainings.index', ['department' => request()->all()['department']]));
     }
 
     public function getParentSections($section)
     {
         $search         = $this->search;
         $trainingsQuery = TrainingPageSection::query()->with('content')
-            ->select( 'training_page_sections.*')
+            ->select('training_page_sections.*')
             ->whereDepartmentId($this->department->id)
-            ->leftJoin('training_page_contents', 'training_page_sections.id', '=', 'training_page_contents.training_page_section_id' );
+            ->leftJoin('training_page_contents', 'training_page_sections.id', '=',
+                'training_page_contents.training_page_section_id');
 
         $trainingsQuery->when($search == '', function ($query) use ($section) {
             $query->where('training_page_sections.parent_id', $section->id ?? 1);
