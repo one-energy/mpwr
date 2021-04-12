@@ -151,4 +151,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('upload-section-file/{section}', [FileController::class, 'uploadSectionFile'])->name('uploadSectionFile');
 
+    Route::post('download-section-file', [FileController::class, 'downloadSectionFile'])->name('downloadSectionFile');
+
 });
