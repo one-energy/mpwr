@@ -4,8 +4,8 @@
     <div class="grid grid-cols-1 gap-y-3 sm:gap-x-3 lg:gap-x-5 md:grid-cols-2 xl:grid-cols-3">
         @foreach ($contents as $content)
             <div wire:key="video-{{ $content->id }}" class="grid grid-rows-2 lg:grid-rows-1 lg:grid-cols-5 lg:gap-x-3 border-2 border-gray-300 rounded p-4">
-                <div class="col-span-full lg:col-span-2 relative  bg-gray-800">
-                    <iframe class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/#" frameborder="0" allowfullscreen></iframe>
+                <div class="col-span-full lg:col-span-2 relative bg-gray-800 cursor-pointer" wire:click="openShowVideoModal({{ $content->id }})">
+                    <iframe class="absolute inset-0 w-full h-full pointer-events-none" src="{{ $this->makeVideoUrl($content) }}" frameborder="0"></iframe>
                 </div>
                 <div class="lg:col-span-3">
                     <div class="flex flex-col h-full">
@@ -61,6 +61,42 @@
         </div>
     </div>
 
+    <div x-data="showVideoHandler()" x-show="isOpen()" @keydown.escape.window="close" x-cloak>
+        <div
+            x-show="isOpen()"
+            class="fixed inset-0 transition-opacity bg-gray-500 opacity-75"
+            x-transition:enter="ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-75"
+            x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 transition-opacity">
+        </div>
+        <div
+            x-show="isOpen()"
+            @click.away="close"
+            class="bg-white w-11/12 h-1/2 md:w-3/5 md:h-3/5 m-auto fixed inset-0 shadow-xl transform transition-all"
+            x-transition:enter="ease-out duration-300"
+            x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+            x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+            x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full"
+        >
+            <div class="flex flex-col h-full">
+                <div class="w-full relative flex-1">
+                    <iframe class="w-full h-full" src="{{ $this->makeVideoUrl($selectedContent) }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <div class="bg-gray-500 text-white px-4 pt-3 pb-5 max-h-1/4 overflow-auto">
+                    <h3 class="font-semibold text-2xl">{{ $selectedContent->title }}</h3>
+                    <p class="text-sm">{{ $selectedContent->description }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <x-modal x-cloak :title="__('Delete Video')" description="Are you sure you want to delete this video? You will not be able to recover!">
         <div class="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto justify-end space-x-2">
             <div class="flex w-full mt-3 rounded-md shadow-sm sm:mt-0 sm:w-auto">
@@ -86,12 +122,18 @@
     const editVideoHandler = () => ({
         content: {},
         show: false,
-        open(content) {
-            this.content = {...event.detail.content};
+        open({ detail }) {
+            this.content = {...detail.content};
 
             this.show = true;
         },
         close() { this.show = false },
         isOpen() { return this.show === true },
+    });
+
+    const showVideoHandler = () => ({
+        show: @entangle('showVideoModal'),
+        isOpen() { return this.show === true },
+        close() { this.show = false },
     });
   </script>
