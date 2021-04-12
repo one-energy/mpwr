@@ -18,7 +18,9 @@ class Videos extends Component
 
     public ?TrainingPageContent $selectedContent;
 
-    public bool $showVideoModal;
+    public bool $showVideoModal = false;
+
+    public bool $showEditVideoModal = false;
 
     public bool $showActions;
 
@@ -27,7 +29,6 @@ class Videos extends Component
         $this->contents        = $contents;
         $this->currentSection  = $currentSection;
         $this->selectedContent = new TrainingPageContent();
-        $this->showVideoModal  = false;
         $this->showActions     = $showActions;
     }
 
@@ -52,8 +53,9 @@ class Videos extends Component
 
     public function onEdit(TrainingPageContent $content)
     {
-        $this->updateRoute = route('castle.manage-trainings.updateContent', $content->id);
-        $this->dispatchBrowserEvent('on-edit-content', ['content' => $content]);
+        $this->selectedContent    = $content;
+        $this->showEditVideoModal = true;
+        $this->updateRoute        = route('castle.manage-trainings.updateContent', $content->id);
     }
 
     public function onDestroy(TrainingPageContent $content)
@@ -62,15 +64,16 @@ class Videos extends Component
         $this->dispatchBrowserEvent('confirm', ['content' => $content]);
     }
 
-    public function destroyVideo(TrainingPageContent $content)
+    public function destroyVideo()
     {
-        $content->delete();
+
+        $this->selectedContent->delete();
 
         $this->contents = $this->contents->filter(
-            fn(TrainingPageContent $c) => $c->id !== $content->id
+            fn(TrainingPageContent $content) => $content->id !== $this->selectedContent->id
         );
 
-        $this->selectedContent = null;
+        $this->selectedContent = new TrainingPageContent();
 
         $this->dispatchBrowserEvent('close-modal');
 

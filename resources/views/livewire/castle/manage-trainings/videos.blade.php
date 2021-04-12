@@ -36,15 +36,10 @@
     </div>
 
     <div x-data="{
-        content: {},
-        show: false,
-        open({ detail }) {
-            this.content = {...detail.content};
-            this.show = true;
-        },
+        show: @entangle('showEditVideoModal').defer,
         close() { this.show = false },
         isOpen() { return this.show === true },
-    }" @on-edit-content.window="open" x-cloak>
+    }" x-cloak>
         <div x-show="isOpen()" wire:loading.remove class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center z-20">
             <div x-show="isOpen()" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity">
                 <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
@@ -59,9 +54,9 @@
                     <h3 class="mb-3.5 font-medium">Video Editing</h3>
                     <x-form id="videoForm" :route="$updateRoute">
                         <div class="grid grid-cols-2 mt-8 gap-2 mb-4">
-                            <x-input class="col-span-1" label="Title" name="content_title" x-model="content.title" />
-                            <x-input class="col-span-1" label="Video Url" name="video_url" x-model="content.video_url"/>
-                            <x-text-area class="col-span-2" label="Description" name="description" x-model="content.description"></x-text-area>
+                            <x-input class="col-span-1" label="Title" name="content_title" value="{{ $selectedContent->title }}" />
+                            <x-input class="col-span-1" label="Video Url" name="video_url" value="{{ $selectedContent->video_url }}"/>
+                            <x-text-area class="col-span-2" label="Description" name="description" value="{{ $selectedContent->description }}"></x-text-area>
                         </div>
                         <div class="mt-6">
                             <span class="block w-full rounded-md shadow-sm">
@@ -127,7 +122,7 @@
             </div>
             <div class="flex w-full mt-3 rounded-md shadow-sm sm:mt-0 sm:w-auto">
                 <button
-                    wire:click="destroyVideo({{ $selectedContent }})"
+                    wire:click="destroyVideo"
                     class="rounded-md inline-flex justify-center w-full px-4 py-2 text-base font-medium leading-6 border-2 text-red-500 border-red-500 hover:text-red-600 hover:border-red-600 focus:border-red-500 focus:shadow-outline-red active:bg-red-50">
                     Confirm
                 </button>
