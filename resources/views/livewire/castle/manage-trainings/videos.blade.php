@@ -53,10 +53,10 @@
                 <div class="px-4 py-5 sm:p-6">
                     <h3 class="mb-3.5 font-medium">Video Editing</h3>
                     <x-form id="videoForm" :route="$updateRoute">
-                        <div class="grid grid-cols-2 mt-8 gap-2 mb-4">
-                            <x-input class="col-span-1" label="Title" name="content_title" value="{{ $selectedContent->title }}" />
-                            <x-input class="col-span-1" label="Video Url" name="video_url" value="{{ $selectedContent->video_url }}"/>
-                            <x-text-area class="col-span-2" label="Description" name="description" value="{{ $selectedContent->description }}"></x-text-area>
+                        <div class="flex flex-col space-y-5 my-4">
+                            <x-input label="Title" name="content_title" value="{{ $selectedContent->title }}" />
+                            <x-input label="Video Url" name="video_url" value="{{ $selectedContent->video_url }}"/>
+                            <x-text-area label="Description" name="description" value="{{ $selectedContent->description }}"></x-text-area>
                         </div>
                         <div class="mt-6">
                             <span class="block w-full rounded-md shadow-sm">

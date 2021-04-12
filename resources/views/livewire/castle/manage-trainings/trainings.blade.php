@@ -163,7 +163,10 @@
                             </div>
                         @endif
                         @if($contents)
-                            <button class="bg-green-450  text-white font-medium text-sm rounded shadow-md px-4 md:px-5 py-2.5" wire:click="$set('showAddContentModal', true)">
+                            <button
+                                class="bg-green-450  text-white font-medium text-sm rounded shadow-md px-4 md:px-5 py-2.5 focus:outline-none"
+                                wire:click="$set('showAddContentModal', true)"
+                            >
                                 Add Content
                             </button>
                             <div class="col-span-1 sm:col-span-3" x-data="addContentHandler()" x-cloak>
@@ -181,7 +184,7 @@
                                             </button>
                                         </div>
                                         <div class="sm:p-6">
-                                            <div class="flex my-4">
+                                            <div class="flex mt-4 mb-7">
                                                 <button
                                                     class="py-2 focus:outline-none rounded-l shadow-md w-96"
                                                     :class="tabVideoSelected ? activeTabColors : inactiveTabColors"
@@ -200,10 +203,10 @@
 
                                             <div x-show="tabVideoSelected">
                                                 <x-form wire:submit.prevent="storeVideo">
-                                                    <div class="grid grid-cols-2 mt-8 gap-2 mb-4">
-                                                        <x-input class="col-span-1" label="Title" wire:model.defer="video.title" name="video.title" />
-                                                        <x-input class="col-span-1" label="Video Url" wire:model.defer="video.video_url" name="video.video_url"/>
-                                                        <x-text-area class="col-span-2" label="Description" wire:model.defer="video.description" name="video.description"></x-text-area>
+                                                    <div class="flex flex-col space-y-5 my-4">
+                                                        <x-input label="Title" wire:model.defer="video.title" name="video.title" />
+                                                        <x-input label="Video Url" wire:model.defer="video.video_url" name="video.video_url"/>
+                                                        <x-text-area label="Description" wire:model.defer="video.description" name="video.description"></x-text-area>
                                                     </div>
                                                     <div class="mt-6">
                                                         <span class="block w-full rounded-md shadow-sm">
