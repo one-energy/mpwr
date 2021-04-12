@@ -8,6 +8,11 @@ use Illuminate\Support\Str;
 
 class SectionFile extends Model
 {
+    const G_SIZE     = 1000000000;
+    const M_SIZE     = 1000000;
+    const K_SIZE     = 1000;
+    const UPLOAD_URL = '{{ $namedRoute }}';
+
     use HasFactory;
 
     protected $fillable = [
@@ -18,8 +23,29 @@ class SectionFile extends Model
         'path'
     ];
 
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d',
+    ];
+
     public function trainingPageSection()
     {
         return $this->belongsTo(TrainingPageSection::class);
+    }
+
+    public function getAbbreviatedSizeAttribute()
+    {
+        if($this->size <= self::K_SIZE){
+            return $this->size + ' B';
+        }
+
+        if($this->size <= self::M_SIZE){
+            return number_format(($this->size/self::K_SIZE), 2) . ' KB';
+        }
+
+        if($this->size <= self::G_SIZE){
+            return number_format(($this->size/self::M_SIZE), 2) . ' MB';
+        }
+
+        return number_format(($this->size/self::G_SIZE), 2) . ' GB';
     }
 }

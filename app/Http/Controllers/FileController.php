@@ -28,8 +28,9 @@ class FileController extends Controller
         });
     }
 
-    public function downloadSectionFile($fileName)
+    public function downloadSectionFile()
     {
-        return Storage::download($fileName);
+        $request = request()->all();
+        return Storage::disk('local')->download( $request['path'] );
     }
 }
