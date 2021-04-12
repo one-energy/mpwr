@@ -13,12 +13,15 @@ class Folders extends Component
 
     public TrainingPageSection $currentSection;
 
-    public string $sectionDestroyRoute = '';
+    public string $sectionDestroyRoute;
 
-    public function mount(Collection $sections, $currentSection)
+    public bool $showActions;
+
+    public function mount(Collection $sections, TrainingPageSection $currentSection, bool $showActions = true)
     {
         $this->sections       = $sections;
         $this->currentSection = $currentSection;
+        $this->showActions    = $showActions;
     }
 
     public function render()

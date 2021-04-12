@@ -15,14 +15,20 @@
                                 {{ Str::limit($content->description, 100) }}
                             </p>
                         </div>
-                        <div class="flex justify-end space-x-1 mt-1">
-                            <button class="hover:bg-gray-100 focus:outline-none p-2 rounded-full" wire:click="onEdit({{ $content->id }})">
-                                <x-svg.pencil class="w-4 h-4 fill-current text-gray-800" />
-                            </button>
-                            <button class="hover:bg-red-200 focus:outline-none p-2 rounded-full" wire:click="onDestroy({{ $content->id }})">
-                                <x-svg.trash class="w-5 h-5  text-red-600 fill-current" />
-                            </button>
-                        </div>
+                        @if ($showActions)
+                            <div class="flex justify-end space-x-1 mt-1">
+                                <button class="hover:bg-gray-100 focus:outline-none p-2 rounded-full" wire:click="onEdit({{ $content->id }})">
+                                    <x-svg.pencil class="w-4 h-4 fill-current text-gray-800" />
+                                </button>
+                                <button class="hover:bg-red-200 focus:outline-none p-2 rounded-full" wire:click="onDestroy({{ $content->id }})">
+                                    <x-svg.trash class="w-5 h-5  text-red-600 fill-current" />
+                                </button>
+                            </div>
+                        @else
+                            <div class="flex justify-end space-x-1 mt-1">
+                                &nbsp;
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

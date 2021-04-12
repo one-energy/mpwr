@@ -18,13 +18,17 @@ class Videos extends Component
 
     public ?TrainingPageContent $selectedContent;
 
-    public bool $showVideoModal = false;
+    public bool $showVideoModal;
 
-    public function mount(Collection $contents, TrainingPageSection $currentSection)
+    public bool $showActions;
+
+    public function mount(Collection $contents, TrainingPageSection $currentSection, bool $showActions = true)
     {
         $this->contents        = $contents;
         $this->currentSection  = $currentSection;
         $this->selectedContent = new TrainingPageContent();
+        $this->showVideoModal  = false;
+        $this->showActions     = $showActions;
     }
 
     public function render()

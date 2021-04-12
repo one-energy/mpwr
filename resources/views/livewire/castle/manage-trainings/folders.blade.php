@@ -1,16 +1,18 @@
 <div class="grid grid-cols-1 gap-y-3 sm:gap-x-3 lg:gap-x-5 md:grid-cols-3">
     @foreach ($sections as $section)
-        <a href="{{ route('castle.manage-trainings.index',[
+        <a href="{{ route($showActions ? 'castle.manage-trainings.index' : 'trainings.index',[
             'department' => $section->department_id,
             'section'    => $section->id,
         ])}}">
             <div class="border-cool-gray-300 border-2 p-3 cursor-pointer flex items-center">
-                <div class="text-center flex flex-1 items-center space-x-3.5 text-base">
-                    <button class="hover:bg-red-200 focus:outline-none p-2 rounded-full" wire:click.prevent="onDestroy({{ $section}})">
-                        <x-svg.trash class="w-5 h-5  text-red-600 fill-current" />
-                    </button>
-                    <p class="">{{ $section->title }}</p>
-                </div>
+                    <div class="text-center flex flex-1 items-center space-x-3.5 text-base">
+                        @if ($showActions)
+                            <button class="hover:bg-red-200 focus:outline-none p-2 rounded-full" wire:click.prevent="onDestroy({{ $section}})">
+                                <x-svg.trash class="w-5 h-5  text-red-600 fill-current" />
+                            </button>
+                        @endif
+                        <p class="">{{ $section->title }}</p>
+                    </div>
                 <div>
                     <x-svg.chevron-right class="text-gray-500 font-bold h-6 w-6" />
                 </div>
