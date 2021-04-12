@@ -29,7 +29,16 @@
         @endforeach
     </div>
 
-    <div x-data="editVideoHandler()" @on-edit-content.window="open" x-cloak>
+    <div x-data="{
+        content: {},
+        show: false,
+        open({ detail }) {
+            this.content = {...detail.content};
+            this.show = true;
+        },
+        close() { this.show = false },
+        isOpen() { return this.show === true },
+    }" @on-edit-content.window="open" x-cloak>
         <div x-show="isOpen()" wire:loading.remove class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center z-20">
             <div x-show="isOpen()" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity">
                 <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
@@ -61,7 +70,11 @@
         </div>
     </div>
 
-    <div x-data="showVideoHandler()" x-show="isOpen()" @keydown.escape.window="close" x-cloak>
+    <div x-data="{
+        show: @entangle('showVideoModal').defer,
+        isOpen() { return this.show === true },
+        close() { this.show = false },
+    }" x-show="isOpen()" @keydown.escape.window="close" x-cloak>
         <div
             x-show="isOpen()"
             class="fixed inset-0 transition-opacity bg-gray-500 opacity-75"
@@ -116,24 +129,3 @@
         </div>
     </x-modal>
 </div>
-
-
-<script>
-    const editVideoHandler = () => ({
-        content: {},
-        show: false,
-        open({ detail }) {
-            this.content = {...detail.content};
-
-            this.show = true;
-        },
-        close() { this.show = false },
-        isOpen() { return this.show === true },
-    });
-
-    const showVideoHandler = () => ({
-        show: @entangle('showVideoModal'),
-        isOpen() { return this.show === true },
-        close() { this.show = false },
-    });
-  </script>
