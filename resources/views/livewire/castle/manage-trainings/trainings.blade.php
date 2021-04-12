@@ -163,19 +163,17 @@
                             </div>
                         @endif
                         @if($contents)
-                            <div class="col-span-1 sm:col-span-3" x-data="addContentHandler()" @content-added.window="alert('aee')"  x-cloak>
-                                <button class="bg-green-450  text-white font-medium text-sm rounded shadow-md px-4 md:px-5 py-2.5" @click="open">
-                                    Add Content
-                                </button>
-
-                                <div x-show="show" wire:loading.remove class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center z-20" x-clock>
-                                    <div x-show="show" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity">
+                            <button class="bg-green-450  text-white font-medium text-sm rounded shadow-md px-4 md:px-5 py-2.5" wire:click="$set('showAddContentModal', true)">
+                                Add Content
+                            </button>
+                            <div class="col-span-1 sm:col-span-3" x-data="addContentHandler()" x-cloak>
+                                <div x-show="show" @keydown.escape.window="close" wire:loading.remove class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center z-20">
+                                    <div x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity">
                                         <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
                                     </div>
                                     <div
-                                        @click.away="close" x-show="show" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                        @click.away="close" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                                         class="relative bottom-16 p-4 overflow-y-auto bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full"
-                                        x-cloak
                                     >
                                         <div class="absolute top-0 right-0 pt-4 pr-4">
                                             <button type="button" @click="close" class="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150" aria-label="Close">
@@ -201,18 +199,20 @@
                                             </div>
 
                                             <div x-show="tabVideoSelected">
-                                                <div class="grid grid-cols-2 mt-8 gap-2 mb-4">
-                                                    <x-input class="col-span-1" label="Title" wire:model.defer="video.title" name="video.title" />
-                                                    <x-input class="col-span-1" label="Video Url" wire:model.defer="video.video_url" name="video.video_url"/>
-                                                    <x-text-area class="col-span-2" label="Description" wire:model.defer="video.description" name="video.description"></x-text-area>
-                                                </div>
-                                                <div class="mt-6">
-                                                    <span class="block w-full rounded-md shadow-sm">
-                                                        <x-button class="w-full flex" type="submit" color="green" @click="$wire.storeVideo()">
-                                                            {{ __('Save') }}
-                                                        </x-button>
-                                                    </span>
-                                                </div>
+                                                <x-form wire:submit.prevent="storeVideo">
+                                                    <div class="grid grid-cols-2 mt-8 gap-2 mb-4">
+                                                        <x-input class="col-span-1" label="Title" wire:model.defer="video.title" name="video.title" />
+                                                        <x-input class="col-span-1" label="Video Url" wire:model.defer="video.video_url" name="video.video_url"/>
+                                                        <x-text-area class="col-span-2" label="Description" wire:model.defer="video.description" name="video.description"></x-text-area>
+                                                    </div>
+                                                    <div class="mt-6">
+                                                        <span class="block w-full rounded-md shadow-sm">
+                                                            <x-button class="w-full flex" type="submit" color="green">
+                                                                {{ __('Save') }}
+                                                            </x-button>
+                                                        </span>
+                                                    </div>
+                                                </x-form>
                                             </div>
                                         </div>
                                     </div>
@@ -258,11 +258,11 @@
                 @endif
 
                 <div>
-                    <livewire:castle.manage-trainings.folders :currentSection="$actualSection" :sections="$sections" />
+                    <livewire:castle.manage-trainings.folders key="folders-list-{{ $sections->count() }}" :currentSection="$actualSection" :sections="$sections" />
                 </div>
 
                 <div class="mt-10 @if ($this->filesTabSelected) hidden @endif">
-                    <livewire:castle.manage-trainings.videos :currentSection="$actualSection" :contents="$contents" />
+                    <livewire:castle.manage-trainings.videos key="videos-list-{{ $contents->count() }}"  :currentSection="$actualSection" :contents="$contents" />
                 </div>
             </div>
         </div>
@@ -271,15 +271,13 @@
 
 <script>
     const addContentHandler = () => ({
-        show: false,
+        show: @entangle('showAddContentModal'),
         selectedTab: 'video',
         changeTab(tab) {
             this.selectedTab = tab;
         },
         open() {
-            setTimeout(() => {
-                this.show = true;
-            }, 100);
+            this.show = true;
         },
         close() {
             this.show = false;
@@ -297,8 +295,4 @@
             return 'bg-gray-300 text-gray-800';
         },
     });
-
-    window.addEventListener('name-updated', event => {
-    alert('Name updated to: ' + event.detail.newName);
-})
 </script>
