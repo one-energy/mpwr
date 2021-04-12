@@ -64,18 +64,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    var readerOption = {
-        readOnly: true
-    }
-
-    var content = <?= $content->description ?? 'null' ?>
-
-        var
-    reader = new Quill('#reader', readerOption);
-
-    if (content) {
-        reader.setContents(content);
-    }
-</script>

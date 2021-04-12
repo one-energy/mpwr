@@ -4,7 +4,7 @@
     $color = $color ?? 'green';
 @endphp
 
-<div x-data="alert()" x-cloak
+<div x-data="$alert()" x-cloak
      x-init="init()"
      x-on:show-alert.window="showEvent($event.detail)"
      class="fixed inset-0 flex items-end justify-center px-4 py-6 pointer-events-none sm:p-6 sm:items-start sm:justify-end"
@@ -45,16 +45,15 @@
         </div>
     </div>
 </div>
-
 @push('scripts')
     <script>
-        function alert() {
+        function $alert() {
             return {
                 open: false,
                 title: '{{ $title }}',
                 description: '{{ $description ?? '' }}',
                 color: '{{ $color }}',
-                shouldInit: {{ $title ? 'true' : 'false' }},
+                shouldInit: '{{ $title ? true : false}}',
                 show() {
                     setTimeout(() => {
                         this.open = true;
