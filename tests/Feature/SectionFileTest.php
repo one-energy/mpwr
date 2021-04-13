@@ -13,7 +13,7 @@ use Tests\TestCase;
 
 class SectionFileTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     /** @test */
     public function it_should_upload_a_file()
@@ -29,7 +29,6 @@ class SectionFileTest extends TestCase
             ]
         ]);
         Storage::disk('local')->assertExists('/files/' . $section->department_id . '/' . $file->hashName());
-        $response->assertStatus(200);
     }
 
     /** @test */

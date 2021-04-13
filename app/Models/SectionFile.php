@@ -35,7 +35,7 @@ class SectionFile extends Model
     public function getAbbreviatedSizeAttribute()
     {
         if($this->size <= self::K_SIZE){
-            return $this->size + ' B';
+            return $this->size . ' B';
         }
 
         if($this->size <= self::M_SIZE){
