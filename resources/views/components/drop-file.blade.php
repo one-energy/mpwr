@@ -97,6 +97,7 @@
                     }).then((res) => {
                         if (res.ok) {
                             window.$app.alert({title:"Your files have been uploaded", color:"green"});
+                            window.Livewire.emit('filesUploaded');
                             return res.json();
                         }
 

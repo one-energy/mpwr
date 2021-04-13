@@ -37,7 +37,8 @@ class Trainings extends Component
     public bool $showAddContentModal = false;
 
     protected $listeners = [
-        'contentAdded' => '$refresh',
+        'contentAdded'  => '$refresh',
+        'filesUploaded' => 'getFreshFiles',
     ];
 
     public function sortBy()
@@ -169,5 +170,11 @@ class Trainings extends Component
 
             $this->showAddContentModal = false;
         });
+    }
+
+    public function getFreshFiles()
+    {
+        $this->actualSection       = TrainingPageSection::find($this->actualSection->id)->load('files');
+        $this->showAddContentModal = false;
     }
 }
