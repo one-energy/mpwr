@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use App\Models\SectionFile;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 
@@ -21,41 +22,50 @@ class ListFiles extends Component
         return $this->order;
     }
 
+    public function mount(Collection $files)
+    {
+        $this->files = $files;
+    }
+
     public function render()
     {
-        if($this->files->count()){
-
-            $this->files = $this->files->sortBy($this->sortBy)
-            ->when($this->sortDirection == 'desc', function ($query) {
+        $this->files = $this->files->sortBy($this->sortBy)
+            ->when($this->sortDirection === 'desc', function ($query) {
                 return $query->sortByDesc($this->sortBy);
             });
-        }
+
         return view('livewire.list-files');
     }
 
-
     public function downloadSectionFile(SectionFile $file)
     {
-        if (Storage::disk('local')->exists($file->path)) {
-            alert()->livewire($this)->withTitle('Download Started')->send();
-            return Storage::disk('local')->download( $file->path );
-        } else {
-            alert()->livewire($this)->withTitle('No one file to download')->send();
+        if (!Storage::disk('local')->exists($file->path)) {
+            alert()->livewire($this)->withTitle('File not found')->send();
         }
+
+        alert()->livewire($this)->withTitle('Download successfully')->send();
+
+        return Storage::disk('local')->download( $file->path );
     }
 
     public function removeFile(SectionFile $delete)
     {
-        if (Storage::disk('local')->exists($delete->path)) {
+        if (!Storage::disk('local')->exists($delete->path)) {
+            alert()->livewire($this)->withTitle('File not found')->send();
+
+            return;
+        }
+
+        DB::transaction(function () use ($delete) {
             SectionFile::destroy($delete->id);
-            Storage::disk('local')->delete($delete->path);
+
             $this->files = $this->files->filter(function ($file) use ($delete) {
                 return $file->id != $delete->id;
             });
-            alert()->livewire($this)->withTitle('The file was delted with success')->send();
-        } else {
-            alert()->livewire($this)->withTitle('No one file to delete')->send();
-        }
 
+            Storage::disk('local')->delete($delete->path);
+        });
+
+        alert()->livewire($this)->withTitle('File deleted successfully')->send();
     }
 }
