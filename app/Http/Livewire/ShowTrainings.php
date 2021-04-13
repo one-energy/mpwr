@@ -44,6 +44,9 @@ class ShowTrainings extends Component
     {
         if ($this->department->id) {
             $this->actualSection = $this->section ?? TrainingPageSection::whereDepartmentId($this->department->id)->first();
+
+            $this->actualSection->load('files');
+
             $this->contents      = $this->getContents($this->actualSection);
             $this->sections      = $this->department->id ? $this->getParentSections($this->actualSection) : collect();
             $this->path          = $this->getPath($this->actualSection);
