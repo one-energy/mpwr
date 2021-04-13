@@ -17,14 +17,17 @@ class ListFiles extends Component
 
     public string $order = 'original_name';
 
+    public bool $showDeleteButton;
+
     public function sortBy()
     {
         return $this->order;
     }
 
-    public function mount(Collection $files)
+    public function mount(Collection $files, bool $showDeleteButton = true)
     {
-        $this->files = $files;
+        $this->files            = $files;
+        $this->showDeleteButton = $showDeleteButton;
     }
 
     public function render()

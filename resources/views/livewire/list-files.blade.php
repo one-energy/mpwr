@@ -22,11 +22,13 @@
                     </x-table.td>
                     <x-table.td>{{ $file->abbreviatedSize }}</x-table.td>
                     <x-table.td>{{ $file->created_at->format('m/d/Y') }} at {{$file->created_at->format('h:ia')}}</x-table.td>
-                    <x-table.td wire:click="removeFile({{$file}})">
-                        <button class="hover:bg-red-200 focus:outline-none p-2 rounded-full cursor-pointer">
-                            <x-svg.trash class="w-5 h-5  text-red-600 fill-current" />
-                        </button>
-                    </x-table.td>
+                   @if ($showDeleteButton)
+                        <x-table.td wire:click="removeFile({{$file}})">
+                            <button class="hover:bg-red-200 focus:outline-none p-2 rounded-full cursor-pointer">
+                                <x-svg.trash class="w-5 h-5  text-red-600 fill-current" />
+                            </button>
+                        </x-table.td>
+                    @endif
                 </x-table.tr>
             @endforeach
         </x-slot>
