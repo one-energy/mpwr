@@ -217,6 +217,12 @@
                                                     </div>
                                                 </x-form>
                                             </div>
+
+                                            <div x-show="tabFileSelected">
+                                                <x-drop-file :namedRoute="route('uploadSectionFile', [
+                                                    'section' => $actualSection->id
+                                                ])" />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
