@@ -24,12 +24,6 @@ class ListFiles extends Component
         return $this->order;
     }
 
-    public function mount(Collection $files, bool $showDeleteButton = true)
-    {
-        $this->files            = $files;
-        $this->showDeleteButton = $showDeleteButton;
-    }
-
     public function render()
     {
         $this->files = $this->files->sortBy($this->sortBy)
