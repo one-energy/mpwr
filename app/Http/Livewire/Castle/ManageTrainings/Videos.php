@@ -4,11 +4,14 @@ namespace App\Http\Livewire\Castle\ManageTrainings;
 
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
 class Videos extends Component
 {
+    use AuthorizesRequests;
+
     /** @var Collection TrainingPageContent[] */
     public Collection $contents;
 
@@ -60,12 +63,15 @@ class Videos extends Component
 
     public function onDestroy(TrainingPageContent $content)
     {
+        $this->authorize('delete', $content);
+
         $this->selectedContent = $content;
         $this->dispatchBrowserEvent('confirm', ['content' => $content]);
     }
 
     public function destroyVideo()
     {
+        $this->authorize('delete', $this->selectedContent);
 
         $this->selectedContent->delete();
 
