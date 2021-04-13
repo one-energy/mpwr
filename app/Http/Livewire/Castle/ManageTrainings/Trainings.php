@@ -71,6 +71,9 @@ class Trainings extends Component
 
         if ($this->department->id) {
             $this->actualSection = $this->section ?? TrainingPageSection::whereDepartmentId($this->department->id)->first();
+
+            $this->actualSection->load('files');
+
             $this->contents      = $this->getContents($this->actualSection);
             $this->departments   = Department::all();
             $this->path          = $this->getPath($this->actualSection);
