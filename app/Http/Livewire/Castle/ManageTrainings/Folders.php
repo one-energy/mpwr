@@ -29,9 +29,9 @@ class Folders extends Component
         return view('livewire.castle.manage-trainings.folders');
     }
 
-    public function onDestroy($section)
+    public function onDestroy(TrainingPageSection $section)
     {
-        $this->sectionDestroyRoute = route('castle.manage-trainings.deleteSection', $section['id']);
+        $this->sectionDestroyRoute = route('castle.manage-trainings.deleteSection', $section->id);
         $this->dispatchBrowserEvent('on-destroy-section', ['section' => $section]);
     }
 }
