@@ -281,6 +281,11 @@
                         :contents="$contents"
                     />
                 </div>
+
+                <div class="mt-10">
+                    <h3 class="text-xl text-gray-700 font-medium mb-3.5">Files</h3>
+                    <livewire:list-files :files="$actualSection->files" />
+                </div>
             </div>
         </div>
     </div>
