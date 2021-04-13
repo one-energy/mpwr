@@ -29,7 +29,10 @@ class TrainingPageSection extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title'];
+    protected $fillable = [
+        'title',
+        'parent_id',
+    ];
 
     public function content()
     {
