@@ -11,8 +11,13 @@ use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Builders\UserBuilder;
+use Tests\Builders\DailyEntryBuilder;
+use Tests\Builders\OfficeBuilder;
+use Tests\Builders\RegionBuilder;
+use Tests\Feature\FeatureTest;
+
 
 class DailyEntryTest extends TestCase
 {

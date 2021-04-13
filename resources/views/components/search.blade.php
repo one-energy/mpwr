@@ -15,7 +15,7 @@
                 </svg>
             </div>
 
-            <input wire:model.debounce.500ms="search" class="block w-full px-10 form-input sm:text-sm sm:leading-5"
+            <input wire:model.debounce.500ms="search" class="mt-1 block w-full px-10 form-input sm:text-sm sm:leading-5"
                    placeholder="Search"/>
 
             @if($search)

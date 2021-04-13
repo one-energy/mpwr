@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -61,9 +62,28 @@ class Customer extends Model
     protected $fillable = ['first_name', 'last_name', 'bill', 'financing_id', 'financer_id', 'term_id', 'opened_by_id', 'system_size', 'adders', 'epc', 'setter_id', 'setter_fee', 'sales_rep_id', 'sales_rep_fee', 'sales_rep_comission', 'commission', 'created_at', 'updated_at', 'is_active'];
 
     protected $casts = [
-        'panel_sold' => 'boolean',
-        'is_active'  => 'boolean',
+        'panel_sold'   => 'boolean',
+        'is_active'    => 'boolean',
         'date_of_sale' => 'datetime:Y-m-d',
+    ];
+
+    const RANGE_DATES = [
+        ['title' => 'Today', 'value' => 'today'],
+        ['title' => 'Week to Date', 'value' => 'week_to_date'],
+        ['title' => 'Last Week', 'value' => 'last_week'],
+        ['title' => 'Month to Date', 'value' => 'month_to_date'],
+        ['title' => 'Last Month', 'value' => 'last_month'],
+        ['title' => 'Quarter to Date', 'value' => 'quarter_to_date'],
+        ['title' => 'Last Quarter', 'value' => 'last_quarter'],
+        ['title' => 'Year to Date', 'value' => 'year_to_date'],
+        ['title' => 'Last Year', 'value' => 'last_year'],
+        ['title' => 'Custom', 'value' => 'custom'],
+    ];
+
+    const STATUS = [
+        'pending'   => 'Pending Customers',
+        'installed' => 'Installed Customers',
+        'canceled'  => 'Canceled',
     ];
 
     const BILLS = [
@@ -102,17 +122,37 @@ class Customer extends Model
 
     public function financer()
     {
-        return $this->hasOne(Financer::class);
+        return $this->belongsTo(Financer::class);
     }
 
-    public function financing()
+    public function financingType()
     {
-        return $this->hasOne(Financing::class);
+        return $this->belongsTo(Financing::class, 'financing_id');
     }
 
     public function term()
     {
-        return $this->hasOne(Term::class);
+        return $this->belongsTo(Term::class);
+    }
+
+    public function recuiterOfSalesRep()
+    {
+        return $this->belongsTo(User::class, 'sales_rep_recruiter_id');
+    }
+
+    public function officeManager()
+    {
+        return $this->belongsTo(User::class, 'office_manager_id');
+    }
+
+    public function regionManager()
+    {
+        return $this->belongsTo(User::class, 'region_manager_id');
+    }
+
+    public function departmentManager()
+    {
+        return $this->belongsTo(User::class, 'department_manager_id');
     }
 
     public function getOpenedByAttribute()
@@ -143,5 +183,50 @@ class Customer extends Model
         } else {
             $this->margin = 0;
         }
+    }
+
+    public function scopeSearch(Builder $query, $search)
+    {
+        $query->when($search, function (Builder $query) use ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $search . '%'])
+                ->orWhereHas('userSetter', function ($query) use ($search) {
+                    $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
+                })
+                ->orWhereHas('userSalesRep', function ($query) use ($search) {
+                    $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
+                })
+                ->when(user()->role != 'Setter', function ($query) use ($search) {
+                    $query->orWhereHas('financingType', function ($query) use ($search) {
+                        $query->where('name', 'LIKE', '%' . $search . '%');
+                    })
+                    ->orWhereHas('financer', function ($query) use ($search) {
+                        $query->where('name', 'LIKE', '%' . $search . '%');
+                    })
+                    ->when(user()->role != 'Sales Rep', function ($query) use ($search) {
+                        $query->orWhereHas('recuiterOfSalesRep', function ($query) use ($search) {
+                            $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
+                        })
+                        ->orWhereHas('officeManager', function ($query) use ($search) {
+                            $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
+                        })
+                        ->when(user()->role != 'Office Manager', function ($query) use ($search) {
+                            $query->orWhereHas('regionManager', function ($query) use ($search) {
+                                $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
+                            })
+                            ->when(user()->role != 'Region Manager', function ($query) use ($search) {
+                                $query->orWhereHas('departmentManager', function ($query) use ($search) {
+                                    $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
+                                })
+                                ->when(user()->role != 'Department Manager', function ($query) use ($search) {
+                                    $query->orWhere('payee_one', 'LIKE', '%' . $search . '%')
+                                        ->orWhere('payee_two', 'LIKE', '%' . $search . '%');
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        });
     }
 }

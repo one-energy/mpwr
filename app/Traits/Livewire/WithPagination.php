@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Traits\Livewire;
 
 use Livewire\WithPagination as LivewireWithPagination;

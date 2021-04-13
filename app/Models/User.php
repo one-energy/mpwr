@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -116,6 +115,66 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo(Department::class, 'department_id');
     }
 
+    public function recruitedBy()
+    {
+        return $this->belongsTo(User::class, 'recruiter_id');
+    }
+
+    public function recruiteds()
+    {
+        return $this->hasMany(User::class, 'recruiter_id');
+    }
+
+    public function officeManager()
+    {
+        return $this->belongsTo(User::class, 'office_manager_id');
+    }
+
+    public function usersManagedOffice()
+    {
+        return $this->hasMany(User::class, 'office_manager_id');
+    }
+
+    public function regionManager()
+    {
+        return $this->belongsTo(User::class, 'region_manager_id');
+    }
+
+    public function usersManagedRegion()
+    {
+        return $this->hasMany(User::class, 'region_manager_id');
+    }
+
+    public function departmentManager()
+    {
+        return $this->belongsTo(User::class, 'department_manager_id');
+    }
+
+    public function usersManagedDepartment()
+    {
+        return $this->hasMany(User::class, 'department_manager_id');
+    }
+
+    public function customersOfSalesRepsRecuited()
+    {
+        return $this->hasMany(Customer::class, 'sales_rep_recruiter_id');
+    }
+
+    public function customersManagedRegion()
+    {
+        return $this->hasMany(Customer::class, 'region_manager_id');
+    }
+
+    public function customersDepartmentManager()
+    {
+        return $this->belongsTo(Customer::class, 'department_manager_id');
+    }
+
+    public function customersManagedDepartment()
+    {
+        return $this->hasMany(Customer::class, 'department_manager_id');
+    }
+
     public function invitations()
     {
         return $this->hasMany(Invitation::class);
@@ -162,11 +221,11 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function getPermittedUsers($departmentId = null)
     {
-        if($this->role == 'Admin' || $this->role == 'Owner') {
+        if ($this->role == 'Admin' || $this->role == 'Owner') {
             return User::has('office')->whereDepartmentId($departmentId)->orderBy('first_name')->get();
         }
 
-        if($this->role == 'Department Manager') {
+        if ($this->role == 'Department Manager') {
             return User::has('office')
                 ->whereDepartmentId($this->department_id)
                 ->where(function($query) {
@@ -178,15 +237,16 @@ class User extends Authenticatable implements MustVerifyEmail
                 })->orderBy('first_name')->get();
         }
 
-        if($this->role == 'Region Manager') {
+        if ($this->role == 'Region Manager') {
             $offices = $this->officesOnManagedRegions()->with('users')->get();
-            $users = $offices->reduce(function($users, Office $office) {
+            $users   = $offices->reduce(function($users, Office $office) {
                 return $users->mergeRecursive($office->users);
             }, $users = collect([]))->unique('id');
+
             return $users->sortBy('first_name');
         }
 
-        if($this->role == 'Office Manager') {
+        if ($this->role == 'Office Manager') {
             return $this->usersOnManagedOffices()->get();
         }
 
@@ -294,6 +354,19 @@ class User extends Authenticatable implements MustVerifyEmail
         return $message . '. Please disassociate the user from what was mentioned before continuing.';
     }
 
+    public function getPhoneNumberAttribute($value)
+    {
+        if ($value) {
+            $cleaned = preg_replace('/[^[:digit:]]/', '', $value);
+            preg_match('/(\d{1,5})(\d{3})(\d{3})(\d{4})/', $cleaned, $matches);
+            if ($matches) {
+                return "+{$matches[1]} ({$matches[2]}) {$matches[3]}-{$matches[4]}";
+            }
+
+            return $cleaned;
+        }
+    }
+
     public function scopeMasters(Builder $query)
     {
         return $query->where('master', true);
@@ -323,5 +396,27 @@ class User extends Authenticatable implements MustVerifyEmail
                     '%' . strtolower($search) . '%'
                 );
         });
+    }
+
+    public function hasRole(string $role): bool
+    {
+        return $this->role === $role;
+    }
+
+    public function hasAnyRole(array $roles): bool
+    {
+        return collect($roles)->some(fn ($role) => $role === $this->role);
+    }
+
+    public function notHaveRoles(array $roles): bool
+    {
+        return collect($roles)->every(fn ($role) => $role !== $this->role);
+    }
+
+    public static function getRoleByNames()
+    {
+        return collect(self::ROLES)
+            ->map(fn ($role) => $role['name'])
+            ->toArray();
     }
 }

@@ -26,7 +26,7 @@ class ManagerMembers extends Component
     {
         $usersQuery = User::query();
 
-        if (user()->role == "Admin" || user()->role == "Owner") {
+        if (user()->role == 'Admin' || user()->role == 'Owner') {
             $users = $usersQuery;
         } else {
             $users = $usersQuery->whereDepartmentId(user()->department_id);

@@ -2,11 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\Rates;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class RateFactory extends Factory
+class RatesFactory extends Factory
 {
-    protected $model = Rate::class;
+    protected $model = Rates::class;
     public function definition()
     {
         return [

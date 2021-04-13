@@ -26,13 +26,13 @@ class ManageOffice extends Component
     public function render()
     {
         $officeQuery = Office::query()
-            ->select("offices.*")
-            ->join("regions", "offices.region_id", "=", "regions.id");
+            ->select('offices.*')
+            ->join('regions', 'offices.region_id', '=', 'regions.id');
 
-        if (user()->role == "Admin" || user()->role == "Owner") {
+        if (user()->role == 'Admin' || user()->role == 'Owner') {
             $office = $officeQuery;
         } else {
-            $office = $officeQuery->where("regions.department_id", "=", user()->department_id);
+            $office = $officeQuery->where('regions.department_id', '=', user()->department_id);
         }
         
         return view('livewire.castle.manage-office', [

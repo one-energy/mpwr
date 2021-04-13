@@ -8,7 +8,7 @@ use App\Models\User;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class ManageIncentiveTest extends TestCase
+class ManageIncentivesTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -16,7 +16,7 @@ class ManageIncentiveTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create(['master' => true]);
+        $this->user = User::factory()->create(['master' => true]);
 
         $this->actingAs($this->user);
     }
@@ -24,12 +24,12 @@ class ManageIncentiveTest extends TestCase
     /** @test */
     public function it_should_list_all_incentives()
     {
-        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
-        $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
+        $department        = Department::factory()->create(["department_manager_id" => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
-        $incentives = factory(Incentive::class, 6)->create([
+        $incentives = Incentive::factory()->count(6)->create([
             "department_id" => $department->id
         ]);
 
@@ -48,11 +48,11 @@ class ManageIncentiveTest extends TestCase
     /** @test */
     public function it_should_block_the_create_form_for_non_top_level_roles()
     {
-        $setter = factory(User::class)->create([
+        $setter = User::factory()->create([
             "role" => "setter"
         ]);
 
-        $department = factory(Department::class)->create([
+        $department = Department::factory()->create([
             "department_manager_id" => $setter->id
         ]);
 
@@ -69,8 +69,8 @@ class ManageIncentiveTest extends TestCase
      /** @test */
      public function it_should_show_the_create_form_for_top_level_roles()
      {
-        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
-        $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
+        $department        = Department::factory()->create(["department_manager_id" => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
@@ -85,8 +85,8 @@ class ManageIncentiveTest extends TestCase
     /** @test */
     public function it_should_store_a_new_incentive()
     {
-        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
-        $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
+        $department        = Department::factory()->create(["department_manager_id" => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
@@ -111,8 +111,8 @@ class ManageIncentiveTest extends TestCase
     /** @test */
     public function it_should_require_all_fields_to_store_a_new_incentive()
     {
-        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
-        $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
+        $department        = Department::factory()->create(["department_manager_id" => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
@@ -138,12 +138,12 @@ class ManageIncentiveTest extends TestCase
     /** @test */
     public function it_should_show_the_edit_form_for_top_level_roles()
     {
-        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
-        $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
+        $department        = Department::factory()->create(["department_manager_id" => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
-        $incentive = factory(Incentive::class)->create();
+        $incentive = Incentive::factory()->create();
 
         $this->actingAs($departmentManager);
 
@@ -156,9 +156,9 @@ class ManageIncentiveTest extends TestCase
     /** @test */
     public function it_should_block_the_edit_form_for_non_top_level_roles()
     {
-        $this->actingAs(factory(User::class)->create(['role' => 'Setter']));
+        $this->actingAs(User::factory()->create(['role' => 'Setter']));
 
-        $incentive = factory(Incentive::class)->create();
+        $incentive = Incentive::factory()->create();
 
         $response = $this->get(route('castle.incentives.edit', $incentive->id));
 
@@ -168,12 +168,12 @@ class ManageIncentiveTest extends TestCase
     /** @test */
     public function it_should_update_an_incentive()
     {
-        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
-        $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
+        $department        = Department::factory()->create(["department_manager_id" => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
-        $incentive       = factory(Incentive::class)->create([
+        $incentive       = Incentive::factory()->create([
             'name' => 'Incentive',
             'department_id' => $department->id
         ]);
@@ -196,12 +196,12 @@ class ManageIncentiveTest extends TestCase
     /** @test */
     public function it_should_destroy_an_incentive()
     {
-        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
-        $department        = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
+        $department        = Department::factory()->create(["department_manager_id" => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
-        $incentive = factory(Incentive::class)->create();
+        $incentive = Incentive::factory()->create();
 
         $this->actingAs($departmentManager);
 
@@ -216,10 +216,10 @@ class ManageIncentiveTest extends TestCase
     /** @test */
     public function it_should_block_access_to_incentives()
     {
-        $regionManager = factory(User::class)->create(["role" => "Region Manager"]);
-        $officeManager = factory(User::class)->create(["role" => "Office Manager"]);
-        $setter = factory(User::class)->create(["role" => "Setter"]);
-        $salesRep = factory(User::class)->create(["role" => "Sales Rep"]);
+        $regionManager = User::factory()->create(["role" => "Region Manager"]);
+        $officeManager = User::factory()->create(["role" => "Office Manager"]);
+        $setter = User::factory()->create(["role" => "Setter"]);
+        $salesRep = User::factory()->create(["role" => "Sales Rep"]);
 
         $this->actingAs($regionManager)
             ->get(route('castle.incentives.index'))
@@ -241,9 +241,9 @@ class ManageIncentiveTest extends TestCase
     /** @test */
     public function it_should_allow_access_to_incentives()
     {
-        $owner = factory(User::class)->create(["role" => "Owner"]);
-        $admin = factory(User::class)->create(["role" => "Admin"]);
-        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
+        $owner = User::factory()->create(["role" => "Owner"]);
+        $admin = User::factory()->create(["role" => "Admin"]);
+        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
 
         $this->actingAs($owner)
             ->get(route('castle.incentives.index'))

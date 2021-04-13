@@ -14,13 +14,13 @@ class RegionController extends Controller
     {
         return Region::query()
             ->with('department')
-            ->when(user()->role == "Department Manager", function (Builder $query) use ($department) {
+            ->when(user()->role == 'Department Manager', function (Builder $query) use ($department) {
                 $query->where('department_id', '=', $department->id);
             })
-            ->when(user()->role == "Region Manager", function (Builder $query) {
+            ->when(user()->role == 'Region Manager', function (Builder $query) {
                 $query->where('region_manager_id', '=', user()->id);
             })
-            ->when(user()->role == "Office Manager", function (Builder $query) {
+            ->when(user()->role == 'Office Manager', function (Builder $query) {
                 $query->where('id', '=', user()->office->region->id);
             })
             ->get();
@@ -36,8 +36,8 @@ class RegionController extends Controller
     public function create()
     {
         $users = User::query()
-            ->where('role', '=', "Region Manager")
-            ->when(user()->role == "Department Manager", function (Builder $query) {
+            ->where('role', '=', 'Region Manager')
+            ->when(user()->role == 'Department Manager', function (Builder $query) {
                 $query->where('department_id', '=', user()->department_id);
             })
             ->get();

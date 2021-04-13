@@ -8,7 +8,7 @@ class SearchBar extends Component
 {
     public $trainings = [];
 
-    public $search = "";
+    public $search = '';
 
     public $sectionId;
 
