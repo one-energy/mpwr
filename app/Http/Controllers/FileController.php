@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use App\Models\TrainingPageSection;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class FileController extends Controller
 {
@@ -13,24 +13,24 @@ class FileController extends Controller
 
     public function uploadSectionFile(TrainingPageSection $section)
     {
-        $this->files = collect([]);
         $request = request()->all();
+
         return collect($request['files'])->map(function ($file) use ($section) {
-            $path = $file->store('files/'. $section->department_id, 'local');
-            $fileSaved = $section->files()->create([
+            $path = $file->store('files/' . $section->department_id, 'local');
+            $section->files()->create([
                 'name'          => $file->hashName(),
                 'original_name' => Str::of($file->getClientOriginalName())->beforeLast('.'),
                 'size'          => $file->getSize(),
                 'type'          => $file->extension(),
                 'path'          => $path,
             ]);
+
             return $file->getClientOriginalName();
         });
     }
 
     public function downloadSectionFile()
     {
-        $request = request()->all();
-        return Storage::disk('local')->download( $request['path'] );
+        return Storage::disk('local')->download(request()->path);
     }
 }
