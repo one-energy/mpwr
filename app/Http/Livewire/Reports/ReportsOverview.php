@@ -36,7 +36,7 @@ class ReportsOverview extends Component
     public function mount()
     {
         $this->sortBy = "date_of_sale";
-        $this->sortDirection = "DESC";
+        $this->sortDirection = "desc";
         $this->departmentId = Department::first()->id;
         if (user()->hasAnyRole(['Admin', 'Owner'])) {
             $this->personalCustomers = false;
@@ -52,6 +52,7 @@ class ReportsOverview extends Component
         return view('livewire.reports.reports-overview', [
             'departments' => Department::get(),
             'customers'   => Customer::query()
+                ->joinInEachRelation()
                 ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
                 ->where(function ($query) {
                     $query->when($this->personalCustomers, function ($query) {
@@ -119,6 +120,7 @@ class ReportsOverview extends Component
                 });
             });
         })
+        ->with(['userSetter', 'userSalesRep'])
         ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
         ->when($this->installedStatus(), function ($query) {
             $query->whereIsActive(true)

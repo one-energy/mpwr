@@ -229,4 +229,35 @@ class Customer extends Model
             });
         });
     }
+    public function scopeJoinInEachRelation(Builder $query)
+    {
+        return $query->select('customers.*')
+            ->leftJoin('users as setter', function ($join) {
+                $join->on('setter.id', '=', 'customers.setter_id');
+            })
+            ->leftJoin('users as salesRep', function ($join) {
+                $join->on('salesRep.id', '=', 'customers.sales_rep_id');
+            })
+            ->leftJoin('users as manager', function ($join) {
+                $join->on('manager.id', '=', 'customers.office_manager_id');
+            })
+            ->leftJoin('users as regionManager', function ($join) {
+                $join->on('regionManager.id', '=', 'customers.region_manager_id');
+            })
+            ->leftJoin('users as departmentManager', function ($join) {
+                $join->on('departmentManager.id', '=', 'customers.department_manager_id');
+            })
+            ->leftJoin('users as recruiter', function ($join) {
+                $join->on('recruiter.id', '=', 'customers.sales_rep_recruiter_id');
+            })
+            ->leftJoin('terms', function ($join) {
+                $join->on('terms.id', '=', 'term_id');
+            })
+            ->leftJoin('financers', function ($join) {
+                $join->on('financers.id', '=', 'financer_id');
+            })
+            ->leftJoin('financings', function ($join) {
+                $join->on('financings.id', '=', 'financing_id');
+            });
+    }
 }

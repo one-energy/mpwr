@@ -188,36 +188,36 @@
                     <x-table :pagination="$customers->links()">
                         <x-slot name="header">
                             <x-table.th-tr>
-                                <x-table.th-searchable class="whitespace-no-wrap" by="CONCAT(first_name, last_name)" :sortedBy="$sortBy" :direction="$sortDirection">
+                                <x-table.th-searchable class="whitespace-no-wrap" by="CONCAT(customers.first_name, customers.last_name)" :sortedBy="$sortBy" :direction="$sortDirection">
                                     @lang('Home Owner')
                                 </x-table.th-searchable>
                                 <x-table.th-searchable class="whitespace-no-wrap" by="date_of_sale" :sortedBy="$sortBy" :direction="$sortDirection">
                                     @lang('Sold Date')
                                 </x-table.th-searchable>
-                                <x-table.th-searchable by="setter" :sortedBy="$sortBy" :direction="$sortDirection">
+                                <x-table.th-searchable by="CONCAT(setter.first_name, setter.last_name)" :sortedBy="$sortBy" :direction="$sortDirection">
                                     @lang('Setter')
                                 </x-table.th-searchable>
-                                <x-table.th-searchable by="setter_rate" :sortedBy="$sortBy" :direction="$sortDirection">
+                                <x-table.th-searchable class="whitespace-no-wrap" by="setter_fee" :sortedBy="$sortBy" :direction="$sortDirection">
                                     @lang('Setter Rate')
                                 </x-table.th-searchable>
-                                <x-table.th-searchable by="closer" :sortedBy="$sortBy" :direction="$sortDirection">
+                                <x-table.th-searchable by="CONCAT(salesRep.first_name, salesRep.last_name)" :sortedBy="$sortBy" :direction="$sortDirection">
                                     @lang('Closer')
                                 </x-table.th-searchable>
                                 @if(user()->role != "Setter")
-                                    <x-table.th-searchable by="pay_rate" :sortedBy="$sortBy" :direction="$sortDirection">
+                                    <x-table.th-searchable class="whitespace-no-wrap" by="sales_rep_fee" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Pay Rate')
                                     </x-table.th-searchable>
-                                    <x-table.th-searchable by="ppw" :sortedBy="$sortBy" :direction="$sortDirection">
+                                    <x-table.th-searchable by="epc" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('PPW')
                                     </x-table.th-searchable>
                                     <x-table.th-searchable by="adders" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Adders')
                                     </x-table.th-searchable>
                                 @endif
-                                <x-table.th-searchable by="system_size" :sortedBy="$sortBy" :direction="$sortDirection">
+                                <x-table.th-searchable class="whitespace-no-wrap" by="system_size" :sortedBy="$sortBy" :direction="$sortDirection">
                                     @lang('System Size')
                                 </x-table.th-searchable>
-                                <x-table.th-searchable by="setter_commission" :sortedBy="$sortBy" :direction="$sortDirection">
+                                <x-table.th-searchable by="system_size * setter_fee" :sortedBy="$sortBy" :direction="$sortDirection">
                                     @lang('Setter Commission')
                                 </x-table.th-searchable>
                                 @if(user()->role != "Setter")
