@@ -60,16 +60,16 @@ class ReportsOverview extends Component
                             ->orWhere('sales_rep_id', user()->id);
                     })
                         ->when(user()->hasRole('Office Manager'), function ($query) {
-                            $query->orWhere('office_manager_id', user()->id);
+                            $query->orWhere('customers.office_manager_id', user()->id);
                         })
                         ->when(user()->hasRole('Region Manager'), function ($query) {
-                            $query->orWhere('region_manager_id', user()->id)
-                                ->orWhere('office_manager_id', user()->id);
+                            $query->orWhere('customers.region_manager_id', user()->id)
+                                ->orWhere('customers.office_manager_id', user()->id);
                         })
                         ->when(user()->hasRole('Department Manager'), function ($query) {
-                            $query->orWhere('department_manager_id', user()->id)
-                                ->orWhere('region_manager_id', user()->id)
-                                ->orWhere('office_manager_id', user()->id);
+                            $query->orWhere('customers.department_manager_id', user()->id)
+                                ->orWhere('customers.region_manager_id', user()->id)
+                                ->orWhere('customers.office_manager_id', user()->id);
                         })
                         ->when(user()->hasAnyRole(['Admin', 'Owner']),
                             function ($query) {

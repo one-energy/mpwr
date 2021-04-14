@@ -135,7 +135,7 @@ class Customer extends Model
         return $this->belongsTo(Term::class);
     }
 
-    public function recuiterOfSalesRep()
+    public function recruiterOfSalesRep()
     {
         return $this->belongsTo(User::class, 'sales_rep_recruiter_id');
     }
@@ -189,7 +189,7 @@ class Customer extends Model
     {
         $query->when($search, function (Builder $query) use ($search) {
             $query->where(function ($query) use ($search) {
-                $query->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $search . '%'])
+                $query->orWhereRaw("CONCAT(customers.first_name, ' ', customers.last_name) LIKE ?", ['%' . $search . '%'])
                 ->orWhereHas('userSetter', function ($query) use ($search) {
                     $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
                 })
@@ -204,7 +204,7 @@ class Customer extends Model
                         $query->where('name', 'LIKE', '%' . $search . '%');
                     })
                     ->when(user()->role != 'Sales Rep', function ($query) use ($search) {
-                        $query->orWhereHas('recuiterOfSalesRep', function ($query) use ($search) {
+                        $query->orWhereHas('recruiterOfSalesRep', function ($query) use ($search) {
                             $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
                         })
                         ->orWhereHas('officeManager', function ($query) use ($search) {
@@ -219,8 +219,8 @@ class Customer extends Model
                                     $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
                                 })
                                 ->when(user()->role != 'Department Manager', function ($query) use ($search) {
-                                    $query->orWhere('payee_one', 'LIKE', '%' . $search . '%')
-                                        ->orWhere('payee_two', 'LIKE', '%' . $search . '%');
+                                    $query->orWhere('customers.payee_one', 'LIKE', '%' . $search . '%')
+                                        ->orWhere('customers.payee_two', 'LIKE', '%' . $search . '%');
                                 });
                             });
                         });
