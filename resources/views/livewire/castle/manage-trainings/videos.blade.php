@@ -41,7 +41,7 @@
         show: @entangle('showEditVideoModal').defer,
         close() { this.show = false },
         isOpen() { return this.show === true },
-    }" x-cloak>
+    }" x-cloak wire:key="editVideoModal">
         <div x-show="isOpen()" wire:loading.remove class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center z-20">
             <div x-show="isOpen()" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity">
                 <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
@@ -77,7 +77,7 @@
         show: @entangle('showVideoModal').defer,
         isOpen() { return this.show === true },
         close() { this.show = false },
-    }" x-show="isOpen()" @keydown.escape.window="close" x-cloak>
+    }" x-show="isOpen()" @keydown.escape.window="close" wire:key="showVideoModal" x-cloak>
         <div
             x-show="isOpen()"
             class="fixed inset-0 transition-opacity bg-gray-500 opacity-75"
@@ -113,7 +113,7 @@
         </div>
     </div>
 
-    <x-modal x-cloak :title="__('Delete Video')" description="Are you sure you want to delete this video? You will not be able to recover!">
+    <x-modal wire:key="deleteVideoModal" x-cloak :title="__('Delete Video')" description="Are you sure you want to delete this video? You will not be able to recover!">
         <div class="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto justify-end space-x-2">
             <div class="flex w-full mt-3 rounded-md shadow-sm sm:mt-0 sm:w-auto">
                 <button
