@@ -146,13 +146,15 @@ class ReportsOverview extends Component
             ->get();
     }
 
-    public function formatNumber(?float $value, string $symbol = '$',  int $decimals = 2)
+    public function formatNumber(?float $value, int $decimals = 2, bool $currency = true)
     {
         if ($value === null) {
             return '-';
         }
 
-        return $value > 0 ? "{$symbol} " . number_format($value, $decimals) : '-';
+        $newValue = $currency ? '$ ' . number_format($value, $decimals) : number_format($value, $decimals);
+
+        return $value > 0 ? $newValue : '-';
     }
 
     public function getUserTotalCommission()
