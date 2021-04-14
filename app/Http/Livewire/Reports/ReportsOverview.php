@@ -98,37 +98,37 @@ class ReportsOverview extends Component
                 $query->orWhere('setter_id', user()->id)
                     ->orWhere('sales_rep_id', user()->id);
             })
-            ->when(user()->hasRole('Office Manager'), function ($query) {
-                $query->orWhere('office_manager_id', user()->id);
-            })
-            ->when(user()->hasRole('Region Manager'), function ($query) {
-                $query->orWhere('region_manager_id', user()->id)
-                    ->orWhere('office_manager_id', user()->id);
-            })
-            ->when(user()->hasRole('Department Manager'), function ($query) {
-                $query->orWhere('department_manager_id', user()->id)
-                    ->orWhere('region_manager_id', user()->id)
-                    ->orWhere('office_manager_id', user()->id);
-            })
-            ->when(user()->hasAnyRole(['Admin', 'Owner']), function ($query) {
-                $query->whereHas('userSalesRep', function ($query) {
-                    $query->where('department_id', $this->departmentId);
+                ->when(user()->hasRole('Office Manager'), function ($query) {
+                    $query->orWhere('office_manager_id', user()->id);
+                })
+                ->when(user()->hasRole('Region Manager'), function ($query) {
+                    $query->orWhere('region_manager_id', user()->id)
+                        ->orWhere('office_manager_id', user()->id);
+                })
+                ->when(user()->hasRole('Department Manager'), function ($query) {
+                    $query->orWhere('department_manager_id', user()->id)
+                        ->orWhere('region_manager_id', user()->id)
+                        ->orWhere('office_manager_id', user()->id);
+                })
+                ->when(user()->hasAnyRole(['Admin', 'Owner']), function ($query) {
+                    $query->whereHas('userSalesRep', function ($query) {
+                        $query->where('department_id', $this->departmentId);
+                    });
                 });
-            });
         })
-        ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
-        ->when($this->installedStatus(), function ($query) {
-            $query->whereIsActive(true)
-                ->wherePanelSold(true);
-        })
-        ->when($this->pendingStatus(), function ($query) {
-            $query->whereIsActive(true)
-                ->wherePanelSold(false);
-        })
-        ->when($this->cancelledStatus(), function ($query) {
-            $query->whereIsActive(false);
-        })
-        ->get();
+            ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
+            ->when($this->installedStatus(), function ($query) {
+                $query->whereIsActive(true)
+                    ->wherePanelSold(true);
+            })
+            ->when($this->pendingStatus(), function ($query) {
+                $query->whereIsActive(true)
+                    ->wherePanelSold(false);
+            })
+            ->when($this->cancelledStatus(), function ($query) {
+                $query->whereIsActive(false);
+            })
+            ->get();
 
         $this->customersOfSalesRepsRecruited = user()->customersOfSalesRepsRecuited()
             ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
@@ -161,7 +161,6 @@ class ReportsOverview extends Component
             return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecruited) + $this->getSumSetterCommission($this->customersOfUser);
         }
         if (user()->hasRole('Sales Rep')) {
-
             return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecruited) + $this->getSumSetterCommission($this->customersOfUser) + $this->getSumSalesRepCommission($this->customersOfUser);
         }
 
@@ -277,22 +276,23 @@ class ReportsOverview extends Component
     public function getOverrideCommission(Customer $customer)
     {
         $overrideCommission = 0;
-        if($customer->office_manager_id == user()->id || user()->hasAnyRole(["Admin", "Owner"])){
+        if ($customer->office_manager_id == user()->id || user()->hasAnyRole(['Admin', 'Owner'])) {
             $overrideCommission += $customer->office_manager_override * ($customer->system_size * 1000);
         }
-        if($customer->region_manager_id == user()->id || user()->hasAnyRole(["Admin", "Owner"])){
+        if ($customer->region_manager_id == user()->id || user()->hasAnyRole(['Admin', 'Owner'])) {
             $overrideCommission += $customer->region_manager_override * ($customer->system_size * 1000);
         }
-        if($customer->department_manager_id == user()->id || user()->hasAnyRole(["Admin", "Owner"])){
+        if ($customer->department_manager_id == user()->id || user()->hasAnyRole(['Admin', 'Owner'])) {
             $overrideCommission += $customer->department_manager_override * ($customer->system_size * 1000);
         }
+
         return $overrideCommission;
     }
 
     public function filterCustomersWithOverrides(Collection $customers)
     {
         $departmentId = $this->departmentId;
-        $customers = $customers->filter(function ($customer) use ($departmentId) {
+        $customers    = $customers->filter(function ($customer) use ($departmentId) {
             if (user()->hasRole('Office Manager')) {
                 return $customer->office_manager_id == user()->id;
             }
