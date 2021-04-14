@@ -146,13 +146,13 @@ class ReportsOverview extends Component
             ->get();
     }
 
-    public function formatNumber(?float $value, int $decimals = 2)
+    public function formatNumber(?float $value, string $symbol = '$',  int $decimals = 2)
     {
         if ($value === null) {
             return '-';
         }
 
-        return $value > 0 ? '$ ' . number_format($value, $decimals) : '-';
+        return $value > 0 ? "{$symbol} " . number_format($value, $decimals) : '-';
     }
 
     public function getUserTotalCommission()
@@ -161,7 +161,6 @@ class ReportsOverview extends Component
             return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecruited) + $this->getSumSetterCommission($this->customersOfUser);
         }
         if (user()->hasRole('Sales Rep')) {
-
             return $this->getSumRecruiterCommission($this->customersOfSalesRepsRecruited) + $this->getSumSetterCommission($this->customersOfUser) + $this->getSumSalesRepCommission($this->customersOfUser);
         }
 
@@ -277,22 +276,23 @@ class ReportsOverview extends Component
     public function getOverrideCommission(Customer $customer)
     {
         $overrideCommission = 0;
-        if($customer->office_manager_id == user()->id || user()->hasAnyRole(["Admin", "Owner"])){
+        if ($customer->office_manager_id == user()->id || user()->hasAnyRole(['Admin', 'Owner'])) {
             $overrideCommission += $customer->office_manager_override * ($customer->system_size * 1000);
         }
-        if($customer->region_manager_id == user()->id || user()->hasAnyRole(["Admin", "Owner"])){
+        if ($customer->region_manager_id == user()->id || user()->hasAnyRole(['Admin', 'Owner'])) {
             $overrideCommission += $customer->region_manager_override * ($customer->system_size * 1000);
         }
-        if($customer->department_manager_id == user()->id || user()->hasAnyRole(["Admin", "Owner"])){
+        if ($customer->department_manager_id == user()->id || user()->hasAnyRole(['Admin', 'Owner'])) {
             $overrideCommission += $customer->department_manager_override * ($customer->system_size * 1000);
         }
+
         return $overrideCommission;
     }
 
     public function filterCustomersWithOverrides(Collection $customers)
     {
         $departmentId = $this->departmentId;
-        $customers = $customers->filter(function ($customer) use ($departmentId) {
+        $customers    = $customers->filter(function ($customer) use ($departmentId) {
             if (user()->hasRole('Office Manager')) {
                 return $customer->office_manager_id == user()->id;
             }
@@ -360,6 +360,11 @@ class ReportsOverview extends Component
 
                 break;
         }
+    }
+
+    public function getSumOfSystemSize($customersOfUser)
+    {
+        return $customersOfUser->sum('system_size');
     }
 
     public function sortBy()
