@@ -120,7 +120,7 @@
                                     </x-table.th>
                                 @endif
                                 <x-table.td>
-                                    {{ $this->formatNumber($this->getAvgSystemSize($customersOfUser)) }}
+                                    {{ $this->formatNumber($this->getAvgSystemSize($customersOfUser), 'kW') }}
                                 </x-table.td>
                                 <x-table.td>
                                     {{ $this->formatNumber($this->getAvgSetterCommission($customersOfUser)) }}
@@ -149,7 +149,7 @@
                                     <x-table.td class="font-bold">-</x-table.td>
                                 @endif
                                 <x-table.td class="font-bold">
-                                    {{ $this->formatNumber($customersOfUser->sum('system_size')) }}
+                                    {{ $this->formatNumber($this->getSumOfSystemSize($customersOfUser), 'kW') }}
                                 </x-table.td>
                                 <x-table.td class="font-bold">
                                     {{ $this->formatNumber($this->getSumSetterCommission($customersOfUser)) }}
