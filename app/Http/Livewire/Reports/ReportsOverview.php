@@ -35,6 +35,8 @@ class ReportsOverview extends Component
 
     public function mount()
     {
+        $this->sortBy = "date_of_sale";
+        $this->sortDirection = "DESC";
         $this->departmentId = Department::first()->id;
         if (user()->hasAnyRole(['Admin', 'Owner'])) {
             $this->personalCustomers = false;
@@ -87,6 +89,7 @@ class ReportsOverview extends Component
                     $query->whereIsActive(false);
                 })
                 ->search($this->search)
+                ->orderByRaw($this->sortBy . ' ' . $this->sortDirection)
                 ->paginate($this->perPage),
         ]);
     }

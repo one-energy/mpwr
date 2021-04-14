@@ -188,106 +188,106 @@
                     <x-table :pagination="$customers->links()">
                         <x-slot name="header">
                             <x-table.th-tr>
-                                <x-table.th by="home_owner">
+                                <x-table.th-searchable class="whitespace-no-wrap" by="CONCAT(first_name, last_name)" :sortedBy="$sortBy" :direction="$sortDirection">
                                     @lang('Home Owner')
-                                </x-table.th>
-                                <x-table.th by="sold_date">
+                                </x-table.th-searchable>
+                                <x-table.th-searchable class="whitespace-no-wrap" by="date_of_sale" :sortedBy="$sortBy" :direction="$sortDirection">
                                     @lang('Sold Date')
-                                </x-table.th>
-                                <x-table.th by="setter">
+                                </x-table.th-searchable>
+                                <x-table.th-searchable by="setter" :sortedBy="$sortBy" :direction="$sortDirection">
                                     @lang('Setter')
-                                </x-table.th>
-                                <x-table.th by="setter_rate">
+                                </x-table.th-searchable>
+                                <x-table.th-searchable by="setter_rate" :sortedBy="$sortBy" :direction="$sortDirection">
                                     @lang('Setter Rate')
-                                </x-table.th>
-                                <x-table.th by="closer">
+                                </x-table.th-searchable>
+                                <x-table.th-searchable by="closer" :sortedBy="$sortBy" :direction="$sortDirection">
                                     @lang('Closer')
-                                </x-table.th>
+                                </x-table.th-searchable>
                                 @if(user()->role != "Setter")
-                                    <x-table.th by="pay_rate">
+                                    <x-table.th-searchable by="pay_rate" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Pay Rate')
-                                    </x-table.th>
-                                    <x-table.th by="ppw">
+                                    </x-table.th-searchable>
+                                    <x-table.th-searchable by="ppw" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('PPW')
-                                    </x-table.th>
-                                    <x-table.th by="adders">
+                                    </x-table.th-searchable>
+                                    <x-table.th-searchable by="adders" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Adders')
-                                    </x-table.th>
+                                    </x-table.th-searchable>
                                 @endif
-                                <x-table.th by="system_size">
+                                <x-table.th-searchable by="system_size" :sortedBy="$sortBy" :direction="$sortDirection">
                                     @lang('System Size')
-                                </x-table.th>
-                                <x-table.th by="setter_commission">
+                                </x-table.th-searchable>
+                                <x-table.th-searchable by="setter_commission" :sortedBy="$sortBy" :direction="$sortDirection">
                                     @lang('Setter Commission')
-                                </x-table.th>
+                                </x-table.th-searchable>
                                 @if(user()->role != "Setter")
-                                    <x-table.th by="closer_commission">
+                                    <x-table.th-searchable by="closer_commission" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Closer Commission')
-                                    </x-table.th>
-                                    <x-table.th by="financing_type">
+                                    </x-table.th-searchable>
+                                    <x-table.th-searchable by="financing_type" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Financing Type')
-                                    </x-table.th>
-                                    <x-table.th by="financer_type">
+                                    </x-table.th-searchable>
+                                    <x-table.th-searchable by="financer_type" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Financer Type')
-                                    </x-table.th>
+                                    </x-table.th-searchable>
                                     @if(user()->role != "Sales Rep")
-                                        <x-table.th by="recruiter">
+                                        <x-table.th-searchable by="recruiter" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Recruiter')
-                                        </x-table.th>
-                                        <x-table.th by="rec_rate">
+                                        </x-table.th-searchable>
+                                        <x-table.th-searchable by="rec_rate" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Rec Rate')
-                                        </x-table.th>
-                                        <x-table.th by="rec_ovr">
+                                        </x-table.th-searchable>
+                                        <x-table.th-searchable by="rec_ovr" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Rec Ovr')
-                                        </x-table.th>
-                                        <x-table.th by="manager">
+                                        </x-table.th-searchable>
+                                        <x-table.th-searchable by="manager" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Manager')
-                                        </x-table.th>
-                                        <x-table.th by="mgr_rate">
+                                        </x-table.th-searchable>
+                                        <x-table.th-searchable by="mgr_rate" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Mgr Rate')
-                                        </x-table.th>
-                                        <x-table.th by="financer_type">
+                                        </x-table.th-searchable>
+                                        <x-table.th-searchable by="financer_type" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Mgr Ovr')
-                                        </x-table.th>
+                                        </x-table.th-searchable>
                                         @if(user()->role != "Office Manager")
-                                            <x-table.th by="regional">
+                                            <x-table.th-searchable by="regional" :sortedBy="$sortBy" :direction="$sortDirection">
                                                 @lang('Regional')
-                                            </x-table.th>
-                                            <x-table.th by="mgr_rate">
+                                            </x-table.th-searchable>
+                                            <x-table.th-searchable by="mgr_rate" :sortedBy="$sortBy" :direction="$sortDirection">
                                                 @lang('RM Rate')
-                                            </x-table.th>
-                                            <x-table.th by="financer_type">
+                                            </x-table.th-searchable>
+                                            <x-table.th-searchable by="financer_type" :sortedBy="$sortBy" :direction="$sortDirection">
                                                 @lang('RM Ovr')
-                                            </x-table.th>
+                                            </x-table.th-searchable>
                                             @if(user()->role != "Region Manager")
-                                                <x-table.th by="vp">
+                                                <x-table.th-searchable by="vp" :sortedBy="$sortBy" :direction="$sortDirection">
                                                     @lang('VP')
-                                                </x-table.th>
-                                                <x-table.th by="vp_rate">
+                                                </x-table.th-searchable>
+                                                <x-table.th-searchable by="vp_rate" :sortedBy="$sortBy" :direction="$sortDirection">
                                                     @lang('VP Rate')
-                                                </x-table.th>
-                                                <x-table.th by="vp_type">
+                                                </x-table.th-searchable>
+                                                <x-table.th-searchable by="vp_type" :sortedBy="$sortBy" :direction="$sortDirection">
                                                     @lang('VP Ovr')
-                                                </x-table.th>
+                                                </x-table.th-searchable>
                                                 @if(user()->role != "Department Manager")
-                                                    <x-table.th by="misc_one">
+                                                    <x-table.th-searchable by="misc_one" :sortedBy="$sortBy" :direction="$sortDirection">
                                                         @lang('Misc 1')
-                                                    </x-table.th>
-                                                    <x-table.th by="mis_rate_one">
+                                                    </x-table.th-searchable>
+                                                    <x-table.th-searchable by="mis_rate_one" :sortedBy="$sortBy" :direction="$sortDirection">
                                                         @lang('M1 Rate')
-                                                    </x-table.th>
-                                                    <x-table.th by="misc_override_one">
+                                                    </x-table.th-searchable>
+                                                    <x-table.th-searchable by="misc_override_one" :sortedBy="$sortBy" :direction="$sortDirection">
                                                         @lang('M1 OVR')
-                                                    </x-table.th>
-                                                    <x-table.th by="misc_one">
+                                                    </x-table.th-searchable>
+                                                    <x-table.th-searchable by="misc_one" :sortedBy="$sortBy" :direction="$sortDirection">
                                                         @lang('Misc 2')
-                                                    </x-table.th>
-                                                    <x-table.th by="mis_rate">
+                                                    </x-table.th-searchable>
+                                                    <x-table.th-searchable by="mis_rate" :sortedBy="$sortBy" :direction="$sortDirection">
                                                         @lang('M2 Rate')
-                                                    </x-table.th>
-                                                    <x-table.th by="misc_override_one">
+                                                    </x-table.th-searchable>
+                                                    <x-table.th-searchable by="misc_override_one" :sortedBy="$sortBy" :direction="$sortDirection">
                                                         @lang('M2 OVR')
-                                                    </x-table.th>
+                                                    </x-table.th-searchable>
                                                 @endif
                                             @endif
                                         @endif

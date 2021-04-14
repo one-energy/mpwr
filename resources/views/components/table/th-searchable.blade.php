@@ -1,6 +1,6 @@
 @props(['by', 'direction', 'sortedBy'])
 
-<x-table.th>
+<x-table.th {{ $attributes }}>
     <button
         class="text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider flex justify-between focus:outline-none"
         wire:click="sort('{{ $by }}', '{{ $sortedBy == $by ? ($direction == 'asc' ? 'desc' : 'asc') :'asc' }}')">
