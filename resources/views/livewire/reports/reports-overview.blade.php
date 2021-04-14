@@ -115,9 +115,9 @@
                                     </x-table.td>
                                 @endif
                                 @if(user()->role != "Setter")
-                                    <x-table.th>
+                                    <x-table.td>
                                         {{ $this->formatNumber($this->getAvgSalesRepEpc($customersOfUser)) }}
-                                    </x-table.th>
+                                    </x-table.td>
                                 @endif
                                 <x-table.td>
                                     {{ $this->formatNumber($this->getAvgSystemSize($customersOfUser)) }}
