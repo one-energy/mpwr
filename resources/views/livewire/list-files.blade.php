@@ -11,6 +11,9 @@
                 <x-table.th-searchable by="created_at" :sortedBy="$sortBy" :direction="$sortDirection">
                     @lang('uploaded_at')
                 </x-table.th-searchable>
+                <x-table.th>
+                    &nbsp;
+                </x-table.th>
             </x-table.th-tr>
         </x-slot>
         <x-slot name="body">
