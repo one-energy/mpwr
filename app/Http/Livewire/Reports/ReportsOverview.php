@@ -185,20 +185,20 @@ class ReportsOverview extends Component
 
     public function getSumSetterCommission(Collection $customers)
     {
-        $customers = $customers->where('setter_id', user()->id);
-
-        return $customers->sum(function ($customer) {
-            return $this->getSetterCommission($customer);
-        });
+        return $customers
+            ->when(user()->notHaveRoles(['Admin', 'Owner']), function (Collection $customers) {
+                return $customers->where('setter_id', user()->id);
+            })
+            ->sum(fn($customer) => $this->getSetterCommission($customer));
     }
 
     public function getAvgSetterCommission(Collection $customers)
     {
-        $customers = $customers->where('setter_id', user()->id);
-
-        return $customers->avg(function ($customer) {
-            return $this->getSetterCommission($customer);
-        });
+        return $customers
+            ->when(user()->notHaveRoles(['Admin', 'Owner']), function (Collection $customers) {
+                return $customers->where('setter_id', user()->id);
+            })
+            ->avg(fn($customer) => $this->getSetterCommission($customer));
     }
 
     public function getSetterCommission(Customer $customer)
@@ -208,27 +208,27 @@ class ReportsOverview extends Component
 
     public function getAvgSalesRepEpc(Collection $customers)
     {
-        $customers = $customers->where('sales_rep_id', user()->id);
-
-        return $customers->avg('epc');
+        return $customers
+            ->where('sales_rep_id', user()->id)
+            ->avg('epc');
     }
 
     public function getSumSalesRepCommission(Collection $customers)
     {
-        $customers = $customers->where('sales_rep_id', user()->id);
-
-        return $customers->sum(function ($customer) {
-            return $this->getSalesRepCommission($customer);
-        });
+        return $customers
+            ->when(user()->notHaveRoles(['Admin', 'Owner']), function (Collection $customers) {
+                return $customers->where('sales_rep_id', user()->id);
+            })
+            ->sum(fn($customer) => $this->getSalesRepCommission($customer));
     }
 
     public function getAvgSalesRepCommission(Collection $customers)
     {
-        $customers = $customers->where('sales_rep_id', user()->id);
-
-        return $customers->avg(function ($customer) {
-            return $this->getSalesRepCommission($customer);
-        });
+        return $customers
+            ->when(user()->notHaveRoles(['Admin', 'Owner']), function (Collection $customers) {
+                return $customers->where('sales_rep_id', user()->id);
+            })
+            ->avg(fn($customer) => $this->getSalesRepCommission($customer));
     }
 
     public function getSalesRepCommission(Customer $customer)
