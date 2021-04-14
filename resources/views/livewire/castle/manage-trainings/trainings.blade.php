@@ -287,6 +287,7 @@
                     <livewire:list-files
                         key="files-list-{{ $actualSection->files->count() }}"
                         :files="$actualSection->files"
+                        :showDeleteButton="true"
                     />
                 </div>
             </div>
