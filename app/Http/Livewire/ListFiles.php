@@ -19,6 +19,8 @@ class ListFiles extends Component
 
     public bool $showDeleteButton;
 
+    public ?SectionFile $selectedFile;
+
     public function sortBy()
     {
         return $this->order;
@@ -34,6 +36,13 @@ class ListFiles extends Component
         return view('livewire.list-files');
     }
 
+    public function onDestroy(SectionFile $file)
+    {
+        $this->selectedFile = $file;
+
+        $this->dispatchBrowserEvent('confirm', ['sectionFile' => $file]);
+    }
+
     public function downloadSectionFile(SectionFile $file)
     {
         if (!Storage::disk('local')->exists($file->path)) {
@@ -45,24 +54,27 @@ class ListFiles extends Component
         return Storage::disk('local')->download( $file->path );
     }
 
-    public function removeFile(SectionFile $delete)
+    public function removeFile()
     {
-        if (!Storage::disk('local')->exists($delete->path)) {
+        if (!Storage::disk('local')->exists($this->selectedFile->path)) {
             alert()->livewire($this)->withTitle('File not found')->send();
 
             return;
         }
 
-        DB::transaction(function () use ($delete) {
-            SectionFile::destroy($delete->id);
+        DB::transaction(function () {
+            SectionFile::destroy($this->selectedFile->id);
 
-            $this->files = $this->files->filter(function ($file) use ($delete) {
-                return $file->id != $delete->id;
+            $this->files = $this->files->filter(function ($file) {
+                return $file->id !== $this->selectedFile->id;
             });
 
-            Storage::disk('local')->delete($delete->path);
+            Storage::disk('local')->delete($this->selectedFile->path);
+
+            $this->selectedFile = new SectionFile();
         });
 
+        $this->dispatchBrowserEvent('close-modal');
         alert()->livewire($this)->withTitle('File deleted successfully')->send();
     }
 }
