@@ -512,58 +512,71 @@
                                 <div class="overflow-x-auto">
                                     <div class="inline-block min-w-full overflow-hidden align-middle">
                                         @if(count($numbersTracked))
-                                            <x-table>
+                                            <x-table-accordion>
                                                 <x-slot name="header">
-                                                    <x-table.th-tr>
+                                                    <x-table-accordion.tr-th>
                                                         @if(user()->role == 'Admin' || user()->role == 'Owner')
-                                                            <x-table.th by="deparmtent">
-                                                                @lang('Department')
-                                                            </x-table.th>
-                                                        @endif
-                                                        <x-table.th by="region_number">
-                                                            @lang('Member')
-                                                        </x-table.th>
-                                                        <x-table.th by="doors">
-                                                            @lang('Doors')
-                                                        </x-table.th>
-                                                        <x-table.th by="hours">
-                                                            @lang('Hours')
-                                                        </x-table.th>
-                                                        <x-table.th by="sets">
-                                                            @lang('Sets')
-                                                        </x-table.th>
-                                                        <x-table.th by="set_sits">
-                                                            @lang('Set Sits')
-                                                        </x-table.th>
-                                                        <x-table.th by="sits">
-                                                            @lang('Sits')
-                                                        </x-table.th>
-                                                        <x-table.th by="set_closes">
-                                                            @lang('Set Closes')
-                                                        </x-table.th>
-                                                        <x-table.th by="closes">
-                                                            @lang('Closes')
-                                                        </x-table.th>
-                                                    </x-table.th-tr>
+                                                        <x-table-accordion.th-serchable by="deparmtent">
+                                                            @lang('Department')
+                                                        </x-table-accordion.th-serchable>
+                                                    @endif
+                                                    <x-table-accordion.th-serchable by="region_number">
+                                                        @lang('Member')
+                                                    </x-table-accordion.th-serchable>
+                                                    <x-table-accordion.th-serchable by="doors">
+                                                        @lang('Doors')
+                                                    </x-table-accordion.th-serchable>
+                                                    <x-table-accordion.th-serchable by="hours">
+                                                        @lang('Hours')
+                                                    </x-table-accordion.th-serchable>
+                                                    <x-table-accordion.th-serchable by="sets">
+                                                        @lang('Sets')
+                                                    </x-table-accordion.th-serchable>
+                                                    <x-table-accordion.th-serchable by="set_sits">
+                                                        @lang('Set Sits')
+                                                    </x-table-accordion.th-serchable>
+                                                    <x-table-accordion.th-serchable by="sits">
+                                                        @lang('Sits')
+                                                    </x-table-accordion.th-serchable>
+                                                    <x-table-accordion.th-serchable by="set_closes">
+                                                        @lang('Set Closes')
+                                                    </x-table-accordion.th-serchable>
+                                                    <x-table-accordion.th-serchable by="closes">
+                                                        @lang('Closes')
+                                                    </x-table-accordion.th-serchable>
+                                                    </x-table-accordion.tr-th>
                                                 </x-slot>
                                                 <x-slot name="body">
                                                     @foreach($numbersTracked as $row)
-                                                        <x-table.tr :loop="$loop">
-                                                            @if(user()->role == 'Admin' || user()->role == 'Owner')
-                                                                <x-table.td>{{ $row->user->department->name }}</x-table.td>
-                                                            @endif
-                                                            <x-table.td>{{ $row['first_name'] . ' ' .  $row['last_name']}}</x-table.td>
-                                                            <x-table.td>{{ $row['doors'] ?? 0 }}</x-table.td>
-                                                            <x-table.td>{{ $row['hours'] ?? 0 }}</x-table.td>
-                                                            <x-table.td>{{ $row['sets'] ?? 0 }}</x-table.td>
-                                                            <x-table.td>{{ $row['set_sits'] ?? 0 }}</x-table.td>
-                                                            <x-table.td>{{ $row['sits'] ?? 0 }}</x-table.td>
-                                                            <x-table.td>{{ $row['set_closes'] ?? 0 }}</x-table.td>
-                                                            <x-table.td>{{ $row['closes'] ?? 0 }}</x-table.td>
-                                                        </x-table.tr>
+                                                            {{-- <x-slot name="raw">
+                                                                @if(user()->role == 'Admin' || user()->role == 'Owner')
+                                                                    <x-table.td>{{ $row->user->department->name }}</x-table.td>
+                                                                @endif
+                                                                <x-table.td>{{ $row['first_name'] . ' ' .  $row['last_name']}}</x-table.td>
+                                                                <x-table.td>{{ $row['doors'] ?? 0 }}</x-table.td>
+                                                                <x-table.td>{{ $row['hours'] ?? 0 }}</x-table.td>
+                                                                <x-table.td>{{ $row['sets'] ?? 0 }}</x-table.td>
+                                                                <x-table.td>{{ $row['set_sits'] ?? 0 }}</x-table.td>
+                                                                <x-table.td>{{ $row['sits'] ?? 0 }}</x-table.td>
+                                                                <x-table.td>{{ $row['set_closes'] ?? 0 }}</x-table.td>
+                                                                <x-table.td>{{ $row['closes'] ?? 0 }}</x-table.td>
+                                                            </x-slot>
+                                                            <x-slot name="rawContent">
+                                                                @if(user()->role == 'Admin' || user()->role == 'Owner')
+                                                                    <x-table.td>{{ $row->user->department->name }}</x-table.td>
+                                                                @endif
+                                                                <x-table.td>{{ $row['first_name'] . ' ' .  $row['last_name']}}</x-table.td>
+                                                                <x-table.td>{{ $row['doors'] ?? 0 }}</x-table.td>
+                                                                <x-table.td>{{ $row['hours'] ?? 0 }}</x-table.td>
+                                                                <x-table.td>{{ $row['sets'] ?? 0 }}</x-table.td>
+                                                                <x-table.td>{{ $row['set_sits'] ?? 0 }}</x-table.td>
+                                                                <x-table.td>{{ $row['sits'] ?? 0 }}</x-table.td>
+                                                                <x-table.td>{{ $row['set_closes'] ?? 0 }}</x-table.td>
+                                                                <x-table.td>{{ $row['closes'] ?? 0 }}</x-table.td>
+                                                            </x-slot> --}}
                                                     @endforeach
                                                 </x-slot>
-                                            </x-table>
+                                            </x-table-accordion>
                                         @else
                                             <div class="h-96 ">
                                                 <div class="flex justify-center align-middle">
