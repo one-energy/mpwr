@@ -6,12 +6,15 @@ use App\Models\DailyNumber;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
+use App\Traits\Livewire\FullTable;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class NumberTrackerDetail extends Component
 {
+    use FullTable;
+
     public $period = 'd';
 
     public $numbersTracked = [];
@@ -61,6 +64,11 @@ class NumberTrackerDetail extends Component
         ];
 
         return view('livewire.number-tracker.number-tracker-detail', ['showOptions' => $showOptions]);
+    }
+
+    public function sortBy()
+    {
+        return "doors";
     }
 
     public function setPeriod($p)
