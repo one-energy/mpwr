@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
  * @property-read \App\Models\Department|null $department
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Office[] $offices
  * @property-read \App\Models\User $regionManager
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\TrainingPageSection[] $trainingPageSections
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Region newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Region newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Region query()
@@ -28,6 +29,12 @@ use Illuminate\Support\Facades\DB;
 class Region extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'region_manager_id',
+        'department_id',
+    ];
 
     public function regionManager()
     {
@@ -42,6 +49,11 @@ class Region extends Model
     public function offices()
     {
         return $this->hasMany(Office::class);
+    }
+
+    public function trainingPageSections()
+    {
+        return $this->hasMany(TrainingPageSection::class);
     }
 
     public function scopeSearch(Builder $query, $search)
