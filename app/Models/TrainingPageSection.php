@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\DB;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int|null $department_id
+ * @property int|null $region_id
+ * @property bool|null $department_folder
  * @property-read \App\Models\TrainingPageContent|null $content
  * @property-read \App\Models\Department|null $department
  * @property-read \App\Models\TrainingPageSection|null $parent
