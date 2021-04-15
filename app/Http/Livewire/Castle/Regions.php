@@ -6,6 +6,7 @@ use App\Models\Department;
 use App\Models\Region;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Regions extends Component
@@ -66,14 +67,20 @@ class Regions extends Component
         $region = $this->deletingRegion;
 
         if ($region->offices()->count()) {
-            $this->validate([
-                'deletingName' => 'same:deletingRegion.name',
-            ], [
-                'deletingName.same' => 'The name of the region doesn\'t match',
-            ]);
+            $this->validate(
+                ['deletingName' => 'same:deletingRegion.name'],
+                ['deletingName.same' => "The name of the region doesn't match"]
+            );
         }
 
-        $region->delete();
+        DB::transaction(function () use ($region) {
+            $region->delete();
+            $region
+                ->trainingPageSections()
+                ->whereNotNull('parent_id')
+                ->where('department_folder', false)
+                ->delete();
+        });
 
         $this->dispatchBrowserEvent('close-modal');
         $this->deletingRegion = null;
