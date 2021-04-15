@@ -48,16 +48,15 @@ class TrainingController extends Controller
 
     public function storeSection(TrainingPageSection $section)
     {
-        $validated = request()->validate([
-            'title' => 'required|string|max:255',
+        request()->validate(['title' => 'required|string|max:255']);
+
+        TrainingPageSection::create([
+            'title'             => request()->title,
+            'parent_id'         => $section->id,
+            'department_id'     => $section->department_id,
+            'region_id'         => $section->region_id,
+            'department_folder' => $section->department_folder,
         ]);
-
-        $trainingPageSection                = new TrainingPageSection();
-        $trainingPageSection->title         = $validated['title'];
-        $trainingPageSection->parent_id     = $section->id;
-        $trainingPageSection->department_id = $section->department_id;
-
-        $trainingPageSection->save();
 
         alert()
             ->withTitle(__('Section created!'))
