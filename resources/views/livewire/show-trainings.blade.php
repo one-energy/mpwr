@@ -62,7 +62,6 @@
                 </div>
 
                 <div class="mt-10 @if ($actualSection->files->isEmpty()) hidden @endif">
-                    <h3 class="text-xl text-gray-700 font-medium mb-3.5">Files</h3>
                     <livewire:list-files
                         key="files-list-{{ $actualSection->files->count() }}"
                         :files="$actualSection->files"
