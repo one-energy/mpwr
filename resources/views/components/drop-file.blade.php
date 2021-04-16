@@ -84,7 +84,8 @@
                         return;
                     }
 
-                    var formData = new FormData()
+                    const formData = new FormData();
+
                     this.files.forEach((file, index) => {
                         formData.append(`files[${index}]`, file);
                     });
@@ -98,13 +99,12 @@
                         if (res.ok) {
                             window.$app.alert({title:"Your files have been uploaded", color:"green"});
                             window.Livewire.emit('filesUploaded');
+                            this.files = [];
                             return res.json();
                         }
 
                         window.$app.alert({title:"there is a problem with your upload"})
                         return false;
-                    }).then((fileUploadResponse) => {
-                        this.uploadedFiles = fileUploadResponse;
                     });
                 }
             }
