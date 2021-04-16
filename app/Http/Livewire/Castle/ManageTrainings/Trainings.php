@@ -1,31 +1,50 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Http\Livewire\Castle\ManageTrainings;
 
 use App\Models\Department;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
-class ShowTrainings extends Component
+class Trainings extends Component
 {
     use FullTable;
 
-    public Collection $contents;
-
     public Collection $sections;
-
-    public TrainingPageSection $actualSection;
 
     public $path = [];
 
-    public ?TrainingPageSection $section;
+    public $departments = [];
+
+    public $departmentId = 0;
+
+    public Collection $contents;
+
+    public TrainingPageSection $actualSection;
 
     public Department $department;
 
+    public ?TrainingPageSection $section;
+
+    public TrainingPageContent $video;
+
     public string $selectedTab = 'files';
+
+    public bool $showAddContentModal = false;
+
+    protected $listeners = [
+        'contentAdded'  => '$refresh',
+        'filesUploaded' => 'getFreshFiles',
+    ];
+
+    public function sortBy()
+    {
+        return 'title';
+    }
 
     public function mount()
     {
@@ -35,24 +54,36 @@ class ShowTrainings extends Component
         $this->sections      = collect();
     }
 
-    public function sortBy()
+    public function getFilesTabSelectedProperty()
     {
-        return 'title';
+        return $this->selectedTab === 'files';
+    }
+
+    public function getTrainingTabSelectedProperty()
+    {
+        return $this->selectedTab === 'training';
     }
 
     public function render()
     {
+        if (!$this->department->id && (user()->role == 'Owner' || user()->role == 'Admin')) {
+            $this->department = Department::first();
+        }
+
         if ($this->department->id) {
             $this->actualSection = $this->section ?? TrainingPageSection::whereDepartmentId($this->department->id)->first();
 
             $this->actualSection->load('files');
 
             $this->contents      = $this->getContents($this->actualSection);
-            $this->sections      = $this->department->id ? $this->getParentSections($this->actualSection) : collect();
+            $this->departments   = Department::all();
             $this->path          = $this->getPath($this->actualSection);
         }
 
-        return view('livewire.show-trainings');
+        $this->sections     = $this->department->id ? $this->getParentSections($this->actualSection) : collect();
+        $this->departmentId = $this->department->id ?? 0;
+
+        return view('livewire.castle.manage-trainings.trainings');
     }
 
     public function getPath($section)
@@ -102,16 +133,6 @@ class ShowTrainings extends Component
         return $trainingsQuery->get();
     }
 
-    public function getFilesTabSelectedProperty()
-    {
-        return $this->selectedTab === 'files';
-    }
-
-    public function getTrainingTabSelectedProperty()
-    {
-        return $this->selectedTab === 'training';
-    }
-
     public function changeTab(string $tabName)
     {
         if ($this->selectedTab === $tabName) {
@@ -119,5 +140,41 @@ class ShowTrainings extends Component
         }
 
         $this->selectedTab = $tabName;
+    }
+
+    public function rules()
+    {
+        return [
+            'video.title'       => 'required|string|max:100',
+            'video.video_url'   => 'required|string|max:100',
+            'video.description' => 'required|string|string',
+        ];
+    }
+
+    public function storeVideo()
+    {
+        $this->validate();
+
+        DB::transaction(function () {
+            $this->video->training_page_section_id = $this->actualSection->id;
+
+            $this->video->save();
+            $this->contents->push($this->video);
+
+            alert()
+                ->withTitle(__('Video has been added!'))
+                ->livewire($this)
+                ->send();
+
+            $this->video = new TrainingPageContent();
+
+            $this->showAddContentModal = false;
+        });
+    }
+
+    public function getFreshFiles()
+    {
+        $this->actualSection       = TrainingPageSection::find($this->actualSection->id)->load('files');
+        $this->showAddContentModal = false;
     }
 }

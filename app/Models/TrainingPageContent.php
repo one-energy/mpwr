@@ -32,4 +32,15 @@ class TrainingPageContent extends Model
     {
         return $this->belongsTo(TrainingPageSection::class, 'training_page_section_id');
     }
+
+    public function getDecodedDescriptionAttribute()
+    {
+        if (!$this->description) {
+            return '';
+        }
+
+        $description = json_decode($this->description);
+
+        return strip_tags($description->ops[0]->insert);
+    }
 }
