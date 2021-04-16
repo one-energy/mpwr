@@ -40,6 +40,8 @@ class NumberTrackerDetail extends Component
 
     public $activeFilters = [];
 
+    public string $selectedPill = 'Hours';
+
     public function mount()
     {
         $this->dateSelected = date('Y-m-d', time());
