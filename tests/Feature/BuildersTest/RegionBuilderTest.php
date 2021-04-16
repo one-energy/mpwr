@@ -18,8 +18,8 @@ class RegionBuilderTest extends FeatureTest
     /** @test */
     public function it_should_create_a_region()
     {
-        $departmentManager = factory(User::class)->create(['role' => 'Department Manager']);
-        $department        = factory(Department::class)->create([
+        $departmentManager = User::factory()->create(['role' => 'Department Manager']);
+        $department        = Department::factory()->create([
             'name'              => 'New Department',
             'department_manager_id' => $departmentManager->id,
         ]);
@@ -49,13 +49,13 @@ class RegionBuilderTest extends FeatureTest
     public function it_should_be_able_to_add_more_offices_to_the_region()
     {
         $user = (new UserBuilder)->save()->get();
-        $departmentManager = factory(User::class)->create(['role' => 'Department Manager']);
-        $department = factory(Department::class)->create([
+        $departmentManager = User::factory()->create(['role' => 'Department Manager']);
+        $department = Department::factory()->create([
             'name'              => 'New Department',
             'department_manager_id' => $departmentManager->id,
         ]);
         $region = (new RegionBuilder)->withDepartment($department)->save()->get();
-        $offices = factory(Office::class, 3)->create([
+        $offices = Office::factory()->count(3)->create([
             'region_id' => $region->id,
             'office_manager_id' => $user->id,
         ]);

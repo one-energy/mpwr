@@ -16,15 +16,15 @@ class IncentiveTest extends TestCase
     {
         parent::setUp();
 
-        $department = factory(Department::class)->create(['id' => 1]);
-        factory(Incentive::class)->create([
+        $department = Department::factory()->create(['id' => 1]);
+        Incentive::factory()->create([
             'name'            => 'incentive test',
             'installs_needed' => 100,
             'kw_needed'       => 100,
             'department_id'   => $department->id,
         ]);
 
-        $this->user = factory(User::class)->create([
+        $this->user = User::factory()->create([
             'role'          => 'Office Manager',
             'installs'      => 10,
             'kw_achived'    => 20,

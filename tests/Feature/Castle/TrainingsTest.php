@@ -13,13 +13,13 @@ use Tests\TestCase;
 
 class TrainingsTest extends TestCase
 {
-    use RefreshDatabase; 
-    
+    use RefreshDatabase;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create(['master' => true]);
+        $this->user = User::factory()->create(['master' => true]);
 
         $this->actingAs($this->user);
     }
@@ -27,11 +27,11 @@ class TrainingsTest extends TestCase
     /** @test */
     public function it_should_show_section_index()
     {
-        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
-        $department = factory(Department::class)->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
+        $department = Department::factory()->create(["department_manager_id" => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
-        $section = factory(TrainingPageSection::class)->create(["department_id" => $department->id]);
+        $section = TrainingPageSection::factory()->create(["department_id" => $department->id]);
 
         $this->actingAs($departmentManager)
             ->get(route('castle.manage-trainings.index', $department->id, $section->id))
@@ -42,26 +42,26 @@ class TrainingsTest extends TestCase
     /** @test */
     public function it_should_show_sections()
     {
-        $master = factory(User::class)->create([
+        $master = User::factory()->create([
             "role" => "Admin"
         ]);
-        $department = factory(Department::class)->create([
+        $department = Department::factory()->create([
             "department_manager_id" => $master->id
         ]);
         $section = (new TrainingSectionBuilder)->save()->get();
-        $sectionOne = factory(TrainingPageSection::class)->create([
+        $sectionOne = TrainingPageSection::factory()->create([
             'parent_id' => $section->id,
             'department_id' => $department->id
         ]);
-        $sectionTwo = factory(TrainingPageSection::class)->create([
+        $sectionTwo = TrainingPageSection::factory()->create([
             'parent_id' => $section->id,
             'department_id' => $department->id
         ]);
-        $sectionThree = factory(TrainingPageSection::class)->create([
+        $sectionThree = TrainingPageSection::factory()->create([
             'parent_id' => $section->id,
             'department_id' => $department->id
         ]);
-        $sectionFour = factory(TrainingPageSection::class)->create([
+        $sectionFour = TrainingPageSection::factory()->create([
             'parent_id' => $section->id,
             'department_id' => $department->id
         ]);
@@ -85,23 +85,23 @@ class TrainingsTest extends TestCase
     /** @test */
     public function it_should_show_content_of_section()
     {
-        $departmentManager = factory(User::class)->create([
+        $departmentManager = User::factory()->create([
             "role" => "Department Manager"
         ]);
-        $department = factory(Department::class)->create([
+        $department = Department::factory()->create([
             "department_manager_id" => $departmentManager->id
         ]);
 
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
-        $section = factory(TrainingPageSection::class)->create([
+        $section = TrainingPageSection::factory()->create([
             "department_id" => $department->id
         ]);
-        $content = factory(TrainingPageContent::class)->create([
+        $content = TrainingPageContent::factory()->create([
             'training_page_section_id' => $section->id
         ]);
-    
+
         $this->actingAs($departmentManager)
             ->get(route('castle.manage-trainings.index', $section->id))
             ->assertSee($content->description)
@@ -116,22 +116,22 @@ class TrainingsTest extends TestCase
     /** @test */
     public function it_should_delete_a_section()
     {
-        $departmentManager = factory(User::class)->create([
+        $departmentManager = User::factory()->create([
             "role" => "Department Manager"
         ]);
-        
-        $department = factory(Department::class)->create([
+
+        $department = Department::factory()->create([
             "department_manager_id" => $departmentManager->id
         ]);
 
         $departmentManager->department_id = $department->id;
         $department->save();
 
-        $section = factory(TrainingPageSection::class)->create([
+        $section = TrainingPageSection::factory()->create([
             'parent_id' => null,
             'department_id' => $department->id
         ]);
-        $sectionOne = factory(TrainingPageSection::class)->create([
+        $sectionOne = TrainingPageSection::factory()->create([
             'parent_id' => $section->id,
             'department_id' => $department->id
         ]);
@@ -139,47 +139,47 @@ class TrainingsTest extends TestCase
         $this->actingAs($departmentManager)
             ->get(route('castle.manage-trainings.index', $section->id))
             ->assertSee($sectionOne->title);
-        
+
         $this->actingAs($departmentManager)
             ->delete(route('castle.manage-trainings.deleteSection', $sectionOne->id))
             ->assertDontSee($sectionOne->title);
     }
-    
+
     /** @test */
     public function it_shouldnt_show_if_user_doesnt_belongs_to_departments()
     {
-        $departmentOne = factory(Department::class)->create();
-        $departmentTwo = factory(Department::class)->create();
-        
-        $departmentManagerOne = factory(User::class)->create([
+        $departmentOne = Department::factory()->create();
+        $departmentTwo = Department::factory()->create();
+
+        $departmentManagerOne = User::factory()->create([
             "department_id" => $departmentOne->id
         ]);
-        $departmentManagerTwo = factory(User::class)->create([
+        $departmentManagerTwo = User::factory()->create([
             "department_id" => $departmentTwo->id
         ]);
 
         $departmentOne->department_manager_id = $departmentManagerOne->id;
         $departmentTwo->department_manager_id = $departmentManagerTwo->id;
-        
+
         $departmentOne->save();
         $departmentTwo->save();
 
-        $salesRepOne = factory(User::class)->create([
+        $salesRepOne = User::factory()->create([
             "department_id" => $departmentOne->id,
             "role"          => "Sales Rep"
         ]);
 
-        $salesRepTwo = factory(User::class)->create([
+        $salesRepTwo = User::factory()->create([
             "department_id" => $departmentTwo->id,
             "role"          => "Sales Rep"
         ]);
 
-        $sectionOne = factory(TrainingPageSection::class)->create([
+        $sectionOne = TrainingPageSection::factory()->create([
             'parent_id' => null,
             'department_id' => $departmentOne->id
         ]);
 
-        $sectionTwo = factory(TrainingPageSection::class)->create([
+        $sectionTwo = TrainingPageSection::factory()->create([
             'parent_id' => null,
             'department_id' => $departmentTwo->id
         ]);
@@ -195,7 +195,7 @@ class TrainingsTest extends TestCase
                 "department" => $departmentTwo->id
                 ])
             )->assertForbidden();
-        
+
         $this->actingAs($salesRepTwo)
             ->get(route('trainings.index', [
                 "department" => $salesRepTwo->department_id

@@ -22,7 +22,7 @@ class NumberTrackerDetail extends Component
 
     public $users = [];
 
-    public $userSearch = "";
+    public $userSearch = '';
 
     public $numbersTrackedLast = [];
 
@@ -32,11 +32,11 @@ class NumberTrackerDetail extends Component
 
     public $graficValueLast;
 
-    public $filterBy = "doors";
+    public $filterBy = 'doors';
 
     public $dateSelected;
 
-    public $order = "desc";
+    public $order = 'desc';
 
     public $activeFilters = [];
 
@@ -80,7 +80,7 @@ class NumberTrackerDetail extends Component
 
     public function updateSearch()
     {
-        $this->users = User::where(DB::raw("CONCAT(`first_name`, ' ',  `last_name`)"), 'like', "%" . $this->userSearch . "%")
+        $this->users = User::where(DB::raw("CONCAT(`first_name`, ' ',  `last_name`)"), 'like', '%' . $this->userSearch . '%')
             ->orWhere('email', 'like', "%{$this->userSearch}%")->get();
     }
 
@@ -91,8 +91,8 @@ class NumberTrackerDetail extends Component
                 $join->on('users.id', '=', 'daily_numbers.user_id');
             })
             ->join('offices', 'users.office_id', '=', 'offices.id')
-            ->select([DB::raw("users.first_name, users.last_name, daily_numbers.id, daily_numbers.user_id, SUM(doors) as doors,
-                    SUM(hours) as hours,  SUM(sets) as sets, SUM(set_sits) as set_sits,  SUM(sits) as sits,  SUM(set_closes) as set_closes, SUM(closes) as closes")]);
+            ->select([DB::raw('users.first_name, users.last_name, daily_numbers.id, daily_numbers.user_id, SUM(doors) as doors,
+                    SUM(hours) as hours,  SUM(sets) as sets, SUM(set_sits) as set_sits,  SUM(sits) as sits,  SUM(set_closes) as set_closes, SUM(closes) as closes')]);
 
         $queryLast = clone $query;
 
@@ -107,19 +107,18 @@ class NumberTrackerDetail extends Component
             $queryLast->whereMonth('date', '=', Carbon::createFromFormat('Y-m-d', $this->dateSelected)->subMonth()->month);
         }
 
-
         if (count($this->activeFilters) > 0) {
             $activeFilters = $this->activeFilters;
             $query->where(function ($query) use ($activeFilters) {
                 foreach ($activeFilters as $filter) {
                     $id = $filter['id'];
-                    if ($filter['type'] == "user") {
+                    if ($filter['type'] == 'user') {
                         $query->orWhere('daily_numbers.user_id', '=', $id);
                     }
-                    if ($filter['type'] == "office") {
+                    if ($filter['type'] == 'office') {
                         $query->orWhere('office_id', '=', $id);
                     }
-                    if ($filter['type'] == "region") {
+                    if ($filter['type'] == 'region') {
                         $query->orWhere('region_id', '=', $id);
                     }
                 }
@@ -127,37 +126,37 @@ class NumberTrackerDetail extends Component
             $queryLast->where(function ($query) use ($activeFilters) {
                 foreach ($activeFilters as $filter) {
                     $id = $filter['id'];
-                    if ($filter['type'] == "user") {
+                    if ($filter['type'] == 'user') {
                         $query->orWhere('daily_numbers.user_id', '=', $id);
                     }
-                    if ($filter['type'] == "office") {
+                    if ($filter['type'] == 'office') {
                         $query->orWhere('office_id', '=', $id);
                     }
-                    if ($filter['type'] == "region") {
+                    if ($filter['type'] == 'region') {
                         $query->orWhere('region_id', '=', $id);
                     }
                 }
             });
         }
 
-        $this->numbersTrackedLast = $queryLast->when(user()->role != "Admin" && user()->role != "Owner", function($query) {
-                    $query->where("users.department_id", "=", user()->department_id);
-                })
+        $this->numbersTrackedLast = $queryLast->when(user()->role != 'Admin' && user()->role != 'Owner', function($query) {
+            $query->where('users.department_id', '=', user()->department_id);
+        })
             ->groupBy('user_id')
             ->get();
 
         $this->graficValueLast    = $this->numbersTrackedLast->sum($this->filterBy);
 
         $query->groupBy('daily_numbers.user_id')
-            ->when(user()->role != "Admin" && user()->role != "Owner", function($query) {
-                $query->where("users.department_id", "=", user()->department_id);
+            ->when(user()->role != 'Admin' && user()->role != 'Owner', function($query) {
+                $query->where('users.department_id', '=', user()->department_id);
             });
 
-        if($this->filterBy == 'sits'){
+        if ($this->filterBy == 'sits') {
             return $query->orderByRaw('sits + set_sits ' . $this->order)->get();
         }
 
-        if($this->filterBy == 'closes'){
+        if ($this->filterBy == 'closes') {
             return $query->orderByRaw('closes + set_closes ' . $this->order)->get();
         }
 
@@ -188,7 +187,8 @@ class NumberTrackerDetail extends Component
         }
     }
 
-    public function changeOrder(){
+    public function changeOrder()
+    {
         $this->order = $this->order == 'desc' ? 'asc' : 'desc';
     }
 
@@ -199,9 +199,9 @@ class NumberTrackerDetail extends Component
 
     public function getOffices()
     {
-        $this->offices = Office::select("offices.*")
-                            ->join("regions", "offices.region_id", "=", "regions.id")
-                            ->where("regions.department_id", "=", user()->department_id)->get();
+        $this->offices = Office::select('offices.*')
+                            ->join('regions', 'offices.region_id', '=', 'regions.id')
+                            ->where('regions.department_id', '=', user()->department_id)->get();
     }
 
     public function getRegions()
@@ -217,8 +217,7 @@ class NumberTrackerDetail extends Component
     public function setFilter()
     {
         $data = [];
-        if(user()->role == "Region Manager")
-        {
+        if (user()->role == 'Region Manager') {
             $regions = user()->managedRegions()->get();
             foreach ($regions as $region) {
                 $data = [
@@ -229,8 +228,7 @@ class NumberTrackerDetail extends Component
             }
         }
 
-        if(user()->role == "Office Manager")
-        {
+        if (user()->role == 'Office Manager') {
             $offices = user()->managedOffices()->get();
             foreach ($offices as $office) {
                 $data = [
@@ -241,12 +239,11 @@ class NumberTrackerDetail extends Component
             }
         }
 
-        if(user()->role == "Setter" || user()->role == "Sales Rep")
-        {
+        if (user()->role == 'Setter' || user()->role == 'Sales Rep') {
             $data = [
                 'first_name' => user()->first_name,
                 'last_name'  => user()->last_name,
-                'id'         => user()->id
+                'id'         => user()->id,
             ];
             $this->addFilter($data, 'user');
         }

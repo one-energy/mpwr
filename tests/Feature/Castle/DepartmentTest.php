@@ -2,9 +2,11 @@
 
 namespace Tests\Feature\Castle;
 
+use App\Http\Livewire\Castle\Departments;
 use App\Models\Department;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class DepartmentTest extends TestCase
@@ -16,7 +18,7 @@ class DepartmentTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create(['master' => true]);
+        $this->user = User::factory()->create(['master' => true]);
 
         $this->actingAs($this->user);
     }
@@ -24,7 +26,7 @@ class DepartmentTest extends TestCase
     /** @test */
     public function it_should_store_a_new_department()
     {
-        $admin = factory(User::class)->create(["role" => "Admin"]);
+        $admin = User::factory()->create(["role" => "Admin"]);
 
         $data = [
             'name'              => 'Department',
@@ -44,16 +46,16 @@ class DepartmentTest extends TestCase
     /** @test */
     public function it_should_list_all_departments()
     {
-        $admin = factory(User::class)->create(['role' => 'Admin']);
+        $admin = User::factory()->create(['role' => 'Admin']);
 
-        $departmentManagerOne = factory(User::class)->create(['role' => 'Department Manager']);
-        $departmentManagerTwo = factory(User::class)->create(['role' => 'Department Manager']);
+        $departmentManagerOne = User::factory()->create(['role' => 'Department Manager']);
+        $departmentManagerTwo = User::factory()->create(['role' => 'Department Manager']);
 
-        $departmentOne       = factory(Department::class)->create([
+        $departmentOne       = Department::factory()->create([
             'department_manager_id' => $departmentManagerOne->id,
         ]);
 
-        $departmentTwo       = factory(Department::class)->create([
+        $departmentTwo       = Department::factory()->create([
             'department_manager_id' => $departmentManagerTwo->id,
         ]);
 
@@ -69,7 +71,7 @@ class DepartmentTest extends TestCase
 
         $response->assertStatus(200)
             ->assertViewIs('castle.departments.index');
-        
+
         $response->assertSee($departmentManagerOne->name);
         $response->assertSee($departmentManagerTwo->name);
     }
@@ -77,8 +79,8 @@ class DepartmentTest extends TestCase
     /** @test */
     public function it_should_edit_an_department()
     {
-        $admin = factory(User::class)->create(["role" => "Admin"]);
-        $department        = factory(Department::class)->create(["department_manager_id" => $admin->id]);
+        $admin = User::factory()->create(["role" => "Admin"]);
+        $department        = Department::factory()->create(["department_manager_id" => $admin->id]);
 
         $data         = $department->toArray();
         $data['department_manager_id'] = $data['department_manager_id'];
@@ -91,7 +93,7 @@ class DepartmentTest extends TestCase
         $response->assertStatus(302);
 
         $this->assertDatabaseHas(
-            'Departments',
+            'departments',
             [
                 'id'   => $department->id,
                 'name' => 'Department Edited'
@@ -102,32 +104,30 @@ class DepartmentTest extends TestCase
     /** @test */
     public function it_should_destroy_an_department()
     {
-        $admin = factory(User::class)->create(["role" => "Admin"]);
-        $department        = factory(Department::class)->create([
+        $admin = User::factory()->create(["role" => "Admin"]);
+        $department        = Department::factory()->create([
             'department_manager_id' => $admin->id,
         ]);
 
         $admin->department_id = $department->id;
         $admin->save();
-        
+
         $this->actingAs($admin);
-        
-        $response = $this->delete(route('castle.departments.destroy', $department->id));
-        $deleted  = Department::where('id', $department->id)->get();
 
-        $response->assertStatus(302);
-
-        $this->assertNotNull($deleted);
+        Livewire::test(Departments::class)->call('setDeletingDepartment', $department)
+        ->set('deletingName', $department->name)
+        ->call('destroy')
+        ->assertDontSee($department->name);
     }
 
     /** @test */
     public function it_should_block_the_create_form_for_non_top_level_roles()
     {
-        $setter = factory(User::class)->create([
+        $setter = User::factory()->create([
             "role" => "Setter"
         ]);
 
-        $department = factory(Department::class)->create([
+        $department = Department::factory()->create([
             "department_manager_id" => $setter->id
         ]);
 
@@ -144,12 +144,12 @@ class DepartmentTest extends TestCase
     /** @test */
     public function it_should_show_the_create_form_for_top_level_roles()
     {
-        $admin = factory(User::class)->create(["role" => "Admin"]);
-        $department        = factory(Department::class)->create(["department_manager_id" => $admin->id]);
+        $admin = User::factory()->create(["role" => "Admin"]);
+        $department        = Department::factory()->create(["department_manager_id" => $admin->id]);
 
         $this->actingAs($admin);
         $response = $this->get('castle/departments/create');
-       
+
         $response->assertStatus(200)
            ->assertViewIs('castle.departments.create');
     }
@@ -157,7 +157,7 @@ class DepartmentTest extends TestCase
     /** @test */
     public function it_should_require_all_fields_to_store_a_new_department()
     {
-        $admin = factory(User::class)->create(["role" => "Admin"]);
+        $admin = User::factory()->create(["role" => "Admin"]);
 
         $data = [
             'name'              => '',
@@ -176,11 +176,11 @@ class DepartmentTest extends TestCase
     /** @test */
     public function it_should_block_access_to_department()
     {
-        $departmentManager = factory(User::class)->create(["role" => "Department Manager"]);
-        $regionManager = factory(User::class)->create(["role" => "Region Manager"]);
-        $officeManager = factory(User::class)->create(["role" => "Office Manager"]);
-        $setter = factory(User::class)->create(["role" => "Setter"]);
-        $salesRep = factory(User::class)->create(["role" => "Sales Rep"]);
+        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
+        $regionManager = User::factory()->create(["role" => "Region Manager"]);
+        $officeManager = User::factory()->create(["role" => "Office Manager"]);
+        $setter = User::factory()->create(["role" => "Setter"]);
+        $salesRep = User::factory()->create(["role" => "Sales Rep"]);
 
         $this->actingAs($departmentManager)
             ->get(route('castle.departments.index'))
@@ -202,12 +202,12 @@ class DepartmentTest extends TestCase
             ->get(route('castle.departments.index'))
             ->assertForbidden();
     }
-    
+
     /** @test */
     public function it_should_allow_access_to_department()
     {
-        $owner = factory(User::class)->create(["role" => "Owner"]);
-        $admin = factory(User::class)->create(["role" => "Admin"]);
+        $owner = User::factory()->create(["role" => "Owner"]);
+        $admin = User::factory()->create(["role" => "Admin"]);
 
         $this->actingAs($owner)
             ->get(route('castle.departments.index'))
@@ -217,5 +217,5 @@ class DepartmentTest extends TestCase
             ->get(route('castle.departments.index'))
             ->assertSuccessful();
     }
-    
-}   
+
+}

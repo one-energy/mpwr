@@ -14,7 +14,7 @@ class Departments extends Component
 
     public ?Department $deletingDepartment;
 
-    public string $deleteMessage = "Are you sure you want to delete this department?";
+    public string $deleteMessage = 'Are you sure you want to delete this department?';
 
     protected $rules = [
         'deletingDepartment.name' => 'nullable',

@@ -18,12 +18,12 @@ class Permission extends Component
     public function render()
     {
         $query = User::query();
-        if (user()->role == "Department Manager") {
+        if (user()->role == 'Department Manager') {
             $query->whereDepartmentId(user()->department_id)
                 ->where('role', '!=', 'Admin')
                 ->where('role', '!=', 'Owner');
         }
-        if (user()->role == "Admin") {
+        if (user()->role == 'Admin') {
             $query->where('role', '!=', 'Owner');
         }
         

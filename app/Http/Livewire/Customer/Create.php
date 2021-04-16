@@ -70,7 +70,7 @@ class Create extends Component
         if ((user()->role == 'Office Manager' || user()->role == 'Sales Rep' || user()->role == 'Setter') && user()->office_id != null) {
             $this->customer->sales_rep_id  = user()->id;
             $this->customer->sales_rep_fee = $this->getUserRate(user()->id);
-            $this->salesRep = user();
+            $this->salesRep                = user();
         }
         $this->setSelfGen();
     }
@@ -80,8 +80,8 @@ class Create extends Component
         $this->customer->calcComission();
         $this->customer->calcMargin();
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
-        $this->salesReps = user()->getPermittedUsers($this->departmentId)->toArray();
-        $this->setters = User::whereDepartmentId($this->departmentId)
+        $this->salesReps         = user()->getPermittedUsers($this->departmentId)->toArray();
+        $this->setters           = User::whereDepartmentId($this->departmentId)
                                 ->where('id', '!=', user()->id)
                                 ->orderBy('first_name')->get()->toArray();
 
@@ -107,8 +107,24 @@ class Create extends Component
     public function store()
     {
 
-        $this->customer->date_of_sale = Carbon::parse($this->customer->date_of_sale);
-        $this->customer->opened_by_id = user()->id;
+        $salesRep = User::find($this->customer->sales_rep_id);
+
+        $this->customer->date_of_sale                = Carbon::parse($this->customer->date_of_sale);
+        $this->customer->opened_by_id                = user()->id;
+        $this->customer->sales_rep_recruiter_id      = $salesRep->recruiter_id;
+        $this->customer->referral_override           = $salesRep->referral_override;
+        $this->customer->office_manager_id           = $salesRep->office_manager_id;
+        $this->customer->region_manager_id           = $salesRep->region_manager_id;
+        $this->customer->department_manager_id       = $salesRep->department_manager_id;
+        $this->customer->office_manager_override     = $salesRep->office_manager_override;
+        $this->customer->region_manager_override     = $salesRep->region_manager_override;
+        $this->customer->department_manager_override = $salesRep->department_manager_override;
+        $this->customer->misc_override_one           = $salesRep->misc_override_one;
+        $this->customer->payee_one                   = $salesRep->payee_one;
+        $this->customer->note_one                    = $salesRep->note_one;
+        $this->customer->misc_override_two           = $salesRep->misc_override_two;
+        $this->customer->payee_two                   = $salesRep->payee_two;
+        $this->customer->note_two                    = $salesRep->note_two;
         $this->customer->financing_id = $this->customer->financing_id != "" ? $this->customer->financing_id : null;
         $this->customer->financer_id = $this->customer->financer_id != "" ? $this->customer->financer_id : null;
         $this->customer->term_id = $this->customer->term_id != "" ? $this->customer->term_id : null;
@@ -130,9 +146,7 @@ class Create extends Component
 
     public function updatedCustomerSetterId()
     {
-        if ($this->customer->setter_id) {
-            $this->getSetterRate($this->customer->setter_id);
-        } else {
+        if (!$this->customer->setter_id) {
             $this->setSelfGen();
         }
     }
@@ -186,10 +200,10 @@ class Create extends Component
     {
         if ( $customer->margin >= 0 && $customer->system_size >= 0 ) {
             return floatval($customer->margin) * floatval($customer->system_size) * 1000;
-        } else {
-            return 0;
         }
-
+  
+        return 0;
+        
         return 0;
     }
 }

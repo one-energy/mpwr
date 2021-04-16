@@ -55,7 +55,6 @@ class Scoreboard extends Component
 
     public function render()
     {
-
         $this->setTop10DoorsPeriod($this->doorsPeriod);
         $this->setTop10HoursPeriod($this->hoursPeriod);
         $this->setTop10SetsPeriod($this->setsPeriod);
@@ -128,15 +127,15 @@ class Scoreboard extends Component
                 $join->on('daily_numbers.user_id', '=', 'users.id');
             });
 
-        if ($this->doorsPeriod === "daily") {
+        if ($this->doorsPeriod === 'daily') {
             $userQuery
                 ->whereDate('daily_numbers.created_at', Carbon::today());
         }
-        if ($this->doorsPeriod === "weekly") {
+        if ($this->doorsPeriod === 'weekly') {
             $userQuery
                 ->whereBetween('daily_numbers.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
         }
-        if ($this->doorsPeriod === "monthly") {
+        if ($this->doorsPeriod === 'monthly') {
             $userQuery
                 ->whereMonth('daily_numbers.created_at', '=', Carbon::now()->month);
         }
@@ -160,10 +159,10 @@ class Scoreboard extends Component
                 $join->on('daily_numbers.user_id', '=', 'users.id');
             });
 
-        if ($this->hoursPeriod === "daily") {
+        if ($this->hoursPeriod === 'daily') {
             $query
                 ->whereDate('daily_numbers.created_at', Carbon::today());
-        } elseif ($this->hoursPeriod === "weekly") {
+        } elseif ($this->hoursPeriod === 'weekly') {
             $query
                 ->whereBetween('daily_numbers.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
         } else {
@@ -190,10 +189,10 @@ class Scoreboard extends Component
                 $join->on('daily_numbers.user_id', '=', 'users.id');
             });
 
-        if ($this->setsPeriod === "daily") {
+        if ($this->setsPeriod === 'daily') {
             $query
                 ->whereDate('daily_numbers.created_at', Carbon::today());
-        } elseif ($this->setsPeriod === "weekly") {
+        } elseif ($this->setsPeriod === 'weekly') {
             $query
                 ->whereBetween('daily_numbers.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
         } else {
@@ -220,10 +219,10 @@ class Scoreboard extends Component
                 $join->on('daily_numbers.user_id', '=', 'users.id');
             });
 
-        if ($this->setClosesPeriod === "daily") {
+        if ($this->setClosesPeriod === 'daily') {
             $query
                 ->whereDate('daily_numbers.created_at', Carbon::today());
-        } elseif ($this->setClosesPeriod === "weekly") {
+        } elseif ($this->setClosesPeriod === 'weekly') {
             $query
                 ->whereBetween('daily_numbers.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
         } else {
@@ -250,9 +249,9 @@ class Scoreboard extends Component
                 $join->on('daily_numbers.user_id', '=', 'users.id');
             });
 
-        if ($this->closesPeriod === "daily") {
+        if ($this->closesPeriod === 'daily') {
             $query->whereDate('daily_numbers.created_at', Carbon::today());
-        } elseif ($this->closesPeriod === "weekly") {
+        } elseif ($this->closesPeriod === 'weekly') {
             $query->whereBetween('daily_numbers.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
         } else {
             $query->whereMonth('daily_numbers.created_at', '=', Carbon::now()->month);

@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\Department;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
 use App\Traits\Livewire\FullTable;
@@ -86,14 +85,14 @@ class ShowTrainings extends Component
             ->whereDepartmentId($this->department->id)
             ->leftJoin('training_page_contents', 'training_page_sections.id', '=', 'training_page_contents.training_page_section_id' );
 
-        $trainingsQuery->when($search == "", function ($query) use ($section) {
+        $trainingsQuery->when($search == '', function ($query) use ($section) {
             $query->where('training_page_sections.parent_id', $section->id ?? 1);
         });
 
-        $trainingsQuery->when($search != "", function ($query) use ($search) {
+        $trainingsQuery->when($search != '', function ($query) use ($search) {
             $query->where(function ($query) use ($search) {
-                $query->orWhere('training_page_sections.title', "like", "%" . $this->search . "%")
-                    ->orWhere('training_page_contents.description', 'like', "%" . $search . "%");
+                $query->orWhere('training_page_sections.title', 'like', '%' . $this->search . '%')
+                    ->orWhere('training_page_contents.description', 'like', '%' . $search . '%');
             });
         });
 

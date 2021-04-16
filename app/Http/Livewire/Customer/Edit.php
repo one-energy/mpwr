@@ -59,7 +59,7 @@ class Edit extends Component
         if (user()->role != 'Admin' && user()->role != 'Owner') {
             $this->departmentId = user()->department_id;
         } else {
-            $this->departmentId = Department::first()->id;
+            $this->departmentId = $customer->userSalesRep->department_id;
         }
     }
 
@@ -68,10 +68,11 @@ class Edit extends Component
         $this->customer->calcComission();
         $this->customer->calcMargin();
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
-        $this->salesReps = user()->getPermittedUsers($this->departmentId)->toArray();
-        $this->setters = User::whereDepartmentId($this->departmentId)
+        $this->salesReps         = user()->getPermittedUsers($this->departmentId)->toArray();
+        $this->setters           = User::whereDepartmentId($this->departmentId)
                                 ->where('id', '!=', user()->id)
                                 ->orderBy('first_name')->get()->toArray();
+
         return view('livewire.customer.edit', [
             'departments' => Department::all(),
             'setterFee'   => $this->getSetterFee(),
@@ -86,9 +87,24 @@ class Edit extends Component
     public function update()
     {
 
+        $salesRep   = User::find($this->customer->sales_rep_id);
         $commission = $this->calculateCommission($this->customer);
 
-        $this->customer->commission = $commission;
+        $this->customer->commission                  = $commission;
+        $this->customer->sales_rep_recruiter_id      = $salesRep->recruiter_id;
+        $this->customer->referral_override           = $salesRep->referral_override;
+        $this->customer->office_manager_id           = $salesRep->office_manager_id;
+        $this->customer->region_manager_id           = $salesRep->region_manager_id;
+        $this->customer->department_manager_id       = $salesRep->department_manager_id;
+        $this->customer->office_manager_override     = $salesRep->office_manager_override;
+        $this->customer->region_manager_override     = $salesRep->region_manager_override;
+        $this->customer->department_manager_override = $salesRep->department_manager_override;
+        $this->customer->misc_override_one           = $salesRep->misc_override_one;
+        $this->customer->payee_one                   = $salesRep->payee_one;
+        $this->customer->note_one                    = $salesRep->note_one;
+        $this->customer->misc_override_two           = $salesRep->misc_override_two;
+        $this->customer->payee_two                   = $salesRep->payee_two;
+        $this->customer->note_two                    = $salesRep->note_two;
         $this->customer->financing_id = $this->customer->financing_id != "" ? $this->customer->financing_id : null;
         $this->customer->financer_id = $this->customer->financer_id != "" ? $this->customer->financer_id : null;
         $this->customer->term_id = $this->customer->term_id != "" ? $this->customer->term_id : null;
@@ -116,9 +132,8 @@ class Edit extends Component
     public function setSelfGen()
     {
         $this->customer->setter_fee = 0;
-        $this->isSelfGen = true;
+        $this->isSelfGen            = true;
     }
-
 
     public function updatedCustomerFinancingId()
     {
@@ -138,8 +153,6 @@ class Edit extends Component
     {
         if ($setterId) {
             $this->isSelfGen = false;
-            $this->setter = User::find($setterId);
-            $this->getSetterRate($setterId);
         } else {
             $this->setSelfGen();
         }
@@ -195,7 +208,7 @@ class Edit extends Component
         if ($customer->margin && $customer->system_size) {
             return $customer->margin * $customer->system_size * 1000;
         }
+
         return 0;
     }
-
 }

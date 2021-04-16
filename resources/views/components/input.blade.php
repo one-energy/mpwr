@@ -1,4 +1,4 @@
-@props(['label', 'name', 'value', 'disabledToUser', 'disabled', 'wire' => null])
+@props(['label', 'name', 'value', 'disabledToUser', 'disabled', 'labelInside' => false, 'wire' => null])
 
 @php
     $class = 'form-input block w-full pr-10 sm:text-sm sm:leading-5';
@@ -12,12 +12,14 @@
 @endphp
 
 <div {{ $attributes }}>
-    <label for="{{ $name }}" class="block text-sm font-medium leading-5 text-gray-700">{{ $label }}</label>
-
+    @if(!$labelInside)
+        <label for="{{ $name }}" class="block text-sm font-medium leading-5 text-gray-700">{{ $label }}</label>
+    @endif
     <div class="mt-1 relative rounded-md shadow-sm">
         <input {{ $attributes->except('class')->merge(['class' => $class]) }}
                name="{{ $name }}"
                id="{{ $name }}"
+               @if($labelInside) placeholder="{{ $label }}" @endif
                @if($attributes->get('type') != 'password') value="{{ old($name, $value ?? null) }}" @endif
                @if ($wire) wire:model="{{ $wire }}" @endif
                @if(($disabledToUser && user()->role == $disabledToUser) || $disabled) disabled @endif/>

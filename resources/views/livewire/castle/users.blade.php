@@ -20,26 +20,25 @@
                                 <x-slot name="header">
                                     <tr class="sm:border-gray-200 border-b-2">
                                         @if(user()->role == "Admin")
-                                            <x-table.th-searchable by="first_name" :sortedBy="$sortBy" :direction="$sortDirection">
+                                            <x-table.th by="first_name">
                                                 @lang('Department')
                                             </x-table.th>
                                         @endif
                                         <x-table.th-searchable by="first_name" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Name')
-                                        </x-table.th>
+                                        </x-table.th-searchable>
                                         <x-table.th-searchable by="email" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Email')
-                                        </x-table.th>
+                                        </x-table.th-searchable>
                                         <x-table.th-searchable by="role" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Role')
-                                        </x-table.th>
+                                        </x-table.th-searchable>
                                         <x-table.th-searchable by="role" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Team')
-                                        </x-table.th>
+                                        </x-table.th-searchable>
                                         <x-table.th-searchable by="role" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Pay')
-                                        </x-table.th>
-                                        <x-table.th></x-table.th>
+                                        </x-table.th-searchable>
                                     </tr>
                                 </x-slot>
                                 <x-slot name="body">
@@ -54,11 +53,6 @@
                                                 <x-table.td>{{ $this->userRole($user->role) }}</x-table.td>
                                                 <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
                                                 <x-table.td>{{ $user->pay }}</x-table.td>
-                                                <x-table.td>
-                                                    <x-link class="text-sm" :href="route('castle.users.edit', $user->id)">
-                                                        Edit
-                                                    </x-link>
-                                                </x-table.td>
                                             </x-table.tr>
                                         @else
                                             <x-table.tr :loop="$loop" class="cursor-pointer">
@@ -69,7 +63,6 @@
                                                 <x-table.td>{{ $user->email }}</x-table.td>
                                                 <x-table.td>{{ $this->userRole($user->role) }}</x-table.td>
                                                 <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
-                                                <x-table.td></x-table.td>
                                                 <x-table.td></x-table.td>
                                             </x-table.tr>
                                         @endif

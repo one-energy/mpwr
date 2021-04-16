@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Livewire\NumberTracker\DailyEntry;
 use App\Models\DailyNumber;
 use Illuminate\Http\Request;
 
@@ -34,10 +33,11 @@ class NumberTrackingController extends Controller
                     return ($element >= 0);
                 });
 
-                $isEmpty = empty(array_filter($filteredNumbers, function($item) {return $item !== null;}));
+                $isEmpty = empty(array_filter($filteredNumbers, function($item) {
+                    return $item !== null;
+                }));
 
                 if (!$isEmpty) {
-
                     DailyNumber::updateOrCreate(
                         [
                             'user_id' => $userId,
@@ -47,8 +47,9 @@ class NumberTrackingController extends Controller
                     );
                 } else {
                     $dailyNumber = DailyNumber::whereDate('date', $date)->whereUserId($userId)->first();
-                    if(!empty($dailyNumber))
+                    if (!empty($dailyNumber)) {
                         DailyNumber::destroy($dailyNumber->id);
+                    }
                 }
             }
             alert()
