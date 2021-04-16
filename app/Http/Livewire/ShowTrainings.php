@@ -97,19 +97,23 @@ class ShowTrainings extends Component
 
     public function getParentSections($section)
     {
-        return TrainingPageSection::query()
+        $query = TrainingPageSection::query()
             ->with('content')
-            ->where(function (Builder $query) {
+            ->where('department_id', $this->department->id);
+
+        if (user()->notHaveRoles(['Admin', 'Owner', 'Department Manager'])) {
+            $query->where(function (Builder $query) {
                 $query
-                    ->where('department_id', $this->department->id)
                     ->orWhereNull('region_id')
                     ->orWhereHas('region.offices', function (Builder $query) {
                         $query->where('offices.id', user()->office_id);
                     });
-            })
-            ->when($this->search === '', function ($query) use ($section) {
-                $query->where('training_page_sections.parent_id', $section->id ?? 1);
-            })
+            });
+        }
+
+        return $query->when($this->search === '', function ($query) use ($section) {
+            $query->where('training_page_sections.parent_id', $section->id ?? 1);
+        })
             ->when($this->search !== '', function ($query) {
                 $query->where(function ($query) {
                     $query
