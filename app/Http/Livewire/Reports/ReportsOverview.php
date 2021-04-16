@@ -98,37 +98,37 @@ class ReportsOverview extends Component
                 $query->orWhere('setter_id', user()->id)
                     ->orWhere('sales_rep_id', user()->id);
             })
-            ->when(user()->hasRole('Office Manager'), function ($query) {
-                $query->orWhere('office_manager_id', user()->id);
-            })
-            ->when(user()->hasRole('Region Manager'), function ($query) {
-                $query->orWhere('region_manager_id', user()->id)
-                    ->orWhere('office_manager_id', user()->id);
-            })
-            ->when(user()->hasRole('Department Manager'), function ($query) {
-                $query->orWhere('department_manager_id', user()->id)
-                    ->orWhere('region_manager_id', user()->id)
-                    ->orWhere('office_manager_id', user()->id);
-            })
-            ->when(user()->hasAnyRole(['Admin', 'Owner']), function ($query) {
-                $query->whereHas('userSalesRep', function ($query) {
-                    $query->where('department_id', $this->departmentId);
+                ->when(user()->hasRole('Office Manager'), function ($query) {
+                    $query->orWhere('office_manager_id', user()->id);
+                })
+                ->when(user()->hasRole('Region Manager'), function ($query) {
+                    $query->orWhere('region_manager_id', user()->id)
+                        ->orWhere('office_manager_id', user()->id);
+                })
+                ->when(user()->hasRole('Department Manager'), function ($query) {
+                    $query->orWhere('department_manager_id', user()->id)
+                        ->orWhere('region_manager_id', user()->id)
+                        ->orWhere('office_manager_id', user()->id);
+                })
+                ->when(user()->hasAnyRole(['Admin', 'Owner']), function ($query) {
+                    $query->whereHas('userSalesRep', function ($query) {
+                        $query->where('department_id', $this->departmentId);
+                    });
                 });
-            });
         })
-        ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
-        ->when($this->installedStatus(), function ($query) {
-            $query->whereIsActive(true)
-                ->wherePanelSold(true);
-        })
-        ->when($this->pendingStatus(), function ($query) {
-            $query->whereIsActive(true)
-                ->wherePanelSold(false);
-        })
-        ->when($this->cancelledStatus(), function ($query) {
-            $query->whereIsActive(false);
-        })
-        ->get();
+            ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
+            ->when($this->installedStatus(), function ($query) {
+                $query->whereIsActive(true)
+                    ->wherePanelSold(true);
+            })
+            ->when($this->pendingStatus(), function ($query) {
+                $query->whereIsActive(true)
+                    ->wherePanelSold(false);
+            })
+            ->when($this->cancelledStatus(), function ($query) {
+                $query->whereIsActive(false);
+            })
+            ->get();
 
         $this->customersOfSalesRepsRecruited = user()->customersOfSalesRepsRecuited()
             ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
@@ -187,20 +187,20 @@ class ReportsOverview extends Component
 
     public function getSumSetterCommission(Collection $customers)
     {
-        $customers = $customers->where('setter_id', user()->id);
-
-        return $customers->sum(function ($customer) {
-            return $this->getSetterCommission($customer);
-        });
+        return $customers
+            ->when(user()->notHaveRoles(['Admin', 'Owner']), function (Collection $customers) {
+                return $customers->where('setter_id', user()->id);
+            })
+            ->sum(fn($customer) => $this->getSetterCommission($customer));
     }
 
     public function getAvgSetterCommission(Collection $customers)
     {
-        $customers = $customers->where('setter_id', user()->id);
-
-        return $customers->avg(function ($customer) {
-            return $this->getSetterCommission($customer);
-        });
+        return $customers
+            ->when(user()->notHaveRoles(['Admin', 'Owner']), function (Collection $customers) {
+                return $customers->where('setter_id', user()->id);
+            })
+            ->avg(fn($customer) => $this->getSetterCommission($customer));
     }
 
     public function getSetterCommission(Customer $customer)
@@ -210,27 +210,27 @@ class ReportsOverview extends Component
 
     public function getAvgSalesRepEpc(Collection $customers)
     {
-        $customers = $customers->where('sales_rep_id', user()->id);
-
-        return $customers->avg('epc');
+        return $customers
+            ->where('sales_rep_id', user()->id)
+            ->avg('epc');
     }
 
     public function getSumSalesRepCommission(Collection $customers)
     {
-        $customers = $customers->where('sales_rep_id', user()->id);
-
-        return $customers->sum(function ($customer) {
-            return $this->getSalesRepCommission($customer);
-        });
+        return $customers
+            ->when(user()->notHaveRoles(['Admin', 'Owner']), function (Collection $customers) {
+                return $customers->where('sales_rep_id', user()->id);
+            })
+            ->sum(fn($customer) => $this->getSalesRepCommission($customer));
     }
 
     public function getAvgSalesRepCommission(Collection $customers)
     {
-        $customers = $customers->where('sales_rep_id', user()->id);
-
-        return $customers->avg(function ($customer) {
-            return $this->getSalesRepCommission($customer);
-        });
+        return $customers
+            ->when(user()->notHaveRoles(['Admin', 'Owner']), function (Collection $customers) {
+                return $customers->where('sales_rep_id', user()->id);
+            })
+            ->avg(fn($customer) => $this->getSalesRepCommission($customer));
     }
 
     public function getSalesRepCommission(Customer $customer)
