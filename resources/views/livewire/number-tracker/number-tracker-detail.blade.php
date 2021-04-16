@@ -126,150 +126,8 @@
                     </div>
                 </div>
 
-                <div class="p-4 border-2 border-gray-200 rounded-lg">
-                    <div class="flex justify-between">
-                        <span>
-                            Filters
-                        </span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                            <symbol id="filter" viewBox="0 0 24 24">
-                                <path d="M19.479 2l-7.479 12.543v5.924l-1-.6v-5.324l-7.479-12.543h15.958zm3.521-2h-23l9 15.094v5.906l5 3v-8.906l9-15.094z" class="text-gray-700 fill-current"/>
-                            </symbol>
-                            <use xlink:href="#filter" width="15" height="15" y="4" x="4" />
-                        </svg>
-                    </div>
 
-                    <!-- Filter -->
-                    <section class="mt-6">
-                        <article>
-                            <div class="border-b border-gray-200" x-data="{ open: false }">
-                                <header class="flex items-center justify-between py-2 cursor-pointer select-none" @click="open = true">
-                                    <span class="text-sm font-thin text-gray-700">
-                                        Regions
-                                    </span>
-                                    <div class="ml-4">
-                                        <x-svg.plus class="text-gray-300"></x-svg.plus>
-                                    </div>
-                                </header>
-                                <ul x-cloak x-show="open === true" @click.away="open = false"
-                                    x-transition:enter="transition ease-out duration-100"
-                                    x-transition:enter-start="transform opacity-0 scale-95"
-                                    x-transition:enter-end="transform opacity-100 scale-100"
-                                    x-transition:leave="transition ease-in duration-75"
-                                    x-transition:leave-start="transform opacity-100 scale-100"
-                                    x-transition:leave-end="transform opacity-0 scale-95"
-                                    class="z-10 w-full mt-2 overflow-y-auto rounded-md shadow-lg max-h-80">
-                                    @foreach($regions as $region)
-                                        <li class="p-2 cursor-pointer" @click="open = false" wire:click="addFilter({{$region}}, 'region')">{{$region->name}}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        </article>
-                        <article>
-                            <div class="border-b border-gray-200 bg-grey-lightest" x-data="{ open: false }">
-                                <header class="flex items-center justify-between py-2 cursor-pointer select-none" @click="open = true">
-                                    <span class="text-sm font-thin text-gray-800">
-                                        Offices
-                                    </span>
-                                    <div class="flex">
-                                        <div class="ml-4">
-                                            <x-svg.plus class="text-gray-300"></x-svg.plus>
-                                        </div>
-                                    </div>
-                                </header>
-                                <ul x-cloak x-show="open === true" @click.away="open = false"
-                                    x-transition:enter="transition ease-out duration-100"
-                                    x-transition:enter-start="transform opacity-0 scale-95"
-                                    x-transition:enter-end="transform opacity-100 scale-100"
-                                    x-transition:leave="transition ease-in duration-75"
-                                    x-transition:leave-start="transform opacity-100 scale-100"
-                                    x-transition:leave-end="transform opacity-0 scale-95"
-                                    class="z-10 w-full mt-2 overflow-y-auto rounded-md shadow-lg max-h-80">
-                                    @foreach($offices as $office)
-                                        <li class="p-2 cursor-pointer" @click="open = false" wire:click="addFilter({{$office}}, 'office')">
-                                            {{$office->region->name}} - {{$office->name}}
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        </article>
-                        <article>
-                            <div class="border-b border-gray-200 bg-grey-lightest" x-data="{ open: false }">
-                                <header class="flex items-center justify-between py-2 cursor-pointer select-none" @click="open = true">
-                                    <span class="text-sm font-thin text-gray-700">
-                                        Users
-                                    </span>
-                                    <div class="flex">
-                                        <div class="ml-4">
-                                            <x-svg.plus class="text-gray-300"></x-svg.plus>
-                                        </div>
-                                    </div>
-                                </header>
-                                <ul x-cloak x-show="open === true" @click.away="open = false"
-                                    x-transition:enter="transition ease-out duration-100"
-                                    x-transition:enter-start="transform opacity-0 scale-95"
-                                    x-transition:enter-end="transform opacity-100 scale-100"
-                                    x-transition:leave="transition ease-in duration-75"
-                                    x-transition:leave-start="transform opacity-100 scale-100"
-                                    x-transition:leave-end="transform opacity-0 scale-95"
-                                    class="z-10 w-full mt-2 overflow-y-auto rounded-md shadow-lg max-h-80">
-                                    <div class="sticky top-0 p-2 bg-white">
-                                        <input
-                                            type="text"
-                                            class="w-full form-input"
-                                            placeholder="Search Users..."
-                                            wire:model="userSearch"
-                                            wire:keydown.escape="$set(userSearch, '')"
-                                            wire:keydown.tab="$set(userSearch, '')"
-                                            wire:keydown.ArrowUp="decrementHighlight"
-                                            wire:keydown.ArrowDown="incrementHighlight"
-                                            wire:keydown.enter="selectContact"
-                                            wire:keydown.debounce.500ms="updateSearch"
-                                        />
-                                    </div>
-                                    @foreach($users as $user)
-                                        <li class="p-2 cursor-pointer" @click="open = false" wire:click="addFilter({{$user}}, 'user')">{{$user->first_name . " " . $user->last_name}}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        </article>
-
-                        <div class="flex justify-between">
-                            <div class="flex mt-12">
-                                <span class="text-sm">
-                                    Active Filters
-                                </span>
-                                <div class="flex items-center justify-center w-4 h-4 mt-1 ml-6 text-xs text-gray-700 bg-gray-200 border border-gray-200 rounded-full">
-                                    {{count($activeFilters)}}
-                                </div>
-                            </div>
-                            <div class="mt-12">
-                                <button wire:click="$set('activeFilters', [])" class="text-xs text-gray-600">
-                                    Clear Filters
-                                </button>
-                            </div>
-                        </div>
-                        <div class="mt-2 border-t border-gray-200">
-                            <div class="flex flex-wrap mt-2">
-                                @foreach($activeFilters as $key => $filter)
-                                <span class="inline-flex p-1 m-1 text-base border border-gray-700 rounded-full">
-                                    {{$filter['name'] ?? $filter['first_name'] . " " . $filter['last_name']}}
-                                    <span class="self-center pl-2 cursor-pointer">
-                                        <x-svg.x class="w-4 h-4" wire:click="removeFilter({{$key}})"></x-svg.x>
-                                    </span>
-                                </span>
-                                @endforeach
-                            </div>
-                        </div>
-                    </section>
-                </div>
-                <div class="mt-6">
-
-                    <x-button :href="route('number-tracking.create')" color="green" class="inline-flex w-full">
-                        Update Numbers
-                    </x-button>
-
-                </div>
+                <x-number-tracker.leaderboard-card />
             </div>
 
             <div class="px-4 py-5 sm:p-6 md:w-2/3 xl:w-3/4">
@@ -603,7 +461,6 @@
 
             days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
             initDate() {
-                console.log('start');
                 let today = new Date();
                 this.month = today.getMonth();
                 this.year = today.getFullYear();
@@ -637,7 +494,6 @@
                     daysArray.push(i);
                 }
                 this.no_of_days = daysArray;
-                console.log(daysArray);
             }
         }
     }
