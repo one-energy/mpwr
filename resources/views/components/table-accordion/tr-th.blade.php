@@ -1,8 +1,5 @@
-@props(['cols' => 4])
-
 @php
-    //the limit to cols is 12
-    $class="grid grid-cols-" . $cols
+    $class="table-header-group";
 @endphp
 
 <div {{ $attributes->merge(['class' => $class]) }}>

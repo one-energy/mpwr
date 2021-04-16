@@ -15,7 +15,7 @@ class NumberTrackerDetail extends Component
 {
     use FullTable;
 
-    public $period = 'd';
+    public $period = 'm';
 
     public $numbersTracked = [];
 
