@@ -103,7 +103,7 @@ class ShowTrainings extends Component
                 $query
                     ->where('department_id', $this->department->id)
                     ->orWhereNull('region_id')
-                    ->whereHas('region.offices', function (Builder $query) {
+                    ->orWhereHas('region.offices', function (Builder $query) {
                         $query->where('offices.id', user()->office_id);
                     });
             })
