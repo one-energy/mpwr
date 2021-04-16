@@ -21,6 +21,8 @@ class ListFiles extends Component
 
     public ?SectionFile $selectedFile;
 
+    public bool $showDeleteModal = false;
+
     public function sortBy()
     {
         return $this->order;
@@ -38,9 +40,8 @@ class ListFiles extends Component
 
     public function onDestroy(SectionFile $file)
     {
-        $this->selectedFile = $file;
-
-        $this->dispatchBrowserEvent('confirm', ['sectionFile' => $file]);
+        $this->selectedFile    = $file;
+        $this->showDeleteModal = true;
     }
 
     public function downloadSectionFile(SectionFile $file)
@@ -51,14 +52,14 @@ class ListFiles extends Component
 
         alert()->livewire($this)->withTitle('Download successfully')->send();
 
-        return Storage::disk('local')->download( $file->path );
+        return Storage::disk('local')->download($file->path);
     }
 
     public function removeFile()
     {
         if (!Storage::disk('local')->exists($this->selectedFile->path)) {
             alert()->livewire($this)->withTitle('File not found')->send();
-
+            $this->showDeleteModal = false;
             return;
         }
 
@@ -74,7 +75,7 @@ class ListFiles extends Component
             $this->selectedFile = new SectionFile();
         });
 
-        $this->dispatchBrowserEvent('close-modal');
+        $this->showDeleteModal = false;
         alert()->livewire($this)->withTitle('File deleted successfully')->send();
     }
 }
