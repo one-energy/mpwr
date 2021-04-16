@@ -23,13 +23,17 @@
     <script>
         function initAccordion() {
            return {
-               collapseRow(elementId) {
+               collapseRow(elementId, secondElementId = null) {
                    element = document.getElementById(elementId);
+                   if (secondElementId) {
+                        secondElement = document.getElementById(secondElementId)
+                   }
                    console.log(element.style);
-                   if (element.style.display == 'none') {
+                   if (element.style.display == 'none' || element.style.display == '') {
                         element.style.display = 'table-row'
                    } else {
                         element.style.display = 'none'
+                        secondElement.style.display = 'none'
                    }
                }
            }

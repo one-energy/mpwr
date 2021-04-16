@@ -514,103 +514,103 @@
                                         @if(count($numbersTracked))
                                             <x-table-accordion class="overflow-x-auto">
                                                 <x-slot name="header">
-                                                    <div class="table-cell" by="deparmtent" sortedBy="$sortBy">Member</div>
-                                                    <div class="table-cell" by="doors" sortedBy="$sortBy">
+                                                    <x-table-accordion.th-searchable class="table-cell" by="deparmtent" sortedBy="$sortBy">Member</x-table-accordion.th-searchable>
+                                                    <x-table-accordion.th-searchable class="table-cell" by="doors" sortedBy="$sortBy">
                                                         @lang('Doors')
-                                                    </div>
-                                                    <div class="table-cell" by="hours" sortedBy="$sortBy">
+                                                    </x-table-accordion.th-searchable>
+                                                    <x-table-accordion.th-searchable class="table-cell" by="hours" sortedBy="$sortBy">
                                                         @lang('Hours')
-                                                    </div>
-                                                    <div class="table-cell" by="sets" sortedBy="$sortBy">
+                                                    </x-table-accordion.th-searchable>
+                                                    <x-table-accordion.th-searchable class="table-cell" by="sets" sortedBy="$sortBy">
                                                         @lang('Sets')
-                                                    </div>
-                                                    <div class="table-cell" by="set_sits" sortedBy="$sortBy">
+                                                    </x-table-accordion.th-searchable>
+                                                    <x-table-accordion.th-searchable class="table-cell" by="set_sits" sortedBy="$sortBy">
                                                         @lang('Set Sits')
-                                                    </div>
-                                                    <div class="table-cell" by="sits" sortedBy="$sortBy">
+                                                    </x-table-accordion.th-searchable>
+                                                    <x-table-accordion.th-searchable class="table-cell" by="sits" sortedBy="$sortBy">
                                                         @lang('Sits')
-                                                    </div>
-                                                    <div class="table-cell" by="set_closes" sortedBy="$sortBy">
+                                                    </x-table-accordion.th-searchable>
+                                                    <x-table-accordion.th-searchable class="table-cell" by="set_closes" sortedBy="$sortBy">
                                                         @lang('Set Closes')
-                                                    </div>
-                                                    <div class="table-cell" by="closes" sortedBy="$sortBy">
+                                                    </x-table-accordion.th-searchable>
+                                                    <x-table-accordion.th-searchable class="table-cell" by="closes" sortedBy="$sortBy">
                                                         @lang('Closes')
-                                                    </div>
+                                                    </x-table-accordion.th-searchable>
                                                 </x-slot>
                                                 <x-slot name="body">
                                                     @foreach($numbersTracked as $row)
                                                         <x-table-accordion.tr-accordion :index="$row->id">
                                                             <x-slot name="row">
-                                                                <div class="table-cell" by="deparmtent" sortedBy="$sortBy">Member</div>
-                                                                <div class="table-cell" by="doors" sortedBy="$sortBy">
+                                                                <x-table-accordion.td-arrow class="table-cell" by="deparmtent" sortedBy="$sortBy">Member</x-table-accordion.td-arrow>
+                                                                <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
                                                                     @lang('Doors')
-                                                                </div>
-                                                                <div class="table-cell" by="hours" sortedBy="$sortBy">
+                                                                </x-table-accordion.td>
+                                                                <x-table-accordion.td class="table-cell" by="hours" sortedBy="$sortBy">
                                                                     @lang('Hours')
-                                                                </div>
-                                                                <div class="table-cell" by="sets" sortedBy="$sortBy">
+                                                                </x-table-accordion.td>
+                                                                <x-table-accordion.td class="table-cell" by="sets" sortedBy="$sortBy">
                                                                     @lang('Sets')
-                                                                </div>
-                                                                <div class="table-cell" by="set_sits" sortedBy="$sortBy">
+                                                                </x-table-accordion.td>
+                                                                <x-table-accordion.td class="table-cell" by="set_sits" sortedBy="$sortBy">
                                                                     @lang('Set Sits')
-                                                                </div>
-                                                                <div class="table-cell" by="sits" sortedBy="$sortBy">
+                                                                </x-table-accordion.td>
+                                                                <x-table-accordion.td class="table-cell" by="sits" sortedBy="$sortBy">
                                                                     @lang('Sits')
-                                                                </div>
-                                                                <div class="table-cell" by="set_closes" sortedBy="$sortBy">
+                                                                </x-table-accordion.td>
+                                                                <x-table-accordion.td class="table-cell" by="set_closes" sortedBy="$sortBy">
                                                                     @lang('Set Closes')
-                                                                </div>
-                                                                <div class="table-cell" by="closes" sortedBy="$sortBy">
+                                                                </x-table-accordion.td>
+                                                                <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
                                                                     @lang('Closes')
-                                                                </div>
+                                                                </x-table-accordion.td>
                                                             </x-slot>
                                                             <x-slot name="firstChild">
-                                                                <div class="table-cell" by="deparmtent" sortedBy="$sortBy">Content</div>
-                                                                <div class="table-cell" by="doors" sortedBy="$sortBy">
+                                                                <x-table-accordion.td-arrow class="table-cell" by="deparmtent" sortedBy="$sortBy">Content</x-table-accordion.td-arrow>
+                                                                <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
                                                                     @lang('Doors')
-                                                                </div>
-                                                                <div class="table-cell" by="hours" sortedBy="$sortBy">
+                                                                </x-table-accordion.td>
+                                                                <x-table-accordion.td class="table-cell" by="hours" sortedBy="$sortBy">
                                                                     @lang('Hours')
-                                                                </div>
-                                                                <div class="table-cell" by="sets" sortedBy="$sortBy">
+                                                                </x-table-accordion.td>
+                                                                <x-table-accordion.td class="table-cell" by="sets" sortedBy="$sortBy">
                                                                     @lang('Sets')
-                                                                </div>
-                                                                <div class="table-cell" by="set_sits" sortedBy="$sortBy">
+                                                                </x-table-accordion.td>
+                                                                <x-table-accordion.td class="table-cell" by="set_sits" sortedBy="$sortBy">
                                                                     @lang('Set Sits')
-                                                                </div>
-                                                                <div class="table-cell" by="sits" sortedBy="$sortBy">
+                                                                </x-table-accordion.td>
+                                                                <x-table-accordion.td class="table-cell" by="sits" sortedBy="$sortBy">
                                                                     @lang('Sits')
-                                                                </div>
-                                                                <div class="table-cell" by="set_closes" sortedBy="$sortBy">
+                                                                </x-table-accordion.td>
+                                                                <x-table-accordion.td class="table-cell" by="set_closes" sortedBy="$sortBy">
                                                                     @lang('Set Closes')
-                                                                </div>
-                                                                <div class="table-cell" by="closes" sortedBy="$sortBy">
+                                                                </x-table-accordion.td>
+                                                                <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
                                                                     @lang('Closes')
-                                                                </div>
+                                                                </x-table-accordion.td>
                                                             </x-slot>
                                                             <x-slot name="secondChild">
-                                                                <div class="table-cell" by="deparmtent" sortedBy="$sortBy">Second Content</div>
-                                                                <div class="table-cell" by="doors" sortedBy="$sortBy">
+                                                                <x-table-accordion.td-arrow class="table-cell" by="deparmtent" sortedBy="$sortBy">Second Content</x-table-accordion.td-arrow>
+                                                                <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
                                                                     @lang('Doors')
-                                                                </div>
-                                                                <div class="table-cell" by="hours" sortedBy="$sortBy">
+                                                                </x-table-accordion.td>
+                                                                <x-table-accordion.td class="table-cell" by="hours" sortedBy="$sortBy">
                                                                     @lang('Hours')
-                                                                </div>
-                                                                <div class="table-cell" by="sets" sortedBy="$sortBy">
+                                                                </x-table-accordion.td>
+                                                                <x-table-accordion.td class="table-cell" by="sets" sortedBy="$sortBy">
                                                                     @lang('Sets')
-                                                                </div>
-                                                                <div class="table-cell" by="set_sits" sortedBy="$sortBy">
+                                                                </x-table-accordion.td>
+                                                                <x-table-accordion.td class="table-cell" by="set_sits" sortedBy="$sortBy">
                                                                     @lang('Set Sits')
-                                                                </div>
-                                                                <div class="table-cell" by="sits" sortedBy="$sortBy">
+                                                                </x-table-accordion.td>
+                                                                <x-table-accordion.td class="table-cell" by="sits" sortedBy="$sortBy">
                                                                     @lang('Sits')
-                                                                </div>
-                                                                <div class="table-cell" by="set_closes" sortedBy="$sortBy">
+                                                                </x-table-accordion.td>
+                                                                <x-table-accordion.td class="table-cell" by="set_closes" sortedBy="$sortBy">
                                                                     @lang('Set Closes')
-                                                                </div>
-                                                                <div class="table-cell" by="closes" sortedBy="$sortBy">
+                                                                </x-table-accordion.td>
+                                                                <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
                                                                     @lang('Closes')
-                                                                </div>
+                                                                </x-table-accordion.td>
                                                             </x-slot>
 
                                                         </x-table-accordion.tr-accordion>
