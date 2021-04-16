@@ -35,6 +35,8 @@ class ReportsOverview extends Component
 
     public function mount()
     {
+        $this->sortBy = "date_of_sale";
+        $this->sortDirection = "desc";
         $this->departmentId = Department::first()->id;
         if (user()->hasAnyRole(['Admin', 'Owner'])) {
             $this->personalCustomers = false;
@@ -50,6 +52,7 @@ class ReportsOverview extends Component
         return view('livewire.reports.reports-overview', [
             'departments' => Department::get(),
             'customers'   => Customer::query()
+                ->joinInEachRelation()
                 ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
                 ->where(function ($query) {
                     $query->when($this->personalCustomers, function ($query) {
@@ -57,16 +60,16 @@ class ReportsOverview extends Component
                             ->orWhere('sales_rep_id', user()->id);
                     })
                         ->when(user()->hasRole('Office Manager'), function ($query) {
-                            $query->orWhere('office_manager_id', user()->id);
+                            $query->orWhere('customers.office_manager_id', user()->id);
                         })
                         ->when(user()->hasRole('Region Manager'), function ($query) {
-                            $query->orWhere('region_manager_id', user()->id)
-                                ->orWhere('office_manager_id', user()->id);
+                            $query->orWhere('customers.region_manager_id', user()->id)
+                                ->orWhere('customers.office_manager_id', user()->id);
                         })
                         ->when(user()->hasRole('Department Manager'), function ($query) {
-                            $query->orWhere('department_manager_id', user()->id)
-                                ->orWhere('region_manager_id', user()->id)
-                                ->orWhere('office_manager_id', user()->id);
+                            $query->orWhere('customers.department_manager_id', user()->id)
+                                ->orWhere('customers.region_manager_id', user()->id)
+                                ->orWhere('customers.office_manager_id', user()->id);
                         })
                         ->when(user()->hasAnyRole(['Admin', 'Owner']),
                             function ($query) {
@@ -87,6 +90,7 @@ class ReportsOverview extends Component
                     $query->whereIsActive(false);
                 })
                 ->search($this->search)
+                ->orderByRaw($this->sortBy . ' ' . $this->sortDirection)
                 ->paginate($this->perPage),
         ]);
     }
@@ -116,6 +120,7 @@ class ReportsOverview extends Component
                     });
                 });
         })
+            ->with(['userSetter', 'userSalesRep'])
             ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
             ->when($this->installedStatus(), function ($query) {
                 $query->whereIsActive(true)
