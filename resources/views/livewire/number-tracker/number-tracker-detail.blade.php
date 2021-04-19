@@ -511,7 +511,7 @@
                             <div class="flex flex-col">
                                 <div class="overflow-x-auto">
                                     <div class="inline-block min-w-full overflow-hidden align-middle">
-                                        @if(count($numbersTracked))
+                                        @if(count($regions))
                                             <x-table-accordion class="overflow-x-auto">
                                                 <x-slot name="header">
                                                     <x-table-accordion.th-searchable class="table-cell" by="deparmtent" sortedBy="$sortBy">Member</x-table-accordion.th-searchable>
@@ -538,10 +538,9 @@
                                                     </x-table-accordion.th-searchable>
                                                 </x-slot>
                                                 <x-slot name="body">
-                                                    @foreach($numbersTracked as $row)
-                                                        <x-table-accordion.tr-accordion :index="$row->id">
-                                                            <x-slot name="row">
-                                                                <x-table-accordion.default-td-arrow class="table-cell" by="deparmtent" sortedBy="$sortBy" :index="$row->id">Member</x-table-accordion.td-arrow>
+                                                        @foreach($regions as $region)
+                                                            <div id="defaultRow-{{$region->id}}" class="table-row" x-on:click="collapseRow('firstRow-{{$region->id}}', 'defaultRow-{{$region->id}}', 'secondRow-{{$region->id}}')">
+                                                                <x-table-accordion.default-td-arrow class="table-cell" :index="$region->id">Member</x-table-accordion.td-arrow>
                                                                 <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
                                                                     @lang('Doors')
                                                                 </x-table-accordion.td>
@@ -563,96 +562,66 @@
                                                                 <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
                                                                     @lang('Closes')
                                                                 </x-table-accordion.td>
-                                                            </x-slot>
-                                                            <x-slot name="firstChild">
-                                                                <x-table-accordion.child-td-arrow class="table-cell" by="deparmtent" sortedBy="$sortBy" :index="$row->id">Content</x-table-accordion.td-arrow>
-                                                                <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
-                                                                    @lang('Doors')
-                                                                </x-table-accordion.td>
-                                                                <x-table-accordion.td class="table-cell" by="hours" sortedBy="$sortBy">
-                                                                    @lang('Hours')
-                                                                </x-table-accordion.td>
-                                                                <x-table-accordion.td class="table-cell" by="sets" sortedBy="$sortBy">
-                                                                    @lang('Sets')
-                                                                </x-table-accordion.td>
-                                                                <x-table-accordion.td class="table-cell" by="set_sits" sortedBy="$sortBy">
-                                                                    @lang('Set Sits')
-                                                                </x-table-accordion.td>
-                                                                <x-table-accordion.td class="table-cell" by="sits" sortedBy="$sortBy">
-                                                                    @lang('Sits')
-                                                                </x-table-accordion.td>
-                                                                <x-table-accordion.td class="table-cell" by="set_closes" sortedBy="$sortBy">
-                                                                    @lang('Set Closes')
-                                                                </x-table-accordion.td>
-                                                                <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
-                                                                    @lang('Closes')
-                                                                </x-table-accordion.td>
-                                                            </x-slot>
-                                                            <x-slot name="secondChild">
-                                                                <x-table-accordion.td class="table-cell pl-28" by="deparmtent" sortedBy="$sortBy">Second Content</x-table-accordion.td>
-                                                                <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
-                                                                    @lang('Doors')
-                                                                </x-table-accordion.td>
-                                                                <x-table-accordion.td class="table-cell" by="hours" sortedBy="$sortBy">
-                                                                    @lang('Hours')
-                                                                </x-table-accordion.td>
-                                                                <x-table-accordion.td class="table-cell" by="sets" sortedBy="$sortBy">
-                                                                    @lang('Sets')
-                                                                </x-table-accordion.td>
-                                                                <x-table-accordion.td class="table-cell" by="set_sits" sortedBy="$sortBy">
-                                                                    @lang('Set Sits')
-                                                                </x-table-accordion.td>
-                                                                <x-table-accordion.td class="table-cell" by="sits" sortedBy="$sortBy">
-                                                                    @lang('Sits')
-                                                                </x-table-accordion.td>
-                                                                <x-table-accordion.td class="table-cell" by="set_closes" sortedBy="$sortBy">
-                                                                    @lang('Set Closes')
-                                                                </x-table-accordion.td>
-                                                                <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
-                                                                    @lang('Closes')
-                                                                </x-table-accordion.td>
-                                                            </x-slot>
-
-                                                        </x-table-accordion.tr-accordion>
-
-
-                                                        {{-- <x-table-accordion.tr cols="10">
-                                                            <x-slot name="raw">
-                                                                <x-table-accordion.td class="col-span-3">{{ $row['first_name'] . ' ' .  $row['last_name']}}</x-table-accordion.td>
-                                                                <x-table-accordion.td>{{ $row['doors'] ?? 0 }}</x-table-accordion.td>
-                                                                <x-table-accordion.td>{{ $row['hours'] ?? 0 }}</x-table-accordion.td>
-                                                                <x-table-accordion.td>{{ $row['sets'] ?? 0 }}</x-table-accordion.td>
-                                                                <x-table-accordion.td>{{ $row['set_sits'] ?? 0 }}</x-table-accordion.td>
-                                                                <x-table-accordion.td>{{ $row['sits'] ?? 0 }}</x-table-accordion.td>
-                                                                <x-table-accordion.td>{{ $row['set_closes'] ?? 0 }}</x-table-accordion.td>
-                                                                <x-table-accordion.td>{{ $row['closes'] ?? 0 }}</x-table-accordion.td>
-                                                            </x-slot>
-                                                            <x-slot name="rawContent">
-                                                                <x-table-accordion.td class="col-span-3">{{ $row['first_name'] . ' ' .  $row['last_name']}}</x-table-accordion.td>
-                                                                <x-table-accordion.td>{{ $row['doors'] ?? 0 }}</x-table-accordion.td>
-                                                                <x-table-accordion.td>{{ $row['hours'] ?? 0 }}</x-table-accordion.td>
-                                                                <x-table-accordion.td>{{ $row['sets'] ?? 0 }}</x-table-accordion.td>
-                                                                <x-table-accordion.td>{{ $row['set_sits'] ?? 0 }}</x-table-accordion.td>
-                                                                <x-table-accordion.td>{{ $row['sits'] ?? 0 }}</x-table-accordion.td>
-                                                                <x-table-accordion.td>{{ $row['set_closes'] ?? 0 }}</x-table-accordion.td>
-                                                                <x-table-accordion.td>{{ $row['closes'] ?? 0 }}</x-table-accordion.td>
-                                                            </x-slot>
-                                                        </x-table-accordion.tr> --}}
-                                                    @endforeach
-                                                            {{--
-                                                            <x-slot name="rawContent">
-                                                                @if(user()->role == 'Admin' || user()->role == 'Owner')
-                                                                    <x-table.td>{{ $row->user->department->name }}</x-table.td>
-                                                                @endif
-                                                                <x-table.td>{{ $row['first_name'] . ' ' .  $row['last_name']}}</x-table.td>
-                                                                <x-table.td>{{ $row['doors'] ?? 0 }}</x-table.td>
-                                                                <x-table.td>{{ $row['hours'] ?? 0 }}</x-table.td>
-                                                                <x-table.td>{{ $row['sets'] ?? 0 }}</x-table.td>
-                                                                <x-table.td>{{ $row['set_sits'] ?? 0 }}</x-table.td>
-                                                                <x-table.td>{{ $row['sits'] ?? 0 }}</x-table.td>
-                                                                <x-table.td>{{ $row['set_closes'] ?? 0 }}</x-table.td>
-                                                                <x-table.td>{{ $row['closes'] ?? 0 }}</x-table.td>
-                                                            </x-slot> --}}
+                                                            </div>
+                                                            @forelse($region->offices as $office)
+                                                                <div id="firstRow-{{$region->id}}-{{$office->id}}" class="hidden" x-on:click="collapseRow('secondRow-{{$office->id}}', 'firstRow-{{$region->id}}-{{$office->id}}')">
+                                                                    <x-table-accordion.child-td-arrow class="table-cell" :index="$office->id">Content</x-table-accordion.td-arrow>
+                                                                        <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
+                                                                            @lang('Doors')
+                                                                        </x-table-accordion.td>
+                                                                        <x-table-accordion.td class="table-cell" by="hours" sortedBy="$sortBy">
+                                                                            @lang('Hours')
+                                                                        </x-table-accordion.td>
+                                                                        <x-table-accordion.td class="table-cell" by="sets" sortedBy="$sortBy">
+                                                                            @lang('Sets')
+                                                                        </x-table-accordion.td>
+                                                                        <x-table-accordion.td class="table-cell" by="set_sits" sortedBy="$sortBy">
+                                                                            @lang('Set Sits')
+                                                                        </x-table-accordion.td>
+                                                                        <x-table-accordion.td class="table-cell" by="sits" sortedBy="$sortBy">
+                                                                            @lang('Sits')
+                                                                        </x-table-accordion.td>
+                                                                        <x-table-accordion.td class="table-cell" by="set_closes" sortedBy="$sortBy">
+                                                                            @lang('Set Closes')
+                                                                        </x-table-accordion.td>
+                                                                        <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
+                                                                            @lang('Closes')
+                                                                        </x-table-accordion.td>
+                                                                </div>
+                                                                @forelse($office->users as $user)
+                                                                    <div id="secondRow-{{$region->id}}-{{$user->id}}" class="hidden">
+                                                                        <x-table-accordion.td class="table-cell pl-28">Second Content</x-table-accordion.td>
+                                                                        <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
+                                                                            @lang('Doors')
+                                                                        </x-table-accordion.td>
+                                                                        <x-table-accordion.td class="table-cell" by="hours" sortedBy="$sortBy">
+                                                                            @lang('Hours')
+                                                                        </x-table-accordion.td>
+                                                                        <x-table-accordion.td class="table-cell" by="sets" sortedBy="$sortBy">
+                                                                            @lang('Sets')
+                                                                        </x-table-accordion.td>
+                                                                        <x-table-accordion.td class="table-cell" by="set_sits" sortedBy="$sortBy">
+                                                                            @lang('Set Sits')
+                                                                        </x-table-accordion.td>
+                                                                        <x-table-accordion.td class="table-cell" by="sits" sortedBy="$sortBy">
+                                                                            @lang('Sits')
+                                                                        </x-table-accordion.td>
+                                                                        <x-table-accordion.td class="table-cell" by="set_closes" sortedBy="$sortBy">
+                                                                            @lang('Set Closes')
+                                                                        </x-table-accordion.td>
+                                                                        <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
+                                                                            @lang('Closes')
+                                                                        </x-table-accordion.td>
+                                                                    </div>
+                                                                @empty
+                                                                    <div id="secondRow-{{$user->id}}" class="hidden">
+                                                                        Empty
+                                                                    </div>
+                                                                @endforelse
+                                                            @empty
+                                                                Empty
+                                                            @endforelse
+                                                        @endforeach
                                                 </x-slot>
                                             </x-table-accordion>
                                         @else

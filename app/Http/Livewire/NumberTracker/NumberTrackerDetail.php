@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\NumberTracker;
 
 use App\Models\DailyNumber;
+use App\Models\Department;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
@@ -214,7 +215,11 @@ class NumberTrackerDetail extends Component
 
     public function getRegions()
     {
-        $this->regions = Region::whereDepartmentId(user()->department_id)->get();
+        if (user()->role == "Admin") {
+            $this->regions = Region::with('offices.users')->get();
+        } else {
+            $this->regions = Region::whereDepartmentId(user()->department_id)->get();
+        }
     }
 
     public function getUsers()
