@@ -7,7 +7,9 @@ use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 class NumberTrackerDetail extends Component
@@ -45,6 +47,7 @@ class NumberTrackerDetail extends Component
     public function mount()
     {
         $this->dateSelected = date('Y-m-d', time());
+
         $this->getOffices();
         $this->getRegions();
         $this->getUsers();
@@ -259,5 +262,34 @@ class NumberTrackerDetail extends Component
             ];
             $this->addFilter($data, 'user');
         }
+    }
+
+    public function getTopTenTrackersProperty()
+    {
+        return $this->getTopTenTrackers();
+    }
+
+    private function getTopTenTrackers()
+    {
+        $selectedPill = strtolower(Str::slug($this->selectedPill, '_'));
+
+        $query = DailyNumber::query()->with('user:id,first_name,last_name,department_id');
+
+        if (user()->notHaveRoles(['Admin', 'Owner'])) {
+            $query->whereHas('user', function (Builder $query) {
+                $query->where('department_id', user()->department_id);
+            });
+        }
+
+        return $query
+            ->whereDate('date', $this->dateSelected)
+            ->orderBy($selectedPill, 'desc')
+            ->groupBy('user_id')
+            ->select(
+                DB::raw(sprintf('SUM(%s) as total', $selectedPill)),
+                'user_id'
+            )
+            ->limit(10)
+            ->get();
     }
 }
