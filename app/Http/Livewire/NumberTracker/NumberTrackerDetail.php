@@ -283,34 +283,44 @@ class NumberTrackerDetail extends Component
             return collect();
         }
 
-        $selectedPill = strtolower(Str::slug($this->selectedPill, '_'));
-        $total        = sprintf('SUM(%s) as total', $selectedPill);
-
-        if ($selectedPill === 'sg_sits') {
-            // condition
-        }
-
-        if ($selectedPill === 'sg_closes') {
-            // condition
-        }
-
         $query = DailyNumber::query()->with('user:id,first_name,last_name,department_id');
 
         if (user()->notHaveRoles(['Admin', 'Owner'])) {
-            $query->whereHas('user', function (Builder $query) {
-                $query->where('department_id', user()->department_id);
-            });
+            $query->whereHas(
+                'user',
+                fn (Builder $query) => $query->where('department_id', user()->department_id)
+            );
         }
 
         return $query
             ->inPeriod($this->period, new Carbon($this->dateSelected))
-            ->orderBy($selectedPill, 'desc')
+            ->orderBy('total', 'desc')
             ->groupBy('user_id')
             ->select(
-                DB::raw(sprintf('SUM(%s) as total', $selectedPill)),
+                DB::raw($this->getTotalRawQuery($this->getSluggedPill())),
                 'user_id'
             )
             ->limit(10)
             ->get();
+    }
+
+    private function getSluggedPill()
+    {
+        return strtolower(Str::slug($this->selectedPill, '_'));
+    }
+
+    private function getTotalRawQuery(string $pill)
+    {
+        $rawQuery = sprintf('SUM(%s) as total', $pill);
+
+        if ($pill === 'sg_sits') {
+            $rawQuery = sprintf('SUM(sits + set_sits) as total');
+        }
+
+        if ($pill === 'sg_closes') {
+            $rawQuery = sprintf('SUM(closes + set_closes) as total');
+        }
+
+        return $rawQuery;
     }
 }
