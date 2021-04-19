@@ -1,11 +1,11 @@
-@props(['trackers'])
+@props(['trackers', 'pills'])
 
 <section class="p-4 border-2 border-gray-400 rounded">
     <h3 class="text-center text-lg text-gray-900 font-medium mb-5">Leaderboard</h3>
 
     <section
         x-data="{
-            pills: ['Doors', 'Hours', 'Sets', 'Sits', 'Set Closes'],
+            pills: {{ json_encode($pills) }},
             selectedPill: @entangle('selectedPill'),
             isTheSelectedPill(pill) {
                 return this.selectedPill === pill;
@@ -26,7 +26,7 @@
     >
         <template x-for="pill in pills" :key="pill">
             <div
-                class="font-medium text-sm px-5 py-1 rounded shadow-md cursor-pointer"
+                class="font-medium text-sm px-5 py-1 rounded shadow-md cursor-pointer uppercase"
                 :class="isTheSelectedPill(pill) ? greenPill : grayPill"
                 style="min-width: fit-content; flex: 0 0 auto"
                 x-text="pill"
