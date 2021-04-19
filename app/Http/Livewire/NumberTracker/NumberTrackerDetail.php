@@ -6,8 +6,8 @@ use App\Models\DailyNumber;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -282,7 +282,7 @@ class NumberTrackerDetail extends Component
         }
 
         return $query
-            ->whereDate('date', $this->dateSelected)
+            ->inPeriod($this->period, new Carbon($this->dateSelected))
             ->orderBy($selectedPill, 'desc')
             ->groupBy('user_id')
             ->select(
