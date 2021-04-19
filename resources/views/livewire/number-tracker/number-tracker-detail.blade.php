@@ -541,7 +541,7 @@
                                                     @foreach($numbersTracked as $row)
                                                         <x-table-accordion.tr-accordion :index="$row->id">
                                                             <x-slot name="row">
-                                                                <x-table-accordion.td-arrow class="table-cell" by="deparmtent" sortedBy="$sortBy">Member</x-table-accordion.td-arrow>
+                                                                <x-table-accordion.default-td-arrow class="table-cell" by="deparmtent" sortedBy="$sortBy" :index="$row->id">Member</x-table-accordion.td-arrow>
                                                                 <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
                                                                     @lang('Doors')
                                                                 </x-table-accordion.td>
@@ -565,7 +565,7 @@
                                                                 </x-table-accordion.td>
                                                             </x-slot>
                                                             <x-slot name="firstChild">
-                                                                <x-table-accordion.td-arrow class="table-cell" by="deparmtent" sortedBy="$sortBy">Content</x-table-accordion.td-arrow>
+                                                                <x-table-accordion.child-td-arrow class="table-cell" by="deparmtent" sortedBy="$sortBy" :index="$row->id">Content</x-table-accordion.td-arrow>
                                                                 <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
                                                                     @lang('Doors')
                                                                 </x-table-accordion.td>
@@ -589,7 +589,7 @@
                                                                 </x-table-accordion.td>
                                                             </x-slot>
                                                             <x-slot name="secondChild">
-                                                                <x-table-accordion.td-arrow class="table-cell" by="deparmtent" sortedBy="$sortBy">Second Content</x-table-accordion.td-arrow>
+                                                                <x-table-accordion.td class="table-cell pl-28" by="deparmtent" sortedBy="$sortBy">Second Content</x-table-accordion.td>
                                                                 <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
                                                                     @lang('Doors')
                                                                 </x-table-accordion.td>
