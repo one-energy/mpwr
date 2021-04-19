@@ -126,8 +126,10 @@
                     </div>
                 </div>
 
-
-                <x-number-tracker.leaderboard-card :trackers="$this->topTenTrackers" />
+                <x-number-tracker.leaderboard-card
+                    :trackers="$this->topTenTrackers"
+                    :pills="$this->pills"
+                />
             </div>
 
             <div class="px-4 py-5 sm:p-6 md:w-2/3 xl:w-3/4">
