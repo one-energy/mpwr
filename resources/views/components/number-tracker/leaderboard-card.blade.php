@@ -1,3 +1,5 @@
+@props(['trackers'])
+
 <section class="p-4 border-2 border-gray-400 rounded">
     <h3 class="text-center text-lg text-gray-900 font-medium mb-5">Leaderboard</h3>
 
@@ -35,11 +37,11 @@
     </section>
 
     <section class="flex flex-col space-y-5 px-5">
-        @foreach (collect()->times(10) as $item)
+        @foreach ($trackers as $tracker)
             <div class="col-span-full flex justify-between items-center text-gray-900 font-medium">
-                <p class="col-span-1 w-5">{{ $item }}</p>
-                <p class="flex-1 ml-4">Blade Cannon</p>
-                <p>230</p>
+                <p class="col-span-1 w-5">{{ $loop->index + 1 }}</p>
+                <p class="flex-1 ml-4">{{ $tracker->user->full_name }}</p>
+                <p>{{ $tracker->total }}</p>
             </div>
         @endforeach
     </section>
@@ -69,6 +71,7 @@
             event.preventDefault();
             const x = event.pageX - slider.offsetLeft;
             const walk = (x - startX) * 2;
+
             slider.scrollLeft = scrollLeft - walk;
         });
     </script>
