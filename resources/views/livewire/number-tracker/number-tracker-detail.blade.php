@@ -127,7 +127,10 @@
                 </div>
 
 
-                <x-number-tracker.leaderboard-card />
+                <x-number-tracker.leaderboard-card
+                    :trackers="$topTenTrackers"
+                    wire:key="now()"
+                />
             </div>
 
             <div class="px-4 py-5 sm:p-6 md:w-2/3 xl:w-3/4">
