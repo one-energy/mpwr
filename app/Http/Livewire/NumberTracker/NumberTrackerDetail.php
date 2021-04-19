@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
+/**
+ * @property-read array $pills
+ */
 class NumberTrackerDetail extends Component
 {
     public $period = 'd';
@@ -42,7 +45,7 @@ class NumberTrackerDetail extends Component
 
     public $activeFilters = [];
 
-    public string $selectedPill = 'Hours';
+    public string $selectedPill = 'hours';
 
     public function mount()
     {
@@ -264,6 +267,11 @@ class NumberTrackerDetail extends Component
         }
     }
 
+    public function getPillsProperty()
+    {
+        return ['doors', 'hours', 'sets', 'set sits', 'sg sits', 'set closes', 'sg closes'];
+    }
+
     public function getTopTenTrackersProperty()
     {
         return $this->getTopTenTrackers();
@@ -271,7 +279,20 @@ class NumberTrackerDetail extends Component
 
     private function getTopTenTrackers()
     {
+        if (!in_array($this->selectedPill, $this->pills)) {
+            return collect();
+        }
+
         $selectedPill = strtolower(Str::slug($this->selectedPill, '_'));
+        $total        = sprintf('SUM(%s) as total', $selectedPill);
+
+        if ($selectedPill === 'sg_sits') {
+            // condition
+        }
+
+        if ($selectedPill === 'sg_closes') {
+            // condition
+        }
 
         $query = DailyNumber::query()->with('user:id,first_name,last_name,department_id');
 
