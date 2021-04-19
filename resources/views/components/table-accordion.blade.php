@@ -24,7 +24,6 @@ if ($pagination) {
         function initAccordion() {
             return {
                 collapseRow(prefixColapseElementsId, targetId, prefixCollapseSecondElementId = null) {
-                    let element = document.getElementById(prefixColapseElementsId);
                     let collapseElements = document.querySelectorAll(`[id^="${prefixColapseElementsId}"]`)
                     let collapseSecondElements = document.querySelectorAll(`[id^="${prefixCollapseSecondElementId}"]`)
                     let targetSvgs = document.querySelectorAll(`#${targetId} > div > div > svg`);

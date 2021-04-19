@@ -49,8 +49,8 @@
                 </x-table-accordion.td>
         </div>
         @forelse($office->users as $user)
-            <div id="secondRow-{{$user->id}}" class="hidden">
-                <x-table-accordion.td class="table-cell pl-28" by="deparmtent" sortedBy="$sortBy">Second Content</x-table-accordion.td>
+            <div id="secondRow-{{$region->id}}-{{$user->id}}" class="hidden">
+                <x-table-accordion.td class="table-cell pl-28" by="deparmtent" sortedBy="$sortBy">{{$region->name}}</x-table-accordion.td>
                 <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
                     @lang('Doors')
                 </x-table-accordion.td>
