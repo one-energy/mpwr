@@ -75,6 +75,15 @@ class TrainingController extends Controller
 
     public function storeSection(TrainingPageSection $section)
     {
+        if ($section->isDepartmentSection() && user()->hasRole('Region Manager')) {
+            alert()
+                ->withTitle(__('You can only create content inside of your region section!'))
+                ->withColor('red')
+                ->send();
+
+            return back();
+        }
+
         request()->validate(['title' => 'required|string|max:255']);
 
         TrainingPageSection::create([
