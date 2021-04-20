@@ -26,7 +26,7 @@
         </x-slot>
         <x-slot name="body">
             @foreach($itsOpenRegions as $regionIndex => $region)
-                <div class="table-row cursor-pointer hover:bg-gray-100" wire:click="collapseRegion({{$regionIndex}})">
+                <div class="table-row cursor-pointer hover:bg-gray-100 @if($region['itsOpen']) bg-gray-200 @endif" wire:click="collapseRegion({{$regionIndex}})">
                     <x-table-accordion.default-td-arrow class="table-cell" :open="$region['itsOpen']">{{$region['name']}}</x-table-accordion.td-arrow>
                     <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
                         @lang('Doors')
@@ -52,7 +52,7 @@
                 </div>
                 @if($region['itsOpen'])
                     @forelse($region['offices'] as $office)
-                        <div class="table-row cursor-pointer hover:bg-gray-100" wire:click="collapseOffice({{$regionIndex}}, {{$loop->index}})">
+                        <div class="table-row cursor-pointer hover:bg-gray-100 @if($office['itsOpen']) bg-gray-100 @endif" wire:click="collapseOffice({{$regionIndex}}, {{$loop->index}})">
                             <x-table-accordion.child-td-arrow class="table-cell" :open="$office['itsOpen']">{{$office['name']}}</x-table-accordion.td-arrow>
                             <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
                                 @lang('Doors')
