@@ -88,6 +88,11 @@ class Users extends Component
         return true;
     }
 
+    public function userInfo(User $user)
+    {
+        return redirect()->route('castle.users.show', $user->id);
+    }
+
     public function canSeeOffices(User $user)
     {
         if ($user->notHaveRoles(['Office Manager', 'Region Manager', 'Department Manager'])) {
