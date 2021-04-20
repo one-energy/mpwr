@@ -27,7 +27,7 @@ class NumberTrackerDetailAccordionTable extends Component
         if (user()->hasAnyRole(['Admin', 'Owner'])) {
             $this->regions = $query->get();
         } else {
-            $this->regions = $query->whereDepartmentid(user()->department_id ?? 0);
+            $this->regions = $query->whereDepartmentId(user()->department_id ?? 0)->get();
         }
 
         $this->addItsOpen();
