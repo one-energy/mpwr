@@ -22,7 +22,14 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function mount()
     {
-        $this->regions = Region::with(['offices', 'offices.users'])->get();
+        $query = Region::with(['offices', 'offices.users']);
+
+        if (user()->hasAnyRole(['Admin', 'Owner'])) {
+            $this->regions = $query->get();
+        } else {
+            $this->regions = $query->whereDepartmentid(user()->department_id ?? 0);
+        }
+
         $this->addItsOpen();
     }
 

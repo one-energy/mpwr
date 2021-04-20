@@ -1,7 +1,7 @@
 <div>
     <x-table-accordion class="overflow-x-auto">
         <x-slot name="header">
-            <x-table-accordion.th-searchable class="table-cell" by="deparmtent" sortedBy="$sortBy">Member</x-table-accordion.th-searchable>
+            <x-table-accordion.th-searchable class="table-cell" by="deparmtent" sortedBy="$sortBy"></x-table-accordion.th-searchable>
             <x-table-accordion.th-searchable class="table-cell" by="doors" sortedBy="$sortBy">
                 @lang('Doors')
             </x-table-accordion.th-searchable>
@@ -26,7 +26,7 @@
         </x-slot>
         <x-slot name="body">
             @foreach($itsOpenRegions as $regionIndex => $region)
-                <div class="table-row" wire:click="collapseRegion({{$regionIndex}})">
+                <div class="table-row cursor-pointer hover:bg-gray-100" wire:click="collapseRegion({{$regionIndex}})">
                     <x-table-accordion.default-td-arrow class="table-cell" :open="$region['itsOpen']">{{$region['name']}}</x-table-accordion.td-arrow>
                     <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
                         @lang('Doors')
@@ -52,8 +52,8 @@
                 </div>
                 @if($region['itsOpen'])
                     @forelse($region['offices'] as $office)
-                        <div class="table-row" wire:click="collapseOffice({{$regionIndex}}, {{$loop->index}})">
-                            <x-table-accordion.child-td-arrow class="table-cell" :open="$office['itsOpen']">{{$region['name']}} {{$office['name']}}</x-table-accordion.td-arrow>
+                        <div class="table-row cursor-pointer hover:bg-gray-100" wire:click="collapseOffice({{$regionIndex}}, {{$loop->index}})">
+                            <x-table-accordion.child-td-arrow class="table-cell" :open="$office['itsOpen']">{{$office['name']}}</x-table-accordion.td-arrow>
                             <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
                                 @lang('Doors')
                             </x-table-accordion.td>
@@ -78,8 +78,8 @@
                         </div>
                         @if($office['itsOpen'])
                             @forelse($office['users'] as $user)
-                                <div class="table-row">
-                                    <x-table-accordion.td class="table-cell pl-28">{{$region['name']}} {{$office['name']}}</x-table-accordion.td>
+                                <div class="table-row cursor-pointer hover:bg-gray-100">
+                                    <x-table-accordion.td class="table-cell pl-28">{{$user['first_name']}} {{$user['last_name']}}</x-table-accordion.td>
                                     <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
                                         @lang('Doors')
                                     </x-table-accordion.td>
