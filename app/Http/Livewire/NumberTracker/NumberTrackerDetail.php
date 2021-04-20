@@ -6,10 +6,15 @@ use App\Models\DailyNumber;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
-use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
+/**
+ * @property-read array $pills
+ */
 class NumberTrackerDetail extends Component
 {
     public $period = 'd';
@@ -40,9 +45,12 @@ class NumberTrackerDetail extends Component
 
     public $activeFilters = [];
 
+    public string $selectedPill = 'hours';
+
     public function mount()
     {
         $this->dateSelected = date('Y-m-d', time());
+
         $this->getOffices();
         $this->getRegions();
         $this->getUsers();
@@ -80,7 +88,9 @@ class NumberTrackerDetail extends Component
 
     public function updateSearch()
     {
-        $this->users = User::where(DB::raw("CONCAT(`first_name`, ' ',  `last_name`)"), 'like', '%' . $this->userSearch . '%')
+        $this->users = User::where(
+            DB::raw("CONCAT(`first_name`, ' ',  `last_name`)"), 'like', "%{$this->userSearch}%"
+        )
             ->orWhere('email', 'like', "%{$this->userSearch}%")->get();
     }
 
@@ -91,8 +101,10 @@ class NumberTrackerDetail extends Component
                 $join->on('users.id', '=', 'daily_numbers.user_id');
             })
             ->join('offices', 'users.office_id', '=', 'offices.id')
-            ->select([DB::raw('users.first_name, users.last_name, daily_numbers.id, daily_numbers.user_id, SUM(doors) as doors,
-                    SUM(hours) as hours,  SUM(sets) as sets, SUM(set_sits) as set_sits,  SUM(sits) as sits,  SUM(set_closes) as set_closes, SUM(closes) as closes')]);
+            ->select([
+                DB::raw('users.first_name, users.last_name, daily_numbers.id, daily_numbers.user_id, SUM(doors) as doors,
+                    SUM(hours) as hours,  SUM(sets) as sets, SUM(set_sits) as set_sits,  SUM(sits) as sits,  SUM(set_closes) as set_closes, SUM(closes) as closes'),
+            ]);
 
         $queryLast = clone $query;
 
@@ -100,11 +112,18 @@ class NumberTrackerDetail extends Component
             $query->whereDate('date', $this->dateSelected);
             $queryLast->whereDate('date', date('Y-m-d', strtotime($this->dateSelected . '-1 day')));
         } elseif ($this->period == 'w') {
-            $query->whereBetween('date', [Carbon::createFromFormat('Y-m-d', $this->dateSelected)->startOfWeek(), Carbon::createFromFormat('Y-m-d', $this->dateSelected)->endOfWeek()]);
-            $queryLast->whereBetween('date', [Carbon::createFromFormat('Y-m-d', $this->dateSelected)->subWeek()->startOfWeek(), Carbon::createFromFormat('Y-m-d', $this->dateSelected)->subWeek()->endOfWeek()]);
+            $query->whereBetween('date', [
+                Carbon::createFromFormat('Y-m-d', $this->dateSelected)->startOfWeek(),
+                Carbon::createFromFormat('Y-m-d', $this->dateSelected)->endOfWeek(),
+            ]);
+            $queryLast->whereBetween('date', [
+                Carbon::createFromFormat('Y-m-d', $this->dateSelected)->subWeek()->startOfWeek(),
+                Carbon::createFromFormat('Y-m-d', $this->dateSelected)->subWeek()->endOfWeek(),
+            ]);
         } else {
             $query->whereMonth('date', '=', Carbon::createFromFormat('Y-m-d', $this->dateSelected)->month);
-            $queryLast->whereMonth('date', '=', Carbon::createFromFormat('Y-m-d', $this->dateSelected)->subMonth()->month);
+            $queryLast->whereMonth('date', '=',
+                Carbon::createFromFormat('Y-m-d', $this->dateSelected)->subMonth()->month);
         }
 
         if (count($this->activeFilters) > 0) {
@@ -139,16 +158,16 @@ class NumberTrackerDetail extends Component
             });
         }
 
-        $this->numbersTrackedLast = $queryLast->when(user()->role != 'Admin' && user()->role != 'Owner', function($query) {
+        $this->numbersTrackedLast = $queryLast->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
             $query->where('users.department_id', '=', user()->department_id);
         })
             ->groupBy('user_id')
             ->get();
 
-        $this->graficValueLast    = $this->numbersTrackedLast->sum($this->filterBy);
+        $this->graficValueLast = $this->numbersTrackedLast->sum($this->filterBy);
 
         $query->groupBy('daily_numbers.user_id')
-            ->when(user()->role != 'Admin' && user()->role != 'Owner', function($query) {
+            ->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
                 $query->where('users.department_id', '=', user()->department_id);
             });
 
@@ -200,8 +219,8 @@ class NumberTrackerDetail extends Component
     public function getOffices()
     {
         $this->offices = Office::select('offices.*')
-                            ->join('regions', 'offices.region_id', '=', 'regions.id')
-                            ->where('regions.department_id', '=', user()->department_id)->get();
+            ->join('regions', 'offices.region_id', '=', 'regions.id')
+            ->where('regions.department_id', '=', user()->department_id)->get();
     }
 
     public function getRegions()
@@ -216,8 +235,7 @@ class NumberTrackerDetail extends Component
 
     public function setFilter()
     {
-        $data = [];
-        if (user()->role == 'Region Manager') {
+        if (user()->hasRole('Region Manager')) {
             $regions = user()->managedRegions()->get();
             foreach ($regions as $region) {
                 $data = [
@@ -228,7 +246,7 @@ class NumberTrackerDetail extends Component
             }
         }
 
-        if (user()->role == 'Office Manager') {
+        if (user()->hasRole('Office Manager')) {
             $offices = user()->managedOffices()->get();
             foreach ($offices as $office) {
                 $data = [
@@ -239,7 +257,7 @@ class NumberTrackerDetail extends Component
             }
         }
 
-        if (user()->role == 'Setter' || user()->role == 'Sales Rep') {
+        if (user()->hasAnyRole(['Setter', 'Sales Rep'])) {
             $data = [
                 'first_name' => user()->first_name,
                 'last_name'  => user()->last_name,
@@ -247,5 +265,62 @@ class NumberTrackerDetail extends Component
             ];
             $this->addFilter($data, 'user');
         }
+    }
+
+    public function getPillsProperty()
+    {
+        return ['doors', 'hours', 'sets', 'set sits', 'sg sits', 'set closes', 'sg closes'];
+    }
+
+    public function getTopTenTrackersProperty()
+    {
+        return $this->getTopTenTrackers();
+    }
+
+    private function getTopTenTrackers()
+    {
+        if (!in_array($this->selectedPill, $this->pills)) {
+            return collect();
+        }
+
+        $query = DailyNumber::query()->with('user:id,first_name,last_name,department_id');
+
+        if (user()->notHaveRoles(['Admin', 'Owner'])) {
+            $query->whereHas(
+                'user',
+                fn (Builder $query) => $query->where('department_id', user()->department_id)
+            );
+        }
+
+        return $query
+            ->inPeriod($this->period, new Carbon($this->dateSelected))
+            ->orderBy('total', 'desc')
+            ->groupBy('user_id')
+            ->select(
+                DB::raw($this->getTotalRawQuery($this->getSluggedPill())),
+                'user_id'
+            )
+            ->limit(10)
+            ->get();
+    }
+
+    private function getSluggedPill()
+    {
+        return strtolower(Str::slug($this->selectedPill, '_'));
+    }
+
+    private function getTotalRawQuery(string $pill)
+    {
+        $rawQuery = sprintf('SUM(%s) as total', $pill);
+
+        if ($pill === 'sg_sits') {
+            $rawQuery = sprintf('SUM(sits + set_sits) as total');
+        }
+
+        if ($pill === 'sg_closes') {
+            $rawQuery = sprintf('SUM(closes + set_closes) as total');
+        }
+
+        return $rawQuery;
     }
 }
