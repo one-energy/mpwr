@@ -15,7 +15,7 @@
                 this.selectedPill = pill;
             },
             get greenPill() {
-                return 'bg-green-450 text-white';
+                return 'bg-green-base text-white';
             },
             get grayPill() {
                 return 'bg-white border-2 border-gray-400 text-cool-gray-800';
