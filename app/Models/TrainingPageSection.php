@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\DB;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\TrainingPageSection newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\TrainingPageSection query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\TrainingPageSection search($search)
+ * @method bool TrainingPageSection isDepartmentSection()
  * @mixin \Eloquent
  */
 class TrainingPageSection extends Model
