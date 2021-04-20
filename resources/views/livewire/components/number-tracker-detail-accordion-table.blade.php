@@ -26,8 +26,11 @@
         </x-slot>
         <x-slot name="body">
             @foreach($itsOpenRegions as $regionIndex => $region)
-                <div class="table-row cursor-pointer hover:bg-gray-100 @if($region['itsOpen']) bg-gray-200 @endif" wire:click="collapseRegion({{$regionIndex}})">
-                    <x-table-accordion.default-td-arrow class="table-cell" :open="$region['itsOpen']">{{$region['name']}}</x-table-accordion.td-arrow>
+                <div class="table-row cursor-pointer hover:bg-gray-100 @if($region['itsOpen']) bg-gray-200 @endif"
+                     wire:click="collapseRegion({{$regionIndex}})">
+                    <x-table-accordion.default-td-arrow class="table-cell" :open="$region['itsOpen']">
+                        <x-checkbox label="{{$region['name']}}" name="{{$region['name']}}"></x-checkbox>
+                    </x-table-accordion.td-arrow>
                     <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
                         @lang('Doors')
                     </x-table-accordion.td>
@@ -52,8 +55,11 @@
                 </div>
                 @if($region['itsOpen'])
                     @forelse($region['offices'] as $office)
-                        <div class="table-row cursor-pointer hover:bg-gray-100 @if($office['itsOpen']) bg-gray-100 @endif" wire:click="collapseOffice({{$regionIndex}}, {{$loop->index}})">
-                            <x-table-accordion.child-td-arrow class="table-cell" :open="$office['itsOpen']">{{$office['name']}}</x-table-accordion.td-arrow>
+                        <div class="table-row cursor-pointer hover:bg-gray-100 @if($office['itsOpen']) bg-gray-100 @endif"
+                             wire:click.self="collapseOffice({{$regionIndex}}, {{$loop->index}})">
+                            <x-table-accordion.child-td-arrow class="table-cell" :open="$office['itsOpen']">
+                                <x-checkbox label="{{$office['name']}}" name="{{$office['name']}}" checked></x-checkbox>
+                            </x-table-accordion.td-arrow>
                             <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
                                 @lang('Doors')
                             </x-table-accordion.td>
@@ -78,8 +84,10 @@
                         </div>
                         @if($office['itsOpen'])
                             @forelse($office['users'] as $user)
-                                <div class="table-row cursor-pointer hover:bg-gray-100">
-                                    <x-table-accordion.td class="table-cell pl-28">{{$user['first_name']}} {{$user['last_name']}}</x-table-accordion.td>
+                                <div class="table-row hover:bg-gray-100">
+                                    <x-table-accordion.td class="table-cell pl-28">
+                                        <x-checkbox label="{{$user['first_name']}} {{$user['last_name']}}" name="{{$user['first_name']}}" checked></x-checkbox>
+                                    </x-table-accordion.td>
                                     <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
                                         @lang('Doors')
                                     </x-table-accordion.td>
