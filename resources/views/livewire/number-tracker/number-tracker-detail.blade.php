@@ -136,26 +136,26 @@
                 <div class="justify-center w-full">
                     <div class="flex justify-between mt-6 md:mt-12">
                         <div class="grid w-full grid-cols-2 row-gap-2 col-gap-1 md:grid-cols-4 md:col-gap-4">
-                            <div class="col-span-1 p-3 rounded-lg bg-green-light">
-                                <div class="text-xs font-semibold uppercase text-green-base">D.P.S</div>
+                            <div class="col-span-1 p-3 rounded-sm bg-green-light space-y-3">
+                                <div class="text-base font-semibold uppercase text-green-base">D.P.S</div>
                                 <div class="text-xl font-bold text-green-base">
                                     {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('doors')/$numbersTracked->sum('sets'), 0) : '-'}}
                                 </div>
                             </div>
-                            <div class="col-span-1 p-3 rounded-lg bg-green-light">
-                                <div class="text-xs font-semibold uppercase text-green-base">H.P. Set</div>
+                            <div class="col-span-1 p-3 rounded-sm bg-green-light space-y-3">
+                                <div class="text-base font-semibold uppercase text-green-base">H.P. Set</div>
                                 <div class="text-xl font-bold text-green-base">
                                     {{$numbersTracked->sum('sets') ? number_format($numbersTracked->sum('hours')/$numbersTracked->sum('sets'), 2) : '-'}}
                                 </div>
                             </div>
-                            <div class="col-span-1 p-3 rounded-lg bg-green-light">
-                                <div class="text-xs font-semibold uppercase text-green-base">Sit Ratio</div>
+                            <div class="col-span-1 p-3 rounded-sm bg-green-light space-y-3">
+                                <div class="text-base font-semibold uppercase text-green-base">Sit Ratio</div>
                                 <div class="text-xl font-bold text-green-base">
                                     {{$numbersTracked->sum('sets') ? (number_format(($numbersTracked->sum('sits') + $numbersTracked->sum('set_sits'))/$numbersTracked->sum('sets'), 2) * 100) . '%' : '-'}}
                                 </div>
                             </div>
-                            <div class="col-span-1 p-3 rounded-lg bg-green-light">
-                                <div class="text-xs font-semibold uppercase text-green-base">Close Ratio</div>
+                            <div class="col-span-1 p-3 rounded-sm bg-green-light space-y-3">
+                                <div class="text-base font-semibold uppercase text-green-base">Close Ratio</div>
                                 <div class="text-xl font-bold text-green-base">
                                     {{ $numbersTracked->sum('sits') || $numbersTracked->sum('set_sits')  ? ( number_format(($numbersTracked->sum('closes') + $numbersTracked->sum('set_closes') ) / ($numbersTracked->sum('set_sits') + $numbersTracked->sum('sits')), 2) * 100) . '%' : '-' }}
                                 </div>
@@ -169,16 +169,8 @@
 
                     <div class="flex justify-between mt-3">
                         <div class="grid w-full grid-cols-6 row-gap-2 col-gap-1 xl:grid-cols-12 md:col-gap-4">
-                            <div class="col-span-2 xl:col-span-2 border-2
-                                @if($filterBy == 'doors')
-                                    border-green-base bg-green-light
-                                @else
-                                    border-gray-200
-                                @endif
-                                cursor-pointer
-                                rounded-lg p-3"
-                                wire:click="setFilterBy('doors')">
-                                <div class="text-xs font-semibold uppercase">Doors</div>
+                            <div class="col-span-2 xl:col-span-2 border-2 border-gray-400 rounded-sm p-3 space-y-3" wire:click="setFilterBy('doors')">
+                                <div class="text-base font-semibold uppercase">Doors</div>
                                 <div class="text-xl font-bold">{{$numbersTracked->sum('doors')}}</div>
                                 <div class="flex text-xs font-semibold text-green-base">
                                     @if($numbersTracked->sum('doors') - $numbersTrackedLast->sum('doors') >= 0)
@@ -186,24 +178,20 @@
                                     @else
                                         <x-svg.arrow-down class="text-red-600"/>
                                     @endif
-                                    <span class="@if($numbersTracked->sum('doors') - $numbersTrackedLast->sum('doors') >= 0)
-                                                    text-green-base
-                                                @else
-                                                    text-red-600
-                                                @endif">
+                                    <span class="
+                                        @if($numbersTracked->sum('doors') - $numbersTrackedLast->sum('doors') >= 0)
+                                            text-green-base
+                                        @else
+                                            text-red-600
+                                        @endif
+                                        text-base
+                                    ">
                                         {{$numbersTracked->sum('doors') - $numbersTrackedLast->sum('doors')}}
                                     </span>
                                 </div>
                             </div>
-                            <div class="col-span-2 xl:col-span-2 border-2 @if($filterBy == 'hours')
-                                    border-green-base bg-green-light
-                                @else
-                                    border-gray-200
-                                @endif
-                                cursor-pointer
-                                rounded-lg p-3"
-                                wire:click="setFilterBy('hours')">
-                                <div class="text-xs font-semibold text-gray-900 uppercase">Hours</div>
+                            <div class="col-span-2 xl:col-span-2 border-2 border-gray-400 rounded-sm p-3 space-y-3" wire:click="setFilterBy('hours')">
+                                <div class="text-base font-semibold text-gray-900 uppercase">Hours</div>
                                 <div class="text-xl font-bold text-gray-900">{{$numbersTracked->sum('hours')}}</div>
                                 <div class="flex text-xs font-semibold text-green-base">
                                     @if($numbersTracked->sum('hours') - $numbersTrackedLast->sum('hours') >= 0)
@@ -211,24 +199,20 @@
                                     @else
                                         <x-svg.arrow-down class="text-red-600"/>
                                     @endif
-                                    <span class="@if($numbersTracked->sum('hours') - $numbersTrackedLast->sum('hours') >= 0)
-                                                    text-green-base
-                                                @else
-                                                    text-red-600
-                                                @endif">
+                                    <span class="
+                                        @if($numbersTracked->sum('hours') - $numbersTrackedLast->sum('hours') >= 0)
+                                            text-green-base
+                                        @else
+                                            text-red-600
+                                        @endif
+                                        text-base
+                                    ">
                                         {{$numbersTracked->sum('hours') - $numbersTrackedLast->sum('hours')}}
                                     </span>
                                 </div>
                             </div>
-                            <div class="col-span-2 xl:col-span-2 border-2 @if($filterBy == 'sets')
-                                    border-green-base bg-green-light
-                                @else
-                                    border-gray-200
-                                @endif
-                                cursor-pointer
-                                rounded-lg p-3"
-                                wire:click="setFilterBy('sets')">
-                                <div class="text-xs font-semibold text-gray-900 uppercase">Sets</div>
+                            <div class="col-span-2 xl:col-span-2 border-2 border-gray-400 rounded-sm p-3 space-y-3" wire:click="setFilterBy('sets')">
+                                <div class="text-base font-semibold text-gray-900 uppercase">Sets</div>
                                 <div class="text-xl font-bold text-gray-900">{{$numbersTracked->sum('sets')}}</div>
                                 <div class="flex text-xs font-semibold text-green-base">
                                     @if($numbersTracked->sum('sets') - $numbersTrackedLast->sum('sets') >= 0)
@@ -236,30 +220,30 @@
                                     @else
                                         <x-svg.arrow-down class="text-red-600"/>
                                     @endif
-                                    <span class="@if($numbersTracked->sum('sets') - $numbersTrackedLast->sum('sets') >= 0)
-                                                    text-green-base
-                                                @else
-                                                    text-red-600
-                                                @endif">
+                                    <span class="
+                                        @if($numbersTracked->sum('sets') - $numbersTrackedLast->sum('sets') >= 0)
+                                            text-green-base
+                                        @else
+                                            text-red-600
+                                        @endif
+                                        text-base
+                                    ">
                                         {{$numbersTracked->sum('sets') - $numbersTrackedLast->sum('sets')}}
                                     </span>
                                 </div>
                             </div>
-                            <div class="col-span-3 xl:col-span-3 border-2 @if($filterBy == 'sits')
-                                    border-green-base bg-green-light
-                                @else
-                                    border-gray-200
-                                @endif
-                                cursor-pointer
-                                rounded-lg p-3"
-                                wire:click="setFilterBy('sits')">
-                                <div class="text-xs font-semibold text-gray-900 uppercase">Sits</div>
+                            <div class="col-span-3 xl:col-span-3 border-2 border-gray-400 rounded-sm p-3 space-y-3" wire:click="setFilterBy('sits')">
+                                <div class="text-base font-semibold text-gray-900 uppercase">Sits</div>
                                 <div class="grid grid-cols-4 gap-1">
-                                    <div class="text-sm self-center col-span-1">Set</div>
-                                    <div class="text-md font-bold text-gray-900 col-span-2">{{$numbersTracked->sum('set_sits')}}</div>
-                                    <div class="flex text-xs place-self-end col-span-1 items-center">
+                                    <div class="text-sm self-center col-span-3">
+                                        <span>Set</span>
+                                        <span class="text-xl font-bold text-gray-900 ml-2">
+                                            {{$numbersTracked->sum('set_sits')}}
+                                        </span>
+                                    </div>
+                                    <div class="flex text-xs font-semibold place-self-end col-span-1 items-center">
                                         @if($numbersTracked->sum('set_sits') - $numbersTrackedLast->sum('set_sits') >= 0)
-                                            <x-svg.arrow-up class="text-green-base"/>
+                                            <x-svg.arrow-up class="text-green-base text-base"/>
                                         @else
                                             <x-svg.arrow-down class="text-red-600"/>
                                         @endif
@@ -268,15 +252,21 @@
                                                     text-green-base
                                                 @else
                                                     text-red-600
-                                                @endif">
+                                                @endif
+                                                text-base
+                                        ">
                                             {{$numbersTracked->sum('set_sits') - $numbersTrackedLast->sum('set_sits')}}
                                         </span>
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-4 gap-1">
-                                    <div class="text-sm self-center col-span-1">SG</div>
-                                    <div class="text-md font-bold text-gray-900 col-span-2">{{$numbersTracked->sum('sits')}}</div>
-                                    <div class="flex text-xs place-self-end col-span-1 items-center">
+                                    <div class="text-sm self-center col-span-3">
+                                        <span>SG</span>
+                                        <span class="text-xl font-bold text-gray-900 ml-2">
+                                            {{$numbersTracked->sum('sits')}}
+                                        </span>
+                                    </div>
+                                    <div class="flex text-xs font-semibold place-self-end col-span-1 items-center">
                                         @if($numbersTracked->sum('sits') - $numbersTrackedLast->sum('sits') >= 0)
                                             <x-svg.arrow-up class="text-green-base"/>
                                         @else
@@ -287,55 +277,64 @@
                                                     text-green-base
                                                 @else
                                                     text-red-600
-                                                @endif">
+                                                @endif
+                                                text-base
+                                        ">
                                             {{$numbersTracked->sum('sits') - $numbersTrackedLast->sum('sits')}}
                                         </span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-span-3 xl:col-span-3 border-2 @if($filterBy == 'closes')
-                                    border-green-base bg-green-light
-                                @else
-                                    border-gray-200
-                                @endif
-                                cursor-pointer
-                                rounded-lg p-3"
-                                wire:click="setFilterBy('closes')">
-                                <div class="text-xs font-semibold text-gray-900 uppercase">Closes</div>
+                            <div class="col-span-3 xl:col-span-3 border-2 border-gray-400 rounded-sm p-3 space-y-3" wire:click="setFilterBy('closes')">
+                                <div class="text-base font-semibold text-gray-900 uppercase">Closes</div>
                                 <div class="grid grid-cols-4 gap-1">
-                                    <div class="text-sm self-center col-span-1">Set</div>
-                                    <div class="text-md font-bold text-gray-900 col-span-2">{{$numbersTracked->sum('set_closes')}}</div>
-                                    <div class="flex text-xs place-self-end col-span-1 items-center">
+                                    <div class="text-sm self-center col-span-3">
+                                        <span>Set</span>
+                                        <span class="text-xl font-bold text-gray-900 ml-2">
+                                            {{$numbersTracked->sum('set_closes')}}
+                                        </span>
+                                    </div>
+                                    <div class="flex text-xs font-semibold place-self-end col-span-1 items-center">
                                         @if($numbersTracked->sum('set_closes') - $numbersTrackedLast->sum('set_closes') >= 0)
                                             <x-svg.arrow-up class="text-green-base"/>
                                         @else
                                             <x-svg.arrow-down class="text-red-600"/>
                                         @endif
                                         <span class="
-                                                @if($numbersTracked->sum('set_closes') - $numbersTrackedLast->sum('set_closes') >= 0)
-                                                    text-green-base
-                                                @else
-                                                    text-red-600
-                                                @endif">
+                                            @if($numbersTracked->sum('set_closes') - $numbersTrackedLast->sum('set_closes') >= 0)
+                                                text-green-base
+                                            @else
+                                                text-red-600
+                                            @endif
+                                            text-base
+                                        ">
                                             {{$numbersTracked->sum('set_closes') - $numbersTrackedLast->sum('set_closes')}}
                                         </span>
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-4 gap-1">
-                                    <div class="text-sm self-center col-span-1">SG</div>
-                                    <div class="text-md font-bold text-gray-900 col-span-2">{{$numbersTracked->sum('closes')}}</div>
-                                    <div class="flex text-xs place-self-end col-span-1 items-center">
+                                    <div class="text-sm self-center col-span-3">
+                                        <span>
+                                            SG
+                                        </span>
+                                        <span class="text-xl font-bold text-gray-900 ml-2">
+                                            {{$numbersTracked->sum('closes')}}
+                                        </span>
+                                    </div>
+                                    <div class="flex text-xs font-semibold place-self-end col-span-1 items-center">
                                         @if($numbersTracked->sum('closes') - $numbersTrackedLast->sum('closes') >= 0)
                                             <x-svg.arrow-up class="text-green-base"/>
                                         @else
                                             <x-svg.arrow-down class="text-red-600"/>
                                         @endif
                                         <span class="
-                                                @if($numbersTracked->sum('closes') - $numbersTrackedLast->sum('closes') >= 0)
-                                                    text-green-base
-                                                @else
-                                                    text-red-600
-                                                @endif">
+                                            @if($numbersTracked->sum('closes') - $numbersTrackedLast->sum('closes') >= 0)
+                                                text-green-base
+                                            @else
+                                                text-red-600
+                                            @endif
+                                            text-base
+                                        ">
                                             {{$numbersTracked->sum('closes') - $numbersTrackedLast->sum('closes')}}
                                         </span>
                                     </div>
