@@ -30,7 +30,7 @@
                         <a href="/castle/manage-trainings/list/{{$departmentId}}/{{$pathSection->id}}" class="text-gray-500 align-baseline">{{$pathSection->title}}</a>
                         <span class="text-gray-500">/</span>
                     @endforeach
-                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
+                    @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager']))
                         <div class="inline-flex" x-data="{ 'editSectionModal': false }" @keydown.escape="editSectionModal = false" x-cloak>
                             <button class="p-3 rounded-full  hover:bg-gray-100" @click="editSectionModal = true">
                                 <x-svg.pencil class="w-4 h-4 fill-current text-gray-800" />
@@ -74,7 +74,7 @@
                     @endif
                 </div>
                 <div class="flex justify-center lg:justify-end mb-3.5 lg:mr-6">
-                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
+                    @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager']))
                         <div class="mr-4" x-data="{ 'showSectionModal': false }" @keydown.escape="showSectionModal = false" x-cloak>
                             <button class="bg-green-base text-white focus:outline-none font-medium text-sm rounded shadow-md px-4 md:px-5 py-2.5" @click="showSectionModal = true">
                                 Add Section
