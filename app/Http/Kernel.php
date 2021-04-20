@@ -74,6 +74,7 @@ class Kernel extends HttpKernel
         'departments'       => CanEnterTheCastleDepartments::class,
         'offices'           => CanEnterTheCastleOffices::class,
         'rates'             => CanEnterTheCastleRates::class,
+        'role'              => Role::class,
     ];
 
     protected $middlewarePriority = [
