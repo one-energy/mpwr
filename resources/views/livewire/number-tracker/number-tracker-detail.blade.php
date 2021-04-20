@@ -370,59 +370,8 @@
                             <div class="flex flex-col">
                                 <div class="overflow-x-auto">
                                     <div class="inline-block min-w-full overflow-hidden align-middle">
-                                        @if(count($numbersTracked))
-                                            <x-table>
-                                                <x-slot name="header">
-                                                    <x-table.th-tr>
-                                                        @if(user()->role == 'Admin' || user()->role == 'Owner')
-                                                            <x-table.th by="deparmtent">
-                                                                @lang('Department')
-                                                            </x-table.th>
-                                                        @endif
-                                                        <x-table.th by="region_number">
-                                                            @lang('Member')
-                                                        </x-table.th>
-                                                        <x-table.th by="doors">
-                                                            @lang('Doors')
-                                                        </x-table.th>
-                                                        <x-table.th by="hours">
-                                                            @lang('Hours')
-                                                        </x-table.th>
-                                                        <x-table.th by="sets">
-                                                            @lang('Sets')
-                                                        </x-table.th>
-                                                        <x-table.th by="set_sits">
-                                                            @lang('Set Sits')
-                                                        </x-table.th>
-                                                        <x-table.th by="sits">
-                                                            @lang('Sits')
-                                                        </x-table.th>
-                                                        <x-table.th by="set_closes">
-                                                            @lang('Set Closes')
-                                                        </x-table.th>
-                                                        <x-table.th by="closes">
-                                                            @lang('Closes')
-                                                        </x-table.th>
-                                                    </x-table.th-tr>
-                                                </x-slot>
-                                                <x-slot name="body">
-                                                    @foreach($numbersTracked as $row)
-                                                        <x-table.tr :loop="$loop">
-                                                            @if(user()->role == 'Admin' || user()->role == 'Owner')
-                                                                <x-table.td>{{ $row->user->department->name }}</x-table.td>
-                                                            @endif
-                                                            <x-table.td>{{ $row['first_name'] . ' ' .  $row['last_name']}}</x-table.td>
-                                                            <x-table.td>{{ $row['doors'] ?? 0 }}</x-table.td>
-                                                            <x-table.td>{{ $row['hours'] ?? 0 }}</x-table.td>
-                                                            <x-table.td>{{ $row['sets'] ?? 0 }}</x-table.td>
-                                                            <x-table.td>{{ $row['set_sits'] ?? 0 }}</x-table.td>
-                                                            <x-table.td>{{ $row['sits'] ?? 0 }}</x-table.td>
-                                                            <x-table.td>{{ $row['set_closes'] ?? 0 }}</x-table.td>
-                                                            <x-table.td>{{ $row['closes'] ?? 0 }}</x-table.td>
-                                                        </x-table.tr>
-                                                    @endforeach
-                                                </x-slot>
-                                            </x-table>
+                                        @if(count($regions))
+                                            <livewire:components.number-tracker-detail-accordion-table/>
                                         @else
                                             <div class="h-96 ">
                                                 <div class="flex justify-center align-middle">
@@ -444,10 +393,6 @@
     </div>
 </div>
 
-<link rel="stylesheet" href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css">
-<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.js" defer></script>
-
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
     const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];

@@ -3,9 +3,11 @@
 namespace App\Http\Livewire\NumberTracker;
 
 use App\Models\DailyNumber;
+use App\Models\Department;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
+use App\Traits\Livewire\FullTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +19,8 @@ use Livewire\Component;
  */
 class NumberTrackerDetail extends Component
 {
+    use FullTable;
+
     public $period = 'd';
 
     public $numbersTracked = [];
@@ -69,6 +73,11 @@ class NumberTrackerDetail extends Component
         ];
 
         return view('livewire.number-tracker.number-tracker-detail', ['showOptions' => $showOptions]);
+    }
+
+    public function sortBy()
+    {
+        return "doors";
     }
 
     public function setPeriod($p)
@@ -225,7 +234,11 @@ class NumberTrackerDetail extends Component
 
     public function getRegions()
     {
-        $this->regions = Region::whereDepartmentId(user()->department_id)->get();
+        if (user()->role == "Admin") {
+            $this->regions = Region::with('offices.users')->get();
+        } else {
+            $this->regions = Region::whereDepartmentId(user()->department_id)->get();
+        }
     }
 
     public function getUsers()
