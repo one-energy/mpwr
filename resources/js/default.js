@@ -1,4 +1,4 @@
-const $app = {
+window.$app = {
     modal: options => {
         Promise.prototype.onClose = Promise.prototype.then
 
@@ -14,6 +14,9 @@ const $app = {
                 resolve()
             })
         })
+    },
+    alert: options => {
+        window.dispatchEvent(new CustomEvent('show-alert', {detail: options}))
     }
 }
 

@@ -59,6 +59,10 @@ class User extends Authenticatable implements MustVerifyEmail
     use Notifiable;
     use SoftDeletes;
 
+    protected $fillable = [
+        'department_id',
+    ];
+
     const ROLES = [
         ['title' => 'Owner', 'name' => 'Owner', 'description' => 'System Owner'],
         ['title' => 'Admin', 'name' => 'Admin', 'description' => 'Allows access to the Admin functionality and Manage Users, Incentives and others (Admin Tab)'],
@@ -215,6 +219,11 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $this->forceFill(['master' => false]);
         $this->save();
+    }
+
+    public function getFullNameAttribute()
+    {
+        return sprintf('%s %s', $this->first_name, $this->last_name);
     }
 
     public function getPermittedUsers($departmentId = null)
