@@ -80,4 +80,9 @@ class TrainingPageSection extends Model
             );
         });
     }
+
+    public function isDepartmentSection()
+    {
+        return $this->department_folder;
+    }
 }
