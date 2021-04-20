@@ -10,7 +10,7 @@ class UpdateOrCreateNumberTracking
 {
     public function execute(array $data)
     {
-        $this->validate($data);
+        $data = $this->validate($data);
 
         $user = User::find(array_keys($data['numbers'])[0]);
 
