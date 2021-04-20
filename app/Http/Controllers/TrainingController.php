@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\Actions\DestroySection;
 use App\Models\Department;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
@@ -37,14 +38,7 @@ class TrainingController extends Controller
 
     public function deleteSection(TrainingPageSection $section)
     {
-        $childsSections = TrainingPageSection::query()->whereParentId($section->id)->get();
-
-        foreach ($childsSections as $childSection) {
-            $childSection->parent_id = $section->parent_id;
-            $childSection->save();
-        }
-
-        $section->delete();
+        DestroySection::execute($section);
 
         return redirect(route('castle.manage-trainings.index', [
             'department' => $section->department_id,

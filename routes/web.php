@@ -14,6 +14,7 @@ use App\Http\Controllers\Castle\RatesController;
 use App\Http\Controllers\Castle\RegionController;
 use App\Http\Controllers\Castle\UsersController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IncentivesController;
 use App\Http\Controllers\NumberTrackingController;
@@ -149,5 +150,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/get-offices/{departmentId?}', [OfficeController::class, 'getOffices'])->name('getOffices');
 
     Route::post('/get-rates-per-role/{role}', [RatesController::class, 'getRatesPerRole'])->name('getRatesPerRole');
+
+    Route::post('upload-section-file/{section}', [FileController::class, 'uploadSectionFile'])->name('uploadSectionFile');
+
+    Route::post('download-section-file', [FileController::class, 'downloadSectionFile'])->name('downloadSectionFile');
 
 });

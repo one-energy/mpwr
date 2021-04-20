@@ -2,28 +2,38 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Department;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
 use App\Traits\Livewire\FullTable;
+use Illuminate\Support\Collection;
 use Livewire\Component;
 
 class ShowTrainings extends Component
 {
     use FullTable;
 
-    public $content       = [];
+    public Collection $contents;
 
-    public $sections      = [];
+    public Collection $sections;
 
-    public $videoId       = [];
+    public TrainingPageSection $actualSection;
 
-    public $actualSection = [];
+    public $path = [];
 
-    public $path          = [];
+    public ?TrainingPageSection $section;
 
-    public $section       = [];
+    public Department $department;
 
-    public $department;
+    public string $selectedTab = 'files';
+
+    public function mount()
+    {
+        $this->video         = new TrainingPageContent();
+        $this->actualSection = new TrainingPageSection();
+        $this->contents      = collect();
+        $this->sections      = collect();
+    }
 
     public function sortBy()
     {
@@ -32,23 +42,15 @@ class ShowTrainings extends Component
 
     public function render()
     {
-        $index         = 0;
         if ($this->department->id) {
-            $actualSection = $this->section ?? TrainingPageSection::whereDepartmentId($this->department->id)->first();
-            $index         = 0;
+            $this->actualSection = $this->section ?? TrainingPageSection::whereDepartmentId($this->department->id)->first();
 
-            $this->content       = $this->getContent($actualSection);
-            $this->sections      = $this->department->id ? $this->getParentSections($actualSection) : [];
-            // dd($this->sections);
-            if ($this->content) {
-                $this->videoId = explode('/', $this->content->video_url);
-                $index         = count($this->videoId);
-            }
+            $this->actualSection->load('files');
 
-            $this->path = $this->getPath($actualSection);
-            // dd($this->content->isEmpty());
+            $this->contents      = $this->getContents($this->actualSection);
+            $this->sections      = $this->department->id ? $this->getParentSections($this->actualSection) : collect();
+            $this->path          = $this->getPath($this->actualSection);
         }
-        $this->videoId = $this->videoId[$index - 1] ?? null;
 
         return view('livewire.show-trainings');
     }
@@ -67,23 +69,24 @@ class ShowTrainings extends Component
         return array_reverse($path);
     }
 
-    public function getContent($section)
+    public function getContents(TrainingPageSection $section): Collection
     {
-        return TrainingPageContent::whereTrainingPageSectionId($section->id)->first();
+        return TrainingPageContent::whereTrainingPageSectionId($section->id)->get();
     }
 
     public function changeDepartment()
     {
-        return redirect(route('castle.manage-trainings.index',  ['department' => request()->all()['department']] ));
+        return redirect(route('castle.manage-trainings.index', ['department' => request()->all()['department']]));
     }
 
     public function getParentSections($section)
     {
         $search         = $this->search;
         $trainingsQuery = TrainingPageSection::query()->with('content')
-            ->select( 'training_page_sections.*')
+            ->select('training_page_sections.*')
             ->whereDepartmentId($this->department->id)
-            ->leftJoin('training_page_contents', 'training_page_sections.id', '=', 'training_page_contents.training_page_section_id' );
+            ->leftJoin('training_page_contents', 'training_page_sections.id', '=',
+                'training_page_contents.training_page_section_id');
 
         $trainingsQuery->when($search == '', function ($query) use ($section) {
             $query->where('training_page_sections.parent_id', $section->id ?? 1);
@@ -97,5 +100,24 @@ class ShowTrainings extends Component
         });
 
         return $trainingsQuery->get();
+    }
+
+    public function getFilesTabSelectedProperty()
+    {
+        return $this->selectedTab === 'files';
+    }
+
+    public function getTrainingTabSelectedProperty()
+    {
+        return $this->selectedTab === 'training';
+    }
+
+    public function changeTab(string $tabName)
+    {
+        if ($this->selectedTab === $tabName) {
+            return;
+        }
+
+        $this->selectedTab = $tabName;
     }
 }
