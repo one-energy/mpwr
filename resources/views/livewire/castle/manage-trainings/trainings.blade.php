@@ -184,7 +184,7 @@
                                             </button>
                                         </div>
                                         <div class="sm:p-6">
-                                            <div class="flex mt-4 mb-7">
+                                            <div class="flex mt-4 mb-7" x-show="topTab === 'training'">
                                                 <button
                                                     class="py-2 focus:outline-none rounded-l shadow-md w-96"
                                                     :class="tabVideoSelected ? activeTabColors : inactiveTabColors"
@@ -201,7 +201,7 @@
                                                 </button>
                                             </div>
 
-                                            <div x-show="tabVideoSelected">
+                                            <div x-show="tabVideoSelected && topTab === 'training'">
                                                 <x-form wire:submit.prevent="storeVideo">
                                                     <div class="flex flex-col space-y-5 my-4">
                                                         <x-input label="Title" wire:model.defer="video.title" name="video.title" />
@@ -218,10 +218,11 @@
                                                 </x-form>
                                             </div>
 
-                                            <div x-show="tabFileSelected">
-                                                <x-drop-file :namedRoute="route('uploadSectionFile', [
-                                                    'section' => $actualSection->id
-                                                ])" />
+                                            <div x-show="tabFileSelected || topTab === 'files'">
+                                                <x-drop-file
+                                                    :namedRoute="route('uploadSectionFile', ['section' => $actualSection->id])"
+                                                    :meta="['training_type' => $selectedTab]"
+                                                />
                                             </div>
                                         </div>
                                     </div>
@@ -297,6 +298,7 @@
 <script>
     const addContentHandler = () => ({
         show: @entangle('showAddContentModal'),
+        topTab: @entangle('selectedTab'),
         selectedTab: 'video',
         changeTab(tab) {
             this.selectedTab = tab;
