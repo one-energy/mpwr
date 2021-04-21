@@ -154,17 +154,16 @@ class NumberTrackerDetail extends Component
             });
         }
 
-        $this->numbersTrackedLast = $queryLast->when(user()->role != 'Admin' && user()->role != 'Owner',
-            function ($query) {
-                $query->where('users.department_id', '=', user()->department_id);
-            })
+        $this->numbersTrackedLast = $queryLast->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
+            $query->where('users.department_id', '=', user()->department_id);
+        })
             ->groupBy('user_id')
             ->get();
 
         $this->graphicValueLast = $this->numbersTrackedLast->sum($this->filterBy);
 
         $query->groupBy('daily_numbers.user_id')
-            ->when(user()->role != 'Admin' && user()->role != 'Owner', function ($query) {
+            ->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
                 $query->where('users.department_id', '=', user()->department_id);
             });
 
@@ -232,7 +231,7 @@ class NumberTrackerDetail extends Component
 
     public function setFilter()
     {
-        if (user()->role == 'Region Manager') {
+        if (user()->hasRole('Region Manager')) {
             $regions = user()->managedRegions()->get();
             foreach ($regions as $region) {
                 $data = [
@@ -243,7 +242,7 @@ class NumberTrackerDetail extends Component
             }
         }
 
-        if (user()->role == 'Office Manager') {
+        if (user()->hasRole('Office Manager')) {
             $offices = user()->managedOffices()->get();
             foreach ($offices as $office) {
                 $data = [
@@ -254,7 +253,7 @@ class NumberTrackerDetail extends Component
             }
         }
 
-        if (user()->role == 'Setter' || user()->role == 'Sales Rep') {
+        if (user()->hasAnyRole(['Setter', 'Sales Rep'])) {
             $data = [
                 'first_name' => user()->first_name,
                 'last_name'  => user()->last_name,
