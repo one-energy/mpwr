@@ -167,7 +167,7 @@
                                 class="bg-green-450  text-white font-medium text-sm rounded shadow-md px-4 md:px-5 py-2.5 focus:outline-none"
                                 wire:click="$set('showAddContentModal', true)"
                             >
-                                Add Content
+                                {{ $this->filesTabSelected ? 'Add File' : 'Add Content' }}
                             </button>
                             <div class="col-span-1 sm:col-span-3" x-data="addContentHandler()" x-cloak>
                                 <div x-show="show" @keydown.escape.window="close" wire:loading.remove class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center z-20">
@@ -275,20 +275,33 @@
                     />
                 </div>
 
-                <div class="mt-10 @if ($this->filesTabSelected) hidden @endif">
-                    <livewire:castle.manage-trainings.videos
-                        key="videos-list-{{ $contents->count() }}"
-                        :currentSection="$actualSection"
-                        :contents="$contents"
-                    />
+                <div class="@if ($this->filesTabSelected) hidden @endif">
+                    <div class="mt-10">
+                        <livewire:castle.manage-trainings.videos
+                            key="videos-list-{{ $contents->count() }}"
+                            :currentSection="$actualSection"
+                            :contents="$contents"
+                        />
+                    </div>
+
+                    <div class="mt-10">
+                        <livewire:list-files
+                            key="training-list-{{ $groupedFiles['training']->count() }}"
+                            :files="$groupedFiles['training']"
+                            :showDeleteButton="true"
+                        />
+                    </div>
                 </div>
 
-                <div class="mt-10 @if ($actualSection->files->isEmpty()) hidden @endif">
-                    <livewire:list-files
-                        key="files-list-{{ $actualSection->files->count() }}"
-                        :files="$actualSection->files"
-                        :showDeleteButton="true"
-                    />
+
+                <div class="@if ($this->trainingTabSelected) hidden @endif">
+                    <div class="mt-10">
+                        <livewire:list-files
+                            key="files-list-{{ $groupedFiles['files']->count() }}"
+                            :files="$groupedFiles['files']"
+                            :showDeleteButton="true"
+                        />
+                    </div>
                 </div>
             </div>
         </div>
