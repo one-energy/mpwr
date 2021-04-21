@@ -93,40 +93,56 @@ class NumberTrackerDetailAccordionTable extends Component
     public function sumRegionNumberTracker($region, $filterBySelected = false)
     {
         $sum = 0;
-        if ($region['selected'] || ($region['selected'] && !$filterBySelected)) {
+        $region = (object) $region;
+        if ($region->selected || ($region->selected && !$filterBySelected)) {
             $collectOffice = $this->collectOffices($region);
             $collectOffice = $collectOffice->map(function ($office) {
+                $office = (object) $office;
                 $office->users = $this->collectUsers($office);
                 $office->users->map(function ($user) {
+                    $user = (object) $user;
                     $user->daily_numbers = $this->collectDailyNumbers($user);
                     return $user;
                 });
                 return $office;
             });
             $sum = $collectOffice->sum(function ($office) use ($filterBySelected) {
-                if ($office->selected || ($office->selected && !$filterBySelected)) {
-                    return $office->users->sum(function ($user) use ($filterBySelected) {
-                        if ($user->selected || ($user->selected && !$filterBySelected)) {
-                            return $user->daily_numbers->sum('doors');
-                        }
-                    });
-                }
+                return $this->sumOfficesNumberTracker($office, $filterBySelected);
             });
         }
         return $sum;
     }
 
+    public function sumOfficesNumberTracker($office, $filterBySelected = false)
+    {
+        $office = (object) $office;
+        if ($office->selected || ($office->selected && !$filterBySelected)) {
+            return $office->users->sum(function ($user) use ($filterBySelected) {
+               return $this->sumUsersNumberTracker($user,$filterBySelected);
+            });
+        }
+    }
+
+    public function sumUsersNumberTracker($user, $filterBySelected = false)
+    {
+        $user = (object) $user;
+        $user->daily_numbers = collect($user->daily_numbers);
+        if ($user->selected || ($user->selected && !$filterBySelected)) {
+            return $user->daily_numbers->sum('doors');
+        }
+    }
+
     public function collectOffices($region)
     {
-        return collect($region['offices'])->map(function ($office) {
-            return (object) $office;
+        return collect($region->offices)->map(function ($office) {
+            return $office;
         });
     }
 
     public function collectUsers($office)
     {
         return collect($office->users)->map(function ($user) {
-            return (object) $user;
+            return $user;
         });
     }
 
@@ -135,21 +151,6 @@ class NumberTrackerDetailAccordionTable extends Component
         return collect($user->daily_numbers)->map(function ($dailyNumber) {
             return (object) $dailyNumber;
         });
-    }
-
-    public function sumOffices()
-    {
-
-    }
-
-    public function sumUsers()
-    {
-
-    }
-
-    public function sumDailyNumbers()
-    {
-
     }
 
     public function teste($teste)
