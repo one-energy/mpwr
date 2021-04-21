@@ -7,7 +7,6 @@
 @endphp
 
 <div {{ $attributes->except(['wire:model', 'v-model'])->merge(['class' => 'flex items-center select-none']) }}>
-    {{-- @dd($wire) --}}
     <input id="{{ $rand }}-{{ $name }}" name="{{ $name }}" type="checkbox" {{ isset($checked) ? 'checked="checked"' : '' }}
         class="form-checkbox h-4 w-4 text-green-base transition duration-150 ease-in-out" {{ $attributes }}
         @if ($wire) wire:model="{{ $wire }}" @endif

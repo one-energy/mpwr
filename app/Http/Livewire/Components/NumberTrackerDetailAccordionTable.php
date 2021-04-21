@@ -14,7 +14,11 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public Collection $regions;
 
+    public Collection $ids;
+
     public array $itsOpenRegions;
+
+    public $selected;
 
     public Carbon $startDate;
 
@@ -23,6 +27,7 @@ class NumberTrackerDetailAccordionTable extends Component
     public function mount()
     {
         $query = Region::with(['offices', 'offices.users']);
+        $this->ids = collect([]);
 
         if (user()->hasAnyRole(['Admin', 'Owner'])) {
             $this->regions = $query->get();
@@ -70,7 +75,30 @@ class NumberTrackerDetailAccordionTable extends Component
         $this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['itsOpen'] = !$this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['itsOpen'];
     }
 
-    public function teste()
+    public function selectRegion($regionIndex)
     {
+        $this->itsOpenRegions[$regionIndex]['selected'] = !$this->itsOpenRegions[$regionIndex]['selected'];
+    }
+
+    public function selectOffice($regionIndex, $officeIndex)
+    {
+        $this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['selected'] = !$this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['selected'];
+    }
+
+    public function selectUser($regionIndex, $officeIndex, $userIndex)
+    {
+        $this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['users'][$userIndex]['selected'] = !$this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['users'][$userIndex]['selected'];
+        $this->selected = $this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['users'][$userIndex]['selected'];
+    }
+
+    public function teste($teste)
+    {
+        if($this->ids->contains($teste)) {
+            $this->ids = $this->ids->filter(function ($id) use ($teste) {
+                return $id != $teste;
+            });
+        } else {
+            $this->ids = $this->ids->merge($teste);
+        }
     }
 }
