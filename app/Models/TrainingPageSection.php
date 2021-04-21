@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\DB;
  * @property int|null $department_id
  * @property int|null $region_id
  * @property bool|null $department_folder
- * @property-read \App\Models\TrainingPageContent|null $content
+ * @property-read \App\Models\TrainingPageContent|null $contents
  * @property-read \App\Models\Department|null $department
  * @property-read \App\Models\TrainingPageSection|null $parent
  * @property-read \App\Models\Region|null $region
@@ -45,7 +45,7 @@ class TrainingPageSection extends Model
         'department_folder' => 'boolean',
     ];
 
-    public function content()
+    public function contents()
     {
         return $this->hasMany(TrainingPageContent::class);
     }

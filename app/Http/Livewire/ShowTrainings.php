@@ -98,7 +98,7 @@ class ShowTrainings extends Component
     public function getParentSections($section)
     {
         $query = TrainingPageSection::query()
-            ->with('content')
+            ->with('contents')
             ->where('department_id', $this->department->id);
 
         if (user()->notHaveRoles(['Admin', 'Owner', 'Department Manager'])) {

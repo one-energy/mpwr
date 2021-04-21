@@ -135,7 +135,7 @@ class Trainings extends Component
     {
         return TrainingPageSection::query()
             ->whereDepartmentId($this->department->id)
-            ->with('content')
+            ->with('contents')
             ->when($this->search === '', function ($query) use ($section) {
                 $query->where('training_page_sections.parent_id', $section->id ?? 1);
             })
