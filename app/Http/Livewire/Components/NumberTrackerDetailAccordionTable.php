@@ -26,7 +26,7 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function mount()
     {
-        $query = Region::with(['offices', 'offices.users']);
+        $query = Region::with(['offices', 'offices.users', 'offices.users.dailyNumbers']);
         $this->ids = collect([]);
 
         if (user()->hasAnyRole(['Admin', 'Owner'])) {
@@ -62,7 +62,6 @@ class NumberTrackerDetailAccordionTable extends Component
             });
             return $region;
         })->toArray();
-
     }
 
     public function collapseRegion( int $regionIndex)
@@ -89,6 +88,68 @@ class NumberTrackerDetailAccordionTable extends Component
     {
         $this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['users'][$userIndex]['selected'] = !$this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['users'][$userIndex]['selected'];
         $this->selected = $this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['users'][$userIndex]['selected'];
+    }
+
+    public function sumRegionNumberTracker($region, $filterBySelected = false)
+    {
+        $sum = 0;
+        if ($region['selected'] || ($region['selected'] && !$filterBySelected)) {
+            $collectOffice = $this->collectOffices($region);
+            $collectOffice = $collectOffice->map(function ($office) {
+                $office->users = $this->collectUsers($office);
+                $office->users->map(function ($user) {
+                    $user->daily_numbers = $this->collectDailyNumbers($user);
+                    return $user;
+                });
+                return $office;
+            });
+            $sum = $collectOffice->sum(function ($office) use ($filterBySelected) {
+                if ($office->selected || ($office->selected && !$filterBySelected)) {
+                    return $office->users->sum(function ($user) use ($filterBySelected) {
+                        if ($user->selected || ($user->selected && !$filterBySelected)) {
+                            return $user->daily_numbers->sum('doors');
+                        }
+                    });
+                }
+            });
+        }
+        return $sum;
+    }
+
+    public function collectOffices($region)
+    {
+        return collect($region['offices'])->map(function ($office) {
+            return (object) $office;
+        });
+    }
+
+    public function collectUsers($office)
+    {
+        return collect($office->users)->map(function ($user) {
+            return (object) $user;
+        });
+    }
+
+    public function collectDailyNumbers($user)
+    {
+        return collect($user->daily_numbers)->map(function ($dailyNumber) {
+            return (object) $dailyNumber;
+        });
+    }
+
+    public function sumOffices()
+    {
+
+    }
+
+    public function sumUsers()
+    {
+
+    }
+
+    public function sumDailyNumbers()
+    {
+
     }
 
     public function teste($teste)
