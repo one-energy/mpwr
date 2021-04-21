@@ -5,7 +5,7 @@
         <textarea hidden x-ref="meta">@json($meta)</textarea>
         <div class="flex flex-col flex-grow mb-3 border-gray-300  border-2 border-dashed rounded-md">
             <div id="FileUpload" class="block w-full py-2 px-3 relative bg-white appearance-none cursor-pointer">
-                <input type="file" multiple accept="image/*,application/pdf" name="inputFiles"
+                <input x-ref="input" type="file" multiple accept="image/*,application/pdf" name="inputFiles"
                        class="absolute inset-0 z-50 m-0 p-0 w-full h-full outline-none opacity-0"
                        x-on:change="addFile($event.target.files)"
                        x-on:dragover="$el.classList.add('active')" x-on:dragleave="$el.classList.remove('active')" x-on:drop="$el.classList.remove('active')"
@@ -103,6 +103,7 @@
                         window.$app.alert({ title:'Your files have been uploaded', color:'green' });
                         window.Livewire.emit('filesUploaded');
                         this.files = [];
+                        this.$refs.input.value = '';
                     } catch (error) {
                         window.$app.alert({ title:'There is a problem with your upload' })
                     }
