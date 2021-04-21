@@ -89,14 +89,18 @@ class NumberTrackerDetail extends Component
     public function getTrackerNumbers()
     {
         $query = DailyNumber::query()
+            ->with([
+                'user:id,office_id,first_name,last_name,department_id,office_id',
+                'user.department',
+            ])
             ->leftJoin('users', function ($join) {
                 $join->on('users.id', '=', 'daily_numbers.user_id')
                     ->on('users.office_id', '=', 'daily_numbers.office_id');
             })
-            ->join('offices', 'users.office_id', '=', 'offices.id')
+            ->leftJoin('offices', 'users.office_id', '=', 'offices.id')
             ->select([
-                DB::raw('users.first_name, users.last_name, daily_numbers.id, daily_numbers.user_id, SUM(doors) as doors,
-                    SUM(hours) as hours,  SUM(sets) as sets, SUM(set_sits) as set_sits,  SUM(sits) as sits,  SUM(set_closes) as set_closes, SUM(closes) as closes'),
+                DB::raw('daily_numbers.id, daily_numbers.user_id, SUM(doors) as doors,
+                    SUM(hours) as hours,  SUM(sets) as sets, SUM(set_sits) as set_sits,  SUM(sits) as sits,  SUM(set_closes) as set_closes, SUM(closes) as closes, daily_numbers.office_id'),
             ]);
 
         $queryLast = clone $query;
@@ -162,7 +166,8 @@ class NumberTrackerDetail extends Component
 
         $this->graphicValueLast = $this->numbersTrackedLast->sum($this->filterBy);
 
-        $query->groupBy('daily_numbers.user_id')
+        $query
+            ->groupBy('daily_numbers.user_id')
             ->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
                 $query->where('users.department_id', '=', user()->department_id);
             });
