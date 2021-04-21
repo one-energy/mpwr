@@ -46,9 +46,14 @@ class NumberTrackerDetailAccordionTable extends Component
     public function addItsOpen()
     {
         $this->itsOpenRegions = $this->regions->map(function ($region) {
-            $region->itsOpen = false;
+            $region->itsOpen  = false;
+            $region->selected = true;
             $region->offices->map(function ($office) {
-                return $office->itsOpen = false;
+                $office->itsOpen = false;
+                $office->selected = true;
+                return $office->users->map(function ($user) {
+                    return $user->selected = true;
+                });
             });
             return $region;
         })->toArray();
@@ -63,5 +68,9 @@ class NumberTrackerDetailAccordionTable extends Component
     public function collapseOffice( int $regionIndex, int $officeIndex)
     {
         $this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['itsOpen'] = !$this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['itsOpen'];
+    }
+
+    public function teste()
+    {
     }
 }
