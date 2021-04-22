@@ -14,8 +14,6 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public Collection $regions;
 
-    public Collection $ids;
-
     public array $itsOpenRegions;
 
     public $selected;
@@ -26,8 +24,7 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function mount()
     {
-        $query = Region::with(['offices', 'offices.users', 'offices.users.dailyNumbers']);
-        $this->ids = collect([]);
+        $query = Region::with('offices.users.dailyNumbers');
 
         if (user()->hasAnyRole(['Admin', 'Owner'])) {
             $this->regions = $query->get();
@@ -95,7 +92,7 @@ class NumberTrackerDetailAccordionTable extends Component
         $sum = 0;
         $region = (object) $region;
         if ($region->selected || !$filterBySelected) {
-            $collectOffice = $this->collectOffices($region);
+            $collectOffice = $this->getCollectionOf($region->offices);
             $sum = $collectOffice->sum(function ($office) use ($filterBySelected, $field) {
                 return $this->sumOfficeNumberTracker($office, $field, $filterBySelected);
             });
@@ -107,7 +104,7 @@ class NumberTrackerDetailAccordionTable extends Component
     {
         $office = (object) $office;
         if ($office->selected || !$filterBySelected) {
-            $office->users = $this->collectUsers($office);
+            $office->users = $this->getCollectionOf($office->users);
             return $office->users->sum(function ($user) use ($filterBySelected, $field,) {
                return $this->sumUserNumberTracker($user, $field, $filterBySelected);
             });
@@ -123,35 +120,8 @@ class NumberTrackerDetailAccordionTable extends Component
         }
     }
 
-    public function collectOffices($region)
+    public function getCollectionOf($array)
     {
-        return collect($region->offices)->map(function ($office) {
-            return $office;
-        });
-    }
-
-    public function collectUsers($office)
-    {
-        return collect($office->users)->map(function ($user) {
-            return $user;
-        });
-    }
-
-    public function collectDailyNumbers($user)
-    {
-        return collect($user->daily_numbers)->map(function ($dailyNumber) {
-            return (object) $dailyNumber;
-        });
-    }
-
-    public function teste($teste)
-    {
-        if($this->ids->contains($teste)) {
-            $this->ids = $this->ids->filter(function ($id) use ($teste) {
-                return $id != $teste;
-            });
-        } else {
-            $this->ids = $this->ids->merge($teste);
-        }
+        return collect($array)->map(fn ($element) => $element);
     }
 }
