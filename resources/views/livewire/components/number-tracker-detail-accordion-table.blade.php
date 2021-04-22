@@ -26,80 +26,100 @@
         </x-slot>
         <x-slot name="body">
             @foreach($itsOpenRegions as $regionIndex => $region)
-                <div class="table-row cursor-pointer hover:bg-gray-100 @if($region['itsOpen']) bg-gray-200 @endif" wire:click="collapseRegion({{$regionIndex}})">
-                    <x-table-accordion.default-td-arrow class="table-cell" :open="$region['itsOpen']">{{$region['name']}}</x-table-accordion.td-arrow>
+                <div class="table-row cursor-pointer hover:bg-gray-100 @if($region['itsOpen']) bg-gray-200 @endif"
+                    wire:click.stop="collapseRegion({{$regionIndex}})" wire:key="region-{{$region['id']}}">
+                    <x-table-accordion.default-td-arrow class="table-cell" :open="$region['itsOpen']">
+                        <div class="flex" x-data>
+                            <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
+                                   type="checkbox" @change="$wire.selectRegion({{$regionIndex}})" checked wire:click.stop="">
+                            <label for="region-{{$region['id']}}">{{$region['name']}}</label>
+                        </div>
+                    </x-table-accordion.td-arrow>
                     <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
-                        @lang('Doors')
+                        {{$this->sumRegionNumberTracker($region, 'doors')}}
                     </x-table-accordion.td>
                     <x-table-accordion.td class="table-cell" by="hours" sortedBy="$sortBy">
-                        @lang('Hours')
+                        {{$this->sumRegionNumberTracker($region, 'hours')}}
                     </x-table-accordion.td>
                     <x-table-accordion.td class="table-cell" by="sets" sortedBy="$sortBy">
-                        @lang('Sets')
+                        {{$this->sumRegionNumberTracker($region, 'sets')}}
                     </x-table-accordion.td>
                     <x-table-accordion.td class="table-cell" by="set_sits" sortedBy="$sortBy">
-                        @lang('Set Sits')
+                        {{$this->sumRegionNumberTracker($region, 'set_sits')}}
                     </x-table-accordion.td>
                     <x-table-accordion.td class="table-cell" by="sits" sortedBy="$sortBy">
-                        @lang('Sits')
+                        {{$this->sumRegionNumberTracker($region, 'sits')}}
                     </x-table-accordion.td>
                     <x-table-accordion.td class="table-cell" by="set_closes" sortedBy="$sortBy">
-                        @lang('Set Closes')
+                        {{$this->sumRegionNumberTracker($region, 'set_closes')}}
                     </x-table-accordion.td>
                     <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
-                        @lang('Closes')
+                        {{$this->sumRegionNumberTracker($region, 'closes')}}
                     </x-table-accordion.td>
                 </div>
                 @if($region['itsOpen'])
-                    @forelse($region['offices'] as $office)
-                        <div class="table-row cursor-pointer hover:bg-gray-100 @if($office['itsOpen']) bg-gray-100 @endif" wire:click="collapseOffice({{$regionIndex}}, {{$loop->index}})">
-                            <x-table-accordion.child-td-arrow class="table-cell" :open="$office['itsOpen']">{{$office['name']}}</x-table-accordion.td-arrow>
+                    @forelse($region['offices'] as $officeIndex => $office)
+                        <div class="table-row cursor-pointer hover:bg-gray-100 @if($office['itsOpen']) bg-gray-100 @endif"
+                             wire:click.stop="collapseOffice({{$regionIndex}}, {{$officeIndex}})" wire:key="office-{{$office['id']}}">
+                            <x-table-accordion.child-td-arrow class="table-cell" :open="$office['itsOpen']">
+                                <div class="flex" x-data>
+                                    <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
+                                        type="checkbox" @change="$wire.selectOffice({{$regionIndex}}, {{$officeIndex}})" checked wire:click.stop="">
+                                    <label for="office-{{$office['id']}}">{{$office['name']}}</label>
+                                </div>
+                            </x-table-accordion.td-arrow>
                             <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
-                                @lang('Doors')
+                                {{$this->sumOfficeNumberTracker($office, 'doors')}}
                             </x-table-accordion.td>
                             <x-table-accordion.td class="table-cell" by="hours" sortedBy="$sortBy">
-                                @lang('Hours')
+                                {{$this->sumOfficeNumberTracker($office, 'hours')}}
                             </x-table-accordion.td>
                             <x-table-accordion.td class="table-cell" by="sets" sortedBy="$sortBy">
-                                @lang('Sets')
+                                {{$this->sumOfficeNumberTracker($office, 'sets')}}
                             </x-table-accordion.td>
                             <x-table-accordion.td class="table-cell" by="set_sits" sortedBy="$sortBy">
-                                @lang('Set Sits')
+                                {{$this->sumOfficeNumberTracker($office, 'set_sits')}}
                             </x-table-accordion.td>
                             <x-table-accordion.td class="table-cell" by="sits" sortedBy="$sortBy">
-                                @lang('Sits')
+                                {{$this->sumOfficeNumberTracker($office, 'sits')}}
                             </x-table-accordion.td>
                             <x-table-accordion.td class="table-cell" by="set_closes" sortedBy="$sortBy">
-                                @lang('Set Closes')
+                                {{$this->sumOfficeNumberTracker($office, 'set_closes')}}
                             </x-table-accordion.td>
                             <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
-                                @lang('Closes')
+                                {{$this->sumOfficeNumberTracker($office, 'closes')}}
                             </x-table-accordion.td>
                         </div>
                         @if($office['itsOpen'])
-                            @forelse($office['users'] as $user)
-                                <div class="table-row cursor-pointer hover:bg-gray-100">
-                                    <x-table-accordion.td class="table-cell pl-28">{{$user['first_name']}} {{$user['last_name']}}</x-table-accordion.td>
+                            @forelse($office['users'] as $userIndex => $user)
+                                <div class="table-row hover:bg-gray-100" wire:key="user-{{$user['id']}}">
+                                    <x-table-accordion.td class="table-cell pl-28">
+                                        <div class="flex" x-data>
+                                            <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
+                                            type="checkbox" @change="$wire.selectUser({{$regionIndex}}, {{$officeIndex}}, {{$userIndex}})" checked wire:click.stop="">
+                                            <label for="user-{{$user['id']}}">{{$user['full_name']}}</label>
+                                        </div>
+                                    </x-table-accordion.td>
                                     <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
-                                        @lang('Doors')
+                                        {{$this->sumUserNumberTracker($user, 'doors')}}
                                     </x-table-accordion.td>
                                     <x-table-accordion.td class="table-cell" by="hours" sortedBy="$sortBy">
-                                        @lang('Hours')
+                                        {{$this->sumUserNumberTracker($user, 'hours')}}
                                     </x-table-accordion.td>
                                     <x-table-accordion.td class="table-cell" by="sets" sortedBy="$sortBy">
-                                        @lang('Sets')
+                                        {{$this->sumUserNumberTracker($user, 'sets')}}
                                     </x-table-accordion.td>
                                     <x-table-accordion.td class="table-cell" by="set_sits" sortedBy="$sortBy">
-                                        @lang('Set Sits')
+                                        {{$this->sumUserNumberTracker($user, 'set_sits')}}
                                     </x-table-accordion.td>
                                     <x-table-accordion.td class="table-cell" by="sits" sortedBy="$sortBy">
-                                        @lang('Sits')
+                                        {{$this->sumUserNumberTracker($user, 'sits')}}
                                     </x-table-accordion.td>
                                     <x-table-accordion.td class="table-cell" by="set_closes" sortedBy="$sortBy">
-                                        @lang('Set Closes')
+                                        {{$this->sumUserNumberTracker($user, 'set_closes')}}
                                     </x-table-accordion.td>
                                     <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
-                                        @lang('Closes')
+                                        {{$this->sumUserNumberTracker($user, 'closes')}}
                                     </x-table-accordion.td>
                                 </div>
                             @empty
