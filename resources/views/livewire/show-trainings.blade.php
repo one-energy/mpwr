@@ -5,7 +5,7 @@
                 <button class="
                     py-2 focus:outline-none rounded-l shadow-md w-96
                     @if ($this->filesTabSelected)
-                        bg-green-450 text-white
+                        bg-green-base  text-white
                     @else
                         bg-gray-base  text-gray-800
                     @endif
@@ -15,7 +15,7 @@
                 <button class="
                     py-2 focus:outline-none rounded-r shadow-md w-96
                     @if ($this->trainingTabSelected)
-                        bg-green-450 text-white
+                        bg-green-base  text-white
                     @else
                         bg-gray-base  text-gray-800
                     @endif

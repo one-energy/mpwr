@@ -4,7 +4,7 @@
             <button class="
                 py-2 focus:outline-none rounded-l shadow-md w-96
                 @if ($this->filesTabSelected)
-                    bg-green-450 text-white
+                    bg-green-base text-white
                 @else
                     bg-gray-base  text-gray-800
                 @endif
@@ -14,7 +14,7 @@
             <button class="
                 py-2 focus:outline-none rounded-r shadow-md w-96
                 @if ($this->trainingTabSelected)
-                    bg-green-450 text-white
+                    bg-green-base text-white
                 @else
                     bg-gray-base  text-gray-800
                 @endif
@@ -76,7 +76,7 @@
                 <div class="flex justify-center lg:justify-end mb-3.5 lg:mr-6">
                     @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
                         <div class="mr-4" x-data="{ 'showSectionModal': false }" @keydown.escape="showSectionModal = false" x-cloak>
-                            <button class="bg-green-450 text-white focus:outline-none font-medium text-sm rounded shadow-md px-4 md:px-5 py-2.5" @click="showSectionModal = true">
+                            <button class="bg-green-base text-white focus:outline-none font-medium text-sm rounded shadow-md px-4 md:px-5 py-2.5" @click="showSectionModal = true">
                                 Add Section
                             </button>
                             <div x-show="showSectionModal" wire:loading.remove class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center z-20">
@@ -119,7 +119,7 @@
                         </div>
                         @if(!$contents)
                             <div class="col-span-1" x-data="{ 'showContentModal': false }" @keydown.escape="showContentModal = false" x-cloak>
-                                <button class="bg-green-450 text-white focus:outline-none font-medium text-sm rounded shadow-md px-4 md:px-5 py-2.5" @click="showContentModal = true">
+                                <button class="bg-green-base text-white focus:outline-none font-medium text-sm rounded shadow-md px-4 md:px-5 py-2.5" @click="showContentModal = true">
                                     Add Section
                                 </button>
                                 <div x-show="showContentModal" wire:loading.remove class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center z-20">
@@ -164,7 +164,7 @@
                         @endif
                         @if($contents)
                             <button
-                                class="bg-green-450  text-white font-medium text-sm rounded shadow-md px-4 md:px-5 py-2.5 focus:outline-none"
+                                class="bg-green-base  text-white font-medium text-sm rounded shadow-md px-4 md:px-5 py-2.5 focus:outline-none"
                                 wire:click="$set('showAddContentModal', true)"
                             >
                                 {{ $this->filesTabSelected ? 'Add File' : 'Add Content' }}
@@ -329,7 +329,7 @@
             return this.selectedTab === 'file';
         },
         get activeTabColors() {
-            return 'bg-green-450 text-white';
+            return 'bg-green-base text-white';
         },
         get inactiveTabColors() {
             return 'bg-gray-300 text-gray-800';
