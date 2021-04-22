@@ -1,7 +1,8 @@
-@props(['namedRoute'])
+@props(['namedRoute', 'meta' => []])
 
 <div>
     <div x-data="initDropFileComponent()">
+        <textarea hidden x-ref="meta">@json($meta)</textarea>
         <div class="flex flex-col flex-grow mb-3 border-gray-300  border-2 border-dashed rounded-md">
             <div id="FileUpload" class="block w-full py-2 px-3 relative bg-white appearance-none cursor-pointer">
                 <input type="file" multiple accept="image/*,application/pdf" name="inputFiles"
@@ -47,7 +48,9 @@
         const M_SIZE     = 1000000;
         const K_SIZE     = 1000;
         const UPLOAD_URL = '{{ $namedRoute }}';
-        function initDropFileComponent (){
+
+        function initDropFileComponent() {
+
             return {
                 files: [],
                 uploadedFiles: [],
@@ -78,34 +81,31 @@
                      ? this.uploadedFiles.indexOf(listedFile.name) >= 0
                      : false;
                 },
-                saveFiles() {
+                async saveFiles() {
                     if(this.files.length === 0) {
-                        window.$app.alert({title:"Nothing to upload", color:"green"});
+                        window.$app.alert({ title: 'Nothing to upload', color: 'green' });
                         return;
                     }
 
                     const formData = new FormData();
+                    const metadata = JSON.parse(this.$refs.meta.value);
 
-                    this.files.forEach((file, index) => {
-                        formData.append(`files[${index}]`, file);
-                    });
-                    fetch(UPLOAD_URL, {
-                        method: 'post',
-                        headers: {
-                            'X-CSRF-TOKEN': this.token
-                        },
-                        body: formData,
-                    }).then((res) => {
-                        if (res.ok) {
-                            window.$app.alert({title:"Your files have been uploaded", color:"green"});
-                            window.Livewire.emit('filesUploaded');
-                            this.files = [];
-                            return res.json();
-                        }
+                    Object.keys(metadata).map(key => formData.append(`meta[${key}]`, metadata[key]))
+                    this.files.forEach((file, index) => formData.append(`files[${index}]`, file));
 
-                        window.$app.alert({title:"there is a problem with your upload"})
-                        return false;
-                    });
+                    try {
+                        await axios.post(UPLOAD_URL, formData, {
+                            headers: {
+                                'X-CSRF-TOKEN': this.token,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        window.$app.alert({ title:'Your files have been uploaded', color:'green' });
+                        window.Livewire.emit('filesUploaded');
+                        this.files = [];
+                    } catch (error) {
+                        window.$app.alert({ title:'There is a problem with your upload' })
+                    }
                 }
             }
         }
