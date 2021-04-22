@@ -141,10 +141,17 @@
                                         @lang('Your Profile')
                                     </a>
 
-                                    <button type="submit" form="form-sign-out"
-                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
-                                        @lang('Logout')
-                                    </button>
+                                    @impersonating()
+                                        <a href="{{ route('impersonate.leave') }}"
+                                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            @lang('Back to My Account')
+                                        </a>
+                                    @else
+                                        <button type="submit" form="form-sign-out"
+                                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
+                                            @lang('Logout')
+                                        </button>
+                                    @endImpersonating
                                 </div>
                             </div>
                         </div>
