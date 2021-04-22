@@ -23,6 +23,8 @@ class NumberTrackerDetail extends Component
 
     public $period = 'd';
 
+    private object $numberTrackerTotal;
+
     public $numbersTracked = [];
 
     public $offices = [];
@@ -51,9 +53,27 @@ class NumberTrackerDetail extends Component
 
     public string $selectedPill = 'hours';
 
+    protected $listeners = ['sumTotalNumbers'];
+
     public function mount()
     {
         $this->dateSelected = date('Y-m-d', time());
+        $this->numberTrackerTotal = (object)[
+            'doors'         => null,
+            'hours'         => null,
+            'sets'          => null,
+            'setSits'      => null,
+            'sits'          => null,
+            'setCloses'    => null,
+            'closes'        => null,
+            'doorsLast'     => null,
+            'hoursLast'     => null,
+            'setsLast'      => null,
+            'setSitsLast'   => null,
+            'sitsLast'      => null,
+            'setClosesLast' => null,
+            'closesLast'    => null
+        ];
 
         $this->getOffices();
         $this->getRegions();
@@ -335,5 +355,43 @@ class NumberTrackerDetail extends Component
         }
 
         return $rawQuery;
+    }
+
+    public function getDps()
+    {
+        return $this->numberTrackerTotal?->sets > 0 ? number_format($this->numberTrackerTotal->doors / $this->numberTrackerTotal->sets, 2) : '-';
+    }
+
+    public function getHps()
+    {
+        return $this->numberTrackerTotal?->sets > 0 ? number_format($this->numberTrackerTotal->hours / $this->numberTrackerTotal->sets, 2) : '-';
+    }
+
+    public function getSitRatio()
+    {
+        return $this->numberTrackerTotal?->sets > 0 ? number_format(($this->numberTrackerTotal->sits + $this->numberTrackerTotal->setSits) / $this->numberTrackerTotal->sets, 2) : '-';
+    }
+
+    public function getCloseRatio()
+    {
+        return $this->numberTrackerTotal->sits + $this->numberTrackerTotal->setSits > 0 ?
+            number_format(($this->numberTrackerTotal->setCloses + $this->numberTrackerTotal->closes) /
+                            ($this->numberTrackerTotal->sits + $this->numberTrackerTotal->setSits), 2) : '-';
+    }
+
+    public function getNumberTrackerSumOf($property)
+    {
+        return  $this->numberTrackerTotal->$property ?? 0;
+    }
+
+    public function getNumberTrackerDifferenceToLasNumbersOf($property)
+    {
+        $propertyLast = $property . 'Last';
+        return  $this->numberTrackerTotal->$property - $this->numberTrackerTotal->$propertyLast;
+    }
+
+    public function sumTotalNumbers($total)
+    {
+        $this->numberTrackerTotal = (object) $total;
     }
 }

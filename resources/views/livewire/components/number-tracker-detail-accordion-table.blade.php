@@ -1,4 +1,4 @@
-<div>
+<div x-data="initAccordion()" x-init="[bootstrap()]">
     <x-table-accordion class="overflow-x-auto">
         <x-slot name="header">
             <x-table-accordion.th-searchable class="table-cell" by="deparmtent" sortedBy="$sortBy"></x-table-accordion.th-searchable>
@@ -136,3 +136,15 @@
         </x-slot>
     </x-table-accordion>
 </div>
+
+@push('scripts')
+    <script>
+        function initAccordion() {
+            return {
+                bootstrap () {
+                    window.livewire.emit('sumTotalNumbers', @json($totals))
+                }
+            }
+        }
+    </script>
+@endpush
