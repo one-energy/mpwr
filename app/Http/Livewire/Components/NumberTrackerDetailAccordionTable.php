@@ -90,45 +90,36 @@ class NumberTrackerDetailAccordionTable extends Component
         $this->selected = $this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['users'][$userIndex]['selected'];
     }
 
-    public function sumRegionNumberTracker($region, $filterBySelected = false)
+    public function sumRegionNumberTracker($region, $field, $filterBySelected = false)
     {
         $sum = 0;
         $region = (object) $region;
-        if ($region->selected || ($region->selected && !$filterBySelected)) {
+        if ($region->selected || !$filterBySelected) {
             $collectOffice = $this->collectOffices($region);
-            $collectOffice = $collectOffice->map(function ($office) {
-                $office = (object) $office;
-                $office->users = $this->collectUsers($office);
-                $office->users->map(function ($user) {
-                    $user = (object) $user;
-                    $user->daily_numbers = $this->collectDailyNumbers($user);
-                    return $user;
-                });
-                return $office;
-            });
-            $sum = $collectOffice->sum(function ($office) use ($filterBySelected) {
-                return $this->sumOfficesNumberTracker($office, $filterBySelected);
+            $sum = $collectOffice->sum(function ($office) use ($filterBySelected, $field) {
+                return $this->sumOfficeNumberTracker($office, $field, $filterBySelected);
             });
         }
         return $sum;
     }
 
-    public function sumOfficesNumberTracker($office, $filterBySelected = false)
+    public function sumOfficeNumberTracker($office, $field, $filterBySelected = false)
     {
         $office = (object) $office;
-        if ($office->selected || ($office->selected && !$filterBySelected)) {
-            return $office->users->sum(function ($user) use ($filterBySelected) {
-               return $this->sumUsersNumberTracker($user,$filterBySelected);
+        if ($office->selected || !$filterBySelected) {
+            $office->users = $this->collectUsers($office);
+            return $office->users->sum(function ($user) use ($filterBySelected, $field,) {
+               return $this->sumUserNumberTracker($user, $field, $filterBySelected);
             });
         }
     }
 
-    public function sumUsersNumberTracker($user, $filterBySelected = false)
+    public function sumUserNumberTracker($user, $field, $filterBySelected = false)
     {
         $user = (object) $user;
         $user->daily_numbers = collect($user->daily_numbers);
-        if ($user->selected || ($user->selected && !$filterBySelected)) {
-            return $user->daily_numbers->sum('doors');
+        if ($user->selected || !$filterBySelected) {
+            return $user->daily_numbers->sum($field,);
         }
     }
 

@@ -36,25 +36,25 @@
                         </div>
                     </x-table-accordion.td-arrow>
                     <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
-                        {{$this->sumRegionNumberTracker($region)}}
+                        {{$this->sumRegionNumberTracker($region, 'doors')}}
                     </x-table-accordion.td>
                     <x-table-accordion.td class="table-cell" by="hours" sortedBy="$sortBy">
-                        @lang('Hours')
+                        {{$this->sumRegionNumberTracker($region, 'hours')}}
                     </x-table-accordion.td>
                     <x-table-accordion.td class="table-cell" by="sets" sortedBy="$sortBy">
-                        @lang('Sets')
+                        {{$this->sumRegionNumberTracker($region, 'sets')}}
                     </x-table-accordion.td>
                     <x-table-accordion.td class="table-cell" by="set_sits" sortedBy="$sortBy">
-                        @lang('Set Sits')
+                        {{$this->sumRegionNumberTracker($region, 'set_sits')}}
                     </x-table-accordion.td>
                     <x-table-accordion.td class="table-cell" by="sits" sortedBy="$sortBy">
-                        @lang('Sits')
+                        {{$this->sumRegionNumberTracker($region, 'sits')}}
                     </x-table-accordion.td>
                     <x-table-accordion.td class="table-cell" by="set_closes" sortedBy="$sortBy">
-                        @lang('Set Closes')
+                        {{$this->sumRegionNumberTracker($region, 'set_closes')}}
                     </x-table-accordion.td>
                     <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
-                        @lang('Closes')
+                        {{$this->sumRegionNumberTracker($region, 'closes')}}
                     </x-table-accordion.td>
                 </div>
                 @if($region['itsOpen'])
@@ -69,25 +69,25 @@
                                 </div>
                             </x-table-accordion.td-arrow>
                             <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
-                                @lang('Doors')
+                                {{$this->sumOfficeNumberTracker($office, 'doors')}}
                             </x-table-accordion.td>
                             <x-table-accordion.td class="table-cell" by="hours" sortedBy="$sortBy">
-                                @lang('Hours')
+                                {{$this->sumOfficeNumberTracker($office, 'hours')}}
                             </x-table-accordion.td>
                             <x-table-accordion.td class="table-cell" by="sets" sortedBy="$sortBy">
-                                @lang('Sets')
+                                {{$this->sumOfficeNumberTracker($office, 'sets')}}
                             </x-table-accordion.td>
                             <x-table-accordion.td class="table-cell" by="set_sits" sortedBy="$sortBy">
-                                @lang('Set Sits')
+                                {{$this->sumOfficeNumberTracker($office, 'set_sits')}}
                             </x-table-accordion.td>
                             <x-table-accordion.td class="table-cell" by="sits" sortedBy="$sortBy">
-                                @lang('Sits')
+                                {{$this->sumOfficeNumberTracker($office, 'sits')}}
                             </x-table-accordion.td>
                             <x-table-accordion.td class="table-cell" by="set_closes" sortedBy="$sortBy">
-                                @lang('Set Closes')
+                                {{$this->sumOfficeNumberTracker($office, 'set_closes')}}
                             </x-table-accordion.td>
                             <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
-                                @lang('Closes')
+                                {{$this->sumOfficeNumberTracker($office, 'closes')}}
                             </x-table-accordion.td>
                         </div>
                         @if($office['itsOpen'])
@@ -101,25 +101,25 @@
                                         </div>
                                     </x-table-accordion.td>
                                     <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
-                                        @lang('Doors')
+                                        {{$this->sumUserNumberTracker($user, 'doors')}}
                                     </x-table-accordion.td>
                                     <x-table-accordion.td class="table-cell" by="hours" sortedBy="$sortBy">
-                                        @lang('Hours')
+                                        {{$this->sumUserNumberTracker($user, 'hours')}}
                                     </x-table-accordion.td>
                                     <x-table-accordion.td class="table-cell" by="sets" sortedBy="$sortBy">
-                                        @lang('Sets')
+                                        {{$this->sumUserNumberTracker($user, 'sets')}}
                                     </x-table-accordion.td>
                                     <x-table-accordion.td class="table-cell" by="set_sits" sortedBy="$sortBy">
-                                        @lang('Set Sits')
+                                        {{$this->sumUserNumberTracker($user, 'set_sits')}}
                                     </x-table-accordion.td>
                                     <x-table-accordion.td class="table-cell" by="sits" sortedBy="$sortBy">
-                                        @lang('Sits')
+                                        {{$this->sumUserNumberTracker($user, 'sits')}}
                                     </x-table-accordion.td>
                                     <x-table-accordion.td class="table-cell" by="set_closes" sortedBy="$sortBy">
-                                        @lang('Set Closes')
+                                        {{$this->sumUserNumberTracker($user, 'set_closes')}}
                                     </x-table-accordion.td>
                                     <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
-                                        @lang('Closes')
+                                        {{$this->sumUserNumberTracker($user, 'closes')}}
                                     </x-table-accordion.td>
                                 </div>
                             @empty
