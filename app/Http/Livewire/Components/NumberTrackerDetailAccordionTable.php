@@ -103,7 +103,7 @@ class NumberTrackerDetailAccordionTable extends Component
     }
 
     public function sumTotal(){
-        $this->emit('loadingSumNumberTracker');
+        $this->dispatchBrowserEvent('loading-number-tracker');
         $regions = collect($this->itsOpenRegions);
         $this->totals = [
             'doors'         => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'doors', true)),
@@ -121,6 +121,7 @@ class NumberTrackerDetailAccordionTable extends Component
             'setClosesLast' => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'set_closes', true)),
             'closesLast'    => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'closes', true)),
         ];
+        $this->dispatchBrowserEvent('endloading-number-tracker');
         $this->emit('sumTotalNumbers', $this->totals);
     }
 
@@ -160,6 +161,51 @@ class NumberTrackerDetailAccordionTable extends Component
     public function getCollectionOf($array)
     {
         return collect($array)->map(fn ($element) => $element);
+    }
+
+    public function getDps()
+    {
+        if(isset($this->totals)) {
+            return $this->totals['sets'] > 0 ? number_format($this->totals['doors'] / $this->totals['sets'], 2) : '-';
+        }
+    }
+
+    public function getHps()
+    {
+        if(isset($this->totals)) {
+            return $this->totals['sets'] > 0 ? number_format($this->totals['hours'] / $this->totals['sets'], 2) : '-';
+        }
+    }
+
+    public function getSitRatio()
+    {
+        if(isset($this->totals)) {
+            return $this->totals['sets'] > 0 ? number_format(($this->totals['sits'] + $this->totals['setSits']) / $this->totals['sets'], 2) : '-';
+        }
+    }
+
+    public function getCloseRatio()
+    {
+        if(isset($this->totals)) {
+            return $this->totals['sits'] + $this->totals['setSits'] > 0 ?
+                number_format(($this->totals['setCloses'] + $this->totals['closes']) /
+                                ($this->totals['sits'] + $this->totals['setSits']), 2) : '-';
+        }
+    }
+
+    public function getNumberTrackerSumOf($property)
+    {
+        if(isset($this->totals)) {
+            return  $this->totals[$property] ?? 0;
+        }
+    }
+
+    public function getNumberTrackerDifferenceToLasNumbersOf($property)
+    {
+        $propertyLast = $property . 'Last';
+        if(isset($this->totals)) {
+            return  $this->totals[$property] - $this->totals[$propertyLast];
+        }
     }
 
     public function setDateOrPeriod($date, $period)

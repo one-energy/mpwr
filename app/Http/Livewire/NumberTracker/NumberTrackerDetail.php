@@ -367,51 +367,6 @@ class NumberTrackerDetail extends Component
         return $rawQuery;
     }
 
-    public function getDps()
-    {
-        if(isset($this->numberTrackerTotal)) {
-            return $this->numberTrackerTotal['sets'] > 0 ? number_format($this->numberTrackerTotal['doors'] / $this->numberTrackerTotal['sets'], 2) : '-';
-        }
-    }
-
-    public function getHps()
-    {
-        if(isset($this->numberTrackerTotal)) {
-            return $this->numberTrackerTotal['sets'] > 0 ? number_format($this->numberTrackerTotal['hours'] / $this->numberTrackerTotal['sets'], 2) : '-';
-        }
-    }
-
-    public function getSitRatio()
-    {
-        if(isset($this->numberTrackerTotal)) {
-            return $this->numberTrackerTotal['sets'] > 0 ? number_format(($this->numberTrackerTotal['sits'] + $this->numberTrackerTotal['setSits']) / $this->numberTrackerTotal['sets'], 2) : '-';
-        }
-    }
-
-    public function getCloseRatio()
-    {
-        if(isset($this->numberTrackerTotal)) {
-            return $this->numberTrackerTotal['sits'] + $this->numberTrackerTotal['setSits'] > 0 ?
-                number_format(($this->numberTrackerTotal['setCloses'] + $this->numberTrackerTotal['closes']) /
-                                ($this->numberTrackerTotal['sits'] + $this->numberTrackerTotal['setSits']), 2) : '-';
-        }
-    }
-
-    public function getNumberTrackerSumOf($property)
-    {
-        if(isset($this->numberTrackerTotal)) {
-            return  $this->numberTrackerTotal[$property] ?? 0;
-        }
-    }
-
-    public function getNumberTrackerDifferenceToLasNumbersOf($property)
-    {
-        $propertyLast = $property . 'Last';
-        if(isset($this->numberTrackerTotal)) {
-            return  $this->numberTrackerTotal[$property] - $this->numberTrackerTotal[$propertyLast];
-        }
-    }
-
     public function sumTotalNumbers($total)
     {
         $this->numberTrackerTotal = $total;
