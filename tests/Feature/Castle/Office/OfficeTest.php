@@ -6,8 +6,8 @@ use App\Models\Department;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class OfficeTest extends TestCase
 {
@@ -25,19 +25,19 @@ class OfficeTest extends TestCase
     /** @test */
     public function it_should_list_all_offices()
     {
-        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
-        $department        = Department::factory()->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
+        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
         $regionManager = User::factory()->create([
             'department_id' => $department->id,
-            'role'          => "Region Manager"
+            'role'          => 'Region Manager',
         ]);
 
         $region        = Region::factory()->create([
             'region_manager_id' => $regionManager->id ,
-            'department_id'     => $department->id
+            'department_id'     => $department->id,
         ]);
         $officeManager = User::factory()->create(['role' => 'Office Manager']);
 
@@ -62,11 +62,11 @@ class OfficeTest extends TestCase
     public function it_should_block_the_create_form_for_non_top_level_roles()
     {
         $setter = User::factory()->create([
-            "role" => "Setter"
+            'role' => 'Setter',
         ]);
 
         $department = Department::factory()->create([
-            "department_manager_id" => $setter->id
+            'department_manager_id' => $setter->id,
         ]);
 
         $setter->department_id = $department->id;
@@ -79,11 +79,11 @@ class OfficeTest extends TestCase
         $response->assertStatus(403);
     }
 
-     /** @test */
-     public function it_should_show_the_create_form_for_top_level_roles()
-     {
-        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
-        $department        = Department::factory()->create(["department_manager_id" => $departmentManager->id]);
+    /** @test */
+    public function it_should_show_the_create_form_for_top_level_roles()
+    {
+        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
+        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
@@ -92,13 +92,13 @@ class OfficeTest extends TestCase
         $response = $this->get('castle/offices/create');
         $response->assertStatus(200)
             ->assertViewIs('castle.offices.create');
-     }
+    }
 
     /** @test */
     public function it_should_store_a_new_office()
     {
-        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
-        $department        = Department::factory()->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
+        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
@@ -124,8 +124,8 @@ class OfficeTest extends TestCase
     /** @test */
     public function it_should_require_all_fields_to_store_a_new_office()
     {
-        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
-        $department        = Department::factory()->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
+        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
@@ -150,14 +150,14 @@ class OfficeTest extends TestCase
     /** @test */
     public function it_should_show_the_edit_form_for_top_level_roles()
     {
-        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
-        $department        = Department::factory()->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
+        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
         $region        = Region::factory()->create([
-            'region_manager_id' => $this->user->id,
-            "department_id"      => $department->id
+            'region_manager_id'  => $this->user->id,
+            'department_id'      => $department->id,
         ]);
         $officeManager = User::factory()->create(['role' => 'Office Manager']);
         $office        = Office::factory()->create([
@@ -167,7 +167,7 @@ class OfficeTest extends TestCase
 
         $this->actingAs($departmentManager);
 
-        $response = $this->get('castle/offices/'. $office->id . '/edit');
+        $response = $this->get('castle/offices/' . $office->id . '/edit');
 
         $response->assertStatus(200)
             ->assertViewIs('castle.offices.edit');
@@ -185,7 +185,7 @@ class OfficeTest extends TestCase
             'office_manager_id' => $officeManager->id,
         ]);
 
-        $response = $this->get('castle/offices/'. $office->id .'/edit');
+        $response = $this->get('castle/offices/' . $office->id . '/edit');
 
         $response->assertStatus(403);
     }
@@ -193,8 +193,8 @@ class OfficeTest extends TestCase
     /** @test */
     public function it_should_update_an_office()
     {
-        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
-        $department        = Department::factory()->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
+        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
@@ -217,15 +217,15 @@ class OfficeTest extends TestCase
         $this->assertDatabaseHas('offices',
         [
             'id'   => $office->id,
-            'name' => 'Office Edited'
+            'name' => 'Office Edited',
         ]);
     }
 
     /** @test */
     public function it_should_destroy_an_office()
     {
-        $departmentManager = User::factory()->create(["role" => "Department Manager"]);
-        $department        = Department::factory()->create(["department_manager_id" => $departmentManager->id]);
+        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
+        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
