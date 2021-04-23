@@ -33,12 +33,6 @@ class Region extends Model
 
     protected $fillable = [
         'name',
-        'region_manager_id',
-        'department_id',
-    ];
-
-    protected $fillable = [
-        'name',
         'department_id',
     ];
 
@@ -64,7 +58,8 @@ class Region extends Model
 
     public function managers()
     {
-        return $this->belongsToMany(User::class, 'user_managed_regions');
+        return $this->belongsToMany(User::class, 'user_managed_regions')
+            ->withTimestamps();
     }
 
     public function scopeSearch(Builder $query, $search)
