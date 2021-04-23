@@ -31,6 +31,10 @@ class Department extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $fillable = [
+        'name',
+    ];
+
     public function departmentAdmin()
     {
         return $this->belongsTo(User::class, 'department_manager_id');
@@ -59,6 +63,12 @@ class Department extends Model
     public function incentives()
     {
         return $this->hasMany(Incentive::class);
+    }
+
+    public function managers()
+    {
+        return $this->belongsToMany(User::class, 'user_has_departments')
+            ->withTimestamps();
     }
 
     public function scopeSearch(Builder $query, $search)
