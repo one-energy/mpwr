@@ -34,39 +34,43 @@
                                     selectedRegion = {{ $office->region_id ?? 'null' }};
                          })">
 
-                    <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
-                        <div class="md:col-span-6 col-span-2">
-                            <x-input label="Office Name" name="name" value="{{ $office->name }}"/>
+                    <div class="mt-6 flex flex-col space-y-5">
+                        <div class="flex flex-wrap space-y-5 md:space-x-5 md:space-y-0">
+                            <x-input class="md:flex-1" label="Office Name" name="name" value="{{ $office->name }}"/>
+                            @if(user()->notHaveRoles(['Admin', 'Owner']))
+                                <div class="md:flex-1 @if(user()->hasAnyRole(['Region Manager', 'Office Manager'])) hidden @endif">
+                                    <x-select x-model="selectedRegion" label="Region" name="region_id">
+                                        <template x-if="regions" x-for="region in regions" :key="region.id">
+                                            <option :value="region.id" x-text="region.name"></option>
+                                        </template>
+                                    </x-select>
+                                </div>
+                            @else
+                                <div class="flex-1">
+                                    <x-select x-model="selectedRegion" label="Region" name="region_id">
+                                        <template x-if="regions" x-for="region in regions" :key="region.id">
+                                            <option :value="region.id"
+                                                    x-text="region.department.name + ' - ' + region.name"></option>
+                                        </template>
+                                    </x-select>
+                                </div>
+                            @endif
                         </div>
 
-                        @if(user()->role != "Admin" && user()->role != "Owner" )
-                            <div
-                                class="md:col-span-3 col-span-2 @if(user()->role == 'Region Manager' || user()->role == 'Office Manager') hidden @endif">
-                                <x-select x-model="selectedRegion" label="Region" name="region_id">
-                                    <template x-if="regions" x-for="region in regions" :key="region.id">
-                                        <option :value="region.id" x-text="region.name"></option>
-                                    </template>
-                                </x-select>
+                        <div>
+                            <div class="w-full md:w-5/12 @if(user()->hasRole('Office Manager')) hidden @endif">
+                                <span class="block text-sm font-medium leading-5 text-gray-700 mb-1">Manager</span>
+                                <div class="border-2 border-gray-200 rounded">
+                                    <ul class="space-y-2 p-4">
+                                        @foreach($office->managers as $manager)
+                                            <li>{{ $manager->full_name }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
                             </div>
-                        @else
-                            <div class="md:col-span-3 col-span-2">
-                                <x-select x-model="selectedRegion" label="Region" name="region_id">
-                                    <template x-if="regions" x-for="region in regions" :key="region.id">
-                                        <option :value="region.id"
-                                                x-text="region.department.name + ' - ' + region.name"></option>
-                                    </template>
-                                </x-select>
-                            </div>
-                        @endif
-                        <div class="md:col-span-3 col-span-2 @if(user()->role == 'Office Manager') hidden @endif">
-                            <x-select x-model="selectedManager" label="Manager" name="office_manager_id">
-                                <template x-if="officesManagers" x-for="manager in officesManagers" :key="manager.id">
-                                    <option :value="manager.id"
-                                            x-text="manager.first_name + ' ' + manager.last_name"></option>
-                                </template>
-                            </x-select>
                         </div>
                     </div>
+
                 </div>
                 <div class="mt-4 border-b border-gray-200 py-2 px-8">
                     <div class="flex justify-start">
