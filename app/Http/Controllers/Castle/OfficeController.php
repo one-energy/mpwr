@@ -35,12 +35,12 @@ class OfficeController extends Controller
         $regionsQuery = Region::query()->select('regions.*');
         $usersQuery   = User::query()->whereRole('Office Manager');
 
-        if (user()->role == 'Admin' || user()->role == 'Owner') {
+        if (user()->hasAnyRole([Role::ADMIN, Role::OWNER])) {
             $users   = $usersQuery->get();
             $regions = $regionsQuery->get();
         }
 
-        if (user()->role == 'Department Manager') {
+        if (user()->hasRole(Role::DEPARTMENT_MANAGER)) {
             $regions = $regionsQuery
                 ->join('departments', function ($join) {
                     $join->on('regions.department_id', '=', 'departments.id')
@@ -48,12 +48,15 @@ class OfficeController extends Controller
                 })->get();
             $users   = $usersQuery->whereDepartmentId(user()->department_id)->get();
         }
-        if (user()->role == 'Region Manager') {
+        if (user()->hasRole(Role::REGION_MANAGER)) {
             $regions = $regionsQuery->whereRegionManagerId(user()->id)->get();
             $users   = $usersQuery->whereDepartmentId(user()->department_id)->get();
         }
 
-        return view('castle.offices.create', compact('regions', 'users'));
+        return view('castle.offices.create', [
+            'regions' => $regions,
+            'users'   => $users,
+        ]);
     }
 
     public function store()
@@ -68,7 +71,7 @@ class OfficeController extends Controller
             'office_manager_id.required' => 'The office manager field is required.',
         ]);
 
-        DB::transaction(function () {
+        $office = DB::transaction(function () {
             /** @var Office $office */
             $office = Office::create([
                 'name'      => request()->name,
@@ -76,6 +79,8 @@ class OfficeController extends Controller
             ]);
 
             $office->managers()->attach(request()->office_manager_ids);
+
+            return $office;
         });
 
         alert()
@@ -88,24 +93,24 @@ class OfficeController extends Controller
     public function edit(Office $office)
     {
         $regions = Region::query()
-            ->when(user()->role == 'Department Manager', function (Builder $query) {
-                $query->where('department_id', '=', user()->department_id);
+            ->when(user()->hasRole(Role::DEPARTMENT_MANAGER), function (Builder $query) {
+                $query->where('department_id', user()->department_id);
             })
-            ->when(user()->role == 'Region Manager', function (Builder $query) {
-                $query->where('region_manager_id', '=', user()->id);
+            ->when(user()->hasRole(Role::REGION_MANAGER), function (Builder $query) {
+                $query->where('region_manager_id', user()->id);
             })
-            ->when(user()->role == 'Office Manager', function (Builder $query) use ($office) {
-                $query->where('id', '=', $office->region_id);
+            ->when(user()->hasRole(Role::OFFICE_MANAGER), function (Builder $query) use ($office) {
+                $query->where('id', $office->region_id);
             })
             ->get();
 
         $users = User::query()
-            ->where('department_id', '=', $office->region->department->id)
+            ->where('department_id', $office->region->department->id)
             ->orderBy('first_name')
             ->get();
 
         return view('castle.offices.edit', [
-            'office'  => $office,
+            'office'  => $office->load('managers'),
             'regions' => $regions,
             'users'   => $users,
         ]);
