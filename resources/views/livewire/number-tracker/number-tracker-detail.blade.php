@@ -170,30 +170,34 @@
                     <div class="flex justify-between mt-3">
                         <div class="grid w-full grid-cols-6 row-gap-2 col-gap-1 xl:grid-cols-12 md:col-gap-4">
                             <div class="col-span-2 xl:col-span-2 border-2 border-gray-200 rounded-sm p-3 space-y-3">
-                                <div class="text-base font-semibold uppercase">Doors</div>
-                                <div class="text-xl font-bold">{{$this->getNumberTrackerSumOf('doors')}}</div>
-                                <div class="flex text-xs font-semibold text-green-base">
-                                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('doors') >= 0)
-                                        <x-svg.arrow-up class="text-green-base"/>
-                                    @else
-                                        <x-svg.arrow-down class="text-red-600"/>
-                                    @endif
-                                    <span class="
+                                @if(!$loading)
+                                    <div class="text-base font-semibold uppercase">Doors</div>
+                                    <div class="text-xl font-bold">{{$this->getNumberTrackerSumOf('doors')}}</div>
+                                    <div class="flex text-xs font-semibold text-green-base">
                                         @if($this->getNumberTrackerDifferenceToLasNumbersOf('doors') >= 0)
-                                            text-green-base
+                                            <x-svg.arrow-up class="text-green-base"/>
                                         @else
-                                            text-red-600
+                                            <x-svg.arrow-down class="text-red-600"/>
                                         @endif
-                                        text-base
-                                    ">
-                                        {{$this->getNumberTrackerDifferenceToLasNumbersOf('doors')}}
-                                    </span>
-                                </div>
+                                        <span class="
+                                            @if($this->getNumberTrackerDifferenceToLasNumbersOf('doors') >= 0)
+                                                text-green-base
+                                            @else
+                                                text-red-600
+                                            @endif
+                                            text-base
+                                        ">
+                                            {{$this->getNumberTrackerDifferenceToLasNumbersOf('doors')}}
+                                        </span>
+                                    </div>
+                                @else
+                                    <x-card-pulse-loading/>
+                                @endif
                             </div>
                             <div class="col-span-2 xl:col-span-2 border-2 border-gray-200 rounded-sm p-3 space-y-3" >
-                                <div class="text-base font-semibold text-gray-900 uppercase">Hours</div>
-                                <div class="text-xl font-bold text-gray-900">{{$this->getNumberTrackerSumOf('hours')}}</div>
-                                <div class="flex text-xs font-semibold text-green-base">
+                                <div wire:loading.remove class="text-base font-semibold text-gray-900 uppercase">Hours</div>
+                                <div wire:loading.remove class="text-xl font-bold text-gray-900">{{$this->getNumberTrackerSumOf('hours')}}</div>
+                                <div wire:loading.remove class="flex text-xs font-semibold text-green-base">
                                     @if($this->getNumberTrackerDifferenceToLasNumbersOf('hours') >= 0)
                                         <x-svg.arrow-up class="text-green-base"/>
                                     @else
@@ -210,6 +214,7 @@
                                         {{$this->getNumberTrackerDifferenceToLasNumbersOf('hours')}}
                                     </span>
                                 </div>
+                                <x-card-pulse-loading wire:loading.flex/>
                             </div>
                             <div class="col-span-2 xl:col-span-2 border-2 border-gray-200 rounded-sm p-3 space-y-3" >
                                 <div class="text-base font-semibold text-gray-900 uppercase">Sets</div>
@@ -371,7 +376,7 @@
                                 <div class="overflow-x-auto">
                                     <div class="inline-block min-w-full overflow-hidden align-middle">
                                         @if(count($regions))
-                                            <livewire:components.number-tracker-detail-accordion-table/>
+                                            <livewire:components.number-tracker-detail-accordion-table :period="$period" :selectedDate="$dateSelected" wire:key="now()"/>
                                         @else
                                             <div class="h-96 ">
                                                 <div class="flex justify-center align-middle">

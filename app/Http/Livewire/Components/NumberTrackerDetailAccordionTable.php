@@ -12,42 +12,26 @@ class NumberTrackerDetailAccordionTable extends Component
 {
     use FullTable;
 
-    public Collection $regions;
-
     public array $itsOpenRegions;
 
     public $totals;
 
-    public Carbon $startDate;
+    public string $period;
 
-    public Carbon $endDate;
+    public $selectedDate;
 
-    protected $listeners = [
-        'ronaldo' => 'teste'
-    ];
+    protected $listeners = ['setDateOrPeriod'];
 
     public function mount()
     {
-        $query = Region::with('offices.users.dailyNumbers');
 
-        if (user()->hasAnyRole(['Admin', 'Owner'])) {
-            $this->regions = $query->get();
-        } else {
-            $this->regions = $query->whereDepartmentId(user()->department_id ?? 0)->get();
-        }
-
-        $this->addItsOpen();
     }
 
     public function render()
     {
+        $this->addItsOpen();
         $this->sumTotal();
         return view('livewire.components.number-tracker-detail-accordion-table');
-    }
-
-    public function teste()
-    {
-        dd('teste');
     }
 
     public function sortBy()
@@ -71,6 +55,20 @@ class NumberTrackerDetailAccordionTable extends Component
         })->toArray();
     }
 
+    public function getRegionsProperty()
+    {
+        $query = Region::with(['offices.users.dailyNumbers' => function ($dailynumbersQuery) {
+            $dailynumbersQuery->inPeriod($this->period, new Carbon($this->selectedDate));
+        }])->whereHas('offices.users.dailyNumbers', function ($query) {
+            $query->inPeriod($this->period, new Carbon($this->selectedDate));
+        });
+
+        if (user()->hasAnyRole(['Admin', 'Owner'])) {
+            return $query->get();
+        }
+        return $query->whereDepartmentId(user()->department_id ?? 0)->get();
+    }
+
     public function collapseRegion( int $regionIndex)
     {
         $this->itsOpenRegions[$regionIndex]['itsOpen'] = !$this->itsOpenRegions[$regionIndex]['itsOpen'];
@@ -84,28 +82,32 @@ class NumberTrackerDetailAccordionTable extends Component
     public function selectRegion($regionIndex)
     {
         $this->itsOpenRegions[$regionIndex]['selected'] = !$this->itsOpenRegions[$regionIndex]['selected'];
+
     }
 
     public function selectOffice($regionIndex, $officeIndex)
     {
         $this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['selected'] = !$this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['selected'];
+
     }
 
     public function selectUser($regionIndex, $officeIndex, $userIndex)
     {
         $this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['users'][$userIndex]['selected'] = !$this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['users'][$userIndex]['selected'];
         $this->selected = $this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['users'][$userIndex]['selected'];
+
     }
 
     public function sumTotal(){
+        $this->emit('loadingSumNumberTracker');
         $regions = collect($this->itsOpenRegions);
         $this->totals = [
             'doors'         => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'doors', true)),
             'hours'         => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'hours', true)),
             'sets'          => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'sets', true)),
-            'setSits'      => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'set_sits', true)),
+            'setSits'       => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'set_sits', true)),
             'sits'          => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'sits', true)),
-            'setCloses'    => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'set_closes', true)),
+            'setCloses'     => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'set_closes', true)),
             'closes'        => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'closes', true)),
             'doorsLast'     => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'doors', true)),
             'hoursLast'     => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'hours', true)),
@@ -154,5 +156,11 @@ class NumberTrackerDetailAccordionTable extends Component
     public function getCollectionOf($array)
     {
         return collect($array)->map(fn ($element) => $element);
+    }
+
+    public function setDateOrPeriod($date, $period)
+    {
+        $this->selectedDate = $date;
+        $this->period       = $period;
     }
 }

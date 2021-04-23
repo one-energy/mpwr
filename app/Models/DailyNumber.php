@@ -61,7 +61,7 @@ class DailyNumber extends Model
             $query->whereDate('date', $date);
         }
 
-        if ($period === 'month') {
+        if ($period === 'm') {
             $query->whereMonth('date', '=', $date);
         }
 

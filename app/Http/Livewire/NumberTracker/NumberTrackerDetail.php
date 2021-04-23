@@ -3,7 +3,6 @@
 namespace App\Http\Livewire\NumberTracker;
 
 use App\Models\DailyNumber;
-use App\Models\Department;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
@@ -13,6 +12,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Component;
+use phpDocumentor\Reflection\Types\Boolean;
 
 /**
  * @property-read array $pills
@@ -23,7 +23,7 @@ class NumberTrackerDetail extends Component
 
     public $period = 'd';
 
-    private object $numberTrackerTotal;
+    public $numberTrackerTotal;
 
     public $numbersTracked = [];
 
@@ -53,18 +53,19 @@ class NumberTrackerDetail extends Component
 
     public string $selectedPill = 'hours';
 
-    protected $listeners = ['sumTotalNumbers'];
+    public bool $loading = false;
+
+    protected $listeners = ['sumTotalNumbers', 'loadingSumNumberTracker'];
 
     public function mount()
     {
-        $this->dateSelected = date('Y-m-d', time());
-        $this->numberTrackerTotal = (object)[
+        $this->numberTrackerTotal = [
             'doors'         => null,
             'hours'         => null,
             'sets'          => null,
-            'setSits'      => null,
+            'setSits'       => null,
             'sits'          => null,
-            'setCloses'    => null,
+            'setCloses'     => null,
             'closes'        => null,
             'doorsLast'     => null,
             'hoursLast'     => null,
@@ -74,6 +75,7 @@ class NumberTrackerDetail extends Component
             'setClosesLast' => null,
             'closesLast'    => null
         ];
+        $this->dateSelected = date('Y-m-d', time());
 
         $this->getOffices();
         $this->getRegions();
@@ -103,6 +105,7 @@ class NumberTrackerDetail extends Component
     public function setPeriod($p)
     {
         $this->period = $p;
+        $this->emit('setDateOrPeriod', $this->dateSelected, $this->period);
     }
 
     public function setFilterBy($filter)
@@ -113,6 +116,7 @@ class NumberTrackerDetail extends Component
     public function setDate()
     {
         $this->dateSelected = date('Y-m-d', strtotime($this->date));
+        $this->emit('setDateOrPeriod', $this->dateSelected, $this->period);
     }
 
     public function updateSearch()
@@ -359,39 +363,57 @@ class NumberTrackerDetail extends Component
 
     public function getDps()
     {
-        return $this->numberTrackerTotal?->sets > 0 ? number_format($this->numberTrackerTotal->doors / $this->numberTrackerTotal->sets, 2) : '-';
+        if(isset($this->numberTrackerTotal)) {
+            return $this->numberTrackerTotal['sets'] > 0 ? number_format($this->numberTrackerTotal['doors'] / $this->numberTrackerTotal['sets'], 2) : '-';
+        }
     }
 
     public function getHps()
     {
-        return $this->numberTrackerTotal?->sets > 0 ? number_format($this->numberTrackerTotal->hours / $this->numberTrackerTotal->sets, 2) : '-';
+        if(isset($this->numberTrackerTotal)) {
+            return $this->numberTrackerTotal['sets'] > 0 ? number_format($this->numberTrackerTotal['hours'] / $this->numberTrackerTotal['sets'], 2) : '-';
+        }
     }
 
     public function getSitRatio()
     {
-        return $this->numberTrackerTotal?->sets > 0 ? number_format(($this->numberTrackerTotal->sits + $this->numberTrackerTotal->setSits) / $this->numberTrackerTotal->sets, 2) : '-';
+        if(isset($this->numberTrackerTotal)) {
+            return $this->numberTrackerTotal['sets'] > 0 ? number_format(($this->numberTrackerTotal['sits'] + $this->numberTrackerTotal['setSits']) / $this->numberTrackerTotal['sets'], 2) : '-';
+        }
     }
 
     public function getCloseRatio()
     {
-        return $this->numberTrackerTotal->sits + $this->numberTrackerTotal->setSits > 0 ?
-            number_format(($this->numberTrackerTotal->setCloses + $this->numberTrackerTotal->closes) /
-                            ($this->numberTrackerTotal->sits + $this->numberTrackerTotal->setSits), 2) : '-';
+        if(isset($this->numberTrackerTotal)) {
+            return $this->numberTrackerTotal['sits'] + $this->numberTrackerTotal['setSits'] > 0 ?
+                number_format(($this->numberTrackerTotal['setCloses'] + $this->numberTrackerTotal['closes']) /
+                                ($this->numberTrackerTotal['sits'] + $this->numberTrackerTotal['setSits']), 2) : '-';
+        }
     }
 
     public function getNumberTrackerSumOf($property)
     {
-        return  $this->numberTrackerTotal->$property ?? 0;
+        if(isset($this->numberTrackerTotal)) {
+            return  $this->numberTrackerTotal[$property] ?? 0;
+        }
     }
 
     public function getNumberTrackerDifferenceToLasNumbersOf($property)
     {
         $propertyLast = $property . 'Last';
-        return  $this->numberTrackerTotal->$property - $this->numberTrackerTotal->$propertyLast;
+        if(isset($this->numberTrackerTotal)) {
+            return  $this->numberTrackerTotal[$property] - $this->numberTrackerTotal[$propertyLast];
+        }
     }
 
     public function sumTotalNumbers($total)
     {
-        $this->numberTrackerTotal = (object) $total;
+        $this->numberTrackerTotal = $total;
+        $this->loading = false;
+    }
+
+    public function loadingSumNumberTracker()
+    {
+        $this->loading = true;
     }
 }
