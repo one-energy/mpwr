@@ -37,6 +37,11 @@ class Region extends Model
         'department_id',
     ];
 
+    protected $fillable = [
+        'name',
+        'department_id',
+    ];
+
     public function regionManager()
     {
         return $this->belongsTo(User::class, 'region_manager_id');
@@ -55,6 +60,11 @@ class Region extends Model
     public function trainingPageSections()
     {
         return $this->hasMany(TrainingPageSection::class);
+    }
+
+    public function managers()
+    {
+        return $this->belongsToMany(User::class, 'user_managed_regions');
     }
 
     public function scopeSearch(Builder $query, $search)
