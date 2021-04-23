@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
+use App\Role\Role;
+use App\Rules\UserHasRole;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class OfficeController extends Controller
 {
@@ -55,21 +58,25 @@ class OfficeController extends Controller
 
     public function store()
     {
-        $validated = request()->validate([
-            'name'              => 'required|string|min:3|max:255',
-            'region_id'         => 'required',
-            'office_manager_id' => 'required',
+        request()->validate([
+            'name'                 => 'required|string|min:3|max:255',
+            'region_id'            => 'required|exists:regions,id',
+            'office_manager_ids'   => 'required|array',
+            'office_manager_ids.*' => ['required', 'exists:users,id', new UserHasRole(Role::OFFICE_MANAGER)],
         ], [
             'region_id.required'         => 'The region field is required.',
             'office_manager_id.required' => 'The office manager field is required.',
         ]);
 
-        $office                    = new Office();
-        $office->name              = $validated['name'];
-        $office->region_id         = $validated['region_id'];
-        $office->office_manager_id = $validated['office_manager_id'];
+        DB::transaction(function () {
+            /** @var Office $office */
+            $office = Office::create([
+                'name'      => request()->name,
+                'region_id' => request()->region_id,
+            ]);
 
-        $office->save();
+            $office->managers()->attach(request()->office_manager_ids);
+        });
 
         alert()
             ->withTitle(__('Office created!'))
