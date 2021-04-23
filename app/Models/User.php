@@ -274,6 +274,12 @@ class User extends Authenticatable implements MustVerifyEmail
             ->withTimestamps();
     }
 
+    public function offices()
+    {
+        return $this->belongsToMany(Office::class, 'user_managed_offices')
+            ->withTimestamps();
+    }
+
     public function changePassword($new)
     {
         $this->password = Hash::make($new);
