@@ -23,26 +23,6 @@ class DepartmentTest extends TestCase
     }
 
     /** @test */
-    public function it_should_store_a_new_department()
-    {
-        $admin = User::factory()->create(['role' => 'Admin']);
-
-        $data = [
-            'name'                  => 'Department',
-            'department_manager_id' => $admin->id,
-        ];
-
-        $this->actingAs($admin);
-
-        $response = $this->post(route('castle.departments.store'), $data);
-
-        $created = Department::where('name', $data['name'])->first();
-
-        $response->assertStatus(302)
-            ->assertRedirect(route('castle.departments.index'));
-    }
-
-    /** @test */
     public function it_should_list_all_departments()
     {
         $admin = User::factory()->create(['role' => 'Admin']);
