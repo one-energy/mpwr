@@ -22,32 +22,6 @@ class RegionTest extends TestCase
     }
 
     /** @test */
-    public function it_should_store_a_new_region()
-    {
-        $regionManager = User::factory()->create(['role' => 'Region Manager']);
-
-        $departmentManager = User::factory()->create(['role' => 'Department Manager']);
-
-        $department = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-
-        $regionManager->department_id = $department->id;
-        $regionManager->save();
-
-        $data = [
-            'name'              => 'Region',
-            'region_manager_id' => $regionManager->id,
-            'department_id'     => $department->id,
-        ];
-
-        $this->actingAs($regionManager);
-
-        $response = $this->post(route('castle.regions.store'), $data);
-
-        $response->assertStatus(302)
-            ->assertRedirect(route('castle.regions.index'));
-    }
-
-    /** @test */
     public function it_should_list_all_regions()
     {
         $departmentManager = User::factory()->create(['role' => 'Department Manager']);
@@ -56,11 +30,11 @@ class RegionTest extends TestCase
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
-        $regionManager     = User::factory()->create([
+        $regionManager = User::factory()->create([
             'role'          => 'Region Manager',
             'department_id' => $department->id,
         ]);
-        $regions           = Region::factory()->count(6)->create([
+        $regions       = Region::factory()->count(6)->create([
             'region_manager_id' => $regionManager->id,
             'department_id'     => $department->id,
         ]);
@@ -85,8 +59,8 @@ class RegionTest extends TestCase
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
-        $regionManager     = User::factory()->create(['role' => 'Region Manager']);
-        $region            = Region::factory()->create([
+        $regionManager = User::factory()->create(['role' => 'Region Manager']);
+        $region        = Region::factory()->create([
             'name'              => 'New Region',
             'region_manager_id' => $regionManager->id,
             'department_id'     => $department->id,
@@ -139,12 +113,13 @@ class RegionTest extends TestCase
         $departmentManager = $setter = User::factory()->create([
             'role' => 'Department Manager',
         ]);
+
         $setter = User::factory()->create([
             'role' => 'Setter',
         ]);
 
         $department = Department::factory()->create([
-            'department_manager_id' => $departmentManager ->id,
+            'department_manager_id' => $departmentManager->id,
         ]);
 
         $departmentManager->department_id = $department->id;
@@ -176,36 +151,7 @@ class RegionTest extends TestCase
         $response = $this->get('castle/regions/create');
 
         $response->assertStatus(200)
-           ->assertViewIs('castle.regions.create');
-    }
-
-    /** @test */
-    public function it_should_require_all_fields_to_store_a_new_region()
-    {
-        $departmentManager = User::factory()->create([
-            'role' => 'Department Manager',
-        ]);
-
-        $department = Department::factory()->create([
-            'department_manager_id' => $departmentManager->id,
-        ]);
-
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
-
-        $this->actingAs($departmentManager);
-
-        $data = [
-            'name'              => '',
-            'region_manager_id' => '',
-        ];
-
-        $response = $this->post(route('castle.regions.store'), $data);
-        $response->assertSessionHasErrors(
-        [
-            'name',
-            'region_manager_id',
-        ]);
+            ->assertViewIs('castle.regions.create');
     }
 
     /** @test */
