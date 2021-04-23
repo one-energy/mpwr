@@ -4,10 +4,9 @@ namespace Tests\Feature\Castle\Region;
 
 use App\Models\Department;
 use App\Models\Region;
-use App\Models\TrainingPageSection;
 use App\Models\User;
+use App\Role\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -15,231 +14,143 @@ class StoreRegionTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->user = User::factory()->create(['master' => true]);
-
-        $this->actingAs($this->user);
-    }
-
     /** @test */
-    public function it_should_store_a_new_region()
+    public function it_should_store_a_region()
     {
-        ['regionManager' => $regionManager, 'department' => $department] = $this->makeSetup();
+        $john = User::factory()->create(['role' => Role::ADMIN]);
 
-        $data = [
-            'name'              => 'Region',
-            'region_manager_id' => $regionManager->id,
-            'department_id'     => $department->id,
-        ];
+        $data = $this->makeData();
+
+        $this->assertDatabaseCount('regions', 0);
+        $this->assertDatabaseCount('user_managed_regions', 0);
 
         $this
-            ->actingAs($regionManager)
-            ->post(route('castle.regions.store'), $data)
-            ->assertSessionHasNoErrors()
-            ->assertStatus(Response::HTTP_FOUND)
-            ->assertRedirect(route('castle.regions.index'));
+            ->actingAs($john)
+            ->post(route('castle.regions.store', $data))
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseCount('regions', 1);
+        $this->assertDatabaseCount('user_managed_regions', 2);
+
+        /** @var Region $createdRegion */
+        $createdRegion = Region::where('name', $data['name'])->first();
 
         $this->assertDatabaseHas('regions', [
-            'name'              => 'Region',
-            'region_manager_id' => $regionManager->id,
-            'department_id'     => $department->id,
-        ]);
-    }
-
-    /** @test */
-    public function it_should_create_a_training_page_section_after_create_a_region()
-    {
-        ['regionManager' => $regionManager, 'department' => $department] = $this->makeSetup();
-
-        $data = [
-            'name'              => Str::random(),
-            'region_manager_id' => $regionManager->id,
-            'department_id'     => $department->id,
-        ];
-
-        $this
-            ->actingAs($regionManager)
-            ->post(route('castle.regions.store'), $data);
-
-        $this->assertDatabaseHas('regions', $data);
-
-        /** @var Region */
-        $region = Region::where('name', $data['name'])->first();
-
-        $this->assertNull($region->trainingPageSections->first()->parent_id);
-        $this->assertFalse($region->trainingPageSections->first()->department_folder);
-    }
-
-    /** @test */
-    public function it_should_create_a_training_page_section_with_the_parent_id_of_the_root_section()
-    {
-        ['regionManager' => $regionManager, 'department' => $department] = $this->makeSetup();
-
-        $rootSection = TrainingPageSection::factory()->create([
-            'department_id' => $department->id,
-        ]);
-        $childSection = TrainingPageSection::factory()->create([
-            'parent_id'     => $rootSection->id,
-            'department_id' => $department->id,
+            'name'          => $createdRegion->name,
+            'department_id' => $createdRegion->department_id,
         ]);
 
-        $data = [
-            'name'              => Str::random(),
-            'region_manager_id' => $regionManager->id,
-            'department_id'     => $department->id,
-        ];
-
-        $this
-            ->actingAs($regionManager)
-            ->post(route('castle.regions.store'), $data);
-
-        $this->assertDatabaseHas('regions', $data);
-
-        /** @var Region */
-        $region = Region::where('name', $data['name'])->first();
-
-        $this->assertEquals($rootSection->id, $region->trainingPageSections->first()->parent_id);
-        $this->assertEquals($childSection->parent_id, $region->trainingPageSections->first()->parent_id);
+        $this->assertSame($data['region_manager_ids'][0], $createdRegion->managers[0]->id);
+        $this->assertSame($data['region_manager_ids'][1], $createdRegion->managers[1]->id);
     }
 
     /** @test */
     public function it_should_require_name()
     {
-        [
-            'regionManager'     => $regionManager,
-            'departmentManager' => $departmentManager,
-            'department'        => $department
-        ] = $this->makeSetup();
-
-        $data = [
-            'name'              => '',
-            'region_manager_id' => $regionManager->id,
-            'department_id'     => $department->id,
-        ];
+        $john = User::factory()->create(['role' => Role::ADMIN]);
 
         $this
-            ->actingAs($departmentManager)
-            ->post(route('castle.regions.store'), $data)
+            ->actingAs($john)
+            ->post(
+                route('castle.regions.store', $this->makeData(['name' => null]))
+            )
             ->assertSessionHasErrors('name');
-    }
-
-    /** @test */
-    public function it_should_require_region_manager_id()
-    {
-        ['department' => $department, 'departmentManager' => $departmentManager] = $this->makeSetup();
-
-        $data = [
-            'name'          => Str::random(),
-            'department_id' => $department->id,
-        ];
-
-        $this
-            ->actingAs($departmentManager)
-            ->post(route('castle.regions.store'), $data)
-            ->assertSessionHasErrors('region_manager_id');
     }
 
     /** @test */
     public function it_should_require_department_id()
     {
-        ['regionManager' => $regionManager, 'departmentManager' => $departmentManager] = $this->makeSetup();
-
-        $data = [
-            'name'              => Str::random(),
-            'region_manager_id' => $regionManager->id,
-        ];
+        $john = User::factory()->create(['role' => Role::ADMIN]);
 
         $this
-            ->actingAs($departmentManager)
-            ->post(route('castle.regions.store'), $data)
+            ->actingAs($john)
+            ->post(
+                route('castle.regions.store', $this->makeData(['department_id' => null]))
+            )
             ->assertSessionHasErrors('department_id');
     }
 
     /** @test */
-    public function it_should_prevent_name_below_3_characters()
+    public function it_should_require_region_manager_ids()
     {
-        ['regionManager' => $regionManager, 'department' => $department] = $this->makeSetup();
-
-        $data = [
-            'name'              => Str::random(2),
-            'region_manager_id' => $regionManager->id,
-            'department_id'     => $department->id,
-        ];
+        $john = User::factory()->create(['role' => Role::ADMIN]);
 
         $this
-            ->actingAs($regionManager)
-            ->post(route('castle.regions.store'), $data)
+            ->actingAs($john)
+            ->post(
+                route('castle.regions.store', $this->makeData(['region_manager_ids' => null]))
+            )
+            ->assertSessionHasErrors('region_manager_ids');
+    }
+
+    /** @test */
+    public function it_should_require_name_above_3_characters()
+    {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+
+        $this
+            ->actingAs($john)
+            ->post(
+                route('castle.regions.store', $this->makeData(['name' => Str::random(2)]))
+            )
             ->assertSessionHasErrors('name');
     }
 
     /** @test */
-    public function it_should_prevent_name_above_255_characters()
+    public function it_should_require_name_below_255_characters()
     {
-        ['regionManager' => $regionManager, 'department' => $department] = $this->makeSetup();
-
-        $data = [
-            'name'              => Str::random(256),
-            'region_manager_id' => $regionManager->id,
-            'department_id'     => $department->id,
-        ];
+        $john = User::factory()->create(['role' => Role::ADMIN]);
 
         $this
-            ->actingAs($regionManager)
-            ->post(route('castle.regions.store'), $data)
+            ->actingAs($john)
+            ->post(
+                route('castle.regions.store', $this->makeData(['name' => Str::random(256)]))
+            )
             ->assertSessionHasErrors('name');
     }
 
     /** @test */
-    public function it_should_require_an_existent_region_manager_id()
+    public function it_should_require_a_valid_department_id()
     {
-        ['regionManager' => $regionManager, 'department' => $department] = $this->makeSetup();
-
-        $data = [
-            'name'              => Str::random(256),
-            'region_manager_id' => 99,
-            'department_id'     => $department->id,
-        ];
+        $john = User::factory()->create(['role' => Role::ADMIN]);
 
         $this
-            ->actingAs($regionManager)
-            ->post(route('castle.regions.store'), $data)
-            ->assertSessionHasErrors('region_manager_id');
-    }
-
-    /** @test */
-    public function it_should_require_an_existent_department_id()
-    {
-        ['regionManager' => $regionManager] = $this->makeSetup();
-
-        $data = [
-            'name'              => Str::random(256),
-            'region_manager_id' => $regionManager->id,
-            'department_id'     => 99,
-        ];
-
-        $this
-            ->actingAs($regionManager)
-            ->post(route('castle.regions.store'), $data)
+            ->actingAs($john)
+            ->post(
+                route('castle.regions.store', $this->makeData(['department_id' => Str::random(3)]))
+            )
             ->assertSessionHasErrors('department_id');
     }
 
-    private function makeSetup()
+    /** @test */
+    public function it_should_prevent_region_manager_ids_that_arent_from_users_that_have_region_manager_role()
     {
-        $regionManager     = User::factory()->create(['role' => 'Region Manager']);
-        $departmentManager = User::factory()->create(['role' => 'Department Manager']);
-        $department        = Department::factory()->create([
-            'department_manager_id' => $departmentManager->id,
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+
+        $data = $this->makeData([
+            'region_manager_ids' => [
+                User::factory()->create(['role' => Role::DEPARTMENT_MANAGER])->id,
+                User::factory()->create(['role' => Role::SETTER])->id,
+            ],
         ]);
 
-        $regionManager->update(['department_id' => $department->id]);
+        $this
+            ->actingAs($john)
+            ->post(route('castle.regions.store', $data))
+            ->assertSessionHasErrors('region_manager_ids.0')
+            ->assertSessionHasErrors('region_manager_ids.1');
+    }
 
-        return [
-            'regionManager'     => $regionManager,
-            'departmentManager' => $departmentManager,
-            'department'        => $department,
-        ];
+    private function makeData(array $attributes = []): array
+    {
+        return array_merge([
+            'name'               => Str::random(),
+            'department_id'      => Department::factory()->create()->id,
+            'region_manager_ids' => User::factory()
+                ->times(2)
+                ->create(['role' => Role::REGION_MANAGER])
+                ->pluck('id')
+                ->toArray(),
+        ], $attributes);
     }
 }
