@@ -36,12 +36,12 @@ class OfficeTest extends TestCase
         ]);
 
         $region        = Region::factory()->create([
-            'region_manager_id' => $regionManager->id ,
+            'region_manager_id' => $regionManager->id,
             'department_id'     => $department->id,
         ]);
         $officeManager = User::factory()->create(['role' => 'Office Manager']);
 
-        $offices       = Office::factory()->count(6)->create([
+        $offices = Office::factory()->count(6)->create([
             'region_id'         => $region->id,
             'office_manager_id' => $officeManager->id,
         ]);
@@ -95,59 +95,6 @@ class OfficeTest extends TestCase
     }
 
     /** @test */
-    public function it_should_store_a_new_office()
-    {
-        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
-        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
-
-        $region        = Region::factory()->create(['region_manager_id' => $this->user->id]);
-        $officeManager = User::factory()->create(['role' => 'Office Manager']);
-
-        $data = [
-            'name'              => 'Office',
-            'region_id'         => $region->id,
-            'office_manager_id' => $officeManager->id,
-        ];
-
-        $this->actingAs($departmentManager);
-
-        $response = $this->post(route('castle.offices.store'), $data);
-
-        $created = Office::where('name', $data['name'])->first();
-
-        $response->assertStatus(302)
-            ->assertRedirect(route('castle.offices.index', $created));
-    }
-
-    /** @test */
-    public function it_should_require_all_fields_to_store_a_new_office()
-    {
-        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
-        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
-
-        $data = [
-            'name'              => '',
-            'region_id'         => '',
-            'office_manager_id' => '',
-            'department_id'     => '',
-        ];
-
-        $this->actingAs($departmentManager);
-
-        $response = $this->post(route('castle.offices.store'), $data);
-        $response->assertSessionHasErrors(
-        [
-            'name',
-            'region_id',
-            'office_manager_id',
-        ]);
-    }
-
-    /** @test */
     public function it_should_show_the_edit_form_for_top_level_roles()
     {
         $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
@@ -156,8 +103,8 @@ class OfficeTest extends TestCase
         $departmentManager->save();
 
         $region        = Region::factory()->create([
-            'region_manager_id'  => $this->user->id,
-            'department_id'      => $department->id,
+            'region_manager_id' => $this->user->id,
+            'department_id'     => $department->id,
         ]);
         $officeManager = User::factory()->create(['role' => 'Office Manager']);
         $office        = Office::factory()->create([
@@ -205,8 +152,8 @@ class OfficeTest extends TestCase
             'region_id'         => $region->id,
             'office_manager_id' => $officeManager->id,
         ]);
-        $data         = $office->toArray();
-        $updateOffice = array_merge($data, ['name' => 'Office Edited']);
+        $data          = $office->toArray();
+        $updateOffice  = array_merge($data, ['name' => 'Office Edited']);
 
         $this->actingAs($departmentManager);
 
@@ -215,10 +162,10 @@ class OfficeTest extends TestCase
         $response->assertStatus(302);
 
         $this->assertDatabaseHas('offices',
-        [
-            'id'   => $office->id,
-            'name' => 'Office Edited',
-        ]);
+            [
+                'id'   => $office->id,
+                'name' => 'Office Edited',
+            ]);
     }
 
     /** @test */
