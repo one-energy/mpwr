@@ -118,20 +118,17 @@ class OfficeController extends Controller
 
     public function update(Office $office)
     {
-        $validated = request()->validate([
-            'name'              => 'required|string|min:3|max:255',
-            'region_id'         => 'required',
-            'office_manager_id' => 'required',
+        request()->validate([
+            'name'      => 'required|string|min:3|max:255',
+            'region_id' => 'required|exists:regions,id',
         ], [
-            'region_id.required'         => 'The region field is required.',
-            'office_manager_id.required' => 'The office manager field is required.',
+            'region_id.required' => 'The region field is required.',
         ]);
 
-        $office->name              = $validated['name'];
-        $office->region_id         = $validated['region_id'];
-        $office->office_manager_id = $validated['office_manager_id'];
-
-        $office->save();
+        $office->update([
+            'name'      => request()->name,
+            'region_id' => request()->region_id,
+        ]);
 
         alert()
             ->withTitle(__('Office updated!'))
