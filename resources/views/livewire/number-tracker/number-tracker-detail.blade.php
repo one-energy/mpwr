@@ -170,29 +170,26 @@
                     <div class="flex justify-between mt-3">
                         <div class="grid w-full grid-cols-6 row-gap-2 col-gap-1 xl:grid-cols-12 md:col-gap-4">
                             <div class="col-span-2 xl:col-span-2 border-2 border-gray-200 rounded-sm p-3 space-y-3">
-                                @if(!$loading)
-                                    <div class="text-base font-semibold uppercase">Doors</div>
-                                    <div class="text-xl font-bold">{{$this->getNumberTrackerSumOf('doors')}}</div>
-                                    <div class="flex text-xs font-semibold text-green-base">
+                                <div wire:loading.remove class="text-base font-semibold uppercase">Doors</div>
+                                <div wire:loading.remove class="text-xl font-bold">{{$this->getNumberTrackerSumOf('doors')}}</div>
+                                <div wire:loading.remove class="flex text-xs font-semibold text-green-base">
+                                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('doors') >= 0)
+                                        <x-svg.arrow-up class="text-green-base"/>
+                                    @else
+                                        <x-svg.arrow-down class="text-red-600"/>
+                                    @endif
+                                    <span class="
                                         @if($this->getNumberTrackerDifferenceToLasNumbersOf('doors') >= 0)
-                                            <x-svg.arrow-up class="text-green-base"/>
+                                            text-green-base
                                         @else
-                                            <x-svg.arrow-down class="text-red-600"/>
+                                            text-red-600
                                         @endif
-                                        <span class="
-                                            @if($this->getNumberTrackerDifferenceToLasNumbersOf('doors') >= 0)
-                                                text-green-base
-                                            @else
-                                                text-red-600
-                                            @endif
-                                            text-base
-                                        ">
-                                            {{$this->getNumberTrackerDifferenceToLasNumbersOf('doors')}}
-                                        </span>
-                                    </div>
-                                @else
-                                    <x-card-pulse-loading/>
-                                @endif
+                                        text-base
+                                    ">
+                                        {{$this->getNumberTrackerDifferenceToLasNumbersOf('doors')}}
+                                    </span>
+                                </div>
+                                <x-card-pulse-loading wire:loading.flex/>
                             </div>
                             <div class="col-span-2 xl:col-span-2 border-2 border-gray-200 rounded-sm p-3 space-y-3" >
                                 <div wire:loading.remove class="text-base font-semibold text-gray-900 uppercase">Hours</div>
@@ -217,9 +214,9 @@
                                 <x-card-pulse-loading wire:loading.flex/>
                             </div>
                             <div class="col-span-2 xl:col-span-2 border-2 border-gray-200 rounded-sm p-3 space-y-3" >
-                                <div class="text-base font-semibold text-gray-900 uppercase">Sets</div>
-                                <div class="text-xl font-bold text-gray-900">{{$this->getNumberTrackerSumOf('sets')}}</div>
-                                <div class="flex text-xs font-semibold text-green-base">
+                                <div wire:loading.remove class="text-base font-semibold text-gray-900 uppercase">Sets</div>
+                                <div wire:loading.remove class="text-xl font-bold text-gray-900">{{$this->getNumberTrackerSumOf('sets')}}</div>
+                                <div wire:loading.remove class="flex text-xs font-semibold text-green-base">
                                     @if($this->getNumberTrackerDifferenceToLasNumbersOf('sets') >= 0)
                                         <x-svg.arrow-up class="text-green-base"/>
                                     @else
@@ -236,10 +233,11 @@
                                         {{$this->getNumberTrackerDifferenceToLasNumbersOf('sets')}}
                                     </span>
                                 </div>
+                                <x-card-pulse-loading wire:loading.flex/>
                             </div>
                             <div class="col-span-3 xl:col-span-3 border-2 border-gray-200 rounded-sm p-3 space-y-3" >
-                                <div class="text-base font-semibold text-gray-900 uppercase">Sits</div>
-                                <div class="grid grid-cols-4 gap-1">
+                                <div wire:loading.remove class="text-base font-semibold text-gray-900 uppercase">Sits</div>
+                                <div wire:loading.remove class="grid grid-cols-4 gap-1">
                                     <div class="text-sm self-center col-span-3">
                                         <span>Set</span>
                                         <span class="text-xl font-bold text-gray-900 ml-2">
@@ -264,7 +262,7 @@
                                         </span>
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-4 gap-1">
+                                <div wire:loading.remove class="grid grid-cols-4 gap-1">
                                     <div class="text-sm self-center col-span-3">
                                         <span>SG</span>
                                         <span class="text-xl font-bold text-gray-900 ml-2">
@@ -289,10 +287,11 @@
                                         </span>
                                     </div>
                                 </div>
+                                <x-card-pulse-loading wire:loading.flex/>
                             </div>
                             <div class="col-span-3 xl:col-span-3 border-2 border-gray-200 rounded-sm p-3 space-y-3" >
-                                <div class="text-base font-semibold text-gray-900 uppercase">Closes</div>
-                                <div class="grid grid-cols-4 gap-1">
+                                <div wire:loading.remove class="text-base font-semibold text-gray-900 uppercase">Closes</div>
+                                <div wire:loading.remove class="grid grid-cols-4 gap-1">
                                     <div class="text-sm self-center col-span-3">
                                         <span>Set</span>
                                         <span class="text-xl font-bold text-gray-900 ml-2">
@@ -317,7 +316,7 @@
                                         </span>
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-4 gap-1">
+                                <div wire:loading.remove class="grid grid-cols-4 gap-1">
                                     <div class="text-sm self-center col-span-3">
                                         <span>
                                             SG
@@ -344,6 +343,7 @@
                                         </span>
                                     </div>
                                 </div>
+                                <x-card-pulse-loading wire:loading.flex/>
                             </div>
                         </div>
                     </div>

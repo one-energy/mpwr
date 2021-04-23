@@ -24,14 +24,18 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function mount()
     {
-
+        $this->initRegionsData();
     }
 
     public function render()
     {
+        return view('livewire.components.number-tracker-detail-accordion-table');
+    }
+
+    public function initRegionsData()
+    {
         $this->addItsOpen();
         $this->sumTotal();
-        return view('livewire.components.number-tracker-detail-accordion-table');
     }
 
     public function sortBy()
@@ -82,20 +86,20 @@ class NumberTrackerDetailAccordionTable extends Component
     public function selectRegion($regionIndex)
     {
         $this->itsOpenRegions[$regionIndex]['selected'] = !$this->itsOpenRegions[$regionIndex]['selected'];
-
+        $this->sumTotal();
     }
 
     public function selectOffice($regionIndex, $officeIndex)
     {
         $this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['selected'] = !$this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['selected'];
-
+        $this->sumTotal();
     }
 
     public function selectUser($regionIndex, $officeIndex, $userIndex)
     {
         $this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['users'][$userIndex]['selected'] = !$this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['users'][$userIndex]['selected'];
         $this->selected = $this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['users'][$userIndex]['selected'];
-
+        $this->sumTotal();
     }
 
     public function sumTotal(){
@@ -162,5 +166,6 @@ class NumberTrackerDetailAccordionTable extends Component
     {
         $this->selectedDate = $date;
         $this->period       = $period;
+        $this->initRegionsData();
     }
 }

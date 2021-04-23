@@ -31,7 +31,7 @@
                     <x-table-accordion.default-td-arrow class="table-cell" :open="$region['itsOpen']">
                         <div class="flex" x-data>
                             <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
-                                   type="checkbox" @change="$wire.selectRegion({{$regionIndex}}); console.log('teste')" checked wire:click.stop="">
+                                   type="checkbox" @change="$wire.selectRegion({{$regionIndex}})" checked wire:click.stop="">
                             <label for="region-{{$region['id']}}">{{$region['name']}}</label>
                         </div>
                     </x-table-accordion.td-arrow>

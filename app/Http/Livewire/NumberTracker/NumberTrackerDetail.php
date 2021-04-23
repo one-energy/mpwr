@@ -85,6 +85,7 @@ class NumberTrackerDetail extends Component
 
     public function render()
     {
+        // dd('teste');
         $this->numbersTracked = $this->getTrackerNumbers();
         $this->graficValue    = $this->numbersTracked->sum($this->filterBy);
         $showOptions          = [
@@ -100,6 +101,11 @@ class NumberTrackerDetail extends Component
     public function sortBy()
     {
         return "doors";
+    }
+
+    public function updatedSelectedPill($value)
+    {
+
     }
 
     public function setPeriod($p)
