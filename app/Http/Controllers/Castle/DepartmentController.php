@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Castle;
 use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\User;
+use App\Role\Role;
+use App\Rules\UserHasRole;
+use Illuminate\Support\Facades\DB;
 
 class DepartmentController extends Controller
 {
@@ -29,27 +32,22 @@ class DepartmentController extends Controller
 
     public function store()
     {
-        $validated = request()->validate([
-            'name'                  => 'required|string|min:3|max:255',
-            'department_manager_id' => 'required',
+        request()->validate([
+            'name'                     => 'required|string|min:3|max:255',
+            'department_manager_ids'   => 'required|array',
+            'department_manager_ids.*' => ['required', 'exists:users,id', new UserHasRole(Role::DEPARTMENT_MANAGER)],
         ], [
             'department_id.required'         => 'The department field is required.',
             'department_manager_id.required' => 'The department manager field is required.',
         ]);
 
-        $department                        = new Department();
-        $department->name                  = $validated['name'];
-        $department->department_manager_id = $validated['department_manager_id'];
+        DB::transaction(function () {
+            /** @var Department $department */
+            $department = Department::create(['name' => request()->name]);
 
-        $department->save();
-
-        $department->trainingPageSections()->create([
-            'title' => 'Training Page',
-        ]);
-
-        $departmentAdmin                = $department->departmentAdmin;
-        $departmentAdmin->department_id = $department->id;
-        $departmentAdmin->save();
+            $department->managers()->attach(request()->department_manager_ids);
+            $department->trainingPageSections()->create(['title' => 'Training Page']);
+        });
 
         alert()
             ->withTitle(__('Department Created!'))
@@ -60,11 +58,8 @@ class DepartmentController extends Controller
 
     public function edit(Department $department)
     {
-        $users = User::query()->where('role', 'Department Manager')->get();
-
         return view('castle.departments.edit', [
-            'department' => $department,
-            'users'      => $users,
+            'department' => $department->load('managers'),
         ]);
     }
 
