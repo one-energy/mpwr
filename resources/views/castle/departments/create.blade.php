@@ -13,7 +13,7 @@
                             <x-input label="Department Name" name="name"/>
                         </div>
                         <div class="md:col-span-3 col-span-2">
-                            <x-select label="Department Manager" name="department_manager_id">
+                            <x-select label="Department Manager" name="department_manager_ids[]" multiple>
                                 @if (old('department_manager_id') == '')
                                     <option value="" selected>None</option>
                                 @endif
