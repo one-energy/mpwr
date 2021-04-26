@@ -21,7 +21,7 @@ class NumberTrackerDetail extends Component
 {
     use FullTable;
 
-    public $period = 'd';
+    public $period = 'm';
 
     public $numberTrackerTotal;
 
@@ -85,7 +85,6 @@ class NumberTrackerDetail extends Component
 
     public function render()
     {
-        // dd('teste');
         $this->numbersTracked = $this->getTrackerNumbers();
         $this->graficValue    = $this->numbersTracked->sum($this->filterBy);
         $showOptions          = [

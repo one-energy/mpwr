@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Components;
 
+use App\Models\DailyNumber;
 use App\Models\Region;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Support\Carbon;
@@ -45,16 +46,21 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function addItsOpen()
     {
+        unset($this->itsOpenRegions);
+        $this->itsOpenRegions = array();
         $this->itsOpenRegions = $this->regions->map(function ($region) {
             $region->itsOpen  = false;
             $region->selected = true;
-            $region->offices->map(function ($office) {
+            $region->offices = $region->offices->map(function ($office) {
                 $office->itsOpen = false;
                 $office->selected = true;
-                return $office->users->map(function ($user) {
-                    return $user->selected = true;
+                $office->users = $office->users->map(function ($user) {
+                    $user->selected = true;
+                    return $user;
                 });
+                return $office;
             });
+
             return $region;
         })->toArray();
     }
@@ -68,9 +74,42 @@ class NumberTrackerDetailAccordionTable extends Component
         });
 
         if (user()->hasAnyRole(['Admin', 'Owner'])) {
-            return $query->get();
+            $regions = $query->get();
+        } else {
+            $regions = $query->whereDepartmentId(user()->department_id ?? 0)->get();
         }
-        return $query->whereDepartmentId(user()->department_id ?? 0)->get();
+
+        $regions = $regions->sortBy(function($region) {
+            return $region->offices->sum(function ($office) {
+                return $office->users->sum(function ($user) {
+                    return $user->dailyNumbers->sum('doors');
+                });
+            });
+        })->values();
+
+        $regions = $regions->map(function($region) {
+            $region->offices = $region->offices->sortBy(function ($office) {
+                return $office->users->sum(function ($user) {
+                    return $user->dailyNumbers->sum('doors');
+                });
+            })->values();
+            return $region;
+        });
+
+
+
+        $regions = $regions->map(function($region) {
+            $region->offices = $region->offices->map(function ($office) {
+                $office->users = $office->users->sortBy(function ($user) {
+                    return $user->dailyNumbers->sum('doors');
+                })->values();
+                return $office;
+            });
+            return $region;
+        });
+
+
+        return $regions;
     }
 
     public function collapseRegion( int $regionIndex)

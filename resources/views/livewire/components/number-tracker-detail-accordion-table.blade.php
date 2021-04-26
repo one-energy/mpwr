@@ -1,4 +1,5 @@
 <div x-data="initAccordion()" x-init="[bootstrap()]">
+
     <div class="flex justify-between mt-6 md:mt-12">
         <div class="grid w-full grid-cols-2 row-gap-2 col-gap-1 md:grid-cols-4 md:col-gap-4">
             <div class="col-span-1 p-3 rounded-sm bg-green-light space-y-3">
@@ -229,40 +230,41 @@
             <div class="flex flex-col">
                 <div class="overflow-x-auto">
                     <div class="inline-block min-w-full overflow-hidden align-middle">
+                        {{-- @dump($itsOpenRegions) --}}
                         @if(count($itsOpenRegions))
                             <x-table-accordion class="overflow-x-auto">
                                 <x-slot name="header">
-                                    <x-table-accordion.th-searchable class="table-cell" by="deparmtent" sortedBy="$sortBy"></x-table-accordion.th-searchable>
-                                    <x-table-accordion.th-searchable class="table-cell" by="doors" sortedBy="$sortBy">
+                                    <x-table-accordion.th-searchable class="table-cell" by="deparmtent" sortedBy="$sortBy" :direction="$sortDirection"></x-table-accordion.th-searchable>
+                                    <x-table-accordion.th-searchable class="table-cell" by="doors" sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Doors')
                                     </x-table-accordion.th-searchable>
-                                    <x-table-accordion.th-searchable class="table-cell" by="hours" sortedBy="$sortBy">
+                                    <x-table-accordion.th-searchable class="table-cell" by="hours" sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Hours')
                                     </x-table-accordion.th-searchable>
-                                    <x-table-accordion.th-searchable class="table-cell" by="sets" sortedBy="$sortBy">
+                                    <x-table-accordion.th-searchable class="table-cell" by="sets" sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Sets')
                                     </x-table-accordion.th-searchable>
-                                    <x-table-accordion.th-searchable class="table-cell" by="set_sits" sortedBy="$sortBy">
+                                    <x-table-accordion.th-searchable class="table-cell" by="set_sits" sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Set Sits')
                                     </x-table-accordion.th-searchable>
-                                    <x-table-accordion.th-searchable class="table-cell" by="sits" sortedBy="$sortBy">
+                                    <x-table-accordion.th-searchable class="table-cell" by="sits" sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Sits')
                                     </x-table-accordion.th-searchable>
-                                    <x-table-accordion.th-searchable class="table-cell" by="set_closes" sortedBy="$sortBy">
+                                    <x-table-accordion.th-searchable class="table-cell" by="set_closes" sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Set Closes')
                                     </x-table-accordion.th-searchable>
-                                    <x-table-accordion.th-searchable class="table-cell" by="closes" sortedBy="$sortBy">
+                                    <x-table-accordion.th-searchable class="table-cell" by="closes" sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Closes')
                                     </x-table-accordion.th-searchable>
                                 </x-slot>
                                 <x-slot name="body">
                                     @foreach($itsOpenRegions as $regionIndex => $region)
                                         <div class="table-row cursor-pointer hover:bg-gray-100 @if($region['itsOpen']) bg-gray-200 @endif"
-                                            wire:click.stop="collapseRegion({{$regionIndex}})" wire:key="region-{{$region['id']}}">
+                                            wire:click.stop="collapseRegion({{$regionIndex}})">
                                             <x-table-accordion.default-td-arrow class="table-cell" :open="$region['itsOpen']">
                                                 <div class="flex" x-data>
                                                     <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
-                                                        type="checkbox" @change="$wire.selectRegion({{$regionIndex}})" checked wire:click.stop="">
+                                                        type="checkbox" x-on:change="$wire.selectRegion({{$regionIndex}})" checked wire:click.stop="">
                                                     <label for="region-{{$region['id']}}">{{$region['name']}}</label>
                                                 </div>
                                             </x-table-accordion.td-arrow>
@@ -289,13 +291,14 @@
                                             </x-table-accordion.td>
                                         </div>
                                         @if($region['itsOpen'])
+                                         {{-- @dump($region['offices']) --}}
                                             @forelse($region['offices'] as $officeIndex => $office)
                                                 <div class="table-row cursor-pointer hover:bg-gray-100 @if($office['itsOpen']) bg-gray-100 @endif"
-                                                    wire:click.stop="collapseOffice({{$regionIndex}}, {{$officeIndex}})" wire:key="office-{{$office['id']}}">
+                                                    wire:click.stop="collapseOffice({{$regionIndex}}, {{$officeIndex}})">
                                                     <x-table-accordion.child-td-arrow class="table-cell" :open="$office['itsOpen']">
                                                         <div class="flex" x-data>
                                                             <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
-                                                                type="checkbox" @change="$wire.selectOffice({{$regionIndex}}, {{$officeIndex}})" checked wire:click.stop="">
+                                                                type="checkbox" x-on:change="$wire.selectOffice({{$regionIndex}}, {{$officeIndex}})" checked wire:click.stop="">
                                                             <label for="office-{{$office['id']}}">{{$office['name']}}</label>
                                                         </div>
                                                     </x-table-accordion.td-arrow>
@@ -323,11 +326,11 @@
                                                 </div>
                                                 @if($office['itsOpen'])
                                                     @forelse($office['users'] as $userIndex => $user)
-                                                        <div class="table-row hover:bg-gray-100" wire:key="user-{{$user['id']}}">
+                                                        <div class="table-row hover:bg-gray-100">
                                                             <x-table-accordion.td class="table-cell pl-28">
                                                                 <div class="flex" x-data>
                                                                     <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
-                                                                    type="checkbox" @change="$wire.selectUser({{$regionIndex}}, {{$officeIndex}}, {{$userIndex}})" checked wire:click.stop="">
+                                                                    type="checkbox" x-on:change="$wire.selectUser({{$regionIndex}}, {{$officeIndex}}, {{$userIndex}})" checked wire:click.stop="">
                                                                     <label for="user-{{$user['id']}}">{{$user['full_name']}}</label>
                                                                 </div>
                                                             </x-table-accordion.td>
