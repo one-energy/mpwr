@@ -24,7 +24,7 @@
                         <div class="font-medium sm:mr-2">Joined:</div>
                         <div>{{ $user->created_at->format('F dS, Y') }}</div>
                     </div>
-                    @if ($user->id !== user()->id)
+                    @if ($user->id !== user()->id && !user()->isImpersonated())
                         @canImpersonate()
                             <div class="flex">
                                 <a
