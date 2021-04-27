@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\DB;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\TrainingPageSection newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\TrainingPageSection query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\TrainingPageSection search($search)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\TrainingPageSection sectionsUserManaged(User $user)
  * @method bool TrainingPageSection isDepartmentSection()
  * @mixin \Eloquent
  */
@@ -79,6 +80,19 @@ class TrainingPageSection extends Model
                 'like',
                 '%' . strtolower($search) . '%'
             );
+        });
+    }
+
+    public function scopeSectionsUserManaged(Builder $query, User $user = null)
+    {
+        $user = $user ?? user();
+
+        return $query->where(function (Builder $query) use ($user) {
+            $query
+                ->orWhereNull('region_id')
+                ->orWhereHas('region.offices', function (Builder $query) use ($user) {
+                    $query->where('offices.id', $user->office_id);
+                });
         });
     }
 
