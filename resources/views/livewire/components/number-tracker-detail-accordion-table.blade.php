@@ -226,7 +226,7 @@
             wire:loading.class.remove="hidden" wire:target="setDate, setPeriod, addFilter, removeFilter">
         </x-svg.spinner>
 
-        <div class="w-full mt-6"wire:loading.remove wire:target="setDate, setPeriod, addFilter, removeFilter">
+        <div class="w-full mt-6" wire:loading.remove wire:target="setDate, setPeriod, addFilter, removeFilter">
             <div class="flex flex-col">
                 <div class="overflow-x-auto">
                     <div class="inline-block min-w-full overflow-hidden align-middle">
@@ -234,26 +234,26 @@
                         @if(count($itsOpenRegions))
                             <x-table-accordion class="overflow-x-auto">
                                 <x-slot name="header">
-                                    <x-table-accordion.th-searchable class="table-cell" by="deparmtent" sortedBy="$sortBy" :direction="$sortDirection"></x-table-accordion.th-searchable>
-                                    <x-table-accordion.th-searchable class="table-cell" by="doors" sortedBy="$sortBy" :direction="$sortDirection">
+                                    <x-table-accordion.th-searchable class="table-cell" by="deparmtent" :sortedBy="$sortBy" :direction="$sortDirection"></x-table-accordion.th-searchable>
+                                    <x-table-accordion.th-searchable class="table-cell" by="doors" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Doors')
                                     </x-table-accordion.th-searchable>
-                                    <x-table-accordion.th-searchable class="table-cell" by="hours" sortedBy="$sortBy" :direction="$sortDirection">
+                                    <x-table-accordion.th-searchable class="table-cell" by="hours" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Hours')
                                     </x-table-accordion.th-searchable>
-                                    <x-table-accordion.th-searchable class="table-cell" by="sets" sortedBy="$sortBy" :direction="$sortDirection">
+                                    <x-table-accordion.th-searchable class="table-cell" by="sets" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Sets')
                                     </x-table-accordion.th-searchable>
-                                    <x-table-accordion.th-searchable class="table-cell" by="set_sits" sortedBy="$sortBy" :direction="$sortDirection">
+                                    <x-table-accordion.th-searchable class="table-cell" by="set_sits" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Set Sits')
                                     </x-table-accordion.th-searchable>
-                                    <x-table-accordion.th-searchable class="table-cell" by="sits" sortedBy="$sortBy" :direction="$sortDirection">
+                                    <x-table-accordion.th-searchable class="table-cell" by="sits" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Sits')
                                     </x-table-accordion.th-searchable>
-                                    <x-table-accordion.th-searchable class="table-cell" by="set_closes" sortedBy="$sortBy" :direction="$sortDirection">
+                                    <x-table-accordion.th-searchable class="table-cell" by="set_closes" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Set Closes')
                                     </x-table-accordion.th-searchable>
-                                    <x-table-accordion.th-searchable class="table-cell" by="closes" sortedBy="$sortBy" :direction="$sortDirection">
+                                    <x-table-accordion.th-searchable class="table-cell" by="closes" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Closes')
                                     </x-table-accordion.th-searchable>
                                 </x-slot>

@@ -23,10 +23,11 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public $selectedDate;
 
-    protected $listeners = ['setDateOrPeriod'];
+    protected $listeners = ['setDateOrPeriod' , 'sortTable' => 'initRegionsData'];
 
     public function mount()
     {
+        $this->sortBy = 'doors';
         $this->initRegionsData();
     }
 
@@ -99,34 +100,61 @@ class NumberTrackerDetailAccordionTable extends Component
             $regions = $query->whereDepartmentId(user()->department_id ?? 0)->get();
         }
 
-        $regions = $regions->sortBy(function($region) {
-            return $region->offices->sum(function ($office) {
-                return $office->users->sum(function ($user) {
-                    return $user->dailyNumbers->sum('doors');
-                });
-            });
-        })->values();
-
-        $regions = $regions->map(function($region) {
-            $region->offices = $region->offices->sortBy(function ($office) {
-                return $office->users->sum(function ($user) {
-                    return $user->dailyNumbers->sum('doors');
+        if ($this->sortDirection == 'asc') {
+            $regions = $regions->sortBy(function($region) {
+                return $region->offices->sum(function ($office) {
+                    return $office->users->sum(function ($user) {
+                        return $user->dailyNumbers->sum($this->sortBy);
+                    });
                 });
             })->values();
-            return $region;
-        });
 
-
-
-        $regions = $regions->map(function($region) {
-            $region->offices = $region->offices->map(function ($office) {
-                $office->users = $office->users->sortBy(function ($user) {
-                    return $user->dailyNumbers->sum('doors');
+            $regions = $regions->map(function($region) {
+                $region->offices = $region->offices->sortBy(function ($office) {
+                    return $office->users->sum(function ($user) {
+                        return $user->dailyNumbers->sum($this->sortBy);
+                    });
                 })->values();
-                return $office;
+                return $region;
             });
-            return $region;
-        });
+
+            $regions = $regions->map(function($region) {
+                $region->offices = $region->offices->map(function ($office) {
+                    $office->users = $office->users->sortBy(function ($user) {
+                        return $user->dailyNumbers->sum($this->sortBy);
+                    })->values();
+                    return $office;
+                });
+                return $region;
+            });
+        } else {
+            $regions = $regions->sortByDesc(function($region) {
+                return $region->offices->sum(function ($office) {
+                    return $office->users->sum(function ($user) {
+                        return $user->dailyNumbers->sum($this->sortBy);
+                    });
+                });
+            })->values();
+
+            $regions = $regions->map(function($region) {
+                $region->offices = $region->offices->sortByDesc(function ($office) {
+                    return $office->users->sum(function ($user) {
+                        return $user->dailyNumbers->sum($this->sortBy);
+                    });
+                })->values();
+                return $region;
+            });
+
+            $regions = $regions->map(function($region) {
+                $region->offices = $region->offices->map(function ($office) {
+                    $office->users = $office->users->sortByDesc(function ($user) {
+                        return $user->dailyNumbers->sum($this->sortBy);
+                    })->values();
+                    return $office;
+                });
+                return $region;
+            });
+        }
 
 
         return $regions;
