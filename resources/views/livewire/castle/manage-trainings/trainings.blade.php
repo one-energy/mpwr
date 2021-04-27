@@ -77,13 +77,13 @@
                     @if (user()->hasRole('Region Manager') && !$actualSection->isDepartmentSection())
                         <x-castle.manage-trainings.add-section
                             :actualSection="$actualSection"
-                            :content="$content"
+                            :contents="$contents"
                         />
                     @endif
                     @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager']))
                         <x-castle.manage-trainings.add-section
                             :actualSection="$actualSection"
-                            :content="$content"
+                            :contents="$contents"
                         />
                     @endif
                 </div>
