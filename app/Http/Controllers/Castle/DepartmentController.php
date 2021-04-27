@@ -34,8 +34,8 @@ class DepartmentController extends Controller
     {
         request()->validate([
             'name'                     => 'required|string|min:3|max:255',
-            'department_manager_ids'   => 'required|array',
-            'department_manager_ids.*' => ['required', 'exists:users,id', new UserHasRole(Role::DEPARTMENT_MANAGER)],
+            'department_manager_ids'   => 'nullable|array',
+            'department_manager_ids.*' => ['nullable', 'exists:users,id', new UserHasRole(Role::DEPARTMENT_MANAGER)],
         ], [
             'department_id.required'         => 'The department field is required.',
             'department_manager_id.required' => 'The department manager field is required.',
@@ -45,7 +45,12 @@ class DepartmentController extends Controller
             /** @var Department $department */
             $department = Department::create(['name' => request()->name]);
 
-            $department->managers()->attach(request()->department_manager_ids);
+            $managerIds = collect(request()->department_manager_ids)->filter();
+
+            if ($managerIds->isNotEmpty()) {
+                $department->managers()->attach($managerIds->toArray());
+            }
+
             $department->trainingPageSections()->create(['title' => 'Training Page']);
         });
 

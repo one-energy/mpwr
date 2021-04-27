@@ -64,8 +64,8 @@ class OfficeController extends Controller
         request()->validate([
             'name'                 => 'required|string|min:3|max:255',
             'region_id'            => 'required|exists:regions,id',
-            'office_manager_ids'   => 'required|array',
-            'office_manager_ids.*' => ['required', 'exists:users,id', new UserHasRole(Role::OFFICE_MANAGER)],
+            'office_manager_ids'   => 'nullable|array',
+            'office_manager_ids.*' => ['nullable', 'exists:users,id', new UserHasRole(Role::OFFICE_MANAGER)],
         ], [
             'region_id.required'         => 'The region field is required.',
             'office_manager_id.required' => 'The office manager field is required.',
@@ -77,6 +77,12 @@ class OfficeController extends Controller
                 'name'      => request()->name,
                 'region_id' => request()->region_id,
             ]);
+
+            $managerIds = collect(request()->office_manager_ids)->filter();
+
+            if ($managerIds->isNotEmpty()) {
+                $office->managers()->attach($managerIds->toArray());
+            }
 
             $office->managers()->attach(request()->office_manager_ids);
 
@@ -110,7 +116,7 @@ class OfficeController extends Controller
             ->get();
 
         return view('castle.offices.edit', [
-            'office'  => $office->load('managers'),
+            'office'  => $office,
             'regions' => $regions,
             'users'   => $users,
         ]);

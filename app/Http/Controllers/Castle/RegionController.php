@@ -57,8 +57,8 @@ class RegionController extends Controller
         request()->validate([
             'name'                 => 'required|string|min:3|max:255',
             'department_id'        => 'required|exists:departments,id',
-            'region_manager_ids'   => 'required|array',
-            'region_manager_ids.*' => ['required', new UserHasRole(Role::REGION_MANAGER)],
+            'region_manager_ids'   => 'nullable|array',
+            'region_manager_ids.*' => ['nullable', new UserHasRole(Role::REGION_MANAGER)],
         ], [
             'region_id.required'         => 'The region field is required.',
             'region_manager_id.required' => 'The region manager field is required.',
@@ -86,6 +86,12 @@ class RegionController extends Controller
                 'department_folder' => false,
             ]);
 
+            $managerIds = collect(request()->region_manager_ids)->filter();
+
+            if ($managerIds->isNotEmpty()) {
+                $region->managers()->attach($managerIds->toArray());
+            }
+
             $region->managers()->attach(request()->region_manager_ids);
         });
 
@@ -107,18 +113,12 @@ class RegionController extends Controller
 
     public function update(Region $region)
     {
-        $validated = request()->validate([
-            'name'              => 'required|string|min:3|max:255',
-            'region_manager_id' => 'required',
-        ], [
-            'region_id.required'         => 'The region field is required.',
-            'region_manager_id.required' => 'The region manager field is required.',
-        ]);
+        request()->validate(
+            ['name' => 'required|string|min:3|max:255'],
+            ['region_id.required' => 'The region field is required.']
+        );
 
-        $region->name              = $validated['name'];
-        $region->region_manager_id = $validated['region_manager_id'];
-
-        $region->save();
+        $region->update(['name' => request()->name]);
 
         alert()
             ->withTitle(__('Region updated!'))
