@@ -422,4 +422,29 @@
             </button>
         </div>
     </x-modal>
+
+    <x-app-modal wire:model.defer="showWarningRoleModal">
+        <x-slot name="header">
+            <h3 class="text-lg font-medium leading-6 text-gray-900" id="modal-headline">
+                Are you sure?
+            </h3>
+        </x-slot>
+        <x-slot name="body">
+            <p class="text-base">{{ $warningRoleMessage }}</p>
+        </x-slot>
+        <x-slot name="footer">
+            <div class="flex justify-end space-x-2">
+                <button
+                    wire:click="$set('showWarningRoleModal', false)"
+                    class="px-4 py-2 text-base font-medium leading-6 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded shadow-sm hover:text-gray-500 focus:outline-none focus:border-green-300 focus:shadow-outline-green sm:text-sm sm:leading-5">
+                    Cancel
+                </button>
+                <button
+                    wire:click="changeUserPay"
+                    class="px-4 py-2 font-medium leading-6 text-white transition duration-150 ease-in-out bg-green-base rounded shadow-sm focus:outline-none focus:border-green-300 focus:shadow-outline-green sm:text-sm sm:leading-5">
+                    Continue
+                </button>
+            </div>
+        </x-slot>
+    </x-app-modal>
 </div>
