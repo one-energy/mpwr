@@ -97,4 +97,12 @@ class Offices extends Component
             ->livewire($this)
             ->send();
     }
+
+    public function openManagersListModal(Office $office)
+    {
+        $this->dispatchBrowserEvent('on-show-managers', [
+            'managers' => $office->managers->take(4),
+            'quantity' => $office->managers()->count(),
+        ]);
+    }
 }

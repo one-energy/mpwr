@@ -6,7 +6,7 @@
                     <h3 class="text-lg text-gray-900">Manage Regions</h3>
                 </div>
                 <div>
-                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
+                    @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager']))
                         <x-button :href="route('castle.regions.create')" color="green">
                             @lang('Create')
                         </x-button>
@@ -23,7 +23,7 @@
                             <x-table :pagination="$regions->links()">
                                 <x-slot name="header">
                                     <x-table.th-tr>
-                                        @if(user()->role != "Region Manager" && user()->role != "Department Manager")
+                                        @if(user()->notHaveRoles(['Region Manager', 'Department Manager']))
                                             <x-table.th-searchable by="regions.name" :sortedBy="$sortBy"
                                                                    :direction="$sortDirection">
                                                 @lang('Department')
@@ -42,22 +42,52 @@
                                 <x-slot name="body">
                                     @foreach($regions as $region)
                                         <x-table.tr :loop="$loop">
-                                            @if(user()->role != "Region Manager" && user()->role != "Department Manager")
+                                            @if(user()->notHaveRoles(['Region Manager', 'Department Manager']))
                                                 <x-table.td>{{ $region->department->name }}</x-table.td>
                                             @endif
                                             <x-table.td>{{ $region->name }}</x-table.td>
-                                            @if($region->regionManager)
-                                                <x-table.td>{{ $region->regionManager->first_name }} {{ $region->regionManager->last_name }}</x-table.td>
-                                            @else
-                                                <x-table.td>Without Manager</x-table.td>
-                                            @endif
+                                                <x-table.td x-data="{ open: false }" class="relative">
+                                                    @if ($region->managers->isNotEmpty())
+                                                        <div class="hidden md:block">
+                                                            <div
+                                                                class="bg-gray-200 rounded shadow-xl w-48 h-auto p-4 space-y-2 absolute top-1.5"
+                                                                style="left: -177px"
+                                                                x-cloak
+                                                                x-transition:enter="transition ease-out duration-300"
+                                                                x-transition:enter-start="opacity-0 transform scale-90"
+                                                                x-transition:enter-end="opacity-100 transform scale-100"
+                                                                x-transition:leave="transition ease-in duration-300"
+                                                                x-transition:leave-start="opacity-100 transform scale-100"
+                                                                x-transition:leave-end="opacity-0 transform scale-90"
+                                                                x-show="open"
+                                                            >
+                                                                @foreach($region->managers as $manager)
+                                                                    <p>{{ $manager->full_name }}</p>
+                                                                @endforeach
+                                                            </div>
+                                                            <x-icon
+                                                                @mouseenter="open = true"
+                                                                @mouseleave="open = false"
+                                                                icon="user"
+                                                                class="w-3.5 h-auto mr-2.5"
+                                                            />
+                                                        </div>
+                                                        <div class="block md:hidden">
+                                                            <span wire:click="openManagersListModal({{ $region }})">
+                                                               <x-icon icon="user" class="w-3.5 h-auto mr-2.5"/>
+                                                            </span>
+                                                        </div>
+                                                    @else
+                                                        &#8212;
+                                                    @endif
+                                                </x-table.td>
                                             <x-table.td>
                                                 <x-link :href="route('castle.regions.edit', $region)" class="text-sm">
                                                     Edit
                                                 </x-link>
                                             </x-table.td>
                                             <x-table.td>
-                                                @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
+                                                @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager']))
                                                     <x-link color="red" class="text-sm" type="button"
                                                             wire:click="setDeletingRegion({{$region->id}})"
                                                             x-on:click="$dispatch('confirm', {from: $event.target})">
@@ -103,3 +133,27 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+    <script>
+        const showManagersModalHandler = () => ({
+            show: false,
+            managers: [],
+            quantity: 0,
+            open(event) {
+                this.managers = event.detail.managers;
+                this.quantity = event.detail.quantity;
+                this.show = true;
+            },
+            close() {
+                this.show = false;
+            },
+            get isOpen() {
+                return this.show === true;
+            },
+            get hasManagers() {
+                return !!this.managers.length;
+            }
+        })
+    </script>
+@endpush

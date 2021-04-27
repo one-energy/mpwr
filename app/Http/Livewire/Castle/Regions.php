@@ -120,4 +120,12 @@ class Regions extends Component
             ->livewire($this)
             ->send();
     }
+
+    public function openManagersListModal(Region $region)
+    {
+        $this->dispatchBrowserEvent('on-show-managers', [
+            'managers' => $region->managers->take(4),
+            'quantity' => $region->managers()->count(),
+        ]);
+    }
 }

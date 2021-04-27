@@ -6,7 +6,7 @@
                     <div>
                         <h3 class="text-lg text-gray-900">Manage Offices</h3>
                     </div>
-                    @if (user()->role != 'Office Manager')
+                    @if (user()->notHaveRoles(['Office Manager']))
                         <div>
                             <x-button :href="route('castle.offices.create')" color="green">
                                 @lang('Create')
@@ -24,7 +24,7 @@
                                 <x-table :pagination="$offices->links()">
                                     <x-slot name="header">
                                         <x-table.th-tr>
-                                            @if (user()->role == 'Admin' || user()->role == 'Owner')
+                                            @if (user()->hasAnyRole(['Admin', 'Owner']))
                                                 <x-table.th-searchable by="offices.name" :sortedBy="$sortBy"
                                                                        :direction="$sortDirection">
                                                     @lang('Department')
@@ -46,17 +46,46 @@
                                     <x-slot name="body">
                                         @foreach ($offices as $office)
                                             <x-table.tr :loop="$loop">
-                                                @if (user()->role == 'Admin' || user()->role == 'Owner')
+                                                @if (user()->hasAnyRole(['Admin', 'Owner']))
                                                     <x-table.td>{{ $office->region->department->name }}</x-table.td>
                                                 @endif
                                                 <x-table.td>{{ $office->name }}</x-table.td>
                                                 <x-table.td>{{ $office->region->name }}</x-table.td>
-                                                @if ($office->officeManager)
-                                                    <x-table.td>{{ $office->officeManager->first_name }}
-                                                        {{ $office->officeManager->last_name }}</x-table.td>
-                                                @else
-                                                    <x-table.td>Without Manager</x-table.td>
-                                                @endif
+                                                    <x-table.td x-data="{ open: false }" class="relative">
+                                                        @if ($office->managers->isNotEmpty())
+                                                            <div class="hidden md:block">
+                                                                <div
+                                                                    class="bg-gray-200 rounded shadow-xl w-48 h-auto p-4 space-y-2 absolute top-1.5"
+                                                                    style="left: -177px"
+                                                                    x-cloak
+                                                                    x-transition:enter="transition ease-out duration-300"
+                                                                    x-transition:enter-start="opacity-0 transform scale-90"
+                                                                    x-transition:enter-end="opacity-100 transform scale-100"
+                                                                    x-transition:leave="transition ease-in duration-300"
+                                                                    x-transition:leave-start="opacity-100 transform scale-100"
+                                                                    x-transition:leave-end="opacity-0 transform scale-90"
+                                                                    x-show="open"
+                                                                >
+                                                                    @foreach($office->managers as $manager)
+                                                                        <p>{{ $manager->full_name }}</p>
+                                                                    @endforeach
+                                                                </div>
+                                                                <x-icon
+                                                                    @mouseenter="open = true"
+                                                                    @mouseleave="open = false"
+                                                                    icon="user"
+                                                                    class="w-3.5 h-auto mr-2.5"
+                                                                />
+                                                            </div>
+                                                            <div class="block md:hidden">
+                                                            <span wire:click="openManagersListModal({{ $office }})">
+                                                               <x-icon icon="user" class="w-3.5 h-auto mr-2.5"/>
+                                                            </span>
+                                                            </div>
+                                                        @else
+                                                            &#8212;
+                                                        @endif
+                                                    </x-table.td>
                                                 <x-table.td>
                                                     <x-link :href="route('castle.offices.edit', $office)"
                                                             class="text-sm">Edit
@@ -64,7 +93,7 @@
 
                                                 </x-table.td>
                                                 <x-table.td>
-                                                    @if (user()->role == 'Admin' || user()->role == 'Owner' || user()->role == 'Department Manager' || user()->role == 'Region Manager')
+                                                    @if (user()->hasAnyRole(['Admin', 'Owner', 'Department Manager', 'Region Manager']))
                                                         <x-link color="red" class="text-sm" type="button"
                                                                 wire:click="setDeletingOffice({{$office->id}})"
                                                                 x-on:click="$dispatch('confirm')">
@@ -111,3 +140,27 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+    <script>
+        const showManagersModalHandler = () => ({
+            show: false,
+            managers: [],
+            quantity: 0,
+            open(event) {
+                this.managers = event.detail.managers;
+                this.quantity = event.detail.quantity;
+                this.show = true;
+            },
+            close() {
+                this.show = false;
+            },
+            get isOpen() {
+                return this.show === true;
+            },
+            get hasManagers() {
+                return !!this.managers.length;
+            }
+        })
+    </script>
+@endpush
