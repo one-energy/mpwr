@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Department;
 use App\Models\TrainingPageSection;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -22,7 +23,9 @@ class TrainingPageSectionFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'title'         => $this->faker->sentence,
+            'parent_id'     => null,
+            'department_id' => Department::factory(),
         ];
     }
 }

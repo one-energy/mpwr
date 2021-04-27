@@ -78,7 +78,7 @@
                                         :href="route('trainings.index', ['department' => user()->department_id])"
                                         class="ml-8"
                                         :active="is_active('trainings.*')">
-                                        @lang('Training')
+                                        @lang('Files & Training')
                                     </x-nav.link>
                                     <x-nav.link :href="route('incentives.index')" class="ml-8"
                                                 :active="is_active('incentives.*')">

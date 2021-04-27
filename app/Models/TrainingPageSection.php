@@ -29,11 +29,14 @@ class TrainingPageSection extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title'];
+    protected $fillable = [
+        'title',
+        'parent_id',
+    ];
 
     public function content()
     {
-        return $this->hasOne(TrainingPageContent::class);
+        return $this->hasMany(TrainingPageContent::class);
     }
 
     public function department()
@@ -44,6 +47,11 @@ class TrainingPageSection extends Model
     public function parent()
     {
         return $this->belongsTo(TrainingPageSection::class);
+    }
+
+    public function files()
+    {
+        return $this->hasMany(SectionFile::class, 'training_page_section_id');
     }
 
     public function scopeSearch(Builder $query, $search)
