@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\DailyNumber;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 class DailyNumberFactory extends Factory
 {
@@ -11,6 +12,7 @@ class DailyNumberFactory extends Factory
     public function definition()
     {
         return [
+            'user_id'    => null,
             'date'       => $this->faker->date($format = 'Y-m-d', $max = 'now'),
             'doors'      => rand(1, 100),
             'hours'      => rand(1, 100),

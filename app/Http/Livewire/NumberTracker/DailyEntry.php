@@ -53,18 +53,26 @@ class DailyEntry extends Component
     public function getUsers($dateSelected)
     {
         $usersQuery = User::query();
-        if (user()->role == 'Setter' || user()->role == 'Sales Rep' || $this->isNotManager()) {
+
+        if (user()->role == 'Setter' || user()->role == 'Sales Rep' || !$this->isManager()) {
             $usersQuery->where('users.id', '=', user()->id);
         }
 
         return $usersQuery
+            ->withTrashed()
             ->whereOfficeId($this->officeSelected)
             ->with(['dailyNumbers' => function($query) use ($dateSelected) {
                 $query->whereDate('date', $dateSelected)
                     ->where('office_id', $this->officeSelected);
             }])
             ->orderBy('first_name')
-            ->get();
+            ->get()->filter(function (User $user) {
+                if ($user->deleted_at != null && $user->dailyNumbers->isEmpty()) {
+                    return false;
+                }
+
+                return true;
+            });
     }
 
     public function getMissingDate($initialDate, $officeSelected)
@@ -136,15 +144,15 @@ class DailyEntry extends Component
         return 'first_name';
     }
 
-    public function isNotManager()
+    public function isManager()
     {
-        if (user()->id != Office::find($this->officeSelected)->office_manager_id) {
+        if (user()->id == Office::find($this->officeSelected)->office_manager_id) {
             return true;
         }
-        if (user()->id != Office::find($this->officeSelected)->region->region_manager_id) {
+        if (user()->id == Office::find($this->officeSelected)->region->region_manager_id) {
             return true;
         }
-        if (user()->id != Office::find($this->officeSelected)->region->deparment->department_manager_id) {
+        if (user()->id == Office::find($this->officeSelected)->region->department->department_manager_id) {
             return true;
         }
 
