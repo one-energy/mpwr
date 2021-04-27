@@ -44,7 +44,7 @@
                                 <x-slot name="body">
                                     @foreach($users as $user)
                                         @if($this->canEditUser($user))
-                                        <x-table.tr :loop="$loop" class="cursor-pointer">
+                                        <x-table.tr :loop="$loop" wire:click="userInfo({{ $user->id }})"  class="cursor-pointer">
                                             @if(user()->hasRole('Admin'))
                                                     <x-table.td>{{ $user->department->name ?? 'Without Department' }}</x-table.td>
                                                 @endif
@@ -64,6 +64,7 @@
                                                                     x-transition:leave-start="opacity-100 transform scale-100"
                                                                     x-transition:leave-end="opacity-0 transform scale-90"
                                                                     x-show="open"
+                                                                    x-cloak
                                                                 >
                                                                     @if ($user->hasRole('Office Manager'))
                                                                         @foreach($user->managedOffices as $office)
@@ -84,13 +85,10 @@
                                                             </div>
                                                             <div class="block md:hidden">
                                                                 <span
-                                                                    x-on:click="$dispatch('confirm', {from: $event.target})"
-                                                                    wire:click="openOfficesListModal({{ $user }})"
+                                                                    @click="$dispatch('confirm', {from: $event.target})"
+                                                                    wire:click.stop="openOfficesListModal({{ $user }})"
                                                                 >
-                                                                   <x-icon
-                                                                       icon="user"
-                                                                       class="w-3.5 h-auto mr-2.5"
-                                                                   />
+                                                                   <x-icon icon="user" class="w-3.5 h-auto mr-2.5" />
                                                                 </span>
                                                             </div>
                                                         @endif
