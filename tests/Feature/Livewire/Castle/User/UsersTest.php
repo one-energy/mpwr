@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Livewire\Castle;
+namespace Tests\Feature\Livewire\Castle\User;
 
 use App\Http\Livewire\Castle\Users;
 use App\Models\Office;
