@@ -14,7 +14,6 @@ class RegionFactory extends Factory
         return [
             'name'              => $this->faker->city,
             'department_id'     => null,
-            'region_manager_id' => null,
         ];
     }
 }
