@@ -519,9 +519,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     protected static function getChangeRoleMessage(string $previous, Collection $content): string
     {
-        $message = $previous . ' ' . $content->implode('name', ', ');
-
-        return $message . '. Please disassociate the user from what was mentioned before continuing.';
+        return  sprintf('%s %s', $previous, $content->implode('name', ', '));
     }
 
     public function getPhoneNumberAttribute($value)
