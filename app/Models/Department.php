@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\DB;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Region[] $regions
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\TrainingPageSection[] $trainingPageSections
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $managers
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Department newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Department newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Department query()
@@ -67,7 +68,7 @@ class Department extends Model
 
     public function managers()
     {
-        return $this->belongsToMany(User::class, 'user_has_departments')
+        return $this->belongsToMany(User::class, 'user_managed_departments')
             ->withTimestamps();
     }
 

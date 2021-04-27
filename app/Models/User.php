@@ -81,6 +81,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'install',
     ];
 
+    protected $appends = [
+        'full_name',
+    ];
+
     const ROLES = [
         [
             'title'       => 'Owner',
@@ -144,12 +148,13 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function managedOffices()
     {
-        return $this->hasMany(Office::class, 'office_manager_id');
+        return $this->belongsToMany(Office::class, 'user_managed_offices')
+            ->withTimestamps();
     }
 
     public function managedRegions()
     {
-        return $this->hasMany(Region::class, 'region_manager_id');
+        return $this->belongsToMany(Region::class, 'user_managed_regions');
     }
 
     public function officesOnManagedRegions()
@@ -270,7 +275,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function managedDepartments()
     {
-        return $this->belongsToMany(Department::class, 'user_has_departments')
+        return $this->belongsToMany(Department::class, 'user_managed_departments')
             ->withTimestamps();
     }
 

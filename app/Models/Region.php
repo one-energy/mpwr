@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
  * @property int|null $department_id
  * @property-read \App\Models\Department|null $department
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Office[] $offices
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $managers
  * @property-read \App\Models\User $regionManager
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\TrainingPageSection[] $trainingPageSections
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Region newModelQuery()

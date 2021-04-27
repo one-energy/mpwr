@@ -21,7 +21,7 @@ class StoreDepartmentTest extends TestCase
         $data = $this->makeData();
 
         $this->assertDatabaseCount('departments', 0);
-        $this->assertDatabaseCount('user_has_departments', 0);
+        $this->assertDatabaseCount('user_managed_departments', 0);
 
         $this
             ->actingAs($john)
@@ -29,7 +29,7 @@ class StoreDepartmentTest extends TestCase
             ->assertSessionHasNoErrors();
 
         $this->assertDatabaseCount('departments', 1);
-        $this->assertDatabaseCount('user_has_departments', 2);
+        $this->assertDatabaseCount('user_managed_departments', 2);
 
         /** @var Department $createdDepartment */
         $createdDepartment = Department::where('name', $data['name'])->first();
