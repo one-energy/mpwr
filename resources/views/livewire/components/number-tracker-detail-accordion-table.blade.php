@@ -298,7 +298,7 @@
                                                     <x-table-accordion.child-td-arrow class="table-cell" :open="$office['itsOpen']">
                                                         <div class="flex" x-data>
                                                             <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
-                                                                type="checkbox" x-on:change="$wire.selectOffice({{$regionIndex}}, {{$officeIndex}})" checked wire:click.stop="">
+                                                                type="checkbox" x-on:change="$wire.selectOffice({{$regionIndex}}, {{$officeIndex}})" checked wire:click.stop="" wire:key="now()">
                                                             <label for="office-{{$office['id']}}">{{$office['name']}}</label>
                                                         </div>
                                                     </x-table-accordion.td-arrow>

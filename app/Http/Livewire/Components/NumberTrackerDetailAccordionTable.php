@@ -71,7 +71,9 @@ class NumberTrackerDetailAccordionTable extends Component
             $dailynumbersQuery->inPeriod($this->period, new Carbon($this->selectedDate));
         }])->whereHas('offices.users.dailyNumbers', function ($query) {
             $query->inPeriod($this->period, new Carbon($this->selectedDate));
-        });
+        })->with(['offices.users' => function ($query) {
+            $query->withTrashed();
+        }]);
 
         if (user()->hasAnyRole(['Admin', 'Owner'])) {
             $regions = $query->get();
