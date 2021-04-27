@@ -9,6 +9,7 @@ use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
 use App\Notifications\UserInvitation;
+use App\Role\Role;
 use App\Rules\Castle\MasterEmailUnique;
 use App\Rules\Castle\MasterEmailYourSelf;
 use Illuminate\Support\Str;
@@ -166,6 +167,7 @@ class UsersController extends Controller
             'master'        => $invitation->master,
             'role'          => $data['role'],
             'office_id'     => $data['office_id'],
+            'department_id' => $data['department_id'],
             'pay'           => $data['pay'],
             'photo_url'     => asset('storage/profiles/profile.png'),
         ]);
@@ -224,8 +226,9 @@ class UsersController extends Controller
 
     public function getRegionsManager($departmentId)
     {
-        return User::whereDepartmentId($departmentId)
-            ->whereRole('Region Manager')
+        return User::query()
+            ->whereRole(Role::REGION_MANAGER)
+            ->whereDepartmentId($departmentId)
             ->orderBy('first_name', 'ASC')
             ->orderBy('last_name', 'ASC')
             ->get();
@@ -233,10 +236,9 @@ class UsersController extends Controller
 
     public function getOfficesManager(Region $region)
     {
-        $usersQuery = User::query()->select('users.*');
-
-        return $usersQuery->whereRole('Office Manager')
-            ->whereDepartmentId($region->department_id)
+        return User::query()
+            ->whereRole(Role::OFFICE_MANAGER)
+            ->whereDepartmentId($region?->department_id)
             ->orderBy('first_name', 'ASC')
             ->orderBy('last_name', 'ASC')
             ->get();
