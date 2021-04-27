@@ -339,11 +339,11 @@
                                                 <div class="table-row cursor-pointer hover:bg-gray-100 @if($office['itsOpen']) bg-gray-100 @endif"
                                                     wire:click.stop="collapseOffice({{$regionIndex}}, {{$officeIndex}})">
                                                     <x-table-accordion.child-td-arrow class="table-cell" :open="$office['itsOpen']">
-                                                        <div class="flex" x-data wire:loading.remove>
-                                                            <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2" wire:key="now()"
-                                                                type="checkbox" x-on:change="$wire.selectOffice({{$regionIndex}}, {{$officeIndex}})" checked wire:click.stop="">
+                                                        <div class="flex" >
+                                                            <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
+                                                                type="checkbox" wire:change="selectOffice({{$regionIndex}}, {{$officeIndex}})" checked wire:click.stop="" wire:model="itsOpenRegions.{{$regionIndex}}.sortedOffices.{{$officeIndex}}.selected" wire:key="now()" wire:loading.remove >
+                                                                <label>{{$office['name']}}</label>
                                                         </div>
-                                                        <label>{{$office['name']}}</label>
                                                     </x-table-accordion.td-arrow>
                                                     <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
                                                         <x-svg.spinner
@@ -425,8 +425,8 @@
                                                                         @if ($user['deleted_at'] != null)
                                                                             <x-icon class="mr-2 w-auto" name="trash"/>
                                                                         @endif
-                                                                        <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
-                                                                            type="checkbox" x-on:change="$wire.selectUser({{$regionIndex}}, {{$officeIndex}}, {{$userIndex}})" checked wire:click.stop="">
+                                                                        <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2" wire:model="itsOpenRegions.{{$regionIndex}}.sortedOffices.{{$officeIndex}}.sortedUsers.{{$userIndex}}.selected"
+                                                                            type="checkbox" x-on:change="$wire.selectUser({{$regionIndex}}, {{$officeIndex}}, {{$userIndex}})" wire:click.stop="">
                                                                     </div>
                                                                     <label>{{$user['full_name']}}</label>
                                                                 </div>

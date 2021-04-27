@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Components;
 
 use App\Models\DailyNumber;
+use App\Models\Office;
 use App\Models\Region;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Support\Carbon;
@@ -189,18 +190,27 @@ class NumberTrackerDetailAccordionTable extends Component
     public function selectRegion($regionIndex)
     {
         $this->itsOpenRegions[$regionIndex]['selected'] = !$this->itsOpenRegions[$regionIndex]['selected'];
+        foreach ($this->itsOpenRegions[$regionIndex]['sortedOffices'] as $office) {
+            $office['selected'] = !$office['selected'];
+            foreach ($office['sortedUsers'] as $users) {
+                $users['selected'] = !$users['selected'];
+            }
+        }
         $this->sumTotal();
     }
 
     public function selectOffice($regionIndex, $officeIndex)
     {
-        $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['selected'] = !$this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['selected'];
+
+        foreach ($this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedUsers'] as &$user) {
+
+            $user['selected'] = $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['selected'];
+        }
         $this->sumTotal();
     }
 
     public function selectUser($regionIndex, $officeIndex, $userIndex)
     {
-        $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedUsers'][$userIndex]['selected'] = !$this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedUsers'][$userIndex]['selected'];
         $this->sumTotal();
     }
 
