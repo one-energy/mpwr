@@ -47,7 +47,7 @@ class NumberTrackerDetailAccordionTable extends Component
         return 'doors';
     }
 
-    public function addItsOpen()
+    public function addItsOpen($keepOpenAndSelect = null)
     {
         unset($this->itsOpenRegions);
         $this->itsOpenRegions = array();
