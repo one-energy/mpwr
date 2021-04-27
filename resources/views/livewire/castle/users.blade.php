@@ -44,7 +44,7 @@
                                 <x-slot name="body">
                                     @foreach($users as $user)
                                         @if($this->canEditUser($user))
-                                        <x-table.tr :loop="$loop" wire:click="userInfo({{ $user->id }})"  class="cursor-pointer">
+                                        <x-table.tr :loop="$loop" wire:click="userInfo({{ $user->id }})" class="cursor-pointer">
                                             @if(user()->hasRole('Admin'))
                                                     <x-table.td>{{ $user->department->name ?? 'Without Department' }}</x-table.td>
                                                 @endif

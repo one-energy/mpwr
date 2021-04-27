@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Lab404\Impersonate\Models\Impersonate;
 
 /**
  * App\Models\User
@@ -58,6 +59,7 @@ class User extends Authenticatable implements MustVerifyEmail
     use HasFactory;
     use Notifiable;
     use SoftDeletes;
+    use Impersonate;
 
     protected $fillable = [
         'department_id',
@@ -219,6 +221,11 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $this->forceFill(['master' => false]);
         $this->save();
+    }
+
+    public function canImpersonate()
+    {
+        return $this->hasRole('Admin');
     }
 
     public function getFullNameAttribute()
