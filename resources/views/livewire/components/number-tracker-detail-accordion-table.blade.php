@@ -260,11 +260,11 @@
                                 <x-slot name="body">
                                     @foreach($itsOpenRegions as $regionIndex => $region)
                                         <div class="table-row cursor-pointer hover:bg-gray-100 @if($region['itsOpen']) bg-gray-200 @endif"
-                                            wire:click.stop="collapseRegion({{$regionIndex}})">
+                                            wire:click.stop="collapseRegion({{$regionIndex}})" >
                                             <x-table-accordion.default-td-arrow class="table-cell" :open="$region['itsOpen']">
                                                 <div class="flex" x-data>
                                                     <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
-                                                        type="checkbox" x-on:change="$wire.selectRegion({{$regionIndex}})" checked wire:click.stop="">
+                                                        type="checkbox" x-on:change="$wire.selectRegion({{$regionIndex}})" checked wire:click.stop="" >
                                                     <label for="region-{{$region['id']}}">{{$region['name']}}</label>
                                                 </div>
                                             </x-table-accordion.td-arrow>
@@ -291,14 +291,13 @@
                                             </x-table-accordion.td>
                                         </div>
                                         @if($region['itsOpen'])
-                                         {{-- @dump($region['offices']) --}}
-                                            @forelse($region['offices'] as $officeIndex => $office)
+                                            @forelse($region['sortedOffices'] as $officeIndex => $office)
                                                 <div class="table-row cursor-pointer hover:bg-gray-100 @if($office['itsOpen']) bg-gray-100 @endif"
                                                     wire:click.stop="collapseOffice({{$regionIndex}}, {{$officeIndex}})">
                                                     <x-table-accordion.child-td-arrow class="table-cell" :open="$office['itsOpen']">
-                                                        <div class="flex" x-data>
-                                                            <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
-                                                                type="checkbox" x-on:change="$wire.selectOffice({{$regionIndex}}, {{$officeIndex}})" checked wire:click.stop="" wire:key="now()">
+                                                        <div class="flex" x-data >
+                                                            <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2" wire:key="now()"
+                                                                type="checkbox" x-on:change="$wire.selectOffice({{$regionIndex}}, {{$officeIndex}})" checked wire:click.stop="">
                                                             <label for="office-{{$office['id']}}">{{$office['name']}}</label>
                                                         </div>
                                                     </x-table-accordion.td-arrow>
@@ -325,10 +324,13 @@
                                                     </x-table-accordion.td>
                                                 </div>
                                                 @if($office['itsOpen'])
-                                                    @forelse($office['users'] as $userIndex => $user)
-                                                        <div class="table-row hover:bg-gray-100">
+                                                    @forelse($office['sortedUsers'] as $userIndex => $user)
+                                                        <div class="table-row hover:bg-gray-100" >
                                                             <x-table-accordion.td class="table-cell pl-28">
                                                                 <div class="flex" x-data>
+                                                                    @if ($user['deleted_at'] != null)
+                                                                        <x-icon name="trash"/>
+                                                                    @endif
                                                                     <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
                                                                     type="checkbox" x-on:change="$wire.selectUser({{$regionIndex}}, {{$officeIndex}}, {{$userIndex}})" checked wire:click.stop="">
                                                                     <label for="user-{{$user['id']}}">{{$user['full_name']}}</label>

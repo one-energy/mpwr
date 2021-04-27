@@ -51,18 +51,19 @@ class NumberTrackerDetailAccordionTable extends Component
         $this->itsOpenRegions = $this->regions->map(function ($region) {
             $region->itsOpen  = false;
             $region->selected = true;
-            $region->offices = $region->offices->map(function ($office) {
+            $region->sortedOffices = $region->offices->map(function ($office) {
                 $office->itsOpen = false;
                 $office->selected = true;
-                $office->users = $office->users->map(function ($user) {
+                $office->sortedUsers = $office->users->map(function ($user) {
                     $user->selected = true;
                     return $user;
-                });
+                })->toArray();
                 return $office;
-            });
+            })->toArray();
 
             return $region;
         })->toArray();
+        // dd( $this->itsOpenRegions);
     }
 
     public function getRegionsProperty()
@@ -121,7 +122,7 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function collapseOffice( int $regionIndex, int $officeIndex)
     {
-        $this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['itsOpen'] = !$this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['itsOpen'];
+        $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['itsOpen'] = !$this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['itsOpen'];
     }
 
     public function selectRegion($regionIndex)
@@ -132,19 +133,17 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function selectOffice($regionIndex, $officeIndex)
     {
-        $this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['selected'] = !$this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['selected'];
+        $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['selected'] = !$this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['selected'];
         $this->sumTotal();
     }
 
     public function selectUser($regionIndex, $officeIndex, $userIndex)
     {
-        $this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['users'][$userIndex]['selected'] = !$this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['users'][$userIndex]['selected'];
-        $this->selected = $this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['users'][$userIndex]['selected'];
+        $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedUsers'][$userIndex]['selected'] = !$this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedUsers'][$userIndex]['selected'];
         $this->sumTotal();
     }
 
     public function sumTotal(){
-        $this->dispatchBrowserEvent('loading-number-tracker');
         $regions = collect($this->itsOpenRegions);
         $this->totals = [
             'doors'         => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'doors', true)),
@@ -162,8 +161,6 @@ class NumberTrackerDetailAccordionTable extends Component
             'setClosesLast' => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'set_closes', true)),
             'closesLast'    => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'closes', true)),
         ];
-        $this->dispatchBrowserEvent('endloading-number-tracker');
-        $this->emit('sumTotalNumbers', $this->totals);
     }
 
     public function sumRegionNumberTracker($region, $field, $filterBySelected = false)
@@ -171,7 +168,7 @@ class NumberTrackerDetailAccordionTable extends Component
         $sum = 0;
         $region = (object) $region;
         if ($region->selected || !$filterBySelected) {
-            $collectOffice = $this->getCollectionOf($region->offices);
+            $collectOffice = $this->getCollectionOf($region->sortedOffices);
             $sum = $collectOffice->sum(function ($office) use ($filterBySelected, $field) {
                 return $this->sumOfficeNumberTracker($office, $field, $filterBySelected);
             });
@@ -183,8 +180,8 @@ class NumberTrackerDetailAccordionTable extends Component
     {
         $office = (object) $office;
         if ($office->selected || !$filterBySelected) {
-            $office->users = $this->getCollectionOf($office->users);
-            return $office->users->sum(function ($user) use ($filterBySelected, $field,) {
+            $office->sortedUsers = $this->getCollectionOf($office->sortedUsers);
+            return $office->sortedUsers->sum(function ($user) use ($filterBySelected, $field,) {
                return $this->sumUserNumberTracker($user, $field, $filterBySelected);
             });
         }
