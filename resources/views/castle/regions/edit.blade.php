@@ -32,7 +32,7 @@
                         <div class="md:col-span-3 col-span-2">
                             <x-input label="Region Name" name="name" value="{{ $region->name }}"/>
                         </div>
-                        @if(user()->role != "Admin" && user()->role != "Owner")
+                        @if(user()->notHaveRoles(['Admin', 'Owner']))
                             <div class="md:col-span-3 col-span-2 hidden">
                                 <x-select x-model="selectedDepartment" label="Department" name="department_id">
                                     <template x-for="department in departments" :key="department.id">
@@ -50,25 +50,27 @@
                             </div>
                         @endif
 
-                        @if(user()->role != "Admin" && user()->role != "Owner")
-                            <div class="md:col-span-3 col-span-2 @if(user()->role == 'Region Manager') hidden @endif">
-                                <x-select x-model="selectedRegionManager" label="Region Manager"
-                                          name="region_manager_id">
-                                    <template x-for="manager in regionsManager" :key="manager.id">
-                                        <option :value="manager.id"
-                                                x-text="manager.first_name + ' ' + manager.last_name"></option>
-                                    </template>
-                                </x-select>
+                        @if(user()->notHaveRoles(['Admin', 'Owner']))
+                            <div class="md:col-span-3 col-span-2 @if(user()->hasRole('Region Manager')) hidden @endif">
+                                <span class="block text-sm font-medium leading-5 text-gray-700 mb-1">Managers</span>
+                                <div class="border-2 border-gray-200 rounded w-full">
+                                    <ul class="space-y-2 p-4">
+                                        <template x-if="regionsManager" x-for="manager in regionsManager" :key="manager.id">
+                                            <li x-text="manager.full_name"></li>
+                                        </template>
+                                    </ul>
+                                </div>
                             </div>
                         @else
                             <div class="md:col-span-3 col-span-2">
-                                <x-select x-model="selectedRegionManager" label="Region Manager"
-                                          name="region_manager_id">
-                                    <template x-for="manager in regionsManager" :key="manager.id">
-                                        <option :value="manager.id"
-                                                x-text="manager.first_name + ' ' + manager.last_name"></option>
-                                    </template>
-                                </x-select>
+                                <span class="block text-sm font-medium leading-5 text-gray-700">Managers</span>
+                                <div class="border-2 border-gray-200 rounded w-full">
+                                    <ul class="space-y-2 p-4">
+                                        <template x-if="regionsManager" x-for="manager in regionsManager" :key="manager.id">
+                                            <li x-text="manager.full_name"></li>
+                                        </template>
+                                    </ul>
+                                </div>
                             </div>
                         @endif
                     </div>
