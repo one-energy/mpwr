@@ -553,13 +553,13 @@
                                                                 <x-table.td>{{ $row->user->department?->name ?? 'Without department' }}</x-table.td>
                                                             @endif
                                                             <x-table.td class="flex center items-center	">
-                                                                @if($row['deleted_at'] != null)
+                                                                @if($row->user->deleted_at != null)
                                                                     <x-icon class="w-6 h-auto" icon="user-blocked" x-on:mouseenter="tooltipShow = true" x-on:mouseleave="tooltipShow = false"></x-icon>
                                                                     <div class="relative">
                                                                         <div x-show="tooltipShow" class="absolute left-1 bottom-1 px-2 py-1 bg-gray-700 text-xs text-white bg-white shadow border-0 block z-50 text-center break-words rounded-md">This user has been deleted</div>
                                                                     </div>
                                                                 @endif
-                                                                {{ $row['first_name'] . ' ' .  $row['last_name']}}
+                                                                {{ $row->user->full_name }}
                                                             </x-table.td>
                                                             <x-table.td>{{ $row['doors'] ?? 0 }}</x-table.td>
                                                             <x-table.td>{{ $row['hours'] ?? 0 }}</x-table.td>

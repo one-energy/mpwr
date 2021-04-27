@@ -90,7 +90,9 @@ class NumberTrackerDetail extends Component
     {
         $query = DailyNumber::query()
             ->with([
-                'user:id,office_id,first_name,last_name,department_id,office_id',
+                'user' => function ($query) {
+                    $query->withTrashed();
+                },
                 'user.department',
             ])
             ->leftJoin('users', function ($join) {
@@ -98,7 +100,7 @@ class NumberTrackerDetail extends Component
                     ->on('users.office_id', '=', 'daily_numbers.office_id');
             })
             ->leftJoin('offices', 'users.office_id', '=', 'offices.id')
-            ->select([DB::raw('users.first_name, users.last_name, users.deleted_at, daily_numbers.id, daily_numbers.user_id, SUM(doors) as doors,
+            ->select([DB::raw('daily_numbers.id, daily_numbers.user_id, SUM(doors) as doors,
                     SUM(hours) as hours,  SUM(sets) as sets, SUM(set_sits) as set_sits,  SUM(sits) as sits,  SUM(set_closes) as set_closes, SUM(closes) as closes')]);
 
         $queryLast = clone $query;
