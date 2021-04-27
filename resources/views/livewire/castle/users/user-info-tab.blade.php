@@ -426,11 +426,14 @@
     <x-app-modal wire:model.defer="showWarningRoleModal">
         <x-slot name="header">
             <h3 class="text-lg font-medium leading-6 text-gray-900" id="modal-headline">
-                Are you sure?
+                Change Role
             </h3>
         </x-slot>
         <x-slot name="body">
-            <p class="text-base">{{ $warningRoleMessage }}</p>
+            <p class="text-base leading-5 text-gray-900 mb-2">Are you sure you want to change the role?</p>
+            <p class="text-base leading-5 text-gray-900">
+                {{ $warningRoleMessage }}
+            </p>
         </x-slot>
         <x-slot name="footer">
             <div class="flex justify-end space-x-2">
