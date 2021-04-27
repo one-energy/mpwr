@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Castle\Users;
 use App\Models\Department;
 use App\Models\Rates;
 use App\Models\User;
+use App\Role\Role;
 use App\Rules\Castle\DepartmentHasOffice;
 use App\Traits\Livewire\Actions;
 use Illuminate\Support\Collection;
@@ -40,6 +41,10 @@ class UserInfoTab extends Component
 
     protected $queryString = ['openedTab'];
 
+    public bool $showWarningRoleModal = false;
+
+    public string $warningRoleMessage = '';
+
     public function mount(User $user)
     {
         $this->userOverride           = clone $user;
@@ -59,7 +64,8 @@ class UserInfoTab extends Component
         $this->offices     = optional($department)->offices ?? collect();
 
         if ($this->user->department !== null) {
-            $this->departmentUsers        = $this->user->department->users()->where('id', '!=', $this->user->id)->orderBy('first_name')->orderBy('last_name')->get();
+            $this->departmentUsers        = $this->user->department->users()->where('id', '!=',
+                $this->user->id)->orderBy('first_name')->orderBy('last_name')->get();
             $this->departmentManagerUsers = $this->user->department->users()->whereRole('Department Manager')->orderBy('first_name')->orderBy('last_name')->get();
             $this->regionManagerUsers     = $this->user->department->users()->whereRole('Region Manager')->orderBy('first_name')->orderBy('last_name')->get();
             $this->officeManagerUsers     = $this->user->department->users()->whereRole('Office Manager')->orderBy('first_name')->orderBy('last_name')->get();
@@ -76,7 +82,10 @@ class UserInfoTab extends Component
             'user.first_name'                          => 'required|string|max:255',
             'user.last_name'                           => 'required|string|max:255',
             'user.role'                                => 'nullable|in:' . implode(',', User::getRoleByNames()),
-            'user.office_id'                           => ['nullable', new DepartmentHasOffice($this->user['department_id'])],
+            'user.office_id'                           => [
+                'nullable',
+                new DepartmentHasOffice($this->user['department_id']),
+            ],
             'user.phone_number'                        => 'nullable',
             'user.pay'                                 => 'nullable',
             'user.department_id'                       => 'nullable|exists:departments,id',
@@ -118,10 +127,10 @@ class UserInfoTab extends Component
     {
         $this->validate();
 
-        $this->userOverride->recruiter_id          = $this->userOverride->recruiter_id != "" ? $this->userOverride->recruiter_id : null;
-        $this->userOverride->office_manager_id     = $this->userOverride->office_manager_id != "" ? $this->userOverride->office_manager_id : null;
-        $this->userOverride->region_manager_id     = $this->userOverride->region_manager_id != "" ? $this->userOverride->region_manager_id : null;
-        $this->userOverride->department_manager_id = $this->userOverride->department_manager_id != "" ? $this->userOverride->department_manager_id : null;
+        $this->userOverride->recruiter_id          = $this->userOverride->recruiter_id != '' ? $this->userOverride->recruiter_id : null;
+        $this->userOverride->office_manager_id     = $this->userOverride->office_manager_id != '' ? $this->userOverride->office_manager_id : null;
+        $this->userOverride->region_manager_id     = $this->userOverride->region_manager_id != '' ? $this->userOverride->region_manager_id : null;
+        $this->userOverride->department_manager_id = $this->userOverride->department_manager_id != '' ? $this->userOverride->department_manager_id : null;
 
         $this->userOverride->save();
         $this->user = clone $this->userOverride;
@@ -153,15 +162,21 @@ class UserInfoTab extends Component
 
     public function getAssignedTeams()
     {
-        if ($this->user->role == 'Department Manager' || $this->user->role == 'Admin' || $this->user->role == 'Owner' || $this->user->role == 'Sales Rep' || $this->user->role == 'Setter') {
+        if ($this->user->hasAnyRole([
+            Role::DEPARTMENT_MANAGER,
+            Role::ADMIN,
+            Role::OWNER,
+            Role::SALES_REP,
+            Role::SETTER,
+        ])) {
             $this->teams = $this->user->office ? collect([$this->user->office]) : null;
         }
 
-        if ($this->user->role == 'Region Manager') {
+        if ($this->user->hasRole(Role::REGION_MANAGER)) {
             $this->teams = $this->user->managedRegions;
         }
 
-        if ($this->user->role == 'Office Manager') {
+        if ($this->user->hasRole(Role::OFFICE_MANAGER)) {
             $this->teams = $this->user->managedOffices;
         }
     }
@@ -173,17 +188,21 @@ class UserInfoTab extends Component
 
     public function changeRole(string $role): void
     {
-        $canChange       = User::userCanChangeRole($this->user);
-        $this->canChange = $canChange['status'];
+        $canChange = User::userCanChangeRole($this->user);
 
         if ($canChange['status']) {
-            $this->user->pay = Rates::whereRole($role)->first()->rate ?? $this->user->pay;
-        } else {
-            $this->showModal([
-                'icon'  => 'warning',
-                'title' => 'Warning!!',
-                'text'  => $canChange['message'],
-            ]);
+            $this->changeUserPay($role);
+            return;
         }
+
+        $this->showWarningRoleModal = true;
+        $this->warningRoleMessage   = $canChange['message'];
+    }
+
+    public function changeUserPay()
+    {
+        $this->user->pay = Rates::whereRole($this->user->role)->first()->rate ?? $this->user->pay;
+
+        $this->showWarningRoleModal = false;
     }
 }
