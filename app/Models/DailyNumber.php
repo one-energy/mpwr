@@ -62,7 +62,28 @@ class DailyNumber extends Model
         }
 
         if ($period === 'm') {
-            $query->whereMonth('date', '=', $date);
+            $query->whereMonth('date', '=', $date)
+                ->whereYear('date', '=', $date);
+        }
+
+        return $query;
+    }
+
+    public function scopeInLastPeriod(Builder $query, string $period, Carbon $date)
+    {
+        if ($period === 'w') {
+            $clonedDate = clone $date;
+            $query->whereBetween('date', [$date->subWeek()->startOfWeek(), $clonedDate->subWeek()->endOfWeek()]);
+        }
+
+        if ($period === 'd') {
+            $query->whereDate('date', $date->subDay());
+        }
+
+        if ($period === 'm') {
+            $date->subMonth();
+            $query->whereMonth('date', '=', $date)
+                ->whereYear('date', '=', $date);
         }
 
         return $query;
