@@ -21,7 +21,7 @@ class SyncDailyNumbersWithUserOffice extends Command
         }
 
         DB::transaction(function () {
-            DailyNumber::with('user')->chunk(500, function ($dailyNumbers) {
+            DailyNumber::with(['user' => fn($query) => $query->withTrashed()])->chunk(500, function ($dailyNumbers) {
                 $dailyNumbers->each(function (DailyNumber $dailyNumber) {
                     $dailyNumber->update(['office_id' => $dailyNumber->user->office_id]);
                 });
