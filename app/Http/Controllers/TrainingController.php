@@ -13,7 +13,11 @@ class TrainingController extends Controller
 
     public function index(Department $department, TrainingPageSection $section = null, $search = null)
     {
-        $this->authorize('viewList', [TrainingPageSection::class, $department->id]);
+        $this->authorize('viewList', [
+            TrainingPageSection::class,
+            $department->id,
+            $section,
+        ]);
 
         if (user()->hasRole('Department Manager') && user()->department_id === null) {
             alert()
@@ -37,7 +41,11 @@ class TrainingController extends Controller
 
     public function manageTrainings(Department $department, TrainingPageSection $section = null)
     {
-        $this->authorize('viewList', [TrainingPageSection::class, $department->id]);
+        $this->authorize('viewList', [
+            TrainingPageSection::class,
+            $department->id,
+            $section,
+        ]);
 
         if (user()->hasRole('Department Manager') && user()->department_id === null) {
             alert()
