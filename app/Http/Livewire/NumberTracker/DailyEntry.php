@@ -53,17 +53,26 @@ class DailyEntry extends Component
     public function getUsers($dateSelected)
     {
         $usersQuery = User::query();
-        if (user()->role == "Setter" || user()->role == "Sales Rep" || $this->isNotManager()) {
-            $usersQuery->where("users.id", "=", user()->id);
+
+        if (user()->role == 'Setter' || user()->role == 'Sales Rep' || !$this->isManager()) {
+            $usersQuery->where('users.id', '=', user()->id);
         }
 
         return $usersQuery
+            ->withTrashed()
             ->whereOfficeId($this->officeSelected)
             ->with(['dailyNumbers' => function($query) use ($dateSelected) {
-                $query->whereDate('date', $dateSelected);
+                $query->whereDate('date', $dateSelected)
+                    ->where('office_id', $this->officeSelected);
             }])
             ->orderBy('first_name')
-            ->get();
+            ->get()->filter(function (User $user) {
+                if ($user->deleted_at != null && $user->dailyNumbers->isEmpty()) {
+                    return false;
+                }
+
+                return true;
+            });
     }
 
     public function getMissingDate($initialDate, $officeSelected)
@@ -135,16 +144,18 @@ class DailyEntry extends Component
         return 'first_name';
     }
 
-    public function isNotManager(){
-        if (user()->id != Office::find($this->officeSelected)->office_manager_id) {
+    public function isManager()
+    {
+        if (user()->id == Office::find($this->officeSelected)->office_manager_id) {
             return true;
         }
-        if (user()->id != Office::find($this->officeSelected)->region->region_manager_id) {
+        if (user()->id == Office::find($this->officeSelected)->region->region_manager_id) {
             return true;
         }
-        if (user()->id != Office::find($this->officeSelected)->region->deparment->department_manager_id) {
+        if (user()->id == Office::find($this->officeSelected)->region->department->department_manager_id) {
             return true;
         }
+
         return false;
     }
 
@@ -154,23 +165,23 @@ class DailyEntry extends Component
             ->select('offices.*')
             ->join('regions', 'region_id', '=', 'regions.id');
 
-        if (user()->role == "Admin" || user()->role == "Owner") {
-            $query->orWhere("regions.department_id", "=", 0);
+        if (user()->role == 'Admin' || user()->role == 'Owner') {
+            $query->orWhere('regions.department_id', '=', 0);
         }
 
-        if (user()->role == "Department Manager") {
-            $query->orWhere("regions.department_id", "=", user()->department_id);
+        if (user()->role == 'Department Manager') {
+            $query->orWhere('regions.department_id', '=', user()->department_id);
         }
 
-        if (user()->role == "Region Manager") {
-            $query->orWhere("regions.region_manager_id", "=", user()->id);
+        if (user()->role == 'Region Manager') {
+            $query->orWhere('regions.region_manager_id', '=', user()->id);
         }
 
-        if (user()->role == "Office Manager") {
-            $query->orWhere("offices.office_manager_id", "=", user()->id);
+        if (user()->role == 'Office Manager') {
+            $query->orWhere('offices.office_manager_id', '=', user()->id);
         }
 
-            $query->orWhere("offices.id", "=", user()->office_id);
+        $query->orWhere('offices.id', '=', user()->office_id);
 
         return $query;
     }

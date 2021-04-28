@@ -5,7 +5,7 @@
                 <button class="
                     py-2 focus:outline-none rounded-l shadow-md w-96
                     @if ($this->filesTabSelected)
-                        bg-green-450 text-white
+                        bg-green-base  text-white
                     @else
                         bg-gray-base  text-gray-800
                     @endif
@@ -15,7 +15,7 @@
                 <button class="
                     py-2 focus:outline-none rounded-r shadow-md w-96
                     @if ($this->trainingTabSelected)
-                        bg-green-450 text-white
+                        bg-green-base  text-white
                     @else
                         bg-gray-base  text-gray-800
                     @endif
@@ -52,21 +52,33 @@
                     />
                 </div>
 
-                <div class="mt-10 @if ($this->filesTabSelected) hidden @endif">
-                    <livewire:castle.manage-trainings.videos
-                        key="videos-list-{{ $contents->count() }}"
-                        :currentSection="$actualSection"
-                        :contents="$contents"
-                        :show-actions="false"
-                    />
+                <div class="@if ($this->filesTabSelected) hidden @endif">
+                    <div class="mt-10">
+                        <livewire:castle.manage-trainings.videos
+                            key="videos-list-{{ $contents->count() }}"
+                            :currentSection="$actualSection"
+                            :contents="$contents"
+                        />
+                    </div>
+
+                    <div class="mt-10">
+                        <livewire:list-files
+                            key="training-list-{{ $groupedFiles['training']->count() }}"
+                            :files="$groupedFiles['training']"
+                            :showDeleteButton="true"
+                        />
+                    </div>
                 </div>
 
-                <div class="mt-10 @if ($actualSection->files->isEmpty()) hidden @endif">
-                    <livewire:list-files
-                        key="files-list-{{ $actualSection->files->count() }}"
-                        :files="$actualSection->files"
-                        :showDeleteButton="false"
-                    />
+
+                <div class="@if ($this->trainingTabSelected) hidden @endif">
+                    <div class="mt-10">
+                        <livewire:list-files
+                            key="files-list-{{ $groupedFiles['files']->count() }}"
+                            :files="$groupedFiles['files']"
+                            :showDeleteButton="true"
+                        />
+                    </div>
                 </div>
             </div>
         </div>

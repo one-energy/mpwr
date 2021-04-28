@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Department;
+use App\Models\SectionFile;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
 use App\Traits\Livewire\FullTable;
@@ -27,6 +28,8 @@ class ShowTrainings extends Component
 
     public string $selectedTab = 'files';
 
+    public Collection $groupedFiles;
+
     public function mount()
     {
         $this->video         = new TrainingPageContent();
@@ -44,8 +47,9 @@ class ShowTrainings extends Component
     {
         if ($this->department->id) {
             $this->actualSection = $this->section ?? TrainingPageSection::whereDepartmentId($this->department->id)->first();
-
             $this->actualSection->load('files');
+
+            $this->groupedFiles = $this->getGroupedFiles($this->actualSection);
 
             $this->contents      = $this->getContents($this->actualSection);
             $this->sections      = $this->department->id ? $this->getParentSections($this->actualSection) : collect();
@@ -53,6 +57,17 @@ class ShowTrainings extends Component
         }
 
         return view('livewire.show-trainings');
+    }
+
+    public function getGroupedFiles(TrainingPageSection $section)
+    {
+        $files     = $section->files->filter(fn(SectionFile $file) => $file->training_type === 'files');
+        $trainings = $section->files->filter(fn(SectionFile $file) => $file->training_type === 'training');
+
+        return collect([
+            'files'    => $files,
+            'training' => $trainings,
+        ]);
     }
 
     public function getPath($section)

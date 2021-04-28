@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Castle\ManageTrainings;
 
 use App\Models\Department;
+use App\Models\SectionFile;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
 use App\Traits\Livewire\FullTable;
@@ -35,6 +36,8 @@ class Trainings extends Component
     public string $selectedTab = 'files';
 
     public bool $showAddContentModal = false;
+
+    public Collection $groupedFiles;
 
     protected $listeners = [
         'contentAdded'  => '$refresh',
@@ -72,18 +75,30 @@ class Trainings extends Component
 
         if ($this->department->id) {
             $this->actualSection = $this->section ?? TrainingPageSection::whereDepartmentId($this->department->id)->first();
-
             $this->actualSection->load('files');
 
-            $this->contents      = $this->getContents($this->actualSection);
-            $this->departments   = Department::all();
-            $this->path          = $this->getPath($this->actualSection);
+            $this->groupedFiles = $this->getGroupedFiles($this->actualSection);
+
+            $this->contents    = $this->getContents($this->actualSection);
+            $this->departments = Department::all();
+            $this->path        = $this->getPath($this->actualSection);
         }
 
         $this->sections     = $this->department->id ? $this->getParentSections($this->actualSection) : collect();
         $this->departmentId = $this->department->id ?? 0;
 
         return view('livewire.castle.manage-trainings.trainings');
+    }
+
+    public function getGroupedFiles(TrainingPageSection $section)
+    {
+        $files     = $section->files->filter(fn(SectionFile $file) => $file->training_type === 'files');
+        $trainings = $section->files->filter(fn(SectionFile $file) => $file->training_type === 'training');
+
+        return collect([
+            'files'    => $files,
+            'training' => $trainings,
+        ]);
     }
 
     public function getPath($section)
@@ -176,5 +191,7 @@ class Trainings extends Component
     {
         $this->actualSection       = TrainingPageSection::find($this->actualSection->id)->load('files');
         $this->showAddContentModal = false;
+
+        $this->groupedFiles = $this->getGroupedFiles($this->actualSection);
     }
 }

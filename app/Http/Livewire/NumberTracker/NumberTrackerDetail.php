@@ -39,9 +39,9 @@ class NumberTrackerDetail extends Component
 
     public $date;
 
-    public $graficValue;
+    public $graphicValue;
 
-    public $graficValueLast;
+    public $graphicValueLast;
 
     public $filterBy = 'doors';
 
@@ -86,8 +86,9 @@ class NumberTrackerDetail extends Component
     public function render()
     {
         $this->numbersTracked = $this->getTrackerNumbers();
-        $this->graficValue    = $this->numbersTracked->sum($this->filterBy);
-        $showOptions          = [
+        $this->graphicValue   = $this->numbersTracked->sum($this->filterBy);
+
+        $showOptions = [
             'Daily Total',
             'Weekly Total',
             'Monthly Total',
@@ -126,23 +127,27 @@ class NumberTrackerDetail extends Component
 
     public function updateSearch()
     {
-        $this->users = User::where(
-            DB::raw("CONCAT(`first_name`, ' ',  `last_name`)"), 'like', "%{$this->userSearch}%"
-        )
+        $this->users = User::where(DB::raw("CONCAT(`first_name`, ' ',  `last_name`)"), 'like',
+            '%' . $this->userSearch . '%')
             ->orWhere('email', 'like', "%{$this->userSearch}%")->get();
     }
 
     public function getTrackerNumbers()
     {
         $query = DailyNumber::query()
+            ->with([
+                'user' => function ($query) {
+                    $query->withTrashed();
+                },
+                'user.department',
+            ])
             ->leftJoin('users', function ($join) {
-                $join->on('users.id', '=', 'daily_numbers.user_id');
+                $join->on('users.id', '=', 'daily_numbers.user_id')
+                    ->on('users.office_id', '=', 'daily_numbers.office_id');
             })
-            ->join('offices', 'users.office_id', '=', 'offices.id')
-            ->select([
-                DB::raw('users.first_name, users.last_name, daily_numbers.id, daily_numbers.user_id, SUM(doors) as doors,
-                    SUM(hours) as hours,  SUM(sets) as sets, SUM(set_sits) as set_sits,  SUM(sits) as sits,  SUM(set_closes) as set_closes, SUM(closes) as closes'),
-            ]);
+            ->leftJoin('offices', 'users.office_id', '=', 'offices.id')
+            ->select([DB::raw('daily_numbers.id, daily_numbers.user_id, SUM(doors) as doors,
+                    SUM(hours) as hours,  SUM(sets) as sets, SUM(set_sits) as set_sits,  SUM(sits) as sits,  SUM(set_closes) as set_closes, SUM(closes) as closes')]);
 
         $queryLast = clone $query;
 
@@ -159,9 +164,12 @@ class NumberTrackerDetail extends Component
                 Carbon::createFromFormat('Y-m-d', $this->dateSelected)->subWeek()->endOfWeek(),
             ]);
         } else {
-            $query->whereMonth('date', '=', Carbon::createFromFormat('Y-m-d', $this->dateSelected)->month);
-            $queryLast->whereMonth('date', '=',
-                Carbon::createFromFormat('Y-m-d', $this->dateSelected)->subMonth()->month);
+            $query->whereMonth(
+                'date', '=', Carbon::createFromFormat('Y-m-d', $this->dateSelected)->month
+            );
+            $queryLast->whereMonth(
+                'date', '=', Carbon::createFromFormat('Y-m-d', $this->dateSelected)->subMonth()->month
+            );
         }
 
         if (count($this->activeFilters) > 0) {
@@ -173,7 +181,7 @@ class NumberTrackerDetail extends Component
                         $query->orWhere('daily_numbers.user_id', '=', $id);
                     }
                     if ($filter['type'] == 'office') {
-                        $query->orWhere('office_id', '=', $id);
+                        $query->orWhere('daily_numbers.office_id', '=', $id);
                     }
                     if ($filter['type'] == 'region') {
                         $query->orWhere('region_id', '=', $id);
@@ -187,7 +195,7 @@ class NumberTrackerDetail extends Component
                         $query->orWhere('daily_numbers.user_id', '=', $id);
                     }
                     if ($filter['type'] == 'office') {
-                        $query->orWhere('office_id', '=', $id);
+                        $query->orWhere('daily_numbers.office_id', '=', $id);
                     }
                     if ($filter['type'] == 'region') {
                         $query->orWhere('region_id', '=', $id);
@@ -202,9 +210,10 @@ class NumberTrackerDetail extends Component
             ->groupBy('user_id')
             ->get();
 
-        $this->graficValueLast = $this->numbersTrackedLast->sum($this->filterBy);
+        $this->graphicValueLast = $this->numbersTrackedLast->sum($this->filterBy);
 
-        $query->groupBy('daily_numbers.user_id')
+        $query
+            ->groupBy('daily_numbers.user_id')
             ->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
                 $query->where('users.department_id', '=', user()->department_id);
             });
