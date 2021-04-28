@@ -84,8 +84,6 @@ class OfficeController extends Controller
                 $office->managers()->attach($managerIds->toArray());
             }
 
-            $office->managers()->attach(request()->office_manager_ids);
-
             return $office;
         });
 

@@ -91,8 +91,6 @@ class RegionController extends Controller
             if ($managerIds->isNotEmpty()) {
                 $region->managers()->attach($managerIds->toArray());
             }
-
-            $region->managers()->attach(request()->region_manager_ids);
         });
 
         alert()
