@@ -50,8 +50,6 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function addItsOpen()
     {
-        unset($this->itsOpenRegions);
-        $this->itsOpenRegions = array();
         $this->itsOpenRegions = $this->regions->map(function ($region) {
             $region->itsOpen  = false;
             $region->selected = true;
@@ -102,20 +100,20 @@ class NumberTrackerDetailAccordionTable extends Component
         if ($this->sortDirection == 'asc') {
             $regions = $regions->sortBy(function($region) {
                 return $region->offices->sum(function ($office) {
-                    return $office->dailyNumbers->count() ? $office->dailyNumbers->sum($this->sortBy) : 0;
+                    return $office->daily_numbers ? $office->daily_numbers->sum($this->sortBy) : 0;
                 });
             })->values();
 
             $regions = $regions->map(function($region) {
                 $region->offices = $region->offices->sortBy(function ($office) {
-                    return $office->dailyNumbers->count() ? $office->dailyNumbers->sum($this->sortBy) : 0;
+                    return $office->daily_numbers ? $office->daily_numbers->sum($this->sortBy) : 0;
                 })->values();
                 return $region;
             });
 
             $regions = $regions->map(function($region) {
                 $region->offices = $region->offices->map(function ($office) {
-                    $office->dailyNumbers = $office->dailyNumbers->sortBy($this->sortBy)->values();
+                    $office->daily_numbers = $office->daily_numbers ? $office->daily_numbers->sortBy($this->sortBy)->values() : null;
                     return $office;
                 });
                 return $region;
@@ -123,26 +121,25 @@ class NumberTrackerDetailAccordionTable extends Component
         } else {
             $regions = $regions->sortByDesc(function($region) {
                 return $region->offices->sum(function ($office) {
-                    return $office->dailyNumbers->count() ? $office->dailyNumbers->sum($this->sortBy) : 0;
+                    return $office->daily_numbers ? $office->daily_numbers->sum($this->sortBy) : 0;
                 });
             })->values();
 
             $regions = $regions->map(function($region) {
                 $region->offices = $region->offices->sortByDesc(function ($office) {
-                    return $office->dailyNumbers->count() ? $office->dailyNumbers->sum($this->sortBy) : 0;
+                    return $office->daily_numbers ? $office->daily_numbers->sum($this->sortBy) : 0;
                 })->values();
                 return $region;
             });
 
             $regions = $regions->map(function($region) {
                 $region->offices = $region->offices->map(function ($office) {
-                    $office->dailyNumbers = $office->dailyNumbers->sortByDesc($this->sortBy)->values();
+                    $office->daily_numbers = $office->daily_numbers->sortByDesc($this->sortBy)->values();
                     return $office;
                 });
                 return $region;
             });
         }
-
 
         return $regions;
     }

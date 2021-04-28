@@ -85,17 +85,7 @@ class NumberTrackerDetail extends Component
 
     public function render()
     {
-        $this->numbersTracked = $this->getTrackerNumbers();
-        $this->graphicValue   = $this->numbersTracked->sum($this->filterBy);
-
-        $showOptions = [
-            'Daily Total',
-            'Weekly Total',
-            'Monthly Total',
-            'Statistics',
-        ];
-
-        return view('livewire.number-tracker.number-tracker-detail', ['showOptions' => $showOptions]);
+        return view('livewire.number-tracker.number-tracker-detail');
     }
 
     public function sortBy()
