@@ -52,6 +52,11 @@ class DailyNumber extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function office()
+    {
+        return $this->belongsTo(Office::class, 'office_id');
+    }
+
     public function scopeInPeriod(Builder $query, string $period, Carbon $date)
     {
         if ($period === 'w') {

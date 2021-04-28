@@ -87,14 +87,15 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function getRegionsProperty()
     {
-        $query = Region::with(['offices.users.dailyNumbers' => function ($dailynumbersQuery) {
-            $dailynumbersQuery->inPeriod($this->period, new Carbon($this->selectedDate));
+        $query = Region::with(['offices.dailyNumbers' => function ($dailynumbersQuery) {
+            $dailynumbersQuery->inPeriod($this->period, new Carbon($this->selectedDate))
+                ->with('user')
+                ->groupBy('user_id');
         }])->whereHas('offices.users.dailyNumbers', function ($query) {
             $query->inPeriod($this->period, new Carbon($this->selectedDate));
-        })->with(['offices.users' => function ($query) {
-            $query->withTrashed();
-        }]);
+        });
 
+        dd($query->get()->toArray());
         if (user()->hasAnyRole(['Admin', 'Owner'])) {
             $regions = $query->get();
         } else {

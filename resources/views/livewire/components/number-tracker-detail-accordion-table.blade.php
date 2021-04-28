@@ -257,9 +257,15 @@
                                         <div class="table-row cursor-pointer hover:bg-gray-100 @if($region['itsOpen']) bg-gray-200 @endif"
                                             wire:click.stop="collapseRegion({{$regionIndex}})" >
                                             <x-table-accordion.default-td-arrow class="table-cell" :open="$region['itsOpen']">
-                                                <div class="flex" x-data wire:loading.remove wire:key="now()">
+                                                <div class="flex" x-data wire:loading.remove wire:key="{{$regionIndex}}">
                                                     <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
                                                         type="checkbox" x-on:change="$wire.selectRegion({{$regionIndex}})" checked wire:click.stop="" >
+                                                </div>
+                                                <div class="flex items-center mr-2 w-6 h-6"" wire:loading>
+                                                    <x-svg.spinner
+                                                        color="#9fa6b2"
+                                                        class="self-center ">
+                                                    </x-svg.spinner>
                                                 </div>
                                                 <label>{{$region['name']}}</label>
                                             </x-table-accordion.td-arrow>
@@ -337,12 +343,21 @@
                                         @if($region['itsOpen'])
                                             @forelse($region['sortedOffices'] as $officeIndex => $office)
                                                 <div class="table-row cursor-pointer hover:bg-gray-100 @if($office['itsOpen']) bg-gray-100 @endif"
-                                                    wire:click.stop="collapseOffice({{$regionIndex}}, {{$officeIndex}})">
+                                                    wire:click.stop="collapseOffice({{$regionIndex}}, {{$officeIndex}})" wire:key="{{$regionIndex}}-{{$officeIndex}}">
                                                     <x-table-accordion.child-td-arrow class="table-cell" :open="$office['itsOpen']">
-                                                        <div class="flex" >
-                                                            <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
-                                                                type="checkbox" wire:change="selectOffice({{$regionIndex}}, {{$officeIndex}})" checked wire:click.stop="" wire:model="itsOpenRegions.{{$regionIndex}}.sortedOffices.{{$officeIndex}}.selected" wire:key="now()" wire:loading.remove >
-                                                                <label>{{$office['name']}}</label>
+                                                        <div class="flex">
+                                                            <div wire:loading.remove>
+                                                                <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
+                                                                    type="checkbox" wire:change="selectOffice({{$regionIndex}}, {{$officeIndex}})" checked wire:click.stop=""
+                                                                    wire:model="itsOpenRegions.{{$regionIndex}}.sortedOffices.{{$officeIndex}}.selected">
+                                                            </div>
+                                                            <div class="flex items-center mr-2 w-6 h-6"" wire:loading>
+                                                                <x-svg.spinner
+                                                                    color="#9fa6b2"
+                                                                    class="self-center ">
+                                                                </x-svg.spinner>
+                                                            </div>
+                                                            <label>{{$office['name']}}</label>
                                                         </div>
                                                     </x-table-accordion.td-arrow>
                                                     <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
@@ -418,17 +433,26 @@
                                                 </div>
                                                 @if($office['itsOpen'])
                                                     @forelse($office['sortedUsers'] as $userIndex => $user)
-                                                        <div class="table-row hover:bg-gray-100" >
+                                                        <div class="table-row hover:bg-gray-100" wire:key="{{$regionIndex}}-{{$officeIndex}}-{{$userIndex}}">
                                                             <x-table-accordion.td class="table-cell pl-28">
-                                                                <div class="flex" x-data >
-                                                                    <div wire:key="now()" wire:loading.remove>
-                                                                        @if ($user['deleted_at'] != null)
-                                                                            <x-icon class="mr-2 w-auto" name="trash"/>
-                                                                        @endif
-                                                                        <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2" wire:model="itsOpenRegions.{{$regionIndex}}.sortedOffices.{{$officeIndex}}.sortedUsers.{{$userIndex}}.selected"
+                                                                <div class="flex items-center" x-data >
+                                                                    <div class="flex items-center" wire:loading.remove>
+                                                                        <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
+                                                                            wire:model="itsOpenRegions.{{$regionIndex}}.sortedOffices.{{$officeIndex}}.sortedUsers.{{$userIndex}}.selected"
                                                                             type="checkbox" x-on:change="$wire.selectUser({{$regionIndex}}, {{$officeIndex}}, {{$userIndex}})" wire:click.stop="">
                                                                     </div>
-                                                                    <label>{{$user['full_name']}}</label>
+                                                                    <div class="flex items-center mr-2 w-6 h-6"" wire:loading>
+                                                                        <x-svg.spinner
+                                                                            color="#9fa6b2"
+                                                                            class="self-center ">
+                                                                        </x-svg.spinner>
+                                                                    </div>
+                                                                    <div class="flex items-center">
+                                                                        @if ($user['deleted_at'] != null)
+                                                                            <x-icon class="mr-2 w-6 h-6" icon="user-blocked"/>
+                                                                        @endif
+                                                                        <label>{{$user['full_name']}}</label>
+                                                                    </div>
                                                                 </div>
                                                             </x-table-accordion.td>
                                                             <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
