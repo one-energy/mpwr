@@ -71,19 +71,6 @@ class StoreRegionTest extends TestCase
     }
 
     /** @test */
-    public function it_should_require_region_manager_ids()
-    {
-        $john = User::factory()->create(['role' => Role::ADMIN]);
-
-        $this
-            ->actingAs($john)
-            ->post(
-                route('castle.regions.store', $this->makeData(['region_manager_ids' => null]))
-            )
-            ->assertSessionHasErrors('region_manager_ids');
-    }
-
-    /** @test */
     public function it_should_require_name_above_3_characters()
     {
         $john = User::factory()->create(['role' => Role::ADMIN]);

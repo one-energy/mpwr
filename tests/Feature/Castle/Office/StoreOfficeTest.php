@@ -71,19 +71,6 @@ class StoreOfficeTest extends TestCase
     }
 
     /** @test */
-    public function it_should_require_office_manager_ids()
-    {
-        $john = User::factory()->create(['role' => Role::ADMIN]);
-
-        $this
-            ->actingAs($john)
-            ->post(
-                route('castle.offices.store', $this->makeData(['office_manager_ids' => null]))
-            )
-            ->assertSessionHasErrors('office_manager_ids');
-    }
-
-    /** @test */
     public function it_should_require_name_above_3_characters()
     {
         $john = User::factory()->create(['role' => Role::ADMIN]);
