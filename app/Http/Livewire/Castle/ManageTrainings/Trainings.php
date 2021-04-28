@@ -102,6 +102,19 @@ class Trainings extends Component
         ]);
     }
 
+    public function getCanSeeActionsProperty()
+    {
+        if (user()->hasAnyRole(['Admin', 'Owner', 'Department Manager'])) {
+            return true;
+        }
+
+        if (user()->hasRole('Region Manager') && $this->actualSection->isDepartmentSection()) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function getPath($section)
     {
         $path                = [$section];

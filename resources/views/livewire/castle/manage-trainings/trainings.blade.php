@@ -133,33 +133,21 @@
                     />
                 </div>
 
-                <div class="@if ($this->filesTabSelected) hidden @endif">
-                    <div class="mt-10">
-                        <livewire:castle.manage-trainings.videos
-                            key="videos-list-{{ $contents->count() }}"
-                            :currentSection="$actualSection"
-                            :contents="$contents"
-                        />
-                    </div>
-
-                    <div class="mt-10">
-                        <livewire:list-files
-                            key="training-list-{{ $groupedFiles['training']->count() }}"
-                            :files="$groupedFiles['training']"
-                            :showDeleteButton="true"
-                        />
-                    </div>
+                <div class="mt-10 @if ($this->filesTabSelected) hidden @endif">
+                    <livewire:castle.manage-trainings.videos
+                        key="videos-list-{{ $contents->count() }}"
+                        :currentSection="$actualSection"
+                        :contents="$contents"
+                        :showActions="$this->canSeeActions"
+                    />
                 </div>
 
-
-                <div class="@if ($this->trainingTabSelected) hidden @endif">
-                    <div class="mt-10">
-                        <livewire:list-files
-                            key="files-list-{{ $groupedFiles['files']->count() }}"
-                            :files="$groupedFiles['files']"
-                            :showDeleteButton="true"
-                        />
-                    </div>
+                <div class="mt-10 @if ($actualSection->files->isEmpty()) hidden @endif">
+                    <livewire:list-files
+                        key="files-list-{{ $actualSection->files->count() }}"
+                        :files="$actualSection->files"
+                        :showDeleteButton="$this->canSeeActions"
+                    />
                 </div>
             </div>
         </div>
