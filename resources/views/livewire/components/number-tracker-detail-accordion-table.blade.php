@@ -1,4 +1,4 @@
-<div x-data="initAccordion()" x-init="[bootstrap()]">
+<div>
 
     <div class="flex justify-between mt-6 md:mt-12">
         <div class="grid w-full grid-cols-2 row-gap-2 col-gap-1 md:grid-cols-4 md:col-gap-4">
@@ -224,7 +224,6 @@
             <div class="flex flex-col">
                 <div class="overflow-x-auto">
                     <div class="inline-block min-w-full overflow-hidden align-middle">
-                        {{-- @dump($itsOpenRegions) --}}
                         @if(count($itsOpenRegions))
                             <x-table-accordion class="overflow-x-auto">
                                 <x-slot name="header">
@@ -432,14 +431,14 @@
                                                     </x-table-accordion.td>
                                                 </div>
                                                 @if($office['itsOpen'])
-                                                    @forelse($office['sortedUsers'] as $userIndex => $user)
-                                                        <div class="table-row hover:bg-gray-100" wire:key="{{$regionIndex}}-{{$officeIndex}}-{{$userIndex}}">
+                                                    @forelse($office['sortedDailyNumbers'] as $dailyNumberIndex => $dailyNumber)
+                                                        <div class="table-row hover:bg-gray-100" wire:key="{{$regionIndex}}-{{$officeIndex}}-{{$dailyNumberIndex}}">
                                                             <x-table-accordion.td class="table-cell pl-28">
                                                                 <div class="flex items-center" x-data >
                                                                     <div class="flex items-center" wire:loading.remove>
                                                                         <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
-                                                                            wire:model="itsOpenRegions.{{$regionIndex}}.sortedOffices.{{$officeIndex}}.sortedUsers.{{$userIndex}}.selected"
-                                                                            type="checkbox" x-on:change="$wire.selectUser({{$regionIndex}}, {{$officeIndex}}, {{$userIndex}})" wire:click.stop="">
+                                                                            wire:model="itsOpenRegions.{{$regionIndex}}.sortedOffices.{{$officeIndex}}.sortedDailyNumbers.{{$dailyNumberIndex}}.selected"
+                                                                            type="checkbox" x-on:change="$wire.selectUser({{$regionIndex}}, {{$officeIndex}}, {{$dailyNumberIndex}})" wire:click.stop="">
                                                                     </div>
                                                                     <div class="flex items-center mr-2 w-6 h-6"" wire:loading>
                                                                         <x-svg.spinner
@@ -448,10 +447,10 @@
                                                                         </x-svg.spinner>
                                                                     </div>
                                                                     <div class="flex items-center">
-                                                                        @if ($user['deleted_at'] != null)
+                                                                        @if ($dailyNumber['user']['deleted_at'] != null)
                                                                             <x-icon class="mr-2 w-6 h-6" icon="user-blocked"/>
                                                                         @endif
-                                                                        <label>{{$user['full_name']}}</label>
+                                                                        <label>{{$dailyNumber['user']['full_name']}}</label>
                                                                     </div>
                                                                 </div>
                                                             </x-table-accordion.td>
@@ -462,7 +461,7 @@
                                                                     wire:loading wire:target="initRegionsData">
                                                                 </x-svg.spinner>
                                                                 <div wire:loading.remove wire:target="initRegionsData">
-                                                                    {{$this->sumUserNumberTracker($user, 'doors')}}
+                                                                    {{$dailyNumber['doors']}}
                                                                 </div>
                                                             </x-table-accordion.td>
                                                             <x-table-accordion.td class="table-cell" by="hours" sortedBy="$sortBy">
@@ -472,7 +471,7 @@
                                                                     wire:loading wire:target="initRegionsData">
                                                                 </x-svg.spinner>
                                                                 <div wire:loading.remove wire:target="initRegionsData">
-                                                                    {{$this->sumUserNumberTracker($user, 'hours')}}
+                                                                    {{$dailyNumber['hours']}}
                                                                 </div>
                                                             </x-table-accordion.td>
                                                             <x-table-accordion.td class="table-cell" by="sets" sortedBy="$sortBy">
@@ -482,7 +481,7 @@
                                                                     wire:loading wire:target="initRegionsData">
                                                                 </x-svg.spinner>
                                                                 <div wire:loading.remove wire:target="initRegionsData">
-                                                                    {{$this->sumUserNumberTracker($user, 'sets')}}
+                                                                    {{$dailyNumber['sets']}}
                                                                 </div>
                                                             </x-table-accordion.td>
                                                             <x-table-accordion.td class="table-cell" by="set_sits" sortedBy="$sortBy">
@@ -492,7 +491,7 @@
                                                                     wire:loading wire:target="initRegionsData">
                                                                 </x-svg.spinner>
                                                                 <div wire:loading.remove wire:target="initRegionsData">
-                                                                    {{$this->sumUserNumberTracker($user, 'set_sits')}}
+                                                                    {{$dailyNumber['set_sits']}}
                                                                 </div>
                                                             </x-table-accordion.td>
                                                             <x-table-accordion.td class="table-cell" by="sits" sortedBy="$sortBy">
@@ -502,7 +501,7 @@
                                                                     wire:loading wire:target="initRegionsData">
                                                                 </x-svg.spinner>
                                                                 <div wire:loading.remove wire:target="initRegionsData">
-                                                                    {{$this->sumUserNumberTracker($user, 'sits')}}
+                                                                    {{$dailyNumber['sits']}}
                                                                 </div>
                                                             </x-table-accordion.td>
                                                             <x-table-accordion.td class="table-cell" by="set_closes" sortedBy="$sortBy">
@@ -512,7 +511,7 @@
                                                                     wire:loading wire:target="initRegionsData">
                                                                 </x-svg.spinner>
                                                                 <div wire:loading.remove wire:target="initRegionsData">
-                                                                    {{$this->sumUserNumberTracker($user, 'set_closes')}}
+                                                                    {{$dailyNumber['set_closes']}}
                                                                 </div>
                                                             </x-table-accordion.td>
                                                             <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
@@ -522,7 +521,7 @@
                                                                     wire:loading wire:target="initRegionsData">
                                                                 </x-svg.spinner>
                                                                 <div wire:loading.remove wire:target="initRegionsData">
-                                                                    {{$this->sumUserNumberTracker($user, 'closes')}}
+                                                                    {{$dailyNumber['closes']}}
                                                                 </div>
                                                             </x-table-accordion.td>
                                                         </div>
@@ -556,15 +555,3 @@
         </div>
     </div>
 </div>
-
-@push('scripts')
-    <script>
-        function initAccordion() {
-            return {
-                bootstrap () {
-                    window.livewire.emit('sumTotalNumbers', @json($totals))
-                }
-            }
-        }
-    </script>
-@endpush
