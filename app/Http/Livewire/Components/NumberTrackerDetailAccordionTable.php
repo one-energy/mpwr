@@ -66,11 +66,9 @@ class NumberTrackerDetailAccordionTable extends Component
             return $region;
         })->toArray();
 
-        $this->lastPeriodNumberTracker = $this->last_regions->map(function ($region) {
-            $region->itsOpen  = false;
+        $this->lastPeriodNumberTracker = $this->lastRegions->map(function ($region) {
             $region->selected = true;
             $region->sortedOffices = $region->offices->map(function ($office) {
-                $office->itsOpen = false;
                 $office->selected = true;
                 $office->sortedDailyNumbers = $office->dailyNumbers->map(function ($dailyNumbers) {
                     $dailyNumbers->selected = true;
@@ -236,7 +234,10 @@ class NumberTrackerDetailAccordionTable extends Component
         $office = (object) $office;
         if ($office->selected || !$filterBySelected) {
             $office->sortedDailyNumbers = $this->getCollectionOf($office->sortedDailyNumbers);
-            return count($office->sortedDailyNumbers) ? $office->sortedDailyNumbers->sum($field) : 0;
+            return $office->sortedDailyNumbers->sum(function ($dailyNumber) use ($field) {
+                // dd($dailyNumber);
+               return $dailyNumber['selected'] ? $dailyNumber[$field] : 0;
+            });
         }
     }
 
