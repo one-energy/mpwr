@@ -258,7 +258,8 @@
                                             <x-table-accordion.default-td-arrow class="table-cell" :open="$region['itsOpen']">
                                                 <div class="flex" x-data wire:loading.remove wire:key="{{$regionIndex}}">
                                                     <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
-                                                        type="checkbox" x-on:change="$wire.selectRegion({{$regionIndex}})" checked wire:click.stop="" >
+                                                        wire:model="itsOpenRegions.{{$regionIndex}}.selected"
+                                                        type="checkbox" x-on:change="$wire.selectRegion({{$regionIndex}})" wire:click.stop="" >
                                                 </div>
                                                 <div class="flex items-center mr-2 w-6 h-6"" wire:loading>
                                                     <x-svg.spinner
@@ -266,7 +267,7 @@
                                                         class="self-center ">
                                                     </x-svg.spinner>
                                                 </div>
-                                                <label>{{$region['name']}}</label>
+                                                <label>{{$region['name']}} {{$region['selected'] == true}}</label>
                                             </x-table-accordion.td-arrow>
                                             <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
                                                 <x-svg.spinner
@@ -347,7 +348,7 @@
                                                         <div class="flex">
                                                             <div wire:loading.remove>
                                                                 <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
-                                                                    type="checkbox" wire:change="selectOffice({{$regionIndex}}, {{$officeIndex}})" checked wire:click.stop=""
+                                                                    type="checkbox" wire:change="selectOffice({{$regionIndex}}, {{$officeIndex}})" wire:click.stop=""
                                                                     wire:model="itsOpenRegions.{{$regionIndex}}.sortedOffices.{{$officeIndex}}.selected">
                                                             </div>
                                                             <div class="flex items-center mr-2 w-6 h-6"" wire:loading>
@@ -356,7 +357,7 @@
                                                                     class="self-center ">
                                                                 </x-svg.spinner>
                                                             </div>
-                                                            <label>{{$office['name']}}</label>
+                                                            <label>{{$office['name']}} {{$office['selected']}}</label>
                                                         </div>
                                                     </x-table-accordion.td-arrow>
                                                     <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
@@ -450,7 +451,7 @@
                                                                         @if ($dailyNumber['user']['deleted_at'] != null)
                                                                             <x-icon class="mr-2 w-6 h-6" icon="user-blocked"/>
                                                                         @endif
-                                                                        <label>{{$dailyNumber['user']['full_name']}}</label>
+                                                                        <label>{{$dailyNumber['user']['full_name']}} {{ $dailyNumber['selected']}}</label>
                                                                     </div>
                                                                 </div>
                                                             </x-table-accordion.td>

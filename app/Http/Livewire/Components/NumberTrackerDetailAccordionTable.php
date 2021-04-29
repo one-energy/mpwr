@@ -144,7 +144,7 @@ class NumberTrackerDetailAccordionTable extends Component
     public function collapseRegion(int $regionIndex)
     {
 
-        $collectionOffices = collect($this->itsOpenRegions[$regionIndex]['offices']);
+        $collectionOffices = collect($this->itsOpenRegions[$regionIndex]['sortedOffices']);
         if ($this->sortDirection == 'asc') {
             $this->itsOpenRegions[$regionIndex]['sortedOffices'] = $collectionOffices->sortBy(function ($office) {
                 $collectionDailyNumbers = collect($office['daily_numbers']);
@@ -162,8 +162,7 @@ class NumberTrackerDetailAccordionTable extends Component
     public function collapseOffice(int $regionIndex, int $officeIndex)
     {
 
-        $collectionDailyNumbers = collect($this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['daily_numbers']);
-        // dd($collectionDailyNumbers);
+        $collectionDailyNumbers = collect($this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedDailyNumbers']);
         if ($this->sortDirection == 'asc') {
             $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedDailyNumbers'] = $collectionDailyNumbers->sortBy($this->sortBy)->values();
         } else {
@@ -174,7 +173,6 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function selectRegion($regionIndex)
     {
-        $this->itsOpenRegions[$regionIndex]['selected'] = !$this->itsOpenRegions[$regionIndex]['selected'];
         foreach ($this->itsOpenRegions[$regionIndex]['sortedOffices'] as &$office) {
             $office['selected'] = $this->itsOpenRegions[$regionIndex]['selected'];
             foreach ($office['sortedDailyNumbers'] as &$dailyNumber) {
@@ -186,16 +184,30 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function selectOffice($regionIndex, $officeIndex)
     {
-
         foreach ($this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedDailyNumbers'] as &$dailyNumber) {
-
             $dailyNumber['selected'] = $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['selected'];
         }
+
+        if(!$this->itsOpenRegions[$regionIndex]['selected'] && $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['selected']) {
+            $this->itsOpenRegions[$regionIndex]['selected'] = true;
+        } else {
+            $this->itsOpenRegions[$regionIndex]['selected'] = array_search(true, array_column($this->itsOpenRegions[$regionIndex]['sortedOffices'], 'selected')) !== false;
+        }
+
         $this->sumTotal();
     }
 
-    public function selectUser($regionIndex, $officeIndex, $userIndex)
+    public function selectUser($regionIndex, $officeIndex, $dailyNumberIndex)
     {
+        if(!$this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['selected'] && $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedDailyNumbers'][$dailyNumberIndex]['selected']) {
+            $this->itsOpenRegions[$regionIndex]['selected'] = true;
+            $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['selected'] = true;
+        } else {
+            $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['selected'] = array_search(true, array_column($this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedDailyNumbers'], 'selected')) !== false;
+            $this->itsOpenRegions[$regionIndex]['selected'] = array_search(true, array_column($this->itsOpenRegions[$regionIndex]['sortedOffices'], 'selected')) !== false;
+        }
+
+
         $this->sumTotal();
     }
 
@@ -238,9 +250,8 @@ class NumberTrackerDetailAccordionTable extends Component
         $office = (object) $office;
         if ($office->selected || !$filterBySelected) {
             $office->sortedDailyNumbers = $this->getCollectionOf($office->sortedDailyNumbers);
-            return $office->sortedDailyNumbers->sum(function ($dailyNumber) use ($field) {
-                // dd($dailyNumber);
-               return $dailyNumber['selected'] ? $dailyNumber[$field] : 0;
+            return $office->sortedDailyNumbers->sum(function ($dailyNumber) use ($field, $filterBySelected) {
+                return $dailyNumber['selected'] || !$filterBySelected ? $dailyNumber[$field] : 0;
             });
         }
     }
