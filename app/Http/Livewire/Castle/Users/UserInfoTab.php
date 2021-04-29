@@ -62,9 +62,27 @@ class UserInfoTab extends Component
         $this->departmentManagerUsers = collect();
         $this->regionManagerUsers     = collect();
         $this->officeManagerUsers     = collect();
-        $this->selectedManagers       = collect();
         $this->selectedRole           = $user->role;
         $this->reportsTo              = $user->office_id;
+
+        $this->selectedManagers = $this->getSelectedManagers($user);
+    }
+
+    private function getSelectedManagers(User $user)
+    {
+        if ($user->hasRole(Role::DEPARTMENT_MANAGER)) {
+            return $user->managedDepartments->pluck('id');
+        }
+
+        if ($user->hasRole(Role::REGION_MANAGER)) {
+            return $user->managedRegions->pluck('id');
+        }
+
+        if ($user->hasRole(Role::OFFICE_MANAGER)) {
+            return $user->managedOffices->pluck('id');
+        }
+
+        return collect();
     }
 
     public function render()
