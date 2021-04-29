@@ -3,12 +3,15 @@
 namespace App\Http\Livewire\Castle\Users;
 
 use App\Models\Department;
+use App\Models\Office;
 use App\Models\Rates;
+use App\Models\Region;
 use App\Models\User;
 use App\Role\Role;
 use App\Rules\Castle\DepartmentHasOffice;
 use App\Traits\Livewire\Actions;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class UserInfoTab extends Component
@@ -45,6 +48,12 @@ class UserInfoTab extends Component
 
     public string $warningRoleMessage = '';
 
+    public string $selectedRole = '';
+
+    public Collection | array $selectedManagers;
+
+    public int $reportsTo;
+
     public function mount(User $user)
     {
         $this->userOverride           = clone $user;
@@ -53,6 +62,9 @@ class UserInfoTab extends Component
         $this->departmentManagerUsers = collect();
         $this->regionManagerUsers     = collect();
         $this->officeManagerUsers     = collect();
+        $this->selectedManagers       = collect();
+        $this->selectedRole           = $user->role;
+        $this->reportsTo              = $user->office_id;
     }
 
     public function render()
@@ -60,7 +72,7 @@ class UserInfoTab extends Component
         $department = Department::find($this->selectedDepartmentId);
 
         $this->departments = Department::get();
-        $this->roles       = User::getRolesPerUserRole(user());
+        $this->roles       = User::getRolesPerUserRole();
         $this->offices     = optional($department)->offices ?? collect();
 
         if ($this->user->department !== null) {
@@ -134,6 +146,7 @@ class UserInfoTab extends Component
 
         $this->userOverride->save();
         $this->user = clone $this->userOverride;
+
         alert()
             ->withTitle(__('User has been updated!'))
             ->livewire($this)
@@ -186,12 +199,14 @@ class UserInfoTab extends Component
         $this->selectedDepartmentId = $departmentId;
     }
 
-    public function changeRole(string $role): void
+    public function changeRole(): void
     {
         $canChange = User::userCanChangeRole($this->user);
 
         if ($canChange['status']) {
-            $this->changeUserPay($role);
+            $this->syncManagersOf();
+            $this->changeUserPay();
+
             return;
         }
 
@@ -199,10 +214,132 @@ class UserInfoTab extends Component
         $this->warningRoleMessage   = $canChange['message'];
     }
 
-    public function changeUserPay()
+    public function returnToDefaultRole()
     {
-        $this->user->pay = Rates::whereRole($this->user->role)->first()->rate ?? $this->user->pay;
+        $this->selectedRole = $this->user->role;
 
         $this->showWarningRoleModal = false;
+    }
+
+    public function changeUserPay()
+    {
+        $this->user->role = $this->selectedRole;
+        $this->user->pay  = Rates::whereRole($this->user->role)->first()->rate ?? $this->user->pay;
+
+        $this->showWarningRoleModal = false;
+    }
+
+    public function syncManagersOf()
+    {
+        $this->selectedManagers = collect();
+    }
+
+    public function getManagerOfProperty()
+    {
+        return match ($this->selectedRole) {
+            Role::DEPARTMENT_MANAGER => Department::query()
+                ->where('id', $this->user->department_id)
+                ->get(),
+            Role::OFFICE_MANAGER => Department::query()
+                ->where('id', $this->user->department_id)
+                ->first()
+                ->load('offices')
+                ->offices,
+            Role::REGION_MANAGER => Region::query()
+                ->where('department_id', $this->user->department_id)
+                ->get(),
+            default => [],
+        };
+    }
+
+    private function detachOffices(User $user)
+    {
+        $user->managedOffices()->detach(
+            $user->managedOffices()->select('offices.id')->pluck('id')->toArray()
+        );
+    }
+
+    private function detachDepartments(User $user)
+    {
+        $user->managedDepartments()->detach(
+            $user->managedDepartments()->select('departments.id')->pluck('id')->toArray()
+        );
+    }
+
+    private function detachRegions(User $user)
+    {
+        $user->managedRegions()->detach(
+            $user->managedRegions()->select('regions.id')->pluck('id')->toArray()
+        );
+    }
+
+    public function teamLabel($team)
+    {
+        return match (get_class($team)) {
+            Office::class     => 'Office',
+            Region::class     => 'Region',
+            Department::class => 'Department',
+        };
+    }
+
+    public function updateOrgAssigment()
+    {
+        $rules = [
+            'selectedRole' => 'required|in:' . implode(',', User::getRoleByNames()),
+        ];
+
+        if ($this->selectedRole === Role::REGION_MANAGER) {
+            $rules = array_merge($rules, [
+                'selectedManagers'   => 'required|array',
+                'selectedManagers.*' => 'exists:regions,id',
+            ]);
+        }
+
+        if ($this->selectedRole === Role::DEPARTMENT_MANAGER) {
+            $rules = array_merge($rules, [
+                'selectedManagers'   => 'required|array',
+                'selectedManagers.*' => 'exists:departments,id',
+            ]);
+        }
+
+        if ($this->selectedRole === Role::OFFICE_MANAGER) {
+            $rules = array_merge($rules, [
+                'selectedManagers'   => 'required|array',
+                'selectedManagers.*' => 'exists:offices,id',
+            ]);
+        }
+
+        $this->validate($rules);
+
+        DB::transaction(function () {
+            $this->user->update([
+                'role'      => $this->selectedRole,
+                'office_id' => $this->reportsTo,
+            ]);
+
+            $this->detachOffices($this->user);
+            $this->detachDepartments($this->user);
+            $this->detachRegions($this->user);
+
+            if ($this->selectedRole === Role::OFFICE_MANAGER) {
+                $this->user->managedOffices()->attach($this->selectedManagers);
+            }
+
+            if ($this->selectedRole === Role::DEPARTMENT_MANAGER) {
+                $this->user->managedDepartments()->attach($this->selectedManagers);
+            }
+
+            if ($this->selectedRole === Role::REGION_MANAGER) {
+                $this->user->managedRegions()->attach($this->selectedManagers);
+            }
+        });
+
+        alert()
+            ->withTitle(__('User has been updated!'))
+            ->send();
+
+        return redirect(
+            route('castle.users.show', ['user' => $this->user->id, 'openedTab' => 'orgInfo'])
+        );
     }
 }
