@@ -114,13 +114,13 @@ class NumberTrackerDetailAccordionTable extends Component
         if ($this->sortDirection == 'asc') {
             $regions = $regions->sortBy(function($region) {
                 return $region->offices->sum(function ($office) {
-                    return $office->daily_numbers ? $office->daily_numbers->sum($this->sortBy) : 0;
+                    return $office->dailyNumbers->count() ? $office->dailyNumbers->sum($this->sortBy) : 0;
                 });
             })->values();
         } else {
             $regions = $regions->sortByDesc(function($region) {
                 return $region->offices->sum(function ($office) {
-                    return $office->daily_numbers ? $office->daily_numbers->sum($this->sortBy) : 0;
+                    return $office->dailyNumbers->count() ? $office->dailyNumbers->sum($this->sortBy) : 0;
                 });
             })->values();
         }
@@ -161,13 +161,14 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function collapseOffice(int $regionIndex, int $officeIndex)
     {
-        $collectionDailyNumbers = collect($this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['daily_numbers']);
+
+        $collectionDailyNumbers = collect($this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['daily_numbers']);
+        // dd($collectionDailyNumbers);
         if ($this->sortDirection == 'asc') {
             $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedDailyNumbers'] = $collectionDailyNumbers->sortBy($this->sortBy)->values();
         } else {
             $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedDailyNumbers'] = $collectionDailyNumbers->sortByDesc($this->sortBy)->values();
         }
-
         $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['itsOpen'] = !$this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['itsOpen'];
     }
 

@@ -440,7 +440,7 @@
                                                                             wire:model="itsOpenRegions.{{$regionIndex}}.sortedOffices.{{$officeIndex}}.sortedDailyNumbers.{{$dailyNumberIndex}}.selected"
                                                                             type="checkbox" x-on:change="$wire.selectUser({{$regionIndex}}, {{$officeIndex}}, {{$dailyNumberIndex}})" wire:click.stop="">
                                                                     </div>
-                                                                    <div class="flex items-center mr-2 w-6 h-6"" wire:loading>
+                                                                    <div class="flex items-center mr-2 w-6 h-6" wire:loading>
                                                                         <x-svg.spinner
                                                                             color="#9fa6b2"
                                                                             class="self-center ">
@@ -461,7 +461,7 @@
                                                                     wire:loading wire:target="initRegionsData">
                                                                 </x-svg.spinner>
                                                                 <div wire:loading.remove wire:target="initRegionsData">
-                                                                    {{$dailyNumber['doors']}}
+                                                                    {{$dailyNumber['doors'] ?? 0}}
                                                                 </div>
                                                             </x-table-accordion.td>
                                                             <x-table-accordion.td class="table-cell" by="hours" sortedBy="$sortBy">
@@ -471,7 +471,7 @@
                                                                     wire:loading wire:target="initRegionsData">
                                                                 </x-svg.spinner>
                                                                 <div wire:loading.remove wire:target="initRegionsData">
-                                                                    {{$dailyNumber['hours']}}
+                                                                    {{$dailyNumber['hours'] ?? 0}}
                                                                 </div>
                                                             </x-table-accordion.td>
                                                             <x-table-accordion.td class="table-cell" by="sets" sortedBy="$sortBy">
@@ -481,7 +481,7 @@
                                                                     wire:loading wire:target="initRegionsData">
                                                                 </x-svg.spinner>
                                                                 <div wire:loading.remove wire:target="initRegionsData">
-                                                                    {{$dailyNumber['sets']}}
+                                                                    {{$dailyNumber['sets'] ?? 0}}
                                                                 </div>
                                                             </x-table-accordion.td>
                                                             <x-table-accordion.td class="table-cell" by="set_sits" sortedBy="$sortBy">
@@ -491,7 +491,7 @@
                                                                     wire:loading wire:target="initRegionsData">
                                                                 </x-svg.spinner>
                                                                 <div wire:loading.remove wire:target="initRegionsData">
-                                                                    {{$dailyNumber['set_sits']}}
+                                                                    {{$dailyNumber['set_sits'] ?? 0}}
                                                                 </div>
                                                             </x-table-accordion.td>
                                                             <x-table-accordion.td class="table-cell" by="sits" sortedBy="$sortBy">
@@ -501,7 +501,7 @@
                                                                     wire:loading wire:target="initRegionsData">
                                                                 </x-svg.spinner>
                                                                 <div wire:loading.remove wire:target="initRegionsData">
-                                                                    {{$dailyNumber['sits']}}
+                                                                    {{$dailyNumber['sits'] ?? 0}}
                                                                 </div>
                                                             </x-table-accordion.td>
                                                             <x-table-accordion.td class="table-cell" by="set_closes" sortedBy="$sortBy">
@@ -511,7 +511,7 @@
                                                                     wire:loading wire:target="initRegionsData">
                                                                 </x-svg.spinner>
                                                                 <div wire:loading.remove wire:target="initRegionsData">
-                                                                    {{$dailyNumber['set_closes']}}
+                                                                    {{$dailyNumber['set_closes'] ?? 0}}
                                                                 </div>
                                                             </x-table-accordion.td>
                                                             <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
@@ -521,13 +521,15 @@
                                                                     wire:loading wire:target="initRegionsData">
                                                                 </x-svg.spinner>
                                                                 <div wire:loading.remove wire:target="initRegionsData">
-                                                                    {{$dailyNumber['closes']}}
+                                                                    {{$dailyNumber['closes'] ?? 0}}
                                                                 </div>
                                                             </x-table-accordion.td>
                                                         </div>
                                                     @empty
                                                         <div class="table-row">
-                                                            Empty
+                                                            <x-table-accordion.td class="table-cell pl-28">
+                                                                Empty
+                                                            </x-table-accordion.td>
                                                         </div>
                                                     @endforelse
                                                 @endif
