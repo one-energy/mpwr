@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Components;
 use App\Models\DailyNumber;
 use App\Models\Office;
 use App\Models\Region;
+use App\Models\User;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -84,10 +85,25 @@ class NumberTrackerDetailAccordionTable extends Component
     {
         $query = Region::with(['offices.dailyNumbers' => function ($dailynumbersQuery) {
             $dailynumbersQuery->inPeriod($this->period, new Carbon($this->selectedDate))
-                ->with('user');
+                ->with(['user' => function($query) {
+                    $query->withTrashed();
+                }])
+                ->groupBy('user_id')
+                ->selectRaw('*')
+                ->selectRaw('SUM(doors) as doors')
+                ->selectRaw('SUM(hours) as hours')
+                ->selectRaw('SUM(sets) as sets')
+                ->selectRaw('SUM(set_sits) as set_sits')
+                ->selectRaw('SUM(sits) as sits')
+                ->selectRaw('SUM(set_closes) as set_closes')
+                ->selectRaw('SUM(closes) as closes');
+
         }])->whereHas('offices.dailyNumbers', function ($query) {
-            $query->inPeriod($this->period, new Carbon($this->selectedDate));
-        })->has('offices.dailyNumbers');
+            $query->inPeriod($this->period, new Carbon($this->selectedDate))
+            ->with(['user' => function($query) {
+                $query->withTrashed();
+            }]);
+        });
 
         if (user()->hasAnyRole(['Admin', 'Owner'])) {
             $regions = $query->get();
@@ -101,42 +117,12 @@ class NumberTrackerDetailAccordionTable extends Component
                     return $office->daily_numbers ? $office->daily_numbers->sum($this->sortBy) : 0;
                 });
             })->values();
-
-            $regions = $regions->map(function($region) {
-                $region->offices = $region->offices->sortBy(function ($office) {
-                    return $office->daily_numbers ? $office->daily_numbers->sum($this->sortBy) : 0;
-                })->values();
-                return $region;
-            });
-
-            $regions = $regions->map(function($region) {
-                $region->offices = $region->offices->map(function ($office) {
-                    $office->daily_numbers = $office->daily_numbers ? $office->daily_numbers->sortBy($this->sortBy)->values() : null;
-                    return $office;
-                });
-                return $region;
-            });
         } else {
             $regions = $regions->sortByDesc(function($region) {
                 return $region->offices->sum(function ($office) {
                     return $office->daily_numbers ? $office->daily_numbers->sum($this->sortBy) : 0;
                 });
             })->values();
-
-            $regions = $regions->map(function($region) {
-                $region->offices = $region->offices->sortByDesc(function ($office) {
-                    return $office->daily_numbers ? $office->daily_numbers->sum($this->sortBy) : 0;
-                })->values();
-                return $region;
-            });
-
-            $regions = $regions->map(function($region) {
-                $region->offices = $region->offices->map(function ($office) {
-                    $office->daily_numbers = $office->daily_numbers->sortByDesc($this->sortBy)->values();
-                    return $office;
-                });
-                return $region;
-            });
         }
 
         return $regions;
@@ -145,26 +131,43 @@ class NumberTrackerDetailAccordionTable extends Component
     public function getLastRegionsProperty()
     {
         $query = Region::with(['offices.dailyNumbers' => function ($dailynumbersQuery) {
-            $dailynumbersQuery->inLastPeriod($this->period, new Carbon($this->selectedDate))
-                ->with(['user' => function($query) {
-                    $query->withTrashed();
-                }]);
-        }])->whereHas('offices.dailyNumbers', function ($query) {
-            $query->inLastPeriod($this->period, new Carbon($this->selectedDate));
-        });
+            $dailynumbersQuery->inLastPeriod($this->period, new Carbon($this->selectedDate));
+        }]);
+
+
         if (user()->hasAnyRole(['Admin', 'Owner'])) {
             return $query->get();
         }
         return $query->whereDepartmentId(user()->department_id ?? 0)->get();
     }
 
-    public function collapseRegion( int $regionIndex)
+    public function collapseRegion(int $regionIndex)
     {
+
+        $collectionOffices = collect($this->itsOpenRegions[$regionIndex]['offices']);
+        if ($this->sortDirection == 'asc') {
+            $this->itsOpenRegions[$regionIndex]['sortedOffices'] = $collectionOffices->sortBy(function ($office) {
+                $collectionDailyNumbers = collect($office['daily_numbers']);
+                return $office['sortedDailyNumbers'] ? $collectionDailyNumbers->sum($this->sortBy) : 0;
+            })->values();
+        } else {
+            $this->itsOpenRegions[$regionIndex]['sortedOffices'] = $collectionOffices->sortByDesc(function ($office) {
+                $collectionDailyNumbers = collect($office['daily_numbers']);
+                return $office['sortedDailyNumbers'] ? $collectionDailyNumbers->sum($this->sortBy) : 0;
+            })->values();
+        }
         $this->itsOpenRegions[$regionIndex]['itsOpen'] = !$this->itsOpenRegions[$regionIndex]['itsOpen'];
     }
 
-    public function collapseOffice( int $regionIndex, int $officeIndex)
+    public function collapseOffice(int $regionIndex, int $officeIndex)
     {
+        $collectionDailyNumbers = collect($this->itsOpenRegions[$regionIndex]['offices'][$officeIndex]['daily_numbers']);
+        if ($this->sortDirection == 'asc') {
+            $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedDailyNumbers'] = $collectionDailyNumbers->sortBy($this->sortBy)->values();
+        } else {
+            $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedDailyNumbers'] = $collectionDailyNumbers->sortByDesc($this->sortBy)->values();
+        }
+
         $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['itsOpen'] = !$this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['itsOpen'];
     }
 

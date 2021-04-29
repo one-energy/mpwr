@@ -40,7 +40,7 @@
         @forelse ($trackers as $tracker)
             <div class="col-span-full flex justify-between items-center text-gray-900 font-medium">
                 <p class="col-span-1 w-5">{{ $loop->index + 1 }}</p>
-                <p class="flex-1 ml-4">{{ $tracker->user->full_name }}</p>
+                {{-- <p class="flex-1 ml-4">{{ $tracker->user->full_name }}</p> --}}
                 <p>{{ $tracker->total }}</p>
             </div>
         @empty
