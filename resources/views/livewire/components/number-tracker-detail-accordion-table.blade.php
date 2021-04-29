@@ -267,7 +267,7 @@
                                                         class="self-center ">
                                                     </x-svg.spinner>
                                                 </div>
-                                                <label>{{$region['name']}} {{$region['selected'] == true}}</label>
+                                                <label>{{$region['name']}}</label>
                                             </x-table-accordion.td-arrow>
                                             <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
                                                 <x-svg.spinner
@@ -357,7 +357,7 @@
                                                                     class="self-center ">
                                                                 </x-svg.spinner>
                                                             </div>
-                                                            <label>{{$office['name']}} {{$office['selected']}}</label>
+                                                            <label>{{$office['name']}}</label>
                                                         </div>
                                                     </x-table-accordion.td-arrow>
                                                     <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
@@ -451,7 +451,7 @@
                                                                         @if ($dailyNumber['user']['deleted_at'] != null)
                                                                             <x-icon class="mr-2 w-6 h-6" icon="user-blocked"/>
                                                                         @endif
-                                                                        <label>{{$dailyNumber['user']['full_name']}} {{ $dailyNumber['selected']}}</label>
+                                                                        <label>{{$dailyNumber['user']['full_name']}}</label>
                                                                     </div>
                                                                 </div>
                                                             </x-table-accordion.td>
@@ -541,7 +541,7 @@
                                     @endforeach
                                 </x-slot>
                             </x-table-accordion>
-
+                            <x-button wire:click="teste()"></x-button>
                         @else
                             <div class="h-96 ">
                                 <div class="flex justify-center align-middle">

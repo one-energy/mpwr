@@ -19,6 +19,12 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public array $lastPeriodNumberTracker;
 
+    public Collection $unselectedRegions;
+
+    public Collection $unselectedOffices;
+
+    public Collection $unselectedDailyNumbers;
+
     public $totals;
 
     public string $period;
@@ -29,7 +35,12 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function mount()
     {
+        $this->unselectedRegions      = collect([]);
+        $this->unselectedOffices      = collect([]);
+        $this->unselectedDailyNumbers = collect([]);
+
         $this->sortBy = 'doors';
+
         $this->initRegionsData();
     }
 
@@ -68,11 +79,11 @@ class NumberTrackerDetailAccordionTable extends Component
         })->toArray();
 
         $this->lastPeriodNumberTracker = $this->lastRegions->map(function ($region) {
-            $region->selected = true;
+            $region->selected = !$this->unselectedRegions->contains($region->id);
             $region->sortedOffices = $region->offices->map(function ($office) {
-                $office->selected = true;
+                $office->selected = !$this->unselectedOffices->contains($office->id);;
                 $office->sortedDailyNumbers = $office->dailyNumbers->map(function ($dailyNumbers) {
-                    $dailyNumbers->selected = true;
+                    $dailyNumbers->selected = !$this->unselectedDailyNumbers->contains($dailyNumbers->id);;
                     return $dailyNumbers;
                 })->toArray();
                 return $office;
@@ -173,6 +184,7 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function selectRegion($regionIndex)
     {
+        $this->addOrRemoveOf($this->unselectedRegions, $this->itsOpenRegions[$regionIndex]['id']);
         foreach ($this->itsOpenRegions[$regionIndex]['sortedOffices'] as &$office) {
             $office['selected'] = $this->itsOpenRegions[$regionIndex]['selected'];
             foreach ($office['sortedDailyNumbers'] as &$dailyNumber) {
@@ -184,6 +196,7 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function selectOffice($regionIndex, $officeIndex)
     {
+        $this->addOrRemoveOf($this->unselectedOffices, $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['id']);
         foreach ($this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedDailyNumbers'] as &$dailyNumber) {
             $dailyNumber['selected'] = $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['selected'];
         }
@@ -199,6 +212,7 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function selectUser($regionIndex, $officeIndex, $dailyNumberIndex)
     {
+        $this->addOrRemoveOf($this->unselectedOffices, $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedDailyNumbers'][$dailyNumberIndex]['id']);
         if(!$this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['selected'] && $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedDailyNumbers'][$dailyNumberIndex]['selected']) {
             $this->itsOpenRegions[$regionIndex]['selected'] = true;
             $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['selected'] = true;
@@ -259,6 +273,22 @@ class NumberTrackerDetailAccordionTable extends Component
     public function getCollectionOf($array)
     {
         return collect($array)->map(fn ($element) => $element);
+    }
+
+    public function teste()
+    {
+        dd($this->unselectedRegions, $this->unselectedOffices, $this->unselectedDailyNumbers);
+    }
+
+    public function addOrRemoveOf(collection &$array , int $id)
+    {
+        if($array->contains($id)) {
+            $array = $array->filter(function ($item) use ($id) {
+                return $item != $id;
+            });
+        } else {
+            $array->push($id);
+        }
     }
 
     public function getDps()
