@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Department;
 use Illuminate\Database\Eloquent\Factories\Factory;
+
 class DepartmentFactory extends Factory
 {
     protected $model = Department::class;
@@ -11,8 +12,7 @@ class DepartmentFactory extends Factory
     public function definition()
     {
         return [
-            'name'                  => $this->faker->city,
-            'department_manager_id' => null
+            'name' => $this->faker->city
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Role\Role;
 use Illuminate\Database\Seeder;
 
 class UsersTableSeeder extends Seeder
@@ -11,7 +12,7 @@ class UsersTableSeeder extends Seeder
     {
         User::factory()->create([
             'email'         => 'admin@devsquad.com',
-            'role'          => 'Admin',
+            'role'          => Role::ADMIN,
             'department_id' => null,
         ]);
 
