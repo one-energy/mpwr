@@ -317,13 +317,18 @@
                         </x-select>
                     </div>
 
-                    <div class="w-full sm:w-1/2">
+                    <div class="w-full">
                         @if ($selectedRole !== 'Sales Rep' && $selectedRole !== 'Setter')
-                            <x-select class="sm:mr-2" label="Manager Of" name="selectedManagers" wire:model="selectedManagers" multiple>
-                                @foreach ($this->managerOf as $manager)
-                                    <option value="{{ $manager->id }}"> {{ $manager->name }}</option>
-                                @endforeach
-                            </x-select>
+                            <x-multiselect
+                                class="sm:flex-1"
+                                trackBy="id"
+                                labeledBy="name"
+                                label="Manager Of"
+                                name="selectedManagers"
+                                :options="$this->managerOf"
+                                wire:model.defer="selectedManagers"
+                                wire:key="{{ $this->managerOf->count() }}"
+                            />
                         @endif
                     </div>
                 </div>
