@@ -11,6 +11,7 @@ use App\Models\TrainingPageSection;
 use App\Models\User;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -127,5 +128,13 @@ class Regions extends Component
             'managers' => $region->managers->take(4),
             'quantity' => $region->managers()->count(),
         ]);
+    }
+
+    public function getManagersName(Collection $managers)
+    {
+        return $managers
+            ->take(3)
+            ->pluck('full_name')
+            ->join(', ');
     }
 }

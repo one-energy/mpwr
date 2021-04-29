@@ -7,6 +7,7 @@ use App\Models\Department;
 use App\Models\Office;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -100,5 +101,13 @@ class Departments extends Component
             'managers' => $department->managers->take(4),
             'quantity' => $department->managers()->count(),
         ]);
+    }
+
+    public function getManagersName(Collection $managers)
+    {
+        return $managers
+            ->take(3)
+            ->pluck('full_name')
+            ->join(', ');
     }
 }

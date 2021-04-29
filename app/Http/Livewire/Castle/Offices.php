@@ -5,9 +5,9 @@ namespace App\Http\Livewire\Castle;
 use App\Models\DailyNumber;
 use App\Models\Office;
 use App\Models\Region;
-use App\Models\User;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -104,5 +104,13 @@ class Offices extends Component
             'managers' => $office->managers->take(4),
             'quantity' => $office->managers()->count(),
         ]);
+    }
+
+    public function getManagersName(Collection $managers)
+    {
+        return $managers
+            ->take(3)
+            ->pluck('full_name')
+            ->join(', ');
     }
 }
