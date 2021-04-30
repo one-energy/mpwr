@@ -9,6 +9,7 @@ use App\Models\SectionFile;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
 use App\Models\User;
+use App\Role\Role;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -37,14 +38,14 @@ class Regions extends Component
     public function render()
     {
         $regions = Region::query()
-            ->when(user()->role == 'Department Manager', function (Builder $query) {
+            ->when(user()->hasRole(Role::DEPARTMENT_MANAGER), function (Builder $query) {
                 $departmentIds = Department::query()
                     ->where('department_manager_id', '=', user()->id)
                     ->pluck('id');
 
                 $query->whereIn('department_id', $departmentIds);
             })
-            ->when(user()->role == 'Region Manager', function (Builder $query) {
+            ->when(user()->hasRole(Role::REGION_MANAGER), function (Builder $query) {
                 $query->where('region_manager_id', '=', user()->id);
             })
             ->search($this->search)
@@ -94,6 +95,10 @@ class Regions extends Component
             SectionFile::query()
                 ->whereIn('training_page_section_id', $region->trainingPageSections()->select('id')->pluck('id')->toArray())
                 ->update(['training_page_section_id' => $parentSection?->id]);
+
+            $region->managers()->detach(
+                $region->managers->pluck('id')->toArray()
+            );
 
             $region
                 ->trainingPageSections()

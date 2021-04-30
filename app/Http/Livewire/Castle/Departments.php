@@ -58,16 +58,18 @@ class Departments extends Component
         $department = $this->deletingDepartment;
 
         if ($department->regions()->count() || $department->users()->count()) {
-            $this->validate([
-                'deletingName' => 'same:deletingDepartment.name',
-            ], [
-                'deletingName.same' => 'The name of the department doesn\'t match',
-            ]);
+            $this->validate(
+                ['deletingName' => 'same:deletingDepartment.name'],
+                ['deletingName.same' => "The name of the department doesn't match"]
+            );
         }
 
         DB::transaction(function () use ($department) {
-            $departmentManager = $department->departmentAdmin;
-            $departmentManager->update(['department_id' => null]);
+            $department->managers()->detach(
+                $department->managers->pluck('id')->toArray()
+            );
+
+            $department->managers()->update(['users.department_id' => null]);
 
             $officeIds = Office::whereIn('region_id', $department->regions->pluck('id'))
                 ->select('id')

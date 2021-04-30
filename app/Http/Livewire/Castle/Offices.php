@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Castle;
 use App\Models\DailyNumber;
 use App\Models\Office;
 use App\Models\Region;
+use App\Role\Role;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -33,19 +34,19 @@ class Offices extends Component
     public function render()
     {
         $offices = Office::query()
-            ->when(user()->role == 'Region Manager', function (Builder $query) {
+            ->when(user()->hasRole(Role::REGION_MANAGER), function (Builder $query) {
                 $query->whereHas('region', function (Builder $query) {
                     $query->where('region_manager_id', '=', user()->id);
                 });
             })
-            ->when(user()->role == 'Department Manager', function (Builder $query) {
+            ->when(user()->hasRole(Role::DEPARTMENT_MANAGER), function (Builder $query) {
                 $regionIds = Region::query()
                     ->where('department_id', '=', user()->department_id)
                     ->pluck('id');
 
                 $query->whereIn('region_id', $regionIds);
             })
-            ->when(user()->role == 'Office Manager', function (Builder $query) {
+            ->when(user()->hasRole(Role::OFFICE_MANAGER), function (Builder $query) {
                 $query->where('office_manager_id', '=', user()->id);
             })
             ->search($this->search)
@@ -84,6 +85,12 @@ class Offices extends Component
                 'user.office',
                 fn(Builder $query) => $query->whereIn('id', [$office->id])
             )->delete();
+
+            $office->managers()->detach(
+                $office->managers->pluck('id')->toArray()
+            );
+
+            $office->managers()->update(['users.office_id' => null]);
 
             $office->users()->delete();
             $office->delete();
