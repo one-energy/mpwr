@@ -21,7 +21,7 @@
                 this.selectedPill = pill;
             },
             get greenPill() {
-                return 'bg-green-base border-2 border-green-200 text-white sticky left-0 right-0';
+                return 'bg-green-base border-2 border-green-500 rounded-md text-white sticky left-0 right-0';
             },
             get grayPill() {
                 return 'bg-white border-2 border-gray-200 text-cool-gray-800';
