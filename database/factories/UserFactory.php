@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Department;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Arr;
@@ -29,7 +28,6 @@ class UserFactory extends Factory
             'department_manager_override' => 10,
             'region_manager_override'     => 10,
             'office_manager_override'     => 10,
-            'department_id'               => Department::factory()
         ];
     }
 }

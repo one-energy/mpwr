@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Department;
 use App\Models\Region;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -13,7 +14,7 @@ class RegionFactory extends Factory
     {
         return [
             'name'              => $this->faker->city,
-            'department_id'     => null,
+            'department_id'     => Department::factory(),
         ];
     }
 }
