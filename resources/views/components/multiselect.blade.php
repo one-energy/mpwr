@@ -7,7 +7,7 @@
     'name' => ''
 ])
 
-<select id="select" hidden {{ $attributes }} hidden multiple>
+<select id="select" class="hidden" {{ $attributes }} name="{{ $name }}" multiple>
     @foreach($options as $option)
         <option value="{{ is_object($option) ? $option->{$trackBy} : $option[$trackBy] }}">
             {{ is_object($option) ? $option->{$labeledBy} : $option[$labeledBy] }}
@@ -16,12 +16,14 @@
 </select>
 
 <div x-data="dropdown()" x-init="() => {
-    loadOptions();
-    $watch('selected', (value) => {
-        if (Array.isArray(value)) {
-            $wire.set('{{ $attributes->wire('model')->value() }}', selectedValues);
-        }
-    })
+    $nextTick(() => loadOptions());
+    @if ($attributes->has('wire:model'))
+        $watch('selected', (value) => {
+            if (Array.isArray(value)) {
+                $wire.set('{{ $attributes->wire('model')->value() }}', selectedValues);
+            }
+        });
+    @endif
 }" class="sm:flex-1">
     <label for="select" class="block text-sm font-medium leading-5 text-gray-700">{{ $label }}</label>
     <input name="values" type="hidden" x-bind:value="selectedValues" x-cloak>
