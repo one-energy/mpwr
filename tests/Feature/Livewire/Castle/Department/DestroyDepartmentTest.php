@@ -8,6 +8,7 @@ use App\Models\Department;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
+use App\Role\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Livewire\Livewire;
@@ -172,6 +173,35 @@ class DestroyDepartmentTest extends TestCase
         $this->assertSoftDeleted($department);
 
         $dummyUsers->each(fn (User $user) => $this->assertSoftDeleted($user));
+    }
+
+    /** @test */
+    public function it_should_detach_managers_on_destroy()
+    {
+        $mary = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+        $ann  = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach([$mary->id, $ann->id]);
+
+        $mary->update(['department_id' => $department->id]);
+        $ann->update(['department_id' => $department->id]);
+
+        $this->assertSame($department->id, $mary->department_id);
+        $this->assertSame($department->id, $ann->department_id);
+        $this->assertDatabaseCount('user_managed_departments', 2);
+
+        Livewire::test(Departments::class)
+            ->call('setDeletingDepartment', $department)
+            ->set('deletingName', $department->name)
+            ->call('destroy')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseCount('user_managed_departments', 0);
+        $this->assertDatabaseMissing($department->getTable(), [
+            'id' => $department->id,
+        ]);
     }
 
     private function makeDailyNumberForUser(User $user, int $times = 2)

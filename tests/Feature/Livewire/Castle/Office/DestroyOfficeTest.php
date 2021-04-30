@@ -6,6 +6,7 @@ use App\Http\Livewire\Castle\Offices;
 use App\Models\DailyNumber;
 use App\Models\Office;
 use App\Models\User;
+use App\Role\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -84,5 +85,38 @@ class DestroyOfficeTest extends TestCase
         $this->assertSoftDeleted($office);
 
         $dummyUsers->each(fn (User $user) => $this->assertSoftDeleted($user));
+    }
+
+    /** @test */
+    public function it_should_detach_managers_on_destroy()
+    {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+
+        $mary = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
+        $ann  = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
+
+        /** @var Office $office */
+        $office = Office::factory()->create();
+        $office->managers()->attach([$mary->id, $ann->id]);
+
+        $mary->update(['office_id' => $office->id]);
+        $ann->update(['office_id' => $office->id]);
+
+        $this->assertSame($office->id, $mary->office_id);
+        $this->assertSame($office->id, $ann->office_id);
+        $this->assertDatabaseCount('user_managed_offices', 2);
+
+        $this->actingAs($john);
+
+        Livewire::test(Offices::class)
+            ->call('setDeletingOffice', $office)
+            ->set('deletingName', $office->name)
+            ->call('destroy')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseCount('user_managed_offices', 0);
+        $this->assertSoftDeleted($office->getTable(), [
+            'id' => $office->id,
+        ]);
     }
 }

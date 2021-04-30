@@ -9,6 +9,7 @@ use App\Models\Office;
 use App\Models\Region;
 use App\Models\TrainingPageSection;
 use App\Models\User;
+use App\Role\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -53,7 +54,8 @@ class DestroyRegionTest extends TestCase
         Livewire::test(Regions::class)
             ->call('setDeletingRegion', $region)
             ->assertSet('deletingRegion', $region)
-            ->call('destroy', ['deletingName' => $region->name]);
+            ->call('destroy', ['deletingName' => $region->name])
+            ->assertHasNoErrors();
 
         $this->assertSoftDeleted($region);
     }
@@ -90,17 +92,42 @@ class DestroyRegionTest extends TestCase
             'department_folder' => false,
         ]);
 
+        $anotherSections->each(fn (TrainingPageSection $section) => $this->assertNull($section->deleted_at));
+        $regionSections->each(fn (TrainingPageSection $section) => $this->assertSoftDeleted($section));
+    }
+
+    public function it_should_detach_managers_on_destroy()
+    {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+
+        $mary = User::factory()->create(['role' => Role::REGION_MANAGER]);
+        $ann  = User::factory()->create(['role' => Role::REGION_MANAGER]);
+
+        /** @var Region $region */
+        $region = Region::factory()->create();
+        $region->managers()->attach([$mary->id, $ann->id]);
+
+        $mary->update(['department_id' => $region->department_id]);
+        $ann->update(['department_id' => $region->department_id]);
+
+        $this->assertSame($region->department_id, $mary->department_id);
+        $this->assertSame($region->department_id, $ann->department_id);
+        $this->assertDatabaseCount('user_managed_regions', 2);
+
         $this->actingAs($john);
 
         Livewire::test(Regions::class)
             ->call('setDeletingRegion', $region)
             ->assertSet('deletingRegion', $region)
-            ->call('destroy', ['deletingName' => $region->name]);
+            ->call('destroy', ['deletingName' => $region->name])
+            ->assertHasNoErrors();
 
         $this->assertSoftDeleted($region);
 
-        $anotherSections->each(fn (TrainingPageSection $section) => $this->assertNull($section->deleted_at));
-        $regionSections->each(fn (TrainingPageSection $section) => $this->assertSoftDeleted($section));
+        $this->assertDatabaseCount('user_managed_regions', 0);
+        $this->assertDatabaseMissing($region->getTable(), [
+            'id' => $region->id,
+        ]);
     }
 
     /** @test */
@@ -167,7 +194,8 @@ class DestroyRegionTest extends TestCase
         Livewire::test(Regions::class)
             ->call('setDeletingRegion', $region)
             ->assertSet('deletingRegion', $region)
-            ->call('destroy', ['deletingName' => $region->name]);
+            ->call('destroy', ['deletingName' => $region->name])
+            ->assertHasNoErrors();
 
         $this
             ->assertSoftDeleted($region)
