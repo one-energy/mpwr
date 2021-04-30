@@ -48,7 +48,21 @@ class DepartmentController extends Controller
             $managerIds = collect(request()->department_manager_ids)->filter();
 
             if ($managerIds->isNotEmpty()) {
+                $managers = User::query()
+                    ->whereIn('id', $managerIds->toArray())
+                    ->get();
+
+                $managers->each(function (User $user) {
+                    $user->managedDepartments()->detach(
+                        $user->managedDepartments->pluck('id')->toArray()
+                    );
+                });
+
                 $department->managers()->attach($managerIds->toArray());
+
+                User::query()
+                    ->whereIn('id', $managerIds->toArray())
+                    ->update(['department_id' => $department->id]);
             }
 
             $department->trainingPageSections()->create(['title' => 'Training Page']);
