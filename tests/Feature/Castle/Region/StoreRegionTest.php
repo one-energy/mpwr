@@ -45,6 +45,38 @@ class StoreRegionTest extends TestCase
     }
 
     /** @test */
+    public function it_should_detach_the_managed_regions_from_the_user_if_he_will_manage_other_region()
+    {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+
+        /** @var User $mary */
+        $mary = User::factory()->create(['role' => Role::REGION_MANAGER]);
+
+        /** @var Region $region */
+        $region = Region::factory()->create();
+        $region->managers()->attach($mary->id);
+        $mary->update(['department_id' => $region->department_id]);
+
+        $data = $this->makeData(['region_manager_ids' => [$mary->id]]);
+
+        $this->assertSame($region->department_id, $mary->department_id);
+
+        $this
+            ->actingAs($john)
+            ->post(route('castle.regions.store', $data))
+            ->assertSessionHasNoErrors();
+
+        /** @var Region $createdRegion */
+        $createdRegion = Region::where('name', $data['name'])->first();
+        $mary->refresh();
+
+        $this->assertCount(1, $mary->managedRegions);
+        $this->assertNotEquals($region->department_id, $mary->department_id);
+        $this->assertSame($createdRegion->department_id, $mary->department_id);
+        $this->assertSame($createdRegion->name, $mary->managedRegions->first()->name);
+    }
+
+    /** @test */
     public function it_should_require_name()
     {
         $john = User::factory()->create(['role' => Role::ADMIN]);

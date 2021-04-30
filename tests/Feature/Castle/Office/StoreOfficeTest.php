@@ -45,6 +45,37 @@ class StoreOfficeTest extends TestCase
     }
 
     /** @test */
+    public function it_should_detach_the_managed_offices_from_the_user_if_he_will_manage_other_office()
+    {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+
+        /** @var User $mary */
+        $mary = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
+
+        /** @var Office $office */
+        $office = Office::factory()->create();
+        $office->managers()->attach($mary->id);
+        $mary->update(['office_id' => $office->id]);
+
+        $data = $this->makeData(['office_manager_ids' => [$mary->id]]);
+
+        $this->assertSame($office->id, $mary->office_id);
+
+        $this
+            ->actingAs($john)
+            ->post(route('castle.offices.store', $data))
+            ->assertSessionHasNoErrors();
+
+        $createdOffice = Office::where('name', $data['name'])->first();
+        $mary->refresh();
+
+        $this->assertCount(1, $mary->managedOffices);
+        $this->assertNotEquals($office->id, $mary->office_id);
+        $this->assertSame($createdOffice->id, $mary->office_id);
+        $this->assertSame($createdOffice->name, $mary->managedOffices->first()->name);
+    }
+
+    /** @test */
     public function it_should_require_name()
     {
         $john = User::factory()->create(['role' => Role::ADMIN]);

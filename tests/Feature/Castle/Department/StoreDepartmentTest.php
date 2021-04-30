@@ -43,6 +43,37 @@ class StoreDepartmentTest extends TestCase
     }
 
     /** @test */
+    public function it_should_detach_the_managed_departments_from_the_user_if_he_will_manage_other_department()
+    {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+
+        /** @var User $mary */
+        $mary = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($mary->id);
+        $mary->update(['department_id' => $department->id]);
+
+        $data = $this->makeData(['department_manager_ids' => [$mary->id]]);
+
+        $this->assertSame($department->id, $mary->department_id);
+
+        $this
+            ->actingAs($john)
+            ->post(route('castle.departments.store'), $data)
+            ->assertSessionHasNoErrors();
+
+        $createdDepartment = Department::where('name', $data['name'])->first();
+        $mary->refresh();
+
+        $this->assertCount(1, $mary->managedDepartments);
+        $this->assertNotEquals($department->id, $mary->department_id);
+        $this->assertSame($createdDepartment->id, $mary->department_id);
+        $this->assertSame($createdDepartment->name, $mary->managedDepartments->first()->name);
+    }
+
+    /** @test */
     public function it_should_require_name()
     {
         $john = User::factory()->create(['role' => Role::ADMIN]);
@@ -53,19 +84,6 @@ class StoreDepartmentTest extends TestCase
             ->actingAs($john)
             ->post(route('castle.departments.store'), $data)
             ->assertSessionHasErrors('name');
-    }
-
-    /** @test */
-    public function it_should_require_department_manager_ids()
-    {
-        $john = User::factory()->create(['role' => Role::ADMIN]);
-
-        $data = $this->makeData(['department_manager_ids' => []]);
-
-        $this
-            ->actingAs($john)
-            ->post(route('castle.departments.store'), $data)
-            ->assertSessionHasErrors('department_manager_ids');
     }
 
     /** @test */
@@ -87,10 +105,12 @@ class StoreDepartmentTest extends TestCase
     {
         $john = User::factory()->create(['role' => Role::ADMIN]);
 
-        $data = $this->makeData(['department_manager_ids' => [
-            User::factory()->create(['role' => Role::SETTER])->id,
-            User::factory()->create(['role' => Role::OFFICE_MANAGER])->id,
-        ]]);
+        $data = $this->makeData([
+            'department_manager_ids' => [
+                User::factory()->create(['role' => Role::SETTER])->id,
+                User::factory()->create(['role' => Role::OFFICE_MANAGER])->id,
+            ]
+        ]);
 
         $this
             ->actingAs($john)
