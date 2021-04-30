@@ -16,7 +16,7 @@
                                     @endIf
                                     py-2 text-sm font-semibold"
                             href="javascript:void(0);"
-                            wire:click="setPeriod('d')">Daily
+                            wire:click="setPeriod('d')">Day
                         </a>
                     </li>
                     <li class="mr-4">
@@ -28,7 +28,7 @@
                                     @endIf
                                     py-2 text-sm font-semibold"
                             href="javascript:void(0);"
-                            wire:click="setPeriod('w')">Weekly
+                            wire:click="setPeriod('w')">Week
                         </a>
                     </li>
                     <li class="mr-4">
@@ -40,7 +40,7 @@
                                     @endIf
                                     py-2 text-sm font-semibold"
                             href="javascript:void(0);"
-                            wire:click="setPeriod('m')">Monthly</a>
+                            wire:click="setPeriod('m')">Month</a>
                     </li>
                     <li>
                         <x-svg.spinner
@@ -127,7 +127,7 @@
                 </div>
 
                 <x-number-tracker.leaderboard-card
-                    :trackers="$this->topTenTrackers"
+                    :trackers="$topTenTrackers"
                     :pills="$this->pills"
                 />
             </div>

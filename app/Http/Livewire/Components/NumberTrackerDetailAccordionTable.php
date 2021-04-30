@@ -270,6 +270,7 @@ class NumberTrackerDetailAccordionTable extends Component
     }
 
     public function sumTotal(){
+        $this->emitUp('updateLeaderBoard', $this->unselectedRegions, $this->unselectedOffices, $this->unselectedDailyNumbers);
         $regions     = collect($this->itsOpenRegions);
         $regionsLast = collect($this->getLastDailyNumbers());
         $this->totals = [

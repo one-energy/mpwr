@@ -1,6 +1,6 @@
 @props(['trackers', 'pills'])
 
-<section class="p-4 border-2 border-gray-400 rounded">
+<section class="p-4 border-2 border-gray-200 rounded-md">
     <h3 class="text-center text-lg text-gray-900 font-medium mb-5">Leaderboard</h3>
 
     <section
@@ -18,7 +18,7 @@
                 return 'bg-green-base text-white';
             },
             get grayPill() {
-                return 'bg-white border-2 border-gray-400 text-cool-gray-800';
+                return 'bg-white border-2 border-gray-200 text-cool-gray-800';
             }
         }"
         id="items"
@@ -26,7 +26,7 @@
     >
         <template x-for="pill in pills" :key="pill">
             <div
-                class="font-medium text-sm px-5 py-1 rounded shadow-md cursor-pointer uppercase"
+                class="font-medium text-sm px-5 py-1 rounded-md shadow-md cursor-pointer uppercase"
                 :class="isTheSelectedPill(pill) ? greenPill : grayPill"
                 style="min-width: fit-content; flex: 0 0 auto"
                 x-text="pill"
@@ -36,7 +36,7 @@
         </template>
     </section>
 
-    <section class="flex flex-col space-y-5 px-5">
+    <section class="flex flex-col space-y-5 px-5" >
         @forelse ($trackers as $tracker)
             <div class="col-span-full flex justify-between items-center text-gray-900 font-medium">
                 <p class="col-span-1 w-5">{{ $loop->index + 1 }}</p>
@@ -46,6 +46,12 @@
         @empty
             <p class="italic text-gray-800">No users found...</p>
         @endforelse
+    </section>
+    <section class="flex" wire:loading>
+        <x-svg.spinner
+            color="#9fa6b2"
+            class="relative hidden w-6 top-2">
+        </x-svg.spinner>
     </section>
 </section>
 

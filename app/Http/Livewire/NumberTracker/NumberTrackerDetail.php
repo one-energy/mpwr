@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -21,70 +22,34 @@ class NumberTrackerDetail extends Component
 {
     use FullTable;
 
+    public array $unselectedRegions = [];
+
+    public array $unselectedOffices = [];
+
+    public array $unselectedDailyNumbers = [];
+
+    public Collection $topTenTrackers;
+
     public $period = 'm';
-
-    public $numberTrackerTotal;
-
-    public $numbersTracked = [];
-
-    public $offices = [];
-
-    public $regions = [];
-
-    public $users = [];
-
-    public $userSearch = '';
 
     public $numbersTrackedLast = [];
 
     public $date;
 
-    public $graphicValue;
-
-    public $graphicValueLast;
-
-    public $filterBy = 'doors';
-
     public $dateSelected;
-
-    public $order = 'desc';
-
-    public $activeFilters = [];
 
     public string $selectedPill = 'hours';
 
-    public bool $loading = false;
-
-    protected $listeners = ['sumTotalNumbers', 'loadingSumNumberTracker'];
+    protected $listeners = ['sumTotalNumbers', 'loadingSumNumberTracker', 'updateLeaderBoard' => 'getUnselectedCollections'];
 
     public function mount()
     {
-        $this->numberTrackerTotal = [
-            'doors'         => null,
-            'hours'         => null,
-            'sets'          => null,
-            'setSits'       => null,
-            'sits'          => null,
-            'setCloses'     => null,
-            'closes'        => null,
-            'doorsLast'     => null,
-            'hoursLast'     => null,
-            'setsLast'      => null,
-            'setSitsLast'   => null,
-            'sitsLast'      => null,
-            'setClosesLast' => null,
-            'closesLast'    => null
-        ];
         $this->dateSelected = date('Y-m-d', time());
-
-        $this->getOffices();
-        $this->getRegions();
-        $this->getUsers();
-        $this->setFilter();
     }
 
     public function render()
     {
+        $this->topTenTrackers = $this->getTopTenTrackers();
         return view('livewire.number-tracker.number-tracker-detail');
     }
 
@@ -93,20 +58,10 @@ class NumberTrackerDetail extends Component
         return "doors";
     }
 
-    public function updatedSelectedPill($value)
-    {
-
-    }
-
     public function setPeriod($p)
     {
         $this->period = $p;
         $this->emit('setDateOrPeriod', $this->dateSelected, $this->period);
-    }
-
-    public function setFilterBy($filter)
-    {
-        $this->filterBy = $filter;
     }
 
     public function setDate()
@@ -115,207 +70,16 @@ class NumberTrackerDetail extends Component
         $this->emit('setDateOrPeriod', $this->dateSelected, $this->period);
     }
 
-    public function updateSearch()
+    public function getUnselectedCollections($unselectedRegions, $unselectedOffices, $unselectedDailyNumbers)
     {
-        $this->users = User::where(DB::raw("CONCAT(`first_name`, ' ',  `last_name`)"), 'like',
-            '%' . $this->userSearch . '%')
-            ->orWhere('email', 'like', "%{$this->userSearch}%")->get();
-    }
-
-    public function getTrackerNumbers()
-    {
-        $query = DailyNumber::query()
-            ->with([
-                'user' => function ($query) {
-                    $query->withTrashed();
-                },
-                'user.department',
-            ])
-            ->leftJoin('users', function ($join) {
-                $join->on('users.id', '=', 'daily_numbers.user_id')
-                    ->on('users.office_id', '=', 'daily_numbers.office_id');
-            })
-            ->leftJoin('offices', 'users.office_id', '=', 'offices.id')
-            ->select([DB::raw('daily_numbers.id, daily_numbers.user_id, SUM(doors) as doors,
-                    SUM(hours) as hours,  SUM(sets) as sets, SUM(set_sits) as set_sits,  SUM(sits) as sits,  SUM(set_closes) as set_closes, SUM(closes) as closes')]);
-
-        $queryLast = clone $query;
-
-        if ($this->period == 'd') {
-            $query->whereDate('date', $this->dateSelected);
-            $queryLast->whereDate('date', date('Y-m-d', strtotime($this->dateSelected . '-1 day')));
-        } elseif ($this->period == 'w') {
-            $query->whereBetween('date', [
-                Carbon::createFromFormat('Y-m-d', $this->dateSelected)->startOfWeek(),
-                Carbon::createFromFormat('Y-m-d', $this->dateSelected)->endOfWeek(),
-            ]);
-            $queryLast->whereBetween('date', [
-                Carbon::createFromFormat('Y-m-d', $this->dateSelected)->subWeek()->startOfWeek(),
-                Carbon::createFromFormat('Y-m-d', $this->dateSelected)->subWeek()->endOfWeek(),
-            ]);
-        } else {
-            $query->whereMonth(
-                'date', '=', Carbon::createFromFormat('Y-m-d', $this->dateSelected)->month
-            );
-            $queryLast->whereMonth(
-                'date', '=', Carbon::createFromFormat('Y-m-d', $this->dateSelected)->subMonth()->month
-            );
-        }
-
-        if (count($this->activeFilters) > 0) {
-            $activeFilters = $this->activeFilters;
-            $query->where(function ($query) use ($activeFilters) {
-                foreach ($activeFilters as $filter) {
-                    $id = $filter['id'];
-                    if ($filter['type'] == 'user') {
-                        $query->orWhere('daily_numbers.user_id', '=', $id);
-                    }
-                    if ($filter['type'] == 'office') {
-                        $query->orWhere('daily_numbers.office_id', '=', $id);
-                    }
-                    if ($filter['type'] == 'region') {
-                        $query->orWhere('region_id', '=', $id);
-                    }
-                }
-            });
-            $queryLast->where(function ($query) use ($activeFilters) {
-                foreach ($activeFilters as $filter) {
-                    $id = $filter['id'];
-                    if ($filter['type'] == 'user') {
-                        $query->orWhere('daily_numbers.user_id', '=', $id);
-                    }
-                    if ($filter['type'] == 'office') {
-                        $query->orWhere('daily_numbers.office_id', '=', $id);
-                    }
-                    if ($filter['type'] == 'region') {
-                        $query->orWhere('region_id', '=', $id);
-                    }
-                }
-            });
-        }
-
-        $this->numbersTrackedLast = $queryLast->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
-            $query->where('users.department_id', '=', user()->department_id);
-        })
-            ->groupBy('user_id')
-            ->get();
-
-        $this->graphicValueLast = $this->numbersTrackedLast->sum($this->filterBy);
-
-        $query
-            ->groupBy('daily_numbers.user_id')
-            ->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
-                $query->where('users.department_id', '=', user()->department_id);
-            });
-
-        if ($this->filterBy == 'sits') {
-            return $query->orderByRaw('sits + set_sits ' . $this->order)->get();
-        }
-
-        if ($this->filterBy == 'closes') {
-            return $query->orderByRaw('closes + set_closes ' . $this->order)->get();
-        }
-
-        return $query->orderBy($this->filterBy, $this->order)->get();
-    }
-
-    public function addFilter($data, $type)
-    {
-        if ($type == 'user') {
-            $element = [
-                'type'       => $type,
-                'first_name' => $data['first_name'],
-                'last_name'  => $data['last_name'],
-                'id'         => $data['id'],
-            ];
-            if (!in_array($element, $this->activeFilters)) {
-                array_push($this->activeFilters, $element);
-            }
-        } else {
-            $element = [
-                'type' => $type,
-                'name' => $data['name'],
-                'id'   => $data['id'],
-            ];
-            if (!in_array($element, $this->activeFilters)) {
-                array_push($this->activeFilters, $element);
-            }
-        }
-    }
-
-    public function changeOrder()
-    {
-        $this->order = $this->order == 'desc' ? 'asc' : 'desc';
-    }
-
-    public function removeFilter($item)
-    {
-        unset($this->activeFilters[$item]);
-    }
-
-    public function getOffices()
-    {
-        $this->offices = Office::select('offices.*')
-            ->join('regions', 'offices.region_id', '=', 'regions.id')
-            ->where('regions.department_id', '=', user()->department_id)->get();
-    }
-
-    public function getRegions()
-    {
-        if (user()->role == "Admin") {
-            $this->regions = Region::with('offices.users')->get();
-        } else {
-            $this->regions = Region::whereDepartmentId(user()->department_id)->get();
-        }
-    }
-
-    public function getUsers()
-    {
-        $this->users = User::whereDepartmentId(user()->department_id)->get();
-    }
-
-    public function setFilter()
-    {
-        if (user()->hasRole('Region Manager')) {
-            $regions = user()->managedRegions()->get();
-            foreach ($regions as $region) {
-                $data = [
-                    'name' => $region->name,
-                    'id'   => $region->id,
-                ];
-                $this->addFilter($data, 'office');
-            }
-        }
-
-        if (user()->hasRole('Office Manager')) {
-            $offices = user()->managedOffices()->get();
-            foreach ($offices as $office) {
-                $data = [
-                    'name' => $office->name,
-                    'id'   => $office->id,
-                ];
-                $this->addFilter($data, 'office');
-            }
-        }
-
-        if (user()->hasAnyRole(['Setter', 'Sales Rep'])) {
-            $data = [
-                'first_name' => user()->first_name,
-                'last_name'  => user()->last_name,
-                'id'         => user()->id,
-            ];
-            $this->addFilter($data, 'user');
-        }
+        $this->unselectedRegions = $unselectedRegions;
+        $this->unselectedOffices = $unselectedOffices;
+        $this->unselectedDailyNumbers = $unselectedDailyNumbers;
     }
 
     public function getPillsProperty()
     {
         return ['doors', 'hours', 'sets', 'set sits', 'sg sits', 'set closes', 'sg closes'];
-    }
-
-    public function getTopTenTrackersProperty()
-    {
-        return $this->getTopTenTrackers();
     }
 
     private function getTopTenTrackers()
@@ -324,7 +88,11 @@ class NumberTrackerDetail extends Component
             return collect();
         }
 
-        $query = DailyNumber::query()->with('user:id,first_name,last_name,department_id');
+        $query = DailyNumber::query()
+            ->with('user:id,first_name,last_name,department_id')
+            ->with(['office' => function ($query) {
+                $query->whereNotIn('region_id', $this->unselectedRegions);
+            }]);
 
         if (user()->notHaveRoles(['Admin', 'Owner'])) {
             $query->whereHas(
@@ -333,8 +101,11 @@ class NumberTrackerDetail extends Component
             );
         }
 
+        // dd($this->unselectedRegions);
         return $query
             ->inPeriod($this->period, new Carbon($this->dateSelected))
+            ->whereNotIn('office_id', $this->unselectedOffices)
+            ->whereNotIn('user_id', $this->unselectedDailyNumbers)
             ->orderBy('total', 'desc')
             ->groupBy('user_id')
             ->select(
@@ -363,16 +134,5 @@ class NumberTrackerDetail extends Component
         }
 
         return $rawQuery;
-    }
-
-    public function sumTotalNumbers($total)
-    {
-        $this->numberTrackerTotal = $total;
-        $this->loading = false;
-    }
-
-    public function loadingSumNumberTracker()
-    {
-        $this->loading = true;
     }
 }
