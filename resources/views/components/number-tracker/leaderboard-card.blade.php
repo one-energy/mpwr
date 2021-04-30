@@ -1,7 +1,13 @@
 @props(['trackers', 'pills'])
 
 <section class="p-4 border-2 border-gray-200 rounded-md">
-    <h3 class="text-center text-lg text-gray-900 font-medium mb-5">Leaderboard</h3>
+    <div class="flex text-center mb-5">
+        <h3 class="text-lg text-gray-900 font-medium mr-3">Leaderboard</h3>
+        <x-svg.spinner wire:loading
+            color="#9fa6b2"
+            class="relative w-6">
+        </x-svg.spinner>
+    </div>
 
     <section
         x-data="{
@@ -15,14 +21,14 @@
                 this.selectedPill = pill;
             },
             get greenPill() {
-                return 'bg-green-base text-white';
+                return 'bg-green-base border-2 border-green-200 text-white sticky left-0 right-0';
             },
             get grayPill() {
                 return 'bg-white border-2 border-gray-200 text-cool-gray-800';
             }
         }"
         id="items"
-        class="flex flex-no-wrap items-center space-x-2 overflow-x-hidden overflow-y-hidden whitespace-no-wrap px-5 mb-7"
+        class="flex flex-no-wrap items-center space-x-2 overflow-x-hidden overflow-y-hidden whitespace-no-wrap mb-7"
     >
         <template x-for="pill in pills" :key="pill">
             <div
@@ -36,22 +42,22 @@
         </template>
     </section>
 
-    <section class="flex flex-col space-y-5 px-5" >
+    <section class="flex flex-col space-y-5">
         @forelse ($trackers as $tracker)
             <div class="col-span-full flex justify-between items-center text-gray-900 font-medium">
-                <p class="col-span-1 w-5">{{ $loop->index + 1 }}</p>
-                {{-- <p class="flex-1 ml-4">{{ $tracker->user->full_name }}</p> --}}
-                <p>{{ $tracker->total }}</p>
+                <div class="flex">
+                    <p class="col-span-1 w-5">{{ $loop->index + 1 }}</p>
+                    <p class="col-span-1 w-5">{{html_entity_decode('&#8212;')}}</p>
+                    @if ($tracker->user->deleted_at != null)
+                        <x-icon class="w-6 h-6" icon="user-blocked"/>
+                    @endif
+                    <p class="flex-1 ml-1">{{ $tracker->user->full_name }}</p>
+                </div>
+                <p>{{ $tracker->total ?? html_entity_decode('&#8212;') }}</p>
             </div>
         @empty
             <p class="italic text-gray-800">No users found...</p>
         @endforelse
-    </section>
-    <section class="flex" wire:loading>
-        <x-svg.spinner
-            color="#9fa6b2"
-            class="relative hidden w-6 top-2">
-        </x-svg.spinner>
     </section>
 </section>
 

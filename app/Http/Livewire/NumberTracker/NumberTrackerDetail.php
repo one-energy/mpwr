@@ -87,7 +87,7 @@ class NumberTrackerDetail extends Component
         }
 
         $query = DailyNumber::query()
-            ->with('user:id,first_name,last_name,department_id')
+            ->with(['user' => fn($query) => $query->withTrashed()])
             ->with(['office' => function ($query) {
                 $query->whereNotIn('region_id', $this->unselectedRegions);
             }]);

@@ -130,6 +130,13 @@
                     :trackers="$topTenTrackers"
                     :pills="$this->pills"
                 />
+                <div class="mt-6">
+
+                    <x-button :href="route('number-tracking.create')" color="green" class="inline-flex w-full">
+                        Update Numbers
+                    </x-button>
+
+                </div>
             </div>
 
             <div class="px-4 py-5 sm:p-6 md:w-2/3 xl:w-3/4">
