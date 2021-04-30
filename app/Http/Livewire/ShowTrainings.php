@@ -46,6 +46,10 @@ class ShowTrainings extends Component
 
     public function render()
     {
+        if (!$this->department->id && (user()->role == 'Owner' || user()->role == 'Admin')) {
+            $this->department = Department::first();
+        }
+
         if ($this->department->id) {
             $this->actualSection = $this->section ?? TrainingPageSection::whereDepartmentId($this->department->id)->first();
             $this->actualSection->load('files');

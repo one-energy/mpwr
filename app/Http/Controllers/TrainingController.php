@@ -15,6 +15,15 @@ class TrainingController extends Controller
     {
         $this->authorize('viewList', [TrainingPageSection::class, $department->id]);
 
+        if (user()->hasRole('Department Manager') && user()->department_id === null) {
+            alert()
+                ->withTitle(__('You need to be part of a department to access!'))
+                ->withColor('red')
+                ->send();
+
+            return redirect()->route('home');
+        }
+
         return view('training.index', [
             'department' => $department,
             'section'    => $section,
