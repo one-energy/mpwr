@@ -22,17 +22,15 @@ class NumberTrackerDetail extends Component
 {
     use FullTable;
 
-    public array $unselectedRegions = [];
+    public array $unselectedRegions          = [];
 
-    public array $unselectedOffices = [];
+    public array $unselectedOffices          = [];
 
-    public array $unselectedDailyNumbers = [];
+    public array $unselectedUserDailyNumbers = [];
+
+    public string $period                    = 'm';
 
     public Collection $topTenTrackers;
-
-    public $period = 'm';
-
-    public $numbersTrackedLast = [];
 
     public $date;
 
@@ -70,11 +68,11 @@ class NumberTrackerDetail extends Component
         $this->emit('setDateOrPeriod', $this->dateSelected, $this->period);
     }
 
-    public function getUnselectedCollections($unselectedRegions, $unselectedOffices, $unselectedDailyNumbers)
+    public function getUnselectedCollections($unselectedRegions, $unselectedOffices, $unselectedUserDailyNumbers)
     {
-        $this->unselectedRegions = $unselectedRegions;
-        $this->unselectedOffices = $unselectedOffices;
-        $this->unselectedDailyNumbers = $unselectedDailyNumbers;
+        $this->unselectedRegions          = $unselectedRegions;
+        $this->unselectedOffices          = $unselectedOffices;
+        $this->unselectedUserDailyNumbers = $unselectedUserDailyNumbers;
     }
 
     public function getPillsProperty()
@@ -105,7 +103,7 @@ class NumberTrackerDetail extends Component
         return $query
             ->inPeriod($this->period, new Carbon($this->dateSelected))
             ->whereNotIn('office_id', $this->unselectedOffices)
-            ->whereNotIn('user_id', $this->unselectedDailyNumbers)
+            ->whereNotIn('user_id', $this->unselectedUserDailyNumbers)
             ->orderBy('total', 'desc')
             ->groupBy('user_id')
             ->select(
