@@ -36,9 +36,9 @@
     <div class="flex justify-between mt-3">
         <div class="grid w-full grid-cols-6 row-gap-2 col-gap-1 xl:grid-cols-12 md:col-gap-4">
             <div class="col-span-2 xl:col-span-2 border-2 border-gray-200 rounded-md p-3 space-y-3">
-                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectUser" class="text-base font-semibold uppercase">Doors</div>
-                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectUser" class="text-xl font-bold">{{$this->getNumberTrackerSumOf('doors')}}</div>
-                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectUser" class="flex text-xs font-semibold text-green-base">
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold uppercase">Doors</div>
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold">{{$this->getNumberTrackerSumOf('doors')}}</div>
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
                     @if($this->getNumberTrackerDifferenceToLasNumbersOf('doors') >= 0)
                         <x-svg.arrow-up class="text-green-base"/>
                     @else
@@ -55,12 +55,12 @@
                         {{$this->getNumberTrackerDifferenceToLasNumbersOf('doors')}}
                     </span>
                 </div>
-                <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectUser"/>
+                <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
             </div>
             <div class="col-span-2 xl:col-span-2 border-2 border-gray-200 rounded-md p-3 space-y-3" >
-                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectUser" class="text-base font-semibold text-gray-900 uppercase">Hours</div>
-                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectUser" class="text-xl font-bold text-gray-900">{{$this->getNumberTrackerSumOf('hours')}}</div>
-                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectUser" class="flex text-xs font-semibold text-green-base">
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">Hours</div>
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold text-gray-900">{{$this->getNumberTrackerSumOf('hours')}}</div>
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
                     @if($this->getNumberTrackerDifferenceToLasNumbersOf('hours') >= 0)
                         <x-svg.arrow-up class="text-green-base"/>
                     @else
@@ -77,12 +77,12 @@
                         {{$this->getNumberTrackerDifferenceToLasNumbersOf('hours')}}
                     </span>
                 </div>
-                <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectUser"/>
+                <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
             </div>
             <div class="col-span-2 xl:col-span-2 border-2 border-gray-200 rounded-md p-3 space-y-3" >
-                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectUser" class="text-base font-semibold text-gray-900 uppercase">Sets</div>
-                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectUser" class="text-xl font-bold text-gray-900">{{$this->getNumberTrackerSumOf('sets')}}</div>
-                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectUser" class="flex text-xs font-semibold text-green-base">
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">Sets</div>
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold text-gray-900">{{$this->getNumberTrackerSumOf('sets')}}</div>
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
                     @if($this->getNumberTrackerDifferenceToLasNumbersOf('sets') >= 0)
                         <x-svg.arrow-up class="text-green-base"/>
                     @else
@@ -99,11 +99,11 @@
                         {{$this->getNumberTrackerDifferenceToLasNumbersOf('sets')}}
                     </span>
                 </div>
-                <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectUser"/>
+                <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
             </div>
             <div class="col-span-3 xl:col-span-3 border-2 border-gray-200 rounded-md p-3 space-y-3" >
-                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectUser" class="text-base font-semibold text-gray-900 uppercase">Sits</div>
-                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectUser" class="grid grid-cols-4 gap-1">
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">Sits</div>
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="grid grid-cols-4 gap-1">
                     <div class="text-sm self-center col-span-3">
                         <span>Set</span>
                         <span class="text-xl font-bold text-gray-900 ml-2">
@@ -128,7 +128,7 @@
                         </span>
                     </div>
                 </div>
-                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectUser" class="grid grid-cols-4 gap-1">
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="grid grid-cols-4 gap-1">
                     <div class="text-sm self-center col-span-3">
                         <span>SG</span>
                         <span class="text-xl font-bold text-gray-900 ml-2">
@@ -153,11 +153,11 @@
                         </span>
                     </div>
                 </div>
-                <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectUser"/>
+                <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
             </div>
             <div class="col-span-3 xl:col-span-3 border-2 border-gray-200 rounded-md p-3 space-y-3" >
-                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectUser" class="text-base font-semibold text-gray-900 uppercase">Closes</div>
-                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectUser" class="grid grid-cols-4 gap-1">
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">Closes</div>
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="grid grid-cols-4 gap-1">
                     <div class="text-sm self-center col-span-3">
                         <span>Set</span>
                         <span class="text-xl font-bold text-gray-900 ml-2">
@@ -182,7 +182,7 @@
                         </span>
                     </div>
                 </div>
-                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectUser" class="grid grid-cols-4 gap-1">
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="grid grid-cols-4 gap-1">
                     <div class="text-sm self-center col-span-3">
                         <span>
                             SG
@@ -209,7 +209,7 @@
                         </span>
                     </div>
                 </div>
-                <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectUser"/>
+                <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
             </div>
         </div>
     </div>
@@ -439,7 +439,7 @@
                                                                     <div class="flex items-center" wire:loading.remove>
                                                                         <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
                                                                             wire:model="itsOpenRegions.{{$regionIndex}}.sortedOffices.{{$officeIndex}}.sortedDailyNumbers.{{$dailyNumberIndex}}.selected"
-                                                                            type="checkbox" x-on:change="$wire.selectUser({{$regionIndex}}, {{$officeIndex}}, {{$dailyNumberIndex}})" wire:click.stop="">
+                                                                            type="checkbox" x-on:change="$wire.selectDailyNumberUser({{$regionIndex}}, {{$officeIndex}}, {{$dailyNumberIndex}})" wire:click.stop="">
                                                                     </div>
                                                                     <div class="flex items-center mr-2 w-6 h-6" wire:loading>
                                                                         <x-svg.spinner
@@ -541,7 +541,6 @@
                                     @endforeach
                                 </x-slot>
                             </x-table-accordion>
-                            <x-button wire:click="teste()"></x-button>
                         @else
                             <div class="h-96 ">
                                 <div class="flex justify-center align-middle">
