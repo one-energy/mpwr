@@ -2,8 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Department;
-use App\Models\Office;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Storage;
@@ -17,8 +15,7 @@ class UserFactory extends Factory
     public function definition()
     {
         $roles = $this->faker->randomElement(User::ROLES);
-        $role = $roles['name'];
-
+        $role  = $roles['name'];
 
 
         return [
@@ -36,7 +33,6 @@ class UserFactory extends Factory
             'department_manager_override' => 10,
             'region_manager_override'     => 10,
             'office_manager_override'     => 10,
-            'department_id'               => Department::factory()->create()->id
         ];
     }
 
