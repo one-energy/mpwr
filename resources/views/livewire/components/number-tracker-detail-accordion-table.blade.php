@@ -1,5 +1,4 @@
 <div>
-
     <div class="flex justify-between mt-6 md:mt-12">
         <div class="grid w-full grid-cols-2 row-gap-2 col-gap-1 md:grid-cols-4 md:col-gap-4">
             <div class="col-span-1 p-3 rounded-md bg-green-light space-y-3">
@@ -35,7 +34,7 @@
 
     <div class="flex justify-between mt-3">
         <div class="grid w-full grid-cols-6 row-gap-2 col-gap-1 xl:grid-cols-12 md:col-gap-4">
-            <div class="col-span-2 xl:col-span-2 border-2 border-gray-200 rounded-md p-3 space-y-3">
+            <div class="col-span-2 xl:col-span-2 border-2 border-gray-200 rounded-md p-3 space-y-1">
                 <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold uppercase">Doors</div>
                 <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold">{{$this->getNumberTrackerSumOf('doors')}}</div>
                 <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
@@ -57,7 +56,7 @@
                 </div>
                 <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
             </div>
-            <div class="col-span-2 xl:col-span-2 border-2 border-gray-200 rounded-md p-3 space-y-3" >
+            <div class="col-span-2 xl:col-span-2 border-2 border-gray-200 rounded-md p-3 space-y-1" >
                 <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">Hours</div>
                 <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold text-gray-900">{{$this->getNumberTrackerSumOf('hours')}}</div>
                 <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
@@ -79,7 +78,7 @@
                 </div>
                 <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
             </div>
-            <div class="col-span-2 xl:col-span-2 border-2 border-gray-200 rounded-md p-3 space-y-3" >
+            <div class="col-span-2 xl:col-span-2 border-2 border-gray-200 rounded-md p-3 space-y-1" >
                 <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">Sets</div>
                 <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold text-gray-900">{{$this->getNumberTrackerSumOf('sets')}}</div>
                 <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
@@ -101,7 +100,7 @@
                 </div>
                 <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
             </div>
-            <div class="col-span-3 xl:col-span-3 border-2 border-gray-200 rounded-md p-3 space-y-3" >
+            <div class="col-span-3 xl:col-span-3 border-2 border-gray-200 rounded-md p-3 space-y-1" >
                 <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">Sits</div>
                 <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="grid grid-cols-4 gap-1">
                     <div class="text-sm self-center col-span-3">
@@ -155,7 +154,7 @@
                 </div>
                 <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
             </div>
-            <div class="col-span-3 xl:col-span-3 border-2 border-gray-200 rounded-md p-3 space-y-3" >
+            <div class="col-span-3 xl:col-span-3 border-2 border-gray-200 rounded-md p-3 space-y-1" >
                 <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">Closes</div>
                 <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="grid grid-cols-4 gap-1">
                     <div class="text-sm self-center col-span-3">
