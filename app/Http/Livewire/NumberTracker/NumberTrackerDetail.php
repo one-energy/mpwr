@@ -24,7 +24,7 @@ class NumberTrackerDetail extends Component
 
     public array $unselectedUserDailyNumbers = [];
 
-    public string $period = 'm';
+    public string $period = 'd';
 
     public Collection $topTenTrackers;
 
