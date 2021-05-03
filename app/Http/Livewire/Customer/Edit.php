@@ -165,7 +165,10 @@ class Edit extends Component
 
     public function calculateCommission($customer)
     {
-        return (($customer->epc - ($customer->pay + $customer->setter_fee)) * ($customer->system_size * 1000)) - $customer->adders;
+        return (
+                ((float)$customer->epc - ((float)$customer->pay + (float)$customer->setter_fee)) *
+                ((float)$customer->system_size * 1000)
+            ) - (float)$customer->adders;
     }
 
     public function getSalesRepFee()
