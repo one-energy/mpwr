@@ -37,10 +37,6 @@ class Region extends Model
         'department_id',
     ];
 
-    protected $fillable = [
-        'id',
-    ];
-
     public function regionManager()
     {
         return $this->belongsTo(User::class, 'region_manager_id');
