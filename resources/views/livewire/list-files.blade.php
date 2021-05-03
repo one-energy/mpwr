@@ -14,9 +14,11 @@
                     <x-table.th-searchable by="created_at" :sortedBy="$sortBy" :direction="$sortDirection">
                         @lang('uploaded_at')
                     </x-table.th-searchable>
-                    <x-table.th>
-                        &nbsp;
-                    </x-table.th>
+                    @if ($showDeleteButton)
+                        <x-table.th>
+                            &nbsp;
+                        </x-table.th>
+                    @endif
                 </x-table.th-tr>
             </x-slot>
             <x-slot name="body">

@@ -16,11 +16,6 @@ class CreateSectionForRegions extends Command
 
     public function handle()
     {
-        if (!$this->confirm('Do you wish to continue?')) {
-            $this->info('Command aborted.');
-            return;
-        }
-
         /** @var Collection $regions */
         $regions = Region::all();
 

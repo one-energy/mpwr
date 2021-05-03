@@ -106,7 +106,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('/{incentive}', [ManageIncentivesController::class, 'destroy'])->name('destroy');
         });
 
-        Route::prefix('manage-trainings')->middleware('incentives')->name('manage-trainings.')->group(function () {
+        Route::prefix('manage-trainings')->middleware('role:Admin|Owner|Department Manager|Region Manager')->name('manage-trainings.')->group(function () {
             Route::get('/list/{department?}/{section?}', [TrainingController::class, 'manageTrainings'])->name('index');
             Route::post('/{section?}/create-section', [TrainingController::class, 'storeSection'])->name('storeSection');
             Route::put('/{section?}/update-section', [TrainingController::class, 'updateSection'])->name('updateSection');

@@ -101,23 +101,15 @@ class ShowTrainings extends Component
 
     public function getParentSections($section)
     {
-        $query = TrainingPageSection::query()
+        return TrainingPageSection::query()
+            ->where('department_id', $this->department->id)
             ->with('contents')
-            ->where('department_id', $this->department->id);
-
-        if (user()->notHaveRoles(['Admin', 'Owner', 'Department Manager'])) {
-            $query->where(function (Builder $query) {
-                $query
-                    ->orWhereNull('region_id')
-                    ->orWhereHas('region.offices', function (Builder $query) {
-                        $query->where('offices.id', user()->office_id);
-                    });
-            });
-        }
-
-        return $query->when($this->search === '', function ($query) use ($section) {
-            $query->where('training_page_sections.parent_id', $section->id ?? 1);
-        })
+            ->when(user()->hasRole('Region Manager'), function (Builder $query) {
+                $query->sectionsUserManaged();
+            })
+            ->when($this->search === '', function ($query) use ($section) {
+                $query->where('training_page_sections.parent_id', $section->id ?? 1);
+            })
             ->when($this->search !== '', function ($query) {
                 $query->where(function ($query) {
                     $query
@@ -125,7 +117,7 @@ class ShowTrainings extends Component
                         ->orWhere('training_page_contents.description', 'like', "%{$this->search}%");
                 });
             })
-           ->get();
+            ->get();
     }
 
     public function getFilesTabSelectedProperty()
