@@ -31,7 +31,6 @@ class NumberTrackerDetailAccordionTable extends Component
     public function mount()
     {
         $this->sortBy = 'doors';
-        $this->initUnselectedCollections();
         $this->initRegionsData();
     }
 
@@ -42,6 +41,7 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function initRegionsData()
     {
+        $this->initUnselectedCollections();
         $this->addItsOpen();
         $this->sumTotal();
     }
