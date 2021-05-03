@@ -3,9 +3,6 @@
 namespace App\Http\Livewire\NumberTracker;
 
 use App\Models\DailyNumber;
-use App\Models\Office;
-use App\Models\Region;
-use App\Models\User;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
@@ -13,7 +10,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Component;
-use phpDocumentor\Reflection\Types\Boolean;
 
 /**
  * @property-read array $pills
@@ -22,13 +18,13 @@ class NumberTrackerDetail extends Component
 {
     use FullTable;
 
-    public array $unselectedRegions          = [];
+    public array $unselectedRegions = [];
 
-    public array $unselectedOffices          = [];
+    public array $unselectedOffices = [];
 
     public array $unselectedUserDailyNumbers = [];
 
-    public string $period                    = 'm';
+    public string $period = 'm';
 
     public Collection $topTenTrackers;
 
@@ -38,7 +34,11 @@ class NumberTrackerDetail extends Component
 
     public string $selectedPill = 'hours';
 
-    protected $listeners = ['sumTotalNumbers', 'loadingSumNumberTracker', 'updateLeaderBoard' => 'getUnselectedCollections'];
+    protected $listeners = [
+        'sumTotalNumbers',
+        'loadingSumNumberTracker',
+        'updateLeaderBoard' => 'getUnselectedCollections',
+    ];
 
     public function mount()
     {
@@ -48,12 +48,13 @@ class NumberTrackerDetail extends Component
     public function render()
     {
         $this->topTenTrackers = $this->getTopTenTrackers();
+
         return view('livewire.number-tracker.number-tracker-detail');
     }
 
     public function sortBy()
     {
-        return "doors";
+        return 'doors';
     }
 
     public function setPeriod($p)
@@ -88,18 +89,19 @@ class NumberTrackerDetail extends Component
 
         $query = DailyNumber::query()
             ->with(['user' => fn($query) => $query->withTrashed()])
-            ->with(['office' => function ($query) {
-                $query->whereNotIn('region_id', $this->unselectedRegions);
-            }]);
+            ->with([
+                'office' => function ($query) {
+                    $query->whereNotIn('region_id', $this->unselectedRegions);
+                },
+            ]);
 
         if (user()->notHaveRoles(['Admin', 'Owner'])) {
             $query->whereHas(
                 'user',
-                fn (Builder $query) => $query->where('department_id', user()->department_id)
+                fn(Builder $query) => $query->where('department_id', user()->department_id)
             );
         }
 
-        // dd($this->unselectedRegions);
         return $query
             ->inPeriod($this->period, new Carbon($this->dateSelected))
             ->whereNotIn('office_id', $this->unselectedOffices)

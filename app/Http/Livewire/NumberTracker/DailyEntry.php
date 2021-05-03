@@ -54,7 +54,7 @@ class DailyEntry extends Component
     {
         $usersQuery = User::query();
 
-        if (user()->role == 'Setter' || user()->role == 'Sales Rep' || !$this->isManager()) {
+        if (user()->hasAnyRole(['Setter', 'Sales Rep']) || !$this->isManager()) {
             $usersQuery->where('users.id', '=', user()->id);
         }
 
