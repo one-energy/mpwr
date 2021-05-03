@@ -148,13 +148,13 @@ class DailyEntry extends Component
 
     public function isManager()
     {
-        if (user()->id == Office::find($this->officeSelected)->office_manager_id) {
+        if (user()->id == Office::find($this->officeSelected)?->office_manager_id) {
             return true;
         }
-        if (user()->id == Office::find($this->officeSelected)->region->region_manager_id) {
+        if (user()->id == Office::find($this->officeSelected)?->region->region_manager_id) {
             return true;
         }
-        if (user()->id == Office::find($this->officeSelected)->region->department->department_manager_id) {
+        if (user()->id == Office::find($this->officeSelected)?->region->department->department_manager_id) {
             return true;
         }
 

@@ -120,32 +120,33 @@ class Trainings extends Component
         return TrainingPageContent::whereTrainingPageSectionId($section->id)->get();
     }
 
-    public function changeDepartment()
+    public function changeDepartment($value)
     {
-        return redirect(route('castle.manage-trainings.index', ['department' => request()->all()['department']]));
+        $department = Department::query()->find($value);
+
+        if ($department === null) {
+            return;
+        }
+
+        return redirect(route('castle.manage-trainings.index', ['department' => $department->id]));
     }
 
     public function getParentSections($section)
     {
-        $search         = $this->search;
-        $trainingsQuery = TrainingPageSection::query()->with('content')
-            ->select('training_page_sections.*')
+        return TrainingPageSection::query()
             ->whereDepartmentId($this->department->id)
-            ->leftJoin('training_page_contents', 'training_page_sections.id', '=',
-                'training_page_contents.training_page_section_id');
-
-        $trainingsQuery->when($search == '', function ($query) use ($section) {
-            $query->where('training_page_sections.parent_id', $section->id ?? 1);
-        });
-
-        $trainingsQuery->when($search != '', function ($query) use ($search) {
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('training_page_sections.title', 'like', '%' . $this->search . '%')
-                    ->orWhere('training_page_contents.description', 'like', '%' . $search . '%');
-            });
-        });
-
-        return $trainingsQuery->get();
+            ->with('contents')
+            ->when($this->search === '', function ($query) use ($section) {
+                $query->where('training_page_sections.parent_id', $section->id ?? 1);
+            })
+            ->when($this->search !== '', function ($query) {
+                $query->where(function ($query) {
+                    $query
+                        ->orWhere('training_page_sections.title', 'like', "%{$this->search}%")
+                        ->orWhere('training_page_contents.description', 'like', "%{$this->search}%");
+                });
+            })
+           ->get();
     }
 
     public function changeTab(string $tabName)

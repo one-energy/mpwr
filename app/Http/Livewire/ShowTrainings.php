@@ -7,6 +7,7 @@ use App\Models\SectionFile;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
 use App\Traits\Livewire\FullTable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
@@ -45,6 +46,10 @@ class ShowTrainings extends Component
 
     public function render()
     {
+        if (!$this->department->id && (user()->role == 'Owner' || user()->role == 'Admin')) {
+            $this->department = Department::first();
+        }
+
         if ($this->department->id) {
             $this->actualSection = $this->section ?? TrainingPageSection::whereDepartmentId($this->department->id)->first();
             $this->actualSection->load('files');
@@ -96,25 +101,31 @@ class ShowTrainings extends Component
 
     public function getParentSections($section)
     {
-        $search         = $this->search;
-        $trainingsQuery = TrainingPageSection::query()->with('content')
-            ->select('training_page_sections.*')
-            ->whereDepartmentId($this->department->id)
-            ->leftJoin('training_page_contents', 'training_page_sections.id', '=',
-                'training_page_contents.training_page_section_id');
+        $query = TrainingPageSection::query()
+            ->with('contents')
+            ->where('department_id', $this->department->id);
 
-        $trainingsQuery->when($search == '', function ($query) use ($section) {
-            $query->where('training_page_sections.parent_id', $section->id ?? 1);
-        });
-
-        $trainingsQuery->when($search != '', function ($query) use ($search) {
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('training_page_sections.title', 'like', '%' . $this->search . '%')
-                    ->orWhere('training_page_contents.description', 'like', '%' . $search . '%');
+        if (user()->notHaveRoles(['Admin', 'Owner', 'Department Manager'])) {
+            $query->where(function (Builder $query) {
+                $query
+                    ->orWhereNull('region_id')
+                    ->orWhereHas('region.offices', function (Builder $query) {
+                        $query->where('offices.id', user()->office_id);
+                    });
             });
-        });
+        }
 
-        return $trainingsQuery->get();
+        return $query->when($this->search === '', function ($query) use ($section) {
+            $query->where('training_page_sections.parent_id', $section->id ?? 1);
+        })
+            ->when($this->search !== '', function ($query) {
+                $query->where(function ($query) {
+                    $query
+                        ->orWhere('training_page_sections.title', 'like', "%{$this->search}%")
+                        ->orWhere('training_page_contents.description', 'like', "%{$this->search}%");
+                });
+            })
+           ->get();
     }
 
     public function getFilesTabSelectedProperty()

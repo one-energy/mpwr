@@ -23,9 +23,11 @@ class TrainingPageSectionFactory extends Factory
     public function definition()
     {
         return [
-            'title'         => $this->faker->sentence,
-            'parent_id'     => null,
-            'department_id' => Department::factory(),
+            'title'             => $this->faker->sentence,
+            'parent_id'         => null,
+            'department_id'     => Department::factory(),
+            'region_id'         => null,
+            'department_folder' => true,
         ];
     }
 }

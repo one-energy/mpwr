@@ -235,25 +235,27 @@
                     <x-search class="block w-full border-1  border-cool-gray-400 rounded-sm px-10 form-input md:w-96 sm:text-sm sm:leading-5" :search="$search" :perPage="false"/>
                 </div>
             </div>
-            {{-- @if(user()->role == "Admin" || user()->role == "Owner")
-                <form action="{{ route('castle.manage-trainings.changeDepartment')}}" method="POST">
-                    @csrf
-                    <div class="flex justify-end" x-data="{ sortOptions: false }">
-                        <label for="department" class="block mt-1 text-xs font-medium leading-5 text-gray-700">
-                            Department
-                        </label>
-                        <div class="relative inline-block ml-2 text-left">
-                            <select name="department" onchange="this.form.submit()" class="block w-full py-1 text-lg text-gray-500 transition duration-150 ease-in-out rounded-lg form-select">
-                                @foreach($departments as $department)
-                                <option value="{{ $department->id }}" {{ $departmentId == $department->id ? 'selected' : '' }}>
-                                    {{ $department->name }}
-                                </option>
-                                @endforeach
-                            </select>
+
+            @if (user()->hasAnyRole(['Admin', 'Owner']))
+                <div class="my-4">
+                    <form action="{{ route('castle.manage-trainings.index')}}" method="get">
+                        <div class="flex items-center justify-end">
+                            <label for="department" class="block mt-1 text-xs font-medium leading-5 text-gray-700">
+                                Department
+                            </label>
+                            <div class="relative inline-block ml-2 text-left">
+                                <select name="department" x-data="{}" @change="$wire.changeDepartment($el.value)" class="block w-full py-1 text-lg text-gray-500 transition duration-150 ease-in-out rounded-lg form-select">
+                                    @foreach($departments as $department)
+                                    <option value="{{ $department->id }}" {{ $departmentId == $department->id ? 'selected' : '' }}>
+                                        {{ $department->name }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                </form>
-            @endif --}}
+                    </form>
+                </div>
+            @endif
 
             <div class="mt-15">
                 @if(!$path || ($contents == null && $sections->isEmpty()) )

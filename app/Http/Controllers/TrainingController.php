@@ -15,6 +15,15 @@ class TrainingController extends Controller
     {
         $this->authorize('viewList', [TrainingPageSection::class, $department->id]);
 
+        if (user()->hasRole('Department Manager') && user()->department_id === null) {
+            alert()
+                ->withTitle(__('You need to be part of a department to access!'))
+                ->withColor('red')
+                ->send();
+
+            return redirect()->route('home');
+        }
+
         return view('training.index', [
             'department' => $department,
             'section'    => $section,
@@ -29,6 +38,24 @@ class TrainingController extends Controller
     public function manageTrainings(Department $department, TrainingPageSection $section = null)
     {
         $this->authorize('viewList', [TrainingPageSection::class, $department->id]);
+
+        if (user()->hasRole('Department Manager') && user()->department_id === null) {
+            alert()
+                ->withTitle(__('You need to be part of a department to access!'))
+                ->withColor('red')
+                ->send();
+
+            return redirect()->route('castle.dashboard');
+        }
+
+        if (user()->hasRole('Region Manager') && user()->department_id === null) {
+            alert()
+                ->withTitle(__('You need to be linked to a department!'))
+                ->withColor('red')
+                ->send();
+
+            return back();
+        }
 
         return view('castle.manage-trainings.index', [
             'department' => $department,
@@ -48,16 +75,15 @@ class TrainingController extends Controller
 
     public function storeSection(TrainingPageSection $section)
     {
-        $validated = request()->validate([
-            'title' => 'required|string|max:255',
+        request()->validate(['title' => 'required|string|max:255']);
+
+        TrainingPageSection::create([
+            'title'             => request()->title,
+            'parent_id'         => $section->id,
+            'department_id'     => $section->department_id,
+            'region_id'         => $section->region_id,
+            'department_folder' => $section->department_folder,
         ]);
-
-        $trainingPageSection                = new TrainingPageSection();
-        $trainingPageSection->title         = $validated['title'];
-        $trainingPageSection->parent_id     = $section->id;
-        $trainingPageSection->department_id = $section->department_id;
-
-        $trainingPageSection->save();
 
         alert()
             ->withTitle(__('Section created!'))
