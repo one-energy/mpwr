@@ -40,6 +40,10 @@ class ListFiles extends Component
 
     public function onDestroy(SectionFile $file)
     {
+        if (!$this->showDeleteButton) {
+            return;
+        }
+
         $this->selectedFile    = $file;
         $this->showDeleteModal = true;
     }
@@ -57,6 +61,10 @@ class ListFiles extends Component
 
     public function removeFile()
     {
+        if (!$this->showDeleteButton) {
+            return;
+        }
+
         if (!Storage::disk('local')->exists($this->selectedFile->path)) {
             alert()->livewire($this)->withTitle('File not found')->send();
             $this->showDeleteModal = false;

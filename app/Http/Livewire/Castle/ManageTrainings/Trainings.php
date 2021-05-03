@@ -7,6 +7,7 @@ use App\Models\SectionFile;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
 use App\Traits\Livewire\FullTable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -101,6 +102,19 @@ class Trainings extends Component
         ]);
     }
 
+    public function getCanSeeActionsProperty()
+    {
+        if (user()->hasAnyRole(['Admin', 'Owner', 'Department Manager'])) {
+            return true;
+        }
+
+        if (user()->hasRole('Region Manager') && $this->actualSection->isDepartmentSection()) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function getPath($section)
     {
         $path                = [$section];
@@ -134,8 +148,11 @@ class Trainings extends Component
     public function getParentSections($section)
     {
         return TrainingPageSection::query()
-            ->whereDepartmentId($this->department->id)
+            ->where('department_id', $this->department->id)
             ->with('contents')
+            ->when(user()->hasRole('Region Manager'), function (Builder $query) {
+                $query->sectionsUserManaged();
+            })
             ->when($this->search === '', function ($query) use ($section) {
                 $query->where('training_page_sections.parent_id', $section->id ?? 1);
             })
@@ -146,7 +163,7 @@ class Trainings extends Component
                         ->orWhere('training_page_contents.description', 'like', "%{$this->search}%");
                 });
             })
-           ->get();
+            ->get();
     }
 
     public function changeTab(string $tabName)
