@@ -79,8 +79,6 @@ class Regions extends Component
         }
 
         DB::transaction(function () use ($region) {
-            $region->delete();
-
             $parentSection = TrainingPageSection::query()
                 ->where(function (Builder $query) use ($region) {
                     $query->where('department_id', $region->department_id)
@@ -90,11 +88,11 @@ class Regions extends Component
 
             TrainingPageContent::query()
                 ->whereIn('training_page_section_id', $region->trainingPageSections()->select('id')->pluck('id')->toArray())
-                ->update(['training_page_section_id' => $parentSection->id]);
+                ->update(['training_page_section_id' => $parentSection?->id]);
 
             SectionFile::query()
                 ->whereIn('training_page_section_id', $region->trainingPageSections()->select('id')->pluck('id')->toArray())
-                ->update(['training_page_section_id' => $parentSection->id]);
+                ->update(['training_page_section_id' => $parentSection?->id]);
 
             $region
                 ->trainingPageSections()
