@@ -39,4 +39,21 @@ class NumberTrackingController extends Controller
 
         return back();
     }
+
+    public function spreadsheet()
+    {
+        return view('number-tracking.spreadsheet')
+            ->with([
+                'indicators' => [
+                    ['label' => 'HW', 'description' => 'Hours Worked'],
+                    ['label' => 'D', 'description' => 'Doors'],
+                    ['label' => 'HK', 'description' => 'Hours Knocked'],
+                    ['label' => 'S', 'description' => 'Sets'],
+                    ['label' => 'SA', 'description' => 'Sats'],
+                    ['label' => 'SC', 'description' => 'Set Closes'],
+                    ['label' => 'CS', 'description' => 'Closer Sits'],
+                    ['label' => 'C', 'description' => 'Closes'],
+                ]
+            ]);
+    }
 }
