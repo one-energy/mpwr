@@ -45,9 +45,7 @@ class DestroyRegionTest extends TestCase
     public function it_should_soft_delete_a_region()
     {
         $john   = User::factory()->create(['role' => 'Region Manager']);
-        $region = Region::factory()->create([
-            'region_manager_id' => $john->id,
-        ]);
+        $region = Region::factory()->create();
 
         $this->actingAs($john);
 
@@ -67,10 +65,7 @@ class DestroyRegionTest extends TestCase
 
         $department = Department::factory()->create();
 
-        $region = Region::factory()->create([
-            'region_manager_id' => $john->id,
-            'department_id'     => $department->id,
-        ]);
+        $region = Region::factory()->create(['department_id' => $department->id]);
 
         $anotherSections = TrainingPageSection::factory()->times(5)->create([
             'parent_id'         => null,
@@ -85,17 +80,26 @@ class DestroyRegionTest extends TestCase
             'department_folder' => true,
         ]);
 
-        $regionSections  = TrainingPageSection::factory()->times(5)->create([
+        $regionSections = TrainingPageSection::factory()->times(5)->create([
             'parent_id'         => $root->id,
             'department_id'     => $department->id,
             'region_id'         => $region->id,
             'department_folder' => false,
         ]);
 
-        $anotherSections->each(fn (TrainingPageSection $section) => $this->assertNull($section->deleted_at));
-        $regionSections->each(fn (TrainingPageSection $section) => $this->assertSoftDeleted($section));
+        $this->actingAs($john);
+
+        Livewire::test(Regions::class)
+            ->call('setDeletingRegion', $region)
+            ->assertSet('deletingRegion', $region)
+            ->call('destroy', ['deletingName' => $region->name])
+            ->assertHasNoErrors();
+
+        $anotherSections->each(fn(TrainingPageSection $section) => $this->assertNull($section->deleted_at));
+        $regionSections->each(fn(TrainingPageSection $section) => $this->assertSoftDeleted($section));
     }
 
+    /** @test */
     public function it_should_detach_managers_on_destroy()
     {
         $john = User::factory()->create(['role' => Role::ADMIN]);
@@ -123,11 +127,7 @@ class DestroyRegionTest extends TestCase
             ->assertHasNoErrors();
 
         $this->assertSoftDeleted($region);
-
         $this->assertDatabaseCount('user_managed_regions', 0);
-        $this->assertDatabaseMissing($region->getTable(), [
-            'id' => $region->id,
-        ]);
     }
 
     /** @test */
@@ -137,10 +137,7 @@ class DestroyRegionTest extends TestCase
 
         $department = Department::factory()->create();
 
-        $region = Region::factory()->create([
-            'region_manager_id' => $john->id,
-            'department_id'     => $department->id,
-        ]);
+        $region = Region::factory()->create(['department_id' => $department->id]);
 
         /** @var TrainingPageSection */
         $root = TrainingPageSection::factory()->create([
@@ -150,7 +147,7 @@ class DestroyRegionTest extends TestCase
             'department_folder' => true,
         ]);
 
-        $regionSection  = TrainingPageSection::factory()->create([
+        $regionSection = TrainingPageSection::factory()->create([
             'parent_id'         => $root->id,
             'department_id'     => $department->id,
             'region_id'         => $region->id,
