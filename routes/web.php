@@ -135,8 +135,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/trainings/{department?}/{section?}/{search?}', [TrainingController::class, 'index'])->name('trainings.index');
     Route::get('/incentives', IncentivesController::class)->name('incentives.index');
     Route::get('/reports', [ReportsController::class, 'index'])->name('reports.index');
+
     Route::get('/number-tracking', [NumberTrackingController::class, 'index'])->name('number-tracking.index');
     Route::get('/number-tracking/create', [NumberTrackingController::class, 'create'])->name('number-tracking.create');
+    Route::get('/number-tracking/spreadsheet', [NumberTrackingController::class, 'spreadsheet'])->name('number-tracking.spreadsheet');
     Route::post('/number-tracking/create', [NumberTrackingController::class, 'store'])->name('number-tracking.store');
 
     Route::post('/get-offices-managers/{regionId}', [UsersController::class, 'getOfficesManager'])->name('getOfficesManager');
