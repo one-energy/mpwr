@@ -95,7 +95,12 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function getRegionsProperty()
     {
-        $query = Region::with(['offices.dailyNumbers' => function ($query) {
+        $query = Region::with(['offices' => function ($query) {
+            $query->when($this->deleteds, function ($query) {
+                $query->withTrashed();
+            });
+        }])
+        ->with(['offices.dailyNumbers' => function ($query) {
             $query
                 ->inPeriod($this->period, new Carbon($this->selectedDate))
                 ->with(['user' => function($query) {
@@ -103,6 +108,9 @@ class NumberTrackerDetailAccordionTable extends Component
                         $query->withTrashed();
                     });
                 }])
+                ->when(!$this->deleteds, function ($query) {
+                    $query->has('user');
+                })
                 ->when($this->deleteds, function ($query) {
                     $query->withTrashed();
                 })
@@ -115,13 +123,7 @@ class NumberTrackerDetailAccordionTable extends Component
                 ->selectRaw('SUM(sits) as sits')
                 ->selectRaw('SUM(set_closes) as set_closes')
                 ->selectRaw('SUM(closes) as closes');
-        }])->whereHas('offices.dailyNumbers', function ($query) {
-            $query
-                ->inPeriod($this->period, new Carbon($this->selectedDate))
-                ->with(['user' => function($query) {
-                    $query->withTrashed();
-                }]);
-        })
+        }])
         ->when($this->deleteds, function ($query) {
             $query->withTrashed();
         });;
