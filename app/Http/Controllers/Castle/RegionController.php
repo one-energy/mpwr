@@ -89,16 +89,6 @@ class RegionController extends Controller
             $managerIds = collect(request()->region_manager_ids)->filter();
 
             if ($managerIds->isNotEmpty()) {
-                $managers = User::query()
-                    ->whereIn('id', $managerIds->toArray())
-                    ->get();
-
-                $managers->each(function (User $user) {
-                    $user->managedRegions()->detach(
-                        $user->managedRegions->pluck('id')->toArray()
-                    );
-                });
-
                 $region->managers()->attach($managerIds->toArray());
             }
         });

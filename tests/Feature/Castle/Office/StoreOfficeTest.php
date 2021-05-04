@@ -7,6 +7,7 @@ use App\Models\Region;
 use App\Models\User;
 use App\Role\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -45,34 +46,34 @@ class StoreOfficeTest extends TestCase
     }
 
     /** @test */
-    public function it_should_detach_the_managed_offices_from_the_user_if_he_will_manage_other_office()
+    public function it_should_attach_new_regions_if_user_already_managed_regions()
     {
         $john = User::factory()->create(['role' => Role::ADMIN]);
 
         /** @var User $mary */
         $mary = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
 
-        /** @var Office $office */
-        $office = Office::factory()->create();
-        $office->managers()->attach($mary->id);
-        $mary->update(['office_id' => $office->id]);
+        /** @var Collection $offices */
+        $offices = Office::factory()->times(2)->create();
+        $offices->each(function (Office $office) use ($mary) {
+            $office->managers()->attach($mary->id);
+            $mary->update(['office_id' => $office->id]);
+        });
 
         $data = $this->makeData(['office_manager_ids' => [$mary->id]]);
-
-        $this->assertSame($office->id, $mary->office_id);
 
         $this
             ->actingAs($john)
             ->post(route('castle.offices.store', $data))
             ->assertSessionHasNoErrors();
 
+        /** @var Office $createdOffice */
         $createdOffice = Office::where('name', $data['name'])->first();
         $mary->refresh();
 
-        $this->assertCount(1, $mary->managedOffices);
-        $this->assertNotEquals($office->id, $mary->office_id);
-        $this->assertSame($createdOffice->id, $mary->office_id);
-        $this->assertSame($createdOffice->name, $mary->managedOffices->first()->name);
+        $this->assertDatabaseCount('user_managed_offices', 3);
+        $this->assertCount(3, $mary->managedOffices);
+        $this->assertTrue($mary->managedOffices->contains('id', $createdOffice->id));
     }
 
     /** @test */

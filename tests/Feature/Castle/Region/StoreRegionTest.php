@@ -7,6 +7,7 @@ use App\Models\Region;
 use App\Models\User;
 use App\Role\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -45,21 +46,21 @@ class StoreRegionTest extends TestCase
     }
 
     /** @test */
-    public function it_should_detach_the_managed_regions_from_the_user_if_he_will_manage_other_region()
+    public function it_should_attach_new_regions_if_user_already_managed_regions()
     {
         $john = User::factory()->create(['role' => Role::ADMIN]);
 
         /** @var User $mary */
         $mary = User::factory()->create(['role' => Role::REGION_MANAGER]);
 
-        /** @var Region $region */
-        $region = Region::factory()->create();
-        $region->managers()->attach($mary->id);
-        $mary->update(['department_id' => $region->department_id]);
+        /** @var Collection $regions */
+        $regions = Region::factory()->times(2)->create();
+        $regions->each(function (Region $region) use ($mary) {
+            $region->managers()->attach($mary->id);
+            $mary->update(['department_id' => $region->department_id]);
+        });
 
         $data = $this->makeData(['region_manager_ids' => [$mary->id]]);
-
-        $this->assertSame($region->department_id, $mary->department_id);
 
         $this
             ->actingAs($john)
@@ -68,12 +69,12 @@ class StoreRegionTest extends TestCase
 
         /** @var Region $createdRegion */
         $createdRegion = Region::where('name', $data['name'])->first();
+
         $mary->refresh();
 
-        $this->assertCount(1, $mary->managedRegions);
-        $this->assertNotEquals($region->department_id, $mary->department_id);
-        $this->assertSame($createdRegion->department_id, $mary->department_id);
-        $this->assertSame($createdRegion->name, $mary->managedRegions->first()->name);
+        $this->assertDatabaseCount('user_managed_regions', 3);
+        $this->assertCount(3, $mary->managedRegions);
+        $this->assertTrue($mary->managedRegions->contains('id', $createdRegion->id));
     }
 
     /** @test */

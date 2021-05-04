@@ -81,21 +81,7 @@ class OfficeController extends Controller
             $managerIds = collect(request()->office_manager_ids)->filter();
 
             if ($managerIds->isNotEmpty()) {
-                $managers = User::query()
-                    ->whereIn('id', $managerIds->toArray())
-                    ->get();
-
-                $managers->each(function (User $user) {
-                    $user->managedOffices()->detach(
-                        $user->managedOffices->pluck('id')->toArray()
-                    );
-                });
-
                 $office->managers()->attach($managerIds->toArray());
-
-                User::query()
-                    ->whereIn('id', $managerIds->toArray())
-                    ->update(['office_id' => $office->id]);
             }
 
             return $office;
