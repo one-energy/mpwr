@@ -54,30 +54,20 @@
                                                     <x-table.td x-data="{ open: false }" class="relative">
                                                         @if ($office->managers->isNotEmpty())
                                                             <div class="hidden md:block">
-                                                                <div
-                                                                    class="bg-gray-200 rounded shadow-xl z-10 h-auto p-4 space-y-2 absolute top-1.5"
-                                                                    style="left: -180px; max-width: 200px; width: 200px"
-                                                                    x-cloak
-                                                                    x-transition:enter="transition ease-out duration-300"
-                                                                    x-transition:enter-start="opacity-0 transform scale-90"
-                                                                    x-transition:enter-end="opacity-100 transform scale-100"
-                                                                    x-transition:leave="transition ease-in duration-300"
-                                                                    x-transition:leave-start="opacity-100 transform scale-100"
-                                                                    x-transition:leave-end="opacity-0 transform scale-90"
-                                                                    x-show="open"
-                                                                >
+                                                                <x-popover left :ref="$loop->index">
                                                                     <ul class="text-sm space-y-3">
                                                                         @foreach($office->managers as $manager)
                                                                             <li class="flex" style="white-space: break-spaces">
-                                                                                <span>- {{ $manager->full_name }}</span>
+                                                                                <span> {{ $manager->full_name }}</span>
                                                                             </li>
                                                                         @endforeach
                                                                     </ul>
-                                                                </div>
+                                                                </x-popover>
                                                                 <div class="flex items-baseline space-x-1">
                                                                     <x-icon
-                                                                        @mouseenter="open = true"
-                                                                        @mouseleave="open = false"
+                                                                        x-data=""
+                                                                        @mouseenter="$dispatch('open-popover', {ref: '{{ $loop->index }}'})"
+                                                                        @mouseleave="$dispatch('close-popover', {ref: '{{ $loop->index }}'})"
                                                                         icon="user"
                                                                         class="w-3.5 h-auto mr-2.5"
                                                                     />
