@@ -43,10 +43,9 @@ use Lab404\Impersonate\Models\Impersonate;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invitation[] $invitations
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Office[] $managedOffices
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Region[] $managedRegions
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Department[] $managedDepartments
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read \App\Models\Office|null $office
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Office[] $officesOnManagedRegions
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $usersOnManagedOffices
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User masters()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newQuery()
@@ -152,16 +151,6 @@ class User extends Authenticatable implements MustVerifyEmail
     public function managedRegions()
     {
         return $this->belongsToMany(Region::class, 'user_managed_regions');
-    }
-
-    public function officesOnManagedRegions()
-    {
-        return $this->hasManyThrough(Office::class, Region::class, 'region_manager_id', 'region_id');
-    }
-
-    public function usersOnManagedOffices()
-    {
-        return $this->hasManyThrough(User::class, Office::class, 'office_manager_id', 'office_id');
     }
 
     public function department()
@@ -322,11 +311,11 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function getPermittedUsers($departmentId = null)
     {
-        if ($this->role == 'Admin' || $this->role == 'Owner') {
+        if ($this->hasAnyRole([Role::ADMIN, Role::OWNER])) {
             return User::has('office')->whereDepartmentId($departmentId)->orderBy('first_name')->get();
         }
 
-        if ($this->role == 'Department Manager') {
+        if ($this->hasRole(Role::DEPARTMENT_MANAGER)) {
             return User::has('office')
                 ->whereDepartmentId($this->department_id)
                 ->where(function ($query) {
@@ -338,8 +327,8 @@ class User extends Authenticatable implements MustVerifyEmail
                 })->orderBy('first_name')->get();
         }
 
-        if ($this->role == 'Region Manager') {
-            $offices = $this->officesOnManagedRegions()->with('users')->get();
+        if ($this->hasRole(Role::REGION_MANAGER)) {
+            $offices = Office::whereIn('region_id', $this->managedRegions->pluck('id'))->with('users')->get();
             $users   = $offices->reduce(function ($users, Office $office) {
                 return $users->mergeRecursive($office->users);
             }, $users = collect([]))->unique('id');
@@ -347,8 +336,8 @@ class User extends Authenticatable implements MustVerifyEmail
             return $users->sortBy('first_name');
         }
 
-        if ($this->role == 'Office Manager') {
-            return $this->usersOnManagedOffices()->get();
+        if ($this->hasRole(Role::OFFICE_MANAGER)) {
+            return User::whereIn('office_id', $this->managedOffices->pluck('id'))->get();
         }
 
         return collect([user()]);
