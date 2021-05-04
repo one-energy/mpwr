@@ -212,6 +212,9 @@
             </div>
         </div>
     </div>
+    <div class="justify-end mt-5">
+        <x-toggle wire:click="initRegionsData" wire:model="deleteds" class="items-end" label="Deleted"/>
+    </div>
     <div class="flex justify-center w-full">
         <x-svg.spinner
             color="#9fa6b2"
