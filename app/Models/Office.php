@@ -50,6 +50,11 @@ class Office extends Model
         return $this->hasMany(User::class);
     }
 
+    public function dailyNumbers()
+    {
+        return $this->hasMany(DailyNumber::class);
+    }
+
     public function departments()
     {
         return $this->hasManyThrough(Department::class, Region::class);

@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -25,6 +27,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\DailyNumber newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\DailyNumber newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\DailyNumber query()
+ * @method static \Illuminate\Database\Eloquent\Builder inPeriod(string $period, \Illuminate\Support\Carbon $date)
  * @mixin \Eloquent
  */
 class DailyNumber extends Model
@@ -47,5 +50,49 @@ class DailyNumber extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function office()
+    {
+        return $this->belongsTo(Office::class, 'office_id');
+    }
+
+    public function scopeInPeriod(Builder $query, string $period, Carbon $date)
+    {
+        if ($period === 'w') {
+            $clonedDate = clone $date;
+            $query->whereBetween('date', [$date->startOfWeek(), $clonedDate->endOfWeek()]);
+        }
+
+        if ($period === 'd') {
+            $query->whereDate('date', $date);
+        }
+
+        if ($period === 'm') {
+            $query->whereMonth('date', '=', $date)
+                ->whereYear('date', '=', $date);
+        }
+
+        return $query;
+    }
+
+    public function scopeInLastPeriod(Builder $query, string $period, Carbon $date)
+    {
+        if ($period === 'w') {
+            $clonedDate = clone $date;
+            $query->whereBetween('date', [$date->subWeek()->startOfWeek(), $clonedDate->subWeek()->endOfWeek()]);
+        }
+
+        if ($period === 'd') {
+            $query->whereDate('date', $date->subDay());
+        }
+
+        if ($period === 'm') {
+            $date->subMonth();
+            $query->whereMonth('date', '=', $date)
+                ->whereYear('date', '=', $date);
+        }
+
+        return $query;
     }
 }
