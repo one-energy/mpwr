@@ -36,7 +36,7 @@ class Offices extends Component
         $offices = Office::query()
             ->when(user()->hasRole(Role::REGION_MANAGER), function (Builder $query) {
                 $query->whereHas('region', function (Builder $query) {
-                    $query->where('region_manager_id', '=', user()->id);
+                    $query->whereIn('id', user()->managedRegions->pluck('id'));
                 });
             })
             ->when(user()->hasRole(Role::DEPARTMENT_MANAGER), function (Builder $query) {
@@ -47,7 +47,7 @@ class Offices extends Component
                 $query->whereIn('region_id', $regionIds);
             })
             ->when(user()->hasRole(Role::OFFICE_MANAGER), function (Builder $query) {
-                $query->where('office_manager_id', '=', user()->id);
+                $query->whereIn('id', user()->managedOffices->pluck('id'));
             })
             ->search($this->search)
             ->orderBy($this->sortBy, $this->sortDirection)

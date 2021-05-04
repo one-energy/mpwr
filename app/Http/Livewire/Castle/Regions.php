@@ -3,7 +3,6 @@
 namespace App\Http\Livewire\Castle;
 
 use App\Models\DailyNumber;
-use App\Models\Department;
 use App\Models\Region;
 use App\Models\SectionFile;
 use App\Models\TrainingPageContent;
@@ -39,14 +38,10 @@ class Regions extends Component
     {
         $regions = Region::query()
             ->when(user()->hasRole(Role::DEPARTMENT_MANAGER), function (Builder $query) {
-                $departmentIds = Department::query()
-                    ->where('department_manager_id', '=', user()->id)
-                    ->pluck('id');
-
-                $query->whereIn('department_id', $departmentIds);
+                $query->whereIn('department_id', user()->managedDepartments->pluck('id'));
             })
             ->when(user()->hasRole(Role::REGION_MANAGER), function (Builder $query) {
-                $query->where('region_manager_id', '=', user()->id);
+                $query->whereIn('id', user()->managedRegions->pluck('id'));
             })
             ->search($this->search)
             ->orderBy($this->sortBy, $this->sortDirection)
@@ -88,17 +83,20 @@ class Regions extends Component
                 })
                 ->first();
 
+            $trainingPageSectionsIds = $region->trainingPageSections()
+                ->select('id')
+                ->pluck('id')
+                ->toArray();
+
             TrainingPageContent::query()
-                ->whereIn('training_page_section_id', $region->trainingPageSections()->select('id')->pluck('id')->toArray())
+                ->whereIn('training_page_section_id', $trainingPageSectionsIds)
                 ->update(['training_page_section_id' => $parentSection?->id]);
 
             SectionFile::query()
-                ->whereIn('training_page_section_id', $region->trainingPageSections()->select('id')->pluck('id')->toArray())
+                ->whereIn('training_page_section_id', $trainingPageSectionsIds)
                 ->update(['training_page_section_id' => $parentSection?->id]);
 
-            $region->managers()->detach(
-                $region->managers->pluck('id')->toArray()
-            );
+            $region->managers()->detach($region->managers->pluck('id')->toArray());
 
             $region
                 ->trainingPageSections()
