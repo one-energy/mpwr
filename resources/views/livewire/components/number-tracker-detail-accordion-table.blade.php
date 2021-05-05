@@ -277,7 +277,7 @@
                                                     class="self-center hidden w-5"
                                                     wire:loading wire:target="initRegionsData">
                                                 </x-svg.spinner>
-                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                <div class="@if($region['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                     {{$this->sumRegionNumberTracker($region, 'doors')}}
                                                 </div>
                                             </x-table-accordion.td>
@@ -287,7 +287,7 @@
                                                     class="self-center hidden w-5"
                                                     wire:loading wire:target="initRegionsData">
                                                 </x-svg.spinner>
-                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                <div class="@if($region['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                     {{$this->sumRegionNumberTracker($region, 'hours')}}
                                                 </div>
                                             </x-table-accordion.td>
@@ -297,7 +297,7 @@
                                                     class="self-center hidden w-5"
                                                     wire:loading wire:target="initRegionsData">
                                                 </x-svg.spinner>
-                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                <div class="@if($region['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                     {{$this->sumRegionNumberTracker($region, 'sets')}}
                                                 </div>
                                             </x-table-accordion.td>
@@ -307,7 +307,7 @@
                                                     class="self-center hidden w-5"
                                                     wire:loading wire:target="initRegionsData">
                                                 </x-svg.spinner>
-                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                <div class="@if($region['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                     {{$this->sumRegionNumberTracker($region, 'set_sits')}}
                                                 </div>
                                             </x-table-accordion.td>
@@ -317,7 +317,7 @@
                                                     class="self-center hidden w-5"
                                                     wire:loading wire:target="initRegionsData">
                                                 </x-svg.spinner>
-                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                <div class="@if($region['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                     {{$this->sumRegionNumberTracker($region, 'sits')}}
                                                 </div>
                                             </x-table-accordion.td>
@@ -327,7 +327,7 @@
                                                     class="self-center hidden w-5"
                                                     wire:loading wire:target="initRegionsData">
                                                 </x-svg.spinner>
-                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                <div class="@if($region['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                     {{$this->sumRegionNumberTracker($region, 'set_closes')}}
                                                 </div>
                                             </x-table-accordion.td>
@@ -337,7 +337,7 @@
                                                     class="self-center hidden w-5"
                                                     wire:loading wire:target="initRegionsData">
                                                 </x-svg.spinner>
-                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                <div class="@if($region['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                     {{$this->sumRegionNumberTracker($region, 'closes')}}
                                                 </div>
                                             </x-table-accordion.td>
@@ -463,7 +463,7 @@
                                                                     class="self-center hidden w-5"
                                                                     wire:loading wire:target="initRegionsData">
                                                                 </x-svg.spinner>
-                                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                                <div class="@if($dailyNumber['deleted_at'] != null || $dailyNumber['user']['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                                     {{$dailyNumber['doors'] ?? 0}}
                                                                 </div>
                                                             </x-table-accordion.td>
@@ -473,7 +473,7 @@
                                                                     class="self-center hidden w-5"
                                                                     wire:loading wire:target="initRegionsData">
                                                                 </x-svg.spinner>
-                                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                                <div class="@if($dailyNumber['deleted_at'] != null || $dailyNumber['user']['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                                     {{$dailyNumber['hours'] ?? 0}}
                                                                 </div>
                                                             </x-table-accordion.td>
@@ -483,7 +483,7 @@
                                                                     class="self-center hidden w-5"
                                                                     wire:loading wire:target="initRegionsData">
                                                                 </x-svg.spinner>
-                                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                                <div class="@if($dailyNumber['deleted_at'] != null || $dailyNumber['user']['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                                     {{$dailyNumber['sets'] ?? 0}}
                                                                 </div>
                                                             </x-table-accordion.td>
@@ -493,7 +493,7 @@
                                                                     class="self-center hidden w-5"
                                                                     wire:loading wire:target="initRegionsData">
                                                                 </x-svg.spinner>
-                                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                                <div class="@if($dailyNumber['deleted_at'] != null || $dailyNumber['user']['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                                     {{$dailyNumber['set_sits'] ?? 0}}
                                                                 </div>
                                                             </x-table-accordion.td>
@@ -503,7 +503,7 @@
                                                                     class="self-center hidden w-5"
                                                                     wire:loading wire:target="initRegionsData">
                                                                 </x-svg.spinner>
-                                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                                <div class="@if($dailyNumber['deleted_at'] != null || $dailyNumber['user']['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                                     {{$dailyNumber['sits'] ?? 0}}
                                                                 </div>
                                                             </x-table-accordion.td>
@@ -513,7 +513,7 @@
                                                                     class="self-center hidden w-5"
                                                                     wire:loading wire:target="initRegionsData">
                                                                 </x-svg.spinner>
-                                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                                <div class="@if($dailyNumber['deleted_at'] != null || $dailyNumber['user']['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                                     {{$dailyNumber['set_closes'] ?? 0}}
                                                                 </div>
                                                             </x-table-accordion.td>
@@ -523,7 +523,7 @@
                                                                     class="self-center hidden w-5"
                                                                     wire:loading wire:target="initRegionsData">
                                                                 </x-svg.spinner>
-                                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                                <div class="@if($dailyNumber['deleted_at'] != null || $dailyNumber['user']['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                                     {{$dailyNumber['closes'] ?? 0}}
                                                                 </div>
                                                             </x-table-accordion.td>
