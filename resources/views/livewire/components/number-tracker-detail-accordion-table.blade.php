@@ -368,7 +368,7 @@
                                                             class="self-center hidden w-5"
                                                             wire:loading wire:target="initRegionsData">
                                                         </x-svg.spinner>
-                                                        <div wire:loading.remove wire:target="initRegionsData">
+                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                             {{$this->sumOfficeNumberTracker($office, 'doors')}}
                                                         </div>
                                                     </x-table-accordion.td>
@@ -378,7 +378,7 @@
                                                             class="self-center hidden w-5"
                                                             wire:loading wire:target="initRegionsData">
                                                         </x-svg.spinner>
-                                                        <div wire:loading.remove wire:target="initRegionsData">
+                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                             {{$this->sumOfficeNumberTracker($office, 'hours')}}
                                                         </div>
                                                     </x-table-accordion.td>
@@ -388,7 +388,7 @@
                                                             class="self-center hidden w-5"
                                                             wire:loading wire:target="initRegionsData">
                                                         </x-svg.spinner>
-                                                        <div wire:loading.remove wire:target="initRegionsData">
+                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                             {{$this->sumOfficeNumberTracker($office, 'sets')}}
                                                         </div>
                                                     </x-table-accordion.td>
@@ -398,7 +398,7 @@
                                                             class="self-center hidden w-5"
                                                             wire:loading wire:target="initRegionsData">
                                                         </x-svg.spinner>
-                                                        <div wire:loading.remove wire:target="initRegionsData">
+                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                             {{$this->sumOfficeNumberTracker($office, 'set_sits')}}
                                                         </div>
                                                     </x-table-accordion.td>
@@ -408,7 +408,7 @@
                                                             class="self-center hidden w-5"
                                                             wire:loading wire:target="initRegionsData">
                                                         </x-svg.spinner>
-                                                        <div wire:loading.remove wire:target="initRegionsData">
+                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                             {{$this->sumOfficeNumberTracker($office, 'sits')}}
                                                         </div>
                                                     </x-table-accordion.td>
@@ -418,7 +418,7 @@
                                                             class="self-center hidden w-5"
                                                             wire:loading wire:target="initRegionsData">
                                                         </x-svg.spinner>
-                                                        <div wire:loading.remove wire:target="initRegionsData">
+                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                             {{$this->sumOfficeNumberTracker($office, 'set_closes')}}
                                                         </div>
                                                     </x-table-accordion.td>
@@ -428,7 +428,7 @@
                                                             class="self-center hidden w-5"
                                                             wire:loading wire:target="initRegionsData">
                                                         </x-svg.spinner>
-                                                        <div wire:loading.remove wire:target="initRegionsData">
+                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                             {{$this->sumOfficeNumberTracker($office, 'closes')}}
                                                         </div>
                                                     </x-table-accordion.td>

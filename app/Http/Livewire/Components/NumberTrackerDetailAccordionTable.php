@@ -97,7 +97,14 @@ class NumberTrackerDetailAccordionTable extends Component
     {
         $query = Region::with(['offices' => function ($query) {
             $query->when($this->deleteds, function ($query) {
-                $query->withTrashed();
+                $query->withTrashed()
+                    ->where(function($query) {
+                        $query->whereHas('dailyNumbers', function ($query) {
+                            $query->inPeriod($this->period, new Carbon($this->selectedDate));
+                        })
+                        ->whereNotNull('deleted_at');
+                    })
+                    ->orWhereNull('deleted_at');
             })
             ->with(['dailyNumbers' => function ($query) {
                 $query->with(['user' => function($query) {
@@ -150,7 +157,10 @@ class NumberTrackerDetailAccordionTable extends Component
     public function getLastRegionsProperty()
     {
         $query = Region::with(['offices.dailyNumbers' => function ($query) {
-            $query->inLastPeriod($this->period, new Carbon($this->selectedDate));
+            $query->inLastPeriod($this->period, new Carbon($this->selectedDate))
+                ->when($this->deleteds, function ($query) {
+                    $query->withTrashed();
+                });
         }]);
 
         if (user()->hasAnyRole(['Admin', 'Owner'])) {

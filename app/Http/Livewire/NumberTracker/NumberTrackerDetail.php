@@ -115,19 +115,6 @@ class NumberTrackerDetail extends Component
                 $query->has('user');
             });
 
-            // dd($this->deleteds, $query
-            // ->inPeriod($this->period, new Carbon($this->dateSelected))
-            // ->whereNotIn('office_id', $this->unselectedOffices)
-            // ->whereNotIn('user_id', $this->unselectedUserDailyNumbers)
-            // ->orderBy('total', 'desc')
-            // ->groupBy('user_id')
-            // ->select(
-            //     DB::raw($this->getTotalRawQuery($this->getSluggedPill())),
-            //     'user_id'
-            // )
-            // ->limit(10)
-            // ->toSql());
-
         return $query
             ->inPeriod($this->period, new Carbon($this->dateSelected))
             ->whereNotIn('office_id', $this->unselectedOffices)
