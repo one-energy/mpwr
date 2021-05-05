@@ -8,13 +8,16 @@ use Illuminate\Support\Facades\DB;
 
 class SyncDailyNumbersWithUserOffice extends Command
 {
-    protected $signature = 'daily-numbers:sync';
+    protected $signature = 'daily-numbers:sync {--force}';
 
     protected $description = 'Sync the daily_numbers.office_id with the user.office_id';
 
     public function handle()
     {
-        if (!$this->confirm('Are you really sure? This will sync daily_numbers.office_id with the user.office_id')) {
+        if (
+            $this->option('force') === false &&
+            !$this->confirm('Are you really sure? This will sync daily_numbers.office_id with the user.office_id')
+        ) {
             $this->info('Command aborted successfully!');
 
             return 0;
