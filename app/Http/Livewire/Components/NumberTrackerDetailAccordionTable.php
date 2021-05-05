@@ -330,7 +330,8 @@ class NumberTrackerDetailAccordionTable extends Component
             'updateLeaderBoard',
             $this->unselectedRegions,
             $this->unselectedOffices,
-            $this->unselectedUserDailyNumbers
+            $this->unselectedUserDailyNumbers,
+            $this->deleteds
         );
 
         $regions      = collect($this->itsOpenRegions);
