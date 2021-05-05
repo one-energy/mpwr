@@ -104,99 +104,42 @@
                     </x-slot>
 
                     <x-slot name="body">
-                        @foreach (collect(['John Doe', 'Joseph Mcfly', 'Mary Ann', 'Tifa Lockhart', 'Red XIII', 'Total']) as $name)
+                        @foreach($this->users as $user)
                             <x-table.tr class="relative">
-                                <x-table.td>{{ $name }}</x-table.td>
+                                <x-table.td>{{ $user->full_name }}</x-table.td>
+                                @foreach($this->weeklyLabels[$key] as $label)
+                                    @if (isset($user->dailyNumbers[$label]))
+                                        <x-table.td>
+                                            <section class="w-full flex flex-row items-center justify-between">
+                                                <span>{{ $user->dailyNumbers[$label][0]->doors }}</span>
+                                                <span>2</span>
+                                                <span>2</span>
+                                                <span>2</span>
+                                                <span>2</span>
+                                                <span>2</span>
+                                                <span>2</span>
+                                            </section>
+                                        </x-table.td>
+                                    @else
+                                        <x-table.td>
+                                            <section class="w-full flex flex-row items-center justify-between">
+                                                <span>&nbsp;</span>
+                                                <span>&nbsp;</span>
+                                                <span>&nbsp;</span>
+                                                <span>&nbsp;</span>
+                                                <span>&nbsp;</span>
+                                                <span>&nbsp;</span>
+                                                <span>&nbsp;</span>
+                                            </section>
+                                        </x-table.td>
+                                    @endif
+                                @endforeach
                                 <x-table.td>
                                     <section class="w-full flex flex-row items-center justify-between">
-                                        <span>12</span>
-                                        <span>23</span>
-                                        <span>5</span>
-                                        <span>4</span>
-                                        <span>1</span>
-                                        <span>0</span>
-                                        <span>0</span>
-                                    </section>
-                                </x-table.td>
-                                <x-table.td>
-                                    <section class="w-full flex flex-row items-center justify-between">
-                                        <span>12</span>
-                                        <span>23</span>
-                                        <span>5</span>
-                                        <span>4</span>
-                                        <span>1</span>
                                         <span>0</span>
                                         <span>0</span>
                                         <span>0</span>
-                                    </section>
-                                </x-table.td>
-                                <x-table.td>
-                                    <section class="w-full flex flex-row items-center justify-between">
-                                        <span>12</span>
-                                        <span>23</span>
-                                        <span>5</span>
-                                        <span>4</span>
-                                        <span>1</span>
                                         <span>0</span>
-                                        <span>0</span>
-                                        <span>0</span>
-                                    </section>
-                                </x-table.td>
-                                <x-table.td>
-                                    <section class="w-full flex flex-row items-center justify-between">
-                                        <span>12</span>
-                                        <span>23</span>
-                                        <span>5</span>
-                                        <span>4</span>
-                                        <span>1</span>
-                                        <span>0</span>
-                                        <span>0</span>
-                                        <span>0</span>
-                                    </section>
-                                </x-table.td>
-                                <x-table.td>
-                                    <section class="w-full flex flex-row items-center justify-between">
-                                        <span>12</span>
-                                        <span>23</span>
-                                        <span>5</span>
-                                        <span>4</span>
-                                        <span>1</span>
-                                        <span>0</span>
-                                        <span>0</span>
-                                        <span>0</span>
-                                    </section>
-                                </x-table.td>
-                                <x-table.td>
-                                    <section class="w-full flex flex-row items-center justify-between">
-                                        <span>12</span>
-                                        <span>23</span>
-                                        <span>5</span>
-                                        <span>4</span>
-                                        <span>1</span>
-                                        <span>0</span>
-                                        <span>0</span>
-                                        <span>0</span>
-                                    </section>
-                                </x-table.td>
-                                <x-table.td>
-                                    <section class="w-full flex flex-row items-center justify-between">
-                                        <span>12</span>
-                                        <span>23</span>
-                                        <span>5</span>
-                                        <span>4</span>
-                                        <span>1</span>
-                                        <span>0</span>
-                                        <span>0</span>
-                                        <span>0</span>
-                                    </section>
-                                </x-table.td>
-                                <x-table.td>
-                                    <section class="w-full flex flex-row items-center justify-between">
-                                        <span>12</span>
-                                        <span>23</span>
-                                        <span>5</span>
-                                        <span>4</span>
-                                        <span>1</span>
                                         <span>0</span>
                                         <span>0</span>
                                         <span>0</span>
