@@ -2,17 +2,22 @@
 
 namespace App\Http\Livewire\NumberTracker;
 
+use App\Models\DailyNumber;
 use App\Models\Office;
+use App\Models\User;
 use DateInterval;
 use DatePeriod;
 use DateTimeImmutable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
 /**
  * @property-read Collection|Office[] $offices
  * @property-read array $periods
+ * @property-read Collection $weeklyPeriods
  * @property-read string $dateFormat
+ * @property-read Collection|DailyNumber[] $users
  */
 class Spreadsheet extends Component
 {
@@ -20,7 +25,9 @@ class Spreadsheet extends Component
 
     public function mount()
     {
-        $this->selectedOffice = $this->offices->first()->id;
+        $this->selectedOffice = match (user()->role) {
+            'Admin', 'Owner' => $this->offices->first()->id,
+        };
     }
 
     public function render()
@@ -55,25 +62,33 @@ class Spreadsheet extends Component
         return $weeks;
     }
 
-    public function getWeeklyLabelsProperty()
+    public function getWeeklyPeriodsProperty()
     {
         $interval = new DateInterval('P1D');
 
         return collect($this->periods)
             ->chunk(2)
-            ->map(fn($chunks) => collect($chunks)->values()->toArray())
-            ->map(function ($chunk) use ($interval) {
-                $days = [$chunk[0]->format($this->dateFormat)];
+            ->map(function (Collection $chunk) use ($interval) {
+                $days = [$chunk->first()];
 
-                $weekDays = new DatePeriod($chunk[0], $interval, $chunk[1], DatePeriod::EXCLUDE_START_DATE);
+                $weekDays = new DatePeriod($chunk->first(), $interval, $chunk->last(), DatePeriod::EXCLUDE_START_DATE);
 
                 foreach ($weekDays as $day) {
-                    $days[] = $day->format($this->dateFormat);
+                    $days[] = $day;
                 }
 
-                $days[] = $chunk[1]->format($this->dateFormat);
+                $days[] = $chunk->last();
 
                 return $days;
+            });
+    }
+
+    public function getWeeklyLabelsProperty()
+    {
+        return collect($this->weeklyPeriods)
+            ->map(function (array $periods) {
+                return collect($periods)
+                    ->map(fn(DateTimeImmutable $date) => $date->format($this->dateFormat));
             });
     }
 
@@ -81,8 +96,31 @@ class Spreadsheet extends Component
     {
         return collect($this->periods)
             ->chunk(2)
-            ->map(fn($chunks) => collect($chunks)->values()->toArray())
-            ->map(fn($chunks) => $chunks[0]->format($this->dateFormat) . ' - ' . $chunks[1]->format($this->dateFormat));
+            ->map(function ($chunks) {
+                return $chunks->first()->format($this->dateFormat) . ' - ' . $chunks->last()->format($this->dateFormat);
+            });
+    }
+
+    public function getUsersProperty()
+    {
+        return User::query()
+            ->where('office_id', $this->selectedOffice)
+            ->with([
+                'dailyNumbers' => function ($query) {
+                    $query->orderBy('date', 'asc');
+                },
+            ])
+            ->whereHas('dailyNumbers', function ($query) {
+                $query->where('office_id', $this->selectedOffice);
+            })
+            ->get()
+            ->map(function (User $user) {
+                $user->dailyNumbers = $user->dailyNumbers->groupBy(function (DailyNumber $dailyNumber) {
+                    return (new Carbon($dailyNumber->date))->format('F dS');
+                });
+
+                return $user;
+            });
     }
 
     public function getDateFormatProperty()
