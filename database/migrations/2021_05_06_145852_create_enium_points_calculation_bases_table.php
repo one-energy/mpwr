@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateEniumPointsCalculationBasisTable extends Migration
+class CreateEniumPointsCalculationBasesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateEniumPointsCalculationBasisTable extends Migration
      */
     public function up()
     {
-        Schema::create('enium_points_calculation_basis', function (Blueprint $table) {
+        Schema::create('enium_points_calculation_bases', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->decimal('noble_pay_dealer_fee');
@@ -30,6 +30,6 @@ class CreateEniumPointsCalculationBasisTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('enium_points_calculation_basis');
+        Schema::dropIfExists('enium_points_calculation_bases');
     }
 }
