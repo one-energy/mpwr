@@ -107,7 +107,11 @@ class Spreadsheet extends Component
             ->where('office_id', $this->selectedOffice)
             ->with([
                 'dailyNumbers' => function ($query) {
-                    $query->orderBy('date', 'asc');
+                    $query->orderBy('date', 'asc')
+                        ->whereBetween('date', [
+                            today()->startOfMonth()->format('Y-m-d'),
+                            today()->endOfMonth()->format('Y-m-d'),
+                        ]);
                 },
             ])
             ->whereHas('dailyNumbers', function ($query) {
@@ -121,6 +125,29 @@ class Spreadsheet extends Component
 
                 return $user;
             });
+    }
+
+    public function getTotalsProperty()
+    {
+        $totals = [];
+
+        foreach ($this->periodsLabel as $key => $period) {
+            foreach ($this->weeklyLabels[$key] as $label) {
+                if ($this->users->isEmpty()) {
+                    $totals[$label] = [];
+
+                    continue;
+                }
+
+                $dailyNumbers = $this->getDailyNumbersGroupedByDate($this->users);
+
+                $totals[$label] = isset($dailyNumbers[$label])
+                    ? $this->getMappedDailyNumbers($dailyNumbers, $label)
+                    : [];
+            }
+        }
+
+        return array_chunk($totals, 7, true);
     }
 
     public function getDateFormatProperty()
@@ -149,6 +176,63 @@ class Spreadsheet extends Component
 
     public function getOfficesProperty()
     {
-        return Office::get();
+        return Office::oldest('name')->get();
+    }
+
+    public function sumOf(string $field, $user, array $weekDays)
+    {
+        $formattedDates = collect($weekDays)->map(
+            fn(DateTimeImmutable $date) => $date->format('Y-m-d')
+        );
+
+        if (collect($user->dailyNumbers)->isEmpty()) {
+            return 0;
+        }
+
+        return collect($user->dailyNumbers)
+            ->flatten()
+            ->whereIn('date', $formattedDates)
+            ->sum($field);
+    }
+
+    public function sumTotalOf(string $field, $totals, array $weekDays)
+    {
+        $formattedDates = collect($weekDays)->map(
+            fn(DateTimeImmutable $date) => $date->format('Y-m-d')
+        );
+
+        return collect($totals)
+            ->filter()
+            ->map(function ($data) use ($formattedDates, $field) {
+                if (in_array($data['date'], $formattedDates->toArray())) {
+                    return $data[$field];
+                }
+
+                return 0;
+            })
+            ->flatten()
+            ->sum();
+    }
+
+    private function getDailyNumbersGroupedByDate(Collection $users)
+    {
+        return $users
+            ->map(fn(User $user) => $user->dailyNumbers)
+            ->flatten()
+            ->groupBy(
+                fn(DailyNumber $dailyNumber) => (new Carbon($dailyNumber->date))->format($this->dateFormat)
+            );
+    }
+
+    private function getMappedDailyNumbers(Collection $dailyNumbers, string $key)
+    {
+        return [
+            'hours'      => $dailyNumbers[$key]->sum('hours'),
+            'doors'      => $dailyNumbers[$key]->sum('doors'),
+            'sets'       => $dailyNumbers[$key]->sum('sets'),
+            'set_closes' => $dailyNumbers[$key]->sum('set_closes'),
+            'closes'     => $dailyNumbers[$key]->sum('closes'),
+            'date'       => $dailyNumbers[$key]->first()->date,
+        ];
     }
 }
