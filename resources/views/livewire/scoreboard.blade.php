@@ -76,7 +76,7 @@
                                                             {{ $user->first_name }} {{ $user->last_name }}
                                                         </x-table.td>
                                                         <x-table.td>{{ $user->doors }}</x-table.td>
-                                                        <x-table.td>{{ $user->office->name }}</x-table.td>
+                                                        <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
                                                     </x-table.tr>
                                                 @endforeach
                                             </x-slot>
@@ -156,7 +156,7 @@
                                                         <x-table.td>{{ $user->first_name }} {{ $user->last_name }}
                                                         </x-table.td>
                                                         <x-table.td>{{ $user->hours }}</x-table.td>
-                                                        <x-table.td>{{ $user->office->name }}</x-table.td>
+                                                        <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
                                                     </x-table.tr>
                                                 @endforeach
                                             </x-slot>
@@ -236,7 +236,7 @@
                                                         <x-table.td>{{ $user->first_name }} {{ $user->last_name }}
                                                         </x-table.td>
                                                         <x-table.td>{{ $user->sets }}</x-table.td>
-                                                        <x-table.td>{{ $user->office->name }}</x-table.td>
+                                                        <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
                                                     </x-table.tr>
                                                 @endforeach
                                             </x-slot>
@@ -316,7 +316,7 @@
                                                         <x-table.td>{{ $user->first_name }} {{ $user->last_name }}
                                                         </x-table.td>
                                                         <x-table.td>{{ $user->set_closes }}</x-table.td>
-                                                        <x-table.td>{{ $user->office->name }}</x-table.td>
+                                                        <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
                                                     </x-table.tr>
                                                 @endforeach
                                             </x-slot>
@@ -396,7 +396,7 @@
                                                         <x-table.td>{{ $user->first_name }} {{ $user->last_name }}
                                                         </x-table.td>
                                                         <x-table.td>{{ $user->closes }}</x-table.td>
-                                                        <x-table.td>{{ $user->office->name }}</x-table.td>
+                                                        <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
                                                     </x-table.tr>
                                                 @endforeach
                                             </x-slot>
