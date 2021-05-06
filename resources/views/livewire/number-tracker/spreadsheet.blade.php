@@ -1,36 +1,43 @@
 <div>
     @push('styles')
         <style>
-            thead th:first-child {
-                left: 0;
-                z-index: 1;
+            thead th:first-child,
+            thead th:last-child {
+                z-index: 10;
             }
 
-            tbody td:first-child {
+            thead th:first-child { left: 0; }
+            thead th:last-child { right: 0; }
+
+            tbody td:first-child,
+            tbody td:last-child {
                 position: -webkit-sticky;
                 position: sticky;
-                left: 0;
                 background: #FFF;
+                z-index: 10;
             }
+
+            tbody td:first-child { left: 0; }
+            tbody td:last-child { right: 0; }
 
             thead th:first-child,
             thead th:last-child {
                 position: -webkit-sticky;
                 position: sticky;
-                top: 0;
                 background-color: #FFF;
             }
 
-            thead th:last-child {
-                right: 0;
-                z-index: 1;
-            }
+            thead th:first-child  { left: 0; }
+            thead th:last-child { right: 0; }
 
-            tbody td:last-child {
-                position: -webkit-sticky;
-                position: sticky;
-                right: 0;
-                background: #FFF;
+            span[name="pipe"]:not(:last-child)::after {
+                content: "";
+                top: -17px;
+                bottom: 0;
+                position: absolute;
+                height: 54px;
+                border-right: 2px solid #E5E7EB;
+                display: inline;
             }
         </style>
     @endpush
@@ -64,54 +71,44 @@
                                 @lang('Office Members')
                             </x-table.th>
                             @foreach($this->weeklyLabels[$key] as $label)
-                                <x-table.th class="whitespace-no-wrap">
+                                <th class="px-4 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider border-l-2 border-r-2">
                                     <section class="flex flex-col items-center">
                                         <span class="font-bold">@lang($label)</span>
-                                        <div class="w-full flex flex-row items-center justify-between space-x-3">
+                                        <div class="w-full flex flex-row items-center justify-between" style="margin-left: -10px">
                                             @foreach($this->indicators as $indicator)
                                                 <div
-                                                    class="cursor-default"
+                                                    class="cursor-default relative"
                                                     x-data=""
                                                     @mouseenter="$dispatch('open-popover', {ref: '{{ $label . $loop->index }}'})"
                                                     @mouseleave="$dispatch('close-popover', {ref: '{{ $label . $loop->index }}'})"
                                                 >
                                                     {{ $indicator['label'] }}
-                                                    <x-popover
-                                                        ref="{{ $label . $loop->index }}">{{ $indicator['description'] }}</x-popover>
+                                                    <x-popover position="bottom" ref="{{ $label . $loop->index }}">
+                                                        {{ $indicator['description'] }}
+                                                    </x-popover>
                                                 </div>
                                             @endforeach
                                         </div>
                                     </section>
-                                </x-table.th>
+                                </th>
                             @endforeach
                             <x-table.th class="whitespace-no-wrap">
                                 <section class="flex flex-col items-center">
                                     <span class="font-bold">@lang('Weekly Totals')</span>
                                     <div class="w-full flex flex-row items-center justify-between space-x-3">
-                                        <span class="text-center w-6">
-                                            HW
-                                        </span>
-                                        <span class="text-center w-6">
-                                            D
-                                        </span>
-                                        <span class="text-center w-6">
-                                            HK
-                                        </span>
-                                        <span class="text-center w-6">
-                                            S
-                                        </span>
-                                        <span class="text-center w-6">
-                                            SA
-                                        </span>
-                                        <span class="text-center w-6">
-                                            SC
-                                        </span>
-                                        <span class="text-center w-6">
-                                            CS
-                                        </span>
-                                        <span class="text-center w-6">
-                                            C
-                                        </span>
+                                        @foreach($this->indicators as $indicator)
+                                            <div
+                                                class="cursor-default relative"
+                                                x-data=""
+                                                @mouseenter="$dispatch('open-popover', {ref: '{{ $label . $loop->index }}'})"
+                                                @mouseleave="$dispatch('close-popover', {ref: '{{ $label . $loop->index }}'})"
+                                            >
+                                                {{ $indicator['label'] }}
+                                                <x-popover position="bottom" ref="{{ $label . $loop->index }}">
+                                                    {{ $indicator['description'] }}
+                                                </x-popover>
+                                            </div>
+                                        @endforeach
                                     </div>
                                 </section>
                             </x-table.th>
@@ -121,46 +118,75 @@
                     <x-slot name="body">
                         @foreach($this->users as $user)
                             <x-table.tr class="relative">
-                                <x-table.td>{{ $user->full_name }}</x-table.td>
+                                <x-table.td class="border-2">
+                                    {{ $user->full_name }}
+                                </x-table.td>
 
                                 {{-- Weekly Columns --}}
                                 @foreach($this->weeklyLabels[$key] as $label)
                                     @if (isset($user->dailyNumbers[$label]))
-                                        <x-table.td>
-                                            <section class="w-full flex flex-row items-center justify-between">
-                                                <span class="text-center w-6">
-                                                    {{ $user->dailyNumbers[$label][0]->hours }}
+                                        <td class="border-2 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
+                                            <div class="relative space-x-2">
+                                                <span name="pipe">
+                                                    <input type="text" class="text-center w-10 inline" value="{{ $user->dailyNumbers[$label][0]->hours }}"/>
                                                 </span>
-                                                <span class="text-center w-6">
-                                                    {{ $user->dailyNumbers[$label][0]->doors }}
+                                                <span name="pipe">
+                                                    <input type="text" class="text-center w-10 inline" value="{{ $user->dailyNumbers[$label][0]->doors }}"/>
                                                 </span>
-                                                <span class="text-center w-6">
-                                                    HK
+                                                <span name="pipe">
+                                                    <input type="text" class="text-center w-10 inline" value="HK"/>
                                                 </span>
-                                                <span class="text-center w-6">
-                                                    {{ $user->dailyNumbers[$label][0]->sets }}
+                                                <span name="pipe">
+                                                    <input type="text" class="text-center w-10 inline" value="{{ $user->dailyNumbers[$label][0]->sets }}"/>
                                                 </span>
-                                                <span class="text-center w-6">
-                                                    SA
+                                                <span name="pipe">
+                                                    <input type="text" class="text-center w-10 inline" value="SA"/>
                                                 </span>
-                                                <span class="text-center w-6">
-                                                    {{ $user->dailyNumbers[$label][0]->set_closes }}
+                                                <span name="pipe">
+                                                    <input type="text" class="text-center w-10 inline" value="{{ $user->dailyNumbers[$label][0]->set_closes }}"/>
                                                 </span>
-                                                <span class="text-center w-6">
-                                                    CS
+                                                <span name="pipe">
+                                                    <input type="text" class="text-center w-10 inline" value="CS"/>
                                                 </span>
-                                                <span class="text-center w-6">
-                                                    {{ $user->dailyNumbers[$label][0]->closes }}
+                                                <span name="pipe">
+                                                    <input type="text" class="text-center w-10 inline" value="{{ $user->dailyNumbers[$label][0]->closes }}"/>
                                                 </span>
-                                            </section>
-                                        </x-table.td>
+                                            </div>
+                                        </td>
                                     @else
-                                        <x-table.td></x-table.td>
+                                        <td class="border-2 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
+                                            <div class="relative space-x-2">
+                                                <span name="pipe">
+                                                    <input type="text" class="text-center w-10 inline" placeholder="HW" value=""/>
+                                                </span>
+                                                <span name="pipe">
+                                                    <input type="text" class="text-center w-10 inline" placeholder="D" value=""/>
+                                                </span>
+                                                <span name="pipe">
+                                                    <input type="text" class="text-center w-10 inline" placeholder="HK" value=""/>
+                                                </span>
+                                                <span name="pipe">
+                                                    <input type="text" class="text-center w-10 inline" placeholder="S" value=""/>
+                                                </span>
+                                                <span name="pipe">
+                                                    <input type="text" class="text-center w-10 inline" placeholder="SA" value=""/>
+                                                </span>
+                                                <span name="pipe">
+                                                    <input type="text" class="text-center w-10 inline" placeholder="SC" value=""/>
+                                                </span>
+                                                <span name="pipe">
+                                                    <input type="text" class="text-center w-10 inline" placeholder="CS" value=""/>
+                                                </span>
+                                                <span name="pipe">
+                                                    <input type="text" class="text-center w-10 inline" placeholder="C" value=""/>
+                                                </span>
+                                            </div>
+                                        </td>
                                     @endif
                                 @endforeach
 
                                 {{-- Weekly Totals Column --}}
-                                <x-table.td>
+                                <x-table.td class="border-2">
                                     <section class="w-full flex flex-row items-center justify-between">
                                         <span class="text-center w-6">
                                             {{ $this->sumOf('hours', $user, $this->weeklyPeriods[$key]) }}
@@ -190,59 +216,73 @@
                                 </x-table.td>
                             </x-table.tr>
                         @endforeach
+
                         <x-table.tr class="relative">
-                            <x-table.td>
+                            <x-table.td class="border-2">
                                 <span class="font-bold">Total</span>
                             </x-table.td>
                             @foreach($this->weeklyLabels[$key] as $label)
                                 @if ($this->totals[$key][$label])
-                                    <x-table.td>
-                                        <section class="w-full space-x-2 flex flex-row items-center justify-between">
-                                            <span class="text-center w-6">
-                                                {{ $this->totals[$key][$label]['hours'] }}
+                                    <td class="border-2 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
+                                        <div class="relative space-x-2">
+                                            <span name="pipe">
+                                                <input type="text" class="text-center w-10 inline outline-none" readonly value="{{ $this->totals[$key][$label]['hours'] }}"/>
                                             </span>
-                                            <span class="text-center w-6">{{ $this->totals[$key][$label]['doors'] }}
+                                            <span name="pipe">
+                                                <input type="text" class="text-center w-10 inline outline-none" readonly value="{{ $this->totals[$key][$label]['hours'] }}"/>
                                             </span>
-                                            <span class="text-center w-6">
-                                                2
+                                            <span name="pipe">
+                                                <input type="text" class="text-center w-10 inline outline-none" readonly value="{{ $this->totals[$key][$label]['hours'] }}"/>
                                             </span>
-                                            <span class="text-center w-6">
-                                                HK
+                                            <span name="pipe">
+                                                <input type="text" class="text-center w-10 inline outline-none" readonly value="{{ $this->totals[$key][$label]['hours'] }}"/>
                                             </span>
-                                            <span class="text-center w-6">
-                                                3
+                                            <span name="pipe">
+                                                <input type="text" class="text-center w-10 inline outline-none" readonly value="{{ $this->totals[$key][$label]['hours'] }}"/>
                                             </span>
-                                            <span class="text-center w-6">
-                                                SA
+                                            <span name="pipe">
+                                                <input type="text" class="text-center w-10 inline outline-none" readonly value="{{ $this->totals[$key][$label]['hours'] }}"/>
                                             </span>
-                                            <span class="text-center w-6">
-                                                4
+                                            <span name="pipe">
+                                                <input type="text" class="text-center w-10 inline outline-none" readonly value="{{ $this->totals[$key][$label]['hours'] }}"/>
                                             </span>
-                                            <span class="text-center w-6">
-                                                CS
+                                            <span name="pipe">
+                                                <input type="text" class="text-center w-10 inline outline-none" readonly value="{{ $this->totals[$key][$label]['hours'] }}"/>
                                             </span>
-                                            <span class="text-center w-6">
-                                                5
-                                            </span>
-                                        </section>
-                                    </x-table.td>
+                                        </div>
+                                    </td>
                                 @else
-                                    <x-table.td>
-                                        <section class="w-full space-x-2 flex flex-row items-center justify-between">
-                                            <span class="text-center w-6">&nbsp;</span>
-                                            <span class="text-center w-6">&nbsp;</span>
-                                            <span class="text-center w-6">&nbsp;</span>
-                                            <span class="text-center w-6">&nbsp;</span>
-                                            <span class="text-center w-6">&nbsp;</span>
-                                            <span class="text-center w-6">&nbsp;</span>
-                                            <span class="text-center w-6">&nbsp;</span>
-                                            <span class="text-center w-6">&nbsp;</span>
-                                            <span class="text-center w-6">&nbsp;</span>
-                                        </section>
-                                    </x-table.td>
+                                    <td class="border-2 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
+                                        <div class="relative space-x-2">
+                                            <span name="pipe">
+                                                <input type="text" class="text-center w-10 inline outline-none" readonly value=""/>
+                                            </span>
+                                            <span name="pipe">
+                                                <input type="text" class="text-center w-10 inline outline-none" readonly value=""/>
+                                            </span>
+                                            <span name="pipe">
+                                                <input type="text" class="text-center w-10 inline outline-none" readonly value="HK"/>
+                                            </span>
+                                            <span name="pipe">
+                                                <input type="text" class="text-center w-10 inline outline-none" readonly value=""/>
+                                            </span>
+                                            <span name="pipe">
+                                                <input type="text" class="text-center w-10 inline outline-none" readonly value="SA"/>
+                                            </span>
+                                            <span name="pipe">
+                                                <input type="text" class="text-center w-10 inline outline-none" readonly value=""/>
+                                            </span>
+                                            <span name="pipe">
+                                                <input type="text" class="text-center w-10 inline outline-none" readonly value="CS"/>
+                                            </span>
+                                            <span name="pipe">
+                                                <input type="text" class="text-center w-10 inline outline-none" readonly value=""/>
+                                            </span>
+                                        </div>
+                                    </td>
                                 @endif
                                 @if ($loop->last)
-                                    <x-table.td>
+                                    <x-table.td class="border-2">
                                         <section class="w-full space-x-2 flex flex-row items-center justify-between">
                                             <span class="text-center w-6">
                                                 {{ $this->sumTotalOf('hours', $this->totals[$key], $this->weeklyPeriods[$key]) }}
