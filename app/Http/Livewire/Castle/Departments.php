@@ -81,6 +81,7 @@ class Departments extends Component
 
             $department->regions()->delete();
             $department->users()->delete();
+            $department->incentives()->delete();
             $department->delete();
         });
 
