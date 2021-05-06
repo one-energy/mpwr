@@ -53,7 +53,6 @@
             </section>
         @endif
     </section>
-
     @foreach($this->periodsLabel as $key => $label)
         <section class="mb-10">
             <h3 class="font-bold text-center mb-3">{{ $label }}</h3>
@@ -89,14 +88,30 @@
                                 <section class="flex flex-col items-center">
                                     <span class="font-bold">@lang('Weekly Totals')</span>
                                     <div class="w-full flex flex-row items-center justify-between space-x-3">
-                                        <span>HW</span>
-                                        <span>D</span>
-                                        <span>HK</span>
-                                        <span>S</span>
-                                        <span>SA</span>
-                                        <span>SC</span>
-                                        <span>CS</span>
-                                        <span>C</span>
+                                        <span class="text-center w-6">
+                                            HW
+                                        </span>
+                                        <span class="text-center w-6">
+                                            D
+                                        </span>
+                                        <span class="text-center w-6">
+                                            HK
+                                        </span>
+                                        <span class="text-center w-6">
+                                            S
+                                        </span>
+                                        <span class="text-center w-6">
+                                            SA
+                                        </span>
+                                        <span class="text-center w-6">
+                                            SC
+                                        </span>
+                                        <span class="text-center w-6">
+                                            CS
+                                        </span>
+                                        <span class="text-center w-6">
+                                            C
+                                        </span>
                                     </div>
                                 </section>
                             </x-table.th>
@@ -107,46 +122,157 @@
                         @foreach($this->users as $user)
                             <x-table.tr class="relative">
                                 <x-table.td>{{ $user->full_name }}</x-table.td>
+
+                                {{-- Weekly Columns --}}
                                 @foreach($this->weeklyLabels[$key] as $label)
                                     @if (isset($user->dailyNumbers[$label]))
                                         <x-table.td>
                                             <section class="w-full flex flex-row items-center justify-between">
-                                                <span>{{ $user->dailyNumbers[$label][0]->doors }}</span>
-                                                <span>2</span>
-                                                <span>2</span>
-                                                <span>2</span>
-                                                <span>2</span>
-                                                <span>2</span>
-                                                <span>2</span>
+                                                <span class="text-center w-6">
+                                                    {{ $user->dailyNumbers[$label][0]->hours }}
+                                                </span>
+                                                <span class="text-center w-6">
+                                                    {{ $user->dailyNumbers[$label][0]->doors }}
+                                                </span>
+                                                <span class="text-center w-6">
+                                                    HK
+                                                </span>
+                                                <span class="text-center w-6">
+                                                    {{ $user->dailyNumbers[$label][0]->sets }}
+                                                </span>
+                                                <span class="text-center w-6">
+                                                    SA
+                                                </span>
+                                                <span class="text-center w-6">
+                                                    {{ $user->dailyNumbers[$label][0]->set_closes }}
+                                                </span>
+                                                <span class="text-center w-6">
+                                                    CS
+                                                </span>
+                                                <span class="text-center w-6">
+                                                    {{ $user->dailyNumbers[$label][0]->closes }}
+                                                </span>
                                             </section>
                                         </x-table.td>
                                     @else
-                                        <x-table.td>
-                                            <section class="w-full flex flex-row items-center justify-between">
-                                                <span>&nbsp;</span>
-                                                <span>&nbsp;</span>
-                                                <span>&nbsp;</span>
-                                                <span>&nbsp;</span>
-                                                <span>&nbsp;</span>
-                                                <span>&nbsp;</span>
-                                                <span>&nbsp;</span>
-                                            </section>
-                                        </x-table.td>
+                                        <x-table.td></x-table.td>
                                     @endif
                                 @endforeach
+
+                                {{-- Weekly Totals Column --}}
                                 <x-table.td>
                                     <section class="w-full flex flex-row items-center justify-between">
-                                        <span>0</span>
-                                        <span>0</span>
-                                        <span>0</span>
-                                        <span>0</span>
-                                        <span>0</span>
-                                        <span>0</span>
-                                        <span>0</span>
+                                        <span class="text-center w-6">
+                                            {{ $this->sumOf('hours', $user, $this->weeklyPeriods[$key]) }}
+                                        </span>
+                                        <span class="text-center w-6">
+                                            {{ $this->sumOf('doors', $user, $this->weeklyPeriods[$key]) }}
+                                        </span>
+                                        <span class="text-center w-6">
+                                            HK
+                                        </span>
+                                        <span class="text-center w-6">
+                                            {{ $this->sumOf('sets', $user, $this->weeklyPeriods[$key]) }}
+                                        </span>
+                                        <span class="text-center w-6">
+                                            SA
+                                        </span>
+                                        <span class="text-center w-6">
+                                            {{ $this->sumOf('set_closes', $user, $this->weeklyPeriods[$key]) }}
+                                        </span>
+                                        <span class="text-center w-6">
+                                            CS
+                                        </span>
+                                        <span class="text-center w-6">
+                                            {{ $this->sumOf('closes', $user, $this->weeklyPeriods[$key]) }}
+                                        </span>
                                     </section>
                                 </x-table.td>
                             </x-table.tr>
                         @endforeach
+                        <x-table.tr class="relative">
+                            <x-table.td>
+                                <span class="font-bold">Total</span>
+                            </x-table.td>
+                            @foreach($this->weeklyLabels[$key] as $label)
+                                @if ($this->totals[$key][$label])
+                                    <x-table.td>
+                                        <section class="w-full space-x-2 flex flex-row items-center justify-between">
+                                            <span class="text-center w-6">
+                                                {{ $this->totals[$key][$label]['hours'] }}
+                                            </span>
+                                            <span class="text-center w-6">{{ $this->totals[$key][$label]['doors'] }}
+                                            </span>
+                                            <span class="text-center w-6">
+                                                2
+                                            </span>
+                                            <span class="text-center w-6">
+                                                HK
+                                            </span>
+                                            <span class="text-center w-6">
+                                                3
+                                            </span>
+                                            <span class="text-center w-6">
+                                                SA
+                                            </span>
+                                            <span class="text-center w-6">
+                                                4
+                                            </span>
+                                            <span class="text-center w-6">
+                                                CS
+                                            </span>
+                                            <span class="text-center w-6">
+                                                5
+                                            </span>
+                                        </section>
+                                    </x-table.td>
+                                @else
+                                    <x-table.td>
+                                        <section class="w-full space-x-2 flex flex-row items-center justify-between">
+                                            <span class="text-center w-6">&nbsp;</span>
+                                            <span class="text-center w-6">&nbsp;</span>
+                                            <span class="text-center w-6">&nbsp;</span>
+                                            <span class="text-center w-6">&nbsp;</span>
+                                            <span class="text-center w-6">&nbsp;</span>
+                                            <span class="text-center w-6">&nbsp;</span>
+                                            <span class="text-center w-6">&nbsp;</span>
+                                            <span class="text-center w-6">&nbsp;</span>
+                                            <span class="text-center w-6">&nbsp;</span>
+                                        </section>
+                                    </x-table.td>
+                                @endif
+                                @if ($loop->last)
+                                    <x-table.td>
+                                        <section class="w-full space-x-2 flex flex-row items-center justify-between">
+                                            <span class="text-center w-6">
+                                                {{ $this->sumTotalOf('hours', $this->totals[$key], $this->weeklyPeriods[$key]) }}
+                                            </span>
+                                            <span class="text-center w-6">
+                                                {{ $this->sumTotalOf('doors', $this->totals[$key], $this->weeklyPeriods[$key]) }}
+                                            </span>
+                                            <span class="text-center w-6">
+                                                2
+                                            </span>
+                                            <span class="text-center w-6">
+                                                {{ $this->sumTotalOf('sets', $this->totals[$key], $this->weeklyPeriods[$key]) }}
+                                            </span>
+                                            <span class="text-center w-6">
+                                                SA
+                                            </span>
+                                            <span class="text-center w-6">
+                                                {{ $this->sumTotalOf('set_closes', $this->totals[$key], $this->weeklyPeriods[$key]) }}
+                                            </span>
+                                            <span class="text-center w-6">
+                                                CS
+                                            </span>
+                                            <span class="text-center w-6">
+                                                {{ $this->sumTotalOf('closes', $this->totals[$key], $this->weeklyPeriods[$key]) }}
+                                            </span>
+                                        </section>
+                                    </x-table.td>
+                                @endif
+                            @endforeach
+                        </x-table.tr>
                     </x-slot>
                 </x-table>
             </div>
