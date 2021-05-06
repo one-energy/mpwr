@@ -22,7 +22,10 @@ class EniumPointsCalculationBasisFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'name'                 => $this->faker->name(),
+            'noble_pay_dealer_fee' => $this->faker->randomFloat(3, max:1),
+            'rep_residual'         => $this->faker->randomFloat(3, max:1),
+            'amount'               => $this->faker->randomFloat(2),
         ];
     }
 }
