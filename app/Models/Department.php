@@ -56,6 +56,11 @@ class Department extends Model
         return $this->hasMany(TrainingPageSection::class);
     }
 
+    public function incentives()
+    {
+        return $this->hasMany(Incentive::class);
+    }
+
     public function scopeSearch(Builder $query, $search)
     {
         $query->when($search, function (Builder $query) use ($search) {
