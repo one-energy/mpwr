@@ -22,7 +22,9 @@ class UserEniumPointLevelFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'level'            => $this->faker->randomNumber(),
+            'point'            => $this->faker->randomNumber(),
+            'monthly_residual' => $this->faker->randomNumber()
         ];
     }
 }
