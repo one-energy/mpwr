@@ -15,9 +15,9 @@ class CreateUserCustomersEniumPointsTable extends Migration
     {
         Schema::create('user_customers_enium_points', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id');
-            $table->foreignId('customer_id');
-            $table->foreignId('enium_points_of_sale');
+            $table->foreignId('user_sales_rep_id')->constrained('user');
+            $table->foreignId('customer_id')->constrained();
+            $table->integer('enium_points_of_sale');
             $table->timestamps();
         });
     }

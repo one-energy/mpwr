@@ -155,6 +155,11 @@ class Customer extends Model
         return $this->belongsTo(User::class, 'department_manager_id');
     }
 
+    public function userEniumPoint()
+    {
+        return $this->hasOne(UserCustomersEniumPoints::class);
+    }
+
     public function getOpenedByAttribute()
     {
         return User::find($this->opened_by_id);

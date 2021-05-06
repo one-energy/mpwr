@@ -193,6 +193,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(DailyNumber::class);
     }
 
+    public function customersEniumPoints()
+    {
+        return $this->hasMany(UserCustomersEniumPoints::class);
+    }
+
     public function changePassword($new)
     {
         $this->password = Hash::make($new);
