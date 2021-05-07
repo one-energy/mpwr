@@ -121,15 +121,16 @@ class Spreadsheet extends Component
 
         if (!array_key_exists($index, $this->newDailyNumbers)) {
             $this->newDailyNumbers[$index] = [
-                'user_id'    => $user->id,
-                'date'       => (new Carbon($date))->format('Y-m-d'),
-                'doors'      => 0,
-                'hours'      => 0,
-                'sets'       => 0,
-                'set_sits'   => 0,
-                'sits'       => 0,
-                'set_closes' => 0,
-                'closes'     => 0,
+                'user_id'       => $user->id,
+                'date'          => (new Carbon($date))->format('Y-m-d'),
+                'doors'         => 0,
+                'sets'          => 0,
+                'set_closes'    => 0,
+                'closes'        => 0,
+                'hours_worked'  => 0,
+                'hours_knocked' => 0,
+                'sats'          => 0,
+                'closer_sits'   => 0,
             ];
         }
 
@@ -335,12 +336,15 @@ class Spreadsheet extends Component
     private function getMappedDailyNumbers(Collection $dailyNumbers, string $key)
     {
         return [
-            'hours'      => $dailyNumbers[$key]->sum('hours'),
-            'doors'      => $dailyNumbers[$key]->sum('doors'),
-            'sets'       => $dailyNumbers[$key]->sum('sets'),
-            'set_closes' => $dailyNumbers[$key]->sum('set_closes'),
-            'closes'     => $dailyNumbers[$key]->sum('closes'),
-            'date'       => $dailyNumbers[$key]->first()->date,
+            'doors'         => $dailyNumbers[$key]->sum('doors'),
+            'sets'          => $dailyNumbers[$key]->sum('sets'),
+            'set_closes'    => $dailyNumbers[$key]->sum('set_closes'),
+            'closes'        => $dailyNumbers[$key]->sum('closes'),
+            'hours_worked'  => $dailyNumbers[$key]->sum('hours_worked'),
+            'hours_knocked' => $dailyNumbers[$key]->sum('hours_knocked'),
+            'sats'          => $dailyNumbers[$key]->sum('sats'),
+            'closer_sits'   => $dailyNumbers[$key]->sum('closer_sits'),
+            'date'          => $dailyNumbers[$key]->first()->date,
         ];
     }
 }

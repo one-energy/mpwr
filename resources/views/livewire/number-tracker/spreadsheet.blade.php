@@ -146,9 +146,9 @@
                                                 <span name="pipe">
                                                     <input
                                                         type="text" class="text-center w-10 inline"
-                                                        value="{{ $user->dailyNumbers[$label][0]->hours }}"
+                                                        value="{{ $user->dailyNumbers[$label][0]->hours_worked }}"
                                                         x-on:input.debounce.400ms="
-                                                            $wire.updateDailyNumber({{ $user->dailyNumbers[$label][0]->id }}, 'hours', $event.target.value)
+                                                            $wire.updateDailyNumber({{ $user->dailyNumbers[$label][0]->id }}, 'hours_worked', $event.target.value)
                                                         "
                                                     />
                                                 </span>
@@ -163,7 +163,14 @@
                                                     />
                                                 </span>
                                                 <span name="pipe">
-                                                    <input type="text" class="text-center w-10 inline" value="HK"/>
+                                                    <input
+                                                        type="text"
+                                                        class="text-center w-10 inline"
+                                                        value="{{ $user->dailyNumbers[$label][0]->hours_knocked }}"
+                                                        x-on:input.debounce.400ms="
+                                                            $wire.updateDailyNumber({{ $user->dailyNumbers[$label][0]->id }}, 'hours_knocked', $event.target.value)
+                                                        "
+                                                    />
                                                 </span>
                                                 <span name="pipe">
                                                     <input
@@ -176,7 +183,14 @@
                                                     />
                                                 </span>
                                                 <span name="pipe">
-                                                    <input type="text" class="text-center w-10 inline" value="SA"/>
+                                                    <input
+                                                        type="text"
+                                                        class="text-center w-10 inline"
+                                                        value="{{ $user->dailyNumbers[$label][0]->sats }}"
+                                                        x-on:input.debounce.400ms="
+                                                            $wire.updateDailyNumber({{ $user->dailyNumbers[$label][0]->id }}, 'sats', $event.target.value)
+                                                        "
+                                                    />
                                                 </span>
                                                 <span name="pipe">
                                                     <input
@@ -189,7 +203,14 @@
                                                     />
                                                 </span>
                                                 <span name="pipe">
-                                                    <input type="text" class="text-center w-10 inline" value="CS"/>
+                                                    <input
+                                                        type="text"
+                                                        class="text-center w-10 inline"
+                                                        value="{{ $user->dailyNumbers[$label][0]->closer_sits }}"
+                                                        x-on:input.debounce.400ms="
+                                                            $wire.updateDailyNumber({{ $user->dailyNumbers[$label][0]->id }}, 'closer_sits', $event.target.value)
+                                                        "
+                                                    />
                                                 </span>
                                                 <span name="pipe">
                                                     <input
@@ -212,7 +233,7 @@
                                                         value=""
                                                         placeholder="HW"
                                                         x-on:input.debounce.400ms="
-                                                            $wire.attachNewDailyEntry({{ $userKey }}, {{ $user->id }}, '{{ $label }}', 'hours', $event.target.value)
+                                                            $wire.attachNewDailyEntry({{ $userKey }}, {{ $user->id }}, '{{ $label }}', 'hours_worked', $event.target.value)
                                                         "
                                                     />
                                                 </span>
@@ -227,7 +248,14 @@
                                                     />
                                                 </span>
                                                 <span name="pipe">
-                                                    <input type="text" class="text-center w-10 inline" placeholder="HK" value=""/>
+                                                    <input
+                                                        type="text" class="text-center w-10 inline"
+                                                        value=""
+                                                        placeholder="D"
+                                                        x-on:input.debounce.400ms="
+                                                            $wire.attachNewDailyEntry({{ $userKey }}, {{ $user->id }}, '{{ $label }}', 'hours_knocked', $event.target.value)
+                                                        "
+                                                    />
                                                 </span>
                                                 <span name="pipe">
                                                     <input
@@ -240,16 +268,44 @@
                                                     />
                                                 </span>
                                                 <span name="pipe">
-                                                    <input type="text" class="text-center w-10 inline" placeholder="SA" value=""/>
+                                                    <input
+                                                        type="text" class="text-center w-10 inline"
+                                                        value=""
+                                                        placeholder="SA"
+                                                        x-on:input.debounce.400ms="
+                                                            $wire.attachNewDailyEntry({{ $userKey }}, {{ $user->id }}, '{{ $label }}', 'sats', $event.target.value)
+                                                        "
+                                                    />
                                                 </span>
                                                 <span name="pipe">
-                                                    <input type="text" class="text-center w-10 inline" placeholder="SC" value=""/>
+                                                    <input
+                                                        type="text" class="text-center w-10 inline"
+                                                        value=""
+                                                        placeholder="SC"
+                                                        x-on:input.debounce.400ms="
+                                                            $wire.attachNewDailyEntry({{ $userKey }}, {{ $user->id }}, '{{ $label }}', 'set_closes', $event.target.value)
+                                                        "
+                                                    />
                                                 </span>
                                                 <span name="pipe">
-                                                    <input type="text" class="text-center w-10 inline" placeholder="CS" value=""/>
+                                                    <input
+                                                        type="text" class="text-center w-10 inline"
+                                                        value=""
+                                                        placeholder="CS"
+                                                        x-on:input.debounce.400ms="
+                                                            $wire.attachNewDailyEntry({{ $userKey }}, {{ $user->id }}, '{{ $label }}', 'closer_sits', $event.target.value)
+                                                        "
+                                                    />
                                                 </span>
                                                 <span name="pipe">
-                                                    <input type="text" class="text-center w-10 inline" placeholder="C" value=""/>
+                                                    <input
+                                                        type="text" class="text-center w-10 inline"
+                                                        value=""
+                                                        placeholder="C"
+                                                        x-on:input.debounce.400ms="
+                                                            $wire.attachNewDailyEntry({{ $userKey }}, {{ $user->id }}, '{{ $label }}', 'closes', $event.target.value)
+                                                        "
+                                                    />
                                                 </span>
                                             </div>
                                         </td>
@@ -262,7 +318,7 @@
                                         <span name="pipe">
                                             <input
                                                 type="text" class="text-center w-10 inline"
-                                                value="{{ $this->sumOf('hours', $user, $this->weeklyPeriods[$key]) }}"
+                                                value="{{ $this->sumOf('hours_worked', $user, $this->weeklyPeriods[$key]) }}"
                                             />
                                         </span>
                                         <span name="pipe">
@@ -274,7 +330,7 @@
                                         <span name="pipe">
                                             <input
                                                 type="text" class="text-center w-10 inline"
-                                                value="{{ $this->sumOf('hours', $user, $this->weeklyPeriods[$key]) }}"
+                                                value="{{ $this->sumOf('hours_knocked', $user, $this->weeklyPeriods[$key]) }}"
                                             />
                                         </span>
                                         <span name="pipe">
@@ -286,7 +342,7 @@
                                         <span name="pipe">
                                             <input
                                                 type="text" class="text-center w-10 inline"
-                                                value="{{ $this->sumOf('hours', $user, $this->weeklyPeriods[$key]) }}"
+                                                value="{{ $this->sumOf('sats', $user, $this->weeklyPeriods[$key]) }}"
                                             />
                                         </span>
                                         <span name="pipe">
@@ -298,7 +354,7 @@
                                         <span name="pipe">
                                             <input
                                                 type="text" class="text-center w-10 inline"
-                                                value="{{ $this->sumOf('hours', $user, $this->weeklyPeriods[$key]) }}"
+                                                value="{{ $this->sumOf('closer_sits', $user, $this->weeklyPeriods[$key]) }}"
                                             />
                                         </span>
                                         <span name="pipe">
@@ -325,7 +381,7 @@
                                                     type="text"
                                                     class="text-center w-10 inline outline-none"
                                                     readonly
-                                                    value="{{ $this->totals[$key][$label]['hours'] }}"/>
+                                                    value="{{ $this->totals[$key][$label]['hours_worked'] }}"/>
                                             </span>
                                             <span name="pipe">
                                                 <input
@@ -339,7 +395,7 @@
                                                     type="text"
                                                     class="text-center w-10 inline outline-none"
                                                     readonly
-                                                    value="{{ $this->totals[$key][$label]['hours'] }}"/>
+                                                    value="{{ $this->totals[$key][$label]['hours_knocked'] }}"/>
                                             </span>
                                             <span name="pipe">
                                                 <input
@@ -353,7 +409,7 @@
                                                     type="text"
                                                     class="text-center w-10 inline outline-none"
                                                     readonly
-                                                    value="{{ $this->totals[$key][$label]['hours'] }}"/>
+                                                    value="{{ $this->totals[$key][$label]['sats'] }}"/>
                                             </span>
                                             <span name="pipe">
                                                 <input
@@ -367,7 +423,7 @@
                                                     type="text"
                                                     class="text-center w-10 inline outline-none"
                                                     readonly
-                                                    value="{{ $this->totals[$key][$label]['hours'] }}"/>
+                                                    value="{{ $this->totals[$key][$label]['closer_sits'] }}"/>
                                             </span>
                                             <span name="pipe">
                                                 <input
@@ -416,7 +472,7 @@
                                                     type="text"
                                                     class="text-center w-10 inline outline-none"
                                                     readonly
-                                                    value="{{ $this->sumTotalOf('hours', $this->totals[$key], $this->weeklyPeriods[$key]) }}"
+                                                    value="{{ $this->sumTotalOf('hours_worked', $this->totals[$key], $this->weeklyPeriods[$key]) }}"
                                                 />
                                             </span>
                                             <span name="pipe">
@@ -432,7 +488,7 @@
                                                     type="text"
                                                     class="text-center w-10 inline outline-none"
                                                     readonly
-                                                    value="{{ $this->sumTotalOf('hours', $this->totals[$key], $this->weeklyPeriods[$key]) }}"
+                                                    value="{{ $this->sumTotalOf('hours_knocked', $this->totals[$key], $this->weeklyPeriods[$key]) }}"
                                                 />
                                             </span>
                                             <span name="pipe">
@@ -448,7 +504,7 @@
                                                     type="text"
                                                     class="text-center w-10 inline outline-none"
                                                     readonly
-                                                    value="{{ $this->sumTotalOf('hours', $this->totals[$key], $this->weeklyPeriods[$key]) }}"
+                                                    value="{{ $this->sumTotalOf('sats', $this->totals[$key], $this->weeklyPeriods[$key]) }}"
                                                 />
                                             </span>
                                             <span name="pipe">
@@ -464,7 +520,7 @@
                                                     type="text"
                                                     class="text-center w-10 inline outline-none"
                                                     readonly
-                                                    value="{{ $this->sumTotalOf('hours', $this->totals[$key], $this->weeklyPeriods[$key]) }}"
+                                                    value="{{ $this->sumTotalOf('closer_sits', $this->totals[$key], $this->weeklyPeriods[$key]) }}"
                                                 />
                                             </span>
                                             <span name="pipe">
