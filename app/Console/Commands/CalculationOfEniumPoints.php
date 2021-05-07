@@ -15,28 +15,27 @@ class CalculationOfEniumPoints extends Command
 
     public function handle()
     {
+        Term::find(4)->update([
+            'noble_pay_dealer_fee' => 0.22,
+            'rep_residual'         => 0.015,
+            'amount'               => 480
+        ]);
+        Term::find(2)->update([
+            'noble_pay_dealer_fee' => 0.24,
+            'rep_residual'         => 0.015,
+            'amount'               => 800
+        ]);
+        Term::find(3)->update([
+            'noble_pay_dealer_fee' => 0.15,
+            'rep_residual'         => 0.025,
+            'amount'               => 480
+        ]);
+        Term::find(1)->update([
+            'noble_pay_dealer_fee' => 0.19,
+            'rep_residual'         => 0.025,
+            'amount'               => 800
+        ]);
         DB::transaction(function () {
-            Term::find(Term::STANDARD_ONE)->update([
-                'noble_pay_dealer_fee' => 0.015,
-                'rep_residual'         => 0.025,
-                'amount'               => 480
-            ]);
-            Term::find(Term::FORMONTH_ONE)->update([
-                'noble_pay_dealer_fee' => 0.22,
-                'rep_residual'         => 0.015,
-                'amount'               => 800
-            ]);
-            Term::find(Term::STANDARD_TWO)->update([
-                'noble_pay_dealer_fee' => 0.015,
-                'rep_residual'         => 0.025,
-                'amount'               => 480
-            ]);
-            Term::find(Term::FORMONTH_TWO)->update([
-                'noble_pay_dealer_fee' => 0.22,
-                'rep_residual'         => 0.015,
-                'amount'               => 800
-            ]);
-
             $users = User::withTrashed()->get();
             $users->each(function (User $user) {
                 $user->customersOfSalesReps()->withTrashed()->get()->each(function ($customer) use ($user) {

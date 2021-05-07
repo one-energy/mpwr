@@ -26,6 +26,6 @@ class Term extends Model
     const FORMONTH_ONE = 2;
     const FORMONTH_TWO = 1;
 
-    protected $fillable = ['noble_pay_dealer_fee'];
+    protected $fillable = ['noble_pay_dealer_fee', 'amount', 'rep_residual', 'noble_pay_dealer_fee'];
     //
 }

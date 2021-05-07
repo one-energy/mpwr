@@ -10,7 +10,7 @@ class UserCustomersEniumPoints extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['customer_id'];
+    protected $fillable = ['customer_id', 'user_sales_rep_id', 'points'];
 
     public function user()
     {
