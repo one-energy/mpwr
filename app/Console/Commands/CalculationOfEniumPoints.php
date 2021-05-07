@@ -16,34 +16,34 @@ class CalculationOfEniumPoints extends Command
     public function handle()
     {
         DB::transaction(function () {
-            Term::find(1)->update([
+            Term::find(Term::STANDARD_ONE)->update([
                 'noble_pay_dealer_fee' => 0.015,
                 'rep_residual'         => 0.025,
                 'amount'               => 480
             ]);
-            Term::find(2)->update([
+            Term::find(Term::FORMONTH_ONE)->update([
                 'noble_pay_dealer_fee' => 0.22,
                 'rep_residual'         => 0.015,
                 'amount'               => 800
             ]);
-            Term::find(3)->update([
+            Term::find(Term::STANDARD_TWO)->update([
                 'noble_pay_dealer_fee' => 0.015,
                 'rep_residual'         => 0.025,
                 'amount'               => 480
             ]);
-            Term::find(4)->update([
+            Term::find(Term::FORMONTH_TWO)->update([
                 'noble_pay_dealer_fee' => 0.22,
                 'rep_residual'         => 0.015,
                 'amount'               => 800
             ]);
+
             $users = User::withTrashed()->get();
             $users->each(function (User $user) {
                 $user->customersOfSalesReps()->withTrashed()->get()->each(function ($customer) use ($user) {
                     if ($customer->term_id != null) {
-                        dd($customer->epc);
                         $user->customersEniumPoints()->create([
                             'customer_id'          => $customer->id,
-                            'enium_points_of_sale' => $customer->epc/$customer->term->amount,
+                            'points'               => $customer->term->amount > 0 ? round($customer->epc/$customer->term->amount) : 0,
                             'deleted_at'           => $customer->deleted_at
                         ]);
                     }

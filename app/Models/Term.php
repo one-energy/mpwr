@@ -21,6 +21,11 @@ class Term extends Model
 {
     use HasFactory;
 
+    const STANDARD_ONE = 4;
+    const STANDARD_TWO = 3;
+    const FORMONTH_ONE = 2;
+    const FORMONTH_TWO = 1;
+
     protected $fillable = ['noble_pay_dealer_fee'];
     //
 }
