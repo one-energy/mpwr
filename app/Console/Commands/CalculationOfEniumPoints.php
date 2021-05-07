@@ -41,11 +41,14 @@ class CalculationOfEniumPoints extends Command
             $users->each(function (User $user) {
                 $user->customersOfSalesReps()->withTrashed()->get()->each(function ($customer) use ($user) {
                     if ($customer->term_id != null) {
-                        $user->customersEniumPoints()->create([
+                        // dd($customer->deleted_at);
+                        $customerEniumPoint = $user->customersEniumPoints()->create([
                             'customer_id'          => $customer->id,
                             'points'               => $customer->term->amount > 0 ? round($customer->epc/$customer->term->amount) : 0,
-                            'deleted_at'           => $customer->deleted_at
                         ]);
+                        if ($customer->deleted_at) {
+                            $customerEniumPoint->delete();
+                        }
                     }
                 });
             }); 

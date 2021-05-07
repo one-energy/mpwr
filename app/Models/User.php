@@ -212,11 +212,11 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function eniumPoints()
     {
-        return $this->customersEniumPoints()->with(['customer' => function ($query) {
-            $query->whereIsActive(true)
-                ->wherePanelSold(true)
+        return $this->customersEniumPoints()->whereHas('customer', function ($query) {
+            $query->where('is_active', true)
+                ->where('panel_sold', true)
                 ->inYear();
-        }])->get()->sum('points');
+        })->with('customer')->get()->sum('points');
     }
 
     public function changePassword($new)
