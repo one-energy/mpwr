@@ -28,8 +28,16 @@
         </div>
     </div>
 
-    <div class="flex justify-start mt-6">
+    <div class="flex justify-between items-center mt-6">
         <h2 class="text-lg text-gray-900">Total Overviews</h2>
+
+        <a
+            href="{{ route('number-tracking.spreadsheet') }}"
+            class="py-2 px-3 focus:outline-none rounded shadow-md text-white bg-green-base"
+            title="Spreadsheet Page"
+        >
+            <x-svg.spreadsheet class="w-5 h-5 text-white fill-current" />
+        </a>
     </div>
 
     <div class="flex justify-between mt-3">
