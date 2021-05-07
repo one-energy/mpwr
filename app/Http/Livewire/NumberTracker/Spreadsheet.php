@@ -69,6 +69,8 @@ class Spreadsheet extends Component
 
         try {
             $this->dailyNumbers->each(function ($dailyNumber) {
+                $dailyNumber['hours_worked'] = $this->calculateHoursWorked($dailyNumber);
+
                 DailyNumber::query()
                     ->where('id', $dailyNumber['id'])
                     ->update($dailyNumber);
@@ -86,12 +88,26 @@ class Spreadsheet extends Component
 
         try {
             collect($this->newDailyNumbers)->each(function ($dailyNumber) {
+                $dailyNumber['hours_worked'] = $this->calculateHoursWorked($dailyNumber);
+
                 DailyNumber::create($dailyNumber);
                 DB::commit();
             });
+
+            $this->newDailyNumbers = [];
         } catch (Throwable $e) {
             DB::rollBack();
         }
+    }
+
+    /**
+     * One hours_knocked = 1h
+     * One closes = 1h
+     * One closer_sits = 2h
+     */
+    private function calculateHoursWorked($dailyNumber): float | int
+    {
+        return $dailyNumber['hours_knocked'] + $dailyNumber['closes'] + ($dailyNumber['closer_sits'] * 2);
     }
 
     public function updateDailyNumber(DailyNumber $dailyNumber, string $field, string $newValue)
@@ -122,6 +138,7 @@ class Spreadsheet extends Component
         if (!array_key_exists($index, $this->newDailyNumbers)) {
             $this->newDailyNumbers[$index] = [
                 'user_id'       => $user->id,
+                'office_id'     => $user->office_id,
                 'date'          => (new Carbon($date))->format('Y-m-d'),
                 'doors'         => 0,
                 'sets'          => 0,
@@ -211,11 +228,13 @@ class Spreadsheet extends Component
             ->where('office_id', $this->selectedOffice)
             ->with([
                 'dailyNumbers' => function ($query) {
-                    $query->orderBy('date', 'asc')
+                    $query
+                        ->where('office_id', $this->selectedOffice)
                         ->whereBetween('date', [
                             today()->startOfMonth()->format('Y-m-d'),
                             today()->endOfMonth()->format('Y-m-d'),
-                        ]);
+                        ])
+                        ->orderBy('date', 'asc');
                 },
             ])
             ->whereHas('dailyNumbers', function ($query) {
