@@ -269,6 +269,6 @@ class Customer extends Model
 
     public function scopeInYear(Builder $query)
     {
-        return $query->whereYear(Carbon::now()->year());
+        return $query->whereYear('date_of_sale', Carbon::now()->year());
     }
 }

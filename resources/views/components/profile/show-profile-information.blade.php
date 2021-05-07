@@ -89,16 +89,41 @@
                 @endif
             </div>
         </div>
-        <div class="flex justify-between grid grid-cols-4 row-gap-1 col-gap-4 border-gray-200 border-2 m-1 p-2 rounded-lg">
-            <div class="col-span-4 text-xs text-gray-900">
+        <div class="border-gray-200 border-2 m-1 p-2 rounded-lg">
+            <div class="text-sm font-bold text-center text-gray-900 mb-4">
                 ENIUM POINTS
             </div>
-            <div class="col-span-4 text-xl font-bold text-gray-900">
-                @if(user()->level())
-                    {{user()->level()}}
-                @else
-                -
-                @endif
+            <div class="space-y-2">
+                <div class="text-sm text-center text-gray-900">
+                    <p>Total</p>
+                    <p class="font-bold text-xl">
+                        @if(user()->level())
+                            {{user()->eniumPoints()}}
+                        @else
+                        -
+                        @endif
+                    </p>
+                </div>
+                <div class="text-sm text-center text-gray-900">
+                    <p>Level</p>
+                    <p class="font-bold text-xl">
+                        @if(user()->level())
+                            {{user()->level()->level}}
+                        @else
+                        -
+                        @endif
+                    </p>
+                </div>
+                <div class="text-sm text-center text-gray-900">
+                    <p>Monthly Income</p>
+                    <p class="font-bold text-xl">
+                        @if(user()->level())
+                            $ {{user()->level()->monthly_residual}}
+                        @else
+                        -
+                        @endif
+                    </p>
+                </div>
             </div>
         </div>
 
