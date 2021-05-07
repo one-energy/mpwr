@@ -116,11 +116,11 @@
                                             <div
                                                 class="cursor-default relative"
                                                 x-data=""
-                                                @mouseenter="$dispatch('open-popover', {ref: '{{ $label . $loop->index }}'})"
-                                                @mouseleave="$dispatch('close-popover', {ref: '{{ $label . $loop->index }}'})"
+                                                @mouseenter="$dispatch('open-popover', {ref: '{{ $label . $loop->index . $indicator['label'] }}'})"
+                                                @mouseleave="$dispatch('close-popover', {ref: '{{ $label . $loop->index . $indicator['label'] }}'})"
                                             >
                                                 {{ $indicator['label'] }}
-                                                <x-popover position="bottom" ref="{{ $label . $loop->index }}">
+                                                <x-popover position="bottom" ref="{{ $label . $loop->index . $indicator['label'] }}">
                                                     {{ $indicator['description'] }}
                                                 </x-popover>
                                             </div>
