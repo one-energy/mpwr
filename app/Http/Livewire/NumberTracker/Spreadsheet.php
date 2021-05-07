@@ -10,7 +10,9 @@ use DatePeriod;
 use DateTimeImmutable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
+use Throwable;
 
 /**
  * @property-read Collection|Office[] $offices
@@ -23,16 +25,105 @@ class Spreadsheet extends Component
 {
     public int $selectedOffice;
 
+    public Collection $dailyNumbers;
+
+    public array $newDailyNumbers;
+
     public function mount()
     {
-        $this->selectedOffice = match (user()->role) {
-            'Admin', 'Owner' => $this->offices->first()->id,
-        };
+        $this->selectedOffice  = $this->offices->first()->id;
+        $this->newDailyNumbers = [];
+        $this->dailyNumbers    = $this->users->pluck('dailyNumbers')->flatten();
     }
 
     public function render()
     {
         return view('livewire.number-tracker.spreadsheet');
+    }
+
+    public function updatedSelectedOffice()
+    {
+        $this->newDailyNumbers = [];
+        $this->dailyNumbers    = $this->users->pluck('dailyNumbers')->flatten();
+    }
+
+    public function save()
+    {
+        if ($this->dailyNumbers->isNotEmpty()) {
+            $this->update();
+        }
+
+        if (collect($this->newDailyNumbers)->isNotEmpty()) {
+            $this->store();
+        }
+
+        alert()
+            ->withTitle(__('Number Trackers saved!'))
+            ->livewire($this)
+            ->send();
+    }
+
+    private function update()
+    {
+        DB::beginTransaction();
+
+        try {
+            $this->dailyNumbers->each(function ($dailyNumber) {
+                DailyNumber::query()
+                    ->where('id', $dailyNumber['id'])
+                    ->update($dailyNumber);
+
+                DB::commit();
+            });
+        } catch (Throwable $e) {
+            DB::rollBack();
+        }
+    }
+
+    private function store()
+    {
+        DB::beginTransaction();
+
+        try {
+            collect($this->newDailyNumbers)->each(function ($dailyNumber) {
+                DailyNumber::create($dailyNumber);
+                DB::commit();
+            });
+        } catch (Throwable $e) {
+            DB::rollBack();
+        }
+    }
+
+    public function updateDailyNumber(DailyNumber $dailyNumber, string $field, string $newValue)
+    {
+        $this->dailyNumbers = $this->dailyNumbers->map(function ($tracker) use ($dailyNumber, $field, $newValue) {
+            if ($tracker['id'] === $dailyNumber->id) {
+                $tracker[$field] = abs(preg_replace('/[^0-9.]+/', '', $newValue));
+            }
+
+            return $tracker;
+        });
+    }
+
+    public function attachNewDailyEntry($index, User $user, $date, string $field, string $value)
+    {
+        if (!array_key_exists($index, $this->newDailyNumbers)) {
+            $this->newDailyNumbers[$index] = [
+                'user_id'    => $user->id,
+                'date'       => (new Carbon($date))->format('Y-m-d'),
+                'doors'      => 0,
+                'hours'      => 0,
+                'sets'       => 0,
+                'set_sits'   => 0,
+                'sits'       => 0,
+                'set_closes' => 0,
+                'closes'     => 0,
+            ];
+        }
+
+        $this->newDailyNumbers[$index] = array_merge(
+            $this->newDailyNumbers[$index], [$field => abs(preg_replace('/[^0-9.]+/', '', $value))]
+        );
     }
 
     public function getPeriodsProperty()
@@ -176,7 +267,12 @@ class Spreadsheet extends Component
 
     public function getOfficesProperty()
     {
-        return Office::oldest('name')->get();
+        return match (user()->role) {
+            'Admin', 'Owner' => Office::oldest('name')->get(),
+            'Region Manager' => Office::oldest('name')->whereIn('region_id', user()->managedRegions->pluck('id')),
+            'Office Manager' => Office::oldest('name')->whereIn('id', user()->managedOffices->pluck('id')),
+            default          => collect()
+        };
     }
 
     public function sumOf(string $field, $user, array $weekDays)
