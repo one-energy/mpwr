@@ -19,6 +19,7 @@ class CreateUserCustomersEniumPointsTable extends Migration
             $table->foreignId('customer_id')->constrained();
             $table->integer('enium_points_of_sale');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

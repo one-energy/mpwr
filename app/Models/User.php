@@ -163,6 +163,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(User::class, 'department_manager_id');
     }
 
+    public function customersOfSalesReps()
+    {
+        return $this->hasMany(Customer::class, 'sales_rep_id');
+    }
+
     public function customersOfSalesRepsRecuited()
     {
         return $this->hasMany(Customer::class, 'sales_rep_recruiter_id');
@@ -195,7 +200,18 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function customersEniumPoints()
     {
-        return $this->hasMany(UserCustomersEniumPoints::class);
+        return $this->hasMany(UserCustomersEniumPoints::class, 'user_sales_rep_id');
+    }
+
+    public function level()
+    {
+        $eniumPoints = $this->customersEniumPoints()->with(['customer' => function ($query) {
+            $query->whereIsActive(true)
+                ->wherePanelSold(true)
+                ->inYear();
+        }])->get();
+        // dd($eniumPoints);
+        return $eniumPoints->count() ? UserEniumPointLevel::where('point', '<=', $eniumPoints)->first()->pluck('point') : 0;
     }
 
     public function changePassword($new)

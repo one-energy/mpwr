@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -264,5 +265,10 @@ class Customer extends Model
             ->leftJoin('financings', function ($join) {
                 $join->on('financings.id', '=', 'financing_id');
             });
+    }
+
+    public function scopeInYear(Builder $query)
+    {
+        return $query->whereYear(Carbon::now()->year());
     }
 }
