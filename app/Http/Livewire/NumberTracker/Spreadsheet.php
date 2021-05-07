@@ -96,9 +96,15 @@ class Spreadsheet extends Component
 
     public function updateDailyNumber(DailyNumber $dailyNumber, string $field, string $newValue)
     {
+        $newValue = preg_replace('/[^0-9.]+/', '', $newValue);
+
+        if ($newValue === '') {
+            return;
+        }
+
         $this->dailyNumbers = $this->dailyNumbers->map(function ($tracker) use ($dailyNumber, $field, $newValue) {
             if ($tracker['id'] === $dailyNumber->id) {
-                $tracker[$field] = abs(preg_replace('/[^0-9.]+/', '', $newValue));
+                $tracker[$field] = abs($newValue);
             }
 
             return $tracker;
@@ -107,6 +113,12 @@ class Spreadsheet extends Component
 
     public function attachNewDailyEntry($index, User $user, $date, string $field, string $value)
     {
+        $value = preg_replace('/[^0-9.]+/', '', $value);
+
+        if ($value === '') {
+            return;
+        }
+
         if (!array_key_exists($index, $this->newDailyNumbers)) {
             $this->newDailyNumbers[$index] = [
                 'user_id'    => $user->id,
@@ -122,7 +134,7 @@ class Spreadsheet extends Component
         }
 
         $this->newDailyNumbers[$index] = array_merge(
-            $this->newDailyNumbers[$index], [$field => abs(preg_replace('/[^0-9.]+/', '', $value))]
+            $this->newDailyNumbers[$index], [$field => abs($value)]
         );
     }
 
