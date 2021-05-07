@@ -50,16 +50,28 @@
             </a>
         </div>
 
-        @if ($this->isAdmin)
-            <section class="flex my-6 md:justify-end md:mb-8 md:mt-5">
-                <x-select wire:model="selectedOffice" class="w-full md:w-auto" name="offices" label="Offices">
-                    @foreach($this->offices as $office)
-                        <option value="{{ $office->id }}">{{ $office->name }}</option>
-                    @endforeach
-                </x-select>
-            </section>
-        @endif
+        <div class="flex my-6 md:justify-end md:mb-8 md:mt-5">
+            <x-select wire:model="selectedOffice" class="w-full md:w-auto" name="offices" label="Offices">
+                @foreach($this->offices as $office)
+                    <option value="{{ $office->id }}">{{ $office->name }}</option>
+                @endforeach
+            </x-select>
+        </div>
     </section>
+
+    <section class="flex justify-end mt-3 mb-2">
+        <button
+            class="py-2 px-4 focus:outline-none rounded shadow-md text-white bg-green-base"
+            wire:loading.class.remove="bg-green-base"
+            wire:loading.class="flex items-center disabled bg-opacity-50 pointer-events-none bg-green-500"
+            wire:target="save"
+            wire:click="save"
+        >
+            <x-svg.spinner wire:target="save" wire:loading  class="w-5 h-5 mr-2" />
+            Save
+        </button>
+    </section>
+
     @foreach($this->periodsLabel as $key => $label)
         <section class="mb-10">
             <h3 class="font-bold text-center mb-3">{{ $label }}</h3>
@@ -116,7 +128,7 @@
                     </x-slot>
 
                     <x-slot name="body">
-                        @foreach($this->users as $user)
+                        @foreach($this->users as $userKey => $user)
                             <x-table.tr class="relative">
                                 <x-table.td class="border-2">
                                     {{ $user->full_name }}
@@ -126,47 +138,102 @@
                                 @foreach($this->weeklyLabels[$key] as $label)
                                     @if (isset($user->dailyNumbers[$label]))
                                         <td class="border-2 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
-                                            <div class="relative space-x-2">
+                                            <div class="relative space-x-2" x-data="">
                                                 <span name="pipe">
-                                                    <input type="text" class="text-center w-10 inline" value="{{ $user->dailyNumbers[$label][0]->hours }}"/>
+                                                    <input
+                                                        type="text" class="text-center w-10 inline"
+                                                        value="{{ $user->dailyNumbers[$label][0]->hours }}"
+                                                        x-on:input.debounce.400ms="
+                                                            $wire.updateDailyNumber({{ $user->dailyNumbers[$label][0]->id }}, 'hours', $event.target.value)
+                                                        "
+                                                    />
                                                 </span>
                                                 <span name="pipe">
-                                                    <input type="text" class="text-center w-10 inline" value="{{ $user->dailyNumbers[$label][0]->doors }}"/>
+                                                    <input
+                                                        type="text"
+                                                        class="text-center w-10 inline"
+                                                        value="{{ $user->dailyNumbers[$label][0]->doors }}"
+                                                        x-on:input.debounce.400ms="
+                                                            $wire.updateDailyNumber({{ $user->dailyNumbers[$label][0]->id }}, 'doors', $event.target.value)
+                                                        "
+                                                    />
                                                 </span>
                                                 <span name="pipe">
                                                     <input type="text" class="text-center w-10 inline" value="HK"/>
                                                 </span>
                                                 <span name="pipe">
-                                                    <input type="text" class="text-center w-10 inline" value="{{ $user->dailyNumbers[$label][0]->sets }}"/>
+                                                    <input
+                                                        type="text"
+                                                        class="text-center w-10 inline"
+                                                        value="{{ $user->dailyNumbers[$label][0]->sets }}"
+                                                        x-on:input.debounce.400ms="
+                                                            $wire.updateDailyNumber({{ $user->dailyNumbers[$label][0]->id }}, 'sets', $event.target.value)
+                                                        "
+                                                    />
                                                 </span>
                                                 <span name="pipe">
                                                     <input type="text" class="text-center w-10 inline" value="SA"/>
                                                 </span>
                                                 <span name="pipe">
-                                                    <input type="text" class="text-center w-10 inline" value="{{ $user->dailyNumbers[$label][0]->set_closes }}"/>
+                                                    <input
+                                                        type="text"
+                                                        class="text-center w-10 inline"
+                                                        value="{{ $user->dailyNumbers[$label][0]->set_closes }}"
+                                                        x-on:input.debounce.400ms="
+                                                            $wire.updateDailyNumber({{ $user->dailyNumbers[$label][0]->id }}, 'set_closes', $event.target.value)
+                                                        "
+                                                    />
                                                 </span>
                                                 <span name="pipe">
                                                     <input type="text" class="text-center w-10 inline" value="CS"/>
                                                 </span>
                                                 <span name="pipe">
-                                                    <input type="text" class="text-center w-10 inline" value="{{ $user->dailyNumbers[$label][0]->closes }}"/>
+                                                    <input
+                                                        type="text"
+                                                        class="text-center w-10 inline"
+                                                        value="{{ $user->dailyNumbers[$label][0]->closes }}"
+                                                        x-on:input.debounce.400ms="
+                                                            $wire.updateDailyNumber({{ $user->dailyNumbers[$label][0]->id }}, 'closes', $event.target.value)
+                                                        "
+                                                    />
                                                 </span>
                                             </div>
                                         </td>
                                     @else
                                         <td class="border-2 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
-                                            <div class="relative space-x-2">
+                                            <div class="relative space-x-2" x-data="">
                                                 <span name="pipe">
-                                                    <input type="text" class="text-center w-10 inline" placeholder="HW" value=""/>
+                                                    <input
+                                                        type="text" class="text-center w-10 inline"
+                                                        value=""
+                                                        placeholder="HW"
+                                                        x-on:input.debounce.400ms="
+                                                            $wire.attachNewDailyEntry({{ $userKey }}, {{ $user->id }}, '{{ $label }}', 'hours', $event.target.value)
+                                                        "
+                                                    />
                                                 </span>
                                                 <span name="pipe">
-                                                    <input type="text" class="text-center w-10 inline" placeholder="D" value=""/>
+                                                    <input
+                                                        type="text" class="text-center w-10 inline"
+                                                        value=""
+                                                        placeholder="D"
+                                                        x-on:input.debounce.400ms="
+                                                            $wire.attachNewDailyEntry({{ $userKey }}, {{ $user->id }}, '{{ $label }}', 'doors', $event.target.value)
+                                                        "
+                                                    />
                                                 </span>
                                                 <span name="pipe">
                                                     <input type="text" class="text-center w-10 inline" placeholder="HK" value=""/>
                                                 </span>
                                                 <span name="pipe">
-                                                    <input type="text" class="text-center w-10 inline" placeholder="S" value=""/>
+                                                    <input
+                                                        type="text" class="text-center w-10 inline"
+                                                        value=""
+                                                        placeholder="S"
+                                                        x-on:input.debounce.400ms="
+                                                            $wire.attachNewDailyEntry({{ $userKey }}, {{ $user->id }}, '{{ $label }}', 'sets', $event.target.value)
+                                                        "
+                                                    />
                                                 </span>
                                                 <span name="pipe">
                                                     <input type="text" class="text-center w-10 inline" placeholder="SA" value=""/>
