@@ -301,8 +301,8 @@ class Spreadsheet extends Component
     {
         return match (user()->role) {
             'Admin', 'Owner' => Office::oldest('name')->get(),
-            'Region Manager' => Office::oldest('name')->whereIn('region_id', user()->managedRegions->pluck('id')),
-            'Office Manager' => Office::oldest('name')->whereIn('id', user()->managedOffices->pluck('id')),
+            'Region Manager' => Office::oldest('name')->whereIn('region_id', user()->managedRegions->pluck('id'))->get(),
+            'Office Manager' => Office::oldest('name')->whereIn('id', user()->managedOffices->pluck('id'))->get(),
             default          => collect()
         };
     }
