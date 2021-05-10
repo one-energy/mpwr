@@ -30,7 +30,7 @@ class DailyNumberFactory extends Factory
             'hours_worked'  => $hoursWorked,
             'hours_knocked' => $hoursKnocked,
             'closer_sits'   => $closerSits,
-            'closes'        => $closes
+            'closes'        => $closes,
         ];
     }
 }
