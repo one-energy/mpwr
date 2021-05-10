@@ -36,6 +36,7 @@ use Lab404\Impersonate\Models\Impersonate;
  * @property int|null $department_id
  * @property int $installs
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\DailyNumber[] $dailyNumbers
+ * @property-read string $full_name
  * @property-read \App\Models\Department|null $department
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invitation[] $invitations
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Office[] $managedOffices
