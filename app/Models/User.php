@@ -62,7 +62,21 @@ class User extends Authenticatable implements MustVerifyEmail
     use Impersonate;
 
     protected $fillable = [
+        'first_name',
+        'last_name',
+        'email',
+        'email_verified_at',
+        'password',
+        'role',
+        'pay',
+        'timezone',
+        'master',
+        'photo_url',
+        'remember_token',
+        'kw_achived',
+        'office_id',
         'department_id',
+        'install',
     ];
 
     const ROLES = [

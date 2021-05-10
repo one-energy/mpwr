@@ -2,10 +2,13 @@
 
 namespace App\Http\Livewire\Castle;
 
+use App\Models\DailyNumber;
 use App\Models\Office;
 use App\Models\Region;
+use App\Models\User;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Offices extends Component
@@ -70,14 +73,21 @@ class Offices extends Component
         $office = $this->deletingOffice;
 
         if ($office->users()->count()) {
-            $this->validate([
-                'deletingName' => 'same:deletingOffice.name',
-            ], [
-                'deletingName.same' => 'The name of the office doesn\'t match',
-            ]);
+            $this->validate(
+                ['deletingName' => 'same:deletingOffice.name'],
+                ['deletingName.same' => "The name of the office doesn't match"]
+            );
         }
 
-        $office->delete();
+        DB::transaction(function () use ($office) {
+            DailyNumber::whereHas(
+                'user.office',
+                fn(Builder $query) => $query->whereIn('id', [$office->id])
+            )->delete();
+
+            $office->users()->delete();
+            $office->delete();
+        });
 
         $this->dispatchBrowserEvent('close-modal');
         $this->deletingOffice = null;
