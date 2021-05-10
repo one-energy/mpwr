@@ -36,10 +36,10 @@
 
             span[name="pipe"]:not(:last-child)::after {
                 content: "";
-                top: -17px;
+                top: -15px;
                 bottom: 0;
                 position: absolute;
-                height: 54px;
+                height: 51px;
                 border-right: 2px solid #E5E7EB;
                 display: inline;
             }
@@ -54,13 +54,15 @@
             </a>
         </div>
 
-        <div class="flex my-6 md:justify-end md:mb-8 md:mt-5">
-            <x-select wire:model="selectedOffice" class="w-full md:w-auto" name="offices" label="Offices">
-                @foreach($this->offices as $office)
-                    <option value="{{ $office->id }}">{{ $office->name }}</option>
-                @endforeach
-            </x-select>
-        </div>
+        @if ($this->offices->isNotEmpty())
+            <div class="flex my-6 md:justify-end md:mb-8 md:mt-5">
+                <x-select wire:model="selectedOffice" class="w-full md:w-auto" name="offices" label="Offices">
+                    @foreach($this->offices as $office)
+                        <option value="{{ $office->id }}">{{ $office->name }}</option>
+                    @endforeach
+                </x-select>
+            </div>
+        @endif
     </section>
 
     <section class="flex justify-end mt-3 mb-2">
@@ -141,15 +143,13 @@
                                 {{-- Weekly Columns --}}
                                 @foreach($this->weeklyLabels[$key] as $label)
                                     @if (isset($user->dailyNumbers[$label]))
-                                        <td class="border-2 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
+                                        <td class="border-t-2 border-l-2 border-r-2 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b border-gray-200">
                                             <div class="relative space-x-2" x-data="">
                                                 <span name="pipe">
                                                     <input
-                                                        type="text" class="text-center w-10 inline"
+                                                        type="text" class="text-center w-10 inline pointer-events-none"
                                                         value="{{ $user->dailyNumbers[$label][0]->hours_worked }}"
-                                                        x-on:input.debounce.400ms="
-                                                            $wire.updateDailyNumber({{ $user->dailyNumbers[$label][0]->id }}, 'hours_worked', $event.target.value)
-                                                        "
+                                                        readonly
                                                     />
                                                 </span>
                                                 <span name="pipe">
@@ -225,16 +225,14 @@
                                             </div>
                                         </td>
                                     @else
-                                        <td class="border-2 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
+                                        <td class="border-t-2 border-l-2 border-r-2 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b border-gray-200">
                                             <div class="relative space-x-2" x-data="">
                                                 <span name="pipe">
                                                     <input
-                                                        type="text" class="text-center w-10 inline"
+                                                        type="text" class="text-center w-10 inline pointer-events-none"
                                                         value=""
+                                                        readonly
                                                         placeholder="HW"
-                                                        x-on:input.debounce.400ms="
-                                                            $wire.attachNewDailyEntry({{ $userKey }}, {{ $user->id }}, '{{ $label }}', 'hours_worked', $event.target.value)
-                                                        "
                                                     />
                                                 </span>
                                                 <span name="pipe">
@@ -317,49 +315,57 @@
                                     <div class="relative space-x-2">
                                         <span name="pipe">
                                             <input
-                                                type="text" class="text-center w-10 inline"
+                                                type="text" class="text-center w-10 inline pointer-events-none"
+                                                readonly
                                                 value="{{ $this->sumOf('hours_worked', $user, $this->weeklyPeriods[$key]) }}"
                                             />
                                         </span>
                                         <span name="pipe">
                                             <input
-                                                type="text" class="text-center w-10 inline"
+                                                type="text" class="text-center w-10 inline pointer-events-none"
+                                                readonly
                                                 value="{{ $this->sumOf('doors', $user, $this->weeklyPeriods[$key]) }}"
                                             />
                                         </span>
                                         <span name="pipe">
                                             <input
-                                                type="text" class="text-center w-10 inline"
+                                                type="text" class="text-center w-10 inline pointer-events-none"
+                                                readonly
                                                 value="{{ $this->sumOf('hours_knocked', $user, $this->weeklyPeriods[$key]) }}"
                                             />
                                         </span>
                                         <span name="pipe">
                                             <input
-                                                type="text" class="text-center w-10 inline"
+                                                type="text" class="text-center w-10 inline pointer-events-none"
+                                                readonly
                                                 value="{{ $this->sumOf('sets', $user, $this->weeklyPeriods[$key]) }}"
                                             />
                                         </span>
                                         <span name="pipe">
                                             <input
-                                                type="text" class="text-center w-10 inline"
+                                                type="text" class="text-center w-10 inline pointer-events-none"
+                                                readonly
                                                 value="{{ $this->sumOf('sats', $user, $this->weeklyPeriods[$key]) }}"
                                             />
                                         </span>
                                         <span name="pipe">
                                             <input
-                                                type="text" class="text-center w-10 inline"
+                                                type="text" class="text-center w-10 inline pointer-events-none"
+                                                readonly
                                                 value="{{ $this->sumOf('set_closes', $user, $this->weeklyPeriods[$key]) }}"
                                             />
                                         </span>
                                         <span name="pipe">
                                             <input
-                                                type="text" class="text-center w-10 inline"
+                                                type="text" class="text-center w-10 inline pointer-events-none"
+                                                readonly
                                                 value="{{ $this->sumOf('closer_sits', $user, $this->weeklyPeriods[$key]) }}"
                                             />
                                         </span>
                                         <span name="pipe">
                                             <input
-                                                type="text" class="text-center w-10 inline"
+                                                type="text" class="text-center w-10 inline pointer-events-none"
+                                                readonly
                                                 value="{{ $this->sumOf('closes', $user, $this->weeklyPeriods[$key]) }}"
                                             />
                                         </span>
@@ -369,108 +375,108 @@
                         @endforeach
 
                         <x-table.tr class="relative">
-                            <x-table.td class="border-2">
+                            <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 border-t-2 border-l-2 border-r-2 border-gray-800">
                                 <span class="font-bold">Total</span>
-                            </x-table.td>
+                            </td>
                             @foreach($this->weeklyLabels[$key] as $label)
                                 @if ($this->totals[$key][$label])
-                                    <td class="border-2 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
+                                    <td class="py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 border-l-2 border-r-2 border-t-2 border-gray-800">
                                         <div class="relative space-x-2">
                                             <span name="pipe">
                                                 <input
                                                     type="text"
-                                                    class="text-center w-10 inline outline-none"
+                                                    class="text-center w-10 inline outline-none pointer-events-none font-bold"
                                                     readonly
                                                     value="{{ $this->totals[$key][$label]['hours_worked'] }}"/>
                                             </span>
                                             <span name="pipe">
                                                 <input
                                                     type="text"
-                                                    class="text-center w-10 inline outline-none"
+                                                    class="text-center w-10 inline outline-none pointer-events-none font-bold"
                                                     readonly
                                                     value="{{ $this->totals[$key][$label]['doors'] }}"/>
                                             </span>
                                             <span name="pipe">
                                                 <input
                                                     type="text"
-                                                    class="text-center w-10 inline outline-none"
+                                                    class="text-center w-10 inline outline-none pointer-events-none font-bold"
                                                     readonly
                                                     value="{{ $this->totals[$key][$label]['hours_knocked'] }}"/>
                                             </span>
                                             <span name="pipe">
                                                 <input
                                                     type="text"
-                                                    class="text-center w-10 inline outline-none"
+                                                    class="text-center w-10 inline outline-none pointer-events-none font-bold"
                                                     readonly
                                                     value="{{ $this->totals[$key][$label]['sets'] }}"/>
                                             </span>
                                             <span name="pipe">
                                                 <input
                                                     type="text"
-                                                    class="text-center w-10 inline outline-none"
+                                                    class="text-center w-10 inline outline-none pointer-events-none font-bold"
                                                     readonly
                                                     value="{{ $this->totals[$key][$label]['sats'] }}"/>
                                             </span>
                                             <span name="pipe">
                                                 <input
                                                     type="text"
-                                                    class="text-center w-10 inline outline-none"
+                                                    class="text-center w-10 inline outline-none pointer-events-none font-bold"
                                                     readonly
                                                     value="{{ $this->totals[$key][$label]['set_closes'] }}"/>
                                             </span>
                                             <span name="pipe">
                                                 <input
                                                     type="text"
-                                                    class="text-center w-10 inline outline-none"
+                                                    class="text-center w-10 inline outline-none pointer-events-none font-bold"
                                                     readonly
                                                     value="{{ $this->totals[$key][$label]['closer_sits'] }}"/>
                                             </span>
                                             <span name="pipe">
                                                 <input
                                                     type="text"
-                                                    class="text-center w-10 inline outline-none"
+                                                    class="text-center w-10 inline outline-none pointer-events-none font-bold"
                                                     readonly
                                                     value="{{ $this->totals[$key][$label]['closes'] }}"/>
                                             </span>
                                         </div>
                                     </td>
                                 @else
-                                    <td class="border-2 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
+                                    <td class="py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 border-l-2 border-r-2 border-t-2 border-gray-800">
                                         <div class="relative space-x-2">
                                             <span name="pipe">
-                                                <input type="text" class="text-center w-10 inline outline-none" readonly value="0"/>
+                                                <input type="text" class="text-center w-10 inline outline-none pointer-events-none font-bold" readonly value="0"/>
                                             </span>
                                             <span name="pipe">
-                                                <input type="text" class="text-center w-10 inline outline-none" readonly value="0"/>
+                                                <input type="text" class="text-center w-10 inline outline-none pointer-events-none font-bold" readonly value="0"/>
                                             </span>
                                             <span name="pipe">
-                                                <input type="text" class="text-center w-10 inline outline-none" readonly value="0"/>
+                                                <input type="text" class="text-center w-10 inline outline-none pointer-events-none font-bold" readonly value="0"/>
                                             </span>
                                             <span name="pipe">
-                                                <input type="text" class="text-center w-10 inline outline-none" readonly value="0"/>
+                                                <input type="text" class="text-center w-10 inline outline-none pointer-events-none font-bold" readonly value="0"/>
                                             </span>
                                             <span name="pipe">
-                                                <input type="text" class="text-center w-10 inline outline-none" readonly value="0"/>
+                                                <input type="text" class="text-center w-10 inline outline-none pointer-events-none font-bold" readonly value="0"/>
                                             </span>
                                             <span name="pipe">
-                                                <input type="text" class="text-center w-10 inline outline-none" readonly value="0"/>
+                                                <input type="text" class="text-center w-10 inline outline-none pointer-events-none font-bold" readonly value="0"/>
                                             </span>
                                             <span name="pipe">
-                                                <input type="text" class="text-center w-10 inline outline-none" readonly value="0"/>
+                                                <input type="text" class="text-center w-10 inline outline-none pointer-events-none font-bold" readonly value="0"/>
                                             </span>
                                             <span name="pipe">
-                                                <input type="text" class="text-center w-10 inline outline-none" readonly value="0"/>
+                                                <input type="text" class="text-center w-10 inline outline-none pointer-events-none font-bold" readonly value="0"/>
                                             </span>
                                         </div>
                                     </td>
                                 @endif
                                 @if ($loop->last)
-                                    <td class="border-2 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
+                                    <td class="py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 border-l-2 border-r-2 border-t-2 border-gray-800">
                                         <div class="relative space-x-2">
                                             <span name="pipe">
                                                 <input
                                                     type="text"
-                                                    class="text-center w-10 inline outline-none"
+                                                    class="text-center w-10 inline outline-none pointer-events-none font-bold"
                                                     readonly
                                                     value="{{ $this->sumTotalOf('hours_worked', $this->totals[$key], $this->weeklyPeriods[$key]) }}"
                                                 />
@@ -478,7 +484,7 @@
                                             <span name="pipe">
                                                 <input
                                                     type="text"
-                                                    class="text-center w-10 inline outline-none"
+                                                    class="text-center w-10 inline outline-none pointer-events-none font-bold"
                                                     readonly
                                                     value="{{ $this->sumTotalOf('doors', $this->totals[$key], $this->weeklyPeriods[$key]) }}"
                                                 />
@@ -486,7 +492,7 @@
                                             <span name="pipe">
                                                 <input
                                                     type="text"
-                                                    class="text-center w-10 inline outline-none"
+                                                    class="text-center w-10 inline outline-none pointer-events-none font-bold"
                                                     readonly
                                                     value="{{ $this->sumTotalOf('hours_knocked', $this->totals[$key], $this->weeklyPeriods[$key]) }}"
                                                 />
@@ -494,7 +500,7 @@
                                             <span name="pipe">
                                                 <input
                                                     type="text"
-                                                    class="text-center w-10 inline outline-none"
+                                                    class="text-center w-10 inline outline-none pointer-events-none font-bold"
                                                     readonly
                                                     value="{{ $this->sumTotalOf('sets', $this->totals[$key], $this->weeklyPeriods[$key]) }}"
                                                 />
@@ -502,7 +508,7 @@
                                             <span name="pipe">
                                                 <input
                                                     type="text"
-                                                    class="text-center w-10 inline outline-none"
+                                                    class="text-center w-10 inline outline-none pointer-events-none font-bold"
                                                     readonly
                                                     value="{{ $this->sumTotalOf('sats', $this->totals[$key], $this->weeklyPeriods[$key]) }}"
                                                 />
@@ -510,7 +516,7 @@
                                             <span name="pipe">
                                                 <input
                                                     type="text"
-                                                    class="text-center w-10 inline outline-none"
+                                                    class="text-center w-10 inline outline-none pointer-events-none font-bold"
                                                     readonly
                                                     value="{{ $this->sumTotalOf('set_closes', $this->totals[$key], $this->weeklyPeriods[$key]) }}"
                                                 />
@@ -518,7 +524,7 @@
                                             <span name="pipe">
                                                 <input
                                                     type="text"
-                                                    class="text-center w-10 inline outline-none"
+                                                    class="text-center w-10 inline outline-none pointer-events-none font-bold"
                                                     readonly
                                                     value="{{ $this->sumTotalOf('closer_sits', $this->totals[$key], $this->weeklyPeriods[$key]) }}"
                                                 />
@@ -526,7 +532,7 @@
                                             <span name="pipe">
                                                 <input
                                                     type="text"
-                                                    class="text-center w-10 inline outline-none"
+                                                    class="text-center w-10 inline outline-none pointer-events-none font-bold"
                                                     readonly
                                                     value="{{ $this->sumTotalOf('closes', $this->totals[$key], $this->weeklyPeriods[$key]) }}"
                                                 />
