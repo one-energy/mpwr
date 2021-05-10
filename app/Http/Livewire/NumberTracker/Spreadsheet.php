@@ -226,6 +226,7 @@ class Spreadsheet extends Component
     {
         return User::query()
             ->where('office_id', $this->selectedOffice)
+            ->whereNotIn('role', ['Admin', 'Owner'])
             ->with([
                 'dailyNumbers' => function ($query) {
                     $query
@@ -237,9 +238,6 @@ class Spreadsheet extends Component
                         ->orderBy('date', 'asc');
                 },
             ])
-            ->whereHas('dailyNumbers', function ($query) {
-                $query->where('office_id', $this->selectedOffice);
-            })
             ->get()
             ->map(function (User $user) {
                 $user->dailyNumbers = $user->dailyNumbers->groupBy(function (DailyNumber $dailyNumber) {
