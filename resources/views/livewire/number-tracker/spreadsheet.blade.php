@@ -36,10 +36,10 @@
 
             span[name="pipe"]:not(:last-child)::after {
                 content: "";
-                top: -15px;
+                top: -16px;
                 bottom: 0;
                 position: absolute;
-                height: 51px;
+                height: 54px;
                 border-right: 2px solid #E5E7EB;
                 display: inline;
             }
