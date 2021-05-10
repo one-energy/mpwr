@@ -111,7 +111,7 @@ class Create extends Component
 
         $this->validate();
         $salesRep = User::find($this->customer->sales_rep_id);
-
+        
         $this->customer->date_of_sale                = Carbon::parse($this->customer->date_of_sale);
         $this->customer->opened_by_id                = user()->id;
         $this->customer->sales_rep_recruiter_id      = $salesRep->recruiter_id;
@@ -134,7 +134,6 @@ class Create extends Component
 
         DB::transaction(function () {
             $this->customer->save();
-            // dd($this->customer->sales_rep_id);
             if ($this->customer->term_id) {
                 $this->customer->userEniumPoint()->create([
                     'user_sales_rep_id' => $this->customer->sales_rep_id,

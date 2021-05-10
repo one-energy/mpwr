@@ -2,7 +2,10 @@
 
 namespace Tests\Feature\Profile;
 
+use App\Http\Livewire\Customer\Create;
 use App\Models\Customer;
+use App\Models\Financer;
+use App\Models\Term;
 use App\Models\User;
 use App\Models\UserCustomersEniumPoints;
 use App\Models\UserEniumPointLevel;
@@ -11,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class EniumPointsTest extends TestCase
@@ -106,10 +110,9 @@ class EniumPointsTest extends TestCase
         $this->assertEquals($jhon->level()->level, 5);
     }
 
+    /** @test */
     public function it_should_show_enium_sum_points()
     {
-        $response = $this->get('/');
-
         $jhon     = User::factory()->create(['role' => 'Sales Rep']);
         $customer = Customer::factory()->create([
             'sales_rep_id' => $jhon->id
@@ -120,6 +123,7 @@ class EniumPointsTest extends TestCase
             'customer_id'       => $customer->id 
         ]);
 
-        $response->assertSee($this->userEniumPoints->sum('points'));
+        $this->get('/')
+            ->assertSee($this->userEniumPoints->sum('points'));
     }
 }

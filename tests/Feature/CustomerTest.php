@@ -19,7 +19,7 @@ use Tests\TestCase;
 
 class CustomerTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     public User $user;
 
