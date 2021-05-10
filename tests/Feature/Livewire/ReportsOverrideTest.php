@@ -6,7 +6,6 @@ use App\Http\Livewire\Reports\ReportsOverview;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Livewire\Livewire;
@@ -14,7 +13,7 @@ use Tests\TestCase;
 
 class ReportsOverrideTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private User $admin;
     private User $departmentManager;

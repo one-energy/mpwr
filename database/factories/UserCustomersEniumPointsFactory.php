@@ -24,9 +24,9 @@ class UserCustomersEniumPointsFactory extends Factory
     public function definition()
     {
         return [
-            'user_id'     => User::factory(),
-            'customer_id' => Customer::factory(),
-            'enium_points_of_sale' => $this->faker->randomNumber()
+            'user_sales_rep_id' => User::factory(),
+            'customer_id'       => Customer::factory(),
+            'points'            => $this->faker->randomNumber()
         ];
     }
 }

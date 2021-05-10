@@ -206,12 +206,12 @@ class User extends Authenticatable implements MustVerifyEmail
     public function level()
     {
         $eniumPoints = $this->eniumPoints();
-
-        return UserEniumPointLevel::where('point', '>=', $eniumPoints)->first();
+        return UserEniumPointLevel::where('point', '>=', $eniumPoints)->first() ?? UserEniumPointLevel::LAST_LEVEL;
     }
 
     public function eniumPoints()
     {
+        // dd($this->customersEniumPoints()->get());
         return $this->customersEniumPoints()->whereHas('customer', function ($query) {
             $query->where('is_active', true)
                 ->where('panel_sold', true)

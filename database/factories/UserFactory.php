@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Department;
-use App\Models\Office;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Storage;

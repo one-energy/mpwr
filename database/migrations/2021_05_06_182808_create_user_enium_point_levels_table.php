@@ -16,7 +16,7 @@ class CreateUserEniumPointLevelsTable extends Migration
         Schema::create('user_enium_point_levels', function (Blueprint $table) {
             $table->id();
             $table->integer('level');
-            $table->decimal('point');
+            $table->integer('point');
             $table->decimal('monthly_residual');
             $table->timestamps();
         });
