@@ -141,6 +141,7 @@ class Scoreboard extends Component
         }
 
         $this->top10Doors = $userQuery
+            ->with('office')
             ->select(DB::raw('sum(daily_numbers.doors) as doors, users.office_id, users.first_name, users.last_name, users.id'))
             ->groupBy('users.id')
             ->whereNotNull('daily_numbers.doors')
@@ -171,6 +172,7 @@ class Scoreboard extends Component
         }
 
         $this->top10Hours = $query
+            ->with('office')
             ->select(DB::raw('sum(daily_numbers.hours) as hours, users.office_id, users.first_name, users.last_name, users.id'))
             ->groupBy('users.id')
             ->whereNotNull('daily_numbers.hours')
@@ -201,6 +203,7 @@ class Scoreboard extends Component
         }
 
         $this->top10Sets = $query
+            ->with('office')
             ->select(DB::raw('sum(daily_numbers.sets) as sets, users.office_id, users.first_name, users.last_name, users.id'))
             ->groupBy('users.id')
             ->whereNotNull('daily_numbers.sets')
@@ -231,6 +234,7 @@ class Scoreboard extends Component
         }
 
         $this->top10SetCloses = $query
+            ->with('office')
             ->select(DB::raw('sum(daily_numbers.set_closes) as set_closes, users.office_id, users.first_name, users.last_name, users.id'))
             ->groupBy('users.id')
             ->whereNotNull('daily_numbers.set_closes')
@@ -258,6 +262,7 @@ class Scoreboard extends Component
         }
 
         $this->top10Closes = $query
+            ->with('office')
             ->select(DB::raw('sum(daily_numbers.closes) as closes, users.office_id, users.first_name, users.last_name, users.id'))
             ->groupBy('users.id')
             ->whereNotNull('daily_numbers.closes')

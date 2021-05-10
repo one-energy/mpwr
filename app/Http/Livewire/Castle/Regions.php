@@ -2,11 +2,13 @@
 
 namespace App\Http\Livewire\Castle;
 
+use App\Models\DailyNumber;
 use App\Models\Department;
 use App\Models\Region;
 use App\Models\SectionFile;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
+use App\Models\User;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -77,8 +79,6 @@ class Regions extends Component
         }
 
         DB::transaction(function () use ($region) {
-            $region->delete();
-
             $parentSection = TrainingPageSection::query()
                 ->where(function (Builder $query) use ($region) {
                     $query->where('department_id', $region->department_id)
@@ -88,17 +88,28 @@ class Regions extends Component
 
             TrainingPageContent::query()
                 ->whereIn('training_page_section_id', $region->trainingPageSections()->select('id')->pluck('id')->toArray())
-                ->update(['training_page_section_id' => $parentSection->id]);
+                ->update(['training_page_section_id' => $parentSection?->id]);
 
             SectionFile::query()
                 ->whereIn('training_page_section_id', $region->trainingPageSections()->select('id')->pluck('id')->toArray())
-                ->update(['training_page_section_id' => $parentSection->id]);
+                ->update(['training_page_section_id' => $parentSection?->id]);
 
             $region
                 ->trainingPageSections()
                 ->whereNotNull('parent_id')
                 ->where('department_folder', false)
                 ->delete();
+
+            DailyNumber::whereHas(
+                'user.office',
+                fn (Builder $query) => $query->whereIn('id', $region->offices->pluck('id'))
+            )->delete();
+
+            User::whereIn('office_id', $region->offices->pluck('id'))->delete();
+
+            $region->offices()->delete();
+
+            $region->delete();
         });
 
         $this->dispatchBrowserEvent('close-modal');
