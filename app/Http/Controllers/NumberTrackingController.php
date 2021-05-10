@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Facades\Actions\UpdateOrCreateNumberTracking;
 use App\Models\DailyNumber;
-use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class NumberTrackingController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
         $this->authorize('viewList', DailyNumber::class);
 
@@ -42,6 +42,8 @@ class NumberTrackingController extends Controller
 
     public function spreadsheet()
     {
+        abort_if(user()->hasAnyRole(['Setter', 'Sales Rep']), Response::HTTP_NOT_FOUND);
+
         return view('number-tracking.spreadsheet');
     }
 }
