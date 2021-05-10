@@ -31,13 +31,15 @@
     <div class="flex justify-between items-center mt-6">
         <h2 class="text-lg text-gray-900">Total Overviews</h2>
 
-        <a
-            href="{{ route('number-tracking.spreadsheet') }}"
-            class="py-2 px-3 focus:outline-none rounded shadow-md text-white bg-green-base"
-            title="Spreadsheet Page"
-        >
-            <x-svg.spreadsheet class="w-5 h-5 text-white fill-current" />
-        </a>
+        @if (user()->notHaveRoles(['Setter', 'Sales Rep']))
+            <a
+                href="{{ route('number-tracking.spreadsheet') }}"
+                class="py-2 px-3 focus:outline-none rounded shadow-md text-white bg-green-base"
+                title="Spreadsheet Page"
+            >
+                <x-svg.spreadsheet class="w-5 h-5 text-white fill-current" />
+            </a>
+        @endif
     </div>
 
     <div class="flex justify-between mt-3">
@@ -108,6 +110,112 @@
                 </div>
                 <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
             </div>
+
+            <div class="col-span-2 xl:col-span-2 border-2 border-gray-200 rounded-md p-3 space-y-1">
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold uppercase">
+                    Hours Worked
+                </div>
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold">
+                    {{$this->getNumberTrackerSumOf('hoursWorked')}}
+                </div>
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
+                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('hoursWorked') >= 0)
+                        <x-svg.arrow-up class="text-green-base"/>
+                    @else
+                        <x-svg.arrow-down class="text-red-600"/>
+                    @endif
+                    <span class="
+                        @if($this->getNumberTrackerDifferenceToLasNumbersOf('hoursWorked') >= 0)
+                            text-green-base
+                        @else
+                            text-red-600
+                        @endif
+                        text-base
+                    ">
+                        {{$this->getNumberTrackerDifferenceToLasNumbersOf('hoursWorked')}}
+                    </span>
+                </div>
+                <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
+            </div>
+            <div class="col-span-2 xl:col-span-2 border-2 border-gray-200 rounded-md p-3 space-y-1" >
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">
+                    Hours Knocked
+                </div>
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold text-gray-900">
+                    {{$this->getNumberTrackerSumOf('hoursKnocked')}}
+                </div>
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
+                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('hoursKnocked') >= 0)
+                        <x-svg.arrow-up class="text-green-base"/>
+                    @else
+                        <x-svg.arrow-down class="text-red-600"/>
+                    @endif
+                    <span class="
+                        @if($this->getNumberTrackerDifferenceToLasNumbersOf('hoursKnocked') >= 0)
+                            text-green-base
+                        @else
+                            text-red-600
+                        @endif
+                        text-base
+                    ">
+                        {{$this->getNumberTrackerDifferenceToLasNumbersOf('hoursKnocked')}}
+                    </span>
+                </div>
+                <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
+            </div>
+            <div class="col-span-2 xl:col-span-2 border-2 border-gray-200 rounded-md p-3 space-y-1" >
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">
+                    Sats
+                </div>
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold text-gray-900">
+                    {{$this->getNumberTrackerSumOf('sats')}}
+                </div>
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
+                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('sats') >= 0)
+                        <x-svg.arrow-up class="text-green-base"/>
+                    @else
+                        <x-svg.arrow-down class="text-red-600"/>
+                    @endif
+                    <span class="
+                        @if($this->getNumberTrackerDifferenceToLasNumbersOf('sats')>= 0)
+                            text-green-base
+                        @else
+                            text-red-600
+                        @endif
+                        text-base
+                    ">
+                        {{$this->getNumberTrackerDifferenceToLasNumbersOf('sats')}}
+                    </span>
+                </div>
+                <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
+            </div>
+            <div class="col-span-2 xl:col-span-2 border-2 border-gray-200 rounded-md p-3 space-y-1" >
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">
+                    Closer Sits
+                </div>
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold text-gray-900">
+                    {{$this->getNumberTrackerSumOf('closerSits')}}
+                </div>
+                <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
+                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('closerSits') >= 0)
+                        <x-svg.arrow-up class="text-green-base"/>
+                    @else
+                        <x-svg.arrow-down class="text-red-600"/>
+                    @endif
+                    <span class="
+                        @if($this->getNumberTrackerDifferenceToLasNumbersOf('closerSits')>= 0)
+                            text-green-base
+                        @else
+                            text-red-600
+                        @endif
+                        text-base
+                    ">
+                        {{$this->getNumberTrackerDifferenceToLasNumbersOf('closerSits')}}
+                    </span>
+                </div>
+                <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
+            </div>
+
             <div class="col-span-3 xl:col-span-3 border-2 border-gray-200 rounded-md p-3 space-y-1" >
                 <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">Sits</div>
                 <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="grid grid-cols-4 gap-1">
@@ -259,9 +367,20 @@
                                     <x-table-accordion.th-searchable wire:click="initRegionsData" class="table-cell" by="closes" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Closes')
                                     </x-table-accordion.th-searchable>
+                                    <x-table-accordion.th-searchable wire:click="initRegionsData" class="table-cell" by="hours_worked" :sortedBy="$sortBy" :direction="$sortDirection">
+                                        @lang('Hours Worked')
+                                    </x-table-accordion.th-searchable>
+                                    <x-table-accordion.th-searchable wire:click="initRegionsData" class="table-cell" by="hours_knocked" :sortedBy="$sortBy" :direction="$sortDirection">
+                                        @lang('Hours Knocked')
+                                    </x-table-accordion.th-searchable>
+                                    <x-table-accordion.th-searchable wire:click="initRegionsData" class="table-cell" by="sats" :sortedBy="$sortBy" :direction="$sortDirection">
+                                        @lang('Sats')
+                                    </x-table-accordion.th-searchable>
+                                    <x-table-accordion.th-searchable wire:click="initRegionsData" class="table-cell" by="closer_sits" :sortedBy="$sortBy" :direction="$sortDirection">
+                                        @lang('Closer Sits')
+                                    </x-table-accordion.th-searchable>
                                 </x-slot>
                                 <x-slot name="body">
-
                                     @foreach($itsOpenRegions as $regionIndex => $region)
                                         <div class="table-row cursor-pointer hover:bg-gray-100 @if($region['itsOpen']) bg-gray-200 @endif"
                                             wire:click.stop="collapseRegion({{$regionIndex}})" >
@@ -271,14 +390,14 @@
                                                         wire:model="itsOpenRegions.{{$regionIndex}}.selected"
                                                         type="checkbox" x-on:change="$wire.selectRegion({{$regionIndex}})" wire:click.stop="" >
                                                 </div>
-                                                <div class="flex items-center mr-2 w-6 h-6"" wire:loading>
+                                                <div class="flex items-center mr-2 w-6 h-6" wire:loading>
                                                     <x-svg.spinner
                                                         color="#9fa6b2"
                                                         class="self-center ">
                                                     </x-svg.spinner>
                                                 </div>
                                                 <label>{{$region['name']}}</label>
-                                            </x-table-accordion.td-arrow>
+                                            </x-table-accordion.default-td-arrow>
                                             <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
                                                 <x-svg.spinner
                                                     color="#9fa6b2"
@@ -349,6 +468,46 @@
                                                     {{$this->sumRegionNumberTracker($region, 'closes')}}
                                                 </div>
                                             </x-table-accordion.td>
+                                            <x-table-accordion.td class="table-cell" by="hours_worked" sortedBy="$sortBy">
+                                                <x-svg.spinner
+                                                    color="#9fa6b2"
+                                                    class="self-center hidden w-5"
+                                                    wire:loading wire:target="initRegionsData">
+                                                </x-svg.spinner>
+                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                    {{$this->sumRegionNumberTracker($region, 'hours_worked')}}
+                                                </div>
+                                            </x-table-accordion.td>
+                                            <x-table-accordion.td class="table-cell" by="hours_knocked" sortedBy="$sortBy">
+                                                <x-svg.spinner
+                                                    color="#9fa6b2"
+                                                    class="self-center hidden w-5"
+                                                    wire:loading wire:target="initRegionsData">
+                                                </x-svg.spinner>
+                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                    {{$this->sumRegionNumberTracker($region, 'hours_knocked')}}
+                                                </div>
+                                            </x-table-accordion.td>
+                                            <x-table-accordion.td class="table-cell" by="sats" sortedBy="$sortBy">
+                                                <x-svg.spinner
+                                                    color="#9fa6b2"
+                                                    class="self-center hidden w-5"
+                                                    wire:loading wire:target="initRegionsData">
+                                                </x-svg.spinner>
+                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                    {{$this->sumRegionNumberTracker($region, 'sats')}}
+                                                </div>
+                                            </x-table-accordion.td>
+                                            <x-table-accordion.td class="table-cell" by="closer_sits" sortedBy="$sortBy">
+                                                <x-svg.spinner
+                                                    color="#9fa6b2"
+                                                    class="self-center hidden w-5"
+                                                    wire:loading wire:target="initRegionsData">
+                                                </x-svg.spinner>
+                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                    {{$this->sumRegionNumberTracker($region, 'closer_sits')}}
+                                                </div>
+                                            </x-table-accordion.td>
                                         </div>
                                         @if($region['itsOpen'])
                                             @forelse($region['sortedOffices'] as $officeIndex => $office)
@@ -361,7 +520,7 @@
                                                                     type="checkbox" wire:change="selectOffice({{$regionIndex}}, {{$officeIndex}})" wire:click.stop=""
                                                                     wire:model="itsOpenRegions.{{$regionIndex}}.sortedOffices.{{$officeIndex}}.selected">
                                                             </div>
-                                                            <div class="flex items-center mr-2 w-6 h-6"" wire:loading>
+                                                            <div class="flex items-center mr-2 w-6 h-6" wire:loading>
                                                                 <x-svg.spinner
                                                                     color="#9fa6b2"
                                                                     class="self-center ">
@@ -369,7 +528,7 @@
                                                             </div>
                                                             <label>{{$office['name']}}</label>
                                                         </div>
-                                                    </x-table-accordion.td-arrow>
+                                                    </x-table-accordion.child-td-arrow>
                                                     <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
                                                         <x-svg.spinner
                                                             color="#9fa6b2"
@@ -438,6 +597,46 @@
                                                         </x-svg.spinner>
                                                         <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                             {{$this->sumOfficeNumberTracker($office, 'closes')}}
+                                                        </div>
+                                                    </x-table-accordion.td>
+                                                    <x-table-accordion.td class="table-cell" by="hours_worked" sortedBy="$sortBy">
+                                                        <x-svg.spinner
+                                                            color="#9fa6b2"
+                                                            class="self-center hidden w-5"
+                                                            wire:loading wire:target="initRegionsData">
+                                                        </x-svg.spinner>
+                                                        <div wire:loading.remove wire:target="initRegionsData">
+                                                            {{$this->sumOfficeNumberTracker($office, 'hours_worked')}}
+                                                        </div>
+                                                    </x-table-accordion.td>
+                                                    <x-table-accordion.td class="table-cell" by="hours_knocked" sortedBy="$sortBy">
+                                                        <x-svg.spinner
+                                                            color="#9fa6b2"
+                                                            class="self-center hidden w-5"
+                                                            wire:loading wire:target="initRegionsData">
+                                                        </x-svg.spinner>
+                                                        <div wire:loading.remove wire:target="initRegionsData">
+                                                            {{$this->sumOfficeNumberTracker($office, 'hours_knocked')}}
+                                                        </div>
+                                                    </x-table-accordion.td>
+                                                    <x-table-accordion.td class="table-cell" by="sats" sortedBy="$sortBy">
+                                                        <x-svg.spinner
+                                                            color="#9fa6b2"
+                                                            class="self-center hidden w-5"
+                                                            wire:loading wire:target="initRegionsData">
+                                                        </x-svg.spinner>
+                                                        <div wire:loading.remove wire:target="initRegionsData">
+                                                            {{$this->sumOfficeNumberTracker($office, 'sats')}}
+                                                        </div>
+                                                    </x-table-accordion.td>
+                                                    <x-table-accordion.td class="table-cell" by="closer_sits" sortedBy="$sortBy">
+                                                        <x-svg.spinner
+                                                            color="#9fa6b2"
+                                                            class="self-center hidden w-5"
+                                                            wire:loading wire:target="initRegionsData">
+                                                        </x-svg.spinner>
+                                                        <div wire:loading.remove wire:target="initRegionsData">
+                                                            {{$this->sumOfficeNumberTracker($office, 'closer_sits')}}
                                                         </div>
                                                     </x-table-accordion.td>
                                                 </div>
@@ -533,6 +732,47 @@
                                                                 </x-svg.spinner>
                                                                 <div class="@if($dailyNumber['deleted_at'] != null || $dailyNumber['user']['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                                     {{$dailyNumber['closes'] ?? 0}}
+                                                                </div>
+                                                            </x-table-accordion.td>
+
+                                                            <x-table-accordion.td class="table-cell" by="hours_worked" sortedBy="$sortBy">
+                                                                <x-svg.spinner
+                                                                    color="#9fa6b2"
+                                                                    class="self-center hidden w-5"
+                                                                    wire:loading wire:target="initRegionsData">
+                                                                </x-svg.spinner>
+                                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                                    {{$dailyNumber['hours_worked'] ?? 0}}
+                                                                </div>
+                                                            </x-table-accordion.td>
+                                                            <x-table-accordion.td class="table-cell" by="hours_knocked" sortedBy="$sortBy">
+                                                                <x-svg.spinner
+                                                                    color="#9fa6b2"
+                                                                    class="self-center hidden w-5"
+                                                                    wire:loading wire:target="initRegionsData">
+                                                                </x-svg.spinner>
+                                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                                    {{$dailyNumber['hours_knocked'] ?? 0}}
+                                                                </div>
+                                                            </x-table-accordion.td>
+                                                            <x-table-accordion.td class="table-cell" by="sats" sortedBy="$sortBy">
+                                                                <x-svg.spinner
+                                                                    color="#9fa6b2"
+                                                                    class="self-center hidden w-5"
+                                                                    wire:loading wire:target="initRegionsData">
+                                                                </x-svg.spinner>
+                                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                                    {{$dailyNumber['sats'] ?? 0}}
+                                                                </div>
+                                                            </x-table-accordion.td>
+                                                            <x-table-accordion.td class="table-cell" by="closer_sits" sortedBy="$sortBy">
+                                                                <x-svg.spinner
+                                                                    color="#9fa6b2"
+                                                                    class="self-center hidden w-5"
+                                                                    wire:loading wire:target="initRegionsData">
+                                                                </x-svg.spinner>
+                                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                                    {{$dailyNumber['closer_sits'] ?? 0}}
                                                                 </div>
                                                             </x-table-accordion.td>
                                                         </div>
