@@ -8,6 +8,7 @@ use App\Models\Office;
 use App\Models\User;
 use App\Role\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Collection;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,7 +19,7 @@ class DestroyOfficeTest extends TestCase
     /** @test */
     public function it_should_soft_delete_a_office()
     {
-        $john = User::factory()->create(['role' => 'Admin']);
+        $john = User::factory()->create(['role' => Role::ADMIN]);
 
         $office = Office::factory()->create();
 
@@ -35,18 +36,18 @@ class DestroyOfficeTest extends TestCase
     /** @test */
     public function it_should_soft_delete_daily_numbers_when_delete_an_office()
     {
-        $john   = User::factory()->create(['role' => 'Admin']);
+        $john   = User::factory()->create(['role' => Role::ADMIN]);
         $office = Office::factory()->create();
 
         $mary         = User::factory()->create([
-            'role'      => 'Setter',
+            'role'      => Role::SETTER,
             'office_id' => $office->id,
         ]);
         $dailyNumbers = DailyNumber::factory()
             ->times(2)
             ->create(['user_id' => $mary->id]);
 
-        $dummyUser    = User::factory()->create(['role' => 'Setter']);
+        $dummyUser    = User::factory()->create(['role' => Role::SETTER]);
         $dummyNumbers = DailyNumber::factory()
             ->times(2)
             ->create(['user_id' => $dummyUser->id]);
@@ -67,7 +68,7 @@ class DestroyOfficeTest extends TestCase
     /** @test */
     public function it_should_soft_delete_all_users_from_the_office_that_is_being_deleted()
     {
-        $john   = User::factory()->create(['role' => 'Admin']);
+        $john   = User::factory()->create(['role' => Role::ADMIN]);
         $office = Office::factory()->create();
 
         /** @var Collection */
@@ -84,7 +85,7 @@ class DestroyOfficeTest extends TestCase
 
         $this->assertSoftDeleted($office);
 
-        $dummyUsers->each(fn (User $user) => $this->assertSoftDeleted($user));
+        $dummyUsers->each(fn(User $user) => $this->assertSoftDeleted($user));
     }
 
     /** @test */

@@ -30,28 +30,26 @@ class DestroyDepartmentTest extends TestCase
     /** @test */
     public function it_should_soft_delete_a_department()
     {
-        $mary       = User::factory()->create(['role' => 'Department Manager']);
-        $department = Department::factory()->create([
-            'department_manager_id' => $mary->id,
-        ]);
+        $mary       = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+        $department = Department::factory()->create();
+        $department->managers()->attach($mary->id);
 
         $this->actingAs($this->admin);
+
+        $this->assertDatabaseCount('user_managed_departments', 1);
 
         Livewire::test(Departments::class)
             ->call('setDeletingDepartment', $department)
             ->call('destroy');
 
         $this->assertSoftDeleted($department);
+        $this->assertDatabaseCount('user_managed_departments', 0);
     }
 
     /** @test */
     public function it_should_soft_delete_regions_when_delete_a_department()
     {
-        $mary       = User::factory()->create(['role' => 'Department Manager']);
-        $department = Department::factory()->create([
-            'department_manager_id' => $mary->id,
-        ]);
-
+        $department  = Department::factory()->create();
         $dummyRegion = Region::factory()->create();
 
         [$firstRegion, $secondRegion] = Region::factory()
@@ -76,11 +74,7 @@ class DestroyDepartmentTest extends TestCase
     /** @test */
     public function it_should_soft_delete_offices_and_regions_when_delete_a_department()
     {
-        $mary       = User::factory()->create(['role' => 'Department Manager']);
-        $department = Department::factory()->create([
-            'department_manager_id' => $mary->id,
-        ]);
-
+        $department  = Department::factory()->create();
         $dummyRegion = Region::factory()->create();
         $dummyOffice = Office::factory()->create();
 
@@ -112,11 +106,7 @@ class DestroyDepartmentTest extends TestCase
     /** @test */
     public function it_should_soft_delete_daily_numbers_when_delete_a_department()
     {
-        $john       = User::factory()->create(['role' => 'Admin']);
-        $mary       = User::factory()->create(['role' => 'Department Manager']);
-        $department = Department::factory()->create([
-            'department_manager_id' => $mary->id,
-        ]);
+        $department = Department::factory()->create();
 
         [$firstRegion, $secondRegion] = Region::factory()
             ->times(2)
@@ -131,7 +121,7 @@ class DestroyDepartmentTest extends TestCase
         $zackDailyNumbers = $this->makeDailyNumberForUser($zack);
         $jackDailyNumbers = $this->makeDailyNumberForUser($jack);
 
-        $this->actingAs($john);
+        $this->actingAs($this->admin);
 
         Livewire::test(Departments::class)
             ->set('deletingName', $department->name)
@@ -152,18 +142,14 @@ class DestroyDepartmentTest extends TestCase
     /** @test */
     public function it_should_soft_delete_all_users_from_the_department_that_is_being_deleted()
     {
-        $john       = User::factory()->create(['role' => 'Admin']);
-        $mary       = User::factory()->create(['role' => 'Department Manager']);
-        $department = Department::factory()->create([
-            'department_manager_id' => $mary->id,
-        ]);
+        $department = Department::factory()->create();
 
         /** @var Collection */
         $dummyUsers = User::factory()
             ->times(5)
             ->create(['department_id' => $department->id]);
 
-        $this->actingAs($john);
+        $this->actingAs($this->admin);
 
         Livewire::test(Departments::class)
             ->set('deletingName', $department->name)
@@ -172,7 +158,7 @@ class DestroyDepartmentTest extends TestCase
 
         $this->assertSoftDeleted($department);
 
-        $dummyUsers->each(fn (User $user) => $this->assertSoftDeleted($user));
+        $dummyUsers->each(fn(User $user) => $this->assertSoftDeleted($user));
     }
 
     /** @test */
@@ -199,9 +185,7 @@ class DestroyDepartmentTest extends TestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseCount('user_managed_departments', 0);
-        $this->assertDatabaseMissing($department->getTable(), [
-            'id' => $department->id,
-        ]);
+        $this->assertSoftDeleted($department);
     }
 
     private function makeDailyNumberForUser(User $user, int $times = 2)
