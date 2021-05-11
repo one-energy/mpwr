@@ -1,4 +1,4 @@
-@props(['trackers', 'pills'])
+@props(['trackers','pills'])
 
 <section class="p-4 border-2 border-gray-200 rounded-md">
     <div class="flex text-center mb-5">

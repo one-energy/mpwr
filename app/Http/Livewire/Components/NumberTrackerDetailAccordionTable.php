@@ -20,6 +20,12 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public Collection $unselectedUserDailyNumbers;
 
+    public Collection $openedRegions;
+
+    public Collection $openedOffices;
+
+    public bool $deleteds = false;
+
     public $totals;
 
     public string $period;
@@ -31,6 +37,8 @@ class NumberTrackerDetailAccordionTable extends Component
     public function mount()
     {
         $this->sortBy = 'doors';
+        $this->initUnselectedCollections();
+        $this->initOpenedCollections();
         $this->initRegionsData();
     }
 
@@ -41,7 +49,6 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function initRegionsData()
     {
-        $this->initUnselectedCollections();
         $this->addItsOpen();
         $this->sumTotal();
     }
@@ -53,6 +60,13 @@ class NumberTrackerDetailAccordionTable extends Component
         $this->unselectedUserDailyNumbers = collect([]);
     }
 
+    public function initOpenedCollections()
+    {
+        $this->openedRegions          = collect([]);
+        $this->openedOffices          = collect([]);
+        $this->openedUserDailyNumbers = collect([]);
+    }
+
     public function sortBy()
     {
         return 'doors';
@@ -61,15 +75,15 @@ class NumberTrackerDetailAccordionTable extends Component
     public function addItsOpen()
     {
         $this->itsOpenRegions = $this->regions->map(function ($region) {
-            $region->itsOpen  = false;
-            $region->selected = true;
+            $region->itsOpen  = $this->openedRegions->contains($region->id);
+            $region->selected = !$this->unselectedRegions->contains($region->id);
             $region->sortedOffices = $region->offices->map(function ($office) {
-                $office->itsOpen = false;
-                $office->selected = true;
-                $office->sortedDailyNumbers = $office->dailyNumbers->map(function ($user) {
-                    $user->selected = true;
+                $office->itsOpen = $this->openedRegions->contains($office->id);
+                $office->selected = !$this->unselectedOffices->contains($office->id);
+                $office->sortedDailyNumbers = $office->dailyNumbers->map(function ($dailyNumberUser) {
+                    $dailyNumberUser->selected = !$this->unselectedOffices->contains($dailyNumberUser->id);
 
-                    return $user;
+                    return $dailyNumberUser;
                 })->toArray();
 
                 return $office;
@@ -81,12 +95,32 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function getRegionsProperty()
     {
-        $query = Region::with(['offices.dailyNumbers' => function ($query) {
-            $query
-                ->inPeriod($this->period, new Carbon($this->selectedDate))
-                ->with(['user' => function($query) {
-                    $query->withTrashed();
+        $query = Region::when($this->deleteds, function ($query) {
+            $query->withTrashed();
+        })->with(['offices' => function ($query) {
+            $query->when($this->deleteds, function ($query) {
+                $query->withTrashed()
+                    ->where(function($query) {
+                        $query->whereHas('dailyNumbers', function ($query) {
+                            $query->inPeriod($this->period, new Carbon($this->selectedDate))->withTrashed();
+                        })
+                        ->whereNotNull('deleted_at');
+                    })
+                    ->orWhereNull('deleted_at');
+            })
+            ->with(['dailyNumbers' => function ($query) {
+                $query->with(['user' => function($query) {
+                    $query->when($this->deleteds, function ($query) {
+                        $query->withTrashed();
+                    });
                 }])
+                ->when($this->deleteds, function ($query) {
+                    $query->withTrashed();
+                })
+                ->when(!$this->deleteds, function ($query) {
+                    $query->has('user');
+                })
+                ->inPeriod($this->period, new Carbon($this->selectedDate))
                 ->groupBy('user_id')
                 ->selectRaw('*')
                 ->selectRaw('SUM(doors) as doors')
@@ -96,13 +130,8 @@ class NumberTrackerDetailAccordionTable extends Component
                 ->selectRaw('SUM(sits) as sits')
                 ->selectRaw('SUM(set_closes) as set_closes')
                 ->selectRaw('SUM(closes) as closes');
-        }])->whereHas('offices.dailyNumbers', function ($query) {
-            $query
-                ->inPeriod($this->period, new Carbon($this->selectedDate))
-                ->with(['user' => function($query) {
-                    $query->withTrashed();
-                }]);
-        });
+            }]);
+        }]);
 
         if (user()->hasAnyRole(['Admin', 'Owner'])) {
             $regions = $query->get();
@@ -130,7 +159,10 @@ class NumberTrackerDetailAccordionTable extends Component
     public function getLastRegionsProperty()
     {
         $query = Region::with(['offices.dailyNumbers' => function ($query) {
-            $query->inLastPeriod($this->period, new Carbon($this->selectedDate));
+            $query->inLastPeriod($this->period, new Carbon($this->selectedDate))
+                ->when($this->deleteds, function ($query) {
+                    $query->withTrashed();
+                });
         }]);
 
         if (user()->hasAnyRole(['Admin', 'Owner'])) {
@@ -175,6 +207,11 @@ class NumberTrackerDetailAccordionTable extends Component
                 return $office['sortedDailyNumbers'] ? $collectionDailyNumbers->sum($this->sortBy) : 0;
             })->values();
         }
+        $this->addOrRemoveOf(
+            $this->openedRegions,
+            $this->itsOpenRegions[$regionIndex]['id'],
+            !$this->itsOpenRegions[$regionIndex]['itsOpen']
+        );
         $this->itsOpenRegions[$regionIndex]['itsOpen'] = !$this->itsOpenRegions[$regionIndex]['itsOpen'];
     }
 
@@ -186,6 +223,11 @@ class NumberTrackerDetailAccordionTable extends Component
         } else {
             $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedDailyNumbers'] = $collectionDailyNumbers->sortByDesc($this->sortBy)->values();
         }
+        $this->addOrRemoveOf(
+            $this->openedRegions,
+            $this->itsOpenRegions[$regionIndex]['id'],
+            !$this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['itsOpen']
+        );
         $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['itsOpen'] = !$this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['itsOpen'];
     }
 
@@ -300,7 +342,8 @@ class NumberTrackerDetailAccordionTable extends Component
             'updateLeaderBoard',
             $this->unselectedRegions,
             $this->unselectedOffices,
-            $this->unselectedUserDailyNumbers
+            $this->unselectedUserDailyNumbers,
+            $this->deleteds
         );
 
         $regions      = collect($this->itsOpenRegions);
