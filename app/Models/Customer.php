@@ -264,9 +264,4 @@ class Customer extends Model
                 $join->on('financings.id', '=', 'financing_id');
             });
     }
-
-    public function scopeInYear(Builder $query)
-    {
-        return $query->whereYear('date_of_sale', Carbon::now());
-    }
 }

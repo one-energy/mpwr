@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
 class UserCustomersEniumPoints extends Model
 {
@@ -20,5 +22,11 @@ class UserCustomersEniumPoints extends Model
     public function customer()
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function scopeInPeriod(Builder $query)
+    {
+        return $query->whereDate('set_date', '<=', Carbon::now())
+            ->whereDate('expiration_date', '>=', Carbon::now());
     }
 }
