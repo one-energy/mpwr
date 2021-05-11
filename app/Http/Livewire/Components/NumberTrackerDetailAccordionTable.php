@@ -95,12 +95,14 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function getRegionsProperty()
     {
-        $query = Region::with(['offices' => function ($query) {
+        $query = Region::when($this->deleteds, function ($query) {
+            $query->withTrashed();
+        })->with(['offices' => function ($query) {
             $query->when($this->deleteds, function ($query) {
                 $query->withTrashed()
                     ->where(function($query) {
                         $query->whereHas('dailyNumbers', function ($query) {
-                            $query->inPeriod($this->period, new Carbon($this->selectedDate));
+                            $query->inPeriod($this->period, new Carbon($this->selectedDate))->withTrashed();
                         })
                         ->whereNotNull('deleted_at');
                     })

@@ -537,7 +537,11 @@
                                                     @endforelse
                                                 @endif
                                             @empty
-                                                Empty
+                                            <div class="table-row">
+                                                <x-table-accordion.td class="table-cell pl-14">
+                                                    Empty
+                                                </x-table-accordion.td>
+                                            </div>
                                             @endforelse
                                         @endif
                                     @endforeach
