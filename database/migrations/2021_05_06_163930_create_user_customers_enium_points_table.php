@@ -18,6 +18,8 @@ class CreateUserCustomersEniumPointsTable extends Migration
             $table->foreignId('user_sales_rep_id')->constrained('users');
             $table->foreignId('customer_id')->unique()->constrained();
             $table->unsignedInteger('points');
+            $table->date('set_date');
+            $table->date('expiration_date');
             $table->timestamps();
             $table->softDeletes();
         });

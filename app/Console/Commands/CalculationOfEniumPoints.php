@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Term;
 use App\Models\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class CalculationOfEniumPoints extends Command
@@ -41,8 +42,10 @@ class CalculationOfEniumPoints extends Command
                 $user->customersOfSalesReps()->withTrashed()->get()->each(function ($customer) use ($user) {
                     if ($customer->term_id != null) {
                         $customerEniumPoint = $user->customersEniumPoints()->create([
-                            'customer_id'          => $customer->id,
-                            'points'               => $customer->term->amount > 0 ? round($customer->epc/$customer->term->amount) : 0,
+                            'customer_id'     => $customer->id,
+                            'points'          => $customer->term->amount > 0 ? round($customer->epc/$customer->term->amount) : 0,
+                            'set_date'        => $customer->date_of_sale,
+                            'expiration_date' => $customer->date_of_sale->addYear(),
                         ]);
                         if ($customer->deleted_at) {
                             $customerEniumPoint->delete();
