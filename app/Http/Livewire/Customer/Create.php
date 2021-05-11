@@ -132,15 +132,7 @@ class Create extends Component
         $this->customer->financer_id = $this->customer->financer_id != "" ? $this->customer->financer_id : null;
         $this->customer->term_id = $this->customer->term_id != "" ? $this->customer->term_id : null;
 
-        DB::transaction(function () {
-            $this->customer->save();
-            if ($this->customer->term_id) {
-                $this->customer->userEniumPoint()->create([
-                    'user_sales_rep_id' => $this->customer->sales_rep_id,
-                    'points'            => $this->customer->term->amount > 0 ? round($this->customer->epc/$this->customer->term->amount) : 0
-                ]);
-            }
-        });
+        $this->customer->save();
 
         alert()
             ->withTitle(__('Home Owner created!'))
