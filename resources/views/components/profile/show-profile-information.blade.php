@@ -1,3 +1,5 @@
+@props(['userLevel', 'userEniumPoints'])
+
 <div class="px-4 py-5 sm:p-6">
     <div class="flex justify-between">
         <div class="flex justify-start">
@@ -97,8 +99,8 @@
                 <div class="text-sm text-center text-gray-900">
                     <p>Total</p>
                     <p class="font-bold text-xl">
-                        @if(user()->level())
-                            {{user()->eniumPoints()}}
+                        @if($userLevel)
+                            {{$userEniumPoints}}
                         @else
                         -
                         @endif
@@ -107,8 +109,8 @@
                 <div class="text-sm text-center text-gray-900">
                     <p>Level</p>
                     <p class="font-bold text-xl">
-                        @if(user()->level())
-                            {{user()->level()->level}}
+                        @if($userLevel)
+                            {{$userLevel->level}}
                         @else
                         -
                         @endif
@@ -117,8 +119,8 @@
                 <div class="text-sm text-center text-gray-900">
                     <p>Monthly Income</p>
                     <p class="font-bold text-xl">
-                        @if(user()->level())
-                            $ {{user()->level()->monthly_residual}}
+                        @if($userLevel)
+                            $ {{$userLevel->monthly_residual}}
                         @else
                         -
                         @endif

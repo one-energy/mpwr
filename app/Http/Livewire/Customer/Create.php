@@ -137,7 +137,7 @@ class Create extends Component
             if ($this->customer->term_id) {
                 $this->customer->userEniumPoint()->create([
                     'user_sales_rep_id' => $this->customer->sales_rep_id,
-                    'points'            => round($this->customer->epc/$this->customer->term->amount)
+                    'points'            => $this->customer->term->amount > 0 ? round($this->customer->epc/$this->customer->term->amount) : 0
                 ]);
             }
         });

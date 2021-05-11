@@ -15,9 +15,9 @@ class CalculationOfEniumPoints extends Command
 
     public function handle()
     {
-        Term::find(4)->update([
-            'noble_pay_dealer_fee' => 0.22,
-            'rep_residual'         => 0.015,
+        Term::find(1)->update([
+            'noble_pay_dealer_fee' => 0.19,
+            'rep_residual'         => 0.025,
             'amount'               => 480
         ]);
         Term::find(2)->update([
@@ -30,9 +30,9 @@ class CalculationOfEniumPoints extends Command
             'rep_residual'         => 0.025,
             'amount'               => 480
         ]);
-        Term::find(1)->update([
-            'noble_pay_dealer_fee' => 0.19,
-            'rep_residual'         => 0.025,
+        Term::find(4)->update([
+            'noble_pay_dealer_fee' => 0.22,
+            'rep_residual'         => 0.015,
             'amount'               => 800
         ]);
         DB::transaction(function () {
