@@ -211,7 +211,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function eniumPoints()
     {
-        // dd($this->customersEniumPoints()->get());
         return $this->customersEniumPoints()->whereHas('customer', function ($query) {
             $query->where('is_active', true)
                 ->where('panel_sold', true)
