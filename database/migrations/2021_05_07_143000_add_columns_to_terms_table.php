@@ -28,9 +28,7 @@ class AddColumnsToTermsTable extends Migration
     public function down()
     {
         Schema::table('terms', function (Blueprint $table) {
-            $table->dropColumn('noble_pay_dealer_fee');
-            $table->dropColumn('rep_residual');
-            $table->dropColumn('amount');
+            $table->dropColumn(['noble_pay_dealer_fee', 'rep_residual', 'amount']);
         });
     }
 }
