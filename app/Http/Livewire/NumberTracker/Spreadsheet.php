@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\NumberTracker;
 
 use App\Models\DailyNumber;
+use App\Models\Department;
 use App\Models\Office;
 use App\Models\User;
 use DateInterval;
@@ -10,9 +11,7 @@ use DatePeriod;
 use DateTimeImmutable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
-use Throwable;
 
 /**
  * @property-read Collection|Office[] $offices
@@ -27,13 +26,10 @@ class Spreadsheet extends Component
 
     public Collection $dailyNumbers;
 
-    public array $newDailyNumbers;
-
     public function mount()
     {
-        $this->selectedOffice  = $this->offices->first()->id;
-        $this->newDailyNumbers = [];
-        $this->dailyNumbers    = $this->users->pluck('dailyNumbers')->flatten();
+        $this->selectedOffice = $this->offices->first()->id;
+        $this->dailyNumbers   = $this->users->pluck('dailyNumbers')->flatten();
     }
 
     public function render()
@@ -43,117 +39,7 @@ class Spreadsheet extends Component
 
     public function updatedSelectedOffice()
     {
-        $this->newDailyNumbers = [];
-        $this->dailyNumbers    = $this->users->pluck('dailyNumbers')->flatten();
-    }
-
-    public function save()
-    {
-        if ($this->dailyNumbers->isNotEmpty()) {
-            $this->update();
-        }
-
-        if (collect($this->newDailyNumbers)->isNotEmpty()) {
-            $this->store();
-        }
-
-        alert()
-            ->withTitle(__('Number Trackers saved!'))
-            ->livewire($this)
-            ->send();
-    }
-
-    private function update()
-    {
-        DB::beginTransaction();
-
-        try {
-            $this->dailyNumbers->each(function ($dailyNumber) {
-                $dailyNumber['hours_worked'] = $this->calculateHoursWorked($dailyNumber);
-
-                DailyNumber::query()
-                    ->where('id', $dailyNumber['id'])
-                    ->update($dailyNumber);
-
-                DB::commit();
-            });
-        } catch (Throwable $e) {
-            DB::rollBack();
-        }
-    }
-
-    private function store()
-    {
-        DB::beginTransaction();
-
-        try {
-            collect($this->newDailyNumbers)->each(function ($dailyNumber) {
-                $dailyNumber['hours_worked'] = $this->calculateHoursWorked($dailyNumber);
-
-                DailyNumber::create($dailyNumber);
-                DB::commit();
-            });
-
-            $this->newDailyNumbers = [];
-        } catch (Throwable $e) {
-            DB::rollBack();
-        }
-    }
-
-    /**
-     * One hours_knocked = 1h
-     * One closes = 1h
-     * One closer_sits = 2h
-     */
-    private function calculateHoursWorked($dailyNumber): float | int
-    {
-        return $dailyNumber['hours_knocked'] + $dailyNumber['closes'] + ($dailyNumber['closer_sits'] * 2);
-    }
-
-    public function updateDailyNumber(DailyNumber $dailyNumber, string $field, string $newValue)
-    {
-        $newValue = preg_replace('/[^0-9.]+/', '', $newValue);
-
-        if ($newValue === '') {
-            return;
-        }
-
-        $this->dailyNumbers = $this->dailyNumbers->map(function ($tracker) use ($dailyNumber, $field, $newValue) {
-            if ($tracker['id'] === $dailyNumber->id) {
-                $tracker[$field] = abs($newValue);
-            }
-
-            return $tracker;
-        });
-    }
-
-    public function attachNewDailyEntry($index, User $user, $date, string $field, string $value)
-    {
-        $value = preg_replace('/[^0-9.]+/', '', $value);
-
-        if ($value === '') {
-            return;
-        }
-
-        if (!array_key_exists($index, $this->newDailyNumbers)) {
-            $this->newDailyNumbers[$index] = [
-                'user_id'       => $user->id,
-                'office_id'     => $user->office_id,
-                'date'          => (new Carbon($date))->format('Y-m-d'),
-                'doors'         => 0,
-                'sets'          => 0,
-                'set_closes'    => 0,
-                'closes'        => 0,
-                'hours_worked'  => 0,
-                'hours_knocked' => 0,
-                'sats'          => 0,
-                'closer_sits'   => 0,
-            ];
-        }
-
-        $this->newDailyNumbers[$index] = array_merge(
-            $this->newDailyNumbers[$index], [$field => abs($value)]
-        );
+        $this->dailyNumbers = $this->users->pluck('dailyNumbers')->flatten();
     }
 
     public function getPeriodsProperty()
@@ -290,18 +176,14 @@ class Spreadsheet extends Component
         ];
     }
 
-    public function getIsAdminProperty()
-    {
-        return user()->hasAnyRole(['Admin', 'Owner']);
-    }
-
     public function getOfficesProperty()
     {
         return match (user()->role) {
-            'Admin', 'Owner' => Office::oldest('name')->get(),
-            'Region Manager' => Office::oldest('name')->whereIn('region_id', user()->managedRegions->pluck('id'))->get(),
-            'Office Manager' => Office::oldest('name')->whereIn('id', user()->managedOffices->pluck('id'))->get(),
-            default          => collect()
+            'Admin', 'Owner'     => Office::oldest('name')->get(),
+            'Department Manager' => Department::find(user()->department_id)->offices()->oldest('name')->get(),
+            'Region Manager'     => Office::oldest('name')->whereIn('region_id', user()->managedRegions->pluck('id'))->get(),
+            'Office Manager'     => Office::oldest('name')->whereIn('id', user()->managedOffices->pluck('id'))->get(),
+            default => collect()
         };
     }
 
