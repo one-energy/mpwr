@@ -83,6 +83,7 @@
                             </div>
                         </div>
                     @endforeach
+                    @if ($this->user->office !== null)
                         <div class="border-b border-gray-200 last:border-none hover:bg-gray-50">
                             <div class="px-4 py-4 sm:px-6">
                                 <div class="flex items-center justify-between">
@@ -118,6 +119,7 @@
                                 </div>
                             </div>
                         </div>
+                    @endif
                 @else
                     <div class="border-b border-gray-200 last:border-none hover:bg-gray-50">
                         <div class="px-4 py-4 sm:px-6">
@@ -312,13 +314,13 @@
 
                         <x-select class="sm:flex-1" label="Reports To" name="reportsTo" wire:model="reportsTo">
                             @foreach ($offices as $office)
-                                <option value="{{ $office->id }}"> {{ $office->name }}</option>
+                                <option value="{{ $office->id }}">{{ $office->name }}</option>
                             @endforeach
                         </x-select>
                     </div>
 
                     <div class="w-full">
-                        @if ($selectedRole !== 'Sales Rep' && $selectedRole !== 'Setter')
+                    @if ($selectedRole !== 'Sales Rep' && $selectedRole !== 'Setter')
                             <x-multiselect
                                 class="sm:flex-1"
                                 trackBy="id"
@@ -326,7 +328,7 @@
                                 label="Manager Of"
                                 name="selectedManagers"
                                 :options="$this->managerOf"
-                                wire:model.defer="selectedManagers"
+                                wire:model="selectedManagers"
                                 wire:key="{{ $this->managerOf->count() }}"
                             />
                         @endif
