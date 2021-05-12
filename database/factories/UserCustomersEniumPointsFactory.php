@@ -6,6 +6,7 @@ use App\Models\Customer;
 use App\Models\User;
 use App\Models\UserCustomersEniumPoints;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Carbon;
 
 class UserCustomersEniumPointsFactory extends Factory
 {
@@ -17,7 +18,9 @@ class UserCustomersEniumPointsFactory extends Factory
         return [
             'user_sales_rep_id' => User::factory(),
             'customer_id'       => Customer::factory(),
-            'points'            => $this->faker->randomNumber()
+            'points'            => $this->faker->randomNumber(),
+            'set_date'          => Carbon::now(),
+            'expiration_date'   => Carbon::now()->addYear()
         ];
     }
 }
