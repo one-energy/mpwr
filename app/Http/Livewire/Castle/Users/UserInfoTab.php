@@ -52,7 +52,7 @@ class UserInfoTab extends Component
 
     public Collection | array $selectedManagers;
 
-    public int $reportsTo;
+    public null | int $reportsTo;
 
     public function mount(User $user)
     {
@@ -63,9 +63,8 @@ class UserInfoTab extends Component
         $this->regionManagerUsers     = collect();
         $this->officeManagerUsers     = collect();
         $this->selectedRole           = $user->role;
-        $this->reportsTo              = $user->office_id;
-
-        $this->selectedManagers = $this->getSelectedManagers($user);
+        $this->reportsTo              = $this->getOfficeId($user);
+        $this->selectedManagers       = $this->getSelectedManagers($user);
     }
 
     private function getSelectedManagers(User $user)
@@ -193,23 +192,12 @@ class UserInfoTab extends Component
 
     public function getAssignedTeams()
     {
-        if ($this->user->hasAnyRole([
-            Role::DEPARTMENT_MANAGER,
-            Role::ADMIN,
-            Role::OWNER,
-            Role::SALES_REP,
-            Role::SETTER,
-        ])) {
-            $this->teams = $this->user->office ? collect([$this->user->office]) : null;
-        }
-
-        if ($this->user->hasRole(Role::REGION_MANAGER)) {
-            $this->teams = $this->user->managedRegions;
-        }
-
-        if ($this->user->hasRole(Role::OFFICE_MANAGER)) {
-            $this->teams = $this->user->managedOffices;
-        }
+        $this->teams = match ($this->user->role) {
+            Role::ADMIN, Role::OWNER, Role::SALES_REP, Role::SETTER => $this->user->office ? collect([$this->user->office]) : null,
+            Role::DEPARTMENT_MANAGER => $this->user->managedDepartments,
+            Role::REGION_MANAGER     => $this->user->managedRegions,
+            Role::OFFICE_MANAGER     => $this->user->managedOffices
+        };
     }
 
     public function changeDepartment(int $departmentId): void
@@ -266,7 +254,7 @@ class UserInfoTab extends Component
             Role::REGION_MANAGER => Region::query()
                 ->where('department_id', $this->user->department_id)
                 ->get(),
-            default => [],
+            default => collect(),
         };
     }
 
@@ -330,10 +318,13 @@ class UserInfoTab extends Component
         $this->validate($rules);
 
         DB::transaction(function () {
-            $this->user->update([
-                'role'      => $this->selectedRole,
-                'office_id' => $this->reportsTo,
-            ]);
+            $data = ['role' => $this->selectedRole];
+
+            if ($this->reportsTo !== null && $this->reportsTo !== 0) {
+                $data['office_id'] = $this->reportsTo;
+            }
+
+            $this->user->update($data);
 
             $this->detachOffices($this->user);
             $this->detachDepartments($this->user);
@@ -359,5 +350,18 @@ class UserInfoTab extends Component
         return redirect(
             route('castle.users.show', ['user' => $this->user->id, 'openedTab' => 'orgInfo'])
         );
+    }
+
+    private function getOfficeId($user)
+    {
+        $officeId = $user->office_id;
+
+        if ($officeId === null) {
+            $department = Department::find($user->department_id);
+            $officeId   = $department->offices->first()->id;
+        }
+
+        return $officeId;
+        //        || $this->offices->first()?->id || null;
     }
 }
