@@ -3,6 +3,7 @@
 namespace Tests\Feature\Livewire\NumberTracker\Spreadsheet;
 
 use App\Http\Livewire\NumberTracker\Spreadsheet;
+use App\Models\Department;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
@@ -35,6 +36,44 @@ class GetOfficesTest extends TestCase
             ->assertSet('offices', Office::oldest('name')->get());
 
         $offices->each(fn(Office $office) => $component->assertSee($office->name));
+    }
+
+    /** @test */
+    public function it_should_return_all_offices_related_to_the_department_when_user_has_department_manager_role()
+    {
+        $john = User::factory()->create(['role' => 'Department Manager']);
+        $zack = User::factory()->create(['role' => 'Department Manager']);
+        $mary = User::factory()->create(['role' => 'Region Manager']);
+        $ann  = User::factory()->create(['role' => 'Office Manager']);
+
+        $department01 = Department::factory()->create(['department_manager_id' => $john->id]);
+        $john->update(['department_id' => $department01->id]);
+
+        $region01  = Region::factory()->create([
+            'region_manager_id' => $mary->id,
+            'department_id'     => $department01->id
+        ]);
+        $offices01 = Office::factory()->times(10)->create([
+            'region_id'         => $region01->id,
+            'office_manager_id' => $ann->id
+        ]);
+
+        $department02 = Department::factory()->create(['department_manager_id' => $zack->id]);
+        $region02     = Region::factory()->create([
+            'region_manager_id' => $mary->id,
+            'department_id'     => $department02->id
+        ]);
+        $offices02    = Office::factory()->times(10)->create([
+            'region_id'         => $region02->id,
+            'office_manager_id' => $ann->id
+        ]);
+
+        $this->actingAs($john);
+
+        $component = Livewire::test(Spreadsheet::class)->assertHasNoErrors();
+
+        $offices01->each(fn(Office $office) => $component->assertSee($office->name));
+        $offices02->each(fn(Office $office) => $component->assertDontSee($office->name));
     }
 
     /** @test */
