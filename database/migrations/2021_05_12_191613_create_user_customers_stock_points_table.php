@@ -10,6 +10,7 @@ class CreateUserCustomersStockPointsTable extends Migration
     {
         Schema::create('customers_stock_points', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('customer_id');
             $table->integer('stock_recruiter');
             $table->integer('stock_setting');
             $table->integer('stock_personal_sale');
