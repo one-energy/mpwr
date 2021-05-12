@@ -2,19 +2,15 @@
 
 namespace Tests\Feature\Profile;
 
-use App\Http\Livewire\Customer\Create;
 use App\Models\Customer;
-use App\Models\Financer;
 use App\Models\Term;
 use App\Models\User;
 use App\Models\UserCustomersEniumPoints;
 use App\Models\UserEniumPointLevel;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use Livewire\Livewire;
 use Tests\TestCase;
 
 class EniumPointsTest extends TestCase
@@ -34,7 +30,15 @@ class EniumPointsTest extends TestCase
 
         $this->user = User::factory()->create(['role' => 'Sales Rep']);
 
+        Term::factory()->count(4)
+        ->state(new Sequence(
+            ['amount' => 480],
+            ['amount' => 800]
+        ))
+        ->create();
+
         $this->customers = Customer::factory()->count(2)->create([
+            'term_id'      => Term::inRandomOrder()->first()->id,
             'sales_rep_id' => $this->user->id,
             'is_active'    => true,
             'panel_sold'   => true
@@ -44,7 +48,10 @@ class EniumPointsTest extends TestCase
             $this->userEniumPoints->push(
                 UserCustomersEniumPoints::factory()->create([ 
                     'user_sales_rep_id' => $this->user->id,
-                    'customer_id'       => $customer->id
+                    'customer_id'       => $customer->id,
+                    'points'            => round($customer->epc/$customer->term->amount),
+                    'set_date'          => Carbon::now(),
+                    'expiration_date'   => Carbon::now()->addYear()
                 ])
             );  
         });
@@ -104,7 +111,9 @@ class EniumPointsTest extends TestCase
         UserCustomersEniumPoints::factory()->create([ 
             'user_sales_rep_id' => $customer->sales_rep_id,
             'customer_id'       => $customer->id, 
-            'points'            => 2500
+            'points'            => 2500,
+            'set_date'          => Carbon::now(),
+            'expiration_date'   => Carbon::now()->addYear()
         ]);
 
         $this->assertEquals($jhon->level()->level, 5);
@@ -115,12 +124,19 @@ class EniumPointsTest extends TestCase
     {
         $jhon     = User::factory()->create(['role' => 'Sales Rep']);
         $customer = Customer::factory()->create([
-            'sales_rep_id' => $jhon->id
+            'epc'          => 2500,
+            'term_id'      => Term::inRandomOrder()->first()->id,
+            'sales_rep_id' => $jhon->id,
+            'is_active'    => true,
+            'panel_sold'   => true
         ]);
 
         UserCustomersEniumPoints::factory()->create([ 
             'user_sales_rep_id' => $customer->sales_rep_id,
-            'customer_id'       => $customer->id 
+            'customer_id'       => $customer->id, 
+            'points'            => $customer->epc/$customer->term->amount,
+            'set_date'          => Carbon::now(),
+            'expiration_date'   => Carbon::now()->addYear()
         ]);
 
         $this->get('/')
