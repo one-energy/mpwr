@@ -35,7 +35,7 @@
                             selectedRegion = regionsData[0].id
                         });
                  }">
-                <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
+                <div class="mt-6 items-center grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                     <div class="md:col-span-6 col-span-2">
                         <x-input label="Office Name" name="name"/>
                     </div>

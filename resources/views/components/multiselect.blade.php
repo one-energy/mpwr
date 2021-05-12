@@ -25,12 +25,12 @@
         });
     @endif
 }" class="sm:flex-1">
-    <label for="select" class="block text-sm font-medium leading-5 text-gray-700">{{ $label }}</label>
     <input name="values" type="hidden" x-bind:value="selectedValues" x-cloak>
-    <div class="inline-block relative w-full">
+    <div class="rounded-md relative w-full">
         <div class="flex flex-col items-center relative" x-cloak>
             <div x-on:click="open" class="w-full" x-cloak>
-                <div class="my-2 p-1 flex border border-gray-300 bg-white rounded">
+                <label for="select" class="mt-2 block text-sm font-medium leading-5 text-gray-700">{{ $label }}</label>
+                <div class="mb-2 mt-1 p-1 pt-0 flex border border-gray-300 bg-white rounded">
                     <div class="flex flex-auto flex-wrap">
                         <template x-for="option in selected" :key="option.key">
                             <div class="space-x-1 flex justify-center items-center m-1 font-medium py-1.5 px-2 text-white rounded bg-green-400 border">
