@@ -8,15 +8,14 @@ use App\Models\User;
 use App\Models\UserCustomersEniumPoints;
 use App\Models\UserEniumPointLevel;
 use Illuminate\Database\Eloquent\Factories\Sequence;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
 
 class EniumPointsTest extends TestCase
 {
-
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     public User $user;
     public Customer $customer;
