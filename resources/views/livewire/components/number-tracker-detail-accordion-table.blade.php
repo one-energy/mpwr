@@ -345,38 +345,29 @@
                             <x-table-accordion class="overflow-x-auto">
                                 <x-slot name="header">
                                     <x-table-accordion.th-searchable class="table-cell" by="deparmtent" :sortedBy="$sortBy" :direction="$sortDirection"></x-table-accordion.th-searchable>
-                                    <x-table-accordion.th-searchable wire:click="initRegionsData" class="table-cell" by="doors" :sortedBy="$sortBy" :direction="$sortDirection">
-                                        @lang('Doors')
-                                    </x-table-accordion.th-searchable>
-                                    <x-table-accordion.th-searchable wire:click="initRegionsData" class="table-cell" by="hours" :sortedBy="$sortBy" :direction="$sortDirection">
-                                        @lang('Hours')
-                                    </x-table-accordion.th-searchable>
-                                    <x-table-accordion.th-searchable wire:click="initRegionsData" class="table-cell" by="sets" :sortedBy="$sortBy" :direction="$sortDirection">
-                                        @lang('Sets')
-                                    </x-table-accordion.th-searchable>
-                                    <x-table-accordion.th-searchable wire:click="initRegionsData" class="table-cell" by="set_sits" :sortedBy="$sortBy" :direction="$sortDirection">
-                                        @lang('Set Sits')
-                                    </x-table-accordion.th-searchable>
-                                    <x-table-accordion.th-searchable wire:click="initRegionsData" class="table-cell" by="sits" :sortedBy="$sortBy" :direction="$sortDirection">
-                                        @lang('Sits')
-                                    </x-table-accordion.th-searchable>
-                                    <x-table-accordion.th-searchable wire:click="initRegionsData" class="table-cell" by="set_closes" :sortedBy="$sortBy" :direction="$sortDirection">
-                                        @lang('Set Closes')
-                                    </x-table-accordion.th-searchable>
-                                    <x-table-accordion.th-searchable wire:click="initRegionsData" class="table-cell" by="closes" :sortedBy="$sortBy" :direction="$sortDirection">
-                                        @lang('Closes')
-                                    </x-table-accordion.th-searchable>
                                     <x-table-accordion.th-searchable wire:click="initRegionsData" class="table-cell" by="hours_worked" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Hours Worked')
+                                    </x-table-accordion.th-searchable>
+                                    <x-table-accordion.th-searchable wire:click="initRegionsData" class="table-cell" by="doors" :sortedBy="$sortBy" :direction="$sortDirection">
+                                        @lang('Doors')
                                     </x-table-accordion.th-searchable>
                                     <x-table-accordion.th-searchable wire:click="initRegionsData" class="table-cell" by="hours_knocked" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Hours Knocked')
                                     </x-table-accordion.th-searchable>
+                                    <x-table-accordion.th-searchable wire:click="initRegionsData" class="table-cell" by="sets" :sortedBy="$sortBy" :direction="$sortDirection">
+                                        @lang('Sets')
+                                    </x-table-accordion.th-searchable>
                                     <x-table-accordion.th-searchable wire:click="initRegionsData" class="table-cell" by="sats" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Sats')
                                     </x-table-accordion.th-searchable>
+                                    <x-table-accordion.th-searchable wire:click="initRegionsData" class="table-cell" by="set_closes" :sortedBy="$sortBy" :direction="$sortDirection">
+                                        @lang('Set Closes')
+                                    </x-table-accordion.th-searchable>
                                     <x-table-accordion.th-searchable wire:click="initRegionsData" class="table-cell" by="closer_sits" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Closer Sits')
+                                    </x-table-accordion.th-searchable>
+                                    <x-table-accordion.th-searchable wire:click="initRegionsData" class="table-cell" by="closes" :sortedBy="$sortBy" :direction="$sortDirection">
+                                        @lang('Closes')
                                     </x-table-accordion.th-searchable>
                                 </x-slot>
                                 <x-slot name="body">
@@ -397,6 +388,16 @@
                                                 </div>
                                                 <label>{{$region['name']}}</label>
                                             </x-table-accordion.default-td-arrow>
+                                            <x-table-accordion.td class="table-cell" by="hours_worked" sortedBy="$sortBy">
+                                                <x-svg.spinner
+                                                    color="#9fa6b2"
+                                                    class="self-center hidden w-5"
+                                                    wire:loading wire:target="initRegionsData">
+                                                </x-svg.spinner>
+                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                    {{$this->sumRegionNumberTracker($region, 'hours_worked')}}
+                                                </div>
+                                            </x-table-accordion.td>
                                             <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
                                                 <x-svg.spinner
                                                     color="#9fa6b2"
@@ -407,14 +408,14 @@
                                                     {{$this->sumRegionNumberTracker($region, 'doors')}}
                                                 </div>
                                             </x-table-accordion.td>
-                                            <x-table-accordion.td class="table-cell" by="hours" sortedBy="$sortBy">
+                                            <x-table-accordion.td class="table-cell" by="hours_knocked" sortedBy="$sortBy">
                                                 <x-svg.spinner
                                                     color="#9fa6b2"
                                                     class="self-center hidden w-5"
                                                     wire:loading wire:target="initRegionsData">
                                                 </x-svg.spinner>
-                                                <div class="@if($region['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                                                    {{$this->sumRegionNumberTracker($region, 'hours')}}
+                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                    {{$this->sumRegionNumberTracker($region, 'hours_knocked')}}
                                                 </div>
                                             </x-table-accordion.td>
                                             <x-table-accordion.td class="table-cell" by="sets" sortedBy="$sortBy">
@@ -425,6 +426,56 @@
                                                 </x-svg.spinner>
                                                 <div class="@if($region['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                     {{$this->sumRegionNumberTracker($region, 'sets')}}
+                                                </div>
+                                            </x-table-accordion.td>
+                                            <x-table-accordion.td class="table-cell" by="sats" sortedBy="$sortBy">
+                                                <x-svg.spinner
+                                                    color="#9fa6b2"
+                                                    class="self-center hidden w-5"
+                                                    wire:loading wire:target="initRegionsData">
+                                                </x-svg.spinner>
+                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                    {{$this->sumRegionNumberTracker($region, 'sats')}}
+                                                </div>
+                                            </x-table-accordion.td>
+                                            <x-table-accordion.td class="table-cell" by="set_closes" sortedBy="$sortBy">
+                                                <x-svg.spinner
+                                                    color="#9fa6b2"
+                                                    class="self-center hidden w-5"
+                                                    wire:loading wire:target="initRegionsData">
+                                                </x-svg.spinner>
+                                                <div class="@if($region['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                    {{$this->sumRegionNumberTracker($region, 'set_closes')}}
+                                                </div>
+                                            </x-table-accordion.td>
+                                            <x-table-accordion.td class="table-cell" by="closer_sits" sortedBy="$sortBy">
+                                                <x-svg.spinner
+                                                    color="#9fa6b2"
+                                                    class="self-center hidden w-5"
+                                                    wire:loading wire:target="initRegionsData">
+                                                </x-svg.spinner>
+                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                    {{$this->sumRegionNumberTracker($region, 'closer_sits')}}
+                                                </div>
+                                            </x-table-accordion.td>
+                                            <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
+                                                <x-svg.spinner
+                                                    color="#9fa6b2"
+                                                    class="self-center hidden w-5"
+                                                    wire:loading wire:target="initRegionsData">
+                                                </x-svg.spinner>
+                                                <div class="@if($region['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                    {{$this->sumRegionNumberTracker($region, 'closes')}}
+                                                </div>
+                                            </x-table-accordion.td>
+                                            <x-table-accordion.td class="table-cell" by="hours" sortedBy="$sortBy">
+                                                <x-svg.spinner
+                                                    color="#9fa6b2"
+                                                    class="self-center hidden w-5"
+                                                    wire:loading wire:target="initRegionsData">
+                                                </x-svg.spinner>
+                                                <div class="@if($region['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                    {{$this->sumRegionNumberTracker($region, 'hours')}}
                                                 </div>
                                             </x-table-accordion.td>
                                             <x-table-accordion.td class="table-cell" by="set_sits" sortedBy="$sortBy">
@@ -445,66 +496,6 @@
                                                 </x-svg.spinner>
                                                 <div class="@if($region['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                     {{$this->sumRegionNumberTracker($region, 'sits')}}
-                                                </div>
-                                            </x-table-accordion.td>
-                                            <x-table-accordion.td class="table-cell" by="set_closes" sortedBy="$sortBy">
-                                                <x-svg.spinner
-                                                    color="#9fa6b2"
-                                                    class="self-center hidden w-5"
-                                                    wire:loading wire:target="initRegionsData">
-                                                </x-svg.spinner>
-                                                <div class="@if($region['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                                                    {{$this->sumRegionNumberTracker($region, 'set_closes')}}
-                                                </div>
-                                            </x-table-accordion.td>
-                                            <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
-                                                <x-svg.spinner
-                                                    color="#9fa6b2"
-                                                    class="self-center hidden w-5"
-                                                    wire:loading wire:target="initRegionsData">
-                                                </x-svg.spinner>
-                                                <div class="@if($region['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                                                    {{$this->sumRegionNumberTracker($region, 'closes')}}
-                                                </div>
-                                            </x-table-accordion.td>
-                                            <x-table-accordion.td class="table-cell" by="hours_worked" sortedBy="$sortBy">
-                                                <x-svg.spinner
-                                                    color="#9fa6b2"
-                                                    class="self-center hidden w-5"
-                                                    wire:loading wire:target="initRegionsData">
-                                                </x-svg.spinner>
-                                                <div wire:loading.remove wire:target="initRegionsData">
-                                                    {{$this->sumRegionNumberTracker($region, 'hours_worked')}}
-                                                </div>
-                                            </x-table-accordion.td>
-                                            <x-table-accordion.td class="table-cell" by="hours_knocked" sortedBy="$sortBy">
-                                                <x-svg.spinner
-                                                    color="#9fa6b2"
-                                                    class="self-center hidden w-5"
-                                                    wire:loading wire:target="initRegionsData">
-                                                </x-svg.spinner>
-                                                <div wire:loading.remove wire:target="initRegionsData">
-                                                    {{$this->sumRegionNumberTracker($region, 'hours_knocked')}}
-                                                </div>
-                                            </x-table-accordion.td>
-                                            <x-table-accordion.td class="table-cell" by="sats" sortedBy="$sortBy">
-                                                <x-svg.spinner
-                                                    color="#9fa6b2"
-                                                    class="self-center hidden w-5"
-                                                    wire:loading wire:target="initRegionsData">
-                                                </x-svg.spinner>
-                                                <div wire:loading.remove wire:target="initRegionsData">
-                                                    {{$this->sumRegionNumberTracker($region, 'sats')}}
-                                                </div>
-                                            </x-table-accordion.td>
-                                            <x-table-accordion.td class="table-cell" by="closer_sits" sortedBy="$sortBy">
-                                                <x-svg.spinner
-                                                    color="#9fa6b2"
-                                                    class="self-center hidden w-5"
-                                                    wire:loading wire:target="initRegionsData">
-                                                </x-svg.spinner>
-                                                <div wire:loading.remove wire:target="initRegionsData">
-                                                    {{$this->sumRegionNumberTracker($region, 'closer_sits')}}
                                                 </div>
                                             </x-table-accordion.td>
                                         </div>
@@ -528,76 +519,6 @@
                                                             <label>{{$office['name']}}</label>
                                                         </div>
                                                     </x-table-accordion.child-td-arrow>
-                                                    <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
-                                                        <x-svg.spinner
-                                                            color="#9fa6b2"
-                                                            class="self-center hidden w-5"
-                                                            wire:loading wire:target="initRegionsData">
-                                                        </x-svg.spinner>
-                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                                                            {{$this->sumOfficeNumberTracker($office, 'doors')}}
-                                                        </div>
-                                                    </x-table-accordion.td>
-                                                    <x-table-accordion.td class="table-cell" by="hours" sortedBy="$sortBy">
-                                                        <x-svg.spinner
-                                                            color="#9fa6b2"
-                                                            class="self-center hidden w-5"
-                                                            wire:loading wire:target="initRegionsData">
-                                                        </x-svg.spinner>
-                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                                                            {{$this->sumOfficeNumberTracker($office, 'hours')}}
-                                                        </div>
-                                                    </x-table-accordion.td>
-                                                    <x-table-accordion.td class="table-cell" by="sets" sortedBy="$sortBy">
-                                                        <x-svg.spinner
-                                                            color="#9fa6b2"
-                                                            class="self-center hidden w-5"
-                                                            wire:loading wire:target="initRegionsData">
-                                                        </x-svg.spinner>
-                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                                                            {{$this->sumOfficeNumberTracker($office, 'sets')}}
-                                                        </div>
-                                                    </x-table-accordion.td>
-                                                    <x-table-accordion.td class="table-cell" by="set_sits" sortedBy="$sortBy">
-                                                        <x-svg.spinner
-                                                            color="#9fa6b2"
-                                                            class="self-center hidden w-5"
-                                                            wire:loading wire:target="initRegionsData">
-                                                        </x-svg.spinner>
-                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                                                            {{$this->sumOfficeNumberTracker($office, 'set_sits')}}
-                                                        </div>
-                                                    </x-table-accordion.td>
-                                                    <x-table-accordion.td class="table-cell" by="sits" sortedBy="$sortBy">
-                                                        <x-svg.spinner
-                                                            color="#9fa6b2"
-                                                            class="self-center hidden w-5"
-                                                            wire:loading wire:target="initRegionsData">
-                                                        </x-svg.spinner>
-                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                                                            {{$this->sumOfficeNumberTracker($office, 'sits')}}
-                                                        </div>
-                                                    </x-table-accordion.td>
-                                                    <x-table-accordion.td class="table-cell" by="set_closes" sortedBy="$sortBy">
-                                                        <x-svg.spinner
-                                                            color="#9fa6b2"
-                                                            class="self-center hidden w-5"
-                                                            wire:loading wire:target="initRegionsData">
-                                                        </x-svg.spinner>
-                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                                                            {{$this->sumOfficeNumberTracker($office, 'set_closes')}}
-                                                        </div>
-                                                    </x-table-accordion.td>
-                                                    <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
-                                                        <x-svg.spinner
-                                                            color="#9fa6b2"
-                                                            class="self-center hidden w-5"
-                                                            wire:loading wire:target="initRegionsData">
-                                                        </x-svg.spinner>
-                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                                                            {{$this->sumOfficeNumberTracker($office, 'closes')}}
-                                                        </div>
-                                                    </x-table-accordion.td>
                                                     <x-table-accordion.td class="table-cell" by="hours_worked" sortedBy="$sortBy">
                                                         <x-svg.spinner
                                                             color="#9fa6b2"
@@ -606,6 +527,16 @@
                                                         </x-svg.spinner>
                                                         <div wire:loading.remove wire:target="initRegionsData">
                                                             {{$this->sumOfficeNumberTracker($office, 'hours_worked')}}
+                                                        </div>
+                                                    </x-table-accordion.td>
+                                                    <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
+                                                        <x-svg.spinner
+                                                            color="#9fa6b2"
+                                                            class="self-center hidden w-5"
+                                                            wire:loading wire:target="initRegionsData">
+                                                        </x-svg.spinner>
+                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                            {{$this->sumOfficeNumberTracker($office, 'doors')}}
                                                         </div>
                                                     </x-table-accordion.td>
                                                     <x-table-accordion.td class="table-cell" by="hours_knocked" sortedBy="$sortBy">
@@ -618,6 +549,16 @@
                                                             {{$this->sumOfficeNumberTracker($office, 'hours_knocked')}}
                                                         </div>
                                                     </x-table-accordion.td>
+                                                    <x-table-accordion.td class="table-cell" by="sets" sortedBy="$sortBy">
+                                                        <x-svg.spinner
+                                                            color="#9fa6b2"
+                                                            class="self-center hidden w-5"
+                                                            wire:loading wire:target="initRegionsData">
+                                                        </x-svg.spinner>
+                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                            {{$this->sumOfficeNumberTracker($office, 'sets')}}
+                                                        </div>
+                                                    </x-table-accordion.td>
                                                     <x-table-accordion.td class="table-cell" by="sats" sortedBy="$sortBy">
                                                         <x-svg.spinner
                                                             color="#9fa6b2"
@@ -628,6 +569,16 @@
                                                             {{$this->sumOfficeNumberTracker($office, 'sats')}}
                                                         </div>
                                                     </x-table-accordion.td>
+                                                    <x-table-accordion.td class="table-cell" by="set_closes" sortedBy="$sortBy">
+                                                        <x-svg.spinner
+                                                            color="#9fa6b2"
+                                                            class="self-center hidden w-5"
+                                                            wire:loading wire:target="initRegionsData">
+                                                        </x-svg.spinner>
+                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                            {{$this->sumOfficeNumberTracker($office, 'set_closes')}}
+                                                        </div>
+                                                    </x-table-accordion.td>
                                                     <x-table-accordion.td class="table-cell" by="closer_sits" sortedBy="$sortBy">
                                                         <x-svg.spinner
                                                             color="#9fa6b2"
@@ -636,6 +587,16 @@
                                                         </x-svg.spinner>
                                                         <div wire:loading.remove wire:target="initRegionsData">
                                                             {{$this->sumOfficeNumberTracker($office, 'closer_sits')}}
+                                                        </div>
+                                                    </x-table-accordion.td>
+                                                    <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
+                                                        <x-svg.spinner
+                                                            color="#9fa6b2"
+                                                            class="self-center hidden w-5"
+                                                            wire:loading wire:target="initRegionsData">
+                                                        </x-svg.spinner>
+                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                            {{$this->sumOfficeNumberTracker($office, 'closes')}}
                                                         </div>
                                                     </x-table-accordion.td>
                                                 </div>
@@ -663,77 +624,6 @@
                                                                     </div>
                                                                 </div>
                                                             </x-table-accordion.td>
-                                                            <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
-                                                                <x-svg.spinner
-                                                                    color="#9fa6b2"
-                                                                    class="self-center hidden w-5"
-                                                                    wire:loading wire:target="initRegionsData">
-                                                                </x-svg.spinner>
-                                                                <div class="@if($dailyNumber['deleted_at'] != null || $dailyNumber['user']['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                                                                    {{$dailyNumber['doors'] ?? 0}}
-                                                                </div>
-                                                            </x-table-accordion.td>
-                                                            <x-table-accordion.td class="table-cell" by="hours" sortedBy="$sortBy">
-                                                                <x-svg.spinner
-                                                                    color="#9fa6b2"
-                                                                    class="self-center hidden w-5"
-                                                                    wire:loading wire:target="initRegionsData">
-                                                                </x-svg.spinner>
-                                                                <div class="@if($dailyNumber['deleted_at'] != null || $dailyNumber['user']['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                                                                    {{$dailyNumber['hours'] ?? 0}}
-                                                                </div>
-                                                            </x-table-accordion.td>
-                                                            <x-table-accordion.td class="table-cell" by="sets" sortedBy="$sortBy">
-                                                                <x-svg.spinner
-                                                                    color="#9fa6b2"
-                                                                    class="self-center hidden w-5"
-                                                                    wire:loading wire:target="initRegionsData">
-                                                                </x-svg.spinner>
-                                                                <div class="@if($dailyNumber['deleted_at'] != null || $dailyNumber['user']['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                                                                    {{$dailyNumber['sets'] ?? 0}}
-                                                                </div>
-                                                            </x-table-accordion.td>
-                                                            <x-table-accordion.td class="table-cell" by="set_sits" sortedBy="$sortBy">
-                                                                <x-svg.spinner
-                                                                    color="#9fa6b2"
-                                                                    class="self-center hidden w-5"
-                                                                    wire:loading wire:target="initRegionsData">
-                                                                </x-svg.spinner>
-                                                                <div class="@if($dailyNumber['deleted_at'] != null || $dailyNumber['user']['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                                                                    {{$dailyNumber['set_sits'] ?? 0}}
-                                                                </div>
-                                                            </x-table-accordion.td>
-                                                            <x-table-accordion.td class="table-cell" by="sits" sortedBy="$sortBy">
-                                                                <x-svg.spinner
-                                                                    color="#9fa6b2"
-                                                                    class="self-center hidden w-5"
-                                                                    wire:loading wire:target="initRegionsData">
-                                                                </x-svg.spinner>
-                                                                <div class="@if($dailyNumber['deleted_at'] != null || $dailyNumber['user']['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                                                                    {{$dailyNumber['sits'] ?? 0}}
-                                                                </div>
-                                                            </x-table-accordion.td>
-                                                            <x-table-accordion.td class="table-cell" by="set_closes" sortedBy="$sortBy">
-                                                                <x-svg.spinner
-                                                                    color="#9fa6b2"
-                                                                    class="self-center hidden w-5"
-                                                                    wire:loading wire:target="initRegionsData">
-                                                                </x-svg.spinner>
-                                                                <div class="@if($dailyNumber['deleted_at'] != null || $dailyNumber['user']['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                                                                    {{$dailyNumber['set_closes'] ?? 0}}
-                                                                </div>
-                                                            </x-table-accordion.td>
-                                                            <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
-                                                                <x-svg.spinner
-                                                                    color="#9fa6b2"
-                                                                    class="self-center hidden w-5"
-                                                                    wire:loading wire:target="initRegionsData">
-                                                                </x-svg.spinner>
-                                                                <div class="@if($dailyNumber['deleted_at'] != null || $dailyNumber['user']['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                                                                    {{$dailyNumber['closes'] ?? 0}}
-                                                                </div>
-                                                            </x-table-accordion.td>
-
                                                             <x-table-accordion.td class="table-cell" by="hours_worked" sortedBy="$sortBy">
                                                                 <x-svg.spinner
                                                                     color="#9fa6b2"
@@ -742,6 +632,16 @@
                                                                 </x-svg.spinner>
                                                                 <div wire:loading.remove wire:target="initRegionsData">
                                                                     {{$dailyNumber['hours_worked'] ?? 0}}
+                                                                </div>
+                                                            </x-table-accordion.td>
+                                                            <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
+                                                                <x-svg.spinner
+                                                                    color="#9fa6b2"
+                                                                    class="self-center hidden w-5"
+                                                                    wire:loading wire:target="initRegionsData">
+                                                                </x-svg.spinner>
+                                                                <div class="@if($dailyNumber['deleted_at'] != null || $dailyNumber['user']['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                                    {{$dailyNumber['doors'] ?? 0}}
                                                                 </div>
                                                             </x-table-accordion.td>
                                                             <x-table-accordion.td class="table-cell" by="hours_knocked" sortedBy="$sortBy">
@@ -754,6 +654,16 @@
                                                                     {{$dailyNumber['hours_knocked'] ?? 0}}
                                                                 </div>
                                                             </x-table-accordion.td>
+                                                            <x-table-accordion.td class="table-cell" by="sets" sortedBy="$sortBy">
+                                                                <x-svg.spinner
+                                                                    color="#9fa6b2"
+                                                                    class="self-center hidden w-5"
+                                                                    wire:loading wire:target="initRegionsData">
+                                                                </x-svg.spinner>
+                                                                <div class="@if($dailyNumber['deleted_at'] != null || $dailyNumber['user']['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                                    {{$dailyNumber['sets'] ?? 0}}
+                                                                </div>
+                                                            </x-table-accordion.td>
                                                             <x-table-accordion.td class="table-cell" by="sats" sortedBy="$sortBy">
                                                                 <x-svg.spinner
                                                                     color="#9fa6b2"
@@ -764,6 +674,16 @@
                                                                     {{$dailyNumber['sats'] ?? 0}}
                                                                 </div>
                                                             </x-table-accordion.td>
+                                                            <x-table-accordion.td class="table-cell" by="set_closes" sortedBy="$sortBy">
+                                                                <x-svg.spinner
+                                                                    color="#9fa6b2"
+                                                                    class="self-center hidden w-5"
+                                                                    wire:loading wire:target="initRegionsData">
+                                                                </x-svg.spinner>
+                                                                <div class="@if($dailyNumber['deleted_at'] != null || $dailyNumber['user']['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                                    {{$dailyNumber['set_closes'] ?? 0}}
+                                                                </div>
+                                                            </x-table-accordion.td>
                                                             <x-table-accordion.td class="table-cell" by="closer_sits" sortedBy="$sortBy">
                                                                 <x-svg.spinner
                                                                     color="#9fa6b2"
@@ -772,6 +692,16 @@
                                                                 </x-svg.spinner>
                                                                 <div wire:loading.remove wire:target="initRegionsData">
                                                                     {{$dailyNumber['closer_sits'] ?? 0}}
+                                                                </div>
+                                                            </x-table-accordion.td>
+                                                            <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
+                                                                <x-svg.spinner
+                                                                    color="#9fa6b2"
+                                                                    class="self-center hidden w-5"
+                                                                    wire:loading wire:target="initRegionsData">
+                                                                </x-svg.spinner>
+                                                                <div class="@if($dailyNumber['deleted_at'] != null || $dailyNumber['user']['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                                    {{$dailyNumber['closes'] ?? 0}}
                                                                 </div>
                                                             </x-table-accordion.td>
                                                         </div>
