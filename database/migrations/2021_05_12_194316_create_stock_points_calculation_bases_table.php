@@ -11,7 +11,7 @@ class CreateStockPointsCalculationBasesTable extends Migration
         Schema::create('stock_points_calculation_bases', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('stock_base_point');
+            $table->decimal('stock_base_point');
             $table->timestamps();
         });
     }

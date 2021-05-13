@@ -20,6 +20,7 @@ class CreateUserCustomersStockPointsTable extends Migration
             $table->integer('stock_regional');
             $table->integer('stock_department');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
