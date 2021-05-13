@@ -448,21 +448,14 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function stockPoints()
     {
-        $stockRecruit       = StockPointsCalculationBases::find(StockPointsCalculationBases::RECRUIT_ID)->stock_base_point;
-        $stockSetting       = StockPointsCalculationBases::find(StockPointsCalculationBases::SETTING_ID)->stock_base_point;
-        $stockPersonalSales = StockPointsCalculationBases::find(StockPointsCalculationBases::PERSONAL_SALES_ID)->stock_base_point;
-        $stockOfficeManager = StockPointsCalculationBases::find(StockPointsCalculationBases::OFFICE_MANAGER_ID)->stock_base_point;
-        $stockRegional      = StockPointsCalculationBases::find(StockPointsCalculationBases::REGIONAL_MANAGER_ID)->stock_base_point;
-        $stockDepartment    = StockPointsCalculationBases::find(StockPointsCalculationBases::DEPARTMENT_ID)->stock_base_point;
-
-        return (object)[
+        return (object) [
             'multiplierOfYear' => MultiplierOfYear::where('year', Carbon::now()->year)->first()->multiplier,
-            'personal'         => $this->customersOfSalesRep()->with('stockPoint')->get()->count() * $stockPersonalSales,
-            'team'             => ($this->customersOfSetter()->with('stockPoint')->get()->count() * $stockSetting) +
-                                  ($this->customersOfSalesRepsRecuited()->with('stockPoint')->get()->count() * $stockRecruit) +
-                                  ($this->customersDepartmentManager()->with('stockPoint')->get()->count() * $stockDepartment) +
-                                  ($this->customersManagedRegion()->with('stockPoint')->get()->count() * $stockRegional) +
-                                  $this->customersManagedOffice()->with('stockPoint')->get()->count() * $stockOfficeManager 
+            'personal'         => $this->customersOfSalesRep()->has('stockPoint')->with('stockPoint')->get()->sum(fn($customer) => $customer->stockPoint->stock_personal_sale),
+            'team'             => ($this->customersOfSetter()->has('stockPoint')->with('stockPoint')->get()->sum(fn($customer) => $customer->stockPoint->stock_setting)) +
+                                  ($this->customersOfSalesRepsRecuited()->has('stockPoint')->with('stockPoint')->get()->sum(fn($customer) => $customer->stockPoint->stock_recruiter)) +
+                                  ($this->customersDepartmentManager()->has('stockPoint')->with('stockPoint')->get()->sum(fn($customer) => $customer->stockPoint->stock_department)) +
+                                  ($this->customersManagedRegion()->has('stockPoint')->with('stockPoint')->get()->sum(fn($customer) => $customer->stockPoint->stock_regional)) +
+                                  $this->customersManagedOffice()->has('stockPoint')->with('stockPoint')->get()->sum(fn($customer) => $customer->stockPoint->stock_manager) 
 
         ];
     }
