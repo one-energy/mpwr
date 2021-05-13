@@ -450,12 +450,24 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return (object) [
             'multiplierOfYear' => MultiplierOfYear::where('year', Carbon::now()->year)->first()->multiplier,
-            'personal'         => $this->customersOfSalesRep()->has('stockPoint')->with('stockPoint')->get()->sum(fn($customer) => $customer->stockPoint->stock_personal_sale),
-            'team'             => ($this->customersOfSetter()->has('stockPoint')->with('stockPoint')->get()->sum(fn($customer) => $customer->stockPoint->stock_setting)) +
-                                  ($this->customersOfSalesRepsRecuited()->has('stockPoint')->with('stockPoint')->get()->sum(fn($customer) => $customer->stockPoint->stock_recruiter)) +
-                                  ($this->customersDepartmentManager()->has('stockPoint')->with('stockPoint')->get()->sum(fn($customer) => $customer->stockPoint->stock_department)) +
-                                  ($this->customersManagedRegion()->has('stockPoint')->with('stockPoint')->get()->sum(fn($customer) => $customer->stockPoint->stock_regional)) +
-                                  $this->customersManagedOffice()->has('stockPoint')->with('stockPoint')->get()->sum(fn($customer) => $customer->stockPoint->stock_manager) 
+            'personal'         => $this->customersOfSalesRep()->whereHas('stockPoint', function ($query) {
+                                      $query->whereYear('created_at', Carbon::now());
+                                  })->with('stockPoint')->get()->sum(fn($customer) => $customer->stockPoint->stock_personal_sale),
+            'team'             => ($this->customersOfSetter()->whereHas('stockPoint', function ($query) {
+                                      $query->whereYear('created_at', Carbon::now());
+                                  })->with('stockPoint')->get()->sum(fn($customer) => $customer->stockPoint->stock_setting)) +
+                                  ($this->customersOfSalesRepsRecuited()->whereHas('stockPoint', function ($query) {
+                                      $query->whereYear('created_at', Carbon::now());
+                                  })->with('stockPoint')->get()->sum(fn($customer) => $customer->stockPoint->stock_recruiter)) +
+                                  ($this->customersDepartmentManager()->whereHas('stockPoint', function ($query) {
+                                      $query->whereYear('created_at', Carbon::now());
+                                  })->with('stockPoint')->get()->sum(fn($customer) => $customer->stockPoint->stock_department)) +
+                                  ($this->customersManagedRegion()->whereHas('stockPoint', function ($query) {
+                                      $query->whereYear('created_at', Carbon::now());
+                                  })->with('stockPoint')->get()->sum(fn($customer) => $customer->stockPoint->stock_regional)) +
+                                  $this->customersManagedOffice()->whereHas('stockPoint', function ($query) {
+                                      $query->whereYear('created_at', Carbon::now());
+                                  })->with('stockPoint')->get()->sum(fn($customer) => $customer->stockPoint->stock_manager) 
 
         ];
     }
