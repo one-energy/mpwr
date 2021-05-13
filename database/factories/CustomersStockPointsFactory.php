@@ -3,12 +3,12 @@
 namespace Database\Factories;
 
 use App\Models\Customer;
-use App\Models\CustomersStockPoints;
+use App\Models\CustomersStockPoint;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class CustomersStockPointsFactory extends Factory
+class CustomersStockPointFactory extends Factory
 {
-    protected $model = CustomersStockPoints::class;
+    protected $model = CustomersStockPoint::class;
 
     public function definition()
     {

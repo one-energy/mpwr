@@ -157,7 +157,7 @@ class Customer extends Model
 
     public function stockPoint()
     {
-        return $this->hasOne(CustomersStockPoints::class);
+        return $this->hasOne(CustomersStockPoint::class);
     }
 
     public function getOpenedByAttribute()

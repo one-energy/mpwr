@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\CustomersStockPoints;
+use App\Models\CustomersStockPoint;
 use Illuminate\Database\Seeder;
 
-class CustomersStockPointsSeeder extends Seeder
+class CustomersStockPointSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,6 +14,6 @@ class CustomersStockPointsSeeder extends Seeder
      */
     public function run()
     {
-        CustomersStockPoints::factory()->count(5)->create();
+        CustomersStockPoint::factory()->count(5)->create();
     }
 }
