@@ -86,7 +86,7 @@
                                     <th class="px-4 py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider border-l-2 border-r-2">
                                         <section class="flex flex-col items-center">
                                             <span class="font-bold">@lang($label)</span>
-                                            <div class="w-full flex flex-row items-center justify-between" style="margin-left: -10px">
+                                            <div class="w-full flex flex-row items-center justify-between">
                                                 @foreach($this->indicators as $indicator)
                                                     <div
                                                         class="cursor-default relative"
@@ -172,7 +172,7 @@
                                                         type="text"
                                                         class="text-center w-10 inline"
                                                         placeholder="D"
-                                                        value="{{ $user->dailyNumbers[$label][0]->doors }}"
+                                                        value="{{ $user->dailyNumbers[$label][0]->doors ?? 0 }}"
                                                         name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][doors]"
                                                     />
                                                 </span>
@@ -189,7 +189,7 @@
                                                         type="text"
                                                         class="text-center w-10 inline"
                                                         placeholder="S"
-                                                        value="{{ $user->dailyNumbers[$label][0]->sets }}"
+                                                        value="{{ $user->dailyNumbers[$label][0]->sets ?? 0 }}"
                                                         name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][sets]"
                                                     />
                                                 </span>
@@ -206,7 +206,7 @@
                                                         type="text"
                                                         class="text-center w-10 inline"
                                                         placeholder="SC"
-                                                        value="{{ $user->dailyNumbers[$label][0]->set_closes }}"
+                                                        value="{{ $user->dailyNumbers[$label][0]->set_closes ?? 0 }}"
                                                         name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][set_closes]"
                                                     />
                                                 </span>
@@ -223,7 +223,7 @@
                                                         type="text"
                                                         class="text-center w-10 inline"
                                                         placeholder="C"
-                                                        value="{{ $user->dailyNumbers[$label][0]->closes }}"
+                                                        value="{{ $user->dailyNumbers[$label][0]->closes ?? 0 }}"
                                                         name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][closes]"
                                                     />
                                                 </span>
