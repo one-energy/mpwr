@@ -21,8 +21,7 @@ class CustomersStockPointsFactory extends Factory
             'stock_manager'         => $this->faker->randomNumber(3),
             'stock_divisional'      => $this->faker->randomNumber(3),
             'stock_regional'        => $this->faker->randomNumber(3),
-            'stock_department'      => $this->faker->randomNumber(3),
-            'year_multiplier'       => $this->faker->randomNumber(3)
+            'stock_department'      => $this->faker->randomNumber(3)
         ];
     }
 }
