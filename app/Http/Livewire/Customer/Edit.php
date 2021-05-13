@@ -153,9 +153,7 @@ class Edit extends Component
                 'stock_manager'         => StockPointsCalculationBases::find(StockPointsCalculationBases::OFFICE_MANAGER_ID)->stock_base_point,
                 'stock_divisional'      => StockPointsCalculationBases::find(StockPointsCalculationBases::DIVISIONAL_ID)->stock_base_point,
                 'stock_regional'        => StockPointsCalculationBases::find(StockPointsCalculationBases::REGIONAL_MANAGER_ID)->stock_base_point,
-                'stock_department'      => StockPointsCalculationBases::find(StockPointsCalculationBases::DEPARTMENT_ID)->stock_base_point,
-                'set_date'              => Carbon::now(),
-                'expiration_date'       => Carbon::now()->addYear()
+                'stock_department'      => StockPointsCalculationBases::find(StockPointsCalculationBases::DEPARTMENT_ID)->stock_base_point
             ]);
         }
     }

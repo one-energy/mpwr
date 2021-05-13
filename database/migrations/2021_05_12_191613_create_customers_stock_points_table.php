@@ -10,15 +10,15 @@ class CreateCustomersStockPointsTable extends Migration
     {
         Schema::create('customers_stock_points', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('customer_id');
-            $table->integer('stock_recruiter')->nullable();
-            $table->integer('stock_setting')->nullable();
-            $table->integer('stock_personal_sale')->nullable();
-            $table->integer('stock_pod_leader_team')->nullable();
-            $table->integer('stock_manager')->nullable();
-            $table->integer('stock_divisional')->nullable();
-            $table->integer('stock_regional')->nullable();
-            $table->integer('stock_department')->nullable();
+            $table->foreignId('customer_id')->constrained()->unique();
+            $table->unsignedInteger('stock_recruiter')->nullable();
+            $table->unsignedInteger('stock_setting')->nullable();
+            $table->unsignedInteger('stock_personal_sale')->nullable();
+            $table->unsignedInteger('stock_pod_leader_team')->nullable();
+            $table->unsignedInteger('stock_manager')->nullable();
+            $table->unsignedInteger('stock_divisional')->nullable();
+            $table->unsignedInteger('stock_regional')->nullable();
+            $table->unsignedInteger('stock_department')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
