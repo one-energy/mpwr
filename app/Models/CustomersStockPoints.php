@@ -10,6 +10,17 @@ class CustomersStockPoints extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $fillable = [
+        'stock_recruiter',
+        'stock_setting',
+        'stock_personal_sale',
+        'stock_pod_leader_team',
+        'stock_manager',
+        'stock_divisional',
+        'stock_regional',
+        'stock_department',
+    ];
+
     public function customer()
     {
         return $this->belongsTo(Customer::class, 'customer_id');

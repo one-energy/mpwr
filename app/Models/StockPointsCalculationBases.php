@@ -17,5 +17,4 @@ class StockPointsCalculationBases extends Model
     const DIVISIONAL_ID       = 6;
     const REGIONAL_MANAGER_ID = 7;
     const DEPARTMENT_ID       = 8;
-    const YEAR_MULTIPLIER_ID  = 9;
 }

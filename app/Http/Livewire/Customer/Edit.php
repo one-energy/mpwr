@@ -93,6 +93,8 @@ class Edit extends Component
         $salesRep   = User::find($this->customer->sales_rep_id);
         $commission = $this->calculateCommission($this->customer);
 
+        $this->validate();
+
         $this->customer->commission                  = $commission;
         $this->customer->sales_rep_recruiter_id      = $salesRep->recruiter_id;
         $this->customer->referral_override           = $salesRep->referral_override;
@@ -111,7 +113,6 @@ class Edit extends Component
         $this->customer->financing_id = $this->customer->financing_id != "" ? $this->customer->financing_id : null;
         $this->customer->financer_id = $this->customer->financer_id != "" ? $this->customer->financer_id : null;
         $this->customer->term_id = $this->customer->term_id != "" ? $this->customer->term_id : null;
-        $this->validate();
 
         DB::transaction(function () {
             $this->customer->save();
@@ -129,7 +130,10 @@ class Edit extends Component
 
     public function delete()
     {
-        $this->customer->delete();
+        DB::transaction(function () {
+            $this->customer->stockPoint()->delete();
+            $this->customer->delete();
+        });
 
         alert()
             ->withTitle(__('Home Owner deleted!'))

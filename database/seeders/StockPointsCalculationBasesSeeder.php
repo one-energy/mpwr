@@ -50,10 +50,5 @@ class StockPointsCalculationBasesSeeder extends Seeder
             'name'             => 'VP',
             'stock_base_point' => 20
         ]);
-        StockPointsCalculationBases::factory()->create([
-            'id'               => 9,
-            'name'             => 'Year Multiplier',
-            'stock_base_point' => 1.50
-        ]);
     }
 }

@@ -109,6 +109,8 @@ class Create extends Component
 
         $salesRep = User::find($this->customer->sales_rep_id);
 
+        $this->validate();
+
         $this->customer->date_of_sale                = Carbon::parse($this->customer->date_of_sale);
         $this->customer->opened_by_id                = user()->id;
         $this->customer->sales_rep_recruiter_id      = $salesRep->recruiter_id;
@@ -128,7 +130,7 @@ class Create extends Component
         $this->customer->financing_id = $this->customer->financing_id != "" ? $this->customer->financing_id : null;
         $this->customer->financer_id = $this->customer->financer_id != "" ? $this->customer->financer_id : null;
         $this->customer->term_id = $this->customer->term_id != "" ? $this->customer->term_id : null;
-        $this->validate();
+       
         $this->customer->save();
 
         alert()
