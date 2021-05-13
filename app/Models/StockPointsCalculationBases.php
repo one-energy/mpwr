@@ -16,5 +16,5 @@ class StockPointsCalculationBases extends Model
     const OFFICE_MANAGER_ID   = 5;
     const DIVISIONAL_ID       = 6;
     const REGIONAL_MANAGER_ID = 7;
-    const VP_ID               = 8;
+    const DEPARTMENT_ID       = 8;
 }

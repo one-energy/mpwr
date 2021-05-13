@@ -7,8 +7,11 @@ use App\Models\Department;
 use App\Models\Financer;
 use App\Models\Financing;
 use App\Models\Rates;
+use App\Models\StockPointsCalculationBases;
 use App\Models\Term;
 use App\Models\User;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Edit extends Component
@@ -109,7 +112,13 @@ class Edit extends Component
         $this->customer->financer_id = $this->customer->financer_id != "" ? $this->customer->financer_id : null;
         $this->customer->term_id = $this->customer->term_id != "" ? $this->customer->term_id : null;
         $this->validate();
-        $this->customer->save();
+
+        DB::transaction(function () {
+            $this->customer->save();
+            if ($this->customer->term_id) {
+                $this->createStockPoint();
+            }
+        });
 
         alert()
             ->withTitle(__('Home Owner updated!'))
@@ -127,6 +136,24 @@ class Edit extends Component
             ->send();
 
         return redirect()->route('home');
+    }
+
+    public function createStockPoint () 
+    {   
+        if (!$this->customer->stockPoint()->exists() && $this->customer->panel_sold) {
+            $this->customer->stockPoint()->create([
+                'stock_recruiter'       => StockPointsCalculationBases::find(StockPointsCalculationBases::RECRUIT_ID)->stock_base_point,
+                'stock_setting'         => StockPointsCalculationBases::find(StockPointsCalculationBases::SETTING_ID)->stock_base_point,
+                'stock_personal_sale'   => StockPointsCalculationBases::find(StockPointsCalculationBases::PERSONAL_SALES_ID)->stock_base_point,
+                'stock_pod_leader_team' => StockPointsCalculationBases::find(StockPointsCalculationBases::POD_LEADER_TEAM_ID)->stock_base_point,
+                'stock_manager'         => StockPointsCalculationBases::find(StockPointsCalculationBases::OFFICE_MANAGER_ID)->stock_base_point,
+                'stock_divisional'      => StockPointsCalculationBases::find(StockPointsCalculationBases::DIVISIONAL_ID)->stock_base_point,
+                'stock_regional'        => StockPointsCalculationBases::find(StockPointsCalculationBases::REGIONAL_MANAGER_ID)->stock_base_point,
+                'stock_department'      => StockPointsCalculationBases::find(StockPointsCalculationBases::DEPARTMENT_ID)->stock_base_point,
+                'set_date'              => Carbon::now(),
+                'expiration_date'       => Carbon::now()->addYear()
+            ]);
+        }
     }
 
     public function setSelfGen()
