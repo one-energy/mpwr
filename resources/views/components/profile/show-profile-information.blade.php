@@ -1,3 +1,4 @@
+@props(['stockPoints'])
 <div class="px-4 py-5 sm:p-6">
     <div class="flex justify-between">
         <div class="flex justify-start">
@@ -89,16 +90,51 @@
                 @endif
             </div>
         </div>
-        <div class="flex justify-between grid grid-cols-4 row-gap-1 col-gap-4 border-gray-200 border-2 m-1 p-2 rounded-lg">
-            <div class="col-span-4 text-xs text-gray-900">
-                STOCK SHARES
+        <div class="border-gray-200 border-2 m-1 p-2 rounded-lg">
+            <div class="text-sm font-bold text-center text-gray-900 mb-4">
+                ENIUM POINTS
             </div>
-            <div class="col-span-4 text-xl font-bold text-gray-900">
-                @if(user()->dailyNumbers->sum('set_sits') || user()->dailyNumbers->sum('sits') > 0)
-                {{number_format((user()->dailyNumbers->sum('set_closes') + user()->dailyNumbers->sum('closes')) / (user()->dailyNumbers->sum('set_sits') + user()->dailyNumbers->sum('sits')) * 100, 2)}}%
-                @else
-                -
-                @endif
+            <div class="space-y-2">
+                <div class="text-sm text-center text-gray-900">
+                    <p>Stock Shares On Personal Installs</p>
+                    <p class="font-bold text-xl">
+                        @if($stockPoints)
+                            {{$stockPoints->personal}}
+                        @else
+                        -
+                        @endif
+                    </p>
+                </div>
+                <div class="text-sm text-center text-gray-900">
+                    <p>Stock Shares On Team Installs</p>
+                    <p class="font-bold text-xl">
+                        @if($stockPoints)
+                            {{$stockPoints->team}}
+                        @else
+                        -
+                        @endif
+                    </p>
+                </div>
+                <div class="text-sm text-center text-gray-900">
+                    <p>Total Stock Shares</p>
+                    <p class="font-bold text-xl">
+                        @if($stockPoints)
+                            {{round($stockPoints->personal + $stockPoints->team)}}
+                        @else
+                        -
+                        @endif
+                    </p>
+                </div>
+                <div class="text-sm text-center text-gray-900">
+                    <p>Gross Total</p>
+                    <p class="font-bold text-xl">
+                        @if($stockPoints)
+                            {{round(($stockPoints->personal + $stockPoints->team) * $stockPoints->multiplierOfYear)}}
+                        @else
+                        -
+                        @endif
+                    </p>
+                </div>
             </div>
         </div>
 

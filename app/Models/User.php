@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Lab404\Impersonate\Models\Impersonate;
@@ -450,19 +451,18 @@ class User extends Authenticatable implements MustVerifyEmail
         $stockRecruit       = StockPointsCalculationBases::find(StockPointsCalculationBases::RECRUIT_ID)->stock_base_point;
         $stockSetting       = StockPointsCalculationBases::find(StockPointsCalculationBases::SETTING_ID)->stock_base_point;
         $stockPersonalSales = StockPointsCalculationBases::find(StockPointsCalculationBases::PERSONAL_SALES_ID)->stock_base_point;
-        $stockPodLeaderTeam = StockPointsCalculationBases::find(StockPointsCalculationBases::POD_LEADER_TEAM_ID)->stock_base_point;
         $stockOfficeManager = StockPointsCalculationBases::find(StockPointsCalculationBases::OFFICE_MANAGER_ID)->stock_base_point;
-        $stockDivisional    = StockPointsCalculationBases::find(StockPointsCalculationBases::DIVISIONAL_ID)->stock_base_point;
         $stockRegional      = StockPointsCalculationBases::find(StockPointsCalculationBases::REGIONAL_MANAGER_ID)->stock_base_point;
         $stockDepartment    = StockPointsCalculationBases::find(StockPointsCalculationBases::DEPARTMENT_ID)->stock_base_point;
 
         return (object)[
-            'personal' => $this->customersOfSalesRep()->with('stockPoint')->get()->count() * $stockPersonalSales,
-            'team'     => ($this->customersOfSetter()->with('stockPoint')->get()->count() * $stockSetting) +
-                          ($this->customersOfSalesRepsRecuited()->with('stockPoint')->get()->count() * $stockRecruit) +
-                          ($this->customersDepartmentManager()->with('stockPoint')->get()->count() * $stockDepartment) +
-                          ($this->customersManagedRegion()->with('stockPoint')->get()->count() * $stockRegional) +
-                          $this->customersManagedOffice()->with('stockPoint')->get()->count() * $stockOfficeManager 
+            'multiplierOfYear' => MultiplierOfYear::where('year', Carbon::now()->year)->first()->multiplier,
+            'personal'         => $this->customersOfSalesRep()->with('stockPoint')->get()->count() * $stockPersonalSales,
+            'team'             => ($this->customersOfSetter()->with('stockPoint')->get()->count() * $stockSetting) +
+                                  ($this->customersOfSalesRepsRecuited()->with('stockPoint')->get()->count() * $stockRecruit) +
+                                  ($this->customersDepartmentManager()->with('stockPoint')->get()->count() * $stockDepartment) +
+                                  ($this->customersManagedRegion()->with('stockPoint')->get()->count() * $stockRegional) +
+                                  $this->customersManagedOffice()->with('stockPoint')->get()->count() * $stockOfficeManager 
 
         ];
     }
