@@ -3,23 +3,14 @@
 namespace App\Http\Livewire;
 
 use App\Models\User;
-use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Scoreboard extends Component
 {
     public $filterTypes;
-
-    public $top10Hours;
-
-    public $top10Doors;
-
-    public $top10Sets;
-
-    public $top10SetCloses;
-
-    public $top10Closes;
 
     public $userId;
 
@@ -35,32 +26,36 @@ class Scoreboard extends Component
 
     public $closeRatio;
 
-    public $hoursPeriod = 'daily';
+    public Carbon $date;
 
-    public $doorsPeriod = 'daily';
-
-    public $setsPeriod = 'daily';
-
-    public $setClosesPeriod = 'daily';
-
-    public $closesPeriod = 'daily';
+    public string $period = 'd';
 
     public function mount()
     {
         $this->filterTypes = [
-            ['index' => 'leaderboards',   'value' => 'Leaderboards'],
-            ['index' => 'records',        'value' => 'Records'],
+            ['index' => 'leaderboards', 'value' => 'Leaderboards'],
+            ['index' => 'records', 'value' => 'Records'],
         ];
+
+        $this->date = now();
+    }
+
+    public function setDate(string $date)
+    {
+        $this->date = new Carbon($date);
+    }
+
+    public function setPeriod(string $period)
+    {
+        if (!in_array($period, ['d', 'w', 'm'])) {
+            return;
+        }
+
+        $this->period = $period;
     }
 
     public function render()
     {
-        $this->setTop10DoorsPeriod($this->doorsPeriod);
-        $this->setTop10HoursPeriod($this->hoursPeriod);
-        $this->setTop10SetsPeriod($this->setsPeriod);
-        $this->setTop10SetClosesPeriod($this->setClosesPeriod);
-        $this->setTop10ClosesPeriod($this->closesPeriod);
-
         return view('livewire.scoreboard');
     }
 
@@ -69,206 +64,85 @@ class Scoreboard extends Component
         $this->userId = $userId;
         $this->user   = User::find($userId);
 
-        $query = $this->user->dailyNumbers;
+        $dailyNumbers = $this->user->dailyNumbers;
 
-        $this->userArray             = [
-            'photo_url'     => $this->user->photo_url,
-            'first_name'    => $this->user->first_name,
-            'last_name'     => $this->user->last_name,
-            'office_name'   => $this->user->office->name,
-            'totalDoors'    => $query->sum('doors'),
-            'totalHours'    => $query->sum('hours'),
-            'totalSets'     => $query->sum('sets'),
-            'totalSits'     => $query->sum('sits'),
-            'totalCloses'   => $query->sum('set_closes'),
+        $this->userArray = [
+            'photo_url'   => $this->user->photo_url,
+            'full_name'   => $this->user->full_name,
+            'office_name' => $this->user->office->name,
+            'totalDoors'  => $dailyNumbers->sum('doors'),
+            'totalHours'  => $dailyNumbers->sum('hours'),
+            'totalSets'   => $dailyNumbers->sum('sets'),
+            'totalSits'   => $dailyNumbers->sum('sits'),
+            'totalCloses' => $dailyNumbers->sum('set_closes'),
         ];
-        // $this->photoUrl   = $this->user->photo_url;
-        // $this->firstName  = $this->user->first_name;
-        // $this->lastName   = $this->user->last_name;
-        // $this->officeName = $this->user->office->name;
 
-        // $this->totalDoors  = $query->sum('doors');
-        // $this->totalHours  = $query->sum('hours');
-        // $this->totalSets   = $query->sum('sets');
-        // $this->totalSits   = $query->sum('sits');
-        // $this->totalCloses = $query->sum('set_closes');
-
-        if ($query->sum('sets') > 0) {
-            $this->dpsRatio   = ($query->sum('doors') / $query->sum('sets'));
-            $this->hpsRatio   = ($query->sum('hours') / $query->sum('sets'));
-            $this->sitRatio   = ($query->sum('sits') / $query->sum('sets'));
+        if ($dailyNumbers->sum('sets') > 0) {
+            $this->dpsRatio = ($dailyNumbers->sum('doors') / $dailyNumbers->sum('sets'));
+            $this->hpsRatio = ($dailyNumbers->sum('hours') / $dailyNumbers->sum('sets'));
+            $this->sitRatio = ($dailyNumbers->sum('sits') / $dailyNumbers->sum('sets'));
         } else {
-            $this->dpsRatio   = 0;
-            $this->hpsRatio   = 0;
-            $this->sitRatio   = 0;
+            $this->dpsRatio = 0;
+            $this->hpsRatio = 0;
+            $this->sitRatio = 0;
         }
 
-        if ($query->sum('sits') > 0) {
-            $this->closeRatio = ($query->sum('set_closes') / $query->sum('sits'));
+        if ($dailyNumbers->sum('sits') > 0) {
+            $this->closeRatio = ($dailyNumbers->sum('set_closes') / $dailyNumbers->sum('sits'));
         } else {
             $this->closeRatio = 0;
         }
 
         $this->dispatchBrowserEvent('setUserNumbers', [
-            'doors'      => $query->sum('doors'),
-            'hours'      => $query->sum('hours'),
-            'sets'       => $query->sum('sets'),
-            'sits'       => $query->sum('sits'),
-            'set_closes' => $query->sum('set_closes'),
+            'doors'      => $dailyNumbers->sum('doors'),
+            'hours'      => $dailyNumbers->sum('hours'),
+            'sets'       => $dailyNumbers->sum('sets'),
+            'sits'       => $dailyNumbers->sum('sits'),
+            'set_closes' => $dailyNumbers->sum('set_closes'),
         ]);
     }
 
-    public function setTop10DoorsPeriod($doorsPeriod)
+    public function getTopTenDoorsProperty()
     {
-        $this->doorsPeriod = $doorsPeriod;
-
-        $userQuery = User::query()
-            ->leftJoin('daily_numbers', function($join) {
-                $join->on('daily_numbers.user_id', '=', 'users.id');
-            });
-
-        if ($this->doorsPeriod === 'daily') {
-            $userQuery
-                ->whereDate('daily_numbers.created_at', Carbon::today());
-        }
-        if ($this->doorsPeriod === 'weekly') {
-            $userQuery
-                ->whereBetween('daily_numbers.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
-        }
-        if ($this->doorsPeriod === 'monthly') {
-            $userQuery
-                ->whereMonth('daily_numbers.created_at', '=', Carbon::now()->month);
-        }
-
-        $this->top10Doors = $userQuery
-            ->with('office')
-            ->select(DB::raw('sum(daily_numbers.doors) as doors, users.office_id, users.first_name, users.last_name, users.id'))
-            ->groupBy('users.id')
-            ->whereNotNull('daily_numbers.doors')
-            ->whereDepartmentId(user()->department_id)
-            ->orderByDesc('doors')
-            ->take(10)
-            ->get();
+        return $this->getTopTenUsersBy('doors');
     }
 
-    public function setTop10HoursPeriod($hoursPeriod)
+    public function getTopTenHoursProperty()
     {
-        $this->hoursPeriod = $hoursPeriod;
-
-        $query = User::query()
-            ->leftJoin('daily_numbers', function($join) {
-                $join->on('daily_numbers.user_id', '=', 'users.id');
-            });
-
-        if ($this->hoursPeriod === 'daily') {
-            $query
-                ->whereDate('daily_numbers.created_at', Carbon::today());
-        } elseif ($this->hoursPeriod === 'weekly') {
-            $query
-                ->whereBetween('daily_numbers.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
-        } else {
-            $query
-                ->whereMonth('daily_numbers.created_at', '=', Carbon::now()->month);
-        }
-
-        $this->top10Hours = $query
-            ->with('office')
-            ->select(DB::raw('sum(daily_numbers.hours) as hours, users.office_id, users.first_name, users.last_name, users.id'))
-            ->groupBy('users.id')
-            ->whereNotNull('daily_numbers.hours')
-            ->whereDepartmentId(user()->department_id)
-            ->orderByDesc('hours')
-            ->take(10)
-            ->get();
+        return $this->getTopTenUsersBy('hours');
     }
 
-    public function setTop10SetsPeriod($setsPeriod)
+    public function getTopTenSetsProperty()
     {
-        $this->setsPeriod = $setsPeriod;
-
-        $query = User::query()
-            ->leftJoin('daily_numbers', function($join) {
-                $join->on('daily_numbers.user_id', '=', 'users.id');
-            });
-
-        if ($this->setsPeriod === 'daily') {
-            $query
-                ->whereDate('daily_numbers.created_at', Carbon::today());
-        } elseif ($this->setsPeriod === 'weekly') {
-            $query
-                ->whereBetween('daily_numbers.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
-        } else {
-            $query
-                ->whereMonth('daily_numbers.created_at', '=', Carbon::now()->month);
-        }
-
-        $this->top10Sets = $query
-            ->with('office')
-            ->select(DB::raw('sum(daily_numbers.sets) as sets, users.office_id, users.first_name, users.last_name, users.id'))
-            ->groupBy('users.id')
-            ->whereNotNull('daily_numbers.sets')
-            ->whereDepartmentId(user()->department_id)
-            ->orderByDesc('sets')
-            ->take(10)
-            ->get();
+        return $this->getTopTenUsersBy('sets');
     }
 
-    public function setTop10SetClosesPeriod($setClosesPeriod)
+    public function getTopTenSetClosesProperty()
     {
-        $this->setClosesPeriod = $setClosesPeriod;
-
-        $query = User::query()
-            ->leftJoin('daily_numbers', function($join) {
-                $join->on('daily_numbers.user_id', '=', 'users.id');
-            });
-
-        if ($this->setClosesPeriod === 'daily') {
-            $query
-                ->whereDate('daily_numbers.created_at', Carbon::today());
-        } elseif ($this->setClosesPeriod === 'weekly') {
-            $query
-                ->whereBetween('daily_numbers.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
-        } else {
-            $query
-                ->whereMonth('daily_numbers.created_at', '=', Carbon::now()->month);
-        }
-
-        $this->top10SetCloses = $query
-            ->with('office')
-            ->select(DB::raw('sum(daily_numbers.set_closes) as set_closes, users.office_id, users.first_name, users.last_name, users.id'))
-            ->groupBy('users.id')
-            ->whereNotNull('daily_numbers.set_closes')
-            ->whereDepartmentId(user()->department_id)
-            ->orderByDesc('set_closes')
-            ->take(10)
-            ->get();
+        return $this->getTopTenUsersBy('set_closes');
     }
 
-    public function setTop10ClosesPeriod($closesPeriod)
+    public function getTopTenClosesProperty()
     {
-        $this->closesPeriod = $closesPeriod;
+        return $this->getTopTenUsersBy('closes');
+    }
 
-        $query = User::query()
-            ->leftJoin('daily_numbers', function($join) {
-                $join->on('daily_numbers.user_id', '=', 'users.id');
-            });
-
-        if ($this->closesPeriod === 'daily') {
-            $query->whereDate('daily_numbers.created_at', Carbon::today());
-        } elseif ($this->closesPeriod === 'weekly') {
-            $query->whereBetween('daily_numbers.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
-        } else {
-            $query->whereMonth('daily_numbers.created_at', '=', Carbon::now()->month);
-        }
-
-        $this->top10Closes = $query
+    public function getTopTenUsersBy(string $field): Collection
+    {
+        return User::query()
             ->with('office')
-            ->select(DB::raw('sum(daily_numbers.closes) as closes, users.office_id, users.first_name, users.last_name, users.id'))
-            ->groupBy('users.id')
-            ->whereNotNull('daily_numbers.closes')
-            ->whereDepartmentId(user()->department_id)
-            ->orderByDesc('closes')
-            ->take(10)
-            ->get();
+            ->select('id', 'first_name', 'last_name', 'department_id', 'office_id')
+            ->withCount([
+                "dailyNumbers as {$field}_total" => function ($query) use ($field) {
+                    $query->select(DB::raw("SUM({$field}) as {$field}_total"))
+                        ->groupBy('user_id')
+                        ->inPeriod($this->period, $this->date);
+                }
+            ])
+            ->where('department_id', user()->department_id)
+            ->latest("{$field}_total")
+            ->limit(10)
+            ->get()
+            ->filter(fn(User $user) => $user->{"{$field}_total"} > 0);
     }
 }
