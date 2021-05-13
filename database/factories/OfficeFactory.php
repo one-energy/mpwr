@@ -15,8 +15,8 @@ class OfficeFactory extends Factory
     {
         return [
             'name'              => $this->faker->company,
-            'region_id'         => Region::factory(),
-            'office_manager_id' => User::factory(),
+            'office_manager_id' => null,
+            'region_id'         => null
         ];
     }
 }

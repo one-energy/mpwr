@@ -5,16 +5,19 @@ namespace App\Http\Controllers\Castle;
 use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\Incentive;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ManageIncentivesController extends Controller
 {
     public function index()
     {
-        if (user()->role == 'Admin' || user()->role == 'Owner') {
-            $incentives = Incentive::all();
-        } else {
-            $incentives = Incentive::query()->whereDepartmentId(user()->department_id)->orderBy('number_installs')->get();
-        }
+        $query = Incentive::query()->with([
+            'department' => fn(BelongsTo $query) => $query->withTrashed(),
+        ]);
+
+        $incentives = user()->hasAnyRole(['Admin', 'Owner'])
+            ? $query->get()
+            : $query->whereDepartmentId(user()->department_id)->orderBy('number_installs')->get();
 
         return view('castle.incentives.index', compact('incentives'));
     }
@@ -30,20 +33,20 @@ class ManageIncentivesController extends Controller
     {
         $validated = request()->validate(
             [
-                'number_installs'   => 'required|integer|max:9999',
-                'name'              => 'required|string|min:3|max:255',
-                'installs_needed'   => 'required|integer|max:9999',
-                'kw_needed'         => 'required|integer|max:9999',
-                'department_id'     => 'required|integer',
+                'number_installs' => 'required|integer|max:9999',
+                'name'            => 'required|string|min:3|max:255',
+                'installs_needed' => 'required|integer|max:9999',
+                'kw_needed'       => 'required|integer|max:9999',
+                'department_id'   => 'required|integer',
             ]
         );
 
-        $incentive                    = new Incentive();
-        $incentive->number_installs   = $validated['number_installs'];
-        $incentive->name              = $validated['name'];
-        $incentive->installs_needed   = $validated['installs_needed'];
-        $incentive->kw_needed         = $validated['kw_needed'];
-        $incentive->department_id     = $validated['department_id'];
+        $incentive                  = new Incentive();
+        $incentive->number_installs = $validated['number_installs'];
+        $incentive->name            = $validated['name'];
+        $incentive->installs_needed = $validated['installs_needed'];
+        $incentive->kw_needed       = $validated['kw_needed'];
+        $incentive->department_id   = $validated['department_id'];
 
         $incentive->save();
 
@@ -65,19 +68,19 @@ class ManageIncentivesController extends Controller
     {
         $validated = request()->validate(
             [
-                'number_installs'   => 'required|integer|max:9999',
-                'name'              => 'required|string|min:3|max:255',
-                'installs_needed'   => 'required|integer|max:9999',
-                'kw_needed'         => 'required|integer|max:9999',
-                'department_id'     => ['nullable', 'numeric'],
+                'number_installs' => 'required|integer|max:9999',
+                'name'            => 'required|string|min:3|max:255',
+                'installs_needed' => 'required|integer|max:9999',
+                'kw_needed'       => 'required|integer|max:9999',
+                'department_id'   => ['nullable', 'numeric'],
             ]
         );
 
-        $incentive->number_installs   = $validated['number_installs'];
-        $incentive->name              = $validated['name'];
-        $incentive->installs_needed   = $validated['installs_needed'];
-        $incentive->kw_needed         = $validated['kw_needed'];
-        $incentive->department_id     = $validated['department_id'];
+        $incentive->number_installs = $validated['number_installs'];
+        $incentive->name            = $validated['name'];
+        $incentive->installs_needed = $validated['installs_needed'];
+        $incentive->kw_needed       = $validated['kw_needed'];
+        $incentive->department_id   = $validated['department_id'];
 
         $incentive->save();
 
@@ -85,7 +88,7 @@ class ManageIncentivesController extends Controller
             ->withTitle(__('Incentive updated!'))
             ->send();
 
-        return  redirect(route('castle.incentives.index'));
+        return redirect(route('castle.incentives.index'));
     }
 
     public function destroy($id)

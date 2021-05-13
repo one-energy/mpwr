@@ -8,6 +8,9 @@ module.exports = {
             },
             maxWidth: {
                 '8xl': '110rem',
+            },
+            colors: {
+                'gray-base': '#F1F1F1'
             }
         },
     },

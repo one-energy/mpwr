@@ -2,28 +2,42 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Department;
+use App\Models\SectionFile;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
 use App\Traits\Livewire\FullTable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Livewire\Component;
 
 class ShowTrainings extends Component
 {
     use FullTable;
 
-    public $content       = [];
+    public Collection $contents;
 
-    public $sections      = [];
+    public Collection $sections;
 
-    public $videoId       = [];
+    public TrainingPageSection $actualSection;
 
-    public $actualSection = [];
+    public $path = [];
 
-    public $path          = [];
+    public ?TrainingPageSection $section;
 
-    public $section       = [];
+    public Department $department;
 
-    public $department;
+    public string $selectedTab = 'files';
+
+    public Collection $groupedFiles;
+
+    public function mount()
+    {
+        $this->video         = new TrainingPageContent();
+        $this->actualSection = new TrainingPageSection();
+        $this->contents      = collect();
+        $this->sections      = collect();
+    }
 
     public function sortBy()
     {
@@ -32,25 +46,33 @@ class ShowTrainings extends Component
 
     public function render()
     {
-        $index         = 0;
-        if ($this->department->id) {
-            $actualSection = $this->section ?? TrainingPageSection::whereDepartmentId($this->department->id)->first();
-            $index         = 0;
-
-            $this->content       = $this->getContent($actualSection);
-            $this->sections      = $this->department->id ? $this->getParentSections($actualSection) : [];
-            // dd($this->sections);
-            if ($this->content) {
-                $this->videoId = explode('/', $this->content->video_url);
-                $index         = count($this->videoId);
-            }
-
-            $this->path = $this->getPath($actualSection);
-            // dd($this->content->isEmpty());
+        if (!$this->department->id && (user()->role == 'Owner' || user()->role == 'Admin')) {
+            $this->department = Department::first();
         }
-        $this->videoId = $this->videoId[$index - 1] ?? null;
+
+        if ($this->department->id) {
+            $this->actualSection = $this->section ?? TrainingPageSection::whereDepartmentId($this->department->id)->first();
+            $this->actualSection->load('files');
+
+            $this->groupedFiles = $this->getGroupedFiles($this->actualSection);
+
+            $this->contents      = $this->getContents($this->actualSection);
+            $this->sections      = $this->department->id ? $this->getParentSections($this->actualSection) : collect();
+            $this->path          = $this->getPath($this->actualSection);
+        }
 
         return view('livewire.show-trainings');
+    }
+
+    public function getGroupedFiles(TrainingPageSection $section)
+    {
+        $files     = $section->files->filter(fn(SectionFile $file) => $file->training_type === 'files');
+        $trainings = $section->files->filter(fn(SectionFile $file) => $file->training_type === 'training');
+
+        return collect([
+            'files'    => $files,
+            'training' => $trainings,
+        ]);
     }
 
     public function getPath($section)
@@ -67,35 +89,53 @@ class ShowTrainings extends Component
         return array_reverse($path);
     }
 
-    public function getContent($section)
+    public function getContents(TrainingPageSection $section): Collection
     {
-        return TrainingPageContent::whereTrainingPageSectionId($section->id)->first();
+        return TrainingPageContent::whereTrainingPageSectionId($section->id)->get();
     }
 
     public function changeDepartment()
     {
-        return redirect(route('castle.manage-trainings.index',  ['department' => request()->all()['department']] ));
+        return redirect(route('castle.manage-trainings.index', ['department' => request()->all()['department']]));
     }
 
     public function getParentSections($section)
     {
-        $search         = $this->search;
-        $trainingsQuery = TrainingPageSection::query()->with('content')
-            ->select( 'training_page_sections.*')
-            ->whereDepartmentId($this->department->id)
-            ->leftJoin('training_page_contents', 'training_page_sections.id', '=', 'training_page_contents.training_page_section_id' );
+        return TrainingPageSection::query()
+            ->where('department_id', $this->department->id)
+            ->with('contents')
+            ->when(user()->hasRole('Region Manager'), function (Builder $query) {
+                $query->sectionsUserManaged();
+            })
+            ->when($this->search === '', function ($query) use ($section) {
+                $query->where('training_page_sections.parent_id', $section->id ?? 1);
+            })
+            ->when($this->search !== '', function ($query) {
+                $query->where(function ($query) {
+                    $query
+                        ->orWhere('training_page_sections.title', 'like', "%{$this->search}%")
+                        ->orWhere('training_page_contents.description', 'like', "%{$this->search}%");
+                });
+            })
+            ->get();
+    }
 
-        $trainingsQuery->when($search == '', function ($query) use ($section) {
-            $query->where('training_page_sections.parent_id', $section->id ?? 1);
-        });
+    public function getFilesTabSelectedProperty()
+    {
+        return $this->selectedTab === 'files';
+    }
 
-        $trainingsQuery->when($search != '', function ($query) use ($search) {
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('training_page_sections.title', 'like', '%' . $this->search . '%')
-                    ->orWhere('training_page_contents.description', 'like', '%' . $search . '%');
-            });
-        });
+    public function getTrainingTabSelectedProperty()
+    {
+        return $this->selectedTab === 'training';
+    }
 
-        return $trainingsQuery->get();
+    public function changeTab(string $tabName)
+    {
+        if ($this->selectedTab === $tabName) {
+            return;
+        }
+
+        $this->selectedTab = $tabName;
     }
 }

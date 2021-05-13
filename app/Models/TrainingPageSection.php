@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -16,24 +17,39 @@ use Illuminate\Support\Facades\DB;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int|null $department_id
- * @property-read \App\Models\TrainingPageContent|null $content
+ * @property int|null $region_id
+ * @property bool|null $department_folder
+ * @property-read \App\Models\TrainingPageContent|null $contents
  * @property-read \App\Models\Department|null $department
  * @property-read \App\Models\TrainingPageSection|null $parent
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\TrainingPageSection newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\TrainingPageSection newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\TrainingPageSection query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\TrainingPageSection search($search)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\TrainingPageSection sectionsUserManaged(User $user)
+ * @method bool TrainingPageSection isDepartmentSection()
  * @mixin \Eloquent
  */
 class TrainingPageSection extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
-    protected $fillable = ['title'];
+    protected $fillable = [
+        'title',
+        'parent_id',
+        'department_id',
+        'region_id',
+        'department_folder',
+    ];
 
-    public function content()
+    protected $casts = [
+        'department_folder' => 'boolean',
+    ];
+
+    public function contents()
     {
-        return $this->hasOne(TrainingPageContent::class);
+        return $this->hasMany(TrainingPageContent::class);
     }
 
     public function department()
@@ -46,6 +62,16 @@ class TrainingPageSection extends Model
         return $this->belongsTo(TrainingPageSection::class);
     }
 
+    public function files()
+    {
+        return $this->hasMany(SectionFile::class, 'training_page_section_id');
+    }
+
+    public function region()
+    {
+        return $this->belongsTo(Region::class);
+    }
+
     public function scopeSearch(Builder $query, $search)
     {
         $query->when($search, function (Builder $query) use ($search) {
@@ -55,5 +81,23 @@ class TrainingPageSection extends Model
                 '%' . strtolower($search) . '%'
             );
         });
+    }
+
+    public function scopeSectionsUserManaged(Builder $query, User $user = null)
+    {
+        $user = $user ?? user();
+
+        return $query->where(function (Builder $query) use ($user) {
+            $query
+                ->orWhereNull('region_id')
+                ->orWhereHas('region.offices', function (Builder $query) use ($user) {
+                    $query->where('offices.id', $user->office_id);
+                });
+        });
+    }
+
+    public function isDepartmentSection()
+    {
+        return $this->department_folder;
     }
 }

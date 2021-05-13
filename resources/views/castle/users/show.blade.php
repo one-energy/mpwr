@@ -13,17 +13,30 @@
                 <div class="tracking-wide">
                 <div class="mb-2 flex flex-col sm:flex-row">
                         <div class="font-medium sm:mr-2">Name:</div>
-                        {{ $user->first_name . ' ' . $user->last_name }}
+                        {{ $user->full_name }}
                     </div>
                     <div class="mb-2 flex flex-col sm:flex-row">
                         <div class="font-medium sm:mr-2">Email Address:</div>
                         <a :href="`mailto:{{ $user->email }}`"
                         class="text-green-base underline">{{ $user->email }}</a>
                     </div>
-                    <div class="flex flex-col sm:flex-row">
+                    <div class="flex flex-col sm:flex-row mb-2">
                         <div class="font-medium sm:mr-2">Joined:</div>
                         <div>{{ $user->created_at->format('F dS, Y') }}</div>
                     </div>
+                    @if ($user->id !== user()->id && !user()->isImpersonated())
+                        @canImpersonate()
+                            <div class="flex">
+                                <a
+                                    class="bg-green-600 cursor-pointer inline text-white px-3 rounded py-1 flex items-center"
+                                    href="{{ route('impersonate', $user->id) }}"
+                                >
+                                    <x-svg.id-card class="w-5 h-5 text-white fill-current mr-3" />
+                                    Impersonate
+                                </a>
+                            </div>
+                        @endCanImpersonate
+                    @endif
                 </div>
             </div>
         </div>

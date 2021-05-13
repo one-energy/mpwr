@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\Actions\DestroySection;
 use App\Models\Department;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
@@ -12,7 +13,20 @@ class TrainingController extends Controller
 
     public function index(Department $department, TrainingPageSection $section = null, $search = null)
     {
-        $this->authorize('viewList', [TrainingPageSection::class, $department->id]);
+        $this->authorize('viewList', [
+            TrainingPageSection::class,
+            $department->id,
+            $section,
+        ]);
+
+        if (user()->hasRole('Department Manager') && user()->department_id === null) {
+            alert()
+                ->withTitle(__('You need to be part of a department to access!'))
+                ->withColor('red')
+                ->send();
+
+            return redirect()->route('home');
+        }
 
         return view('training.index', [
             'department' => $department,
@@ -27,7 +41,29 @@ class TrainingController extends Controller
 
     public function manageTrainings(Department $department, TrainingPageSection $section = null)
     {
-        $this->authorize('viewList', [TrainingPageSection::class, $department->id]);
+        $this->authorize('viewList', [
+            TrainingPageSection::class,
+            $department->id,
+            $section,
+        ]);
+
+        if (user()->hasRole('Department Manager') && user()->department_id === null) {
+            alert()
+                ->withTitle(__('You need to be part of a department to access!'))
+                ->withColor('red')
+                ->send();
+
+            return redirect()->route('castle.dashboard');
+        }
+
+        if (user()->hasRole('Region Manager') && user()->department_id === null) {
+            alert()
+                ->withTitle(__('You need to be linked to a department!'))
+                ->withColor('red')
+                ->send();
+
+            return back();
+        }
 
         return view('castle.manage-trainings.index', [
             'department' => $department,
@@ -37,14 +73,7 @@ class TrainingController extends Controller
 
     public function deleteSection(TrainingPageSection $section)
     {
-        $childsSections = TrainingPageSection::query()->whereParentId($section->id)->get();
-
-        foreach ($childsSections as $childSection) {
-            $childSection->parent_id = $section->parent_id;
-            $childSection->save();
-        }
-
-        $section->delete();
+        DestroySection::execute($section);
 
         return redirect(route('castle.manage-trainings.index', [
             'department' => $section->department_id,
@@ -54,16 +83,24 @@ class TrainingController extends Controller
 
     public function storeSection(TrainingPageSection $section)
     {
-        $validated = request()->validate([
-            'title' => 'required|string|max:255',
+        if ($section->isDepartmentSection() && user()->hasRole('Region Manager')) {
+            alert()
+                ->withTitle(__('You can only create content inside of your region section!'))
+                ->withColor('red')
+                ->send();
+
+            return back();
+        }
+
+        request()->validate(['title' => 'required|string|max:255']);
+
+        TrainingPageSection::create([
+            'title'             => request()->title,
+            'parent_id'         => $section->id,
+            'department_id'     => $section->department_id,
+            'region_id'         => $section->region_id,
+            'department_folder' => $section->department_folder,
         ]);
-
-        $trainingPageSection                = new TrainingPageSection();
-        $trainingPageSection->title         = $validated['title'];
-        $trainingPageSection->parent_id     = $section->id;
-        $trainingPageSection->department_id = $section->department_id;
-
-        $trainingPageSection->save();
 
         alert()
             ->withTitle(__('Section created!'))

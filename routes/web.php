@@ -14,6 +14,7 @@ use App\Http\Controllers\Castle\RatesController;
 use App\Http\Controllers\Castle\RegionController;
 use App\Http\Controllers\Castle\UsersController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IncentivesController;
 use App\Http\Controllers\NumberTrackingController;
@@ -105,7 +106,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('/{incentive}', [ManageIncentivesController::class, 'destroy'])->name('destroy');
         });
 
-        Route::prefix('manage-trainings')->middleware('incentives')->name('manage-trainings.')->group(function () {
+        Route::prefix('manage-trainings')->middleware('role:Admin|Owner|Department Manager|Region Manager')->name('manage-trainings.')->group(function () {
             Route::get('/list/{department?}/{section?}', [TrainingController::class, 'manageTrainings'])->name('index');
             Route::post('/{section?}/create-section', [TrainingController::class, 'storeSection'])->name('storeSection');
             Route::put('/{section?}/update-section', [TrainingController::class, 'updateSection'])->name('updateSection');
@@ -134,9 +135,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/trainings/{department?}/{section?}/{search?}', [TrainingController::class, 'index'])->name('trainings.index');
     Route::get('/incentives', IncentivesController::class)->name('incentives.index');
     Route::get('/reports', [ReportsController::class, 'index'])->name('reports.index');
+
     Route::get('/number-tracking', [NumberTrackingController::class, 'index'])->name('number-tracking.index');
     Route::get('/number-tracking/create', [NumberTrackingController::class, 'create'])->name('number-tracking.create');
     Route::post('/number-tracking/create', [NumberTrackingController::class, 'store'])->name('number-tracking.store');
+
+    Route::get('/number-tracking/spreadsheet', [NumberTrackingController::class, 'spreadsheet'])
+        ->middleware('role:Admin|Owner|Department Manager|Region Manager')
+        ->name('number-tracking.spreadsheet');
+    Route::post('/number-tracking/spreadsheet', [NumberTrackingController::class, 'updateOrCreateDailyNumbers'])
+        ->middleware('role:Admin|Owner|Department Manager|Region Manager')
+        ->name('number-tracking.spreadsheet.updateOrCreate');
 
     Route::post('/get-offices-managers/{regionId}', [UsersController::class, 'getOfficesManager'])->name('getOfficesManager');
     Route::post('/get-regions-managers/{departmentId}', [UsersController::class, 'getRegionsManager'])->name('getRegionsManager');
@@ -150,4 +159,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/get-rates-per-role/{role}', [RatesController::class, 'getRatesPerRole'])->name('getRatesPerRole');
 
+    Route::post('upload-section-file/{section}', [FileController::class, 'uploadSectionFile'])->name('uploadSectionFile');
+
+    Route::post('download-section-file', [FileController::class, 'downloadSectionFile'])->name('downloadSectionFile');
 });
+
+Route::impersonate();

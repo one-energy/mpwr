@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Lab404\Impersonate\Models\Impersonate;
 
 /**
  * App\Models\User
@@ -34,7 +35,8 @@ use Illuminate\Support\Facades\Hash;
  * @property int|null $office_id
  * @property int|null $department_id
  * @property int $installs
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\DailyNumber[] $dailyNumbers
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\DailyNumber[] $dailyNumbers
+ * @property-read string $full_name
  * @property-read \App\Models\Department|null $department
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invitation[] $invitations
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Office[] $managedOffices
@@ -58,6 +60,25 @@ class User extends Authenticatable implements MustVerifyEmail
     use HasFactory;
     use Notifiable;
     use SoftDeletes;
+    use Impersonate;
+
+    protected $fillable = [
+        'first_name',
+        'last_name',
+        'email',
+        'email_verified_at',
+        'password',
+        'role',
+        'pay',
+        'timezone',
+        'master',
+        'photo_url',
+        'remember_token',
+        'kw_achived',
+        'office_id',
+        'department_id',
+        'install',
+    ];
 
     const ROLES = [
         ['title' => 'Owner', 'name' => 'Owner', 'description' => 'System Owner'],
@@ -81,6 +102,10 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
         'master'            => 'boolean',
+    ];
+
+    protected $appends = [
+        'full_name'
     ];
 
     public function office()
@@ -215,6 +240,16 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $this->forceFill(['master' => false]);
         $this->save();
+    }
+
+    public function canImpersonate()
+    {
+        return $this->hasRole('Admin');
+    }
+
+    public function getFullNameAttribute()
+    {
+        return sprintf('%s %s', $this->first_name, $this->last_name);
     }
 
     public function getPermittedUsers($departmentId = null)

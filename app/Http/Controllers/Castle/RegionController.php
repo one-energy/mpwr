@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Castle;
 use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\Region;
+use App\Models\TrainingPageSection;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class RegionController extends Controller
 {
@@ -52,20 +54,32 @@ class RegionController extends Controller
     {
         $validated = request()->validate([
             'name'              => 'required|string|min:3|max:255',
-            'region_manager_id' => 'required',
-            'department_id'     => 'required',
+            'region_manager_id' => 'required|exists:users,id',
+            'department_id'     => 'required|exists:departments,id',
         ], [
             'region_id.required'         => 'The region field is required.',
             'region_manager_id.required' => 'The region manager field is required.',
             'department_id.required'     => 'The department field is required.',
         ]);
 
-        $region                    = new Region();
-        $region->name              = $validated['name'];
-        $region->region_manager_id = $validated['region_manager_id'];
-        $region->department_id     = $validated['department_id'];
+        DB::transaction(function () use ($validated) {
+            /** @var Region */
+            $region = Region::create($validated);
 
-        $region->save();
+            $parentSection = TrainingPageSection::query()
+                ->where(function (Builder $query) use ($region) {
+                    $query->where('department_id', $region->department_id)
+                        ->whereNull('parent_id');
+                })
+                ->first();
+
+            $region->trainingPageSections()->create([
+                'title'             => ucwords($region->name),
+                'parent_id'         => $parentSection->id ?? null,
+                'department_id'     => $region->department_id,
+                'department_folder' => false,
+            ]);
+        });
 
         alert()
             ->withTitle(__('Region created!'))

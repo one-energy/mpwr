@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\Actions\SpreadsheetDailyNumbers;
+use App\Facades\Actions\UpdateOrCreateNumberTracking;
 use App\Models\DailyNumber;
-use Illuminate\Http\Request;
+use Throwable;
 
 class NumberTrackingController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
         $this->authorize('viewList', DailyNumber::class);
 
@@ -21,47 +23,46 @@ class NumberTrackingController extends Controller
 
     public function store()
     {
-        $data = request()->all();
-
-        // $this->authorize('update', [DailyNumber::class, $data['officeSelected']]);
-
-        if (!empty($data['numbers'])) {
-            $date = ($data['date']) ? date('Y-m-d', strtotime($data['date'])) : date('Y-m-d', time());
-
-            foreach ($data['numbers'] as $userId => $numbers) {
-                $filteredNumbers = array_filter($numbers, function ($element) {
-                    return ($element >= 0);
-                });
-
-                $isEmpty = empty(array_filter($filteredNumbers, function($item) {
-                    return $item !== null;
-                }));
-
-                if (!$isEmpty) {
-                    DailyNumber::updateOrCreate(
-                        [
-                            'user_id' => $userId,
-                            'date'    => $date,
-                        ],
-                        $filteredNumbers
-                    );
-                } else {
-                    $dailyNumber = DailyNumber::whereDate('date', $date)->whereUserId($userId)->first();
-                    if (!empty($dailyNumber)) {
-                        DailyNumber::destroy($dailyNumber->id);
-                    }
-                }
-            }
-            alert()
-                ->withTitle(__('Daily Numbers saved!'))
-                ->send();
-        } else {
+        if (collect(request()->numbers)->isEmpty()) {
             alert()
                 ->withTitle(__('Nothing was saved :('))
                 ->withColor('red')
                 ->send();
+
+            return back();
         }
 
+        UpdateOrCreateNumberTracking::execute(request()->all());
+
+        alert()
+            ->withTitle(__('Daily Numbers saved!'))
+            ->send();
+
         return back();
+    }
+
+    public function spreadsheet()
+    {
+        return view('number-tracking.spreadsheet');
+    }
+
+    public function updateOrCreateDailyNumbers()
+    {
+        request()->validate(['dailyNumbers' => 'required|array']);
+
+        try {
+            SpreadsheetDailyNumbers::execute(request()->dailyNumbers);
+
+            alert()
+                ->withTitle(__('Number Trackers saved!'))
+                ->send();
+        } catch (Throwable $exception) {
+            alert()
+                ->withTitle(__('Something went wrong on save Number Trackers!'))
+                ->withColor('red')
+                ->send();
+        }
+
+        return redirect()->route('number-tracking.spreadsheet');
     }
 }

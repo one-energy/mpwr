@@ -26,8 +26,7 @@
                                         </x-nav.link>
                                     @endif
 
-                                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
-                                        <x-nav.link
+                                    @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager', 'Region Manager']))                                        <x-nav.link
                                             :href="route('castle.manage-trainings.index', ['department' => user()->department_id] )"
                                             class="ml-4"
                                             :active="is_active('castle.manage-trainings.index')">
@@ -78,7 +77,7 @@
                                         :href="route('trainings.index', ['department' => user()->department_id])"
                                         class="ml-8"
                                         :active="is_active('trainings.*')">
-                                        @lang('Training')
+                                        @lang('Files & Training')
                                     </x-nav.link>
                                     <x-nav.link :href="route('incentives.index')" class="ml-8"
                                                 :active="is_active('incentives.*')">
@@ -141,10 +140,17 @@
                                         @lang('Your Profile')
                                     </a>
 
-                                    <button type="submit" form="form-sign-out"
-                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
-                                        @lang('Logout')
-                                    </button>
+                                    @impersonating()
+                                        <a href="{{ route('impersonate.leave') }}"
+                                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            @lang('Back to My Account')
+                                        </a>
+                                    @else
+                                        <button type="submit" form="form-sign-out"
+                                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
+                                            @lang('Logout')
+                                        </button>
+                                    @endImpersonating
                                 </div>
                             </div>
                         </div>

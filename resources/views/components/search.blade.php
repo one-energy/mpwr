@@ -1,7 +1,8 @@
-@props(['perPage', 'search'])
+@props(['perPage', 'search', 'class'])
 
 @php
     $perPage  = $perPage ?? true;
+    $class = $class ?? 'mt-1 block w-full px-10 form-input sm:text-sm sm:leading-5';
 @endphp
 
 <div class="mb-4 sm:flex sm:justify-between">
@@ -15,7 +16,7 @@
                 </svg>
             </div>
 
-            <input wire:model.debounce.500ms="search" class="mt-1 block w-full px-10 form-input sm:text-sm sm:leading-5"
+            <input wire:model.debounce.500ms="search" class="{{ $class }}"
                    placeholder="Search"/>
 
             @if($search)

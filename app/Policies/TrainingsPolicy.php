@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\TrainingPageSection;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -9,20 +10,17 @@ class TrainingsPolicy
 {
     use HandlesAuthorization;
 
-    /**
-     * Create a new policy instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    public function viewList(User $user, ?int $departmentId, TrainingPageSection $section = null)
     {
-        //
-    }
-
-    public function viewList(User $user, ?int $departmentId)
-    {
-        if ($user->role == 'Admin' || $user->role == 'Owner') {
+        if ($user->hasAnyRole(['Admin', 'Owner'])) {
             return true;
+        }
+
+        if ($user->hasRole('Region Manager') && $section !== null) {
+            return TrainingPageSection::query()
+                ->sectionsUserManaged($user)
+                ->where('id', $section->id)
+                ->exists();
         }
 
         return $user->department_id == $departmentId;
