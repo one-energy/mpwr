@@ -89,6 +89,18 @@
                 @endif
             </div>
         </div>
+        <div class="flex justify-between grid grid-cols-4 row-gap-1 col-gap-4 border-gray-200 border-2 m-1 p-2 rounded-lg">
+            <div class="col-span-4 text-xs text-gray-900">
+                STOCK SHARES
+            </div>
+            <div class="col-span-4 text-xl font-bold text-gray-900">
+                @if(user()->dailyNumbers->sum('set_sits') || user()->dailyNumbers->sum('sits') > 0)
+                {{number_format((user()->dailyNumbers->sum('set_closes') + user()->dailyNumbers->sum('closes')) / (user()->dailyNumbers->sum('set_sits') + user()->dailyNumbers->sum('sits')) * 100, 2)}}%
+                @else
+                -
+                @endif
+            </div>
+        </div>
 
         <!-- Funnel Chart -->
         <div class="border-gray-200 border-2 m-1 p-2 rounded-lg" id="funnelChart">

@@ -32,10 +32,11 @@ class HomeController extends Controller
             ->when(request()->has('sort_by') && request()->sort_by == 'is_inactive', function (Builder $query) {
                 $query->whereIsActive(false);
             });
-
+            
         return view('home', [
-            'customers' => $query->get(),
-            'sortTypes' => $sortTypes,
+            'customers'   => $query->get(),
+            'sortTypes'   => $sortTypes,
+            'stockPoints' => user()->stockPoints()
         ]);
     }
 }

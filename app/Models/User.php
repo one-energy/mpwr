@@ -177,9 +177,24 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(User::class, 'department_manager_id');
     }
 
+    public function customersOfSetter()
+    {
+        return $this->hasMany(Customer::class, 'setter_id');
+    }
+
+    public function customersOfSalesRep()
+    {
+        return $this->hasMany(Customer::class, 'sales_rep_id');
+    }
+
     public function customersOfSalesRepsRecuited()
     {
         return $this->hasMany(Customer::class, 'sales_rep_recruiter_id');
+    }
+
+    public function customersManagedOffice()
+    {
+        return $this->hasMany(Customer::class, 'office_manager_id');
     }
 
     public function customersManagedRegion()
@@ -188,11 +203,6 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     public function customersDepartmentManager()
-    {
-        return $this->belongsTo(Customer::class, 'department_manager_id');
-    }
-
-    public function customersManagedDepartment()
     {
         return $this->hasMany(Customer::class, 'department_manager_id');
     }
@@ -433,6 +443,28 @@ class User extends Authenticatable implements MustVerifyEmail
     public function hasRole(string $role): bool
     {
         return $this->role === $role;
+    }
+
+    public function stockPoints()
+    {
+        $stockRecruit       = StockPointsCalculationBases::find(StockPointsCalculationBases::RECRUIT_ID)->stock_base_point;
+        $stockSetting       = StockPointsCalculationBases::find(StockPointsCalculationBases::SETTING_ID)->stock_base_point;
+        $stockPersonalSales = StockPointsCalculationBases::find(StockPointsCalculationBases::PERSONAL_SALES_ID)->stock_base_point;
+        $stockPodLeaderTeam = StockPointsCalculationBases::find(StockPointsCalculationBases::POD_LEADER_TEAM_ID)->stock_base_point;
+        $stockOfficeManager = StockPointsCalculationBases::find(StockPointsCalculationBases::OFFICE_MANAGER_ID)->stock_base_point;
+        $stockDivisional    = StockPointsCalculationBases::find(StockPointsCalculationBases::DIVISIONAL_ID)->stock_base_point;
+        $stockRegional      = StockPointsCalculationBases::find(StockPointsCalculationBases::REGIONAL_MANAGER_ID)->stock_base_point;
+        $stockDepartment    = StockPointsCalculationBases::find(StockPointsCalculationBases::DEPARTMENT_ID)->stock_base_point;
+
+        return (object)[
+            'personal' => $this->customersOfSalesRep()->with('stockPoint')->get()->count() * $stockPersonalSales,
+            'team'     => ($this->customersOfSetter()->with('stockPoint')->get()->count() * $stockSetting) +
+                          ($this->customersOfSalesRepsRecuited()->with('stockPoint')->get()->count() * $stockRecruit) +
+                          ($this->customersDepartmentManager()->with('stockPoint')->get()->count() * $stockDepartment) +
+                          ($this->customersManagedRegion()->with('stockPoint')->get()->count() * $stockRegional) +
+                          $this->customersManagedOffice()->with('stockPoint')->get()->count() * $stockOfficeManager 
+
+        ];
     }
 
     public function hasAnyRole(array $roles): bool
