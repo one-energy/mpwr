@@ -5,20 +5,14 @@ namespace Tests\Feature\Profile;
 use App\Models\Customer;
 use App\Models\CustomersStockPoint;
 use App\Models\MultiplierOfYear;
-use App\Models\Term;
 use App\Models\User;
-use App\Models\UserCustomersEniumPoints;
-use App\Models\UserEniumPointLevel;
-use Illuminate\Database\Eloquent\Factories\Sequence;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
 
 class StockPointsTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     public User $user;
     public Customer $customer;
@@ -131,12 +125,12 @@ class StockPointsTest extends TestCase
     public function it_should_show_gross_stock_points()
     {
         $this->get('/')->assertSee(
-            ($this->userPersonalStockPoints->sum('stock_personal_sale') +
+            round(($this->userPersonalStockPoints->sum('stock_personal_sale') +
             $this->teamStockPoints[0]->stock_setting + 
             $this->teamStockPoints[1]->stock_recruiter + 
             $this->teamStockPoints[2]->stock_manager +
             $this->teamStockPoints[3]->stock_regional +
-            $this->teamStockPoints[4]->stock_department) * $this->multiplier
+            $this->teamStockPoints[4]->stock_department) * $this->multiplier)
         );
     }
 }
