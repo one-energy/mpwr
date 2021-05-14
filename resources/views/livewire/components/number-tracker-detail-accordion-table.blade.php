@@ -53,13 +53,13 @@
                     <x-svg.arrow-down class="text-red-600"/>
                 @endif
                 <span class="
-                        @if($this->getNumberTrackerDifferenceToLasNumbersOf('doors') >= 0)
-                    text-green-base
-@else
-                    text-red-600
-@endif
                     text-base
-">
+                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('doors') >= 0)
+                        text-green-base
+                    @else
+                        text-red-600
+                    @endif
+                ">
                         {{$this->getNumberTrackerDifferenceToLasNumbersOf('doors')}}
                     </span>
             </div>
@@ -75,13 +75,13 @@
                     <x-svg.arrow-down class="text-red-600"/>
                 @endif
                 <span class="
-                        @if($this->getNumberTrackerDifferenceToLasNumbersOf('hours') >= 0)
-                    text-green-base
-@else
-                    text-red-600
-@endif
                     text-base
-">
+                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('hours') >= 0)
+                        text-green-base
+                    @else
+                        text-red-600
+                    @endif
+                ">
                         {{$this->getNumberTrackerDifferenceToLasNumbersOf('hours')}}
                     </span>
             </div>
@@ -97,13 +97,13 @@
                     <x-svg.arrow-down class="text-red-600"/>
                 @endif
                 <span class="
-                        @if($this->getNumberTrackerDifferenceToLasNumbersOf('sets')>= 0)
-                    text-green-base
-@else
-                    text-red-600
-@endif
                     text-base
-">
+                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('sets')>= 0)
+                        text-green-base
+                    @else
+                        text-red-600
+                    @endif
+                ">
                         {{$this->getNumberTrackerDifferenceToLasNumbersOf('sets')}}
                     </span>
             </div>
@@ -124,13 +124,13 @@
                     <x-svg.arrow-down class="text-red-600"/>
                 @endif
                 <span class="
-                        @if($this->getNumberTrackerDifferenceToLasNumbersOf('hoursWorked') >= 0)
-                    text-green-base
-@else
-                    text-red-600
-@endif
                     text-base
-">
+                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('hoursWorked') >= 0)
+                        text-green-base
+                    @else
+                        text-red-600
+                    @endif
+                ">
                         {{$this->getNumberTrackerDifferenceToLasNumbersOf('hoursWorked')}}
                     </span>
             </div>
@@ -150,13 +150,13 @@
                     <x-svg.arrow-down class="text-red-600"/>
                 @endif
                 <span class="
-                        @if($this->getNumberTrackerDifferenceToLasNumbersOf('hoursKnocked') >= 0)
-                    text-green-base
-@else
-                    text-red-600
-@endif
                     text-base
-">
+                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('hoursKnocked') >= 0)
+                        text-green-base
+                    @else
+                        text-red-600
+                    @endif
+                ">
                         {{$this->getNumberTrackerDifferenceToLasNumbersOf('hoursKnocked')}}
                     </span>
             </div>
@@ -176,13 +176,13 @@
                     <x-svg.arrow-down class="text-red-600"/>
                 @endif
                 <span class="
-                        @if($this->getNumberTrackerDifferenceToLasNumbersOf('sats')>= 0)
-                    text-green-base
-@else
-                    text-red-600
-@endif
                     text-base
-">
+                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('sats')>= 0)
+                        text-green-base
+                    @else
+                        text-red-600
+                    @endif
+                ">
                         {{$this->getNumberTrackerDifferenceToLasNumbersOf('sats')}}
                     </span>
             </div>
@@ -202,13 +202,13 @@
                     <x-svg.arrow-down class="text-red-600"/>
                 @endif
                 <span class="
-                        @if($this->getNumberTrackerDifferenceToLasNumbersOf('closerSits')>= 0)
-                    text-green-base
-@else
-                    text-red-600
-@endif
                     text-base
-">
+                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('closerSits')>= 0)
+                        text-green-base
+                    @else
+                        text-red-600
+                    @endif
+                ">
                         {{$this->getNumberTrackerDifferenceToLasNumbersOf('closerSits')}}
                     </span>
             </div>
@@ -231,13 +231,13 @@
                         <x-svg.arrow-down class="text-red-600"/>
                     @endif
                     <span class="
-                                @if($this->getNumberTrackerDifferenceToLasNumbersOf('setSits') >= 0)
-                        text-green-base
-@else
-                        text-red-600
-@endif
                         text-base
-">
+                        @if($this->getNumberTrackerDifferenceToLasNumbersOf('setSits') >= 0)
+                            text-green-base
+                        @else
+                            text-red-600
+                        @endif
+                    ">
                             {{$this->getNumberTrackerDifferenceToLasNumbersOf('setSits')}}
                         </span>
                 </div>
@@ -256,13 +256,13 @@
                         <x-svg.arrow-down class="text-red-600"/>
                     @endif
                     <span class="
-                                @if($this->getNumberTrackerDifferenceToLasNumbersOf('sits') >= 0)
-                        text-green-base
-@else
-                        text-red-600
-@endif
                         text-base
-">
+                        @if($this->getNumberTrackerDifferenceToLasNumbersOf('sits') >= 0)
+                            text-green-base
+                        @else
+                            text-red-600
+                        @endif
+                    ">
                             {{$this->getNumberTrackerDifferenceToLasNumbersOf('sits')}}
                         </span>
                 </div>
@@ -285,13 +285,13 @@
                         <x-svg.arrow-down class="text-red-600"/>
                     @endif
                     <span class="
-                            @if($this->getNumberTrackerDifferenceToLasNumbersOf('setCloses') >= 0)
-                        text-green-base
-@else
-                        text-red-600
-@endif
                         text-base
-">
+                        @if($this->getNumberTrackerDifferenceToLasNumbersOf('setCloses') >= 0)
+                            text-green-base
+                        @else
+                            text-red-600
+                        @endif
+                    ">
                             {{$this->getNumberTrackerDifferenceToLasNumbersOf('setCloses')}}
                         </span>
                 </div>
@@ -312,13 +312,13 @@
                         <x-svg.arrow-down class="text-red-600"/>
                     @endif
                     <span class="
-                            @if($this->getNumberTrackerDifferenceToLasNumbersOf('closes') >= 0)
-                        text-green-base
-@else
-                        text-red-600
-@endif
                         text-base
-">
+                        @if($this->getNumberTrackerDifferenceToLasNumbersOf('closes') >= 0)
+                            text-green-base
+                        @else
+                            text-red-600
+                        @endif
+                    ">
                             {{$this->getNumberTrackerDifferenceToLasNumbersOf('closes')}}
                         </span>
                 </div>
@@ -330,6 +330,7 @@
     <div class="justify-end mt-5">
         <x-toggle wire:click="initRegionsData" wire:model="deleteds" class="items-end" label="Deleted"/>
     </div>
+
     <div class="flex justify-center w-full">
         <x-svg.spinner
             color="#9fa6b2"
