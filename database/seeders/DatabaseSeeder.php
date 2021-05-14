@@ -12,6 +12,8 @@ class DatabaseSeeder extends Seeder
         $this->call(FinancersSeeder::class);
         $this->call(FinancingsSeeder::class);
         $this->call(TermsSeeder::class);
+        $this->call(MultiplierOfYearSeeder::class);
+        $this->call(StockPointsCalculationBasesSeeder::class);
         // $this->call(DepartmentOne::class);
         // $this->call(DepartmentTwo::class);
         $this->call(BootstrapSeeder::class);
