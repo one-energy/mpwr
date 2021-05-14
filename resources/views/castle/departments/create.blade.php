@@ -9,7 +9,7 @@
             <x-form :route="route('castle.departments.store')">
                 <div class="px-8">
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
-                        <div class="md:col-span-3 col-span-2">
+                        <div class="md:col-span-3 col-span-2 mt-2">
                             <x-input label="Department Name" name="name"/>
                         </div>
                         <div class="md:col-span-3 col-span-2">
