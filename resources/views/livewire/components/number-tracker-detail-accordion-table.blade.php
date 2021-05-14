@@ -44,73 +44,6 @@
 
     <div class="mt-3 overflow-auto flex flex-row space-x-4 p-3">
         <div style="min-width: fit-content; flex: 0 0 auto" class="w-48 border-2 border-gray-200 rounded-md p-3 space-y-1">
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold uppercase">Doors</div>
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold">{{$this->getNumberTrackerSumOf('doors')}}</div>
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
-                @if($this->getNumberTrackerDifferenceToLasNumbersOf('doors') >= 0)
-                    <x-svg.arrow-up class="text-green-base"/>
-                @else
-                    <x-svg.arrow-down class="text-red-600"/>
-                @endif
-                <span class="
-                        @if($this->getNumberTrackerDifferenceToLasNumbersOf('doors') >= 0)
-                    text-green-base
-@else
-                    text-red-600
-@endif
-                    text-base
-">
-                        {{$this->getNumberTrackerDifferenceToLasNumbersOf('doors')}}
-                    </span>
-            </div>
-            <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
-        </div>
-        <div style="min-width: fit-content; flex: 0 0 auto" class="w-48 border-2 border-gray-200 rounded-md p-3 space-y-1" >
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">Hours</div>
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold text-gray-900">{{$this->getNumberTrackerSumOf('hours')}}</div>
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
-                @if($this->getNumberTrackerDifferenceToLasNumbersOf('hours') >= 0)
-                    <x-svg.arrow-up class="text-green-base"/>
-                @else
-                    <x-svg.arrow-down class="text-red-600"/>
-                @endif
-                <span class="
-                        @if($this->getNumberTrackerDifferenceToLasNumbersOf('hours') >= 0)
-                    text-green-base
-@else
-                    text-red-600
-@endif
-                    text-base
-">
-                        {{$this->getNumberTrackerDifferenceToLasNumbersOf('hours')}}
-                    </span>
-            </div>
-            <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
-        </div>
-        <div style="min-width: fit-content; flex: 0 0 auto" class="w-48 border-2 border-gray-200 rounded-md p-3 space-y-1" >
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">Sets</div>
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold text-gray-900">{{$this->getNumberTrackerSumOf('sets')}}</div>
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
-                @if($this->getNumberTrackerDifferenceToLasNumbersOf('sets') >= 0)
-                    <x-svg.arrow-up class="text-green-base"/>
-                @else
-                    <x-svg.arrow-down class="text-red-600"/>
-                @endif
-                <span class="
-                        @if($this->getNumberTrackerDifferenceToLasNumbersOf('sets')>= 0)
-                    text-green-base
-@else
-                    text-red-600
-@endif
-                    text-base
-">
-                        {{$this->getNumberTrackerDifferenceToLasNumbersOf('sets')}}
-                    </span>
-            </div>
-            <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
-        </div>
-
-        <div style="min-width: fit-content; flex: 0 0 auto" class="w-48 border-2 border-gray-200 rounded-md p-3 space-y-1">
             <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold uppercase">
                 Hours Worked
             </div>
@@ -132,6 +65,28 @@
                     text-base
 ">
                         {{$this->getNumberTrackerDifferenceToLasNumbersOf('hoursWorked')}}
+                    </span>
+            </div>
+            <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
+        </div>
+        <div style="min-width: fit-content; flex: 0 0 auto" class="w-48 border-2 border-gray-200 rounded-md p-3 space-y-1">
+            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold uppercase">Doors</div>
+            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold">{{$this->getNumberTrackerSumOf('doors')}}</div>
+            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
+                @if($this->getNumberTrackerDifferenceToLasNumbersOf('doors') >= 0)
+                    <x-svg.arrow-up class="text-green-base"/>
+                @else
+                    <x-svg.arrow-down class="text-red-600"/>
+                @endif
+                <span class="
+                        @if($this->getNumberTrackerDifferenceToLasNumbersOf('doors') >= 0)
+                    text-green-base
+@else
+                    text-red-600
+@endif
+                    text-base
+">
+                        {{$this->getNumberTrackerDifferenceToLasNumbersOf('doors')}}
                     </span>
             </div>
             <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
@@ -158,6 +113,28 @@
                     text-base
 ">
                         {{$this->getNumberTrackerDifferenceToLasNumbersOf('hoursKnocked')}}
+                    </span>
+            </div>
+            <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
+        </div>
+        <div style="min-width: fit-content; flex: 0 0 auto" class="w-48 border-2 border-gray-200 rounded-md p-3 space-y-1" >
+            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">Sets</div>
+            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold text-gray-900">{{$this->getNumberTrackerSumOf('sets')}}</div>
+            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
+                @if($this->getNumberTrackerDifferenceToLasNumbersOf('sets') >= 0)
+                    <x-svg.arrow-up class="text-green-base"/>
+                @else
+                    <x-svg.arrow-down class="text-red-600"/>
+                @endif
+                <span class="
+                        @if($this->getNumberTrackerDifferenceToLasNumbersOf('sets')>= 0)
+                    text-green-base
+@else
+                    text-red-600
+@endif
+                    text-base
+">
+                        {{$this->getNumberTrackerDifferenceToLasNumbersOf('sets')}}
                     </span>
             </div>
             <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
@@ -190,6 +167,32 @@
         </div>
         <div style="min-width: fit-content; flex: 0 0 auto" class="w-48 border-2 border-gray-200 rounded-md p-3 space-y-1" >
             <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">
+                Set Closes
+            </div>
+            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold text-gray-900">
+                {{$this->getNumberTrackerSumOf('setCloses')}}
+            </div>
+            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
+                @if($this->getNumberTrackerDifferenceToLasNumbersOf('setCloses') >= 0)
+                    <x-svg.arrow-up class="text-green-base"/>
+                @else
+                    <x-svg.arrow-down class="text-red-600"/>
+                @endif
+                <span class="
+                        @if($this->getNumberTrackerDifferenceToLasNumbersOf('setCloses')>= 0)
+                    text-green-base
+@else
+                    text-red-600
+@endif
+                    text-base
+">
+                        {{$this->getNumberTrackerDifferenceToLasNumbersOf('setCloses')}}
+                    </span>
+            </div>
+            <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
+        </div>
+        <div style="min-width: fit-content; flex: 0 0 auto" class="w-48 border-2 border-gray-200 rounded-md p-3 space-y-1" >
+            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">
                 Closer Sits
             </div>
             <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold text-gray-900">
@@ -214,114 +217,29 @@
             </div>
             <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
         </div>
-
-        <div style="min-width: fit-content; flex: 0 0 auto" class="w-56 border-2 border-gray-200 rounded-md p-3 space-y-1" >
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">Sits</div>
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="grid grid-cols-4 gap-1">
-                <div class="text-sm self-center col-span-3">
-                    <span>Set</span>
-                    <span class="text-xl font-bold text-gray-900 ml-2">
-                            {{$this->getNumberTrackerSumOf('setSits')}}
-                        </span>
-                </div>
-                <div class="flex text-xs font-semibold place-self-end col-span-1 items-center">
-                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('setSits') >= 0)
-                        <x-svg.arrow-up class="text-green-base text-base"/>
-                    @else
-                        <x-svg.arrow-down class="text-red-600"/>
-                    @endif
-                    <span class="
-                                @if($this->getNumberTrackerDifferenceToLasNumbersOf('setSits') >= 0)
-                        text-green-base
-@else
-                        text-red-600
-@endif
-                        text-base
-">
-                            {{$this->getNumberTrackerDifferenceToLasNumbersOf('setSits')}}
-                        </span>
-                </div>
+        <div style="min-width: fit-content; flex: 0 0 auto" class="w-48 border-2 border-gray-200 rounded-md p-3 space-y-1" >
+            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">
+                Closes
             </div>
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="grid grid-cols-4 gap-1">
-                <div class="text-sm self-center col-span-3">
-                    <span>SG</span>
-                    <span class="text-xl font-bold text-gray-900 ml-2">
-                            {{$this->getNumberTrackerSumOf('sits')}}
-                        </span>
-                </div>
-                <div class="flex text-xs font-semibold place-self-end col-span-1 items-center">
-                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('sits')>= 0)
-                        <x-svg.arrow-up class="text-green-base"/>
-                    @else
-                        <x-svg.arrow-down class="text-red-600"/>
-                    @endif
-                    <span class="
-                                @if($this->getNumberTrackerDifferenceToLasNumbersOf('sits') >= 0)
-                        text-green-base
-@else
-                        text-red-600
-@endif
-                        text-base
-">
-                            {{$this->getNumberTrackerDifferenceToLasNumbersOf('sits')}}
-                        </span>
-                </div>
+            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold text-gray-900">
+                {{$this->getNumberTrackerSumOf('closes')}}
             </div>
-            <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
-        </div>
-        <div style="min-width: fit-content; flex: 0 0 auto" class="w-56 border-2 border-gray-200 rounded-md p-3 space-y-1" >
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">Closes</div>
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="grid grid-cols-4 gap-1">
-                <div class="text-sm self-center col-span-3">
-                    <span>Set</span>
-                    <span class="text-xl font-bold text-gray-900 ml-2">
-                            {{$this->getNumberTrackerSumOf('setCloses')}}
-                        </span>
-                </div>
-                <div class="flex text-xs font-semibold place-self-end col-span-1 items-center">
-                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('setCloses') >= 0)
-                        <x-svg.arrow-up class="text-green-base"/>
-                    @else
-                        <x-svg.arrow-down class="text-red-600"/>
-                    @endif
-                    <span class="
-                            @if($this->getNumberTrackerDifferenceToLasNumbersOf('setCloses') >= 0)
-                        text-green-base
+            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
+                @if($this->getNumberTrackerDifferenceToLasNumbersOf('closes') >= 0)
+                    <x-svg.arrow-up class="text-green-base"/>
+                @else
+                    <x-svg.arrow-down class="text-red-600"/>
+                @endif
+                <span class="
+                        @if($this->getNumberTrackerDifferenceToLasNumbersOf('closes')>= 0)
+                    text-green-base
 @else
-                        text-red-600
+                    text-red-600
 @endif
-                        text-base
+                    text-base
 ">
-                            {{$this->getNumberTrackerDifferenceToLasNumbersOf('setCloses')}}
-                        </span>
-                </div>
-            </div>
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="grid grid-cols-4 gap-1">
-                <div class="text-sm self-center col-span-3">
-                        <span>
-                            SG
-                        </span>
-                    <span class="text-xl font-bold text-gray-900 ml-2">
-                            {{$this->getNumberTrackerSumOf('closes')}}
-                        </span>
-                </div>
-                <div class="flex text-xs font-semibold place-self-end col-span-1 items-center">
-                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('closes') >= 0)
-                        <x-svg.arrow-up class="text-green-base"/>
-                    @else
-                        <x-svg.arrow-down class="text-red-600"/>
-                    @endif
-                    <span class="
-                            @if($this->getNumberTrackerDifferenceToLasNumbersOf('closes') >= 0)
-                        text-green-base
-@else
-                        text-red-600
-@endif
-                        text-base
-">
-                            {{$this->getNumberTrackerDifferenceToLasNumbersOf('closes')}}
-                        </span>
-                </div>
+                        {{$this->getNumberTrackerDifferenceToLasNumbersOf('closes')}}
+                    </span>
             </div>
             <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
         </div>
@@ -373,12 +291,12 @@
                                 <x-slot name="body">
                                     @foreach($itsOpenRegions as $regionIndex => $region)
                                         <div class="table-row cursor-pointer hover:bg-gray-100 @if($region['itsOpen']) bg-gray-200 @endif"
-                                            wire:click.stop="collapseRegion({{$regionIndex}})" >
+                                             wire:click.stop="collapseRegion({{$regionIndex}})" >
                                             <x-table-accordion.default-td-arrow class="table-cell" :open="$region['itsOpen']">
                                                 <div class="flex" x-data wire:loading.remove wire:key="{{$regionIndex}}">
                                                     <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
-                                                        wire:model="itsOpenRegions.{{$regionIndex}}.selected"
-                                                        type="checkbox" x-on:change="$wire.selectRegion({{$regionIndex}})" wire:click.stop="" >
+                                                           wire:model="itsOpenRegions.{{$regionIndex}}.selected"
+                                                           type="checkbox" x-on:change="$wire.selectRegion({{$regionIndex}})" wire:click.stop="" >
                                                 </div>
                                                 <div class="flex items-center mr-2 w-6 h-6" wire:loading>
                                                     <x-svg.spinner
@@ -472,13 +390,13 @@
                                         @if($region['itsOpen'])
                                             @forelse($region['sortedOffices'] as $officeIndex => $office)
                                                 <div class="table-row cursor-pointer hover:bg-gray-100 @if($office['itsOpen']) bg-gray-100 @endif"
-                                                    wire:click.stop="collapseOffice({{$regionIndex}}, {{$officeIndex}})" wire:key="{{$regionIndex}}-{{$officeIndex}}">
+                                                     wire:click.stop="collapseOffice({{$regionIndex}}, {{$officeIndex}})" wire:key="{{$regionIndex}}-{{$officeIndex}}">
                                                     <x-table-accordion.child-td-arrow class="table-cell" :open="$office['itsOpen']">
                                                         <div class="flex">
                                                             <div wire:loading.remove>
                                                                 <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
-                                                                    type="checkbox" wire:change="selectOffice({{$regionIndex}}, {{$officeIndex}})" wire:click.stop=""
-                                                                    wire:model="itsOpenRegions.{{$regionIndex}}.sortedOffices.{{$officeIndex}}.selected">
+                                                                       type="checkbox" wire:change="selectOffice({{$regionIndex}}, {{$officeIndex}})" wire:click.stop=""
+                                                                       wire:model="itsOpenRegions.{{$regionIndex}}.sortedOffices.{{$officeIndex}}.selected">
                                                             </div>
                                                             <div class="flex items-center mr-2 w-6 h-6" wire:loading>
                                                                 <x-svg.spinner
@@ -577,8 +495,8 @@
                                                                 <div class="flex items-center" x-data >
                                                                     <div class="flex items-center" wire:loading.remove>
                                                                         <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
-                                                                            wire:model="itsOpenRegions.{{$regionIndex}}.sortedOffices.{{$officeIndex}}.sortedDailyNumbers.{{$dailyNumberIndex}}.selected"
-                                                                            type="checkbox" x-on:change="$wire.selectDailyNumberUser({{$regionIndex}}, {{$officeIndex}}, {{$dailyNumberIndex}})" wire:click.stop="">
+                                                                               wire:model="itsOpenRegions.{{$regionIndex}}.sortedOffices.{{$officeIndex}}.sortedDailyNumbers.{{$dailyNumberIndex}}.selected"
+                                                                               type="checkbox" x-on:change="$wire.selectDailyNumberUser({{$regionIndex}}, {{$officeIndex}}, {{$dailyNumberIndex}})" wire:click.stop="">
                                                                     </div>
                                                                     <div class="flex items-center mr-2 w-6 h-6" wire:loading>
                                                                         <x-svg.spinner
@@ -684,11 +602,11 @@
                                                     @endforelse
                                                 @endif
                                             @empty
-                                            <div class="table-row">
-                                                <x-table-accordion.td class="table-cell pl-14">
-                                                    Empty
-                                                </x-table-accordion.td>
-                                            </div>
+                                                <div class="table-row">
+                                                    <x-table-accordion.td class="table-cell pl-14">
+                                                        Empty
+                                                    </x-table-accordion.td>
+                                                </div>
                                             @endforelse
                                         @endif
                                     @endforeach
