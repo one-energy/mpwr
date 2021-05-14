@@ -30,9 +30,9 @@ class OfficesSeeder extends Seeder
                     ->update(['office_id' => $office->id]);
 
                 User::query()
-                    ->where('role', 'Setter')
+                    ->whereIn('role', ['Setter', 'Sales Rep'])
                     ->whereNull('office_id')
-                    ->limit(10)
+                    ->limit(20)
                     ->update(['office_id' => $office->id]);
             });
     }

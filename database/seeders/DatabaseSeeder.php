@@ -12,11 +12,12 @@ class DatabaseSeeder extends Seeder
             PhotosSeeder::class,
             UsersTableSeeder::class,
             FinancersSeeder::class,
+            FinancingsSeeder::class,
             TermsSeeder::class,
             DepartmentsSeeder::class,
             RegionsSeeder::class,
             OfficesSeeder::class,
-            DailyNumbersSeeder::class
+            DailyNumbersSeeder::class,
         ]);
     }
 }
