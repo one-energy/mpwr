@@ -70,11 +70,6 @@ class Scoreboard extends Component
             'photo_url'   => $this->user->photo_url,
             'full_name'   => $this->user->full_name,
             'office_name' => $this->user->office->name,
-            'totalDoors'  => $dailyNumbers->sum('doors'),
-            'totalHours'  => $dailyNumbers->sum('hours'),
-            'totalSets'   => $dailyNumbers->sum('sets'),
-            'totalSits'   => $dailyNumbers->sum('sits'),
-            'totalCloses' => $dailyNumbers->sum('set_closes'),
         ];
 
         if ($dailyNumbers->sum('sets') > 0) {
@@ -94,11 +89,11 @@ class Scoreboard extends Component
         }
 
         $this->dispatchBrowserEvent('setUserNumbers', [
-            'doors'      => $dailyNumbers->sum('doors'),
-            'hours'      => $dailyNumbers->sum('hours'),
-            'sets'       => $dailyNumbers->sum('sets'),
-            'sits'       => $dailyNumbers->sum('sits'),
-            'set_closes' => $dailyNumbers->sum('set_closes'),
+            'doors'       => $dailyNumbers->sum('doors'),
+            'hoursWorked' => $dailyNumbers->sum('hours_worked'),
+            'sets'        => $dailyNumbers->sum('sets'),
+            'sits'        => $dailyNumbers->sum('sits'),
+            'set_closes'  => $dailyNumbers->sum('set_closes'),
         ]);
     }
 
@@ -109,7 +104,7 @@ class Scoreboard extends Component
 
     public function getTopTenHoursProperty()
     {
-        return $this->getTopTenUsersBy('hours');
+        return $this->getTopTenUsersBy('hours_worked');
     }
 
     public function getTopTenSetsProperty()

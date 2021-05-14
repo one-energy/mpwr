@@ -206,7 +206,7 @@
                     <div class="mt-6">
                         <span
                             class="inline-flex items-center pt-1 border-b-2 border-green-base text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-green-base transition duration-150 ease-in-out">
-                            Top 10 Hours
+                            Top 10 Hours Worked
                         </span>
 
                         <div class="mt-6 flex flex-col">
@@ -236,7 +236,7 @@
                                                                 </span>
                                                         </x-table.td>
                                                         <x-table.td>{{ $user->full_name }}</x-table.td>
-                                                        <x-table.td>{{ $user->hours_total }}</x-table.td>
+                                                        <x-table.td>{{ $user->hours_worked_total }}</x-table.td>
                                                         <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
                                                     </x-table.tr>
                                                 @endforeach
@@ -527,7 +527,7 @@
                                     <div class="flex border-gray-200 border-2 m-1 h-48 rounded-lg">
                                         <div class="w-2/3" id="chartdiv"></div>
                                         <div class="w-1/3 block pt-4 space-y-1">
-                                            <div id="hours">0 hours</div>
+                                            <div id="hoursWorked">0 hours worked</div>
                                             <div id="doors">0 doors</div>
                                             <div id="sits">0 sits</div>
                                             <div id="sets">0 sets</div>
@@ -607,15 +607,14 @@
         window.addEventListener('setUserNumbers', event => {
             am4core.useTheme(am4themes_animated);
             // Themes end
-            if (event.detail.doors && event.detail.hours && event.detail.sits && event.detail
-                .sets && event.detail.set_closes) {
+            if (event.detail.doors && event.detail.hoursWorked && event.detail.sits && event.detail.sets && event.detail.set_closes) {
                 var chart = am4core.create('chartdiv', am4charts.SlicedChart);
                 chart.data = [{
                     'name': 'doors',
                     'value2': event.detail.doors
                 }, {
-                    'name': 'hours',
-                    'value2': event.detail.hours
+                    'name': 'hours worked',
+                    'value2': event.detail.hoursWorked
                 }, {
                     'name': 'sits',
                     'value2': event.detail.sits
@@ -631,9 +630,9 @@
                 series1.dataFields.value = 'value2';
                 series1.dataFields.category = 'name';
                 series1.labels.template.disabled = true;
-                document.getElementById('hours').innerHTML = `${event.detail.doors} Hours`;
-                document.getElementById('hours').style.color = '#67B7DC';
-                document.getElementById('doors').innerHTML = `${event.detail.hours} Doors`;
+                document.getElementById('hoursWorked').innerHTML = `${event.detail.hoursWorked} Hours Worked`;
+                document.getElementById('hoursWorked').style.color = '#67B7DC';
+                document.getElementById('doors').innerHTML = `${event.detail.doors} Doors`;
                 document.getElementById('doors').style.color = '#648FD5';
                 document.getElementById('sits').innerHTML = `${event.detail.sits} Sits`;
                 document.getElementById('sits').style.color = '#6670DB';
