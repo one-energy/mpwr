@@ -103,6 +103,7 @@ class UserInfoTab extends Component
     {
         $this->validate();
         $this->user->phone_number = preg_replace('/\D/', '', $this->user->phone_number);
+        $this->user->office_id = $this->user->office_id == "" ? null : $this->user->office_id;
 
         $this->user->save();
 
