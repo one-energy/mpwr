@@ -24,6 +24,7 @@ class DailyNumberFactory extends Factory
             'doors'         => rand(1, 100),
             'hours'         => Arr::random(range(1, 24)),
             'sets'          => rand(1, 100),
+            'set_sits'      => rand(1, 100),
             'sits'          => rand(1, 100),
             'set_closes'    => rand(1, 100),
             'sats'          => Arr::random(range(1, 100)),
