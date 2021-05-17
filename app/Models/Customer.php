@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
+use InvalidArgumentException;
 
 /**
  * App\Models\Customer
@@ -52,6 +54,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer query()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Customer withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Customer withoutTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Customer dateOfSaleInPeriod()
  * @mixin \Eloquent
  */
 class Customer extends Model
@@ -126,6 +129,34 @@ class Customer extends Model
             ->where('opened_by_id', '=', user()->id)
             ->where('panel_sold', '=', true)
             ->where('is_active', '=', true);
+    }
+
+    public function scopeDateOfSaleInPeriod(Builder $query, string $period, Carbon $date): Builder
+    {
+        if ($period === 'w') {
+            $clonedDate = clone $date;
+            return $query->whereBetween('date_of_sale', [
+                $date->subWeek()->startOfWeek(),
+                $clonedDate->subWeek()->endOfWeek()
+            ]);
+        }
+
+        if ($period === 'm') {
+            return $query->whereMonth('date_of_sale', $date->month);
+        }
+
+        if ($period === 's') {
+            return $query->whereBetween('date_of_sale', [
+                sprintf('%s-06-01', $date->year),
+                sprintf('%s-08-31', $date->year),
+            ]);
+        }
+
+        if ($period === 'y') {
+            return $query->whereYear('date_of_sale', $date->year);
+        }
+
+        throw new InvalidArgumentException(sprintf('The provided period [%s] is not valid.', $period));
     }
 
     public function userOpenedBy()
