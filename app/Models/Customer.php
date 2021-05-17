@@ -135,14 +135,12 @@ class Customer extends Model
     {
         if ($period === 'w') {
             $clonedDate = clone $date;
-            return $query->whereBetween('date_of_sale', [
-                $date->subWeek()->startOfWeek(),
-                $clonedDate->subWeek()->endOfWeek()
-            ]);
+            return $query->whereBetween('date_of_sale', [$date->startOfWeek(), $clonedDate->endOfWeek()]);
         }
 
         if ($period === 'm') {
-            return $query->whereMonth('date_of_sale', $date->month);
+            return $query->whereMonth('date_of_sale', $date)
+                ->whereYear('date_of_sale', $date);
         }
 
         if ($period === 's') {
