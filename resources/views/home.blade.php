@@ -89,7 +89,7 @@
 
                 <!-- Personal Data -->
                 <div class="hidden md:block md:w-1/3 xl:w-1/5 break-words">
-                    <x-profile.show-profile-information/>
+                    <x-profile.show-profile-information :userLevel="$userLevel" :userEniumPoints="$userEniumPoints"/>
                 </div>
             </div>
         </div>

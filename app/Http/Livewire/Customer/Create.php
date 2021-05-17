@@ -9,7 +9,9 @@ use App\Models\Financing;
 use App\Models\Rates;
 use App\Models\Term;
 use App\Models\User;
+use App\Models\UserCustomersEniumPoints;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Create extends Component
@@ -107,8 +109,9 @@ class Create extends Component
     public function store()
     {
 
+        $this->validate();
         $salesRep = User::find($this->customer->sales_rep_id);
-
+        
         $this->customer->date_of_sale                = Carbon::parse($this->customer->date_of_sale);
         $this->customer->opened_by_id                = user()->id;
         $this->customer->sales_rep_recruiter_id      = $salesRep->recruiter_id;
@@ -128,7 +131,7 @@ class Create extends Component
         $this->customer->financing_id = $this->customer->financing_id != "" ? $this->customer->financing_id : null;
         $this->customer->financer_id = $this->customer->financer_id != "" ? $this->customer->financer_id : null;
         $this->customer->term_id = $this->customer->term_id != "" ? $this->customer->term_id : null;
-        $this->validate();
+
         $this->customer->save();
 
         alert()
