@@ -63,11 +63,35 @@
                                     <div class="col-span-6 md:col-span-7">
                                         {{ $customer->first_name }} {{ $customer->last_name }}
                                     </div>
-                                    <div class="col-span-1 row-span-2 md:col-span-2">
-                                        <div
-                                            class="@if($customer->is_active && $customer->panel_sold) bg-green-base @elseif($customer->is_active == false) bg-red-500 @else bg-gray-700 @endif text-white @if($customer->setter_id == user()->id) rounded-full @else rounded-md @endif py-1 px-1 text-center">
-                                            $ {{ number_format($customer->sales_rep_comission, 2) }}
-                                        </div>
+                                    <div class="col-span-1 row-span-2 md:col-span-2" x-data="{ open: false }">
+                                        @if($customer->setter_id == user()->id)
+                                            <div
+                                                @mouseenter="open = true"
+                                                @mouseleave="open = false"
+                                                class="@if($customer->is_active && $customer->panel_sold) bg-green-base @elseif($customer->is_active == false) bg-red-500 @else bg-gray-700 @endif text-white @if($customer->setter_id == user()->id) rounded-full @else rounded-md @endif py-1 px-1 text-center">
+                                                $ {{ number_format($customer->setterCommission, 2) }} 
+                                            </div>
+
+                                            <div
+                                                class="bg-gray-200 rounded shadow-xl w-48 h-auto p-4"
+                                                style="position: absolute; left: -177px; top: 20px;"
+                                                x-transition:enter="transition ease-out duration-300"
+                                                x-transition:enter-start="opacity-0 transform scale-90"
+                                                x-transition:enter-end="opacity-100 transform scale-100"
+                                                x-transition:leave="transition ease-in duration-300"
+                                                x-transition:leave-start="opacity-100 transform scale-100"
+                                                x-transition:leave-end="opacity-0 transform scale-90"
+                                                x-show="open"
+                                                x-cloak
+                                            >
+                                                $ {{ number_format($customer->sales_rep_comission, 2) }} 
+                                            </div>
+                                        @else
+                                            <div
+                                                class="@if($customer->is_active && $customer->panel_sold) bg-green-base @elseif($customer->is_active == false) bg-red-500 @else bg-gray-700 @endif text-white @if($customer->setter_id == user()->id) rounded-full @else rounded-md @endif py-1 px-1 text-center">
+                                                $ {{ number_format($customer->sales_rep_comission, 2) }} 
+                                            </div>
+                                        @endif
                                     </div>
                                     <div class="col-span-7 text-xs text-gray-600">
                                         {{ number_format($customer->epc) }}kW - <i> {{ $customer->date_of_sale->format('D M j Y')}} </i>
