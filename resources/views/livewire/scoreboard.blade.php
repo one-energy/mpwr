@@ -440,7 +440,7 @@
                              x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity">
                             <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
                         </div>
-                        <div class="relative bottom-24" x-show="openModal" x-transition:enter="ease-out duration-300"
+                        <div class="sm:w-1/4 relative bottom-24" x-show="openModal" x-transition:enter="ease-out duration-300"
                              x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                              x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
                              x-transition:leave="ease-in duration-200"
@@ -524,7 +524,7 @@
                                     </div>
 
                                     <!-- Bar Chart -->
-                                    <div class="flex border-gray-200 border-2 m-1 h-48 rounded-lg">
+                                    <div class="flex border-gray-200 border-2 m-1 h-56 rounded-lg">
                                         <div class="w-2/3" id="chartdiv"></div>
                                         <div class="w-1/3 block pt-4 space-y-1">
                                             <div id="hoursWorked">0 hours worked</div>
@@ -642,6 +642,7 @@
                 document.getElementById('set_closes').style.color = '#A367DC';
             } else {
                 document.getElementById('chartdiv').innerHTML = 'No data to display';
+                document.getElementById('chartdiv').classList.add('pt-3', 'pl-2');
             }
         });
     }); // end am4core.ready()
