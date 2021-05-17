@@ -3,7 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Customer;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
 class AreaChart extends Component
@@ -20,11 +20,11 @@ class AreaChart extends Component
 
     public $panelSold = false;
 
-    public Collection $data;
+    public array $data;
 
     public function mount()
     {
-        $this->data = collect();
+        $this->data = [];
 
         $this->setPeriod($this->period);
     }
@@ -50,27 +50,14 @@ class AreaChart extends Component
         $currentQuery = Customer::query()->where($condition);
         $pastQuery    = clone $currentQuery;
 
-        if (in_array($this->period, ['w', 'm', 's', 'y'])) {
-            [$currentDate, $pastDate] = match ($this->period) {
-                'w' => [today(), today()->subWeek()],
-                'm' => [today(), today()->subMonth()],
-                's', 'y' => [today(), today()->subYear()]
-            };
+        if (in_array($this->period, $this->availablePeriods(), true)) {
+            [$currentDate, $pastDate] = $this->getMatchedDate($this->period);
 
             $currentQuery->dateOfSaleInPeriod($this->period, $currentDate);
             $pastQuery->dateOfSaleInPeriod($this->period, $pastDate);
         }
 
-        $this->data = $currentQuery
-            ->oldest('date_of_sale')
-            ->get()
-            ->map(function (Customer $customer) {
-                return [
-                    'commission' => $customer->sales_rep_comission,
-                    'date'       => $customer->date_of_sale->format('m-d-Y')
-                ];
-            })
-            ->values();
+        $this->data = $this->getMappedCustomers($currentQuery);
 
         $this->sumIncome($pastQuery, $currentQuery);
     }
@@ -104,7 +91,7 @@ class AreaChart extends Component
 
     public function toggle()
     {
-        if ($this->chartTitle == 'Projected Income') {
+        if ($this->chartTitle === 'Projected Income') {
             $this->chartTitle = 'Actual Income';
             $this->panelSold  = true;
         } else {
@@ -113,5 +100,34 @@ class AreaChart extends Component
         }
 
         $this->setPeriod($this->period);
+    }
+
+    private function availablePeriods()
+    {
+        return ['w', 'm', 's', 'y'];
+    }
+
+    public function getMappedCustomers(Builder $currentQuery): array
+    {
+        return $currentQuery
+            ->oldest('date_of_sale')
+            ->get()
+            ->map(function (Customer $customer) {
+                return [
+                    'commission' => $customer->sales_rep_comission,
+                    'date'       => $customer->date_of_sale->format('m-d-Y')
+                ];
+            })
+            ->values()
+            ->toArray();
+    }
+
+    private function getMatchedDate(string $period): array
+    {
+        return match ($period) {
+            'w' => [today(), today()->subWeek()],
+            'm' => [today(), today()->subMonth()],
+            's', 'y' => [today(), today()->subYear()]
+        };
     }
 }
