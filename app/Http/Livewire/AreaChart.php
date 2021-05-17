@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use App\Models\Customer;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -11,24 +12,22 @@ class AreaChart extends Component
 {
     public $period = 'w';
 
-    public $income;
-
-    public $incomeDate;
-
     public $totalIncome;
 
     public $comparativeIncome;
 
     public $comparativeIncomePercentage;
 
-    public $customers;
-
     public $chartTitle = 'Projected Income';
 
     public $panelSold = false;
 
+    public Collection $data;
+
     public function mount()
     {
+        $this->data = collect();
+
         $this->setPeriod($this->period);
     }
 
@@ -40,56 +39,62 @@ class AreaChart extends Component
     public function setPeriod($period)
     {
         $this->period = $period;
-        
+
         $userId = Auth::user()->id;
 
-        if ($this->panelSold == true) {
-            $currentQuery = Customer::query()->where([
-                ['sales_rep_id', $userId],
-                ['is_active', true],
-                ['panel_sold', true],
-            ]);
+        $condition = [
+            ['sales_rep_id', $userId],
+            ['is_active', true],
+        ];
 
-            $pastQuery = Customer::query()->where([
-                ['sales_rep_id', $userId],
-                ['is_active', true],
-                ['panel_sold', true],
-            ]);
-        } else {
-            $currentQuery = Customer::query()->where([
-                ['sales_rep_id', $userId],
-                ['is_active', true],
-            ]);
-
-            $pastQuery = Customer::query()->where([
-                ['sales_rep_id', $userId],
-                ['is_active', true],
-            ]);
+        if ($this->panelSold) {
+            $condition[] = ['panel_sold', true];
         }
 
+        $currentQuery = Customer::query()->where($condition);
+        $pastQuery    = Customer::query()->where($condition);
+
         if ($period === 'w') {
-            $pastQuery    = $pastQuery->whereBetween('date_of_sale', [Carbon::now()->subWeek()->startOfWeek(), Carbon::now()->subWeek()->endOfWeek()]);
-            $currentQuery = $currentQuery->whereBetween('date_of_sale', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+            $pastQuery    = $pastQuery->whereBetween('date_of_sale', [
+                Carbon::now()->subWeek()->startOfWeek(),
+                Carbon::now()->subWeek()->endOfWeek()
+            ]);
+            $currentQuery = $currentQuery->whereBetween('date_of_sale', [
+                Carbon::now()->startOfWeek(),
+                Carbon::now()->endOfWeek()
+            ]);
         } elseif ($period === 'm') {
-            $pastQuery    = $pastQuery->whereMonth('date_of_sale', '=', Carbon::now()->subMonth()->month);
-            $currentQuery = $currentQuery->whereMonth('date_of_sale', '=', Carbon::now()->month);
+            $pastQuery    = $pastQuery->whereMonth('date_of_sale', Carbon::now()->subMonth()->month);
+            $currentQuery = $currentQuery->whereMonth('date_of_sale', Carbon::now()->month);
         } elseif ($period === 's') {
             $currentYear = Carbon::now()->year;
             $pastYear    = Carbon::now()->year - 1;
 
-            $pastQuery    = $pastQuery->whereBetween('date_of_sale', [$pastYear . '-06-01', $pastYear . '-08-31']);
-            $currentQuery = $currentQuery->whereBetween('date_of_sale', [$currentYear . '-06-01', $currentYear . '-08-31']);
+            $pastQuery    = $pastQuery->whereBetween('date_of_sale', [
+                $pastYear . '-06-01',
+                $pastYear . '-08-31'
+            ]);
+            $currentQuery = $currentQuery->whereBetween('date_of_sale', [
+                $currentYear . '-06-01',
+                $currentYear . '-08-31'
+            ]);
         } elseif ($period === 'y') {
             $currentYear = Carbon::now()->year;
             $pastYear    = Carbon::now()->year - 1;
 
-            $pastQuery    = $pastQuery->whereYear('date_of_sale', '=', $pastYear);
-            $currentQuery = $currentQuery->whereYear('date_of_sale', '=', $currentYear);
+            $pastQuery    = $pastQuery->whereYear('date_of_sale', $pastYear);
+            $currentQuery = $currentQuery->whereYear('date_of_sale', $currentYear);
         }
 
-        $this->customers  = $currentQuery->get();
-        $this->income     = $currentQuery->pluck('sales_rep_comission')->toArray();
-        $this->incomeDate = $currentQuery->pluck('date_of_sale')->toArray();
+        $this->data = $currentQuery->get()
+            ->map(function (Customer $customer) {
+                return [
+                    'commission' => $customer->sales_rep_comission,
+                    'date'       => $customer->date_of_sale->format('m-d-Y')
+                ];
+            })
+            ->sortBy('date')
+            ->values();
 
         $this->sumIncome($pastQuery, $currentQuery);
     }
@@ -101,7 +106,7 @@ class AreaChart extends Component
                 ['is_active', true],
                 ['panel_sold', true],
             ])->sum('sales_rep_comission');
-    
+
             $currentTotalIncome = $currentCustomers->where([
                 ['is_active', true],
                 ['panel_sold', true],
@@ -110,12 +115,12 @@ class AreaChart extends Component
             $pastTotalIncome = $pastCustomers->where([
                 ['is_active', true],
             ])->sum('sales_rep_comission');
-    
+
             $currentTotalIncome = $currentCustomers->where([
                 ['is_active', true],
             ])->sum('sales_rep_comission');
         }
-        
+
         $this->totalIncome = $currentTotalIncome;
 
         $this->compareIncome($pastTotalIncome, $currentTotalIncome);
