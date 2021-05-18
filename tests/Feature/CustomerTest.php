@@ -19,7 +19,7 @@ use Tests\TestCase;
 
 class CustomerTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     public User $user;
 
@@ -192,12 +192,10 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_require_some_fields_to_store_a_new_customer()
     {
-        $customer = Customer::factory()->make();
-
         Livewire::test(Create::class, [
-            'bills' => Customer::BILLS,
-            'customer' => $customer
-        ])->call('store')
+            'bills' => Customer::BILLS
+        ])
+        ->call('store')
         ->assertHasErrors([
             'customer.first_name' => 'required',
             'customer.last_name' => 'required',
@@ -356,6 +354,7 @@ class CustomerTest extends TestCase
             ->set('customer.last_name', 'Last Name')
             ->set('customer.adders', 10)
             ->set('customer.epc', 10)
+            ->set('customer.date_of_sale', Carbon::now())
             ->set('customer.financing_id', $financing->id)
             ->set('customer.financer_id', $financer->id)
             ->set('customer.bill', 'Bill')
@@ -365,6 +364,9 @@ class CustomerTest extends TestCase
             ->set('customer.sales_rep_id', $userTwo->id)
             ->set('customer.sales_rep_fee', 20)
             ->set('customer.sales_rep_comission', 0)
+            ->set('customer.sales_rep_comission', 0)
+            ->set('stockPoints', 0)
+            ->set('grossRepComission', 0)
             ->call('store');
 
         $this->assertDatabaseHas('customers', [
