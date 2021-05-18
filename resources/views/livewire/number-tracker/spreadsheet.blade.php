@@ -387,8 +387,7 @@
                                     <span class="font-bold">Total</span>
                                 </td>
                                 @foreach($this->weeklyLabels[$key] as $label)
-                                    @if ($this->totals[$key][$label])
-                                        <td class="py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 border-l-2 border-r-2 border-t-2 border-gray-800">
+                                    <td class="py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 border-l-2 border-r-2 border-t-2 border-gray-800">
                                             <div class="relative space-x-2">
                                                 <span class="hidden"></span>
                                                 <span class="hidden"></span>
@@ -450,38 +449,6 @@
                                                 </span>
                                             </div>
                                         </td>
-                                    @else
-                                        <td class="py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 border-l-2 border-r-2 border-t-2 border-gray-800">
-                                            <div class="relative space-x-2">
-                                                <span class="hidden"></span>
-                                                <span class="hidden"></span>
-                                                <span name="pipe">
-                                                    <input type="text" class="text-center w-10 inline outline-none pointer-events-none font-bold" readonly value="0"/>
-                                                </span>
-                                                <span name="pipe">
-                                                    <input type="text" class="text-center w-10 inline outline-none pointer-events-none font-bold" readonly value="0"/>
-                                                </span>
-                                                <span name="pipe">
-                                                    <input type="text" class="text-center w-10 inline outline-none pointer-events-none font-bold" readonly value="0"/>
-                                                </span>
-                                                <span name="pipe">
-                                                    <input type="text" class="text-center w-10 inline outline-none pointer-events-none font-bold" readonly value="0"/>
-                                                </span>
-                                                <span name="pipe">
-                                                    <input type="text" class="text-center w-10 inline outline-none pointer-events-none font-bold" readonly value="0"/>
-                                                </span>
-                                                <span name="pipe">
-                                                    <input type="text" class="text-center w-10 inline outline-none pointer-events-none font-bold" readonly value="0"/>
-                                                </span>
-                                                <span name="pipe">
-                                                    <input type="text" class="text-center w-10 inline outline-none pointer-events-none font-bold" readonly value="0"/>
-                                                </span>
-                                                <span name="pipe">
-                                                    <input type="text" class="text-center w-10 inline outline-none pointer-events-none font-bold" readonly value="0"/>
-                                                </span>
-                                            </div>
-                                        </td>
-                                    @endif
                                     @if ($loop->last)
                                         <td class="py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 border-l-2 border-r-2 border-t-2 border-gray-800">
                                             <div class="relative space-x-2">
