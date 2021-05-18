@@ -1,6 +1,12 @@
 <div>
     @push('styles')
         <style>
+            @media only screen and (min-width: 1280px) {
+                #mainContainer {
+                    max-width: 100%;
+                }
+            }
+
             table {
                 border-collapse: separate;
             }
@@ -173,7 +179,6 @@
                                                     <input
                                                         type="text"
                                                         class="text-center w-10 inline"
-                                                        placeholder="D"
                                                         value="{{ $user->dailyNumbers[$label][0]->doors ?? 0 }}"
                                                         name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][doors]"
                                                     />
@@ -190,7 +195,6 @@
                                                     <input
                                                         type="text"
                                                         class="text-center w-10 inline"
-                                                        placeholder="S"
                                                         value="{{ $user->dailyNumbers[$label][0]->sets ?? 0 }}"
                                                         name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][sets]"
                                                     />
@@ -207,7 +211,6 @@
                                                     <input
                                                         type="text"
                                                         class="text-center w-10 inline"
-                                                        placeholder="SC"
                                                         value="{{ $user->dailyNumbers[$label][0]->set_closes ?? 0 }}"
                                                         name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][set_closes]"
                                                     />
@@ -224,7 +227,6 @@
                                                     <input
                                                         type="text"
                                                         class="text-center w-10 inline"
-                                                        placeholder="C"
                                                         value="{{ $user->dailyNumbers[$label][0]->closes ?? 0 }}"
                                                         name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][closes]"
                                                     />
@@ -260,14 +262,12 @@
                                                             type="text" class="text-center w-10 inline pointer-events-none"
                                                             value=""
                                                             readonly
-                                                            placeholder="HW"
                                                         />
                                                     </span>
                                                     <span name="pipe">
                                                     <input
                                                         type="text" class="text-center w-10 inline"
                                                         value=""
-                                                        placeholder="D"
                                                         name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][doors]"
                                                     />
                                                 </span>
@@ -275,7 +275,6 @@
                                                     <input
                                                         type="text" class="text-center w-10 inline"
                                                         value=""
-                                                        placeholder="D"
                                                         name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][hours_knocked]"
                                                     />
                                                 </span>
@@ -283,7 +282,6 @@
                                                     <input
                                                         type="text" class="text-center w-10 inline"
                                                         value=""
-                                                        placeholder="S"
                                                         name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][sets]"
                                                     />
                                                 </span>
@@ -291,7 +289,6 @@
                                                     <input
                                                         type="text" class="text-center w-10 inline"
                                                         value=""
-                                                        placeholder="SA"
                                                         name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][sats]"
                                                     />
                                                 </span>
@@ -299,7 +296,6 @@
                                                     <input
                                                         type="text" class="text-center w-10 inline"
                                                         value=""
-                                                        placeholder="SC"
                                                         name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][set_closes]"
                                                     />
                                                 </span>
@@ -307,7 +303,6 @@
                                                         <input
                                                             type="text" class="text-center w-10 inline"
                                                             value=""
-                                                            placeholder="CS"
                                                             name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][closer_sits]"
                                                         />
                                                     </span>
@@ -315,7 +310,6 @@
                                                         <input
                                                             type="text" class="text-center w-10 inline"
                                                             value=""
-                                                            placeholder="C"
                                                             name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][closes]"
                                                         />
                                                     </span>
