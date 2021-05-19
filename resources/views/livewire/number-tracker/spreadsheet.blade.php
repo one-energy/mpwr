@@ -42,11 +42,11 @@
 
             div[name="pipe"]:not(:last-child)::after {
                 content: "";
-                top: -16px;
+                top: -15px;
                 bottom: 0;
                 right: 0;
                 position: absolute;
-                height: 54px;
+                height: 51px;
                 border-right: 2px solid #E5E7EB;
                 display: inline;
             }
@@ -430,7 +430,7 @@
                             @endforeach
 
                             <x-table.tr class="relative">
-                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 border-t-2 border-l-2 border-r-2 border-gray-800">
+                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 border-2 border-gray-800">
                                     <span class="font-bold">Total</span>
                                 </td>
                                 @foreach($this->weeklyLabels[$key] as $label)
