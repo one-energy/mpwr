@@ -43,7 +43,7 @@ class CalculationOfEniumPoints extends Command
                     if ($customer->term_id != null) {
                         $customerEniumPoint = $user->customersEniumPoints()->create([
                             'customer_id'     => $customer->id,
-                            'points'          => $customer->term->amount > 0 ? round($customer->epc/$customer->term->amount) : 0,
+                            'points'          => $customer->term->amount > 0 ? round($customer->totalSoldPrice/$customer->term->amount) : 0,
                             'set_date'        => $customer->date_of_sale,
                             'expiration_date' => $customer->date_of_sale->addYear(),
                         ]);

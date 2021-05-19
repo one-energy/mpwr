@@ -29,6 +29,8 @@ class EniumPointsTest extends TestCase
 
         $this->user = User::factory()->create(['role' => 'Sales Rep']);
 
+        $this->actingAs($this->user);
+
         Term::factory()->count(4)
         ->state(new Sequence(
             ['amount' => 480],
@@ -48,7 +50,7 @@ class EniumPointsTest extends TestCase
                 UserCustomersEniumPoints::factory()->create([ 
                     'user_sales_rep_id' => $this->user->id,
                     'customer_id'       => $customer->id,
-                    'points'            => round($customer->epc/$customer->term->amount),
+                    'points'            => round($customer->totalSoldPrice/$customer->term->amount),
                     'set_date'          => Carbon::now(),
                     'expiration_date'   => Carbon::now()->addYear()
                 ])
@@ -85,8 +87,6 @@ class EniumPointsTest extends TestCase
                 ['point' => 6000]
             ))
             ->create();
-    
-        $this->actingAs($this->user);
     }
 
     /** @test */
@@ -133,7 +133,7 @@ class EniumPointsTest extends TestCase
         UserCustomersEniumPoints::factory()->create([ 
             'user_sales_rep_id' => $customer->sales_rep_id,
             'customer_id'       => $customer->id, 
-            'points'            => $customer->epc/$customer->term->amount,
+            'points'            => round($customer->totalSoldPrice/$customer->term->amount),
             'set_date'          => Carbon::now(),
             'expiration_date'   => Carbon::now()->addYear()
         ]);
