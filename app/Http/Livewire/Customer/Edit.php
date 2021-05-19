@@ -132,7 +132,7 @@ class Edit extends Component
             ->withTitle(__('Home Owner updated!'))
             ->send();
 
-        return redirect(route('customers.show', $this->customer->id));
+        return redirect()->route('home');
     }
 
     public function delete()
