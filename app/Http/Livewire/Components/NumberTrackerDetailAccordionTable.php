@@ -45,7 +45,7 @@ class NumberTrackerDetailAccordionTable extends Component
     {
         $this->selectedDepartment = $this->getDepartmentId();
 
-        $this->sortBy = 'doors';
+        $this->sortBy = 'hours_worked';
         $this->initUnselectedCollections();
         $this->initOpenedCollections();
         $this->initRegionsData();
