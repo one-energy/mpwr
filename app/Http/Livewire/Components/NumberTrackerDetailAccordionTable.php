@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Components;
 
 use App\Models\Department;
+use App\Models\Office;
 use App\Models\Region;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Support\Carbon;
@@ -97,11 +98,11 @@ class NumberTrackerDetailAccordionTable extends Component
     public function addItsOpen()
     {
         $this->itsOpenRegions = $this->regions->map(function ($region) {
-            $region->itsOpen       = $this->openedRegions->contains($region->id);
-            $region->selected      = !$this->unselectedRegions->contains($region->id);
+            $region->itsOpen  = $this->openedRegions->contains($region->id);
+            $region->selected = !$this->unselectedRegions->contains($region->id);
             $region->sortedOffices = $region->offices->map(function ($office) {
-                $office->itsOpen            = $this->openedRegions->contains($office->id);
-                $office->selected           = !$this->unselectedOffices->contains($office->id);
+                $office->itsOpen = $this->openedRegions->contains($office->id);
+                $office->selected = !$this->unselectedOffices->contains($office->id);
                 $office->sortedDailyNumbers = $office->dailyNumbers->map(function ($dailyNumberUser) {
                     $dailyNumberUser->selected = !$this->unselectedOffices->contains($dailyNumberUser->id);
 
@@ -118,59 +119,70 @@ class NumberTrackerDetailAccordionTable extends Component
     public function getRegionsProperty()
     {
         $regions = Region::query()
-        ->when($this->deleteds, function ($query) {
-            $query->withTrashed();
-        })->with(['offices' => function ($query) {
-            $query->when($this->deleteds, function ($query) {
-                $query->withTrashed()
-                    ->where(function($query) {
-                        $query->whereHas('dailyNumbers', function ($query) {
-                            $query->inPeriod($this->period, new Carbon($this->selectedDate))->withTrashed();
-                        })
-                        ->whereNotNull('deleted_at');
-                    })
-                    ->orWhereNull('deleted_at');
-            })
-            ->with(['dailyNumbers' => function ($query) {
-                $query->with(['user' => function($query) {
+            ->when($this->deleteds, function ($query) {
+                $query->withTrashed();
+            })->with([
+                'offices' => function ($query) {
                     $query->when($this->deleteds, function ($query) {
-                        $query->withTrashed();
-                    });
-                }])
-                ->when($this->deleteds, function ($query) {
-                    $query->withTrashed();
-                })
-                ->when(!$this->deleteds, function ($query) {
-                    $query->has('user');
-                })
-                ->inPeriod($this->period, new Carbon($this->selectedDate))
-                ->groupBy('user_id')
-                ->selectRaw('*')
-                ->selectRaw('SUM(doors) as doors')
-                ->selectRaw('SUM(hours) as hours')
-                ->selectRaw('SUM(sets) as sets')
-                ->selectRaw('SUM(set_sits) as set_sits')
-                ->selectRaw('SUM(sits) as sits')
-                ->selectRaw('SUM(set_closes) as set_closes')
-                ->selectRaw('SUM(closes) as closes')
-                ->selectRaw('SUM(hours_worked) as hours_worked')
-                ->selectRaw('SUM(hours_knocked) as hours_knocked')
-                ->selectRaw('SUM(sats) as sats')
-                ->selectRaw('SUM(closer_sits) as closer_sits');
-            }]);
-        }])
+                        $query->withTrashed()
+                            ->where(function ($query) {
+                                $query->whereHas('dailyNumbers', function ($query) {
+                                    $query->inPeriod($this->period,
+                                        new Carbon($this->selectedDate))->withTrashed();
+                                })
+                                    ->whereNotNull('deleted_at');
+                            })
+                            ->orWhereNull('deleted_at');
+                    })
+                        ->with([
+                            'dailyNumbers' => function ($query) {
+                                $query->with([
+                                    'user' => function ($query) {
+                                        $query->when($this->deleteds, function ($query) {
+                                            $query->withTrashed();
+                                        });
+                                    }
+                                ])
+                                    ->when($this->deleteds, function ($query) {
+                                        $query->withTrashed();
+                                    })
+                                    ->when(!$this->deleteds, function ($query) {
+                                        $query->has('user');
+                                    })
+                                    ->inPeriod($this->period, new Carbon($this->selectedDate))
+                                    ->groupBy('user_id')
+                                    ->selectRaw('*')
+                                    ->selectRaw('SUM(doors) as doors')
+                                    ->selectRaw('SUM(hours) as hours')
+                                    ->selectRaw('SUM(sets) as sets')
+                                    ->selectRaw('SUM(set_sits) as set_sits')
+                                    ->selectRaw('SUM(sits) as sits')
+                                    ->selectRaw('SUM(set_closes) as set_closes')
+                                    ->selectRaw('SUM(closes) as closes')
+                                    ->selectRaw('SUM(hours_worked) as hours_worked')
+                                    ->selectRaw('SUM(hours_knocked) as hours_knocked')
+                                    ->selectRaw('SUM(sats) as sats')
+                                    ->selectRaw('SUM(closer_sits) as closer_sits');
+                            }
+                        ]);
+                }
+            ])
             ->where('department_id', $this->selectedDepartment)
             ->get();
 
+        if ($this->deleteds) {
+            $regions = $this->getRegionsThatHasDailyNumbers($regions);
+        }
+
         if ($this->sortDirection === 'asc') {
-            return $regions->sortBy(function($region) {
+            return $regions->sortBy(function ($region) {
                 return $region->offices->sum(function ($office) {
                     return $office->dailyNumbers->count() ? $office->dailyNumbers->sum($this->sortBy) : 0;
                 });
             })->values();
         }
 
-        return $regions->sortByDesc(function($region) {
+        return $regions->sortByDesc(function ($region) {
             return $region->offices->sum(function ($office) {
                 return $office->dailyNumbers->count() ? $office->dailyNumbers->sum($this->sortBy) : 0;
             });
@@ -217,7 +229,7 @@ class NumberTrackerDetailAccordionTable extends Component
     public function collapseRegion(int $regionIndex)
     {
         $collectionOffices = collect($this->itsOpenRegions[$regionIndex]['sortedOffices']);
-        if ($this->sortDirection == 'asc') {
+        if ($this->sortDirection === 'asc') {
             $this->itsOpenRegions[$regionIndex]['sortedOffices'] = $collectionOffices->sortBy(function ($office) {
                 $collectionDailyNumbers = collect($office['daily_numbers']);
 
@@ -241,7 +253,7 @@ class NumberTrackerDetailAccordionTable extends Component
     public function collapseOffice(int $regionIndex, int $officeIndex)
     {
         $collectionDailyNumbers = collect($this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedDailyNumbers']);
-        if ($this->sortDirection == 'asc') {
+        if ($this->sortDirection === 'asc') {
             $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedDailyNumbers'] = $collectionDailyNumbers->sortBy($this->sortBy)->values();
         } else {
             $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedDailyNumbers'] = $collectionDailyNumbers->sortByDesc($this->sortBy)->values();
@@ -303,9 +315,9 @@ class NumberTrackerDetailAccordionTable extends Component
             $this->itsOpenRegions[$regionIndex]['selected'] = true;
         } else {
             $this->itsOpenRegions[$regionIndex]['selected'] = array_search(
-                    true,
-                    array_column($this->itsOpenRegions[$regionIndex]['sortedOffices'], 'selected')
-                ) !== false;
+                true,
+                array_column($this->itsOpenRegions[$regionIndex]['sortedOffices'], 'selected')
+            ) !== false;
         }
 
         $this->addOrRemoveOf(
@@ -334,15 +346,15 @@ class NumberTrackerDetailAccordionTable extends Component
             $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['selected'] = true;
         } else {
             $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['selected'] = array_search(
-                    true,
-                    array_column($this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedDailyNumbers'],
-                        'selected')
-                ) !== false;
+                true,
+                array_column($this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedDailyNumbers'],
+                    'selected')
+            ) !== false;
 
             $this->itsOpenRegions[$regionIndex]['selected'] = array_search(
-                    true,
-                    array_column($this->itsOpenRegions[$regionIndex]['sortedOffices'], 'selected')
-                ) !== false;
+                true,
+                array_column($this->itsOpenRegions[$regionIndex]['sortedOffices'], 'selected')
+            ) !== false;
         }
 
         $this->addOrRemoveOf(
@@ -373,25 +385,25 @@ class NumberTrackerDetailAccordionTable extends Component
         $regions      = collect($this->itsOpenRegions);
         $regionsLast  = collect($this->getLastDailyNumbers());
         $this->totals = [
-            'doors'         => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'doors', true)),
-            'hours'         => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'hours', true)),
-            'sets'          => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'sets', true)),
-            'setSits'       => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'set_sits', true)),
-            'sits'          => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'sits', true)),
-            'setCloses'     => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'set_closes', true)),
-            'closes'        => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'closes', true)),
-            'hoursWorked'   => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'hours_worked', true)),
-            'hoursKnocked'  => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'hours_knocked', true)),
-            'sats'          => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'sats', true)),
-            'closerSits'    => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'closer_sits', true)),
+            'doors'        => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'doors', true)),
+            'hours'        => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'hours', true)),
+            'sets'         => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'sets', true)),
+            'setSits'      => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'set_sits', true)),
+            'sits'         => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'sits', true)),
+            'setCloses'    => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'set_closes', true)),
+            'closes'       => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'closes', true)),
+            'hoursWorked'  => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'hours_worked', true)),
+            'hoursKnocked' => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'hours_knocked', true)),
+            'sats'         => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'sats', true)),
+            'closerSits'   => $regions->sum(fn($region) => $this->sumRegionNumberTracker($region, 'closer_sits', true)),
 
-            'doorsLast'        => $regionsLast->sum(fn($region)    => $this->sumRegionNumberTracker($region, 'doors', true)),
-            'hoursLast'        => $regionsLast->sum(fn($region)    => $this->sumRegionNumberTracker($region, 'hours', true)),
-            'setsLast'         => $regionsLast->sum(fn($region)    => $this->sumRegionNumberTracker($region, 'sets', true)),
-            'setSitsLast'      => $regionsLast->sum(fn($region)    => $this->sumRegionNumberTracker($region, 'set_sits', true)),
-            'sitsLast'         => $regionsLast->sum(fn($region)    => $this->sumRegionNumberTracker($region, 'sits', true)),
-            'setClosesLast'    => $regionsLast->sum(fn($region)    => $this->sumRegionNumberTracker($region, 'set_closes', true)),
-            'closesLast'       => $regionsLast->sum(fn($region)    => $this->sumRegionNumberTracker($region, 'closes', true)),
+            'doorsLast'        => $regionsLast->sum(fn($region) => $this->sumRegionNumberTracker($region, 'doors', true)),
+            'hoursLast'        => $regionsLast->sum(fn($region) => $this->sumRegionNumberTracker($region, 'hours', true)),
+            'setsLast'         => $regionsLast->sum(fn($region) => $this->sumRegionNumberTracker($region, 'sets', true)),
+            'setSitsLast'      => $regionsLast->sum(fn($region) => $this->sumRegionNumberTracker($region, 'set_sits', true)),
+            'sitsLast'         => $regionsLast->sum(fn($region) => $this->sumRegionNumberTracker($region, 'sits', true)),
+            'setClosesLast'    => $regionsLast->sum(fn($region) => $this->sumRegionNumberTracker($region, 'set_closes', true)),
+            'closesLast'       => $regionsLast->sum(fn($region) => $this->sumRegionNumberTracker($region, 'closes', true)),
             'hoursWorkedLast'  => $regionsLast->sum(fn($region) => $this->sumRegionNumberTracker($region, 'hours_worked', true)),
             'hoursKnockedLast' => $regionsLast->sum(fn($region) => $this->sumRegionNumberTracker($region, 'hours_knocked', true)),
             'satsLast'         => $regionsLast->sum(fn($region) => $this->sumRegionNumberTracker($region, 'sats', true)),
@@ -472,8 +484,10 @@ class NumberTrackerDetailAccordionTable extends Component
     {
         if (isset($this->totals)) {
             return $this->totals['sits'] + $this->totals['setSits'] > 0
-                ? number_format(($this->totals['setCloses'] + $this->totals['closes']) / ($this->totals['sits'] + $this->totals['setSits']),
-                    2)
+                ? number_format(
+                    ($this->totals['setCloses'] + $this->totals['closes']) / ($this->totals['sits'] + $this->totals['setSits']),
+                    2
+                )
                 : '-';
         }
     }
@@ -516,5 +530,22 @@ class NumberTrackerDetailAccordionTable extends Component
     public function parseNumber($number)
     {
         return $number > 0 ? $number : html_entity_decode('&#8212;');
+    }
+
+    private function getRegionsThatHasDailyNumbers(Collection $regions)
+    {
+        return $regions->filter(function (Region $region) {
+            if ($region->deleted_at !== null && $region->offices->isEmpty()) {
+                return false;
+            }
+
+            if ($region->deleted_at !== null && $region->offices->isNotEmpty()) {
+                return $region->offices
+                    ->filter(fn(Office $office) => $office->dailyNumbers->isNotEmpty())
+                    ->count() > 0;
+            }
+
+            return true;
+        })->values();
     }
 }
