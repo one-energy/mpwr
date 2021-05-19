@@ -327,6 +327,16 @@
         </div>
     </div>
 
+    @if (user()->hasAnyRole(['Admin', 'Owner']))
+        <div class="flex justify-end mt-4">
+            <x-select name="departments" label="Departments" wire:model="selectedDepartment">
+                @foreach($this->departments as $department)
+                    <option value="{{ $department->id }}">{{ $department->name }}</option>
+                @endforeach
+            </x-select>
+        </div>
+    @endif
+
     <div class="justify-end mt-5">
         <x-toggle wire:click="initRegionsData" wire:model="deleteds" class="items-end" label="Deleted"/>
     </div>
