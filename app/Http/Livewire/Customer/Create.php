@@ -204,8 +204,6 @@ class Create extends Component
         if ( $customer->margin >= 0 && $customer->system_size >= 0 ) {
             return (float) $customer->margin * (float) $customer->system_size * 1000;
         }
-  
-        return 0;
         
         return 0;
     }
