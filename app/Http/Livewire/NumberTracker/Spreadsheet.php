@@ -46,53 +46,44 @@ class Spreadsheet extends Component
 
     public function getPeriodsProperty()
     {
-        $date = DateTimeImmutable::createFromMutable(today());
+        $weeks = [];
 
-        $firsDayOfMonth = $date->modify('first day of this month');
-        $lasDayOfMonth  = $date->modify('last day of this month');
-        $interval       = new DateInterval('P7D');
+        $currentWeek    = DateTimeImmutable::createFromMutable(today());
+        $firstDayOfWeek = $currentWeek->modify(today()->startOfWeek());
+        $lastDayOfWeek  = $currentWeek->modify(today()->endOfWeek()->subDay());
 
-        $period = new DatePeriod(
-            $firsDayOfMonth,
-            $interval,
-            $lasDayOfMonth,
-            DatePeriod::EXCLUDE_START_DATE
-        );
+        $weeks[] = $firstDayOfWeek;
+        $weeks[] = $lastDayOfWeek;
 
-        $weeks = [$firsDayOfMonth];
+        $subWeeks = collect()->times(3)->map(function ($number) {
+            $today       = DateTimeImmutable::createFromMutable(today());
+            $currentWeek = today()->subWeeks($number);
 
-        foreach ($period as $date) {
-            $weeks[] = $date->modify('-1 day');
-            $weeks[] = $date;
-        }
+            return [
+                $today->modify($currentWeek->endOfWeek()->subDay()),
+                $today->modify($currentWeek->startOfWeek()),
+            ];
+        })
+            ->flatten()
+            ->toArray();
 
-        $weeks[] = $lasDayOfMonth;
-
-        return $weeks;
+        return array_merge($weeks, $subWeeks);
     }
 
     public function getWeeklyPeriodsProperty()
     {
-        $interval = new DateInterval('P1D');
+        $isFirstChunk = true;
 
         return collect($this->periods)
             ->chunk(2)
-            ->map(function (Collection $chunk) use ($interval) {
-                $days = [$chunk->first()];
+            ->map(function (Collection $chunk) use (&$isFirstChunk) {
+                if ($isFirstChunk) {
+                    $isFirstChunk = false;
 
-                $weekDays = new DatePeriod($chunk->first(), $interval, $chunk->last(), DatePeriod::EXCLUDE_START_DATE);
-
-                foreach ($weekDays as $day) {
-                    if ($this->isSunday($day)) {
-                        continue;
-                    }
-
-                    $days[] = $day;
+                    return $this->getDaysFrom($chunk, false);
                 }
 
-                $days[] = $chunk->last();
-
-                return $days;
+                return $this->getDaysFrom($chunk, true);
             });
     }
 
@@ -101,7 +92,14 @@ class Spreadsheet extends Component
         return collect($this->weeklyPeriods)
             ->map(function (array $periods) {
                 return collect($periods)
-                    ->map(fn(DateTimeImmutable $date) => $date->format($this->dateFormat));
+                    ->map(function (DateTimeImmutable $date) {
+                        if ($this->isSunday($date)) {
+                            return null;
+                        }
+
+                        return $date->format($this->dateFormat);
+                    })
+                    ->filter();
             });
     }
 
@@ -266,6 +264,33 @@ class Spreadsheet extends Component
         ];
     }
 
+    private function getDaysFrom(Collection $chunk, bool $reverse)
+    {
+        $interval = new DateInterval('P1D');
+
+        $firstPiece  = $chunk->first();
+        $secondPiece = $chunk->last();
+
+        if ($reverse) {
+            $firstPiece  = $chunk->last();
+            $secondPiece = $chunk->first();
+        }
+
+        $days = [$firstPiece];
+
+        $weekDays = new DatePeriod($firstPiece, $interval, $secondPiece, DatePeriod::EXCLUDE_START_DATE);
+
+        foreach ($weekDays as $day) {
+            if ($this->isSunday($day)) {
+                continue;
+            }
+
+            $days[] = $day;
+        }
+
+        return $reverse ? array_reverse($days) : $days;
+    }
+
     private function isSunday(DateTimeInterface $day)
     {
         return $day->format('w') === '0';
@@ -273,7 +298,7 @@ class Spreadsheet extends Component
 
     private function formattedDatesCollection(Collection $weeklyPeriods)
     {
-        return $this->weeklyPeriods
+        return $weeklyPeriods
             ->flatten()
             ->map(fn (DateTimeImmutable $date) => $date->format('Y-m-d'));
     }
