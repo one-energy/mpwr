@@ -97,9 +97,13 @@
                         </x-select>
                     </div>
 
-                    <div class="col-span-2 md:col-span-6 @if($customer->setter_id == user()->id) hidden @endif">
+                    <div class="col-span-2 md:col-span-3 @if($customer->setter_id == user()->id) hidden @endif">
                         <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc"
                                           observation="Sold Price"/>
+                    </div>
+
+                    <div class="col-span-2 md:col-span-3">
+                        <x-input-currency label="Total Cost" name="total_cost" maxSize="100000" value="{{$customer->totalSoldPrice}}" readonly/>
                     </div>
 
                     <div class="col-span-2 md:col-span-3">
@@ -161,7 +165,7 @@
 
                     @if($customer->financer_id == 1)
                         <div class="col-span-2 md:col-span-1 @if($customer->setter_id == user()->id) hidden @endif">
-                            <x-input-currency wire:model="customer.enium_points" label="Noble Pay Points"
+                            <x-input-currency label="Noble Pay Points" value="{{$customer->salesEniumPoint}}"
                                               name="customer.enium_points" readonly/>
                         </div>
                     @endif
