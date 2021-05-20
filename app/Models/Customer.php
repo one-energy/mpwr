@@ -199,18 +199,23 @@ class Customer extends Model
 
     public function getTotalSoldPriceAttribute()
     {
-        return (float) $this->epc * (float) $this->system_size * self::K_WATTS;
+        return (float)$this->epc * (float)$this->system_size * self::K_WATTS;
     }
 
     public function getSalesEniumPointAttribute()
     {
         if ($this->term_id) {
             $term = Term::find($this->term_id);
-            return round($this->getTotalSoldPriceAttribute()/$term->amount);
+
+            return round($this->getTotalSoldPriceAttribute() / $term->amount);
         }
 
         return 0;
+    }
 
+    public function getFullNameAttribute()
+    {
+        return sprintf('%s %s', $this->first_name, $this->last_name);
     }
 
     public function getFullNameAttribute()
@@ -221,7 +226,7 @@ class Customer extends Model
     public function calcComission()
     {
         if ($this->epc >= 0 && $this->sales_rep_fee >= 0 && $this->setter_fee >= 0 && $this->system_size && $this->adders >= 0) {
-            $this->sales_rep_comission = round((float) $this->sales_rep_fee * (float) $this->system_size * self::K_WATTS, 2);
+            $this->sales_rep_comission = round((float)$this->sales_rep_fee * (float)$this->system_size * self::K_WATTS, 2);
         } else {
             $this->sales_rep_comission = 0;
         }
@@ -230,7 +235,7 @@ class Customer extends Model
     public function calcMargin()
     {
         if ($this->epc) {
-            $this->margin = round((float)$this->epc - (float)$this->sales_rep_fee - (float) $this->setter_fee, 2);
+            $this->margin = round((float)$this->epc - (float)$this->sales_rep_fee - (float)$this->setter_fee, 2);
         } else {
             $this->margin = 0;
         }
