@@ -36,7 +36,6 @@ class HomeController extends Controller
         return view('home', [
             'customers'    => $query->get(),
             'sortTypes'    => $sortTypes,
-            'modalContent' => '',
         ]);
     }
 }
