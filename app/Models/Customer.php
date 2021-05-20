@@ -200,7 +200,7 @@ class Customer extends Model
     public function calcMargin()
     {
         if ($this->epc) {
-            $this->margin = number_format((float)$this->epc - (float)$this->sales_rep_fee - (float) $this->setter_fee, 2);
+            $this->margin = round((float)$this->epc - (float)$this->sales_rep_fee - (float) $this->setter_fee, 2);
         } else {
             $this->margin = 0;
         }

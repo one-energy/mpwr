@@ -2,41 +2,26 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Customer;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class FixCalculationOfOldCustomers extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'command:name';
+    protected $signature = 'fix-margin-calculations';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Command description';
+    protected $description = 'This command will change margin value of each customers';
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
     public function handle()
     {
+
+        DB::transaction(function () {
+           Customer::get()->each(function ($customer) {
+               $customer->margin = (float)$customer->epc - (float)$customer->sales_rep_fee - (float) $customer->setter_fee;
+               $customer->save();
+           });
+        });
+        
         return 0;
     }
 }
