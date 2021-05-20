@@ -18,7 +18,9 @@ class EniumPointsTest extends TestCase
     use RefreshDatabase;
 
     public User $user;
+
     public Customer $customer;
+
     public Collection $userEniumPoints;
 
     protected function setUp ():void
@@ -42,19 +44,19 @@ class EniumPointsTest extends TestCase
             'term_id'      => Term::inRandomOrder()->first()->id,
             'sales_rep_id' => $this->user->id,
             'is_active'    => true,
-            'panel_sold'   => true
+            'panel_sold'   => true,
         ]);
 
         $this->customers->each(function ($customer) {
             $this->userEniumPoints->push(
-                UserCustomersEniumPoints::factory()->create([ 
+                UserCustomersEniumPoints::factory()->create([
                     'user_sales_rep_id' => $this->user->id,
                     'customer_id'       => $customer->id,
-                    'points'            => round($customer->totalSoldPrice/$customer->term->amount),
+                    'points'            => round($customer->totalSoldPrice / $customer->term->amount),
                     'set_date'          => Carbon::now(),
-                    'expiration_date'   => Carbon::now()->addYear()
+                    'expiration_date'   => Carbon::now()->addYear(),
                 ])
-            );  
+            );
         });
 
         UserEniumPointLevel::factory()->count(12)
@@ -100,42 +102,42 @@ class EniumPointsTest extends TestCase
     /** @test */
     public function it_should_show_enium_points_level()
     {
-        $jhon     = User::factory()->create(['role' => 'Sales Rep']);
+        $john     = User::factory()->create(['role' => 'Sales Rep']);
         $customer = Customer::factory()->create([
-            'sales_rep_id' => $jhon->id,
+            'sales_rep_id' => $john->id,
             'is_active'    => true,
-            'panel_sold'   => true
+            'panel_sold'   => true,
         ]);
 
-        UserCustomersEniumPoints::factory()->create([ 
+        UserCustomersEniumPoints::factory()->create([
             'user_sales_rep_id' => $customer->sales_rep_id,
-            'customer_id'       => $customer->id, 
+            'customer_id'       => $customer->id,
             'points'            => 2500,
             'set_date'          => Carbon::now(),
-            'expiration_date'   => Carbon::now()->addYear()
+            'expiration_date'   => Carbon::now()->addYear(),
         ]);
 
-        $this->assertEquals($jhon->level()->level, 5);
+        $this->assertEquals($john->level()->level, 5);
     }
 
     /** @test */
     public function it_should_show_enium_sum_points()
     {
-        $jhon     = User::factory()->create(['role' => 'Sales Rep']);
+        $john     = User::factory()->create(['role' => 'Sales Rep']);
         $customer = Customer::factory()->create([
             'epc'          => 2500,
             'term_id'      => Term::inRandomOrder()->first()->id,
-            'sales_rep_id' => $jhon->id,
+            'sales_rep_id' => $john->id,
             'is_active'    => true,
-            'panel_sold'   => true
+            'panel_sold'   => true,
         ]);
 
-        UserCustomersEniumPoints::factory()->create([ 
+        UserCustomersEniumPoints::factory()->create([
             'user_sales_rep_id' => $customer->sales_rep_id,
-            'customer_id'       => $customer->id, 
-            'points'            => round($customer->totalSoldPrice/$customer->term->amount),
+            'customer_id'       => $customer->id,
+            'points'            => round($customer->totalSoldPrice / $customer->term->amount),
             'set_date'          => Carbon::now(),
-            'expiration_date'   => Carbon::now()->addYear()
+            'expiration_date'   => Carbon::now()->addYear(),
         ]);
 
         $this->get('/')
