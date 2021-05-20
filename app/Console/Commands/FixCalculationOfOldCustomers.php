@@ -14,7 +14,6 @@ class FixCalculationOfOldCustomers extends Command
 
     public function handle()
     {
-
         DB::transaction(function () {
            Customer::get()->each(function ($customer) {
                $customer->margin = (float)$customer->epc - (float)$customer->sales_rep_fee - (float) $customer->setter_fee;
