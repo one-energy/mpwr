@@ -183,7 +183,25 @@
                     @endif
                 </div>
             </div>
-            <div class="mt-6 overflow-x-auto ">
+
+            @if ($this->seeAllStatusSelected)
+                <section class="mb-3 flex flex-row items-center w-full space-x-3 text-sm">
+                    <div>
+                        <span class="w-3 h-3 inline-block  bg-blue-500"></span>
+                        <span>Installed & Paid</span>
+                    </div>
+                    <div>
+                        <span class="w-3 h-3 inline-block  bg-yellow-400"></span>
+                        <span>Pending</span>
+                    </div>
+                    <div>
+                        <span class="w-3 h-3 inline-block  bg-red-500"></span>
+                        <span>Canceled</span>
+                    </div>
+                </section>
+            @endif
+
+            <div class="mt-6 overflow-x-auto">
                 <div class="flex flex-col">
                     <x-table :pagination="$customers->links()">
                         <x-slot name="header">
@@ -298,44 +316,106 @@
                         <x-slot name="body">
                             @foreach($customers as $customer)
                                 <x-table.tr >
-                                    <x-table.td>{{$customer->first_name}} {{$customer->last_name}}</x-table.td>
-                                    <x-table.td>{{$customer->date_of_sale->format('M-d')}}</x-table.td>
-                                    <x-table.td>{{$customer->userSetter?->first_name ?? '-'}} {{$customer->userSetter?->last_name}}</x-table.td>
-                                    <x-table.td>{{$customer->setter_fee > 0 ? '$ ' . $customer->setter_fee : '-'}}</x-table.td>
-                                    <x-table.td>{{$customer->userSalesRep?->first_name ?? '-'}} {{$customer->userSalesRep?->last_name}}</x-table.td>
+                                    <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                        {{$customer->full_name}}
+                                    </x-table.td>
+                                    <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                        {{$customer->date_of_sale->format('M-d')}}
+                                    </x-table.td>
+                                    <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                        {{$customer->userSetter?->first_name ?? '-'}} {{$customer->userSetter?->last_name}}
+                                    </x-table.td>
+                                    <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                        {{$customer->setter_fee > 0 ? '$ ' . $customer->setter_fee : '-'}}
+                                    </x-table.td>
+                                    <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                        {{$customer->userSalesRep?->first_name ?? '-'}} {{$customer->userSalesRep?->last_name}}
+                                    </x-table.td>
                                     @if(user()->notHaveRoles(['Setter']))
-                                        <x-table.td>{{$customer->sales_rep_fee ? '$ ' . $customer->sales_rep_fee : '-'}}</x-table.td>
-                                        <x-table.td>{{$customer->epc ? '$ ' . $customer->epc : '-'}}</x-table.td>
-                                        <x-table.td>{{$customer->adders ? '$ ' . $customer->adders : '-'}}</x-table.td>
+                                        <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                            {{$customer->sales_rep_fee ? '$ ' . $customer->sales_rep_fee : '-'}}
+                                        </x-table.td>
+                                        <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                            {{$customer->epc ? '$ ' . $customer->epc : '-'}}
+                                        </x-table.td>
+                                        <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                            {{$customer->adders ? '$ ' . $customer->adders : '-'}}
+                                        </x-table.td>
                                     @endif
-                                    <x-table.td>{{$customer->system_size ?? '-'}}</x-table.td>
-                                    <x-table.td>{{ $this->formatNumber($this->getSetterCommission($customer)) }}</x-table.td>
+                                    <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                        {{$customer->system_size ?? '-'}}
+                                    </x-table.td>
+                                    <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                        {{ $this->formatNumber($this->getSetterCommission($customer)) }}
+                                    </x-table.td>
                                     @if(user()->notHaveRoles(['Setter']))
-                                        <x-table.td>{{ $this->formatNumber($this->getSalesRepCommission($customer)) }}</x-table.td>
-                                        <x-table.td>{{$customer->financingType?->name ?? '-'}}</x-table.td>
-                                        <x-table.td>{{$customer->financer?->name ?? '-'}}</x-table.td>
+                                        <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                            {{ $this->formatNumber($this->getSalesRepCommission($customer)) }}
+                                        </x-table.td>
+                                        <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                            {{$customer->financingtype?->name ?? '-'}}
+                                        </x-table.td>
+                                        <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                            {{$customer->financer?->name ?? '-'}}
+                                        </x-table.td>
                                         @if(user()->notHaveRoles(['Sales Rep']))
-                                            <x-table.td>{{$customer->recruiterOfSalesRep?->first_name ?? '-'}} {{$customer->recruiterOfSalesRep?->last_name}}</x-table.td>
-                                            <x-table.td>{{$customer->recruiterOfSalesRep?->pay ?? '-'}}</x-table.td>
-                                            <x-table.td>{{$customer->referral_override ?? '-'}}</x-table.td>
-                                            <x-table.td>{{$customer->officeManager?->first_name ?? '-'}} {{$customer->officeManager?->last_name}}</x-table.td>
-                                            <x-table.td>{{$customer->officeManager?->pay ?? '-'}}</x-table.td>
-                                            <x-table.td>{{$customer->office_manager_override ?? '-'}}</x-table.td>
+                                            <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                                {{$customer->recruiterOfSalesRep?->first_name ?? '-'}} {{$customer->recruiterOfSalesRep?->last_name}}
+                                            </x-table.td>
+                                            <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                                {{$customer->recruiterOfSalesRep?->pay ?? '-'}}
+                                            </x-table.td>
+                                            <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                                {{$customer->referral_override ?? '-'}}
+                                            </x-table.td>
+                                            <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                                {{$customer->officeManager?->first_name ?? '-'}} {{$customer->officeManager?->last_name}}
+                                            </x-table.td>
+                                            <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                                {{$customer->officeManager?->pay ?? '-'}}
+                                            </x-table.td>
+                                            <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                                {{$customer->office_manager_override ?? '-'}}
+                                            </x-table.td>
                                             @if(user()->notHaveRoles(['Office Manager']))
-                                                <x-table.td>{{$customer->regionManager?->first_name ?? '-'}} {{$customer->regionManager?->last_name}}</x-table.td>
-                                                <x-table.td>{{$customer->regionManager?->pay ?? '-'}}</x-table.td>
-                                                <x-table.td>{{$customer->region_manager_override ?? '-'}}</x-table.td>
+                                                <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                                    {{$customer->regionManager?->first_name ?? '-'}} {{$customer->regionManager?->last_name}}
+                                                </x-table.td>
+                                                <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                                    {{$customer->regionManager?->pay ?? '-'}}
+                                                </x-table.td>
+                                                <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                                    {{$customer->region_manager_override ?? '-'}}
+                                                </x-table.td>
                                                 @if(user()->notHaveRoles(['Region Manager']))
-                                                    <x-table.td>{{$customer->departmentManager?->first_name ?? '-'}} {{$customer->departmentManager?->last_name}}</x-table.td>
-                                                    <x-table.td>{{$customer->departmentManager?->pay ?? '-'}}</x-table.td>
-                                                    <x-table.td>{{$customer->department_manager_override ?? '-'}}</x-table.td>
+                                                    <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                                        {{$customer->departmentManager?->first_name ?? '-'}} {{$customer->departmentManager?->last_name}}
+                                                    </x-table.td>
+                                                    <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                                        {{$customer->departmentManager?->pay ?? '-'}}
+                                                    </x-table.td>
+                                                    <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                                        {{$customer->department_manager_override ?? '-'}}
+                                                    </x-table.td>
                                                     @if(user()->notHaveRoles(['Department Manager']))
-                                                        <x-table.td>{{$customer->payee_one ?? '-'}}</x-table.td>
-                                                        <x-table.td>{{$customer->misc_override_one ?? '-'}}</x-table.td>
-                                                        <x-table.td>{{($customer->misc_override_one * $customer->system_size) > 0 ? $customer->misc_override_one * $customer->system_size : '-'}}</x-table.td>
-                                                        <x-table.td>{{$customer->payee_two ?? '-'}}</x-table.td>
-                                                        <x-table.td>{{$customer->misc_override_two ?? '-'}}</x-table.td>
-                                                        <x-table.td>{{($customer->misc_override_two * $customer->system_size) > 0 ? $customer->misc_override_two * $customer->system_size : '-'}}</x-table.td>
+                                                        <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                                            {{$customer->payee_one ?? '-'}}
+                                                        </x-table.td>
+                                                        <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                                            {{$customer->misc_override_one ?? '-'}}
+                                                        </x-table.td>
+                                                        <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                                            {{($customer->misc_override_one * $customer->system_size) > 0 ? $customer->misc_override_one * $customer->system_size : '-'}}
+                                                        </x-table.td>
+                                                        <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                                            {{$customer->payee_two ?? '-'}}
+                                                        </x-table.td>
+                                                        <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                                            {{$customer->misc_override_two ?? '-'}}
+                                                        </x-table.td>
+                                                        <x-table.td class="{{ $this->statusColorFor($customer) }}">
+                                                            {{($customer->misc_override_two * $customer->system_size) > 0 ? $customer->misc_override_two * $customer->system_size : '-'}}
+                                                        </x-table.td>
                                                     @endif
                                                 @endif
                                             @endif
