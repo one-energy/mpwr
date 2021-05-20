@@ -9,6 +9,9 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
 
+/**
+ * @property-read bool $seeAllStatusSelected
+ */
 class ReportsOverview extends Component
 {
     use FullTable;
@@ -35,12 +38,18 @@ class ReportsOverview extends Component
 
     public function mount()
     {
-        $this->sortBy = "date_of_sale";
-        $this->sortDirection = "desc";
-        $this->departmentId = Department::first()->id;
+        $this->status = array_merge($this->status, [
+            'all' => 'See all',
+        ]);
+
+        $this->sortBy        = 'date_of_sale';
+        $this->sortDirection = 'desc';
+        $this->departmentId  = Department::first()->id;
+
         if (user()->hasAnyRole(['Admin', 'Owner'])) {
             $this->personalCustomers = false;
         }
+
         $this->startDate = Carbon::create($this->startDate)->firstOfYear()->startOfDay()->toString();
         $this->finalDate = Carbon::create($this->finalDate)->endOfDay()->toString();
     }
@@ -393,5 +402,44 @@ class ReportsOverview extends Component
     private function pendingStatus()
     {
         return $this->selectedStatus === 'pending';
+    }
+
+    public function getSeeAllStatusSelectedProperty()
+    {
+        return $this->selectedStatus === 'all';
+    }
+
+    public function statusColorFor(Customer $customer)
+    {
+        if (!$this->seeAllStatusSelected) {
+            return '';
+        }
+
+        if ($this->canceled($customer)) {
+            return 'text-red-500';
+        }
+
+        if ($this->pending($customer)) {
+            return 'text-yellow-400';
+        }
+
+        if ($this->paid($customer)) {
+            return 'text-blue-500';
+        }
+    }
+
+    private function canceled(Customer $customer)
+    {
+        return $customer->is_active === false;
+    }
+
+    private function pending(Customer $customer)
+    {
+        return $customer->is_active === true && $customer->panel_sold === false;
+    }
+
+    private function paid(Customer $customer)
+    {
+        return $customer->is_active === true && $customer->panel_sold === true;
     }
 }
