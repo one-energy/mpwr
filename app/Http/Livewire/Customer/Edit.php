@@ -9,6 +9,8 @@ use App\Models\Financing;
 use App\Models\Rates;
 use App\Models\Term;
 use App\Models\User;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Edit extends Component
@@ -18,6 +20,8 @@ class Edit extends Component
     public ?User $setter;
 
     public int $departmentId;
+
+    public bool $installed;
 
     public int $grossRepComission;
 
@@ -109,7 +113,20 @@ class Edit extends Component
         $this->customer->financer_id = $this->customer->financer_id != "" ? $this->customer->financer_id : null;
         $this->customer->term_id = $this->customer->term_id != "" ? $this->customer->term_id : null;
         $this->validate();
-        $this->customer->save();
+
+        DB::transaction(function () {
+            $this->customer->save();
+            if ($this->customer->term_id) {
+                if (!$this->customer->userEniumPoint()->exists() && $this->customer->panel_sold) {
+                    $this->customer->userEniumPoint()->create([
+                        'user_sales_rep_id' => $this->customer->sales_rep_id,
+                        'points'            => $this->customer->term->amount > 0 ? round($this->customer->epc/$this->customer->term->amount) : 0,
+                        'set_date'          => Carbon::now(),
+                        'expiration_date'   => Carbon::now()->addYear()
+                    ]);
+                }
+            }
+        });
 
         alert()
             ->withTitle(__('Home Owner updated!'))

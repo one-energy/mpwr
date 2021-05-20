@@ -20,5 +20,7 @@ use Illuminate\Database\Eloquent\Model;
 class Financer extends Model
 {
     use HasFactory;
-    //
+
+    const ENIUM = 1;
+    const OTHER = 2;
 }
