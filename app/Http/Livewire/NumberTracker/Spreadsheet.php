@@ -144,7 +144,7 @@ class Spreadsheet extends Component
         foreach ($this->periodsLabel as $key => $period) {
             foreach ($this->weeklyLabels[$key] as $label) {
                 if ($this->users->isEmpty()) {
-                    $totals[$label] = [];
+                    $totals[$label] = $this->getMappedDailyNumbers(collect(), $label);
 
                     continue;
                 }
@@ -182,9 +182,9 @@ class Spreadsheet extends Component
         return match (user()->role) {
             'Admin', 'Owner' => Office::oldest('name')->get(),
             'Department Manager' => $this->getOfficesFromDepartment(),
-            'Region Manager' => Office::oldest('name')->whereIn('region_id', user()->managedRegions->pluck('id'))->get(),
-            'Office Manager' => Office::oldest('name')->whereIn('id', user()->managedOffices->pluck('id'))->get(),
-            default => collect()
+            'Region Manager'     => Office::oldest('name')->whereIn('region_id', user()->managedRegions->pluck('id'))->get(),
+            'Office Manager'     => Office::oldest('name')->whereIn('id', user()->managedOffices->pluck('id'))->get(),
+            default              => collect()
         };
     }
 
