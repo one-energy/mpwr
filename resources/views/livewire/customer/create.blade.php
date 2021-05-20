@@ -92,7 +92,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
-                    <x-input-currency label="Total Cost" name="totalCost" maxSize="100000"/>
+                    <x-input-currency label="Total Cost" name="total_cost" maxSize="100000" value="{{$customer->totalSoldPrice}}" readonly/>
                 </div>
 
                 <div class="col-span-2 md:col-span-3" wire:ignore>
@@ -134,7 +134,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-2">
-                    <x-input-currency wire:model="grossRepComission" label="Gross Rep Comission" name="grossRepComission" type="number" readonly/>
+                    <x-input-currency wire:model="grossRepComission" label="Gross Rep Comission" name="grossRepComission" readonly/>
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
@@ -150,7 +150,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1 @if($customer->financer_id != 1) hidden @endif ">
-                    <x-input wire:model="customer.enium_points" label="Noble Pay Points" name="customer.enium_points" readonly/>
+                    <x-input label="Noble Pay Points" name="enium_points" value="{{$customer->salesEniumPoint}}" readonly/>
                 </div>
             </div>
 

@@ -173,25 +173,34 @@ class Customer extends Model
         return User::find($this->setter_id);
     }
 
-    public function getTotalCostAttribute()
+    public function getTotalSoldPriceAttribute()
     {
-        return $this->epc * $this->system_size * self::K_WATTS;
+        return (float) $this->epc * (float) $this->system_size * self::K_WATTS;
+    }
+
+    public function getSalesEniumPointAttribute()
+    {
+        if ($this->term_id) {
+            $term = Term::find($this->term_id);
+            return round($this->getTotalSoldPriceAttribute()/$term->amount);
+        }
+
+        return 0;
     }
 
     public function calcComission()
     {
         if ($this->epc >= 0 && $this->sales_rep_fee >= 0 && $this->setter_fee >= 0 && $this->system_size && $this->adders >= 0) {
-            $this->sales_rep_comission = ((floatval($this->epc) - floatval($this->sales_rep_fee) - floatval($this->setter_fee)) * (floatval($this->system_size) * 1000)) - floatval($this->adders);
+            $this->sales_rep_comission = round((((float) $this->epc - (float) $this->sales_rep_fee - (float) $this->setter_fee) * ((float) $this->system_size * 1000)) - (float) $this->adders, 2);
         } else {
             $this->sales_rep_comission = 0;
         }
     }
-    
 
     public function calcMargin()
     {
         if ($this->epc) {
-            $this->margin = (float)$this->epc - $this->sales_rep_fee - (float) $this->setter_fee;
+            $this->margin = number_format((float)$this->epc - (float)$this->sales_rep_fee - (float) $this->setter_fee, 2);
         } else {
             $this->margin = 0;
         }

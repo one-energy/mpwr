@@ -20,7 +20,7 @@ class Create extends Component
 
     public int $departmentId;
 
-    public int $grossRepComission;
+    public float $grossRepComission;
 
     public int $stockPoints = 250;
 
@@ -41,7 +41,7 @@ class Create extends Component
         'customer.last_name'           => ['required', 'string', 'max:255'],
         'customer.system_size'         => 'required',
         'customer.bill'                => 'required',
-        'customer.adders'              => 'required',
+        'customer.adders'              => ['required', 'min:0'],
         'customer.date_of_sale'        => 'required',
         'customer.epc'                 => 'required',
         'customer.financing_id'        => 'required',
@@ -68,7 +68,8 @@ class Create extends Component
             $this->departmentId = Department::first()->id;
         }
 
-        $this->customer = new Customer();
+        $this->customer         = new Customer();
+        $this->customer->adders = 0;
         if ((user()->role == 'Office Manager' || user()->role == 'Sales Rep' || user()->role == 'Setter') && user()->office_id != null) {
             $this->customer->sales_rep_id  = user()->id;
             $this->customer->sales_rep_fee = $this->getUserRate(user()->id);
@@ -201,8 +202,8 @@ class Create extends Component
 
     public function calculateGrossRepComission(Customer $customer)
     {
-        if ( $customer->margin >= 0 && $customer->system_size >= 0 ) {
-            return (float) $customer->margin * (float) $customer->system_size * 1000;
+        if ( $customer->margin >= 0 && $customer->system_size >= 0 ) {  
+            return round((float) $customer->margin * (float) $customer->system_size * Customer::K_WATTS, 2);
         }
         
         return 0;
