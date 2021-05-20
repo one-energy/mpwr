@@ -67,49 +67,15 @@
                         </div>
                         @forelse ($customers as $customer)
                             <a href="{{route('customers.show', $customer->id)}}">
-                                <div class="flex flex-col sm:flex-row justify-between border rounded-md border-gray-400 mb-2 p-2" 
-                                     x-data="{ 
-                                        open: false, 
-                                        modalDescription: 'teste',
-                                        openModel(dispatch, salesEpc) {
-                                            var formatter = new Intl.NumberFormat('en-US', {
-                                                style: 'currency',
-                                                currency: 'USD',
-                                            });
-                                            formated = formatter.format(salesEpc);
-                                            document.getElementById('modalDescription').innerText = formated;
-                                            dispatch('confirm')
-                                        }
-                                    }">
-                                    <div class="sm:w-2/3">
+                                <div class="flex flex-col sm:flex-row justify-between border rounded-md border-gray-400 mb-2 p-2" >
+                                    <div class="sm:w-2/3 md:w-3/4">
                                         <div class="whitespace-no-wrap">{{ $customer->first_name }} {{ $customer->last_name }}</div>
                                         <div class="whitespace-no-wrap">{{ number_format($customer->epc) }}kW - <i> {{ $customer->date_of_sale->format('D M j Y')}} </i></div>
                                     </div>
-                                    <div class="sm:w-1/3">
+                                    <div class="sm:w-1/3 md:w-1/4">
                                         @if($customer->setter_id == user()->id)
-                                            <div class="hidden md:block @if($customer->is_active && $customer->panel_sold) bg-green-base @elseif($customer->is_active == false) bg-red-500 @else bg-gray-700 @endif text-white @if($customer->setter_id == user()->id) rounded-full @else rounded-md @endif py-1 px-1 text-center"
-                                                @mouseenter="open = true"
-                                                @mouseleave="open = false">
-                                                $ {{ number_format($customer->setterCommission, 2) }} 
-                                            </div>
-                                            
-                                            <div>
-                                                <a class="flex" href="#">
-                                                    <div @click="openModel($dispatch, {{$customer->sales_rep_comission}})" 
-                                                        class="w-full block md:hidden @if($customer->is_active && $customer->panel_sold) bg-green-base @elseif($customer->is_active == false) bg-red-500 @else bg-gray-700 @endif text-white @if($customer->setter_id == user()->id) rounded-full @else rounded-md @endif py-1 px-1 text-center">
-                                                        $ {{ number_format($customer->setterCommission, 2) }} 
-                                                    </div>
-                                                </a>
-                                            </div>
-                                            
-                                            <div class="relative" x-cloak x-show.transition.origin.top="open">
-                                                <div
-                                                    class="bg-gray-200 rounded shadow-xl w-auto h-auto p-4 absolute top-0 z-50 transform translate-x-20 -translate-y-24"
-                                                    x-show="open"
-                                                    x-cloak
-                                                >
-                                                    Closer Commission: $ {{ number_format($customer->sales_rep_comission, 2) }} 
-                                                </div>
+                                            <div class="hidden md:block @if($customer->is_active && $customer->panel_sold) bg-green-base @elseif($customer->is_active == false) bg-red-500 @else bg-gray-700 @endif text-white @if($customer->setter_id == user()->id) rounded-full @else rounded-md @endif py-1 px-1 text-center">
+                                                Setter Commission $ {{ number_format($customer->setterCommission, 2) }} 
                                             </div>
                                         @else
                                             <div
