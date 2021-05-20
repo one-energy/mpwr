@@ -92,7 +92,7 @@
                                     @lang('Office Members')
                                 </x-table.th>
                                 @foreach($this->weeklyLabels[$key] as $label)
-                                    <th class="py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider border-l-2 border-r-2">
+                                    <th class="py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 tracking-wider border-l-2 border-r-2">
                                         <p class="font-bold text-center">@lang($label)</p>
                                         <section class="grid grid-cols-8">
                                             @foreach($this->indicators as $indicator)
@@ -145,7 +145,7 @@
                                     @foreach($this->weeklyLabels[$key] as $weeklyKey => $label)
                                         @if (isset($user->dailyNumbers[$label]))
                                             <td class="border-t-2 border-l-2 border-r-2 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b border-gray-200">
-                                                <section class="grid grid-cols-8 relative">
+                                                <section style="min-width: 400px" class="grid grid-cols-8 relative">
                                                     <span class="hidden">
                                                         <input
                                                             type="text" class="text-center w-10 inline pointer-events-none"
@@ -250,24 +250,24 @@
                                             </td>
                                         @else
                                             <td class="border-t-2 border-l-2 border-r-2 py-4 whitespace-no-wrap text-sm text-gray-800 md:border-b border-gray-200">
-                                                <div class="grid grid-cols-8 relative">
+                                                <section style="min-width: 400px" class="grid grid-cols-8 relative">
                                                     <span class="hidden">
                                                         <input
-                                                            type="text" class="text-center w-10 inline pointer-events-none"
+                                                            type="text" class="text-center w-9 inline pointer-events-none"
                                                             value="{{ $user->id }}"
                                                             name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][user_id]"
                                                         />
                                                     </span>
                                                     <span class="hidden">
                                                         <input
-                                                            type="text" class="text-center w-10 inline pointer-events-none"
+                                                            type="text" class="text-center w-9 inline pointer-events-none"
                                                             value="{{ $user->office_id }}"
                                                             name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][office_id]"
                                                         />
                                                     </span>
                                                     <span class="hidden">
                                                         <input
-                                                            type="text" class="text-center w-10 inline pointer-events-none"
+                                                            type="text" class="text-center w-9 inline pointer-events-none"
                                                             value="{{ $label }}"
                                                             name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][date]"
                                                         />
@@ -275,7 +275,7 @@
                                                     <div class="relative" name="pipe">
                                                         <span class="block text-center">
                                                             <input
-                                                                type="text" class="text-center w-10 inline pointer-events-none"
+                                                                type="text" class="text-center w-9 inline pointer-events-none"
                                                                 value=""
                                                                 readonly
                                                             />
@@ -284,7 +284,7 @@
                                                     <div class="relative" name="pipe">
                                                         <span class="block text-center">
                                                             <input
-                                                                type="text" class="text-center w-10 inline"
+                                                                type="text" class="text-center w-9 inline"
                                                                 value=""
                                                                 name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][doors]"
                                                             />
@@ -293,7 +293,7 @@
                                                     <div class="relative" name="pipe">
                                                         <span class="block text-center">
                                                             <input
-                                                                type="text" class="text-center w-10 inline"
+                                                                type="text" class="text-center w-9 inline"
                                                                 value=""
                                                                 name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][hours_knocked]"
                                                             />
@@ -302,7 +302,7 @@
                                                     <div class="relative" name="pipe">
                                                         <span class="block text-center">
                                                             <input
-                                                                type="text" class="text-center w-10 inline"
+                                                                type="text" class="text-center w-9 inline"
                                                                 value=""
                                                                 name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][sets]"
                                                             />
@@ -311,7 +311,7 @@
                                                     <div class="relative" name="pipe">
                                                         <span class="block text-center">
                                                             <input
-                                                                type="text" class="text-center w-10 inline"
+                                                                type="text" class="text-center w-9 inline"
                                                                 value=""
                                                                 name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][sats]"
                                                             />
@@ -320,7 +320,7 @@
                                                     <div class="relative" name="pipe">
                                                         <span class="block text-center">
                                                             <input
-                                                                type="text" class="text-center w-10 inline"
+                                                                type="text" class="text-center w-9 inline"
                                                                 value=""
                                                                 name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][set_closes]"
                                                             />
@@ -329,7 +329,7 @@
                                                     <div class="relative" name="pipe">
                                                       <span class="block text-center">
                                                             <input
-                                                                type="text" class="text-center w-10 inline"
+                                                                type="text" class="text-center w-9 inline"
                                                                 value=""
                                                                 name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][closer_sits]"
                                                             />
@@ -338,24 +338,24 @@
                                                     <div class="relative" name="pipe">
                                                         <span class="block text-center">
                                                             <input
-                                                                type="text" class="text-center w-10 inline"
+                                                                type="text" class="text-center w-9 inline"
                                                                 value=""
                                                                 name="dailyNumbers[{{ $key }}][{{ $weeklyKey }}][{{ $userKey }}][closes]"
                                                             />
                                                         </span>
                                                     </div>
-                                                </div>
+                                                </section>
                                             </td>
                                         @endif
                                     @endforeach
 
                                     {{-- Weekly Totals Column --}}
                                     <td class="border-2 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b md:border-gray-200">
-                                        <section class="grid grid-cols-8 relative">
+                                        <section style="min-width: 400px" class="grid grid-cols-8 relative">
                                             <div class="relative" name="pipe">
                                                 <span class="block text-center">
                                                     <input
-                                                        type="text" class="text-center w-10 inline pointer-events-none"
+                                                        type="text" class="text-center w-9 inline pointer-events-none"
                                                         readonly
                                                         value="{{ $this->sumOf('hours_worked', $user, $this->weeklyPeriods[$key]) }}"
                                                     />
@@ -364,7 +364,7 @@
                                             <div class="relative" name="pipe">
                                                 <span class="block text-center">
                                                     <input
-                                                        type="text" class="text-center w-10 inline pointer-events-none"
+                                                        type="text" class="text-center w-9 inline pointer-events-none"
                                                         readonly
                                                         value="{{ $this->sumOf('doors', $user, $this->weeklyPeriods[$key]) }}"
                                                     />
@@ -373,7 +373,7 @@
                                             <div class="relative" name="pipe">
                                                 <span class="block text-center">
                                                     <input
-                                                        type="text" class="text-center w-10 inline pointer-events-none"
+                                                        type="text" class="text-center w-9 inline pointer-events-none"
                                                         readonly
                                                         value="{{ $this->sumOf('hours_knocked', $user, $this->weeklyPeriods[$key]) }}"
                                                     />
@@ -382,7 +382,7 @@
                                             <div class="relative" name="pipe">
                                                 <span class="block text-center">
                                                     <input
-                                                        type="text" class="text-center w-10 inline pointer-events-none"
+                                                        type="text" class="text-center w-9 inline pointer-events-none"
                                                         readonly
                                                         value="{{ $this->sumOf('sets', $user, $this->weeklyPeriods[$key]) }}"
                                                     />
@@ -391,7 +391,7 @@
                                             <div class="relative" name="pipe">
                                                 <span class="block text-center">
                                                     <input
-                                                        type="text" class="text-center w-10 inline pointer-events-none"
+                                                        type="text" class="text-center w-9 inline pointer-events-none"
                                                         readonly
                                                         value="{{ $this->sumOf('sats', $user, $this->weeklyPeriods[$key]) }}"
                                                     />
@@ -400,7 +400,7 @@
                                             <div class="relative" name="pipe">
                                                 <span class="block text-center">
                                                     <input
-                                                        type="text" class="text-center w-10 inline pointer-events-none"
+                                                        type="text" class="text-center w-9 inline pointer-events-none"
                                                         readonly
                                                         value="{{ $this->sumOf('set_closes', $user, $this->weeklyPeriods[$key]) }}"
                                                     />
@@ -409,7 +409,7 @@
                                             <div class="relative" name="pipe">
                                                 <span class="block text-center">
                                                     <input
-                                                        type="text" class="text-center w-10 inline pointer-events-none"
+                                                        type="text" class="text-center w-9 inline pointer-events-none"
                                                         readonly
                                                         value="{{ $this->sumOf('closer_sits', $user, $this->weeklyPeriods[$key]) }}"
                                                     />
@@ -418,7 +418,7 @@
                                             <div class="relative" name="pipe">
                                                 <span>
                                                     <input
-                                                        type="text" class="text-center w-10 inline pointer-events-none"
+                                                        type="text" class="text-center w-9 inline pointer-events-none"
                                                         readonly
                                                         value="{{ $this->sumOf('closes', $user, $this->weeklyPeriods[$key]) }}"
                                                     />
@@ -440,7 +440,7 @@
                                                 <span>
                                                     <input
                                                         type="text"
-                                                        class="text-center w-10 inline outline-none pointer-events-none font-bold"
+                                                        class="text-center w-9 inline outline-none pointer-events-none font-bold"
                                                         readonly
                                                         value="{{ $this->totals[$key][$label]['hours_worked'] }}"/>
                                                 </span>
@@ -449,7 +449,7 @@
                                                 <span>
                                                     <input
                                                         type="text"
-                                                        class="text-center w-10 inline outline-none pointer-events-none font-bold"
+                                                        class="text-center w-9 inline outline-none pointer-events-none font-bold"
                                                         readonly
                                                         value="{{ $this->totals[$key][$label]['doors'] }}"/>
                                                 </span>
@@ -458,7 +458,7 @@
                                                 <span>
                                                     <input
                                                         type="text"
-                                                        class="text-center w-10 inline outline-none pointer-events-none font-bold"
+                                                        class="text-center w-9 inline outline-none pointer-events-none font-bold"
                                                         readonly
                                                         value="{{ $this->totals[$key][$label]['hours_knocked'] }}"/>
                                                 </span>
@@ -467,7 +467,7 @@
                                                 <span>
                                                     <input
                                                         type="text"
-                                                        class="text-center w-10 inline outline-none pointer-events-none font-bold"
+                                                        class="text-center w-9 inline outline-none pointer-events-none font-bold"
                                                         readonly
                                                         value="{{ $this->totals[$key][$label]['sets'] }}"/>
                                                 </span>
@@ -476,7 +476,7 @@
                                                 <span>
                                                     <input
                                                         type="text"
-                                                        class="text-center w-10 inline outline-none pointer-events-none font-bold"
+                                                        class="text-center w-9 inline outline-none pointer-events-none font-bold"
                                                         readonly
                                                         value="{{ $this->totals[$key][$label]['sats'] }}"/>
                                                 </span>
@@ -485,7 +485,7 @@
                                                 <span>
                                                     <input
                                                         type="text"
-                                                        class="text-center w-10 inline outline-none pointer-events-none font-bold"
+                                                        class="text-center w-9 inline outline-none pointer-events-none font-bold"
                                                         readonly
                                                         value="{{ $this->totals[$key][$label]['set_closes'] }}"/>
                                                 </span>
@@ -494,7 +494,7 @@
                                                 <span>
                                                     <input
                                                         type="text"
-                                                        class="text-center w-10 inline outline-none pointer-events-none font-bold"
+                                                        class="text-center w-9 inline outline-none pointer-events-none font-bold"
                                                         readonly
                                                         value="{{ $this->totals[$key][$label]['closer_sits'] }}"/>
                                                 </span>
@@ -503,7 +503,7 @@
                                                 <span>
                                                     <input
                                                         type="text"
-                                                        class="text-center w-10 inline outline-none pointer-events-none font-bold"
+                                                        class="text-center w-9 inline outline-none pointer-events-none font-bold"
                                                         readonly
                                                         value="{{ $this->totals[$key][$label]['closes'] }}"/>
                                                 </span>
@@ -517,7 +517,7 @@
                                                     <span>
                                                         <input
                                                             type="text"
-                                                            class="text-center w-10 inline outline-none pointer-events-none font-bold"
+                                                            class="text-center w-9 inline outline-none pointer-events-none font-bold"
                                                             readonly
                                                             value="{{ $this->sumTotalOf('hours_worked', $this->totals[$key], $this->weeklyPeriods[$key]) }}"
                                                         />
@@ -527,7 +527,7 @@
                                                     <span>
                                                         <input
                                                             type="text"
-                                                            class="text-center w-10 inline outline-none pointer-events-none font-bold"
+                                                            class="text-center w-9 inline outline-none pointer-events-none font-bold"
                                                             readonly
                                                             value="{{ $this->sumTotalOf('doors', $this->totals[$key], $this->weeklyPeriods[$key]) }}"
                                                         />
@@ -537,7 +537,7 @@
                                                     <span>
                                                         <input
                                                             type="text"
-                                                            class="text-center w-10 inline outline-none pointer-events-none font-bold"
+                                                            class="text-center w-9 inline outline-none pointer-events-none font-bold"
                                                             readonly
                                                             value="{{ $this->sumTotalOf('hours_knocked', $this->totals[$key], $this->weeklyPeriods[$key]) }}"
                                                         />
@@ -547,7 +547,7 @@
                                                     <span>
                                                         <input
                                                             type="text"
-                                                            class="text-center w-10 inline outline-none pointer-events-none font-bold"
+                                                            class="text-center w-9 inline outline-none pointer-events-none font-bold"
                                                             readonly
                                                             value="{{ $this->sumTotalOf('sets', $this->totals[$key], $this->weeklyPeriods[$key]) }}"
                                                         />
@@ -557,7 +557,7 @@
                                                     <span>
                                                         <input
                                                             type="text"
-                                                            class="text-center w-10 inline outline-none pointer-events-none font-bold"
+                                                            class="text-center w-9 inline outline-none pointer-events-none font-bold"
                                                             readonly
                                                             value="{{ $this->sumTotalOf('sats', $this->totals[$key], $this->weeklyPeriods[$key]) }}"
                                                         />
@@ -567,7 +567,7 @@
                                                     <span>
                                                         <input
                                                             type="text"
-                                                            class="text-center w-10 inline outline-none pointer-events-none font-bold"
+                                                            class="text-center w-9 inline outline-none pointer-events-none font-bold"
                                                             readonly
                                                             value="{{ $this->sumTotalOf('set_closes', $this->totals[$key], $this->weeklyPeriods[$key]) }}"
                                                         />
@@ -577,7 +577,7 @@
                                                     <span>
                                                         <input
                                                             type="text"
-                                                            class="text-center w-10 inline outline-none pointer-events-none font-bold"
+                                                            class="text-center w-9 inline outline-none pointer-events-none font-bold"
                                                             readonly
                                                             value="{{ $this->sumTotalOf('closer_sits', $this->totals[$key], $this->weeklyPeriods[$key]) }}"
                                                         />
@@ -587,7 +587,7 @@
                                                     <span>
                                                         <input
                                                             type="text"
-                                                            class="text-center w-10 inline outline-none pointer-events-none font-bold"
+                                                            class="text-center w-9 inline outline-none pointer-events-none font-bold"
                                                             readonly
                                                             value="{{ $this->sumTotalOf('closes', $this->totals[$key], $this->weeklyPeriods[$key]) }}"
                                                         />
