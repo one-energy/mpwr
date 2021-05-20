@@ -79,6 +79,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'office_id',
         'department_id',
         'install',
+        'department_manager_id',
+        'office_manager_id',
+        'region_manager_id',
     ];
 
     const ROLES = [

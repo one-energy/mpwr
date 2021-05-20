@@ -76,9 +76,10 @@ class Customer extends Model
         'sales_rep_fee',
         'sales_rep_comission',
         'commission',
-        'created_at',
-        'updated_at',
-        'is_active'
+        'is_active',
+        'department_manager_id',
+        'office_manager_id',
+        'region_manager_id',
     ];
 
     protected $casts = [
