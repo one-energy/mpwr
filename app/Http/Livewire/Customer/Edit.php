@@ -7,6 +7,7 @@ use App\Models\Department;
 use App\Models\Financer;
 use App\Models\Financing;
 use App\Models\Rates;
+use App\Models\StockPointsCalculationBases;
 use App\Models\Term;
 use App\Models\User;
 use Illuminate\Support\Carbon;
@@ -94,6 +95,8 @@ class Edit extends Component
         $salesRep   = User::find($this->customer->sales_rep_id);
         $commission = $this->calculateCommission($this->customer);
 
+        $this->validate();
+
         $this->customer->commission                  = $commission;
         $this->customer->sales_rep_recruiter_id      = $salesRep->recruiter_id;
         $this->customer->referral_override           = $salesRep->referral_override;
@@ -112,11 +115,11 @@ class Edit extends Component
         $this->customer->financing_id = $this->customer->financing_id != "" ? $this->customer->financing_id : null;
         $this->customer->financer_id = $this->customer->financer_id != "" ? $this->customer->financer_id : null;
         $this->customer->term_id = $this->customer->term_id != "" ? $this->customer->term_id : null;
-        $this->validate();
 
         DB::transaction(function () {
             $this->customer->save();
             if ($this->customer->term_id) {
+                $this->createStockPoint();
                 if (!$this->customer->userEniumPoint()->exists() && $this->customer->panel_sold) {
                     $this->customer->userEniumPoint()->create([
                         'user_sales_rep_id' => $this->customer->sales_rep_id,
@@ -137,13 +140,32 @@ class Edit extends Component
 
     public function delete()
     {
-        $this->customer->delete();
+        DB::transaction(function () {
+            $this->customer->stockPoint()->delete();
+            $this->customer->delete();
+        });
 
         alert()
             ->withTitle(__('Home Owner deleted!'))
             ->send();
 
         return redirect()->route('home');
+    }
+
+    public function createStockPoint () 
+    {   
+        if (!$this->customer->stockPoint()->exists() && $this->customer->panel_sold) {
+            $this->customer->stockPoint()->create([
+                'stock_recruiter'       => StockPointsCalculationBases::find(StockPointsCalculationBases::RECRUIT_ID)->stock_base_point,
+                'stock_setting'         => StockPointsCalculationBases::find(StockPointsCalculationBases::SETTING_ID)->stock_base_point,
+                'stock_personal_sale'   => StockPointsCalculationBases::find(StockPointsCalculationBases::PERSONAL_SALES_ID)->stock_base_point,
+                'stock_pod_leader_team' => StockPointsCalculationBases::find(StockPointsCalculationBases::POD_LEADER_TEAM_ID)->stock_base_point,
+                'stock_manager'         => StockPointsCalculationBases::find(StockPointsCalculationBases::OFFICE_MANAGER_ID)->stock_base_point,
+                'stock_divisional'      => StockPointsCalculationBases::find(StockPointsCalculationBases::DIVISIONAL_ID)->stock_base_point,
+                'stock_regional'        => StockPointsCalculationBases::find(StockPointsCalculationBases::REGIONAL_MANAGER_ID)->stock_base_point,
+                'stock_department'      => StockPointsCalculationBases::find(StockPointsCalculationBases::DEPARTMENT_ID)->stock_base_point
+            ]);
+        }
     }
 
     public function setSelfGen()

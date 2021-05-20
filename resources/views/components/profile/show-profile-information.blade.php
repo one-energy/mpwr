@@ -1,4 +1,4 @@
-@props(['userLevel', 'userEniumPoints'])
+@props(['userLevel', 'stockPoints', 'userEniumPoints'])
 
 <div class="px-4 py-5 sm:p-6">
     <div class="flex justify-between">
@@ -121,6 +121,54 @@
                     <p class="font-bold text-xl">
                         @if($userLevel)
                             $ {{$userLevel->monthly_residual}}
+                        @else
+                        -
+                        @endif
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-gray-200 border-2 m-1 p-2 rounded-lg">
+            <div class="text-sm font-bold text-center text-gray-900 mb-4">
+                STOCK SHARES
+            </div>
+            <div class="space-y-2">
+                <div class="text-sm text-center text-gray-900">
+                    <p>Stock Shares On Personal Installs</p>
+                    <p class="font-bold text-xl">
+                        @if($stockPoints->personal)
+                            {{$stockPoints->personal}}
+                        @else
+                        -
+                        @endif
+                    </p>
+                </div>
+                <div class="text-sm text-center text-gray-900">
+                    <p>Stock Shares On Team Installs</p>
+                    <p class="font-bold text-xl">
+                        @if($stockPoints->team)
+                            {{$stockPoints->team}}
+                        @else
+                        -
+                        @endif
+                    </p>
+                </div>
+                <div class="text-sm text-center text-gray-900">
+                    <p>Total Stock Shares</p>
+                    <p class="font-bold text-xl">
+                        @if(round($stockPoints->personal + $stockPoints->team))
+                            {{round($stockPoints->personal + $stockPoints->team)}}
+                        @else
+                        -
+                        @endif
+                    </p>
+                </div>
+                <div class="text-sm text-center text-gray-900">
+                    <p>Gross Total</p>
+                    <p class="font-bold text-xl">
+                        @if(round(($stockPoints->personal + $stockPoints->team) * $stockPoints->multiplierOfYear))
+                            {{round(($stockPoints->personal + $stockPoints->team) * $stockPoints->multiplierOfYear)}}
                         @else
                         -
                         @endif

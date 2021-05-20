@@ -158,6 +158,11 @@ class Customer extends Model
         return $this->belongsTo(User::class, 'department_manager_id');
     }
 
+    public function stockPoint()
+    {
+        return $this->hasOne(CustomersStockPoint::class);
+    }
+    
     public function userEniumPoint()
     {
         return $this->hasOne(UserCustomersEniumPoints::class);
