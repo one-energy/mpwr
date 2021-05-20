@@ -132,7 +132,7 @@
 
                     <div class="col-span-2 md:col-span-3 @if($customer->setter_id == user()->id) hidden @endif">
                         <x-input-currency wire:model="customer.sales_rep_fee" label="Sales Rep Pay Rate"
-                                          name="customer.sales_rep_fee" readonly/>
+                                          name="customer.sales_rep_fee" :disabled="user()->notHaveRoles(['Region Manager'])"/>
                     </div>
 
                     <div class="col-span-2 md:col-span-1 @if($customer->setter_id == user()->id) hidden @endif">
