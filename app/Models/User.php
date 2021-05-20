@@ -189,7 +189,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Customer::class, 'sales_rep_id');
     }
 
-    public function customersOfSalesRepsRecuited()
+    public function customersOfSalesRepsRecruited()
     {
         return $this->hasMany(Customer::class, 'sales_rep_recruiter_id');
     }
@@ -227,6 +227,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function level()
     {
         $eniumPoints = $this->eniumPoints();
+
         return UserEniumPointLevel::where('point', '>=', $eniumPoints)->first() ?? UserEniumPointLevel::find(UserEniumPointLevel::LAST_LEVEL);
     }
 

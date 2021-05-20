@@ -145,7 +145,7 @@ class ReportsOverview extends Component
             })
             ->get();
 
-        $this->customersOfSalesRepsRecruited = user()->customersOfSalesRepsRecuited()
+        $this->customersOfSalesRepsRecruited = user()->customersOfSalesRepsRecruited()
             ->whereBetween('date_of_sale', [Carbon::create($this->startDate), Carbon::create($this->finalDate)])
             ->when($this->installedStatus(), function ($query) {
                 $query->whereIsActive(true)
