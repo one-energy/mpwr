@@ -11,7 +11,7 @@
                 </div>
 
                 <div class="md:justify-self-end col-span-2 grid grid-cols-2 gap-2 md:col-span-1 md:w-1/2">
-                    @if (user()->role == "Admin" || user()->role == "Owner")
+                    @if (user()->hasAnyRole(['Admin', 'Owner']))
                         <div class="col-span-2">
                             <x-select wire:model="departmentId" name="selectedDepartment">
                                 @foreach($departments as $department)
@@ -39,14 +39,14 @@
                         <x-slot name="header">
                             <x-table.th-tr>
                                 <x-table.th></x-table.th>
-                                @if(user()->role == "Setter" || user()->role == "Sales Rep")
+                                @if(user()->hasAnyRole(['Setter', 'Sales Rep']))
                                     <x-table.th by="setter_rate">
                                         @lang('My Setter Rate')
                                     </x-table.th>
                                 @endif
                                 @if(user()->role != "Setter")
                                     <x-table.th>
-                                        @if (user()->role == "Admin" || user()->role == "Owner")
+                                        @if (user()->hasAnyRole(['Admin', 'Owner']))
                                             @lang('PPW')
                                         @else
                                             @lang('My Closed PPW')
@@ -54,11 +54,11 @@
                                     </x-table.th>
                                 @endif
                                 <x-table.th by="system_size">
-                                    @if (user()->role == "Setter")
+                                    @if (user()->hasRole('Setter'))
                                         @lang('My Set System Size (kW)')
                                     @endif
-                                    @if (user()->role != "Setter")
-                                        @if (user()->role == "Admin" || user()->role == "Owner")
+                                    @if (user()->notHaveRoles(['Setter']))
+                                        @if (user()->hasAnyRole(['Admin', 'Owner']))
                                             @lang('System Size (kW)')
                                         @else
                                             @lang('My Closed System Size (kW)')
@@ -66,24 +66,24 @@
                                     @endif
                                 </x-table.th>
                                 <x-table.th by="my_setter_commission">
-                                    @if(user()->role == "Admin" || user()->role == "Owner")
+                                    @if (user()->hasAnyRole(['Admin', 'Owner']))
                                         @lang('Setter Comission')
                                     @else
                                         @lang('My Setter Comission')
                                     @endif
                                 </x-table.th>
-                                @if(user()->role != "Setter")
+                                @if(user()->notHaveRoles(['Setter']))
                                     <x-table.th by="my_closer_commission">
-                                        @if (user()->role == "Admin" || user()->role == "Owner")
+                                        @if (user()->hasAnyRole(['Admin', 'Owner']))
                                             @lang('Closer Comission')
                                         @else
                                             @lang('My Closer Comission')
                                         @endif
                                     </x-table.th>
                                 @endif
-                                @if(user()->role != "Setter" && user()->role != "Sales Rep")
+                                @if(user()->notHaveRoles(['Setter', 'Sales Rep']))
                                     <x-table.th by="my_override_commission">
-                                        @if (user()->role == "Admin" || user()->role == "Owner")
+                                        @if (user()->hasAnyRole(['Admin', 'Owner']))
                                             @lang('Override Comission')
                                         @else
                                             @lang('My Override Comission')
@@ -91,14 +91,14 @@
                                     </x-table.th>
                                 @endif
                                 <x-table.th by="my_recruter_commission">
-                                    @if (user()->role == "Admin" || user()->role == "Owner")
+                                    @if (user()->hasAnyRole(['Admin', 'Owner']))
                                         @lang('Recruter Comission')
                                     @else
                                         @lang('My Recruter Comission')
                                     @endif
                                 </x-table.th>
                                 <x-table.th by="my_total_commission">
-                                    @if (user()->role == "Admin" || user()->role == "Owner")
+                                    @if (user()->hasAnyRole(['Admin', 'Owner']))
                                         @lang('Total Comission')
                                     @else
                                         @lang('My Total Comission')
@@ -109,12 +109,12 @@
                         <x-slot name="body">
                             <x-table.tr >
                                 <x-table.td>Average</x-table.td>
-                                @if(user()->role == "Setter" || user()->role == "Sales Rep")
+                                @if(user()->hasAnyRole(['Setter', 'Sales Rep']))
                                     <x-table.td>
                                         {{ $this->formatNumber($customersOfUser?->avg('setter_fee')) }}
                                     </x-table.td>
                                 @endif
-                                @if(user()->role != "Setter")
+                                @if(user()->notHaveRoles(['Setter']))
                                     <x-table.td>
                                         {{ $this->formatNumber($this->getAvgSalesRepEpc($customersOfUser)) }}
                                     </x-table.td>
@@ -125,12 +125,12 @@
                                 <x-table.td>
                                     {{ $this->formatNumber($this->getAvgSetterCommission($customersOfUser)) }}
                                 </x-table.td>
-                                @if(user()->role != "Setter")
+                                @if(user()->notHaveRoles(['Setter']))
                                     <x-table.td>
                                         {{ $this->formatNumber($this->getAvgSalesRepCommission($customersOfUser)) }}
                                     </x-table.td>
                                 @endif
-                                @if(user()->role != "Setter" && user()->role != "Sales Rep")
+                                @if(user()->notHaveRoles(['Setter', 'Sales Rep']))
                                     <x-table.td>
                                         {{ $this->formatNumber($this->getAvgOverrideCommission($customersOfUser)) }}
                                     </x-table.td>
@@ -142,10 +142,10 @@
                             </x-table.tr>
                             <x-table.tr class="bg-gray-100">
                                 <x-table.td>Total</x-table.td>
-                                @if(user()->role == "Setter" || user()->role == "Sales Rep")
+                                @if(user()->hasAnyRole(['Setter', 'Sales Rep']))
                                     <x-table.td class="font-bold">-</x-table.td>
                                 @endif
-                                @if(user()->role != "Setter")
+                                @if(user()->notHaveRoles(['Setter']))
                                     <x-table.td class="font-bold">-</x-table.td>
                                 @endif
                                 <x-table.td class="font-bold">
@@ -154,12 +154,12 @@
                                 <x-table.td class="font-bold">
                                     {{ $this->formatNumber($this->getSumSetterCommission($customersOfUser)) }}
                                 </x-table.td>
-                                @if(user()->role != "Setter")
+                                @if(user()->notHaveRoles(['Setter']))
                                     <x-table.td class="font-bold">
                                         {{ $this->formatNumber($this->getSumSalesRepCommission($customersOfUser)) }}
                                     </x-table.td>
                                 @endif
-                                @if(user()->role != "Setter" && user()->role != "Sales Rep")
+                                @if(user()->notHaveRoles(['Setter', 'Sales Rep']))
                                     <x-table.td>
                                         {{ $this->formatNumber($this->getSumOverrideCommission($customersOfUser)) }}
                                     </x-table.td>
@@ -178,7 +178,7 @@
             <div class="mt-6">
                 <x-search :search="$search"/>
                 <div class="justify-items-end">
-                    @if (user()->role == "Office Manager" || user()->role == "Region Manager" || user()->role == "Department Manager")
+                    @if (user()->hasAnyRole(['Office Manager', 'Region Manager', 'Department Manager']))
                         <x-toggle wire:model="personalCustomers" class="items-end" label="Include Personal Sales"/>
                     @endif
                 </div>
@@ -203,7 +203,7 @@
                                 <x-table.th-searchable by="CONCAT(salesRep.first_name, salesRep.last_name)" :sortedBy="$sortBy" :direction="$sortDirection">
                                     @lang('Closer')
                                 </x-table.th-searchable>
-                                @if(user()->role != "Setter")
+                                @if(user()->notHaveRoles(['Setter']))
                                     <x-table.th-searchable class="whitespace-no-wrap" by="sales_rep_fee" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Pay Rate')
                                     </x-table.th-searchable>
@@ -220,7 +220,7 @@
                                 <x-table.th-searchable class="whitespace-no-wrap" by="system_size * setter_fee" :sortedBy="$sortBy" :direction="$sortDirection">
                                     @lang('Setter Commission')
                                 </x-table.th-searchable>
-                                @if(user()->role != "Setter")
+                                @if(user()->notHaveRoles(['Setter']))
                                     <x-table.th-searchable class="whitespace-no-wrap" by="system_size * sales_rep_fee" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Closer Commission')
                                     </x-table.th-searchable >
@@ -230,7 +230,7 @@
                                     <x-table.th-searchable class="whitespace-no-wrap" by="financers.name" :sortedBy="$sortBy" :direction="$sortDirection">
                                         @lang('Financer Type')
                                     </x-table.th-searchable>
-                                    @if(user()->role != "Sales Rep")
+                                    @if(user()->notHaveRoles(['Sales Rep']))
                                         <x-table.th-searchable by="CONCAT(recruiter.first_name, recruiter.last_name)" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Recruiter')
                                         </x-table.th-searchable>
@@ -249,7 +249,7 @@
                                         <x-table.th-searchable class="whitespace-no-wrap" by="office_manager_override" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Mgr Ovr')
                                         </x-table.th-searchable>
-                                        @if(user()->role != "Office Manager")
+                                        @if(user()->notHaveRoles(['Office Manager']))
                                             <x-table.th-searchable by="CONCAT(regionManager.first_name, regionManager.last_name)" :sortedBy="$sortBy" :direction="$sortDirection">
                                                 @lang('Regional')
                                             </x-table.th-searchable>
@@ -259,7 +259,7 @@
                                             <x-table.th-searchable class="whitespace-no-wrap" by="region_manager_override" :sortedBy="$sortBy" :direction="$sortDirection">
                                                 @lang('RM Ovr')
                                             </x-table.th-searchable>
-                                            @if(user()->role != "Region Manager")
+                                            @if(user()->notHaveRoles(['Region Manager']))
                                                 <x-table.th-searchable by="CONCAT(departmentManager.first_name, departmentManager.last_name)" :sortedBy="$sortBy" :direction="$sortDirection">
                                                     @lang('VP')
                                                 </x-table.th-searchable>
@@ -269,7 +269,7 @@
                                                 <x-table.th-searchable class="whitespace-no-wrap" by="department_manager_override" :sortedBy="$sortBy" :direction="$sortDirection">
                                                     @lang('VP Ovr')
                                                 </x-table.th-searchable>
-                                                @if(user()->role != "Department Manager")
+                                                @if(user()->notHaveRoles(['Department Manager']))
                                                     <x-table.th-searchable class="whitespace-no-wrap" by="customers.payee_one" :sortedBy="$sortBy" :direction="$sortDirection">
                                                         @lang('Misc 1')
                                                     </x-table.th-searchable>
@@ -303,33 +303,33 @@
                                     <x-table.td>{{$customer->userSetter?->first_name ?? '-'}} {{$customer->userSetter?->last_name}}</x-table.td>
                                     <x-table.td>{{$customer->setter_fee > 0 ? '$ ' . $customer->setter_fee : '-'}}</x-table.td>
                                     <x-table.td>{{$customer->userSalesRep?->first_name ?? '-'}} {{$customer->userSalesRep?->last_name}}</x-table.td>
-                                    @if(user()->role != "Setter")
+                                    @if(user()->notHaveRoles(['Setter']))
                                         <x-table.td>{{$customer->sales_rep_fee ? '$ ' . $customer->sales_rep_fee : '-'}}</x-table.td>
                                         <x-table.td>{{$customer->epc ? '$ ' . $customer->epc : '-'}}</x-table.td>
                                         <x-table.td>{{$customer->adders ? '$ ' . $customer->adders : '-'}}</x-table.td>
                                     @endif
                                     <x-table.td>{{$customer->system_size ?? '-'}}</x-table.td>
                                     <x-table.td>{{ $this->formatNumber($this->getSetterCommission($customer)) }}</x-table.td>
-                                    @if(user()->role != "Setter")
+                                    @if(user()->notHaveRoles(['Setter']))
                                         <x-table.td>{{ $this->formatNumber($this->getSalesRepCommission($customer)) }}</x-table.td>
                                         <x-table.td>{{$customer->financingType?->name ?? '-'}}</x-table.td>
                                         <x-table.td>{{$customer->financer?->name ?? '-'}}</x-table.td>
-                                        @if(user()->role != "Sales Rep")
+                                        @if(user()->notHaveRoles(['Sales Rep']))
                                             <x-table.td>{{$customer->recruiterOfSalesRep?->first_name ?? '-'}} {{$customer->recruiterOfSalesRep?->last_name}}</x-table.td>
                                             <x-table.td>{{$customer->recruiterOfSalesRep?->pay ?? '-'}}</x-table.td>
                                             <x-table.td>{{$customer->referral_override ?? '-'}}</x-table.td>
                                             <x-table.td>{{$customer->officeManager?->first_name ?? '-'}} {{$customer->officeManager?->last_name}}</x-table.td>
                                             <x-table.td>{{$customer->officeManager?->pay ?? '-'}}</x-table.td>
                                             <x-table.td>{{$customer->office_manager_override ?? '-'}}</x-table.td>
-                                            @if(user()->role != "Office Manager")
+                                            @if(user()->notHaveRoles(['Office Manager']))
                                                 <x-table.td>{{$customer->regionManager?->first_name ?? '-'}} {{$customer->regionManager?->last_name}}</x-table.td>
                                                 <x-table.td>{{$customer->regionManager?->pay ?? '-'}}</x-table.td>
                                                 <x-table.td>{{$customer->region_manager_override ?? '-'}}</x-table.td>
-                                                @if(user()->role != "Region Manager")
+                                                @if(user()->notHaveRoles(['Region Manager']))
                                                     <x-table.td>{{$customer->departmentManager?->first_name ?? '-'}} {{$customer->departmentManager?->last_name}}</x-table.td>
                                                     <x-table.td>{{$customer->departmentManager?->pay ?? '-'}}</x-table.td>
                                                     <x-table.td>{{$customer->department_manager_override ?? '-'}}</x-table.td>
-                                                    @if(user()->role != "Department Manager")
+                                                    @if(user()->notHaveRoles(['Department Manager']))
                                                         <x-table.td>{{$customer->payee_one ?? '-'}}</x-table.td>
                                                         <x-table.td>{{$customer->misc_override_one ?? '-'}}</x-table.td>
                                                         <x-table.td>{{($customer->misc_override_one * $customer->system_size) > 0 ? $customer->misc_override_one * $customer->system_size : '-'}}</x-table.td>
