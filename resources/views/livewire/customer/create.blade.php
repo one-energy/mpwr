@@ -87,8 +87,12 @@
                     </x-select>
                 </div>
 
-                <div class="col-span-2 md:col-span-6">
-                    <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc" observation="Sold Price" maxSize="100000"/>
+                <div class="col-span-2 md:col-span-3">
+                    <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc" observation="Sold Price" maxSize="100000" atEnd="Per Watts"/>
+                </div>
+
+                <div class="col-span-2 md:col-span-3">
+                    <x-input-currency label="Total Cost" name="totalCost" maxSize="100000"/>
                 </div>
 
                 <div class="col-span-2 md:col-span-3" wire:ignore>

@@ -99,6 +99,8 @@ class Customer extends Model
         'PACE',
     ];
 
+    const K_WATTS=1000;
+
     public function scopeInstalled($query)
     {
         return $query->where('opened_by_id', '=', user()->id)
@@ -171,6 +173,11 @@ class Customer extends Model
         return User::find($this->setter_id);
     }
 
+    public function getTotalCostAttribute()
+    {
+        return $this->epc * $this->system_size * self::K_WATTS;
+    }
+
     public function calcComission()
     {
         if ($this->epc >= 0 && $this->sales_rep_fee >= 0 && $this->setter_fee >= 0 && $this->system_size && $this->adders >= 0) {
@@ -179,6 +186,7 @@ class Customer extends Model
             $this->sales_rep_comission = 0;
         }
     }
+    
 
     public function calcMargin()
     {
