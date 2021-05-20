@@ -265,37 +265,29 @@
                                         <x-table wire:loading.remove>
                                             <x-slot name="header">
                                                 <x-table.th-tr>
-                                                    <x-table.th by="region_member">
-                                                        @lang('Member')
-                                                    </x-table.th>
-                                                    <x-table.th by="doors">
-                                                        @lang('Doors')
-                                                    </x-table.th>
-                                                    <x-table.th by="hours">
-                                                        @lang('Hours')
-                                                    </x-table.th>
-                                                    <x-table.th by="sets">
-                                                        @lang('Sets')
-                                                    </x-table.th>
-                                                    <x-table.th by="set_sits">
-                                                        @lang('Set Sits')
-                                                    </x-table.th>
-                                                    <x-table.th by="sits">
-                                                        @lang('Sits')
-                                                    </x-table.th>
-                                                    <x-table.th by="set_closes">
-                                                        @lang('Set Closes')
-                                                    </x-table.th>
-                                                    <x-table.th by="closes">
-                                                        @lang('Closes')
-                                                    </x-table.th>
+                                                    <x-table.th by="region_member">@lang('Member')</x-table.th>
+                                                    <x-table.th by="doors">@lang('Hours Worked')</x-table.th>
+                                                    <x-table.th by="doors">@lang('Doors')</x-table.th>
+                                                    <x-table.th by="doors">@lang('Hours Knocked')</x-table.th>
+                                                    <x-table.th by="sets">@lang('Sets')</x-table.th>
+                                                    <x-table.th by="sets">@lang('Sats')</x-table.th>
+                                                    <x-table.th by="set_closes">@lang('Set Closes')</x-table.th>
+                                                    <x-table.th by="set_closes">@lang('Closer Sits')</x-table.th>
+                                                    <x-table.th by="closes">@lang('Closes')</x-table.th>
                                                 </x-table.th-tr>
                                             </x-slot>
                                             <x-slot name="body">
                                                 @foreach($users as $user)
                                                     <x-table.tr :loop="$loop" wire:key="user.id-{{$user->id}}">
-                                                        <x-table.td>
-                                                            {{ $user->first_name . ' ' . $user->last_name }}
+                                                        <x-table.td>{{ $user->full_name }}</x-table.td>
+                                                        <x-table.td class="flex justify-center">
+                                                            <input
+                                                                type="number"
+                                                                min="0"
+                                                                name="numbers[{{ $user->id }}][hours_worked]"
+                                                                readonly
+                                                                class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5 pointer-events-none"
+                                                                value="{{ $user->dailyNumbers->sum('hours_worked') }}"/>
                                                         </x-table.td>
                                                         <x-table.td>
                                                             <input
@@ -305,17 +297,13 @@
                                                                 class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
                                                                 value="{{ $user->dailyNumbers->sum('doors') }}"/>
                                                         </x-table.td>
-                                                        <x-table.td>
+                                                        <x-table.td class="flex justify-center">
                                                             <input
                                                                 type="number"
                                                                 min="0"
-                                                                max="24"
-                                                                oninvalid="this.setCustomValidity('Value must be less than or equal 24')"
-                                                                onchange="this.setCustomValidity('')"
-                                                                step="any"
-                                                                name="numbers[{{ $user->id }}][hours]"
+                                                                name="numbers[{{ $user->id }}][hours_knocked]"
                                                                 class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
-                                                                value="{{ $user->dailyNumbers->sum('hours') }}"/>
+                                                                value="{{ $user->dailyNumbers->sum('hours_knocked') }}"/>
                                                         </x-table.td>
                                                         <x-table.td>
                                                             <input
@@ -329,17 +317,9 @@
                                                             <input
                                                                 type="number"
                                                                 min="0"
-                                                                name="numbers[{{ $user->id }}][set_sits]"
+                                                                name="numbers[{{ $user->id }}][sats]"
                                                                 class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
-                                                                value="{{ $user->dailyNumbers->sum('set_sits') }}"/>
-                                                        </x-table.td>
-                                                        <x-table.td>
-                                                            <input
-                                                                type="number"
-                                                                min="0"
-                                                                name="numbers[{{ $user->id }}][sits]"
-                                                                class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
-                                                                value="{{ $user->dailyNumbers->sum('sits') }}"/>
+                                                                value="{{ $user->dailyNumbers->sum('sats') }}"/>
                                                         </x-table.td>
                                                         <x-table.td>
                                                             <input
@@ -348,6 +328,14 @@
                                                                 name="numbers[{{ $user->id }}][set_closes]"
                                                                 class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
                                                                 value="{{ $user->dailyNumbers->sum('set_closes') }}"/>
+                                                        </x-table.td>
+                                                        <x-table.td>
+                                                            <input
+                                                                type="number"
+                                                                min="0"
+                                                                name="numbers[{{ $user->id }}][closer_sits]"
+                                                                class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
+                                                                value="{{ $user->dailyNumbers->sum('closer_sits') }}"/>
                                                         </x-table.td>
                                                         <x-table.td>
                                                             <input

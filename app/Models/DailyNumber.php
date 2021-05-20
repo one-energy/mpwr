@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
 /**
  * App\Models\DailyNumber
@@ -21,6 +21,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null $sits
  * @property int|null $set_closes
  * @property int|null $closes
+ * @property float|null $hours_worked
+ * @property float|null $hours_knocked
+ * @property int|null $sats
+ * @property int|null $closer_sits
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\User $user
@@ -45,6 +49,10 @@ class DailyNumber extends Model
         'sits',
         'set_closes',
         'closes',
+        'hours_worked',
+        'hours_knocked',
+        'sats',
+        'closer_sits'
     ];
 
     public function user()

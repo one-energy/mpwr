@@ -26,6 +26,8 @@ class NumberTrackerDetail extends Component
 
     public string $period = 'd';
 
+    public bool $deleteds = false;
+
     public Collection $topTenTrackers;
 
     public $date;
@@ -37,7 +39,7 @@ class NumberTrackerDetail extends Component
     protected $listeners = [
         'sumTotalNumbers',
         'loadingSumNumberTracker',
-        'updateLeaderBoard' => 'getUnselectedCollections',
+        'updateLeaderBoard' => 'updateLeaderBoardCard',
     ];
 
     public function mount()
@@ -69,6 +71,12 @@ class NumberTrackerDetail extends Component
         $this->emit('setDateOrPeriod', $this->dateSelected, $this->period);
     }
 
+    public function updateLeaderBoardCard($unselectedRegions, $unselectedOffices, $unselectedUserDailyNumbers, $withDeleteds)
+    {
+        $this->deleteds = $withDeleteds;
+        $this->getUnselectedCollections($unselectedRegions, $unselectedOffices, $unselectedUserDailyNumbers);
+    }
+
     public function getUnselectedCollections($unselectedRegions, $unselectedOffices, $unselectedUserDailyNumbers)
     {
         $this->unselectedRegions          = $unselectedRegions;
@@ -88,19 +96,24 @@ class NumberTrackerDetail extends Component
         }
 
         $query = DailyNumber::query()
-            ->with(['user' => fn($query) => $query->withTrashed()])
+            ->withTrashed()
             ->with([
                 'office' => function ($query) {
                     $query->whereNotIn('region_id', $this->unselectedRegions);
                 },
-            ]);
-
-        if (user()->notHaveRoles(['Admin', 'Owner'])) {
-            $query->whereHas(
-                'user',
-                fn(Builder $query) => $query->where('department_id', user()->department_id)
-            );
-        }
+            ])
+            ->with(['user' => function($query) {
+                $query->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
+                    $query->where('department_id', user()->department_id)
+                        ->withTrashed();
+                })
+                ->when($this->deleteds, function ($query) {
+                    $query->withTrashed();
+                });
+            }])
+            ->when(!$this->deleteds, function ($query) {
+                $query->has('user');
+            });
 
         return $query
             ->inPeriod($this->period, new Carbon($this->dateSelected))

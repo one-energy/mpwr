@@ -36,7 +36,8 @@ use Lab404\Impersonate\Models\Impersonate;
  * @property int|null $office_id
  * @property int|null $department_id
  * @property int $installs
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\DailyNumber[] $dailyNumbers
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\DailyNumber[] $dailyNumbers
+ * @property-read string $full_name
  * @property-read \App\Models\Department|null $department
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invitation[] $invitations
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Office[] $managedOffices
@@ -183,7 +184,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Customer::class, 'setter_id');
     }
 
-    public function customersOfSalesRep()
+    public function customersOfSalesReps()
     {
         return $this->hasMany(Customer::class, 'sales_rep_id');
     }
@@ -216,6 +217,26 @@ class User extends Authenticatable implements MustVerifyEmail
     public function dailyNumbers()
     {
         return $this->hasMany(DailyNumber::class);
+    }
+
+    public function customersEniumPoints()
+    {
+        return $this->hasMany(UserCustomersEniumPoints::class, 'user_sales_rep_id');
+    }
+
+    public function level()
+    {
+        $eniumPoints = $this->eniumPoints();
+        return UserEniumPointLevel::where('point', '>=', $eniumPoints)->first() ?? UserEniumPointLevel::find(UserEniumPointLevel::LAST_LEVEL);
+    }
+
+    public function eniumPoints()
+    {
+        return $this->customersEniumPoints()->whereHas('customer', function ($query) {
+            $query->where('is_active', true)
+                ->where('panel_sold', true);
+        })->inPeriod()
+        ->sum('points');
     }
 
     public function changePassword($new)
@@ -448,7 +469,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function stockPoints()
     {
-        $stockPointsOfSalesRep          = $this->getStockPointsOf($this->customersOfSalesRep());
+        $stockPointsOfSalesRep          = $this->getStockPointsOf($this->customersOfSalesReps());
         $stockPointsOfSetter            = $this->getStockPointsOf($this->customersOfSetter());
         $stockPointsOfSalesRepRecruited = $this->getStockPointsOf($this->customersOfSalesRepsRecuited());
         $stockPointsOfDepartment        = $this->getStockPointsOf($this->customersDepartmentManager());

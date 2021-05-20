@@ -34,9 +34,11 @@ class HomeController extends Controller
             });
             
         return view('home', [
-            'customers'   => $query->get(),
-            'sortTypes'   => $sortTypes,
-            'stockPoints' => user()->stockPoints()
+            'customers'       => $query->get(),
+            'userLevel'       => user()->level() ?? null,
+            'userEniumPoints' => user()->eniumPoints() ?? 0,
+            'stockPoints'     => user()->stockPoints(),
+            'sortTypes'       => $sortTypes,
         ]);
     }
 }

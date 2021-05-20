@@ -1,4 +1,5 @@
-@props(['stockPoints'])
+@props(['userLevel', 'stockPoints', 'userEniumPoints'])
+
 <div class="px-4 py-5 sm:p-6">
     <div class="flex justify-between">
         <div class="flex justify-start">
@@ -90,6 +91,44 @@
                 @endif
             </div>
         </div>
+        <div class="border-gray-200 border-2 m-1 p-2 rounded-lg">
+            <div class="text-sm font-bold text-center text-gray-900 mb-4">
+                ENIUM POINTS
+            </div>
+            <div class="space-y-2">
+                <div class="text-sm text-center text-gray-900">
+                    <p>Total</p>
+                    <p class="font-bold text-xl">
+                        @if($userLevel)
+                            {{$userEniumPoints}}
+                        @else
+                        -
+                        @endif
+                    </p>
+                </div>
+                <div class="text-sm text-center text-gray-900">
+                    <p>Level</p>
+                    <p class="font-bold text-xl">
+                        @if($userLevel)
+                            {{$userLevel->level}}
+                        @else
+                        -
+                        @endif
+                    </p>
+                </div>
+                <div class="text-sm text-center text-gray-900">
+                    <p>Monthly Income</p>
+                    <p class="font-bold text-xl">
+                        @if($userLevel)
+                            $ {{$userLevel->monthly_residual}}
+                        @else
+                        -
+                        @endif
+                    </p>
+                </div>
+            </div>
+        </div>
+
         <div class="border-gray-200 border-2 m-1 p-2 rounded-lg">
             <div class="text-sm font-bold text-center text-gray-900 mb-4">
                 STOCK SHARES

@@ -22,6 +22,8 @@ class Edit extends Component
 
     public int $departmentId;
 
+    public bool $installed;
+
     public int $grossRepComission;
 
     public bool $isSelfGen;
@@ -118,6 +120,14 @@ class Edit extends Component
             $this->customer->save();
             if ($this->customer->term_id) {
                 $this->createStockPoint();
+                if (!$this->customer->userEniumPoint()->exists() && $this->customer->panel_sold) {
+                    $this->customer->userEniumPoint()->create([
+                        'user_sales_rep_id' => $this->customer->sales_rep_id,
+                        'points'            => $this->customer->term->amount > 0 ? round($this->customer->epc/$this->customer->term->amount) : 0,
+                        'set_date'          => Carbon::now(),
+                        'expiration_date'   => Carbon::now()->addYear()
+                    ]);
+                }
             }
         });
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -159,6 +160,11 @@ class Customer extends Model
     {
         return $this->hasOne(CustomersStockPoint::class);
     }
+    
+    public function userEniumPoint()
+    {
+        return $this->hasOne(UserCustomersEniumPoints::class);
+    }
 
     public function getOpenedByAttribute()
     {
@@ -173,10 +179,8 @@ class Customer extends Model
     public function calcComission()
     {
         if ($this->epc >= 0 && $this->sales_rep_fee >= 0 && $this->setter_fee >= 0 && $this->system_size && $this->adders >= 0) {
-            // dd((float)((floatval($this->epc) - floatval($this->sales_rep_fee) - floatval($this->setter_fee)) * (intval($this->system_size) * 1000)) - floatval($this->adders));
             $this->sales_rep_comission = ((floatval($this->epc) - floatval($this->sales_rep_fee) - floatval($this->setter_fee)) * (floatval($this->system_size) * 1000)) - floatval($this->adders);
         } else {
-            // dd('test');
             $this->sales_rep_comission = 0;
         }
     }
