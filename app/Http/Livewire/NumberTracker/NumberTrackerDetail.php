@@ -126,7 +126,7 @@ class NumberTrackerDetail extends Component
                         ->when($this->deleteds, function ($query) {
                             $query->withTrashed();
                         });
-                }
+                },
             ])
             ->when(!$this->deleteds, function ($query) {
                 $query->has('user');
@@ -171,7 +171,7 @@ class NumberTrackerDetail extends Component
     private function getDepartmentId()
     {
         return user()->hasAnyRole(['Admin', 'Owner'])
-            ? Department::first()->id
+            ? Department::oldest('name')->first()->id
             : (user()->department_id ?? 0);
     }
 }
