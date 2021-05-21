@@ -12,14 +12,13 @@ use App\Models\Rates;
 use App\Models\Term;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
 class CustomerTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     public User $user;
 
@@ -385,4 +384,17 @@ class CustomerTest extends TestCase
             'note_two'                    => 'note two',
         ]);
      }
+
+       /** @test */
+    public function it_should_calculate_margin()
+    {
+        $customer = Customer::factory([
+            'epc'           => 6.5,
+            'setter_fee'    => 2.3,
+            'sales_rep_fee' => 2.6,
+        ])->make();
+        $customer->calcMargin();
+
+        $this->assertEquals($customer->margin, 1.6);
+    }
 }
