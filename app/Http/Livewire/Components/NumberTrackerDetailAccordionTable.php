@@ -556,11 +556,6 @@ class NumberTrackerDetailAccordionTable extends Component
         )->every(fn ($dailyNumber) => $dailyNumber['selected']);
     }
 
-    private function getOfficeFromRegionList($regionIndex, $officeIndex)
-    {
-        return $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex];
-    }
-
     private function getRegionsThatHasDailyNumbers(Collection $regions)
     {
         return $regions->filter(function (Region $region) {
