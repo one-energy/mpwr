@@ -23,7 +23,9 @@ class Edit extends Component
 
     public bool $installed;
 
-    public int $grossRepComission;
+    public float $grossRepComission;
+
+    public float $netRepComission;
 
     public bool $isSelfGen;
 
@@ -58,7 +60,6 @@ class Edit extends Component
 
     public function mount(Customer $customer)
     {
-        $this->setSelfGen();
         $this->setter = User::find($customer->setter_id);
         if (user()->role != 'Admin' && user()->role != 'Owner') {
             $this->departmentId = user()->department_id;
@@ -72,6 +73,7 @@ class Edit extends Component
         $this->customer->calcComission();
         $this->customer->calcMargin();
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
+        $this->netRepComission   = $this->calculateNetRepCommission();
         $this->salesReps         = user()->getPermittedUsers($this->departmentId)->toArray();
         $this->setters           = User::whereDepartmentId($this->departmentId)
                                 ->where('id', '!=', user()->id)
@@ -148,6 +150,7 @@ class Edit extends Component
 
     public function setSelfGen()
     {
+
         $this->customer->setter_fee = 0;
         $this->isSelfGen            = true;
     }
@@ -189,6 +192,11 @@ class Edit extends Component
             ) - (float)$customer->adders;
     }
 
+    public function calculateNetRepCommission()
+    {
+        return $this->grossRepComission - $this->customer->adders;
+    }
+
     public function getSalesRepFee()
     {
         return Rates::whereRole('Sales Rep')->orderBy('rate', 'desc')->first();
@@ -202,7 +210,7 @@ class Edit extends Component
     public function getSetterRate($userId)
     {
         if ($userId) {
-            $this->customer->setter_fee = $this->getUserRate($userId);
+            $this->customer->setter_fee = $this->customer->setter_fee ?? $this->getUserRate($userId);
         } else {
             $this->customer->setter_fee = 0;
         }

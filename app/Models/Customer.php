@@ -191,7 +191,7 @@ class Customer extends Model
     public function calcComission()
     {
         if ($this->epc >= 0 && $this->sales_rep_fee >= 0 && $this->setter_fee >= 0 && $this->system_size && $this->adders >= 0) {
-            $this->sales_rep_comission = round((((float) $this->epc - (float) $this->sales_rep_fee - (float) $this->setter_fee) * ((float) $this->system_size * 1000)) - (float) $this->adders, 2);
+            $this->sales_rep_comission = round((float) $this->sales_rep_fee * (float) $this->system_size * self::K_WATTS, 2);
         } else {
             $this->sales_rep_comission = 0;
         }

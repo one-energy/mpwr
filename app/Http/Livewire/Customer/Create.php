@@ -22,6 +22,8 @@ class Create extends Component
 
     public float $grossRepComission;
 
+    public float $netRepComission;
+
     public int $stockPoints = 250;
 
     public $searchSalesRep;
@@ -83,6 +85,7 @@ class Create extends Component
         $this->customer->calcComission();
         $this->customer->calcMargin();
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
+        $this->netRepComission   = $this->calculateNetRepCommission();
         $this->salesReps         = user()->getPermittedUsers($this->departmentId)->toArray();
         $this->setters           = User::whereDepartmentId($this->departmentId)
                                 ->where('id', '!=', user()->id)
@@ -158,6 +161,11 @@ class Create extends Component
     public function setSelfGen()
     {
         $this->customer->setter_fee = 0;
+    }
+
+    public function calculateNetRepCommission()
+    {
+        return (float) $this->grossRepComission - (float) $this->customer->adders;
     }
 
     public function getSetterFee()

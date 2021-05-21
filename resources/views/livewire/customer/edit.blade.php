@@ -155,8 +155,8 @@
                     </div>
 
                     <div class="col-span-2 md:col-span-3 @if($customer->setter_id == user()->id) hidden @endif">
-                        <x-input-currency wire:model="customer.sales_rep_comission" label="Net Rep Commisson"
-                                          name="customer.sales_rep_comission" readonly/>
+                        <x-input-currency wire:model="netRepComission" label="Net Rep Commisson"
+                                          name="net_rep_comission" readonly/>
                     </div>
 
                     <div class="col-span-2 @if($customer->setter_id == user()->id) hidden @endif">
