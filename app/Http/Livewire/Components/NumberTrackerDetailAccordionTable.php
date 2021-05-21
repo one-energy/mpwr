@@ -99,12 +99,13 @@ class NumberTrackerDetailAccordionTable extends Component
     {
         $this->itsOpenRegions = $this->regions->map(function ($region) {
             $region->itsOpen  = $this->openedRegions->contains($region->id);
-            $region->selected = !$this->unselectedRegions->contains($region->id);
+            $region->selected = $this->unselectedRegions->contains($region->id);
             $region->sortedOffices = $region->offices->map(function ($office) {
                 $office->itsOpen = $this->openedRegions->contains($office->id);
-                $office->selected = !$this->unselectedOffices->contains($office->id);
+                $office->selected = $this->unselectedOffices->contains($office->id);
+                $office->totalSelected = false;
                 $office->sortedDailyNumbers = $office->dailyNumbers->map(function ($dailyNumberUser) {
-                    $dailyNumberUser->selected = !$this->unselectedOffices->contains($dailyNumberUser->id);
+                    $dailyNumberUser->selected = $this->unselectedOffices->contains($dailyNumberUser->id);
 
                     return $dailyNumberUser;
                 })->toArray();
@@ -141,7 +142,7 @@ class NumberTrackerDetailAccordionTable extends Component
                                         $query->when($this->deleteds, function ($query) {
                                             $query->withTrashed();
                                         });
-                                    }
+                                    },
                                 ])
                                     ->when($this->deleteds, function ($query) {
                                         $query->withTrashed();
@@ -163,9 +164,9 @@ class NumberTrackerDetailAccordionTable extends Component
                                     ->selectRaw('SUM(hours_knocked) as hours_knocked')
                                     ->selectRaw('SUM(sats) as sats')
                                     ->selectRaw('SUM(closer_sits) as closer_sits');
-                            }
+                            },
                         ]);
-                }
+                },
             ])
             ->where('department_id', $this->selectedDepartment)
             ->get();
@@ -210,11 +211,11 @@ class NumberTrackerDetailAccordionTable extends Component
     public function getLastDailyNumbers()
     {
         return $this->lastRegions->map(function ($region) {
-            $region->selected      = !$this->unselectedRegions->contains($region->id);
+            $region->selected      = $this->unselectedRegions->contains($region->id);
             $region->sortedOffices = $region->offices->map(function ($office) {
-                $office->selected           = !$this->unselectedOffices->contains($office->id);
+                $office->selected           = $this->unselectedOffices->contains($office->id);
                 $office->sortedDailyNumbers = $office->dailyNumbers->map(function ($dailyNumbers) {
-                    $dailyNumbers->selected = !$this->unselectedUserDailyNumbers->contains($dailyNumbers->id);
+                    $dailyNumbers->selected = $this->unselectedUserDailyNumbers->contains($dailyNumbers->id);
 
                     return $dailyNumbers;
                 })->toArray();
@@ -368,6 +369,8 @@ class NumberTrackerDetailAccordionTable extends Component
             $this->itsOpenRegions[$regionIndex]['id'],
             !$this->itsOpenRegions[$regionIndex]['selected']
         );
+
+        $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['totalSelected'] = $this->allDailyNumbersAreSelected($regionIndex, $officeIndex);
 
         $this->sumTotal();
     }
@@ -530,6 +533,32 @@ class NumberTrackerDetailAccordionTable extends Component
     public function parseNumber($number)
     {
         return $number > 0 ? $number : html_entity_decode('&#8212;');
+    }
+
+    public function sumBy(Collection | array $dailyNumbers, string $field)
+    {
+        return collect($dailyNumbers)->sum($field);
+    }
+
+    public function toggleOffices($regionIndex, $officeIndex)
+    {
+        $office  = $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex];
+
+        $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['selected'] = $office['totalSelected'];
+
+        $this->selectOffice($regionIndex, $officeIndex);
+    }
+
+    private function allDailyNumbersAreSelected($regionIndex, $officeIndex)
+    {
+        return collect(
+            $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedDailyNumbers']
+        )->every(fn ($dailyNumber) => $dailyNumber['selected']);
+    }
+
+    private function getOfficeFromRegionList($regionIndex, $officeIndex)
+    {
+        return $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex];
     }
 
     private function getRegionsThatHasDailyNumbers(Collection $regions)
