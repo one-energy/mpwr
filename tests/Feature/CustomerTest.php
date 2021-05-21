@@ -304,7 +304,7 @@ class CustomerTest extends TestCase
         $customer->sales_rep_fee = 3.1;
         $customer->calcComission();
 
-        $this->assertEquals($customer->sales_rep_comission, 6000.00);
+        $this->assertEquals($customer->sales_rep_comission, 13950.00);
     }
 
     /** @test */
@@ -356,6 +356,7 @@ class CustomerTest extends TestCase
             ->set('customer.last_name', 'Last Name')
             ->set('customer.adders', 10)
             ->set('customer.epc', 10)
+            ->set('customer.date_of_sale', Carbon::now())
             ->set('customer.financing_id', $financing->id)
             ->set('customer.financer_id', $financer->id)
             ->set('customer.bill', 'Bill')
@@ -365,6 +366,7 @@ class CustomerTest extends TestCase
             ->set('customer.sales_rep_id', $userTwo->id)
             ->set('customer.sales_rep_fee', 20)
             ->set('customer.sales_rep_comission', 0)
+            ->set('customer.margin', 0)
             ->call('store');
 
         $this->assertDatabaseHas('customers', [
