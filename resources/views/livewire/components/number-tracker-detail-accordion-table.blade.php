@@ -693,7 +693,7 @@
                                                     </div>
                                                 @endforelse
                                             @endif
-                                            @if (count($office['sortedDailyNumbers']))
+                                            @if (count($office['sortedDailyNumbers']) && $office['itsOpen'])
                                                 <div class="table-row hover:bg-gray-100" x-data>
                                                     <x-table-accordion.td class="table-cell" style="padding-left: 5.8rem;">
                                                         <div class="flex">
