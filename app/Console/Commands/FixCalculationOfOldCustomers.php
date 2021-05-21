@@ -16,7 +16,8 @@ class FixCalculationOfOldCustomers extends Command
     {
         DB::transaction(function () {
            Customer::get()->each(function ($customer) {
-               $customer->margin = (float)$customer->epc - (float)$customer->sales_rep_fee - (float) $customer->setter_fee;
+               $customer->margin              = (float)$customer->epc - (float)$customer->sales_rep_fee - (float) $customer->setter_fee;
+               $customer->sales_rep_comission = (float)$customer->sales_rep_fee * (float)$customer->system_size * Customer::K_WATTS;
                $customer->save();
            });
         });
