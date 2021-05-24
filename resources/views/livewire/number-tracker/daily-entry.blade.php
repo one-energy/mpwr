@@ -132,18 +132,18 @@
                                 </div>
                             </div>
                             <div class="col-span-2 xl:col-span-2 p-3 border-2 border-gray-200 rounded-lg">
-                                <div class="text-xs font-semibold text-gray-900 uppercase">Hours</div>
-                                <div class="text-xl font-bold text-gray-900">{{$users->sum('dailyNumber.0.hours')}}</div>
-                                <div class="flex font-semibold text-xs @if($users->sum('dailyNumber.0.hours') >= $usersLastDayEntries->sum('dailyNumber.0.hours')) text-green-base @else text-red-600 @endif">
-                                    @if($users->sum('dailyNumber.0.hours') >= $usersLastDayEntries->sum('dailyNumber.0.hours'))
+                                <div class="text-xs font-semibold text-gray-900 uppercase">Hours Worked</div>
+                                <div class="text-xl font-bold text-gray-900">{{$users->sum('dailyNumbers.0.hours_worked')}}</div>
+                                <div class="flex font-semibold text-xs @if($users->sum('dailyNumbers.0.hours_worked') >= $usersLastDayEntries->sum('dailyNumbers.0.hours_worked')) text-green-base @else text-red-600 @endif">
+                                    @if($users->sum('dailyNumbers.0.hours_worked') >= $usersLastDayEntries->sum('dailyNumbers.0.hours_worked'))
                                         <x-svg.arrow-up class="text-green-base"/>
                                         <span>
-                                            +{{$users->sum('dailyNumber.0.hours') - $usersLastDayEntries->sum('dailyNumber.0.hours')}}
+                                            +{{$users->sum('dailyNumbers.0.hours_worked') - $usersLastDayEntries->sum('dailyNumbers.0.hours_worked')}}
                                         </span>
                                     @else
                                         <x-svg.arrow-down class="text-red-600"/>
                                         <span>
-                                            {{$users->sum('dailyNumber.0.hours') - $usersLastDayEntries->sum('dailyNumber.0.hours')}}
+                                            {{$users->sum('dailyNumbers.0.hours_worked') - $usersLastDayEntries->sum('dailyNumbers.0.hours_worked')}}
                                         </span>
                                     @endif
                                 </div>
