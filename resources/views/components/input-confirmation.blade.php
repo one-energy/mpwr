@@ -13,12 +13,12 @@
 <div {{ $attributes }}>
     <div class="mt-1 relative rounded-md shadow-sm">
         <input {{ $attributes->except('class')->merge(['class' => $class]) }}
-               name="{{ $name }}"
-               id="{{ $name }}"
-               placeholder="{{ $label }}"
-               @if($attributes->get('type') != 'password') value="{{ old($name, $value ?? null) }}" @endif
-               @if ($wire) wire:model="{{ $wire }}" @endif
-               @if(($disabledToUser && user()->role == $disabledToUser) || $disabled) disabled @endif/>
+            name="{{ $name }}"
+            id="{{ $name }}"
+            placeholder="{{ $label }}"
+            @if($attributes->get('type') != 'password') value="{{ old($name, $value ?? null) }}" @endif
+            @if ($wire) wire:model="{{ $wire }}" @endif
+            @if(($disabledToUser && user()->role == $disabledToUser) || $disabled) disabled @endif/>
 
         <div class="absolute inset-y-0 right-0 flex items-center ">
             <button class="justify-center py-2 px-2 text-sm font-medium cursor-pointer focus:outline-none hover:bg-gray-50 bg-gray-200 text-white transition duration-150 ease-in-out" 

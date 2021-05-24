@@ -32,9 +32,7 @@
                     @endforeach
                     @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager']))
                         <div class="inline-flex" x-data="{ 'editSectionModal': false }" @keydown.escape="editSectionModal = false" x-cloak>
-                            <button class="p-3 rounded-full  hover:bg-gray-100" >
-                                <x-svg.pencil class="w-4 h-4 fill-current text-gray-800" />
-                            </button>
+                       
                             <div x-show="editSectionModal" wire:loading.remove class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center z-20">
                                 <div x-show="editSectionModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity">
                                     <div class="absolute inset-0 bg-gray-500 opacity-75"></div>

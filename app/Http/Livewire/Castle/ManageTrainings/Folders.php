@@ -17,6 +17,10 @@ class Folders extends Component
 
     public bool $showActions = true;
 
+    protected $rules = [
+        'sections.*.title' => 'required|string|min:6',
+    ];
+
     public function render()
     {
         return view('livewire.castle.manage-trainings.folders');
