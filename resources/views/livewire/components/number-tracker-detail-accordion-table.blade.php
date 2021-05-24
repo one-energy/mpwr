@@ -555,7 +555,7 @@
                                                         class="self-center hidden w-5"
                                                         wire:loading wire:target="initRegionsData">
                                                     </x-svg.spinner>
-                                                    <div class="@if($office['deleted_at'] != null) text-red-500 @endif" class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                    <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                         {{ $this->parseNumber($this->sumOfficeNumberTracker($office, 'set_closes')) }}
                                                     </div>
                                                 </x-table-accordion.td>
@@ -575,7 +575,7 @@
                                                         class="self-center hidden w-5"
                                                         wire:loading wire:target="initRegionsData">
                                                     </x-svg.spinner>
-                                                    <div class="@if($office['deleted_at'] != null) text-red-500 @endif" class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                    <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
                                                         {{ $this->parseNumber($this->sumOfficeNumberTracker($office, 'closes')) }}
                                                     </div>
                                                 </x-table-accordion.td>
@@ -692,6 +692,103 @@
                                                         </x-table-accordion.td>
                                                     </div>
                                                 @endforelse
+                                            @endif
+                                            @if (count($office['sortedDailyNumbers']) && $office['itsOpen'])
+                                                <div class="table-row hover:bg-gray-100" x-data>
+                                                    <x-table-accordion.td class="table-cell" style="padding-left: 5.8rem;">
+                                                        <div class="flex">
+                                                            <div class="flex items-center" wire:loading.remove>
+                                                                <input
+                                                                    class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
+                                                                    type="checkbox"
+                                                                    wire:model="itsOpenRegions.{{$regionIndex}}.sortedOffices.{{$officeIndex}}.totalSelected"
+                                                                    x-on:change="$wire.toggleOffices({{ $regionIndex }}, {{ $officeIndex }})"
+                                                                >
+                                                            </div>
+                                                            <span class="font-bold">Office Total</span>
+                                                        </div>
+                                                    </x-table-accordion.td>
+                                                    <x-table-accordion.td class="table-cell" by="hours_worked" sortedBy="$sortBy">
+                                                        <x-svg.spinner
+                                                            color="#9fa6b2"
+                                                            class="self-center hidden w-5"
+                                                            wire:loading wire:target="initRegionsData">
+                                                        </x-svg.spinner>
+                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                            {{ $this->parseNumber($this->sumBy($office['sortedDailyNumbers'], 'hours_worked')) }}
+                                                        </div>
+                                                    </x-table-accordion.td>
+                                                    <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
+                                                        <x-svg.spinner
+                                                            color="#9fa6b2"
+                                                            class="self-center hidden w-5"
+                                                            wire:loading wire:target="initRegionsData">
+                                                        </x-svg.spinner>
+                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                            {{ $this->parseNumber($this->sumBy($office['sortedDailyNumbers'], 'doors')) }}
+                                                        </div>
+                                                    </x-table-accordion.td>
+                                                    <x-table-accordion.td class="table-cell" by="hours_knocked" sortedBy="$sortBy">
+                                                        <x-svg.spinner
+                                                            color="#9fa6b2"
+                                                            class="self-center hidden w-5"
+                                                            wire:loading wire:target="initRegionsData">
+                                                        </x-svg.spinner>
+                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                            {{ $this->parseNumber($this->sumBy($office['sortedDailyNumbers'], 'hours_knocked')) }}
+                                                        </div>
+                                                    </x-table-accordion.td>
+                                                    <x-table-accordion.td class="table-cell" by="sets" sortedBy="$sortBy">
+                                                        <x-svg.spinner
+                                                            color="#9fa6b2"
+                                                            class="self-center hidden w-5"
+                                                            wire:loading wire:target="initRegionsData">
+                                                        </x-svg.spinner>
+                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                            {{ $this->parseNumber($this->sumBy($office['sortedDailyNumbers'], 'sets')) }}
+                                                        </div>
+                                                    </x-table-accordion.td>
+                                                    <x-table-accordion.td class="table-cell" by="sats" sortedBy="$sortBy">
+                                                        <x-svg.spinner
+                                                            color="#9fa6b2"
+                                                            class="self-center hidden w-5"
+                                                            wire:loading wire:target="initRegionsData">
+                                                        </x-svg.spinner>
+                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                            {{ $this->parseNumber($this->sumBy($office['sortedDailyNumbers'], 'sats')) }}
+                                                        </div>
+                                                    </x-table-accordion.td>
+                                                    <x-table-accordion.td class="table-cell" by="set_closes" sortedBy="$sortBy">
+                                                        <x-svg.spinner
+                                                            color="#9fa6b2"
+                                                            class="self-center hidden w-5"
+                                                            wire:loading wire:target="initRegionsData">
+                                                        </x-svg.spinner>
+                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                            {{ $this->parseNumber($this->sumBy($office['sortedDailyNumbers'], 'set_closes')) }}
+                                                        </div>
+                                                    </x-table-accordion.td>
+                                                    <x-table-accordion.td class="table-cell" by="closer_sits" sortedBy="$sortBy">
+                                                        <x-svg.spinner
+                                                            color="#9fa6b2"
+                                                            class="self-center hidden w-5"
+                                                            wire:loading wire:target="initRegionsData">
+                                                        </x-svg.spinner>
+                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                            {{ $this->parseNumber($this->sumBy($office['sortedDailyNumbers'], 'closer_sits')) }}
+                                                        </div>
+                                                    </x-table-accordion.td>
+                                                    <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
+                                                        <x-svg.spinner
+                                                            color="#9fa6b2"
+                                                            class="self-center hidden w-5"
+                                                            wire:loading wire:target="initRegionsData">
+                                                        </x-svg.spinner>
+                                                        <div class="@if($office['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                            {{ $this->parseNumber($this->sumBy($office['sortedDailyNumbers'], 'closes')) }}
+                                                        </div>
+                                                    </x-table-accordion.td>
+                                                </div>
                                             @endif
                                         @empty
                                             <div class="table-row">
