@@ -60,8 +60,8 @@ class Spreadsheet extends Component
             $currentWeek = today()->subWeeks($number);
 
             return [
-                $today->modify($currentWeek->endOfWeek()->subDay()),
                 $today->modify($currentWeek->startOfWeek()),
+                $today->modify($currentWeek->endOfWeek()->subDay()),
             ];
         })
             ->flatten()
@@ -72,19 +72,9 @@ class Spreadsheet extends Component
 
     public function getWeeklyPeriodsProperty()
     {
-        $isFirstChunk = true;
-
         return collect($this->periods)
             ->chunk(2)
-            ->map(function (Collection $chunk) use (&$isFirstChunk) {
-                if ($isFirstChunk) {
-                    $isFirstChunk = false;
-
-                    return $this->getDaysFrom($chunk, false);
-                }
-
-                return $this->getDaysFrom($chunk, true);
-            });
+            ->map(fn (Collection $chunk) => $this->getDaysFrom($chunk));
     }
 
     public function getWeeklyLabelsProperty()
@@ -264,17 +254,12 @@ class Spreadsheet extends Component
         ];
     }
 
-    private function getDaysFrom(Collection $chunk, bool $reverse)
+    private function getDaysFrom(Collection $chunk)
     {
         $interval = new DateInterval('P1D');
 
         $firstPiece  = $chunk->first();
         $secondPiece = $chunk->last();
-
-        if ($reverse) {
-            $firstPiece  = $chunk->last();
-            $secondPiece = $chunk->first();
-        }
 
         $days = [$firstPiece];
 
@@ -288,7 +273,7 @@ class Spreadsheet extends Component
             $days[] = $day;
         }
 
-        return $reverse ? array_reverse($days) : $days;
+        return $days;
     }
 
     private function isSunday(DateTimeInterface $day)
