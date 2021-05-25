@@ -8,7 +8,7 @@
         <form wire:submit.prevent="store">
             <div class="grid grid-cols-2 gap-4 sm:col-gap-4 md:grid-cols-6 px-8">
                 @if(user()->role == 'Admin' || user()->role == 'Owner')
-                    <div class="col-span-2 md:col-span-6">
+                    <div class="col-span-2 md:col-span-6" wire:key="departmentId">
                         <x-select wire:model="departmentId" label="Department" name="departmentId">
                             @foreach($departments as $department)
                                 <option
@@ -51,7 +51,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
-                    <x-select wire:model="customer.financing_id" label="Financing" name="customer.financing_id">
+                    <x-select wire:model="customer.financing_id" label="Financing" name="customer.financing_id" wire:key="financingId">
                         @if (old('financing') == '')
                             <option value="" selected>None</option>
                         @endif
@@ -63,7 +63,7 @@
                     </x-select>
                 </div>
 
-                <div class="col-span-1 md:col-span-1 md:col-start-4 @if($customer->financing_id != 1) hidden @endif">
+                <div class="col-span-1 md:col-span-1 md:col-start-4 @if($customer->financing_id != 1) hidden @endif" wire:key="financerId">
                     <x-select wire:model="customer.financer_id" label="Financer" name="customer.financer_id">
                         @if (old('financer') == '')
                             <option value="null" selected>None</option>
@@ -76,7 +76,7 @@
                     </x-select>
                 </div>
 
-                <div class="col-span-1 md:col-span-2 @if($customer->financer_id != 1) hidden @endif">
+                <div class="col-span-1 md:col-span-2 @if($customer->financer_id != 1) hidden @endif" wire:key="termId">
                     <x-select wire:model="customer.term_id" label="Term" name="customer.term_id">
                         <option value="" selected>None</option>
                         @foreach($terms as $term)
@@ -145,7 +145,7 @@
                     <x-input wire:model="stockPoints" label="Stock Points" name="stockPoints" readonly/>
                 </div>
 
-                <div class="col-span-2 md:col-span-1 @if($customer->financer_id != 1) hidden @endif ">
+                <div class="col-span-2 md:col-span-1 @if($customer->financer_id != 1) hidden @endif " wire:key="eniumPoints">
                     <x-input wire:model="customer.enium_points" label="Noble Pay Points" name="customer.enium_points" readonly/>
                 </div>
             </div>
