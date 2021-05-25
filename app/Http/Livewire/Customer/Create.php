@@ -9,7 +9,9 @@ use App\Models\Financing;
 use App\Models\Rates;
 use App\Models\Term;
 use App\Models\User;
+use App\Models\UserCustomersEniumPoints;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Create extends Component
@@ -112,7 +114,7 @@ class Create extends Component
         $this->customer->term_id = $this->customer->term_id != "" ? $this->customer->term_id : null;
         
         $this->validate();
-      
+
         $salesRep = User::find($this->customer->sales_rep_id);
 
         $this->validate();
