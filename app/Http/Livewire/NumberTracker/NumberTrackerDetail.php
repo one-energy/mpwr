@@ -5,7 +5,6 @@ namespace App\Http\Livewire\NumberTracker;
 use App\Models\DailyNumber;
 use App\Models\Department;
 use App\Traits\Livewire\FullTable;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -107,15 +106,17 @@ class NumberTrackerDetail extends Component
 
     private function getTopTenTrackers()
     {
-        if (!in_array($this->selectedPill, $this->pills)) {
+        if (!in_array($this->selectedPill, $this->pills, true)) {
             return collect();
         }
 
         return DailyNumber::query()
             ->withTrashed()
             ->with([
-                'office' => function ($query) {
-                    $query->whereNotIn('region_id', $this->unselectedRegions);
+                'user' => function ($query) {
+                    $query->when($this->deleteds, function ($query) {
+                        $query->withTrashed();
+                    });
                 },
                 'user'   => function ($query) {
                     $query
@@ -128,14 +129,20 @@ class NumberTrackerDetail extends Component
                         });
                 },
             ])
+            ->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
+                $query->whereHas('user', function ($query) {
+                    $query
+                        ->where('department_id', user()->department_id)
+                        ->withTrashed();
+                });
+            })
             ->when(!$this->deleteds, function ($query) {
                 $query->has('user');
             })
-            ->whereHas(
-                'user',
-                fn(Builder $query) => $query->where('department_id', $this->selectedDepartment)
-            )
             ->inPeriod($this->period, new Carbon($this->dateSelected))
+            ->whereHas('office', function ($query) {
+                $query->whereNotIn('region_id', $this->unselectedRegions);
+            })
             ->whereNotIn('office_id', $this->unselectedOffices)
             ->whereNotIn('user_id', $this->unselectedUserDailyNumbers)
             ->orderBy('total', 'desc')
@@ -158,11 +165,11 @@ class NumberTrackerDetail extends Component
         $rawQuery = sprintf('SUM(%s) as total', $pill);
 
         if ($pill === 'sg_sits') {
-            $rawQuery = sprintf('SUM(sits + set_sits) as total');
+            $rawQuery = 'SUM(sits + set_sits) as total';
         }
 
         if ($pill === 'sg_closes') {
-            $rawQuery = sprintf('SUM(closes + set_closes) as total');
+            $rawQuery = 'SUM(closes + set_closes) as total';
         }
 
         return $rawQuery;
