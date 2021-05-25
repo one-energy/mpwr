@@ -118,16 +118,6 @@ class NumberTrackerDetail extends Component
                         $query->withTrashed();
                     });
                 },
-                'user'   => function ($query) {
-                    $query
-                        ->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
-                            $query->where('department_id', user()->department_id)
-                                ->withTrashed();
-                        })
-                        ->when($this->deleteds, function ($query) {
-                            $query->withTrashed();
-                        });
-                },
             ])
             ->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
                 $query->whereHas('user', function ($query) {
