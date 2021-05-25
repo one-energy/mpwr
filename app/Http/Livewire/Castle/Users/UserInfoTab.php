@@ -356,12 +356,11 @@ class UserInfoTab extends Component
     {
         $officeId = $user->office_id;
 
-        if ($officeId === null) {
+        if ($officeId === null && Department::where('id', $user->department_id)->exists()) {
             $department = Department::find($user->department_id);
             $officeId   = $department->offices->first()->id;
         }
 
         return $officeId;
-        //        || $this->offices->first()?->id || null;
     }
 }
