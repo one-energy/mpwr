@@ -143,11 +143,11 @@ class NumberTrackerDetail extends Component
         $rawQuery = sprintf('SUM(%s) as total', $pill);
 
         if ($pill === 'sg_sits') {
-            $rawQuery = sprintf('SUM(sits + set_sits) as total');
+            $rawQuery = 'SUM(sits + set_sits) as total';
         }
 
         if ($pill === 'sg_closes') {
-            $rawQuery = sprintf('SUM(closes + set_closes) as total');
+            $rawQuery = 'SUM(closes + set_closes) as total';
         }
 
         return $rawQuery;
