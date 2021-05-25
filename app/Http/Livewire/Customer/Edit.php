@@ -192,6 +192,7 @@ class Edit extends Component
     {
         if ($setterId) {
             $this->isSelfGen = false;
+            $this->setter = User::find($setterId);
         } else {
             $this->setSelfGen();
         }
