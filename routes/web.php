@@ -141,7 +141,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/number-tracking/create', [NumberTrackingController::class, 'store'])->name('number-tracking.store');
 
     Route::get('/number-tracking/spreadsheet', [NumberTrackingController::class, 'spreadsheet'])
-        ->middleware('role:Admin|Owner|Department Manager|Region Manager')
+        ->middleware('role:Admin|Owner|Department Manager|Region Manager|Office Manager')
         ->name('number-tracking.spreadsheet');
     Route::post('/number-tracking/spreadsheet', [NumberTrackingController::class, 'updateOrCreateDailyNumbers'])
         ->middleware('role:Admin|Owner|Department Manager|Region Manager')

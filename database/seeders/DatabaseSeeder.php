@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
             RegionsSeeder::class,
             OfficesSeeder::class,
             DailyNumbersSeeder::class,
+            MultiplierOfYearSeeder::class,
+            StockPointsCalculationBasesSeeder::class
         ]);
     }
 }
