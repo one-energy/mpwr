@@ -235,7 +235,7 @@ class Edit extends Component
     public function calculateGrossRepComission(Customer $customer)
     {
         if ($customer->margin && $customer->system_size) {
-            return $customer->margin * $customer->system_size * 1000;
+            return round((float) $customer->margin * (float) $customer->system_size * Customer::K_WATTS, 2);
         }
 
         return 0;
