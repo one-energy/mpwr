@@ -94,33 +94,32 @@ class NumberTrackerDetail extends Component
 
     private function getTopTenTrackers()
     {
-        if (!in_array($this->selectedPill, $this->pills)) {
+        if (!in_array($this->selectedPill, $this->pills, true)) {
             return collect();
         }
 
-        $query = DailyNumber::query()
+        return DailyNumber::query()
             ->withTrashed()
             ->with([
                 'office' => function ($query) {
                     $query->whereNotIn('region_id', $this->unselectedRegions);
                 },
-            ])
-            ->with([
-                'user' => function ($query) {
-                    $query->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
-                        $query->where('department_id', user()->department_id)
-                            ->withTrashed();
-                    })
-                        ->when($this->deleteds, function ($query) {
-                            $query->withTrashed();
-                        });
+                'user'   => function ($query) {
+                    $query->when($this->deleteds, function ($query) {
+                        $query->withTrashed();
+                    });
                 },
             ])
+            ->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
+                $query->whereHas('user', function ($query) {
+                    $query
+                        ->where('department_id', user()->department_id)
+                        ->withTrashed();
+                });
+            })
             ->when(!$this->deleteds, function ($query) {
                 $query->has('user');
-            });
-
-        return $query
+            })
             ->inPeriod($this->period, new Carbon($this->dateSelected))
             ->whereNotIn('office_id', $this->unselectedOffices)
             ->whereNotIn('user_id', $this->unselectedUserDailyNumbers)
