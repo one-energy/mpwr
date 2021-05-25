@@ -4,7 +4,6 @@ namespace App\Http\Livewire\NumberTracker;
 
 use App\Models\DailyNumber;
 use App\Traits\Livewire\FullTable;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -71,8 +70,12 @@ class NumberTrackerDetail extends Component
         $this->emit('setDateOrPeriod', $this->dateSelected, $this->period);
     }
 
-    public function updateLeaderBoardCard($unselectedRegions, $unselectedOffices, $unselectedUserDailyNumbers, $withDeleteds)
-    {
+    public function updateLeaderBoardCard(
+        $unselectedRegions,
+        $unselectedOffices,
+        $unselectedUserDailyNumbers,
+        $withDeleteds
+    ) {
         $this->deleteds = $withDeleteds;
         $this->getUnselectedCollections($unselectedRegions, $unselectedOffices, $unselectedUserDailyNumbers);
     }
@@ -102,15 +105,17 @@ class NumberTrackerDetail extends Component
                     $query->whereNotIn('region_id', $this->unselectedRegions);
                 },
             ])
-            ->with(['user' => function($query) {
-                $query->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
-                    $query->where('department_id', user()->department_id)
-                        ->withTrashed();
-                })
-                ->when($this->deleteds, function ($query) {
-                    $query->withTrashed();
-                });
-            }])
+            ->with([
+                'user' => function ($query) {
+                    $query->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
+                        $query->where('department_id', user()->department_id)
+                            ->withTrashed();
+                    })
+                        ->when($this->deleteds, function ($query) {
+                            $query->withTrashed();
+                        });
+                },
+            ])
             ->when(!$this->deleteds, function ($query) {
                 $query->has('user');
             });
