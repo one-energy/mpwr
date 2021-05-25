@@ -45,6 +45,14 @@ class UsersTableSeeder extends Seeder
 
         collect()->times(30)->each(function ($number) {
             User::factory()->create([
+                'email'         => sprintf('sr%s@devsquad.com', str_pad($number, 2, '0', STR_PAD_LEFT)),
+                'role'          => 'Sales Rep',
+                'department_id' => null,
+            ]);
+        });
+
+        collect()->times(30)->each(function ($number) {
+            User::factory()->create([
                 'email'         => sprintf('st%s@devsquad.com', str_pad($number, 2, '0', STR_PAD_LEFT)),
                 'role'          => 'Setter',
                 'department_id' => null,
