@@ -101,10 +101,7 @@ class NumberTrackerDetail extends Component
         return DailyNumber::query()
             ->withTrashed()
             ->with([
-                'office' => function ($query) {
-                    $query->whereNotIn('region_id', $this->unselectedRegions);
-                },
-                'user'   => function ($query) {
+                'user' => function ($query) {
                     $query->when($this->deleteds, function ($query) {
                         $query->withTrashed();
                     });
@@ -121,6 +118,9 @@ class NumberTrackerDetail extends Component
                 $query->has('user');
             })
             ->inPeriod($this->period, new Carbon($this->dateSelected))
+            ->whereHas('office', function ($query) {
+                $query->whereNotIn('region_id', $this->unselectedRegions);
+            })
             ->whereNotIn('office_id', $this->unselectedOffices)
             ->whereNotIn('user_id', $this->unselectedUserDailyNumbers)
             ->orderBy('total', 'desc')
