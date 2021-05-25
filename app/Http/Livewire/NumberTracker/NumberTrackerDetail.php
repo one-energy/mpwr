@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\NumberTracker;
 
 use App\Models\DailyNumber;
+use App\Models\Department;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -35,14 +36,19 @@ class NumberTrackerDetail extends Component
 
     public string $selectedPill = 'hours';
 
+    public int $selectedDepartment;
+
     protected $listeners = [
         'sumTotalNumbers',
         'loadingSumNumberTracker',
-        'updateLeaderBoard' => 'updateLeaderBoardCard',
+        'updateLeaderBoard'    => 'getUnselectedCollections',
+        'onSelectedDepartment' => 'changeSelectedDepartment',
     ];
 
     public function mount()
     {
+        $this->selectedDepartment = $this->getDepartmentId();
+
         $this->dateSelected = date('Y-m-d', time());
     }
 
@@ -87,6 +93,12 @@ class NumberTrackerDetail extends Component
         $this->unselectedUserDailyNumbers = $unselectedUserDailyNumbers;
     }
 
+    public function changeSelectedDepartment(int $departmentId)
+    {
+        $this->selectedDepartment = $departmentId;
+        $this->topTenTrackers     = $this->getTopTenTrackers();
+    }
+
     public function getPillsProperty()
     {
         return ['doors', 'hours', 'sets', 'set sits', 'sg sits', 'set closes', 'sg closes'];
@@ -105,6 +117,16 @@ class NumberTrackerDetail extends Component
                     $query->when($this->deleteds, function ($query) {
                         $query->withTrashed();
                     });
+                },
+                'user'   => function ($query) {
+                    $query
+                        ->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
+                            $query->where('department_id', user()->department_id)
+                                ->withTrashed();
+                        })
+                        ->when($this->deleteds, function ($query) {
+                            $query->withTrashed();
+                        });
                 },
             ])
             ->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
@@ -151,5 +173,12 @@ class NumberTrackerDetail extends Component
         }
 
         return $rawQuery;
+    }
+
+    private function getDepartmentId()
+    {
+        return user()->hasAnyRole(['Admin', 'Owner'])
+            ? Department::oldest('name')->first()->id
+            : (user()->department_id ?? 0);
     }
 }
