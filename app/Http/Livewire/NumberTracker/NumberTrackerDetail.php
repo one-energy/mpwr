@@ -3,8 +3,8 @@
 namespace App\Http\Livewire\NumberTracker;
 
 use App\Models\DailyNumber;
+use App\Models\Department;
 use App\Traits\Livewire\FullTable;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -36,14 +36,19 @@ class NumberTrackerDetail extends Component
 
     public string $selectedPill = 'hours';
 
+    public int $selectedDepartment;
+
     protected $listeners = [
         'sumTotalNumbers',
         'loadingSumNumberTracker',
-        'updateLeaderBoard' => 'updateLeaderBoardCard',
+        'updateLeaderBoard'    => 'getUnselectedCollections',
+        'onSelectedDepartment' => 'changeSelectedDepartment',
     ];
 
     public function mount()
     {
+        $this->selectedDepartment = $this->getDepartmentId();
+
         $this->dateSelected = date('Y-m-d', time());
     }
 
@@ -71,8 +76,12 @@ class NumberTrackerDetail extends Component
         $this->emit('setDateOrPeriod', $this->dateSelected, $this->period);
     }
 
-    public function updateLeaderBoardCard($unselectedRegions, $unselectedOffices, $unselectedUserDailyNumbers, $withDeleteds)
-    {
+    public function updateLeaderBoardCard(
+        $unselectedRegions,
+        $unselectedOffices,
+        $unselectedUserDailyNumbers,
+        $withDeleteds
+    ) {
         $this->deleteds = $withDeleteds;
         $this->getUnselectedCollections($unselectedRegions, $unselectedOffices, $unselectedUserDailyNumbers);
     }
@@ -84,6 +93,12 @@ class NumberTrackerDetail extends Component
         $this->unselectedUserDailyNumbers = $unselectedUserDailyNumbers;
     }
 
+    public function changeSelectedDepartment(int $departmentId)
+    {
+        $this->selectedDepartment = $departmentId;
+        $this->topTenTrackers     = $this->getTopTenTrackers();
+    }
+
     public function getPillsProperty()
     {
         return ['doors', 'hours', 'sets', 'set sits', 'sg sits', 'set closes', 'sg closes'];
@@ -91,32 +106,33 @@ class NumberTrackerDetail extends Component
 
     private function getTopTenTrackers()
     {
-        if (!in_array($this->selectedPill, $this->pills)) {
+        if (!in_array($this->selectedPill, $this->pills, true)) {
             return collect();
         }
 
-        $query = DailyNumber::query()
+        return DailyNumber::query()
             ->withTrashed()
             ->with([
-                'office' => function ($query) {
-                    $query->whereNotIn('region_id', $this->unselectedRegions);
+                'user' => function ($query) {
+                    $query->when($this->deleteds, function ($query) {
+                        $query->withTrashed();
+                    });
                 },
             ])
-            ->with(['user' => function($query) {
-                $query->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
-                    $query->where('department_id', user()->department_id)
+            ->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
+                $query->whereHas('user', function ($query) {
+                    $query
+                        ->where('department_id', user()->department_id)
                         ->withTrashed();
-                })
-                ->when($this->deleteds, function ($query) {
-                    $query->withTrashed();
                 });
-            }])
+            })
             ->when(!$this->deleteds, function ($query) {
                 $query->has('user');
-            });
-
-        return $query
+            })
             ->inPeriod($this->period, new Carbon($this->dateSelected))
+            ->whereHas('office', function ($query) {
+                $query->whereNotIn('region_id', $this->unselectedRegions);
+            })
             ->whereNotIn('office_id', $this->unselectedOffices)
             ->whereNotIn('user_id', $this->unselectedUserDailyNumbers)
             ->orderBy('total', 'desc')
@@ -139,13 +155,20 @@ class NumberTrackerDetail extends Component
         $rawQuery = sprintf('SUM(%s) as total', $pill);
 
         if ($pill === 'sg_sits') {
-            $rawQuery = sprintf('SUM(sits + set_sits) as total');
+            $rawQuery = 'SUM(sits + set_sits) as total';
         }
 
         if ($pill === 'sg_closes') {
-            $rawQuery = sprintf('SUM(closes + set_closes) as total');
+            $rawQuery = 'SUM(closes + set_closes) as total';
         }
 
         return $rawQuery;
+    }
+
+    private function getDepartmentId()
+    {
+        return user()->hasAnyRole(['Admin', 'Owner'])
+            ? Department::oldest('name')->first()->id
+            : (user()->department_id ?? 0);
     }
 }

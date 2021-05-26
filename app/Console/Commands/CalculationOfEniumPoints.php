@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Models\Term;
 use App\Models\User;
 use Illuminate\Console\Command;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class CalculationOfEniumPoints extends Command
@@ -19,22 +18,22 @@ class CalculationOfEniumPoints extends Command
         Term::find(1)->update([
             'noble_pay_dealer_fee' => 0.19,
             'rep_residual'         => 0.025,
-            'amount'               => 480
+            'amount'               => 480,
         ]);
         Term::find(2)->update([
             'noble_pay_dealer_fee' => 0.24,
             'rep_residual'         => 0.015,
-            'amount'               => 800
+            'amount'               => 800,
         ]);
         Term::find(3)->update([
             'noble_pay_dealer_fee' => 0.15,
             'rep_residual'         => 0.025,
-            'amount'               => 480
+            'amount'               => 480,
         ]);
         Term::find(4)->update([
             'noble_pay_dealer_fee' => 0.22,
             'rep_residual'         => 0.015,
-            'amount'               => 800
+            'amount'               => 800,
         ]);
         DB::transaction(function () {
             $users = User::withTrashed()->get();
@@ -43,7 +42,7 @@ class CalculationOfEniumPoints extends Command
                     if ($customer->term_id != null) {
                         $customerEniumPoint = $user->customersEniumPoints()->create([
                             'customer_id'     => $customer->id,
-                            'points'          => $customer->term->amount > 0 ? round($customer->epc/$customer->term->amount) : 0,
+                            'points'          => $customer->term->amount > 0 ? round($customer->totalSoldPrice / $customer->term->amount) : 0,
                             'set_date'        => $customer->date_of_sale,
                             'expiration_date' => $customer->date_of_sale->addYear(),
                         ]);
@@ -52,10 +51,9 @@ class CalculationOfEniumPoints extends Command
                         }
                     }
                 });
-            }); 
+            });
         });
-    
+
         return 0;
     }
-
 }

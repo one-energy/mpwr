@@ -158,9 +158,15 @@ class Customer extends Model
         return $this->belongsTo(User::class, 'department_manager_id');
     }
 
+
     public function getSetterCommissionAttribute()
     {
         return $this->setter_fee * ($this->system_size * self::K_WATTS);
+    }
+
+    public function stockPoint()
+    {
+        return $this->hasOne(CustomersStockPoint::class);
     }
     
     public function userEniumPoint()
@@ -176,6 +182,12 @@ class Customer extends Model
     public function getSetterAttribute()
     {
         return User::find($this->setter_id);
+    }
+
+
+    public function getTotalSoldPriceAttribute()
+    {
+        return $this->epc * $this->system_size * self::K_WATTS;
     }
 
     public function calcComission()
