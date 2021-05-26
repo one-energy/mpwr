@@ -57,12 +57,12 @@ class CustomerController extends Controller
         return redirect(route('home'));
     }
 
-    public function getSetterFee(): Rates
+    public function getSetterFee()
     {
         return Rates::whereRole('Setter')->first();
     }
 
-    public function getSalesRepFee(): Rates
+    public function getSalesRepFee()
     {
         return Rates::whereRole('Sales Rep')->orderBy('rate', 'desc')->first();
     }
