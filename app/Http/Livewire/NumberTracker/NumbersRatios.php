@@ -9,13 +9,13 @@ use Livewire\Component;
 class NumbersRatios extends Component
 {
 
-    private array $offices = [];
+    public array $offices = [];
 
-    private array $users   = [];
+    public array $users   = [];
 
-    private bool $deleteds = false;
+    public bool $deleteds = false;
 
-    private $numbers;
+    public $numbers;
 
     protected $listeners = ['updateNumbers'];
 
@@ -43,7 +43,7 @@ class NumbersRatios extends Component
     {
         $this->offices   = $offices;
         $this->users     = $users;
-        $this->$deleteds = $deleteds;
+        $this->deleteds = $deleteds;
         $this->getNumbers();
     }
 
