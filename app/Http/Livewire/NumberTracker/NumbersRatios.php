@@ -19,14 +19,22 @@ class NumbersRatios extends Component
 
     protected $listeners = ['updateNumbers'];
 
+    public function mount()
+    {
+        $this->getNumbers();
+    }
+
     public function render()
     {
-        $this->numbers = DailyNumber::whereIn('office_id', $this->offices)->get();
         return view('livewire.number-tracker.numbers-ratios');
     }
 
+    public function getNumbers()
+    {
+        $this->numbers = DailyNumber::whereIn('office_id', $this->offices)->get();
+    }
 
-    public function getDps()
+    public function getDpsProperty()
     {
         if (isset($this->numbers)) {
             return $this->numbers->sum('sets') > 0
@@ -35,11 +43,12 @@ class NumbersRatios extends Component
         }
     }
 
-    public function updateNumbers(array $regions, array $offices, array $users)
+    public function updateNumbers(array $regions = [], array $offices = [], array $users = [])
     {
         $this->regions = $regions;
         $this->offices = $offices;
         $this->users = $users;
+        $this->getNumbers();
     }
 
     public function getHps()

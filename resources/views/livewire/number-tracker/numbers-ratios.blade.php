@@ -4,7 +4,7 @@
             <div class="col-span-1 p-3 rounded-md bg-green-light space-y-3">
                 <div class="text-base font-semibold uppercase text-green-base">D.P.S</div>
                 <div class="text-xl font-bold text-green-base">
-                    {{$this->getDps()}}
+                    {{$this->dps}}
                 </div>
             </div>
             <div class="col-span-1 p-3 rounded-md bg-green-light space-y-3">
