@@ -34,7 +34,7 @@ class CustomerController extends Controller
 
     public function show(Customer $customer)
     {
-        $this->authorize('update', $customer);
+        $this->authorize('show', $customer);
 
         return view('customer.show', [
             'customer' => $customer,
