@@ -28,7 +28,7 @@ class Spreadsheet extends Component
 
     public function mount()
     {
-        $this->selectedOffice = $this->offices->first()->id;
+        $this->selectedOffice = $this->offices->isNotEmpty() ? $this->offices->first()->id : 0;
         $this->dailyNumbers   = $this->users->pluck('dailyNumbers')->flatten();
     }
 
@@ -179,12 +179,28 @@ class Spreadsheet extends Component
     public function getOfficesProperty()
     {
         return match (user()->role) {
-            'Admin', 'Owner'     => Office::oldest('name')->get(),
-            'Department Manager' => Department::find(user()->department_id)->offices()->oldest('name')->get(),
-            'Region Manager'     => Office::oldest('name')->whereIn('region_id', user()->managedRegions->pluck('id'))->get(),
-            'Office Manager'     => Office::oldest('name')->whereIn('id', user()->managedOffices->pluck('id'))->get(),
+            'Admin', 'Owner' => Office::oldest('name')->get(),
+            'Department Manager' => $this->getOfficesFromDepartment(),
+            'Region Manager' => Office::oldest('name')->whereIn('region_id', user()->managedRegions->pluck('id'))->get(),
+            'Office Manager' => Office::oldest('name')->whereIn('id', user()->managedOffices->pluck('id'))->get(),
             default => collect()
         };
+    }
+
+    private function getOfficesFromDepartment()
+    {
+        /** @var Department $department */
+        $department = Department::find(user()->department_id);
+
+        if ($department === null) {
+            return collect();
+        }
+
+        if ($department->offices->isNotEmpty()) {
+            return $department->offices()->oldest('name')->get();
+        }
+
+        return collect();
     }
 
     public function sumOf(string $field, $user, array $weekDays)
