@@ -10,19 +10,19 @@
             <div class="col-span-1 p-3 rounded-md bg-green-light space-y-3">
                 <div class="text-base font-semibold uppercase text-green-base">H.P. Set</div>
                 <div class="text-xl font-bold text-green-base">
-                    {{$this->hps()}}
+                    {{$this->hps}}
                 </div>
             </div>
             <div class="col-span-1 p-3 rounded-md bg-green-light space-y-3">
                 <div class="text-base font-semibold uppercase text-green-base">Sit Ratio</div>
                 <div class="text-xl font-bold text-green-base">
-                    {{$this->getSitRatio()}}
+                    {{$this->sitRatios}}
                 </div>
             </div>
             <div class="col-span-1 p-3 rounded-md bg-green-light space-y-3">
                 <div class="text-base font-semibold uppercase text-green-base">Close Ratio</div>
                 <div class="text-xl font-bold text-green-base">
-                    {{$this->getCloseRatio()}}
+                    {{$this->closeRatio}}
                 </div>
             </div>
         </div>

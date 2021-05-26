@@ -9,13 +9,13 @@ use Livewire\Component;
 class NumbersRatios extends Component
 {
 
-    private array $regions = [];
-
     private array $offices = [];
 
     private array $users   = [];
 
-    private Collection $numbers;
+    private bool $deleteds = false;
+
+    private $numbers;
 
     protected $listeners = ['updateNumbers'];
 
@@ -31,14 +31,19 @@ class NumbersRatios extends Component
 
     public function getNumbers()
     {
-        $this->numbers = DailyNumber::whereIn('office_id', $this->offices)->get();
+        $this->numbers = DailyNumber::whereIn('office_id', $this->offices)
+            ->whereIn('user_id', $this->users)
+            ->when($this->deleteds, function($query) {
+                $query->withTrashed();
+            })
+            ->get();
     }
 
-    public function updateNumbers(array $regions = [], array $offices = [], array $users = [])
+    public function updateNumbers(array $offices = [], array $users = [], bool $deleteds = false)
     {
-        $this->regions = $regions;
-        $this->offices = $offices;
-        $this->users = $users;
+        $this->offices   = $offices;
+        $this->users     = $users;
+        $this->$deleteds = $deleteds;
         $this->getNumbers();
     }
 
@@ -54,27 +59,28 @@ class NumbersRatios extends Component
     public function getHpsProperty()
     {
         if (isset($this->numbers)) {
-            return $this->numbers->sum('sets') > 0
-                ? number_format($this->numbers->sum('hours') / $this->numbers('sets'), 2)
+            return $this->sets > 0
+                ? number_format($this->numbers->sum('hours') / $this->numbers->sum('sets'), 2)
                 : '-';
         }
     }
 
-    public function getSitRatioProperty()
+    public function getSitRatiosProperty()
     {
         if (isset($this->numbers)) {
-            return $this->numbers['sets'] > 0
-                ? number_format(($this->numbers['sits'] + $this->numbers['setSits']) / $this->sets, 2)
+            return $this->sets > 0
+                ? number_format(($this->numbers->sum('sits') + $this->numbers->sum('setSits')) / $this->sets, 2)
                 : '-';
         }
     }
 
-    public function getCloseProperty()
+    public function getCloseRatioProperty()
     {
-        if (isset($this->totals)) {
-            return $this->totals['sits'] + $this->totals['setSits'] > 0
+        $sitsPlusSetsits = $this->numbers->sum('sits') + $this->numbers->sum('setSits');
+        if (isset($this->numbers)) {
+            return $sitsPlusSetsits > 0
                 ? number_format(
-                    ($this->totals['setCloses'] + $this->totals['closes']) / ($this->totals['sits'] + $this->totals['setSits']),
+                    ($this->numbers->sum('setCloses') + $this->numbers->sum('closes')) / $sitsPlusSetsits,
                     2
                 )
                 : '-';
