@@ -67,9 +67,11 @@
 
     <x-form :route="route('number-tracking.spreadsheet.updateOrCreate')">
         <section class="flex justify-end mt-3 mb-2">
-            <button class="py-2 px-4 focus:outline-none rounded shadow-md text-white bg-green-base" type="submit">
-                Save
-            </button>
+            @if ($this->users->isNotEmpty())
+                <button class="py-2 px-4 focus:outline-none rounded shadow-md text-white bg-green-base" type="submit">
+                    Save
+                </button>
+            @endif
         </section>
 
         @foreach($this->periodsLabel as $key => $label)
