@@ -129,7 +129,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/profile/change-password', ProfileChangePasswordController::class)->name('profile.change-password');
 
     Route::resource('/customers', CustomerController::class)->except('store', 'update')->names('customers');
-    Route::put('/customers/{customer}/active', [CustomerController::class, 'Active'])->name('customers.active');
+    Route::put('/customers/{customer}/active', [CustomerController::class, 'active'])->name('customers.active');
     Route::delete('/customers/{customer}', [CustomerController::class, 'delete'])->name('customers.delete');
     Route::get('/leaderboard', ScoreboardController::class)->name('leaderboard');
     Route::get('/trainings/{department?}/{section?}/{search?}', [TrainingController::class, 'index'])->name('trainings.index');

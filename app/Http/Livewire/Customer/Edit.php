@@ -9,10 +9,13 @@ use App\Models\Financing;
 use App\Models\Rates;
 use App\Models\Term;
 use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Edit extends Component
 {
+    use AuthorizesRequests;
+
     public Customer $customer;
 
     public ?User $setter;
@@ -86,6 +89,7 @@ class Edit extends Component
 
     public function update()
     {
+        $this->authorize('update', $this->customer);
 
         $salesRep   = User::find($this->customer->sales_rep_id);
         $commission = $this->calculateCommission($this->customer);
@@ -120,6 +124,8 @@ class Edit extends Component
 
     public function delete()
     {
+        $this->authorize('update', $this->customer);
+
         $this->customer->delete();
 
         alert()

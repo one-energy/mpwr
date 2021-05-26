@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -9,40 +10,20 @@ class CustomerPolicy
 {
     use HandlesAuthorization;
 
-    public function viewList(User $user)
-    {
-        return true;
-    }
-
     public function create(User $user)
     {
-        if (in_array($user->role, User::TOPLEVEL_ROLES)) {
-            return true;
-        }
-
-        return false;
+        return in_array($user->role, User::TOPLEVEL_ROLES, true);
     }
 
-    public function view(User $user)
+    public function show(User $user, Customer $customer)
     {
-        return true;
+        return $user->is($customer->userSalesRep) ||
+            $user->is($customer->userSetter) ||
+            $user->is($customer->userOpenedBy);
     }
 
-    public function update(User $user)
+    public function update(User $user, Customer $customer)
     {
-        if (in_array($user->role, User::TOPLEVEL_ROLES)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public function delete(User $user)
-    {
-        if (in_array($user->role, User::TOPLEVEL_ROLES)) {
-            return true;
-        }
-
-        return false;
+        return $user->is($customer->userSalesRep) || $user->is($customer->userOpenedBy);
     }
 }
