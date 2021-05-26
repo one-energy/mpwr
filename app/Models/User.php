@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Lab404\Impersonate\Models\Impersonate;
@@ -178,9 +179,24 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(User::class, 'department_manager_id');
     }
 
+    public function customersOfSetter()
+    {
+        return $this->hasMany(Customer::class, 'setter_id');
+    }
+
+    public function customersOfSalesReps()
+    {
+        return $this->hasMany(Customer::class, 'sales_rep_id');
+    }
+
     public function customersOfSalesRepsRecuited()
     {
         return $this->hasMany(Customer::class, 'sales_rep_recruiter_id');
+    }
+
+    public function customersManagedOffice()
+    {
+        return $this->hasMany(Customer::class, 'office_manager_id');
     }
 
     public function customersManagedRegion()
@@ -189,11 +205,6 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     public function customersDepartmentManager()
-    {
-        return $this->belongsTo(Customer::class, 'department_manager_id');
-    }
-
-    public function customersManagedDepartment()
     {
         return $this->hasMany(Customer::class, 'department_manager_id');
     }
@@ -206,6 +217,26 @@ class User extends Authenticatable implements MustVerifyEmail
     public function dailyNumbers()
     {
         return $this->hasMany(DailyNumber::class);
+    }
+
+    public function customersEniumPoints()
+    {
+        return $this->hasMany(UserCustomersEniumPoints::class, 'user_sales_rep_id');
+    }
+
+    public function level()
+    {
+        $eniumPoints = $this->eniumPoints();
+        return UserEniumPointLevel::where('point', '>=', $eniumPoints)->first() ?? UserEniumPointLevel::find(UserEniumPointLevel::LAST_LEVEL);
+    }
+
+    public function eniumPoints()
+    {
+        return $this->customersEniumPoints()->whereHas('customer', function ($query) {
+            $query->where('is_active', true)
+                ->where('panel_sold', true);
+        })->inPeriod()
+        ->sum('points');
     }
 
     public function changePassword($new)
@@ -434,6 +465,33 @@ class User extends Authenticatable implements MustVerifyEmail
     public function hasRole(string $role): bool
     {
         return $this->role === $role;
+    }
+
+    public function stockPoints()
+    {
+        $stockPointsOfSalesRep          = $this->getStockPointsOf($this->customersOfSalesReps());
+        $stockPointsOfSetter            = $this->getStockPointsOf($this->customersOfSetter());
+        $stockPointsOfSalesRepRecruited = $this->getStockPointsOf($this->customersOfSalesRepsRecuited());
+        $stockPointsOfDepartment        = $this->getStockPointsOf($this->customersDepartmentManager());
+        $stockPointsOfRegionManager     = $this->getStockPointsOf($this->customersManagedRegion());
+        $stockPointsOfOfficeManager     = $this->getStockPointsOf($this->customersManagedOffice());
+
+        return (object) [
+            'multiplierOfYear' => MultiplierOfYear::where('year', Carbon::now()->year)->first()->multiplier,
+            'personal'         => $stockPointsOfSalesRep->sum(fn($customer) => $customer->stockPoint->stock_personal_sale),
+            'team'             => $stockPointsOfSetter->sum(fn($customer) => $customer->stockPoint->stock_setting) +
+                                  $stockPointsOfSalesRepRecruited->sum(fn($customer) => $customer->stockPoint->stock_recruiter) +
+                                  $stockPointsOfDepartment->sum(fn($customer) => $customer->stockPoint->stock_department) +
+                                  $stockPointsOfRegionManager->sum(fn($customer) => $customer->stockPoint->stock_regional) +
+                                  $stockPointsOfOfficeManager->sum(fn($customer) => $customer->stockPoint->stock_manager) 
+        ];
+    }
+
+    public function getStockPointsOf ($query) 
+    {
+        return $query->whereHas('stockPoint', function ($query) {
+            $query->whereYear('created_at', Carbon::now());
+        })->with('stockPoint')->get();
     }
 
     public function hasAnyRole(array $roles): bool
