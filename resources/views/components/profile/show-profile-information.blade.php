@@ -57,7 +57,7 @@
         </div>
         <div class="flex justify-between grid grid-cols-4 row-gap-1 col-gap-4 border-gray-200 border-2 m-1 p-2 rounded-lg">
             <div class="col-span-4 text-xs text-gray-900">
-                HPS RATIO
+                HWPS RATIO
             </div>
             <div class="col-span-4 text-xl font-bold text-gray-900">
                 @if(user()->dailyNumbers->sum('sets') > 0)
