@@ -87,8 +87,12 @@
                     </x-select>
                 </div>
 
-                <div class="col-span-2 md:col-span-6">
-                    <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc" observation="Sold Price" maxSize="100000"/>
+                <div class="col-span-2 md:col-span-3">
+                    <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc" observation="Sold Price" maxSize="100000" atEnd="Per Watts"/>
+                </div>
+
+                <div class="col-span-2 md:col-span-3">
+                    <x-input-currency label="Total Cost" name="total_cost" maxSize="100000" value="{{$customer->totalSoldPrice}}" readonly/>
                 </div>
 
                 <div class="col-span-2 md:col-span-3" wire:ignore>
@@ -130,7 +134,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-2">
-                    <x-input-currency wire:model="grossRepComission" label="Gross Rep Comission" name="grossRepComission" type="number" readonly/>
+                    <x-input-currency wire:model="grossRepComission" label="Gross Rep Comission" name="grossRepComission" readonly/>
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
@@ -138,7 +142,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
-                    <x-input-currency wire:model="customer.sales_rep_comission" label="Net Rep Commisson" name="customer.sales_rep_comission" step="0.01" type="number" readonly/>
+                    <x-input-currency wire:model="netRepComission" label="Net Rep Commisson" name="net_rep_commission" step="0.01" type="number" readonly/>
                 </div>
 
                 <div class="col-span-2">
@@ -146,7 +150,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1 @if($customer->financer_id != 1) hidden @endif ">
-                    <x-input wire:model="customer.enium_points" label="Noble Pay Points" name="customer.enium_points" readonly/>
+                    <x-input label="Noble Pay Points" name="enium_points" value="{{$customer->salesEniumPoint}}" readonly/>
                 </div>
             </div>
 

@@ -18,7 +18,7 @@ use Tests\TestCase;
 
 class CustomerTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     public User $user;
 
@@ -301,7 +301,7 @@ class CustomerTest extends TestCase
         $customer->sales_rep_fee = 3.1;
         $customer->calcComission();
 
-        $this->assertEquals($customer->sales_rep_comission, 6000.00);
+        $this->assertEquals($customer->sales_rep_comission, 13950.00);
     }
 
     /** @test */
@@ -366,6 +366,7 @@ class CustomerTest extends TestCase
             ->set('customer.sales_rep_comission', 0)
             ->set('stockPoints', 0)
             ->set('grossRepComission', 0)
+            ->set('customer.margin', 0)
             ->call('store');
 
         $this->assertDatabaseHas('customers', [
@@ -384,4 +385,17 @@ class CustomerTest extends TestCase
             'note_two'                    => 'note two',
         ]);
      }
+
+       /** @test */
+    public function it_should_calculate_margin()
+    {
+        $customer = Customer::factory([
+            'epc'           => 6.5,
+            'setter_fee'    => 2.3,
+            'sales_rep_fee' => 2.6,
+        ])->make();
+        $customer->calcMargin();
+
+        $this->assertEquals($customer->margin, 1.6);
+    }
 }
