@@ -111,7 +111,10 @@ class Spreadsheet extends Component
                 'dailyNumbers' => function ($query) {
                     $query
                         ->where('office_id', $this->selectedOffice)
-                        ->whereIn('date', $this->formattedDatesCollection($this->weeklyPeriods))
+                        ->whereBetween('date', [
+                            today()->subWeeks(3)->startOfWeek()->format('Y-m-d'),
+                            today()->endOfMonth()->format('Y-m-d'),
+                        ])
                         ->orderBy('date', 'asc');
                 },
             ])
