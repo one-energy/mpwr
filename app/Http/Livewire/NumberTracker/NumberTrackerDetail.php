@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\NumberTracker;
 
 use App\Models\DailyNumber;
+use App\Models\Department;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -35,14 +36,19 @@ class NumberTrackerDetail extends Component
 
     public string $selectedPill = 'hours';
 
+    public int $selectedDepartment;
+
     protected $listeners = [
         'sumTotalNumbers',
         'loadingSumNumberTracker',
-        'updateLeaderBoard' => 'updateLeaderBoardCard',
+        'updateLeaderBoard'    => 'getUnselectedCollections',
+        'onSelectedDepartment' => 'changeSelectedDepartment',
     ];
 
     public function mount()
     {
+        $this->selectedDepartment = $this->getDepartmentId();
+
         $this->dateSelected = date('Y-m-d', time());
     }
 
@@ -85,6 +91,12 @@ class NumberTrackerDetail extends Component
         $this->unselectedRegions          = $unselectedRegions;
         $this->unselectedOffices          = $unselectedOffices;
         $this->unselectedUserDailyNumbers = $unselectedUserDailyNumbers;
+    }
+
+    public function changeSelectedDepartment(int $departmentId)
+    {
+        $this->selectedDepartment = $departmentId;
+        $this->topTenTrackers     = $this->getTopTenTrackers();
     }
 
     public function getPillsProperty()
@@ -151,5 +163,12 @@ class NumberTrackerDetail extends Component
         }
 
         return $rawQuery;
+    }
+
+    private function getDepartmentId()
+    {
+        return user()->hasAnyRole(['Admin', 'Owner'])
+            ? Department::oldest('name')->first()->id
+            : (user()->department_id ?? 0);
     }
 }

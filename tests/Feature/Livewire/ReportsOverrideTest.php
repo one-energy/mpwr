@@ -6,7 +6,6 @@ use App\Http\Livewire\Reports\ReportsOverview;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Livewire\Livewire;
@@ -14,7 +13,7 @@ use Tests\TestCase;
 
 class ReportsOverrideTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private User $admin;
     private User $departmentManager;
@@ -91,9 +90,14 @@ class ReportsOverrideTest extends TestCase
     /** @test */
     public function it_should_see_pending_customers()
     {
+        $customer = $this->makeCustomer([
+            'panel_sold' => false,
+            'is_active' => true,
+        ]);
+
         Livewire::test(ReportsOverview::class)
             ->set('departmentId', $this->department->id)
-            ->assertSee($this->customer->first_name);
+            ->assertSee($customer->first_name);
     }
 
     /** @test */
@@ -114,7 +118,9 @@ class ReportsOverrideTest extends TestCase
     public function it_should_calculate_total_commission()
     {
         $this->actingAs($this->setter);
-        $component = Livewire::test(ReportsOverview::class)->call('getUserTotalCommission');
+        $component = Livewire::test(ReportsOverview::class)
+            ->set('selectedStatus', 'installed')
+            ->call('getUserTotalCommission');
         $this->assertSame(100000.0, $component->payload['effects']['returns']['getUserTotalCommission']);
     }
 
@@ -122,7 +128,9 @@ class ReportsOverrideTest extends TestCase
     public function it_should_calculate_sales_rep_total_commission()
     {
         $this->actingAs($this->salesRep);
-        $component = Livewire::test(ReportsOverview::class)->call('getUserTotalCommission');
+        $component = Livewire::test(ReportsOverview::class)
+            ->set('selectedStatus', 'installed')
+            ->call('getUserTotalCommission');
         $this->assertSame(200000.0, $component->payload['effects']['returns']['getUserTotalCommission']);
     }
 
@@ -130,7 +138,9 @@ class ReportsOverrideTest extends TestCase
     public function it_should_calculate_office_manager_total_commission()
     {
         $this->actingAs($this->officeManager);
-        $component = Livewire::test(ReportsOverview::class)->call('getUserTotalCommission');
+        $component = Livewire::test(ReportsOverview::class)
+            ->set('selectedStatus', 'installed')
+            ->call('getUserTotalCommission');
         $this->assertSame(300000.0, $component->payload['effects']['returns']['getUserTotalCommission']);
     }
 
@@ -138,7 +148,9 @@ class ReportsOverrideTest extends TestCase
     public function it_should_calculate_region_manager_total_commission()
     {
         $this->actingAs($this->regionManager);
-        $component = Livewire::test(ReportsOverview::class)->call('getUserTotalCommission');
+        $component = Livewire::test(ReportsOverview::class)
+            ->set('selectedStatus', 'installed')
+            ->call('getUserTotalCommission');
         $this->assertSame(200000.0, $component->payload['effects']['returns']['getUserTotalCommission']);
     }
 
@@ -146,7 +158,9 @@ class ReportsOverrideTest extends TestCase
     public function it_should_calculate_department_manager_total_commission()
     {
         $this->actingAs($this->departmentManager);
-        $component = Livewire::test(ReportsOverview::class)->call('getUserTotalCommission');
+        $component = Livewire::test(ReportsOverview::class)
+            ->set('selectedStatus', 'installed')
+            ->call('getUserTotalCommission');
         $this->assertSame(100000.0, $component->payload['effects']['returns']['getUserTotalCommission']);
     }
 
@@ -155,9 +169,10 @@ class ReportsOverrideTest extends TestCase
     {
         $this->actingAs($this->admin);
         $component = Livewire::test(ReportsOverview::class)
+            ->set('selectedStatus', 'installed')
             ->set('departmentId', $this->department->id)
             ->call('getUserTotalCommission');
-        $this->assertSame(600000.0, $component->payload['effects']['returns']['getUserTotalCommission']);
+        $this->assertSame(900000.0, $component->payload['effects']['returns']['getUserTotalCommission']);
     }
 
     private function makeCustomer($attr)
