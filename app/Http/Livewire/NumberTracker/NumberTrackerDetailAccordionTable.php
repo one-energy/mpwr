@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Components;
+namespace App\Http\Livewire\NumberTracker;
 
 use App\Models\Department;
 use App\Models\Office;
@@ -53,7 +53,7 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function render()
     {
-        return view('livewire.components.number-tracker-detail-accordion-table');
+        return view('livewire.number-tracker.number-tracker-detail-accordion-table');
     }
 
     public function updatedSelectedDepartment()
@@ -100,18 +100,6 @@ class NumberTrackerDetailAccordionTable extends Component
         $this->itsOpenRegions = $this->regions->map(function ($region) {
             $region->itsOpen       = $this->openedRegions->contains($region->id);
             $region->selected      = $this->unselectedRegions->contains($region->id);
-            $region->sortedOffices = $region->offices->map(function ($office) {
-                $office->itsOpen            = $this->openedRegions->contains($office->id);
-                $office->selected           = $this->unselectedOffices->contains($office->id);
-                $office->totalSelected      = false;
-                $office->sortedDailyNumbers = $office->dailyNumbers->map(function ($dailyNumberUser) {
-                    $dailyNumberUser->selected = $this->unselectedOffices->contains($dailyNumberUser->id);
-
-                    return $dailyNumberUser;
-                })->toArray();
-
-                return $office;
-            })->toArray();
 
             return $region;
         })->toArray();
@@ -119,57 +107,15 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function getRegionsProperty()
     {
-        $regions = Region::query()
-            ->when($this->deleteds, function ($query) {
-                $query->withTrashed();
-            })->with([
-                'offices' => function ($query) {
-                    $query->when($this->deleteds, function ($query) {
-                        $query->withTrashed()
-                            ->where(function ($query) {
-                                $query->whereHas('dailyNumbers', function ($query) {
-                                    $query->inPeriod($this->period,
-                                        new Carbon($this->selectedDate))->withTrashed();
-                                })
-                                    ->whereNotNull('deleted_at');
-                            })
-                            ->orWhereNull('deleted_at');
-                    })
-                        ->with([
-                            'dailyNumbers' => function ($query) {
-                                $query->with([
-                                    'user' => function ($query) {
-                                        $query->when($this->deleteds, function ($query) {
-                                            $query->withTrashed();
-                                        });
-                                    },
-                                ])
-                                    ->when($this->deleteds, function ($query) {
-                                        $query->withTrashed();
-                                    })
-                                    ->when(!$this->deleteds, function ($query) {
-                                        $query->has('user');
-                                    })
-                                    ->inPeriod($this->period, new Carbon($this->selectedDate))
-                                    ->groupBy('user_id')
-                                    ->selectRaw('*')
-                                    ->selectRaw('SUM(doors) as doors')
-                                    ->selectRaw('SUM(hours) as hours')
-                                    ->selectRaw('SUM(sets) as sets')
-                                    ->selectRaw('SUM(set_sits) as set_sits')
-                                    ->selectRaw('SUM(sits) as sits')
-                                    ->selectRaw('SUM(set_closes) as set_closes')
-                                    ->selectRaw('SUM(closes) as closes')
-                                    ->selectRaw('SUM(hours_worked) as hours_worked')
-                                    ->selectRaw('SUM(hours_knocked) as hours_knocked')
-                                    ->selectRaw('SUM(sats) as sats')
-                                    ->selectRaw('SUM(closer_sits) as closer_sits');
-                            },
-                        ]);
-                },
-            ])
+        $regions = Region::withSum("offices")
+            ->when($this->deleteds, function ($query) {   
+                $query->has("offices.dailyNumbers")->withTrashed();
+            })
             ->where('department_id', $this->selectedDepartment)
+            ->with('offices.dailyNumbers')
             ->get();
+
+        dd($regions);
 
         if ($this->deleteds) {
             $regions = $this->getRegionsThatHasDailyNumbers($regions);
@@ -541,23 +487,6 @@ class NumberTrackerDetailAccordionTable extends Component
         return collect(
             $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedDailyNumbers']
         )->every(fn($dailyNumber) => $dailyNumber['selected']);
-    }
-
-    private function getRegionsThatHasDailyNumbers(Collection $regions)
-    {
-        return $regions->filter(function (Region $region) {
-            if ($region->deleted_at !== null && $region->offices->isEmpty()) {
-                return false;
-            }
-
-            if ($region->deleted_at !== null && $region->offices->isNotEmpty()) {
-                return $region->offices
-                        ->filter(fn(Office $office) => $office->dailyNumbers->isNotEmpty())
-                        ->count() > 0;
-            }
-
-            return true;
-        })->values();
     }
 
     private function extractOfficeAndUser(array $itsOpenRegions)
