@@ -20,10 +20,14 @@ class NumbersRatios extends Component
 
     public Carbon $date;
 
-    protected $listeners = ['updateNumbers'];
+    protected $listeners = [
+        'setDateOrPeriod',
+        'updateNumbers'
+    ];
 
     public function mount()
     {
+        $this->date = today();
         $this->getNumbers();
     }
 
@@ -46,6 +50,12 @@ class NumbersRatios extends Component
         $this->offices   = collect($payload["offices"])->unique()->values()->toArray();
         $this->users     = collect($payload["users"])->unique()->values()->toArray();
         $this->getNumbers();
+    }
+
+    public function setDateOrPeriod($date, $period)
+    {
+        $this->period = $period;
+        $this->date   = new Carbon($date);
     }
 
     public function getDpsProperty()
