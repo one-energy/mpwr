@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\NumberTracker;
 
 use App\Models\DailyNumber;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
@@ -13,7 +14,11 @@ class NumbersRatios extends Component
 
     public array $users   = [];
 
+    public string $period = 'd';
+
     public $numbers;
+
+    public Carbon $date;
 
     protected $listeners = ['updateNumbers'];
 
@@ -31,14 +36,15 @@ class NumbersRatios extends Component
     {
         $this->numbers = DailyNumber::whereIn('office_id', $this->offices)
             ->whereIn('user_id', $this->users)
+            ->inPeriod($this->period, $this->date)
             ->withTrashed()
             ->get();
     }
 
-    public function updateNumbers(array $offices = [], array $users = [])
+    public function updateNumbers($payload)
     {
-        $this->offices   = $offices;
-        $this->users     = $users;
+        $this->offices   = collect($payload["offices"])->unique()->values()->toArray();
+        $this->users     = collect($payload["users"])->unique()->values()->toArray();
         $this->getNumbers();
     }
 
