@@ -41,16 +41,17 @@ class TotalOverview extends Component
 
     public function setDateOrPeriod($date, $period)
     {
-        $this->period  = $period;
-        $this->date    = new Carbon($date);
+        $this->period = $period;
+        $this->date   = new Carbon($date);
+
         $this->users   = [];
         $this->offices = [];
     }
 
     public function updateNumbers($payload)
     {
-        $this->users       = collect($payload['users'])->unique()->toArray();
-        $this->offices     = collect($payload['offices'])->unique()->toArray();
+        $this->users       = collect($payload['users'])->unique()->values()->toArray();
+        $this->offices     = collect($payload['offices'])->unique()->values()->toArray();
         $this->withTrashed = $payload['withTrashed'];
     }
 
@@ -81,11 +82,6 @@ class TotalOverview extends Component
     public function sumDailyNumbersBy(string $field)
     {
         return $this->dailyNumbers->sum($this->formatString($field));
-    }
-
-    public function sumLastDailyNumbersBy(string $field)
-    {
-        return $this->lastDailyNumbers->sum($this->formatString($field));
     }
 
     public function differenceFromLastDailyNumbersBy(string $field)
