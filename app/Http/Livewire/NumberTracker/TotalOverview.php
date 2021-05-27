@@ -58,7 +58,7 @@ class TotalOverview extends Component
             ->when($this->withTrashed, fn($query) => $query->withTrashed())
             ->whereIn('user_id', $this->users)
             ->whereIn('office_id', $this->offices)
-            ->inPeriod($this->period, $this->date)
+            ->inPeriod($this->period, new Carbon($this->date))
             ->get();
     }
 
@@ -66,8 +66,9 @@ class TotalOverview extends Component
     {
         return DailyNumber::query()
             ->when($this->withTrashed, fn($query) => $query->withTrashed())
+            ->whereIn('user_id', $this->users)
             ->whereIn('office_id', $this->offices)
-            ->inPeriod($this->period, $this->date)
+            ->inLastPeriod($this->period, new Carbon($this->date))
             ->get();
     }
 
