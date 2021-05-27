@@ -31,6 +31,7 @@ class NumbersRatios extends Component
     {
         $this->numbers = DailyNumber::whereIn('office_id', $this->offices)
             ->whereIn('user_id', $this->users)
+            ->withTrashed()
             ->get();
     }
 

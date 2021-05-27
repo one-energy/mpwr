@@ -132,8 +132,7 @@ class RatiosComponentTest extends TestCase
         Livewire::test(NumbersRatios::class)
             ->emit("updateNumbers", $officeArray, $userArray, $deleted)
             ->assertSet('offices', $officeArray)
-            ->assertSet('users', $userArray)
-            ->assertSet('deleteds', $deleted);
+            ->assertSet('users', $userArray);
     }
 
     /** @test */
@@ -196,20 +195,21 @@ class RatiosComponentTest extends TestCase
     }
 
     /** @test */
-    public function it_should_sum_when_deleted()
+    public function it_should_sum_deleteds()
     {
         $this->officeTwo->delete();
         $this->jhon->delete();
         $this->jhonEntry->delete();
 
-        $officeArray = [$this->office->id];
-        $userArray   = [$this->dptManager->id, $this->regionManager->id, $this->officeManager->id];
+        $officeArray = [$this->office->id, $this->officeTwo->id];
+        $userArray   = [$this->dptManager->id, $this->regionManager->id, $this->officeManager->id, $this->jhon->id];
 
-        $dailyEntries = [$this->dptManagerEntry, $this->regionManagerEntry, $this->officeManagerEntry];
+        $sumDoors = $this->dptManagerEntry->doors + $this->regionManagerEntry->doors + $this->officeManagerEntry->doors + $this->jhonEntry->doors;
+        $sumSets = $this->dptManagerEntry->sets + $this->regionManagerEntry->sets + $this->officeManagerEntry->sets + $this->jhonEntry->sets;
 
         Livewire::test(NumbersRatios::class)
-            ->emit("updateNumbers", $officeArray, $userArray, true)
-            ->assertSet("numbers", $dailyEntries);
+            ->emit("updateNumbers", $officeArray, $userArray)
+            ->assertSee(round($sumDoors/$sumSets, 2));
     }
 
     /** @test */
