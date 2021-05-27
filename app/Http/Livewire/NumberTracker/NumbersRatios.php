@@ -4,12 +4,10 @@ namespace App\Http\Livewire\NumberTracker;
 
 use App\Models\DailyNumber;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 use Livewire\Component;
 
 class NumbersRatios extends Component
 {
-
     public array $offices = [];
 
     public array $users   = [];
@@ -22,7 +20,7 @@ class NumbersRatios extends Component
 
     protected $listeners = [
         'setDateOrPeriod',
-        'updateNumbers'
+        'updateNumbers',
     ];
 
     public function mount()
@@ -47,8 +45,8 @@ class NumbersRatios extends Component
 
     public function updateNumbers($payload)
     {
-        $this->offices   = collect($payload["offices"])->unique()->values()->toArray();
-        $this->users     = collect($payload["users"])->unique()->values()->toArray();
+        $this->offices   = collect($payload['offices'])->unique()->values()->toArray();
+        $this->users     = collect($payload['users'])->unique()->values()->toArray();
         $this->getNumbers();
     }
 
