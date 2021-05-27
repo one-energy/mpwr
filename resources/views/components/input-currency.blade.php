@@ -1,4 +1,4 @@
-@props(['label', 'name', 'value', 'tooltip', 'observation', 'disabledToUser', 'maxSize' => 100000, 'disabled', 'wire' => null])
+@props(['label', 'name', 'value', 'tooltip', 'observation', 'disabledToUser', 'maxSize' => 100000, 'disabled', 'atEnd' => 'USD', 'wire' => null])
 
 @php
     $class = 'form-input block w-full pl-7 pr-12 sm:text-sm sm:leading-5';
@@ -44,7 +44,7 @@
 
         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
             <span class="text-gray-500 sm:text-sm sm:leading-5">
-                USD
+                {{$atEnd}}
             </span>
         </div>
 

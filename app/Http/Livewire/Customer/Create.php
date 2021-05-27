@@ -9,7 +9,9 @@ use App\Models\Financing;
 use App\Models\Rates;
 use App\Models\Term;
 use App\Models\User;
+use App\Models\UserCustomersEniumPoints;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Create extends Component
@@ -18,7 +20,9 @@ class Create extends Component
 
     public int $departmentId;
 
-    public int $grossRepComission;
+    public float $grossRepComission;
+
+    public float $netRepComission;
 
     public int $stockPoints = 250;
 
@@ -39,7 +43,7 @@ class Create extends Component
         'customer.last_name'           => ['required', 'string', 'max:255'],
         'customer.system_size'         => 'required',
         'customer.bill'                => 'required',
-        'customer.adders'              => 'required',
+        'customer.adders'              => ['required', 'min:0'],
         'customer.date_of_sale'        => 'required',
         'customer.epc'                 => 'required',
         'customer.financing_id'        => 'required',
@@ -66,7 +70,8 @@ class Create extends Component
             $this->departmentId = Department::first()->id;
         }
 
-        $this->customer = new Customer();
+        $this->customer         = new Customer();
+        $this->customer->adders = 0;
         if ((user()->role == 'Office Manager' || user()->role == 'Sales Rep' || user()->role == 'Setter') && user()->office_id != null) {
             $this->customer->sales_rep_id  = user()->id;
             $this->customer->sales_rep_fee = $this->getUserRate(user()->id);
@@ -80,6 +85,7 @@ class Create extends Component
         $this->customer->calcComission();
         $this->customer->calcMargin();
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
+        $this->netRepComission   = $this->calculateNetRepCommission();
         $this->salesReps         = user()->getPermittedUsers($this->departmentId)->toArray();
         $this->setters           = User::whereDepartmentId($this->departmentId)
                                 ->where('id', '!=', user()->id)
@@ -107,7 +113,15 @@ class Create extends Component
     public function store()
     {
 
+        $this->customer->financing_id = $this->customer->financing_id != "" ? $this->customer->financing_id : null;
+        $this->customer->financer_id = $this->customer->financer_id != "" ? $this->customer->financer_id : null;
+        $this->customer->term_id = $this->customer->term_id != "" ? $this->customer->term_id : null;
+        
+        $this->validate();
+
         $salesRep = User::find($this->customer->sales_rep_id);
+
+        $this->validate();
 
         $this->customer->date_of_sale                = Carbon::parse($this->customer->date_of_sale);
         $this->customer->opened_by_id                = user()->id;
@@ -125,10 +139,7 @@ class Create extends Component
         $this->customer->misc_override_two           = $salesRep->misc_override_two;
         $this->customer->payee_two                   = $salesRep->payee_two;
         $this->customer->note_two                    = $salesRep->note_two;
-        $this->customer->financing_id = $this->customer->financing_id != "" ? $this->customer->financing_id : null;
-        $this->customer->financer_id = $this->customer->financer_id != "" ? $this->customer->financer_id : null;
-        $this->customer->term_id = $this->customer->term_id != "" ? $this->customer->term_id : null;
-        $this->validate();
+
         $this->customer->save();
 
         alert()
@@ -154,6 +165,11 @@ class Create extends Component
     public function setSelfGen()
     {
         $this->customer->setter_fee = 0;
+    }
+
+    public function calculateNetRepCommission()
+    {
+        return (float) $this->grossRepComission - (float) $this->customer->adders;
     }
 
     public function getSetterFee()
@@ -198,11 +214,9 @@ class Create extends Component
 
     public function calculateGrossRepComission(Customer $customer)
     {
-        if ( $customer->margin >= 0 && $customer->system_size >= 0 ) {
-            return floatval($customer->margin) * floatval($customer->system_size) * 1000;
+        if ( $customer->margin >= 0 && $customer->system_size >= 0 ) {  
+            return round((float) $customer->margin * (float) $customer->system_size * Customer::K_WATTS, 2);
         }
-  
-        return 0;
         
         return 0;
     }

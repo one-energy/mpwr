@@ -72,9 +72,17 @@
 
         slider.addEventListener('mouseleave', () => isDown = false);
         slider.addEventListener('mouseup', () => isDown = false);
+        slider.addEventListener('touchend', () => isDown = false);
+        slider.addEventListener('touchcancel', () => isDown = false);
 
         slider.addEventListener('mousedown', (event) => {
             startX = event.pageX - slider.offsetLeft;
+            scrollLeft = slider.scrollLeft;
+            isDown = true;
+        });
+
+        slider.addEventListener('touchstart', (event) => {
+            startX = event.touches[0].pageX - slider.offsetLeft;
             scrollLeft = slider.scrollLeft;
             isDown = true;
         });
@@ -83,10 +91,26 @@
             if (!isDown) return;
 
             event.preventDefault();
-            const x = event.pageX - slider.offsetLeft;
-            const walk = (x - startX) * 2;
 
-            slider.scrollLeft = scrollLeft - walk;
+            const position = walk(event.pageX, slider.offsetLeft);
+
+            slider.scrollLeft = scrollLeft - position;
         });
+
+        slider.addEventListener('touchmove', (event) => {
+            if (!isDown) return;
+
+            event.preventDefault();
+
+            const position = walk(event.touches[0].pageX, slider.offsetLeft);
+
+            slider.scrollLeft = scrollLeft - position;
+        });
+
+        function walk(pageX, sliderOffset) {
+            const x = pageX - sliderOffset;
+
+            return (x - startX) * 2;
+        }
     </script>
 @endpush

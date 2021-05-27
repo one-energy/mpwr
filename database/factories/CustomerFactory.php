@@ -14,7 +14,7 @@ class CustomerFactory extends Factory
 
     public function definition()
     {
-        $epc        = $this->faker->randomFloat(2, 1, 1000);
+        $epc        = $this->faker->randomFloat(2, 1, 8000);
         $pay        = $epc * 0.8;
         $setterFee  = $pay * 0.2;
         $systemSize = 20;
