@@ -24,14 +24,9 @@ class TotalOverviewTest extends TestCase
         $this->actingAs($john);
 
         Livewire::test(TotalOverview::class)
-            ->set('users', [1, 2, 3])
-            ->set('offices', [1, 2, 3])
-            ->assertSet('period', 'd')
-            ->assertSet('date', today())
-            ->call('setDateOrPeriod', today()->subDay(), 'w')
+            ->emit('setDateOrPeriod', today()->format('Y-m-d'), 'w')
             ->assertSet('period', 'w')
-            ->assertSet('users', [])
-            ->assertSet('offices', []);
+            ->assertSet('date', today());
     }
 
     /** @test */
@@ -44,7 +39,7 @@ class TotalOverviewTest extends TestCase
             ->set('users', [1, 2, 3])
             ->set('offices', [1, 2, 3])
             ->assertSet('withTrashed', false)
-            ->call('updateNumbers', [
+            ->emit('updateNumbers', [
                 'users'       => [1, 1, 1, 3, 4],
                 'offices'     => [4, 4, 4, 3, 4],
                 'withTrashed' => true
@@ -124,20 +119,25 @@ class TotalOverviewTest extends TestCase
         $this->actingAs($john);
 
         $this->createDailyNumbers(10, [
-            'date' => today()->startOfMonth()->format('Y-m-d')
+            'date' => today()->subMonth()->format('Y-m-d')
         ]);
+
+        /** @var Collection $users */
+        $users = User::query()->whereNotIn('id', [$john->id])->get();
 
         /** @var Collection $offices */
         $offices = Office::all();
 
         $dailyNumbers = DailyNumber::query()
+            ->whereIn('user_id', $users->pluck('id')->toArray())
             ->whereIn('office_id', $offices->pluck('id')->toArray())
-            ->inPeriod('m', today())
+            ->inLastPeriod('m', today())
             ->get();
 
         Livewire::test(TotalOverview::class)
             ->set('period', 'm')
             ->set('date', today())
+            ->set('users', $users->pluck('id')->toArray())
             ->set('offices', $offices->pluck('id')->toArray())
             ->assertSet('lastDailyNumbers', $dailyNumbers);
     }
@@ -149,15 +149,19 @@ class TotalOverviewTest extends TestCase
         $this->actingAs($john);
 
         $this->createDailyNumbers(10, [
-            'date' => today()->startOfMonth()->format('Y-m-d')
+            'date' => today()->subMonth()->format('Y-m-d')
         ]);
+
+        /** @var Collection $users */
+        $users = User::query()->whereNotIn('id', [$john->id])->get();
 
         /** @var Collection $offices */
         $offices = Office::all();
 
         $dailyNumbers = DailyNumber::query()
+            ->whereIn('user_id', $users->pluck('id')->toArray())
             ->whereIn('office_id', $offices->pluck('id')->toArray())
-            ->inPeriod('m', today())
+            ->inLastPeriod('m', today())
             ->get();
 
         $dailyNumbers->first()->delete();
@@ -166,6 +170,7 @@ class TotalOverviewTest extends TestCase
             ->set('period', 'm')
             ->set('date', today())
             ->set('withTrashed', true)
+            ->set('users', $users->pluck('id')->toArray())
             ->set('offices', $offices->pluck('id')->toArray())
             ->assertSet('lastDailyNumbers', $dailyNumbers);
     }
