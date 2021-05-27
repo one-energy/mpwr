@@ -26,7 +26,7 @@ class TotalOverview extends Component
 
     protected $listeners = [
         'setDateOrPeriod',
-        'updateNumbers'
+        'updateNumbers',
     ];
 
     public function mount()
@@ -43,9 +43,6 @@ class TotalOverview extends Component
     {
         $this->period = $period;
         $this->date   = new Carbon($date);
-
-        $this->users   = [];
-        $this->offices = [];
     }
 
     public function updateNumbers($payload)
