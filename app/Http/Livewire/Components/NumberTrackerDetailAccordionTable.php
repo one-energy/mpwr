@@ -456,44 +456,6 @@ class NumberTrackerDetailAccordionTable extends Component
         }
     }
 
-    public function getDps()
-    {
-        if (isset($this->totals)) {
-            return $this->totals['sets'] > 0
-                ? number_format($this->totals['doors'] / $this->totals['sets'], 2)
-                : '-';
-        }
-    }
-
-    public function getHps()
-    {
-        if (isset($this->totals)) {
-            return $this->totals['sets'] > 0
-                ? number_format($this->totals['hours'] / $this->totals['sets'], 2)
-                : '-';
-        }
-    }
-
-    public function getSitRatio()
-    {
-        if (isset($this->totals)) {
-            return $this->totals['sets'] > 0
-                ? number_format(($this->totals['sits'] + $this->totals['setSits']) / $this->totals['sets'], 2)
-                : '-';
-        }
-    }
-
-    public function getCloseRatio()
-    {
-        if (isset($this->totals)) {
-            return $this->totals['sits'] + $this->totals['setSits'] > 0
-                ? number_format(
-                    ($this->totals['setCloses'] + $this->totals['closes']) / ($this->totals['sits'] + $this->totals['setSits']),
-                    2
-                )
-                : '-';
-        }
-    }
 
     public function getNumberTrackerSumOf($property)
     {
