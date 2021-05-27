@@ -13,8 +13,6 @@ class NumbersRatios extends Component
 
     public array $users   = [];
 
-    public bool $deleteds = false;
-
     public $numbers;
 
     protected $listeners = ['updateNumbers'];
@@ -33,17 +31,13 @@ class NumbersRatios extends Component
     {
         $this->numbers = DailyNumber::whereIn('office_id', $this->offices)
             ->whereIn('user_id', $this->users)
-            ->when($this->deleteds, function($query) {
-                $query->withTrashed();
-            })
             ->get();
     }
 
-    public function updateNumbers(array $offices = [], array $users = [], bool $deleteds = false)
+    public function updateNumbers(array $offices = [], array $users = [])
     {
         $this->offices   = $offices;
         $this->users     = $users;
-        $this->deleteds = $deleteds;
         $this->getNumbers();
     }
 
@@ -60,7 +54,7 @@ class NumbersRatios extends Component
     {
         if (isset($this->numbers)) {
             return $this->sets > 0
-                ? number_format($this->numbers->sum('hours') / $this->numbers->sum('sets'), 2)
+                ? number_format($this->numbers->sum('hours_worked') / $this->numbers->sum('sets'), 2)
                 : '-';
         }
     }
@@ -69,18 +63,18 @@ class NumbersRatios extends Component
     {
         if (isset($this->numbers)) {
             return $this->sets > 0
-                ? number_format(($this->numbers->sum('sits') + $this->numbers->sum('setSits')) / $this->sets, 2)
+                ? number_format(($this->numbers->sum('sits') + $this->numbers->sum('set_sits')) / $this->sets, 2)
                 : '-';
         }
     }
 
     public function getCloseRatioProperty()
     {
-        $sitsPlusSetsits = $this->numbers->sum('sits') + $this->numbers->sum('setSits');
+        $sitsPlusSetsits = $this->numbers->sum('sits') + $this->numbers->sum('set_sits');
         if (isset($this->numbers)) {
             return $sitsPlusSetsits > 0
                 ? number_format(
-                    ($this->numbers->sum('setCloses') + $this->numbers->sum('closes')) / $sitsPlusSetsits,
+                    ($this->numbers->sum('set_closes') + $this->numbers->sum('closes')) / $sitsPlusSetsits,
                     2
                 )
                 : '-';
