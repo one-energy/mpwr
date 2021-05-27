@@ -24,6 +24,11 @@ class RegionBuilder
         ], $attributes));
     }
 
+    public static function make($attributes = [])
+    {
+        return new RegionBuilder($attributes);
+    }
+
     public function withDepartment($department)
     {
         $this->region->department_id = $department->id;

@@ -98,12 +98,12 @@ class NumberTrackerDetailAccordionTable extends Component
     public function addItsOpen()
     {
         $this->itsOpenRegions = $this->regions->map(function ($region) {
-            $region->itsOpen  = $this->openedRegions->contains($region->id);
-            $region->selected = $this->unselectedRegions->contains($region->id);
+            $region->itsOpen       = $this->openedRegions->contains($region->id);
+            $region->selected      = $this->unselectedRegions->contains($region->id);
             $region->sortedOffices = $region->offices->map(function ($office) {
-                $office->itsOpen = $this->openedRegions->contains($office->id);
-                $office->selected = $this->unselectedOffices->contains($office->id);
-                $office->totalSelected = false;
+                $office->itsOpen            = $this->openedRegions->contains($office->id);
+                $office->selected           = $this->unselectedOffices->contains($office->id);
+                $office->totalSelected      = false;
                 $office->sortedDailyNumbers = $office->dailyNumbers->map(function ($dailyNumberUser) {
                     $dailyNumberUser->selected = $this->unselectedOffices->contains($dailyNumberUser->id);
 
@@ -290,6 +290,15 @@ class NumberTrackerDetailAccordionTable extends Component
                 );
             }
         }
+
+        $result = $this->extractOfficeAndUser($this->itsOpenRegions);
+
+        $this->emit('updateNumbers', [
+            'users'       => $result->pluck('user_id'),
+            'offices'     => $result->pluck('office_id'),
+            'withTrashed' => $this->deleteds,
+        ]);
+
         $this->sumTotal();
     }
 
@@ -326,6 +335,14 @@ class NumberTrackerDetailAccordionTable extends Component
             $this->itsOpenRegions[$regionIndex]['id'],
             !$this->itsOpenRegions[$regionIndex]['selected']
         );
+
+        $result = $this->extractOfficeAndUser($this->itsOpenRegions);
+
+        $this->emit('updateNumbers', [
+            'users'       => $result->pluck('user_id'),
+            'offices'     => $result->pluck('office_id'),
+            'withTrashed' => $this->deleteds,
+        ]);
 
         $this->sumTotal();
     }
@@ -371,6 +388,14 @@ class NumberTrackerDetailAccordionTable extends Component
         );
 
         $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['totalSelected'] = $this->allDailyNumbersAreSelected($regionIndex, $officeIndex);
+
+        $result = $this->extractOfficeAndUser($this->itsOpenRegions);
+
+        $this->emit('updateNumbers', [
+            'users'       => $result->pluck('user_id'),
+            'offices'     => $result->pluck('office_id'),
+            'withTrashed' => $this->deleteds,
+        ]);
 
         $this->sumTotal();
     }
@@ -504,7 +529,7 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function toggleOffices($regionIndex, $officeIndex)
     {
-        $office  = $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex];
+        $office = $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex];
 
         $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['selected'] = $office['totalSelected'];
 
@@ -515,7 +540,7 @@ class NumberTrackerDetailAccordionTable extends Component
     {
         return collect(
             $this->itsOpenRegions[$regionIndex]['sortedOffices'][$officeIndex]['sortedDailyNumbers']
-        )->every(fn ($dailyNumber) => $dailyNumber['selected']);
+        )->every(fn($dailyNumber) => $dailyNumber['selected']);
     }
 
     private function getRegionsThatHasDailyNumbers(Collection $regions)
@@ -527,11 +552,34 @@ class NumberTrackerDetailAccordionTable extends Component
 
             if ($region->deleted_at !== null && $region->offices->isNotEmpty()) {
                 return $region->offices
-                    ->filter(fn(Office $office) => $office->dailyNumbers->isNotEmpty())
-                    ->count() > 0;
+                        ->filter(fn(Office $office) => $office->dailyNumbers->isNotEmpty())
+                        ->count() > 0;
             }
 
             return true;
         })->values();
+    }
+
+    private function extractOfficeAndUser(array $itsOpenRegions)
+    {
+        return collect($itsOpenRegions)
+            ->filter(fn($region) => $region['selected'])
+            ->map(function ($region) {
+                return collect($region['sortedOffices'])
+                    ->filter(fn($office) => $office['selected'])
+                    ->map(function ($office) {
+                        return collect($office['sortedDailyNumbers'])
+                            ->filter(fn($dailyNumber) => $dailyNumber['selected'])
+                            ->map(function ($dailyNumber) {
+                                return [
+                                    'user_id'   => $dailyNumber['user_id'],
+                                    'office_id' => $dailyNumber['office_id'],
+                                ];
+                            });
+                    })
+                    ->filter();
+            })
+            ->filter()
+            ->flatten(2);
     }
 }
