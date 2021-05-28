@@ -45,6 +45,9 @@ class RegionRow extends Component
         if ($this->isAllOfficesSelecteds()) {
             $this->itsSelected == true;
         }
+        if ($this->quantintyOfficesSelected == 0) {
+            $this->itsSelected == false;
+        }
     }
 
     public function isAllOfficesSelecteds()
