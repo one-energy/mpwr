@@ -2,9 +2,9 @@
     <div class="grid grid-cols-12 cursor-pointer hover:bg-gray-100 @if($itsOpen)) bg-gray-200 @endif"
             wire:click="collapseRegion()" >
         <x-table-accordion.default-td-arrow class="col-span-4" :open="$region['itsOpen']">
-            <div class="flex" x-data wire:loading.remove wire:key="{{$region['id']}}">
+            <div class="flex" x-data wire:key="region-{{$region->id}}">
                 <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
-                        wire:model="itsOpenRegions.{{$region['id']}}.selected"
+                        wire:model="itsSelected"
                         type="checkbox" x-on:change="$wire.selectRegion({{$region['id']}})" wire:click.stop="" >
             </div>
             <div class="flex items-center mr-2 w-6 h-6" wire:loading>

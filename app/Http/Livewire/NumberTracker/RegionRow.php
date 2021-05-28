@@ -9,7 +9,11 @@ class RegionRow extends Component
 {
     public Region $region;
 
+    public bool $itsSelected = false;
+
     public bool $itsOpen = false;
+
+    public int $quantintyOfficesSelected = 0;
 
     public function render()
     {
@@ -33,6 +37,19 @@ class RegionRow extends Component
     public function getOfficesProperty()
     {
         return $this->region->offices;
+    }
+
+    public function anyOfficeSelected()
+    {
+        $this->quantintyOfficesSelected++;
+        if ($this->isAllOfficesSelecteds()) {
+            $this->itsSelected == true;
+        }
+    }
+
+    public function isAllOfficesSelecteds()
+    {
+        return ($this->region->offices->count() == $this->quantintyOfficesSelected) && $this->quantintyOfficesSelected > 0;
     }
 
 }
