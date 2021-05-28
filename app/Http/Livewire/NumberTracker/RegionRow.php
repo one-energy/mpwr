@@ -2,11 +2,14 @@
 
 namespace App\Http\Livewire\NumberTracker;
 
+use App\Models\Region;
 use Livewire\Component;
 
 class RegionRow extends Component
 {
-    public $region;
+    public Region $region;
+
+    public bool $itsOpen = false;
 
     public function mount()
     {
@@ -18,18 +21,16 @@ class RegionRow extends Component
         return view('livewire.number-tracker.region-row');
     }
 
-    public function sumRegionNumberTracker($region, $field, $filterBySelected = false)
+    public function sumOf($property)
     {
-        $sum    = 0;
-        $region = (object)$region;
-        if ($region->selected || !$filterBySelected) {
-            $collectOffice = $this->getCollectionOf($region->sortedOffices);
-            $sum           = $collectOffice->sum(function ($office) use ($filterBySelected, $field) {
-                return $this->sumOfficeNumberTracker($office, $field, $filterBySelected);
-            });
-        }
+        $sum = $this->region->offices->sum($property);
 
-        return $sum;
+        return $sum > 0 ? $sum :  html_entity_decode('&#8212;');
+    }
+
+    public function collapseRegion()
+    {
+        $this->itsOpen = !$this->itsOpen;
     }
 
 }

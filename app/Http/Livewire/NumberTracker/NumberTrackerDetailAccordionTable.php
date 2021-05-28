@@ -107,19 +107,22 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function getRegionsProperty()
     {
-        $regions = Region::withSum("offices")
-            ->when($this->deleteds, function ($query) {   
+        $regions = Region::when($this->deleteds, function ($query) {   
                 $query->has("offices.dailyNumbers")->withTrashed();
             })
             ->where('department_id', $this->selectedDepartment)
-            ->with('offices.dailyNumbers')
+            ->with('offices', function($query) {
+                $query->withSum('dailyNumbers', 'hours_worked');
+                $query->withSum('dailyNumbers', 'hours_knocked');
+                $query->withSum('dailyNumbers', 'doors');
+                $query->withSum('dailyNumbers', 'sets');
+                $query->withSum('dailyNumbers', 'set_sits');
+                $query->withSum('dailyNumbers', 'sats');
+                $query->withSum('dailyNumbers', 'set_closes');
+                $query->withSum('dailyNumbers', 'set_closes');
+                $query->withSum('dailyNumbers', 'closes');
+            })
             ->get();
-
-        dd($regions);
-
-        if ($this->deleteds) {
-            $regions = $this->getRegionsThatHasDailyNumbers($regions);
-        }
 
         if ($this->sortDirection === 'asc') {
             return $regions->sortBy(function ($region) {
@@ -173,28 +176,10 @@ class NumberTrackerDetailAccordionTable extends Component
         })->toArray();
     }
 
-    public function collapseRegion(int $regionIndex)
+    public function collapseRegion()
     {
-        $collectionOffices = collect($this->itsOpenRegions[$regionIndex]['sortedOffices']);
-        if ($this->sortDirection === 'asc') {
-            $this->itsOpenRegions[$regionIndex]['sortedOffices'] = $collectionOffices->sortBy(function ($office) {
-                $collectionDailyNumbers = collect($office['daily_numbers']);
-
-                return $office['sortedDailyNumbers'] ? $collectionDailyNumbers->sum($this->sortBy) : 0;
-            })->values();
-        } else {
-            $this->itsOpenRegions[$regionIndex]['sortedOffices'] = $collectionOffices->sortByDesc(function ($office) {
-                $collectionDailyNumbers = collect($office['daily_numbers']);
-
-                return $office['sortedDailyNumbers'] ? $collectionDailyNumbers->sum($this->sortBy) : 0;
-            })->values();
-        }
-        $this->addOrRemoveOf(
-            $this->openedRegions,
-            $this->itsOpenRegions[$regionIndex]['id'],
-            !$this->itsOpenRegions[$regionIndex]['itsOpen']
-        );
-        $this->itsOpenRegions[$regionIndex]['itsOpen'] = !$this->itsOpenRegions[$regionIndex]['itsOpen'];
+        dd("teste");
+        
     }
 
     public function collapseOffice(int $regionIndex, int $officeIndex)

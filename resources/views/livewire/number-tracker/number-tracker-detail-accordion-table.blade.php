@@ -58,7 +58,7 @@
                                 </x-table-accordion.th-searchable>
                             </x-slot>
                             <x-slot name="body">
-                                @foreach($itsOpenRegions as $regionIndex => $region)
+                                @foreach($this->regions as $region)
 
                                     <livewire:number-tracker.region-row :region="$region"/>
                                     
