@@ -11,11 +11,6 @@ class RegionRow extends Component
 
     public bool $itsOpen = false;
 
-    public function mount()
-    {
-
-    }
-
     public function render()
     {
         return view('livewire.number-tracker.region-row');
@@ -23,7 +18,9 @@ class RegionRow extends Component
 
     public function sumOf($property)
     {
-        $sum = $this->region->offices->sum($property);
+        $sum = $this->region->offices->sum(function ($office) use ($property) {
+            return $office->dailyNumbers->sum($property);
+        });
 
         return $sum > 0 ? $sum :  html_entity_decode('&#8212;');
     }
@@ -31,6 +28,11 @@ class RegionRow extends Component
     public function collapseRegion()
     {
         $this->itsOpen = !$this->itsOpen;
+    }
+
+    public function getOfficesProperty()
+    {
+        return $this->region->offices;
     }
 
 }

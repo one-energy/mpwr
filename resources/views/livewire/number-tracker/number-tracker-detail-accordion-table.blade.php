@@ -28,7 +28,7 @@
         <div class="w-full mt-6" wire:loading.remove wire:target="setDate, setPeriod, addFilter, removeFilter">
             <div class="flex flex-col">
                 <div class="inline-block min-w-full align-middle">
-                    @if(count($itsOpenRegions))
+                    @if(count($this->regions))
                         <div class="grid grid-cols-12">
                             <x-table-accordion.th-searchable class="sticky top-0 bg-white table-cell col-span-4 pl-10" by="deparmtent" :sortedBy="$sortBy" :direction="$sortDirection"></x-table-accordion.th-searchable>
                             <x-table-accordion.th-searchable wire:click="initRegionsData" class="sticky top-0 bg-white table-cell" by="hours_worked" :sortedBy="$sortBy" :direction="$sortDirection">

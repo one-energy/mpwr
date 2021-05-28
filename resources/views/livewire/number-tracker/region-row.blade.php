@@ -22,7 +22,7 @@
                 wire:loading wire:target="initRegionsData">
             </x-svg.spinner>
             <div class="@if($region['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                {{$this->sumOf('daily_numbers_sum_hours_worked') }}
+                {{$this->sumOf('hours_worked') }}
             </div>
         </x-table-accordion.td>
         <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
@@ -32,7 +32,7 @@
                 wire:loading wire:target="initRegionsData">
             </x-svg.spinner>
             <div class="@if($region['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                {{$this->sumOf('daily_numbers_sum_doors') }}
+                {{$this->sumOf('doors') }}
             </div>
         </x-table-accordion.td>
         <x-table-accordion.td class="table-cell" by="hours_knocked" sortedBy="$sortBy">
@@ -42,7 +42,7 @@
                 wire:loading wire:target="initRegionsData">
             </x-svg.spinner>
             <div class="@if($region['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                {{$this->sumOf('daily_numbers_sum_hours_knocked') }}
+                {{$this->sumOf('hours_knocked') }}
             </div>
         </x-table-accordion.td>
         <x-table-accordion.td class="table-cell" by="sets" sortedBy="$sortBy">
@@ -52,7 +52,7 @@
                 wire:loading wire:target="initRegionsData">
             </x-svg.spinner>
             <div class="@if($region['deleted_at'] != null) text-red-500 @endif" class="@if($region['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                {{$this->sumOf('daily_numbers_sum_sets') }}
+                {{$this->sumOf('sets') }}
             </div>
         </x-table-accordion.td>
         <x-table-accordion.td class="table-cell" by="sats" sortedBy="$sortBy">
@@ -62,7 +62,7 @@
                 wire:loading wire:target="initRegionsData">
             </x-svg.spinner>
             <div class="@if($region['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                {{$this->sumOf('daily_numbers_sum_sats') }}
+                {{$this->sumOf('sats') }}
             </div>
         </x-table-accordion.td>
         <x-table-accordion.td class="table-cell" by="set_closes" sortedBy="$sortBy">
@@ -72,7 +72,7 @@
                 wire:loading wire:target="initRegionsData">
             </x-svg.spinner>
             <div class="@if($region['deleted_at'] != null) text-red-500 @endif" class="@if($region['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                {{$this->sumOf('daily_numbers_sum_set_closes') }}
+                {{$this->sumOf('set_closes') }}
             </div>
         </x-table-accordion.td>
         <x-table-accordion.td class="table-cell" by="closer_sits" sortedBy="$sortBy">
@@ -82,7 +82,7 @@
                 wire:loading wire:target="initRegionsData">
             </x-svg.spinner>
             <div class="@if($region['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                {{$this->sumOf('daily_numbers_sum_closer_sits') }}
+                {{$this->sumOf('closer_sits') }}
             </div>
         </x-table-accordion.td>
         <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
@@ -92,7 +92,7 @@
                 wire:loading wire:target="initRegionsData">
             </x-svg.spinner>
             <div class="@if($region['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
-                {{$this->sumOf('daily_numbers_sum_closes') }}
+                {{$this->sumOf('closes') }}
             </div>
         </x-table-accordion.td>
     </div>
