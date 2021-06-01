@@ -93,13 +93,7 @@ class NumberTrackerDetailAccordionTable extends Component
         $this->selectedDate = $date;
         $this->period       = $period;
 
-        $this->initRegionsData();
         $this->initUnselectedCollections();
-    }
-
-    public function initRegionsData()
-    {
-        # code...
     }
 
     private function getDepartmentId()
@@ -120,5 +114,10 @@ class NumberTrackerDetailAccordionTable extends Component
         } else {
             $this->selectedOfficesIds->except($offices);
         }
+    }
+
+    public function toggleOffice()
+    {
+        # code...
     }
 }
