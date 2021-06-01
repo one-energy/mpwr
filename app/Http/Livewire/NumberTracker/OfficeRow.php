@@ -50,4 +50,9 @@ class OfficeRow extends Component
     {
         return $value > 0 ? $value : html_entity_decode('&#8212;');
     }
+
+    public function getUsersDailyNumbersProperty()
+    {
+        return $this->office->dailyNumbers->groupBy("user_id");
+    }
 }

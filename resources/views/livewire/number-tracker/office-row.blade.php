@@ -76,9 +76,16 @@
     </div>
 
     @if($itsOpen)
-        <div>
-            <span>user component</span>
-        </div>
+        @forelse ($this->usersDailyNumbers as $userDailyNumbers)
+
+            <livewire:number-tracker.user-row :usersDailyNumbers="$userDailyNumbers"/>
+        @empty
+            <div class="table-row">
+                <x-table-accordion.td class=" pl-14">
+                    Empty
+                </x-table-accordion.td>
+            </div>
+        @endforelse
     @endif
 
     @if ($office->dailyNumbers->isNotEmpty() && $itsOpen)
