@@ -2,18 +2,28 @@
 
 namespace App\Http\Livewire\NumberTracker;
 
+use App\Models\Office;
 use App\Models\Region;
+use Illuminate\Support\Collection;
 use Livewire\Component;
 
 class RegionRow extends Component
 {
     public Region $region;
 
+    public Collection $selectedOfficesId;
+
+    public Collection $selectedUsersId;
+
     public bool $itsSelected = false;
 
     public bool $itsOpen = false;
 
     public int $quantintyOfficesSelected = 0;
+
+    protected $listener = [
+        'toogleOffice'
+    ];
 
     public function render()
     {
@@ -53,6 +63,19 @@ class RegionRow extends Component
     public function isAllOfficesSelecteds()
     {
         return ($this->region->offices->count() == $this->quantintyOfficesSelected) && $this->quantintyOfficesSelected > 0;
+    }
+
+    public function toogleOffice(Office $office, array $users, bool $insert)
+    {
+        if($insert){
+            $this->selectedOfficesId->push($office->id);
+            $this->selectedUsersId->merge($users);
+        } else {
+            $this->selectedOfficesID = $this->selectedOfficesId->except($office->id);
+            $this->selectedUsersId = $this->selectedUsersId->except($users);
+        }
+
+        $this->emit('toogleRegion', $this->selectedOfficesId->toArray(), $this->selectedUsersId, $this->itsSelected);
     }
 
 }

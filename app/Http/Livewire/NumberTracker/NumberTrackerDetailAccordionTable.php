@@ -17,21 +17,11 @@ class NumberTrackerDetailAccordionTable extends Component
 {
     use FullTable;
 
-    public array $itsOpenRegions;
-
-    public Collection $unselectedRegions;
-
-    public Collection $unselectedOffices;
-
-    public Collection $unselectedUserDailyNumbers;
-
-    public Collection $openedRegions;
-
-    public Collection $openedOffices;
-
     public bool $deleteds = false;
 
-    public $totals;
+    public Collection $selectedUsers;
+
+    public Collection $selectedOffices;
 
     public string $period;
 
@@ -39,7 +29,11 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public int $selectedDepartment;
 
-    protected $listeners = ['setDateOrPeriod'];
+    protected $listeners = [
+        'setDateOrPeriod',
+        'toogleOffice',
+        'toogleUser',
+    ];
 
     public function mount()
     {
@@ -95,41 +89,6 @@ class NumberTrackerDetailAccordionTable extends Component
         })->values();
     }
 
-    public function selectRegion($regionIndex)
-    {
-        $this->addOrRemoveOf(
-            $this->unselectedRegions,
-            $this->itsOpenRegions[$regionIndex]['id'],
-            !$this->itsOpenRegions[$regionIndex]['selected']
-        );
-        foreach ($this->itsOpenRegions[$regionIndex]['sortedOffices'] as &$office) {
-            $office['selected'] = $this->itsOpenRegions[$regionIndex]['selected'];
-            $this->addOrRemoveOf(
-                $this->unselectedOffices,
-                $office['id'],
-                !$office['selected']
-            );
-            foreach ($office['sortedDailyNumbers'] as &$dailyNumber) {
-                $dailyNumber['selected'] = $this->itsOpenRegions[$regionIndex]['selected'];
-                $this->addOrRemoveOf(
-                    $this->unselectedUserDailyNumbers,
-                    $dailyNumber['user_id'],
-                    !$dailyNumber['selected']
-                );
-            }
-        }
-
-        $result = $this->extractOfficeAndUser($this->itsOpenRegions);
-
-        $this->emit('updateNumbers', [
-            'users'       => $result->pluck('user_id'),
-            'offices'     => $result->pluck('office_id'),
-            'withTrashed' => $this->deleteds,
-        ]);
-
-        $this->sumTotal();
-    }
-
     public function setDateOrPeriod($date, $period)
     {
         $this->selectedDate = $date;
@@ -148,6 +107,21 @@ class NumberTrackerDetailAccordionTable extends Component
         }
 
         return $departmentId ?? 0;
+    }
+
+    public function toogleOffice(Office $office, $insert) 
+    {
+        if($insert){
+            $this->selectedOffices->push($office->id);
+            $office->users->map(function ($user) {
+                $this->selectedUsers->push($user->id);
+            });
+        } else {
+            $this->selectedOffices = $this->selectedOffices->except($office->id);
+            $office->users->map(function ($user) {
+                $this->selectedUsers = $this->selectedUsers->except($user->id);
+            });
+        }
     }
 
 }
