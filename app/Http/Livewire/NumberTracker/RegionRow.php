@@ -19,10 +19,10 @@ class RegionRow extends Component
 
     public bool $itsOpen = false;
 
-    public int $quantintyOfficesSelected = 0;
+    public int $quantityOfficesSelected = 0;
 
     protected $listener = [
-        'toogleOffice'
+        'toggleOffice',
     ];
 
     public function render()
@@ -36,7 +36,7 @@ class RegionRow extends Component
             return $office->dailyNumbers->sum($property);
         });
 
-        return $sum > 0 ? $sum :  html_entity_decode('&#8212;');
+        return $sum > 0 ? $sum : html_entity_decode('&#8212;');
     }
 
     public function collapseRegion()
@@ -59,14 +59,13 @@ class RegionRow extends Component
         }
     }
 
-    public function toogleOffice(Office $office, bool $insert)
+    public function toggleOffice(Office $office, bool $insert)
     {
-        if($insert){
+        if ($insert) {
             $this->selectedOfficesId->push($office->id);
         } else {
             $this->selectedOfficesId = $this->selectedOfficesId->except($office->id);
         }
         $this->anyOfficeSelected();
     }
-
 }

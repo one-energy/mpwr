@@ -3,10 +3,8 @@
 namespace App\Http\Livewire\NumberTracker;
 
 use App\Models\Department;
-use App\Models\Office;
 use App\Models\Region;
 use App\Traits\Livewire\FullTable;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
@@ -31,9 +29,9 @@ class NumberTrackerDetailAccordionTable extends Component
 
     protected $listeners = [
         'setDateOrPeriod',
-        'toogleRegion',
-        'toogleOffice',
-        'toogleUser',
+        'toggleRegion',
+        'toggleOffice',
+        'toggleUser',
     ];
 
     public function mount()
@@ -68,11 +66,11 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function getRegionsProperty()
     {
-        $regions = Region::when($this->deleteds, function ($query) {   
-                $query->has("offices.dailyNumbers")->withTrashed();
-            })
+        $regions = Region::when($this->deleteds, function ($query) {
+            $query->has('offices.dailyNumbers')->withTrashed();
+        })
             ->where('department_id', $this->selectedDepartment)
-            ->with('offices.dailyNumbers')  
+            ->with('offices.dailyNumbers')
             ->get();
 
         if ($this->sortDirection === 'asc') {
@@ -99,6 +97,11 @@ class NumberTrackerDetailAccordionTable extends Component
         $this->initUnselectedCollections();
     }
 
+    public function initRegionsData()
+    {
+        # code...
+    }
+
     private function getDepartmentId()
     {
         $departmentId = user()->department_id;
@@ -110,7 +113,7 @@ class NumberTrackerDetailAccordionTable extends Component
         return $departmentId ?? 0;
     }
 
-    public function toogleRegion(array $offices, $insert)
+    public function toggleRegion(array $offices, $insert)
     {
         if ($insert) {
             $this->selectedOfficesIds->merge($offices);
@@ -118,5 +121,4 @@ class NumberTrackerDetailAccordionTable extends Component
             $this->selectedOfficesIds->except($offices);
         }
     }
-
 }
