@@ -2,40 +2,39 @@
 
 namespace App\Http\Livewire\NumberTracker;
 
+use App\Models\Office;
 use Livewire\Component;
 
 class OfficeRow extends Component
 {
-    public array $office;
+    public Office $office;
 
-    public int $officeIndex;
+    public bool $itsOpen = false;
+
+    public bool $selected = false;
 
     public function render()
     {
         return view('livewire.number-tracker.office-row');
     }
 
-    public function getWasRemovedProperty()
-    {
-        return $this->office['deleted_at'] !== null;
-    }
-
     public function collapseOffice()
     {
-        $this->office['itsOpen'] = !$this->office['itsOpen'];
+        $this->itsOpen = !$this->itsOpen;
     }
 
     public function selectOffice()
     {
-        $this->emitUp('toggleOffice', $this->office['id']);
+        $this->selected = $this->selected;
+
+        $this->emitUp('toggleOffice', $this->office, $this->selected);
     }
 
     public function sumBy($field)
     {
-        $sum = collect($this->office['sortedDailyNumbers'])
-            ->sum(fn ($dailyNumber) => $dailyNumber[$field]);
-
-        return $this->parseNumber($sum);
+        return $this->parseNumber(
+            $this->office->dailyNumbers->sum(fn ($dailyNumber) => $dailyNumber[$field])
+        );
     }
 
     public function parseNumber($value)
