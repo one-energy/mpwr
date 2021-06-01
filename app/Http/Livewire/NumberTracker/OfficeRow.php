@@ -13,6 +13,10 @@ class OfficeRow extends Component
 
     public bool $selected = false;
 
+    public $listeners = [
+        'regionSelected',
+    ];
+
     public function render()
     {
         return view('livewire.number-tracker.office-row');
@@ -25,9 +29,14 @@ class OfficeRow extends Component
 
     public function selectOffice()
     {
-        $this->selected = $this->selected;
-
         $this->emitUp('toggleOffice', $this->office, $this->selected);
+    }
+
+    public function regionSelected(int $regionId, bool $selected)
+    {
+        if ($this->office->region_id === $regionId) {
+            $this->selected = $selected;
+        }
     }
 
     public function sumBy($field)
