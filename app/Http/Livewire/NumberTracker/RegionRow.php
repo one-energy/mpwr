@@ -21,9 +21,14 @@ class RegionRow extends Component
 
     public int $quantityOfficesSelected = 0;
 
-    protected $listener = [
+    protected $listeners = [
         'toggleOffice',
     ];
+
+    public function mount()
+    {
+        $this->selectedOfficesId = collect();
+    }
 
     public function render()
     {
@@ -51,12 +56,7 @@ class RegionRow extends Component
 
     public function anyOfficeSelected()
     {
-        if ($this->selectedOfficesId->count()) {
-            $this->itsSelected == true;
-        }
-        if (!$this->selectedOfficesId->count()) {
-            $this->itsSelected == false;
-        }
+        $this->itsSelected = $this->selectedOfficesId->isNotEmpty();
     }
 
     public function toggleOffice(Office $office, bool $insert)
@@ -64,8 +64,9 @@ class RegionRow extends Component
         if ($insert) {
             $this->selectedOfficesId->push($office->id);
         } else {
-            $this->selectedOfficesId = $this->selectedOfficesId->except($office->id);
+            $this->selectedOfficesId = $this->selectedOfficesId->filter(fn ($officeId) => $officeId !== $office->id);
         }
+
         $this->anyOfficeSelected();
     }
 }
