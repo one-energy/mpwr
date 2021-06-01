@@ -147,11 +147,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('role:Admin|Owner|Department Manager|Region Manager')
         ->name('number-tracking.spreadsheet.updateOrCreate');
 
-    Route::post('/get-offices-managers/{regionId}', [UsersController::class, 'getOfficesManager'])->name('getOfficesManager');
+    Route::get('/get-offices-managers/{region?}', [UsersController::class, 'getOfficesManager'])->name('getOfficesManager');
     Route::post('/get-regions-managers/{departmentId}', [UsersController::class, 'getRegionsManager'])->name('getRegionsManager');
     Route::post('/get-users', [UsersController::class, 'getUsers'])->name('getUsers');
 
-    Route::post('/get-regions/{departmentId?}', [RegionController::class, 'getRegions'])->name('getRegions');
+    Route::get('/get-regions/{department?}', [RegionController::class, 'getRegions'])->name('getRegions');
 
     Route::post('/get-departments', [DepartmentController::class, 'getDepartments'])->name('getDepartments');
 
