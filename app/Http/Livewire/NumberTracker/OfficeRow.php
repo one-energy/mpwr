@@ -15,6 +15,11 @@ class OfficeRow extends Component
         return view('livewire.number-tracker.office-row');
     }
 
+    public function getWasRemovedProperty()
+    {
+        return $this->office['deleted_at'] !== null;
+    }
+
     public function collapseOffice()
     {
         $this->office['itsOpen'] = !$this->office['itsOpen'];
