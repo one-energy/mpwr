@@ -3,8 +3,13 @@
             wire:click="collapseRegion()" >
         <x-table-accordion.default-td-arrow class="col-span-4" :open="$region['itsOpen']">
             <div class="flex" x-data wire:key="region-{{$region->id}}">
-                <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
-                        wire:model="itsSelected" type="checkbox" wire:click.stop="">
+                <input
+                    class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
+                    type="checkbox"
+                    wire:change="selectRegion"
+                    wire:model="itsSelected"
+                    wire:click.stop=""
+                >
             </div>
             <div class="flex items-center mr-2 w-6 h-6" wire:loading>
                 <x-svg.spinner

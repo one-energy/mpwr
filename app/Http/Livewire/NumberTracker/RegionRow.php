@@ -49,6 +49,11 @@ class RegionRow extends Component
         $this->itsOpen = !$this->itsOpen;
     }
 
+    public function selectRegion()
+    {
+        $this->emit('regionSelected', $this->region->id, $this->itsSelected);
+    }
+
     public function getOfficesProperty()
     {
         return $this->region->offices;
