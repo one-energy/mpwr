@@ -115,4 +115,9 @@ class NumberTrackerDetailAccordionTable extends Component
             $this->selectedOfficesIds->except($offices);
         }
     }
+
+    public function toggleOffice()
+    {
+        # code...
+    }
 }
