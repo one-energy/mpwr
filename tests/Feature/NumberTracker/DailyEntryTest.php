@@ -2,8 +2,6 @@
 
 namespace Tests\Feature\NumberTracker;
 
-use Tests\TestCase;
-use Livewire\Livewire;
 use App\Http\Livewire\NumberTracker\DailyEntry;
 use App\Models\DailyNumber;
 use App\Models\Department;
@@ -12,27 +10,29 @@ use App\Models\Region;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\Builders\UserBuilder;
-use Tests\Builders\DailyEntryBuilder;
-use Tests\Builders\OfficeBuilder;
-use Tests\Builders\RegionBuilder;
-use Tests\Feature\FeatureTest;
-
+use Livewire\Livewire;
+use Tests\TestCase;
 
 class DailyEntryTest extends TestCase
 {
     use RefreshDatabase;
 
     private User $dptManager;
+
     private User $regionManager;
+
     private User $officeManager;
+
     private User $john;
 
     private Department $department;
+
     private Region $region;
+
     private Office $office;
 
     private DailyNumber $officeManagerEntry;
+
     private DailyNumber $johnManagerEntry;
 
     protected function setUp(): void
@@ -44,12 +44,12 @@ class DailyEntryTest extends TestCase
         $this->officeManager = User::factory()->create(['role' => 'Office Manager']);
 
         $this->department = Department::factory()->create([
-            'department_manager_id' => $this->dptManager->id
+            'department_manager_id' => $this->dptManager->id,
         ]);
 
         $this->region     = Region::factory()->create([
             'department_id'     => $this->department->id,
-            'region_manager_id' => $this->regionManager->id
+            'region_manager_id' => $this->regionManager->id,
         ]);
 
         $this->office     = Office::factory()->create([
@@ -58,22 +58,22 @@ class DailyEntryTest extends TestCase
         ]);
 
         $this->john       = User::factory()->create([
-            'role'          => "Sales Rep",
+            'role'          => 'Sales Rep',
             'department_id' => $this->department->id,
-            'office_id'     => $this->office->id
+            'office_id'     => $this->office->id,
         ]);
 
         $this->dptManager->update([
             'department_id' => $this->department->id,
-            'office_id'     => $this->office->id
+            'office_id'     => $this->office->id,
         ]);
         $this->regionManager->update([
             'department_id' => $this->department->id,
-            'office_id'     => $this->office->id
+            'office_id'     => $this->office->id,
         ]);
         $this->officeManager->update([
             'department_id' => $this->department->id,
-            'office_id'     => $this->office->id
+            'office_id'     => $this->office->id,
         ]);
 
         $this->actingAs($this->dptManager);
@@ -81,12 +81,12 @@ class DailyEntryTest extends TestCase
         $this->officeManagerEntry = DailyNumber::factory()->create([
             'user_id' => $this->officeManager->id,
             'date'    => Carbon::now(),
-            'doors'   => 15
+            'doors'   => 15,
         ]);
         $this->johnEntry = DailyNumber::factory()->create([
             'user_id' => $this->john->id,
             'date'    => Carbon::now(),
-            'doors'   => 15
+            'doors'   => 15,
         ]);
     }
 
@@ -99,18 +99,18 @@ class DailyEntryTest extends TestCase
             ->assertSee(15);
     }
 
-     /** @test */
-     public function it_should_show_sum_of_daily_entry()
-     {
-         $this->markTestSkipped('must be revisited.');
+    /** @test */
+    public function it_should_show_sum_of_daily_entry()
+    {
+        $this->markTestSkipped('must be revisited.');
 
-         Livewire::test(DailyEntry::class)
+        Livewire::test(DailyEntry::class)
              ->set('officeSelected', $this->office->id)
              ->set('dateSelected', Carbon::now())
              ->assertSee($this->officeManager->first_name)
              ->assertSee($this->john->first_name)
              ->assertSee($this->johnEntry->doors + $this->officeManagerEntry->doors);
-     }
+    }
 
     /** @test */
     public function it_should_show_deleted_user_that_has_a_daily_entry()
@@ -118,16 +118,16 @@ class DailyEntryTest extends TestCase
         $this->markTestSkipped('must be revisited.');
 
         $user = User::factory()->create([
-            'role'          => "Sales Rep",
+            'role'          => 'Sales Rep',
             'department_id' => $this->department->id,
             'office_id'     => $this->office->id,
-            'deleted_at'    => Carbon::now()
+            'deleted_at'    => Carbon::now(),
         ]);
 
         DailyNumber::factory()->create([
             'user_id' => $user->id,
             'date'    => Carbon::yesterday(),
-            'doors'   => 15
+            'doors'   => 15,
         ]);
         Livewire::test(DailyEntry::class)
             ->set('officeSelected', $this->office->id)

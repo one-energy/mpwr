@@ -19,11 +19,11 @@ class GetTopTenTrackersTest extends FeatureTest
 
         $setter01 = User::factory()->create([
             'department_id' => $department->id,
-            'role'          => 'Setter'
+            'role'          => 'Setter',
         ]);
         $setter02 = User::factory()->create([
             'department_id' => $department->id,
-            'role'          => 'Setter'
+            'role'          => 'Setter',
         ]);
 
         DailyNumber::factory()->create([
@@ -53,16 +53,16 @@ class GetTopTenTrackersTest extends FeatureTest
         $mary = User::factory()->create(['role' => 'Department Manager']);
 
         $department = Department::factory()->create([
-            'department_manager_id' => $mary->id
+            'department_manager_id' => $mary->id,
         ]);
 
         $setter01 = User::factory()->create([
             'role'          => 'Sales Rep',
-            'department_id' => $department->id
+            'department_id' => $department->id,
         ]);
         $setter02 = User::factory()->create([
             'role'          => 'Sales Rep',
-            'department_id' => $department->id
+            'department_id' => $department->id,
         ]);
 
         DailyNumber::factory()->create([
