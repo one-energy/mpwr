@@ -22,7 +22,7 @@ class OfficeRow extends Component
 
     public function selectOffice()
     {
-        $this->emit('officeSelected', $this->officeIndex);
+        $this->emitUp('toggleOffice', $this->office['id']);
     }
 
     public function sumBy($field)
