@@ -51,31 +51,22 @@ class RegionRow extends Component
 
     public function anyOfficeSelected()
     {
-        $this->quantintyOfficesSelected++;
-        if ($this->isAllOfficesSelecteds()) {
+        if ($this->selectedOfficesId->count()) {
             $this->itsSelected == true;
         }
-        if ($this->quantintyOfficesSelected == 0) {
+        if (!$this->selectedOfficesId->count()) {
             $this->itsSelected == false;
         }
     }
 
-    public function isAllOfficesSelecteds()
-    {
-        return ($this->region->offices->count() == $this->quantintyOfficesSelected) && $this->quantintyOfficesSelected > 0;
-    }
-
-    public function toogleOffice(Office $office, array $users, bool $insert)
+    public function toogleOffice(Office $office, bool $insert)
     {
         if($insert){
             $this->selectedOfficesId->push($office->id);
-            $this->selectedUsersId->merge($users);
         } else {
-            $this->selectedOfficesID = $this->selectedOfficesId->except($office->id);
-            $this->selectedUsersId = $this->selectedUsersId->except($users);
+            $this->selectedOfficesId = $this->selectedOfficesId->except($office->id);
         }
-
-        $this->emit('toogleRegion', $this->selectedOfficesId->toArray(), $this->selectedUsersId, $this->itsSelected);
+        $this->anyOfficeSelected();
     }
 
 }

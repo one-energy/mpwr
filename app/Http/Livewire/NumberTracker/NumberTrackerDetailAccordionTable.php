@@ -21,7 +21,7 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public Collection $selectedUsers;
 
-    public Collection $selectedOffices;
+    public Collection $selectedOfficesIds;
 
     public string $period;
 
@@ -31,6 +31,7 @@ class NumberTrackerDetailAccordionTable extends Component
 
     protected $listeners = [
         'setDateOrPeriod',
+        'toogleRegion',
         'toogleOffice',
         'toogleUser',
     ];
@@ -109,18 +110,12 @@ class NumberTrackerDetailAccordionTable extends Component
         return $departmentId ?? 0;
     }
 
-    public function toogleOffice(Office $office, $insert) 
+    public function toogleRegion(array $offices, $insert)
     {
-        if($insert){
-            $this->selectedOffices->push($office->id);
-            $office->users->map(function ($user) {
-                $this->selectedUsers->push($user->id);
-            });
+        if ($insert) {
+            $this->selectedOfficesIds->merge($offices);
         } else {
-            $this->selectedOffices = $this->selectedOffices->except($office->id);
-            $office->users->map(function ($user) {
-                $this->selectedUsers = $this->selectedUsers->except($user->id);
-            });
+            $this->selectedOfficesIds->except($offices);
         }
     }
 
