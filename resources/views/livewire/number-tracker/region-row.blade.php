@@ -1,4 +1,4 @@
-<div wire:key="{{now()}}">
+<div>
     <div class="grid grid-cols-12 cursor-pointer hover:bg-gray-100 @if($itsOpen)) bg-gray-200 @endif"
             wire:click="collapseRegion()" >
         <x-table-accordion.default-td-arrow class="col-span-4" :open="$region['itsOpen']">
@@ -97,8 +97,7 @@
     </div>
     @if ($itsOpen)
         @forelse ($region->offices as $office)
-        {{-- Neasted here a component to offices --}}
-            <p>Future Component</p>
+            <livewire:number-tracker.office-row :office="$office" :key="$office->id"/>
         @empty
             <div class="table-row">
                 <x-table-accordion.td class=" pl-14">
