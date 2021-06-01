@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Tests\Feature\Customer;
-
 
 use App\Http\Livewire\Customer\Edit;
 use App\Models\Customer;
@@ -74,7 +72,10 @@ class UpdateCustomerTest extends TestCase
     public function it_should_inactivate_a_customer()
     {
         $john     = User::factory()->create(['role' => 'Admin']);
-        $customer = Customer::factory()->create(['is_active' => true]);
+        $customer = Customer::factory()->create([
+            'is_active'    => true,
+            'sales_rep_id' => $john->id,
+        ]);
 
         $this
             ->actingAs($john)
@@ -91,7 +92,10 @@ class UpdateCustomerTest extends TestCase
     public function it_should_activate_a_customer()
     {
         $john     = User::factory()->create(['role' => 'Admin']);
-        $customer = Customer::factory()->create(['is_active' => false]);
+        $customer = Customer::factory()->create([
+            'is_active'    => false,
+            'sales_rep_id' => $john->id,
+        ]);
 
         $this
             ->actingAs($john)
