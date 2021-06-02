@@ -6,7 +6,10 @@
                     <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
                             wire:model="isSelected" wire:click="selectUser()" type="checkbox" wire:click.stop="">
                 </div>
-                <label>{{$userDailyNumbers[0]->user?->fullName ?? "Removed"}}</label>
+                @if($user->deleted_at != null)
+                    <x-icon class="mr-2 w-6 h-6" icon="user-blocked"/>
+                @endif
+                <label>{{$user->fullName}}</label>
             </div>
         </x-table-accordion.td>
         <x-table-accordion.td>

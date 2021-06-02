@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\NumberTracker;
 
+use App\Models\User;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
@@ -9,11 +10,18 @@ class UserRow extends Component
 {
     public Collection $userDailyNumbers;
 
+    public User $user;
+
     public bool $isSelected = false;
 
     protected $listeners = [
         'officeSelected'
     ];
+
+    public function mount()
+    {
+        $this->user = $this->userDailyNumbers->first()->user()->withTrashed()->first();
+    }
 
     public function render()
     {
@@ -22,7 +30,7 @@ class UserRow extends Component
 
     public function selectUser()
     {
-        $this->emitUp("toogleUser", $this->userDailyNumbers->first()->user()->withTrashed()->first()->id, $this->isSelected);
+        $this->emitUp("toogleUser", $this->user->id, $this->isSelected);
     }
     
     public function officeSelected(int $officeId, bool $selected)

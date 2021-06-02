@@ -44,11 +44,18 @@ class OfficeRow extends Component
         if ($this->selected) {
             $this->selectedUsers = $this->selectedUsers->merge($this->office->dailyNumbers->unique('user_id')->pluck('user_id'));
         } else {
-            $this->selectedUsers->empty();
+            $this->selectedUsers = $this->selectedUsers->empty();
         }
+
         $this->emitUp('toggleOffice', $this->office, $this->selected);
         $this->emit('officeSelected', $this->office->id, $this->selected);
         $this->isAnyUserSelected();
+    }
+
+    public function selectTotal()
+    {
+        $this->selected = $this->selectedTotal;
+        $this->selectOffice();
     }
 
     public function regionSelected(int $regionId, bool $selected)
@@ -93,17 +100,17 @@ class OfficeRow extends Component
     {  
         $this->selected = $this->selectedUsers->isNotEmpty();
 
+        $this->emitUp('toggleOffice', $this->office, $this->selected);
+
         if (!$this->selected) {
-            $this->emitUp('toggleOffice', $this->office, $this->selected);
             $this->emit('officeSelected', $this->office->id, $this->selected);
         }
 
         if ($this->selectedUsers->count() == $this->office->dailyNumbers->unique('user_id')->count()) {
             $this->selectedTotal = true;
         } else {
+            
             $this->selectedTotal = false;
         }
-
-        $this->emitUp('toggleOffice', $this->office, $this->selected);
     }
 }
