@@ -7,13 +7,28 @@ use Livewire\Component;
 
 class UserRow extends Component
 {
-    public Collection $usersDailyNumbers;
+    public Collection $userDailyNumbers;
 
-    public bool $isSelected;
+    public bool $isSelected = false;
+
+    protected $listeners = [
+        'officeSelected'
+    ];
 
     public function render()
     {
         return view('livewire.number-tracker.user-row');
     }
+
+    public function selectUser()
+    {
+        $this->emitUp("toogleUser", $this->userDailyNumbers->first()->user, $this->isSelected);
+    }
     
+    public function officeSelected(int $officeId, bool $selected)
+    {
+        if ($this->userDailyNumbers[0]->office_id === $officeId) {
+            $this->isSelected = $selected;
+        }
+    }
 }

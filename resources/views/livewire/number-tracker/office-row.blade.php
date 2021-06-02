@@ -1,5 +1,5 @@
 <div class="cursor-pointer hover:bg-gray-100 @if($itsOpen) bg-gray-100 @endif">
-    <div class="grid grid-cols-12" wire:click.stop="collapseOffice">
+    <div class="grid grid-cols-12" wire:click.stop="collapseOffice" >
         <x-table-accordion.child-td-arrow class="col-span-4" :open="$itsOpen">
             <div class="flex">
                 <div wire:loading.remove>
@@ -77,8 +77,7 @@
 
     @if($itsOpen)
         @forelse ($this->usersDailyNumbers as $userDailyNumbers)
-
-            <livewire:number-tracker.user-row :usersDailyNumbers="$userDailyNumbers"/>
+            <livewire:number-tracker.user-row :userDailyNumbers="$userDailyNumbers"  key="user-{{$userDailyNumbers[0]->user_id}}"/>
         @empty
             <div class="table-row">
                 <x-table-accordion.td class=" pl-14">
@@ -89,7 +88,7 @@
     @endif
 
     @if ($office->dailyNumbers->isNotEmpty() && $itsOpen)
-        <div class="grid grid-cols-12 hover:bg-gray-100" x-data>
+        <div class="grid grid-cols-12 hover:bg-gray-100" x-data wire:key="officeTotal-{{$office->id}}">
             <x-table-accordion.td class="col-span-4" style="padding-left: 5.8rem;">
                 <div class="flex">
                     <div class="flex items-center" wire:loading.remove>

@@ -57,7 +57,7 @@
                             </x-table-accordion.th-searchable>
                         </div>
                         @foreach($this->regions as $region)
-                            <livewire:number-tracker.region-row :region="$region" :key="$region->id"/>
+                            <livewire:number-tracker.region-row :region="$region" key="region-{{$region->id}}"/>
                         @endforeach
                     @else
                         <div class="h-96 ">
