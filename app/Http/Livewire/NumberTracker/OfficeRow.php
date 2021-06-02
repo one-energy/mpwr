@@ -17,14 +17,20 @@ class OfficeRow extends Component
 
     public bool $selected = false;
 
+    public bool $selectedTotal = false;
+
     public $listeners = [
         'regionSelected',
         'toogleUser',
     ];
 
-    public function render()
+    public function mount()
     {
         $this->selectedUsers = collect();
+    }
+
+    public function render()
+    {
         return view('livewire.number-tracker.office-row');
     }
 
@@ -35,8 +41,14 @@ class OfficeRow extends Component
 
     public function selectOffice()
     {
+        if ($this->selected) {
+            $this->selectedUsers = $this->selectedUsers->merge($this->office->dailyNumbers->unique('user_id')->pluck('user_id'));
+        } else {
+            $this->selectedUsers->empty();
+        }
         $this->emitUp('toggleOffice', $this->office, $this->selected);
         $this->emit('officeSelected', $this->office->id, $this->selected);
+        $this->isAnyUserSelected();
     }
 
     public function regionSelected(int $regionId, bool $selected)
@@ -64,13 +76,13 @@ class OfficeRow extends Component
         return $this->office->dailyNumbers->groupBy("user_id");
     }
 
-    public function toogleUser(User $user, bool $isSelected)
+    public function toogleUser(int $userId, bool $isSelected)
     {
         if ($isSelected) {
-            $this->selectedUsers->push($user->id);
+            $this->selectedUsers->push($userId);
         } else {
-            $this->selectedUsers = $this->selectedUsers->filter(function ($selectedUser) use ($user) {
-                return $selectedUser != $user->id;
+            $this->selectedUsers = $this->selectedUsers->filter(function ($selectedUser) use ($userId) {
+                return $selectedUser != $userId;
             });
         }
 
@@ -78,8 +90,20 @@ class OfficeRow extends Component
     }
 
     public function isAnyUserSelected()
-    {
+    {  
         $this->selected = $this->selectedUsers->isNotEmpty();
+
+        if (!$this->selected) {
+            $this->emitUp('toggleOffice', $this->office, $this->selected);
+            $this->emit('officeSelected', $this->office->id, $this->selected);
+        }
+
+        if ($this->selectedUsers->count() == $this->office->dailyNumbers->unique('user_id')->count()) {
+            $this->selectedTotal = true;
+        } else {
+            $this->selectedTotal = false;
+        }
+
         $this->emitUp('toggleOffice', $this->office, $this->selected);
     }
 }

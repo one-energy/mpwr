@@ -2,15 +2,15 @@
     <div class="grid grid-cols-12" wire:click.stop="collapseOffice" >
         <x-table-accordion.child-td-arrow class="col-span-4" :open="$itsOpen">
             <div class="flex">
-                <div wire:loading.remove>
-                    <input
-                        class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
-                        type="checkbox"
-                        wire:change="selectOffice"
-                        wire:model="selected"
-                        wire:click.stop=""
-                    />
-                </div>
+                
+                <input
+                    class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
+                    type="checkbox"
+                    wire:change="selectOffice"
+                    wire:model="selected"
+                    wire:click.stop=""
+                />
+            
                 <div class="flex items-center mr-2 w-6 h-6" wire:loading>
                     <x-svg.spinner color="#9fa6b2" class="self-center" />
                 </div>
@@ -91,12 +91,12 @@
         <div class="grid grid-cols-12 hover:bg-gray-100" x-data wire:key="officeTotal-{{$office->id}}">
             <x-table-accordion.td class="col-span-4" style="padding-left: 5.8rem;">
                 <div class="flex">
-                    <div class="flex items-center" wire:loading.remove>
+                    <div class="flex items-center">
                         <input
                             class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
                             type="checkbox"
                             wire:change="selectOffice"
-                            wire:model="office.selected"
+                            wire:model="selectedTotal"
                             wire:click.stop=""
                         >
                     </div>

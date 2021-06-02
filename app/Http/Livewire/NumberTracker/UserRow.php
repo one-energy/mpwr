@@ -22,7 +22,7 @@ class UserRow extends Component
 
     public function selectUser()
     {
-        $this->emitUp("toogleUser", $this->userDailyNumbers->first()->user, $this->isSelected);
+        $this->emitUp("toogleUser", $this->userDailyNumbers->first()->user()->withTrashed()->first()->id, $this->isSelected);
     }
     
     public function officeSelected(int $officeId, bool $selected)
