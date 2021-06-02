@@ -4,7 +4,8 @@
     'trackBy',
     'placeholder' => 'Select an option',
     'label' => '',
-    'name' => ''
+    'name' => '',
+    'searchable' => 'true'
 ])
 
 <select id="select" class="hidden" {{ $attributes }} name="{{ $name }}" multiple>
@@ -16,7 +17,8 @@
 </select>
 
 <div x-data="dropdown()" x-init="() => {
-    $nextTick(() => loadOptions());
+    baseOptions = {{ json_encode($options) }}
+    loadOptions();
     @if ($attributes->has('wire:model'))
         $watch('selected', (value) => {
             if (Array.isArray(value)) {
@@ -25,7 +27,6 @@
         });
     @endif
 }" class="sm:flex-1">
-    <input name="values" type="hidden" x-bind:value="selectedValues" x-cloak>
     <div class="rounded-md relative w-full">
         <div class="flex flex-col items-center relative" x-cloak>
             <div x-on:click="open" class="w-full" x-cloak>
@@ -46,11 +47,19 @@
                             </div>
                         </template>
                         <div x-show="selected.length == 0" class="flex-1">
-                            <input
-                                placeholder="{{ $placeholder }}"
-                                class="bg-transparent p-1 px-2 appearance-none outline-none h-full w-full text-gray-800"
-                                x-bind:value="selectedValues"
-                            >
+                            @if (!$searchable)
+                                <input
+                                    placeholder="{{ $placeholder }}"
+                                    class="bg-transparent p-1 px-2 appearance-none outline-none h-full w-full text-gray-800"
+                                    disabled
+                                >
+                            @else
+                                <input
+                                    placeholder="{{ $placeholder }}"
+                                    class="bg-transparent p-1 px-2 appearance-none outline-none h-full w-full text-gray-800"
+                                    x-model="search"
+                                >
+                            @endif
                         </div>
                     </div>
                     <div class="text-gray-300 w-8 py-1 pl-2 pr-1 border-l flex items-center border-gray-200">
@@ -75,8 +84,17 @@
                 <div x-show.transition.origin.top="isOpen"
                      class="absolute shadow top-100 bg-white z-40 w-full left-0 max-h-select"
                      x-on:click.away="close">
-                    <div class="flex flex-col w-full overflow-y-auto h-40">
-                        <template x-for="(option, index) in options" :key="option.key" class="overflow-auto">
+                    <div
+                        class="flex flex-col w-full overflow-y-auto"
+                        :class="{
+                            'h-40': filteredOptions.length > 0,
+                            'h-10': filteredOptions.length < 1,
+                        }"
+                    >
+                        <template x-if="filteredOptions.length < 1">
+                            <p class="mt-2 ml-3 italic text-sm">No option found...</p>
+                        </template>
+                        <template x-for="(option, index) in filteredOptions" :key="option.key" class="overflow-auto">
                             <div
                                 class="cursor-pointer w-full hover:bg-gray-100"
                                 :class="{'bg-green-400 text-white hover:bg-red-400': option.selected}"
@@ -109,16 +127,24 @@
     <script>
         function dropdown() {
             return {
+                model: @entangle($attributes->wire('model')),
+                baseOptions: @json($options),
+                searchable: '{{ $searchable }}' === 'true',
+                search: '',
                 options: [],
                 selected: [],
                 show: false,
                 open() {
                     this.show = true;
+                    this.search = '';
                 },
                 close() {
                     this.show = false;
+                    this.search = '';
                 },
                 select(option, index) {
+                    this.search = '';
+
                     if (this.options[index].selected) {
                         this.optionsEl[index].selected = false;
                         this.options[index].selected = false;
@@ -138,27 +164,30 @@
                     this.options[index] = {...foundOption, selected: false}
                     this.selected = this.selected.filter(({ key }) => key !== option.key);
                 },
+                isNotEmpty(value) {
+                    return Array.isArray(value) && value.length > 0;
+                },
                 loadOptions() {
-                    this.options = [...this.optionsEl].map((option, index) => {
-                        const key = Math.random().toString(36).substr(2, 5);
-
-                        if (option.selected) {
-                            this.selected.push({
-                                value: option.value,
-                                text: option.innerText.trim(),
-                                key,
-                                index
-                            });
-                        }
-
+                    this.options = this.baseOptions.map((option, index) => {
                         return {
-                            value: option.value,
-                            text: option.innerText.trim(),
-                            selected: option.selected,
-                            key,
-                            index
+                            index,
+                            value: option['{{ $trackBy }}'],
+                            text: option['{{ $labeledBy }}'],
+                            key: Math.random().toString(36).substr(2, 5),
+                            selected: this.isNotEmpty(this.model) ? this.model.includes(option['{{ $trackBy }}']) : false
                         }
                     });
+
+                    if (this.isNotEmpty(this.model)) {
+                        this.selected = this.options.filter(option => this.model.includes(option.value));
+                    }
+                },
+                get filteredOptions() {
+                    if (!this.search) return this.options;
+
+                    return this.options.filter(
+                        option => option.text.toLocaleLowerCase().includes(this.search.toLocaleLowerCase())
+                    );
                 },
                 get optionsEl() {
                     return document.getElementById('select').options;
