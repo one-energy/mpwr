@@ -88,7 +88,7 @@
     </div>
     @if ($itsOpen)
         @forelse ($region->offices as $office)
-            <livewire:number-tracker.office-row :office="$office" key="office-{{$office->id}}"/>
+            <livewire:number-tracker.office-row :office="$office" key="office-{{$office->id}}" :selected="$itsSelected"/>
         @empty
             <div class="table-row">
                 <x-table-accordion.td class=" pl-14">

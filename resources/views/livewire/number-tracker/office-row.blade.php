@@ -64,7 +64,7 @@
 
     @if($itsOpen)
         @forelse ($this->usersDailyNumbers as $userDailyNumbers)
-            <livewire:number-tracker.user-row :userDailyNumbers="$userDailyNumbers"  key="user-{{$userDailyNumbers[0]->user_id}}"/>
+            <livewire:number-tracker.user-row :userDailyNumbers="$userDailyNumbers" :isSelected="$selected" key="user-{{$userDailyNumbers[0]->user_id}}"/>
         @empty
             <div class="table-row">
                 <x-table-accordion.td class=" pl-14">

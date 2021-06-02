@@ -26,6 +26,7 @@ class OfficeRow extends Component
 
     public function mount()
     {
+        $this->selectedTotal = $this->selected;
         $this->selectedUsers = collect();
     }
 
