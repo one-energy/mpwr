@@ -1,19 +1,15 @@
 <div wire:key="{{now()}}">
-    <div class="grid grid-cols-12 cursor-pointer hover:bg-gray-100"
+    <div class="grid grid-cols-12 cursor-pointer bg-white hover:bg-gray-100"
             wire:click="collapseRegion()" >
-        <x-table-accordion.default-td-arrow class="col-span-4">
-            <div class="flex" x-data wire:key="dailyeEntry-{{now()}}">
-                <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
-                        wire:model="itsSelected" type="checkbox" wire:click.stop="">
+        <x-table-accordion.td class="col-span-4">
+            <div class="flex ml-28">
+                <div class="flex" x-data wire:key="dailyeEntry-{{now()}}">
+                    <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
+                            wire:model="itsSelected" type="checkbox" wire:click.stop="">
+                </div>
+                <label>{{$usersDailyNumbers[0]->user?->fullName ?? "Removed"}}</label>
             </div>
-            <div class="flex items-center mr-2 w-6 h-6">
-                <x-svg.spinner
-                    color="#9fa6b2"
-                    class="self-center ">
-                </x-svg.spinner>
-            </div>
-            <label>{{$usersDailyNumbers[0]->user?->fullName ?? "Removed"}}</label>
-        </x-table-accordion.default-td-arrow>
+        </x-table-accordion.td>
         <x-table-accordion.td>
             <x-svg.spinner
                 color="#9fa6b2"
