@@ -193,7 +193,7 @@ class UserInfoTab extends Component
     public function getAssignedTeams()
     {
         $this->teams = match ($this->user->role) {
-            Role::ADMIN, Role::OWNER, Role::SALES_REP, Role::SETTER => $this->user->office ? collect([$this->user->office]) : null,
+            Role::ADMIN, Role::OWNER, Role::SALES_REP, Role::SETTER => $this->user->office ? collect() : null,
             Role::DEPARTMENT_MANAGER => $this->user->managedDepartments,
             Role::REGION_MANAGER     => $this->user->managedRegions,
             Role::OFFICE_MANAGER     => $this->user->managedOffices
