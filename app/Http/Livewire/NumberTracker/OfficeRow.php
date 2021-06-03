@@ -3,7 +3,6 @@
 namespace App\Http\Livewire\NumberTracker;
 
 use App\Models\Office;
-use App\Models\User;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
@@ -21,7 +20,7 @@ class OfficeRow extends Component
 
     public $listeners = [
         'regionSelected',
-        'toogleUser',
+        'toggleUser',
     ];
 
     public function mount()
@@ -70,7 +69,7 @@ class OfficeRow extends Component
     public function sumBy($field)
     {
         return $this->parseNumber(
-            $this->office->dailyNumbers->sum(fn ($dailyNumber) => $dailyNumber[$field])
+            $this->office->dailyNumbers->sum(fn($dailyNumber) => $dailyNumber[$field])
         );
     }
 
@@ -81,16 +80,16 @@ class OfficeRow extends Component
 
     public function getUsersDailyNumbersProperty()
     {
-        return $this->office->dailyNumbers->groupBy("user_id");
+        return $this->office->dailyNumbers->groupBy('user_id');
     }
 
-    public function toogleUser(int $userId, bool $isSelected)
+    public function toggleUser(int $userId, bool $isSelected)
     {
         if ($isSelected) {
             $this->selectedUsers->push($userId);
         } else {
             $this->selectedUsers = $this->selectedUsers->filter(function ($selectedUser) use ($userId) {
-                return $selectedUser != $userId;
+                return $selectedUser !== $userId;
             });
         }
 
@@ -98,7 +97,7 @@ class OfficeRow extends Component
     }
 
     public function isAnyUserSelected()
-    {  
+    {
         $this->selected = $this->selectedUsers->isNotEmpty();
 
         $this->emitUp('toggleOffice', $this->office, $this->selected);
@@ -107,11 +106,6 @@ class OfficeRow extends Component
             $this->emit('officeSelected', $this->office->id, $this->selected);
         }
 
-        if ($this->selectedUsers->count() == $this->office->dailyNumbers->unique('user_id')->count()) {
-            $this->selectedTotal = true;
-        } else {
-            
-            $this->selectedTotal = false;
-        }
+        $this->selectedTotal = $this->selectedUsers->count() === $this->office->dailyNumbers->unique('user_id')->count();
     }
 }

@@ -27,7 +27,7 @@ class RegionRow extends Component
 
     public function mount()
     {
-        $this->selectedUsersId = collect();
+        $this->selectedUsersId   = collect();
         $this->selectedOfficesId = collect();
     }
 
@@ -52,16 +52,11 @@ class RegionRow extends Component
 
     public function selectRegion()
     {
-        $usersId = $this->region->offices->map(function($office) {
-            return $office->dailyNumbers->unique('user_id')->map(function($dailyNumber) {
-                return $dailyNumber->user_id;
-            })->filter();
-        })->flatten();
-        if($this->itsSelected){
-            $this->selectedUsersId = $this->selectedUsersId->merge($usersId);
+        if ($this->itsSelected) {
+            $this->selectedUsersId   = $this->selectedUsersId->merge($this->getUserIds());
             $this->selectedOfficesId = $this->selectedOfficesId->merge($this->region->offices->map->id);
         } else {
-            $this->selectedUsersId = collect([]);
+            $this->selectedUsersId   = collect([]);
             $this->selectedOfficesId = collect([]);
         }
         $this->emit('regionSelected', $this->region->id, $this->itsSelected);
@@ -82,9 +77,18 @@ class RegionRow extends Component
         if ($insert) {
             $this->selectedOfficesId->push($office->id);
         } else {
-            $this->selectedOfficesId = $this->selectedOfficesId->filter(fn ($officeId) => $officeId !== $office->id);
+            $this->selectedOfficesId = $this->selectedOfficesId->filter(fn($officeId) => $officeId !== $office->id);
         }
 
         $this->anyOfficeSelected();
+    }
+
+    private function getUserIds()
+    {
+        return $this->region->offices->map(function ($office) {
+            return $office->dailyNumbers->unique('user_id')->map(function ($dailyNumber) {
+                return $dailyNumber->user_id;
+            })->filter();
+        })->flatten();
     }
 }

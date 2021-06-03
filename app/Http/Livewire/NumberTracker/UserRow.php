@@ -15,7 +15,7 @@ class UserRow extends Component
     public bool $isSelected = false;
 
     protected $listeners = [
-        'officeSelected'
+        'officeSelected',
     ];
 
     public function mount()
@@ -30,9 +30,9 @@ class UserRow extends Component
 
     public function selectUser()
     {
-        $this->emitUp("toogleUser", $this->user->id, $this->isSelected);
+        $this->emitUp('toggleUser', $this->user->id, $this->isSelected);
     }
-    
+
     public function officeSelected(int $officeId, bool $selected)
     {
         if ($this->userDailyNumbers[0]->office_id === $officeId) {
