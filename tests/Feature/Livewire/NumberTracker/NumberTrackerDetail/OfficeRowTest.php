@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Livewire\NumberTracker;
+namespace Tests\Feature\Livewire\NumberTracker\NumberTrackerDetail;
 
 use App\Http\Livewire\NumberTracker\OfficeRow;
 use App\Models\DailyNumber;

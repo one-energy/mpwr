@@ -120,4 +120,9 @@ class NumberTrackerDetailAccordionTable extends Component
     {
         # code...
     }
+
+    public function toggleUser()
+    {
+        # code...
+    }
 }
