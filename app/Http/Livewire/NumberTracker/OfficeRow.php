@@ -130,11 +130,9 @@ class OfficeRow extends Component
 
     public function sortDailyNumbers($sortBy, $sortDirection)
     {
-        if ($this->office === null) {
-            return;
-        }
+        $office = $this->office === null ? $this->findOffice($this->officeId) : $this->office;
 
-        $groupedUsers = $this->office->dailyNumbers->collect()->groupBy('user_id');
+        $groupedUsers = $office->dailyNumbers->collect()->groupBy('user_id');
 
         $this->dailyNumbers = $sortDirection === 'asc'
             ? $this->sortUsersAsc($groupedUsers, $sortBy)
