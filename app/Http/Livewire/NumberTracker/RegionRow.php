@@ -62,6 +62,7 @@ class RegionRow extends Component
             $this->selectedOfficesId = collect([]);
         }
         $this->emit('regionSelected', $this->region->id, $this->itsSelected);
+        $this->updateIds();
     }
 
     public function getOfficesProperty()
@@ -90,6 +91,7 @@ class RegionRow extends Component
             );
         }
         $this->anyOfficeSelected();
+        $this->updateIds();
     }
 
     public function toggleUser($userId, bool $insert, $officeId)
@@ -100,6 +102,9 @@ class RegionRow extends Component
         } else {
             $this->selectedUsersId = $this->selectedUsersId->filter(fn($id) => $userId !== $id);
         }
+        $this->updateIds();
+
+        $this->isAnyUserSelected();
     }
 
     private function getUserIds()
@@ -109,5 +114,15 @@ class RegionRow extends Component
                 return $dailyNumber->user_id;
             })->filter();
         })->flatten();
+    }
+
+    public function updateIds()
+    {
+        $this->emitUp('updateIds', $this->region->id, $this->selectedOfficesId, $this->selectedUsersId);
+    }
+
+    public function isAnyUserSelected()
+    {
+        $this->itsSelected = $this->selectedUsersId->isNotEmpty();
     }
 }
