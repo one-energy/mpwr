@@ -38,7 +38,7 @@ class NumberTrackerDetailAccordionTable extends Component
     {
         $this->selectedDepartment = $this->getDepartmentId();
 
-        $this->sortBy = 'doors';
+        $this->sortBy = 'hours_worked';
     }
 
     public function render()
@@ -53,7 +53,7 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function sortBy()
     {
-        return 'doors';
+        return 'hours_worked';
     }
 
     public function getDepartmentsProperty()
