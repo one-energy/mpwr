@@ -64,7 +64,14 @@
     </div>
     @if ($itsOpen)
         @forelse ($offices as $office)
-            <livewire:number-tracker.office-row :office="$office" key="office-{{$office->id}}" :selected="$itsSelected"/>
+            <livewire:number-tracker.office-row
+                :officeId="$office->id"
+                :selected="$itsSelected"
+                :period="$period"
+                :selectedDate="$selectedDate"
+                :withTrashed="$withTrashed"
+                key="office-{{$office->id}}"
+            />
         @empty
             <div class="table-row">
                 <x-table-accordion.td class=" pl-14">Empty</x-table-accordion.td>

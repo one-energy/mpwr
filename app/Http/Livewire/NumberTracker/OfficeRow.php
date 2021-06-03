@@ -3,12 +3,21 @@
 namespace App\Http\Livewire\NumberTracker;
 
 use App\Models\Office;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
 class OfficeRow extends Component
 {
-    public Office $office;
+    public int $officeId;
+
+    public ?Office $office;
+
+    public string $period;
+
+    public string $selectedDate;
+
+    public bool $withTrashed;
 
     public Collection $dailyNumbers;
 
@@ -28,6 +37,8 @@ class OfficeRow extends Component
 
     public function mount()
     {
+        $this->office = null;
+
         $this->sortDailyNumbers('hours_worked', 'asc');
 
         $this->selectedTotal = $this->selected;
@@ -36,6 +47,8 @@ class OfficeRow extends Component
 
     public function render()
     {
+        $this->office = $this->findOffice($this->officeId);
+
         return view('livewire.number-tracker.office-row');
     }
 
@@ -117,6 +130,10 @@ class OfficeRow extends Component
 
     public function sortDailyNumbers($sortBy, $sortDirection)
     {
+        if ($this->office === null) {
+            return;
+        }
+
         $groupedUsers = $this->office->dailyNumbers->collect()->groupBy('user_id');
 
         $this->dailyNumbers = $sortDirection === 'asc'
@@ -127,14 +144,29 @@ class OfficeRow extends Component
     private function sortUsersAsc(Collection $dailyNumbers, string $sortBy)
     {
         return $dailyNumbers->sortBy(
-            fn (Collection $trackers) => $trackers->sum($sortBy)
+            fn(Collection $trackers) => $trackers->sum($sortBy)
         )->values();
     }
 
     private function sortUsersDesc(Collection $dailyNumbers, string $sortBy)
     {
         return $dailyNumbers->sortByDesc(
-            fn (Collection $trackers) => $trackers->sum($sortBy)
+            fn(Collection $trackers) => $trackers->sum($sortBy)
         )->values();
+    }
+
+    private function findOffice(int $officeId)
+    {
+        return Office::query()
+            ->find($officeId)
+            ->load([
+                'dailyNumbers' => function ($query) {
+                    $query
+                        ->when($this->withTrashed, fn($query) => $query->withTrashed())
+                        ->when(!$this->withTrashed, fn($query) => $query->has('user'))
+                        ->inPeriod($this->period, new Carbon($this->selectedDate))
+                        ->groupBy('user_id');
+                },
+            ]);
     }
 }
