@@ -4,6 +4,7 @@ namespace App\Http\Livewire\NumberTracker;
 
 use App\Models\Office;
 use App\Models\Region;
+use App\Models\User;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
@@ -23,6 +24,7 @@ class RegionRow extends Component
 
     protected $listeners = [
         'toggleOffice',
+        'toggleUser',
     ];
 
     public function mount()
@@ -76,11 +78,22 @@ class RegionRow extends Component
     {
         if ($insert) {
             $this->selectedOfficesId->push($office->id);
+            $this->selectedUsersId = $this->selectedUsersId->merge($office->dailyNumbers->unique('user_id')->map->user_id);
         } else {
             $this->selectedOfficesId = $this->selectedOfficesId->filter(fn($officeId) => $officeId !== $office->id);
+            $this->selectedUsersId = collect([]);
         }
 
         $this->anyOfficeSelected();
+    }
+
+    public function toggleUser($userId, bool $insert)
+    {
+        if ($insert) {
+            $this->selectedUsersId->push($userId);
+        } else {
+            $this->selectedUsersId = $this->selectedUsersId->filter(fn($id) => $userId !== $id);
+        }
     }
 
     private function getUserIds()

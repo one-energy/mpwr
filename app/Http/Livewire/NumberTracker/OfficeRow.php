@@ -92,15 +92,12 @@ class OfficeRow extends Component
                 return $selectedUser !== $userId;
             });
         }
-
         $this->isAnyUserSelected();
     }
 
     public function isAnyUserSelected()
     {
         $this->selected = $this->selectedUsers->isNotEmpty();
-
-        $this->emitUp('toggleOffice', $this->office, $this->selected);
 
         if (!$this->selected) {
             $this->emit('officeSelected', $this->office->id, $this->selected);
