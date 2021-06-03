@@ -3,12 +3,23 @@
 namespace App\Http\Livewire\NumberTracker;
 
 use App\Models\Office;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
 class OfficeRow extends Component
 {
-    public Office $office;
+    public int $officeId;
+
+    public ?Office $office;
+
+    public string $period;
+
+    public string $selectedDate;
+
+    public bool $withTrashed;
+
+    public Collection $dailyNumbers;
 
     public Collection $selectedUsers;
 
@@ -21,16 +32,23 @@ class OfficeRow extends Component
     public $listeners = [
         'regionSelected',
         'toggleUser',
+        'sorted' => 'sortDailyNumbers',
     ];
 
     public function mount()
     {
+        $this->office = null;
+
+        $this->sortDailyNumbers('hours_worked', 'asc');
+
         $this->selectedTotal = $this->selected;
         $this->selectedUsers = collect();
     }
 
     public function render()
     {
+        $this->office = $this->findOffice($this->officeId);
+
         return view('livewire.number-tracker.office-row');
     }
 
@@ -42,7 +60,8 @@ class OfficeRow extends Component
     public function selectOffice()
     {
         if ($this->selected) {
-            $this->selectedUsers = $this->selectedUsers->merge($this->office->dailyNumbers->unique('user_id')->pluck('user_id'));
+            $this->selectedUsers = $this->selectedUsers->merge(
+                $this->office->dailyNumbers->unique('user_id')->pluck('user_id'));
         } else {
             $this->selectedUsers = $this->selectedUsers->empty();
         }
@@ -105,5 +124,45 @@ class OfficeRow extends Component
         }
 
         $this->selectedTotal = $this->selectedUsers->count() === $this->office->dailyNumbers->unique('user_id')->count();
+    }
+
+    public function sortDailyNumbers($sortBy, $sortDirection)
+    {
+        $office = $this->office === null ? $this->findOffice($this->officeId) : $this->office;
+
+        $groupedUsers = $office->dailyNumbers->collect()->groupBy('user_id');
+
+        $this->dailyNumbers = $sortDirection === 'asc'
+            ? $this->sortUsersAsc($groupedUsers, $sortBy)
+            : $this->sortUsersDesc($groupedUsers, $sortBy);
+    }
+
+    private function sortUsersAsc(Collection $dailyNumbers, string $sortBy)
+    {
+        return $dailyNumbers->sortBy(
+            fn(Collection $trackers) => $trackers->sum($sortBy)
+        )->values();
+    }
+
+    private function sortUsersDesc(Collection $dailyNumbers, string $sortBy)
+    {
+        return $dailyNumbers->sortByDesc(
+            fn(Collection $trackers) => $trackers->sum($sortBy)
+        )->values();
+    }
+
+    private function findOffice(int $officeId)
+    {
+        return Office::query()
+            ->find($officeId)
+            ->load([
+                'dailyNumbers' => function ($query) {
+                    $query
+                        ->when($this->withTrashed, fn($query) => $query->withTrashed())
+                        ->when(!$this->withTrashed, fn($query) => $query->has('user'))
+                        ->inPeriod($this->period, new Carbon($this->selectedDate))
+                        ->groupBy('user_id');
+                },
+            ]);
     }
 }

@@ -17,7 +17,7 @@
                 color="#9fa6b2"
                 class="self-center hidden w-5">
             </x-svg.spinner>
-            <div class="@if($userDailyNumbers[0]->deleted_at != null) text-red-500 @endif">
+            <div class="@if($userDailyNumbers[0]['deleted_at'] != null) text-red-500 @endif">
                 {{$userDailyNumbers->sum('hours_worked') }}
             </div>
         </x-table-accordion.td>
@@ -26,7 +26,7 @@
                 color="#9fa6b2"
                 class="self-center hidden w-5">
             </x-svg.spinner>
-            <div class="@if($userDailyNumbers[0]->deleted_at != null) text-red-500 @endif">
+            <div class="@if($userDailyNumbers[0]['deleted_at'] != null) text-red-500 @endif">
                 {{$userDailyNumbers->sum('doors') }}
             </div>
         </x-table-accordion.td>
@@ -35,7 +35,7 @@
                 color="#9fa6b2"
                 class="self-center hidden w-5">
             </x-svg.spinner>
-            <div class="@if($userDailyNumbers[0]->deleted_at != null) text-red-500 @endif">
+            <div class="@if($userDailyNumbers[0]['deleted_at'] != null) text-red-500 @endif">
                 {{$userDailyNumbers->sum('hours_knocked') }}
             </div>
         </x-table-accordion.td>
@@ -44,7 +44,7 @@
                 color="#9fa6b2"
                 class="self-center hidden w-5">
             </x-svg.spinner>
-            <div class="@if($userDailyNumbers[0]->deleted_at != null) text-red-500 @endif" class="@if($userDailyNumbers[0]->deleted_at != null) text-red-500 @endif">
+            <div class="@if($userDailyNumbers[0]['deleted_at'] != null) text-red-500 @endif" class="@if($userDailyNumbers[0]['deleted_at'] != null) text-red-500 @endif">
                 {{$userDailyNumbers->sum('sets') }}
             </div>
         </x-table-accordion.td>
@@ -53,7 +53,7 @@
                 color="#9fa6b2"
                 class="self-center hidden w-5">
             </x-svg.spinner>
-            <div class="@if($userDailyNumbers[0]->deleted_at != null) text-red-500 @endif">
+            <div class="@if($userDailyNumbers[0]['deleted_at'] != null) text-red-500 @endif">
                 {{$userDailyNumbers->sum('sats') }}
             </div>
         </x-table-accordion.td>
@@ -62,7 +62,7 @@
                 color="#9fa6b2"
                 class="self-center hidden w-5">
             </x-svg.spinner>
-            <div class="@if($userDailyNumbers[0]->deleted_at != null) text-red-500 @endif" class="@if($userDailyNumbers[0]->deleted_at != null) text-red-500 @endif">
+            <div class="@if($userDailyNumbers[0]['deleted_at'] != null) text-red-500 @endif" class="@if($userDailyNumbers[0]['deleted_at'] != null) text-red-500 @endif">
                 {{$userDailyNumbers->sum('set_closes') }}
             </div>
         </x-table-accordion.td>
@@ -71,7 +71,7 @@
                 color="#9fa6b2"
                 class="self-center hidden w-5">
             </x-svg.spinner>
-            <div class="@if($userDailyNumbers[0]->deleted_at != null) text-red-500 @endif">
+            <div class="@if($userDailyNumbers[0]['deleted_at'] != null) text-red-500 @endif">
                 {{$userDailyNumbers->sum('closer_sits') }}
             </div>
         </x-table-accordion.td>
@@ -80,7 +80,7 @@
                 color="#9fa6b2"
                 class="self-center hidden w-5">
             </x-svg.spinner>
-            <div class="@if($userDailyNumbers[0]->deleted_at != null) text-red-500 @endif">
+            <div class="@if($userDailyNumbers[0]['deleted_at'] != null) text-red-500 @endif">
                 {{$userDailyNumbers->sum('closes') }}
             </div>
         </x-table-accordion.td>

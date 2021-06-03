@@ -5,6 +5,7 @@ namespace App\Http\Livewire\NumberTracker;
 use App\Models\Department;
 use App\Models\Region;
 use App\Traits\Livewire\FullTable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
@@ -39,7 +40,7 @@ class NumberTrackerDetailAccordionTable extends Component
 
         $this->selectedDepartment = $this->getDepartmentId();
 
-        $this->sortBy = 'doors';
+        $this->sortBy = 'hours_worked';
     }
 
     public function render()
@@ -54,7 +55,7 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function sortBy()
     {
-        return 'doors';
+        return 'hours_worked';
     }
 
     public function getDepartmentsProperty()
@@ -67,11 +68,31 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function getRegionsProperty()
     {
-        $regions = Region::when($this->deleteds, function ($query) {
-            $query->has('offices.dailyNumbers')->withTrashed();
-        })
+        $regions = Region::query()
             ->where('department_id', $this->selectedDepartment)
-            ->with('offices.dailyNumbers')
+            ->with([
+                'offices' => function ($query) {
+                    $query->when($this->deleteds, function ($query) {
+                        $query->withTrashed()
+                            ->where(function ($query) {
+                                $query->whereHas('dailyNumbers', function ($query) {
+                                    $query->inPeriod($this->period,
+                                        new Carbon($this->selectedDate))->withTrashed();
+                                })
+                                    ->whereNotNull('deleted_at');
+                            })
+                            ->orWhereNull('deleted_at');
+                    })
+                        ->with([
+                            'dailyNumbers' => function ($query) {
+                                $query
+                                    ->when($this->deleteds, fn($query) => $query->withTrashed())
+                                    ->when(!$this->deleteds, fn($query) => $query->has('user'))
+                                    ->inPeriod($this->period, new Carbon($this->selectedDate));
+                            },
+                        ]);
+                },
+            ])
             ->get();
 
         if ($this->sortDirection === 'asc') {
@@ -93,8 +114,6 @@ class NumberTrackerDetailAccordionTable extends Component
     {
         $this->selectedDate = $date;
         $this->period       = $period;
-
-        $this->initUnselectedCollections();
     }
 
     private function getDepartmentId()
