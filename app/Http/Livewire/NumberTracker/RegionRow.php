@@ -81,16 +81,22 @@ class RegionRow extends Component
             $this->selectedUsersId = $this->selectedUsersId->merge($office->dailyNumbers->unique('user_id')->map->user_id);
         } else {
             $this->selectedOfficesId = $this->selectedOfficesId->filter(fn($officeId) => $officeId !== $office->id);
-            $this->selectedUsersId = collect([]);
+            $this->selectedUsersId = $this->selectedUsersId->filter( function ($id) use($office) {
+                return !$office->dailyNumbers->unique('user_id')->map(function ($dailyNumber) {
+                        return $dailyNumber->user_id;
+                    })->filter()->contains($id);
+                }
+                
+            );
         }
-
         $this->anyOfficeSelected();
     }
 
-    public function toggleUser($userId, bool $insert)
+    public function toggleUser($userId, bool $insert, $officeId)
     {
         if ($insert) {
             $this->selectedUsersId->push($userId);
+            $this->selectedOfficesId = $this->selectedOfficesId->merge($officeId)->unique();
         } else {
             $this->selectedUsersId = $this->selectedUsersId->filter(fn($id) => $userId !== $id);
         }

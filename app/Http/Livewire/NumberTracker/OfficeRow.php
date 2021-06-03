@@ -100,6 +100,7 @@ class OfficeRow extends Component
         $this->selected = $this->selectedUsers->isNotEmpty();
 
         if (!$this->selected) {
+            $this->emitUp('toggleOffice', $this->office, $this->selected);
             $this->emit('officeSelected', $this->office->id, $this->selected);
         }
 
