@@ -11,6 +11,8 @@ class RegionRow extends Component
 {
     public Region $region;
 
+    public Collection $offices;
+
     public Collection $selectedOfficesId;
 
     public Collection $selectedUsersId;
@@ -21,12 +23,19 @@ class RegionRow extends Component
 
     public int $quantityOfficesSelected = 0;
 
+    public string $sortBy = 'hours_worked';
+
+    public string $sortDirection = 'asc';
+
     protected $listeners = [
         'toggleOffice',
+        'sorted' => 'sortOffices',
     ];
 
     public function mount()
     {
+        $this->sortOffices('hours_worked', 'asc');
+
         $this->selectedUsersId   = collect();
         $this->selectedOfficesId = collect();
     }
@@ -62,11 +71,6 @@ class RegionRow extends Component
         $this->emit('regionSelected', $this->region->id, $this->itsSelected);
     }
 
-    public function getOfficesProperty()
-    {
-        return $this->region->offices;
-    }
-
     public function anyOfficeSelected()
     {
         $this->itsSelected = $this->selectedOfficesId->isNotEmpty();
@@ -90,5 +94,26 @@ class RegionRow extends Component
                 return $dailyNumber->user_id;
             })->filter();
         })->flatten();
+    }
+
+    public function sortOffices($sortBy, $sortDirection)
+    {
+        $this->offices = $sortDirection === 'asc'
+            ? $this->sortOfficesAsc($this->region->offices, $sortBy)
+            : $this->sortOfficesDesc($this->region->offices, $sortBy);
+    }
+
+    private function sortOfficesAsc(Collection $offices, string $sortBy)
+    {
+        return $offices->sortBy(
+            fn (Office $office) => $office->dailyNumbers->count() ? $office->dailyNumbers->sum($sortBy) : 0
+        )->values();
+    }
+
+    private function sortOfficesDesc(Collection $offices, string $sortBy)
+    {
+        return $offices->sortByDesc(
+            fn (Office $office) => $office->dailyNumbers->count() ? $office->dailyNumbers->sum($sortBy) : 0
+        )->values();
     }
 }
