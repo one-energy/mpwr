@@ -142,8 +142,8 @@ class NumberTrackerDetailAccordionTable extends Component
             $this->selectedOfficesIds[$regionId] = $officesIds;
             $this->selectedUsersIds[$regionId]   = $usersIds;
         } else {
-            $this->selectedOfficesIds->forget($regionId);
-            $this->selectedUsersIds->forget($regionId);
+            $this->selectedOfficesIds[$regionId] = [];
+            $this->selectedUsersIds[$regionId] = [];
         }
 
         $this->emitUpdateNumbersEvent();

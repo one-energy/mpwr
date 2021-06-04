@@ -9,9 +9,9 @@
                     wire:model="selected"
                     wire:click.stop=""
                 />
-                <x-svg.spinner wire:loading color="#9fa6b2" class="self-center hidden w-5 mr-2" />
-                <label>{{ $office->name }}</label>
             </div>
+            <x-svg.spinner wire:loading color="#9fa6b2" class="self-center hidden w-5 mr-2" />
+            <label>{{ $office->name }}</label>
         </x-table-accordion.child-td-arrow>
         <x-table-accordion.td by="hours_worked" sortedBy="$sortBy">
             <x-svg.spinner color="#9fa6b2" class="self-center hidden w-5" />
