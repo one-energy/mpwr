@@ -4,6 +4,7 @@ namespace App\Http\Livewire\NumberTracker;
 
 use App\Models\Office;
 use App\Models\Region;
+use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Livewire\Component;
@@ -32,6 +33,8 @@ class RegionRow extends Component
 
     protected $listeners = [
         'toggleOffice',
+        'toggleUser',
+        'setDateOrPeriod',
         'sorted' => 'sortOffices',
     ];
 
@@ -76,6 +79,7 @@ class RegionRow extends Component
             $this->selectedOfficesId = collect([]);
         }
         $this->emit('regionSelected', $this->region->id, $this->itsSelected);
+        $this->updateIds();
     }
 
     public function anyOfficeSelected()
@@ -87,11 +91,32 @@ class RegionRow extends Component
     {
         if ($insert) {
             $this->selectedOfficesId->push($office->id);
+            $this->selectedUsersId = $this->selectedUsersId->merge($office->dailyNumbers->unique('user_id')->map->user_id);
         } else {
             $this->selectedOfficesId = $this->selectedOfficesId->filter(fn($officeId) => $officeId !== $office->id);
+            $this->selectedUsersId = $this->selectedUsersId->filter( function ($id) use($office) {
+                return !$office->dailyNumbers->unique('user_id')->map(function ($dailyNumber) {
+                        return $dailyNumber->user_id;
+                    })->filter()->contains($id);
+                }
+                
+            );
         }
-
         $this->anyOfficeSelected();
+        $this->updateIds();
+    }
+
+    public function toggleUser($userId, bool $insert, $officeId)
+    {
+        if ($insert) {
+            $this->selectedUsersId->push($userId);
+            $this->selectedOfficesId = $this->selectedOfficesId->merge($officeId)->unique();
+        } else {
+            $this->selectedUsersId = $this->selectedUsersId->filter(fn($id) => $userId !== $id);
+        }
+        $this->updateIds();
+
+        $this->isAnyUserSelected();
     }
 
     private function getUserIds()
@@ -103,6 +128,16 @@ class RegionRow extends Component
         })->flatten();
     }
 
+    public function updateIds()
+    {
+        $this->emitUp('updateIds', $this->region->id, $this->selectedOfficesId, $this->selectedUsersId);
+    }
+
+    public function isAnyUserSelected()
+    {
+        $this->itsSelected = $this->selectedUsersId->isNotEmpty();
+    }
+    
     public function sortOffices($sortBy, $sortDirection)
     {
         $region = $this->region === null ? $this->findRegion($this->regionId) : $this->region;
@@ -110,6 +145,13 @@ class RegionRow extends Component
         $this->offices = $sortDirection === 'asc'
             ? $this->sortOfficesAsc($region->offices, $sortBy)
             : $this->sortOfficesDesc($region->offices, $sortBy);
+    }
+
+    public function setDateOrPeriod($date, $period)
+    {
+        $this->selectedDate = $date;
+        $this->period       = $period;
+        $this->region       = $this->findRegion($this->regionId);
     }
 
     private function sortOfficesAsc(Collection $offices, string $sortBy)

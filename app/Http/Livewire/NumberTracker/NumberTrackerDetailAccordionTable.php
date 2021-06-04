@@ -18,7 +18,7 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public bool $deleteds = false;
 
-    public Collection $selectedUsers;
+    public Collection $selectedUsersIds;
 
     public Collection $selectedOfficesIds;
 
@@ -30,13 +30,14 @@ class NumberTrackerDetailAccordionTable extends Component
 
     protected $listeners = [
         'setDateOrPeriod',
-        'toggleRegion',
-        'toggleOffice',
-        'toggleUser',
+        'updateIds'
     ];
 
     public function mount()
     {
+        $this->selectedUsersIds   = collect([]);
+        $this->selectedOfficesIds = collect([]);
+
         $this->selectedDepartment = $this->getDepartmentId();
 
         $this->sortBy = 'hours_worked';
@@ -113,8 +114,6 @@ class NumberTrackerDetailAccordionTable extends Component
     {
         $this->selectedDate = $date;
         $this->period       = $period;
-
-        $this->initUnselectedCollections();
     }
 
     private function getDepartmentId()
@@ -137,13 +136,27 @@ class NumberTrackerDetailAccordionTable extends Component
         }
     }
 
-    public function toggleOffice()
+    public function updateIds(int $regionId, array $officesIds, array $usersIds)
     {
-        # code...
+        if (count($officesIds) > 0) {
+            $this->selectedOfficesIds[$regionId] = $officesIds;
+            $this->selectedUsersIds[$regionId]   = $usersIds;
+        } else {
+            $this->selectedOfficesIds[$regionId] = [];
+            $this->selectedUsersIds[$regionId] = [];
+        }
+
+        $this->emitUpdateNumbersEvent();
     }
 
-    public function toggleUser()
+    public function emitUpdateNumbersEvent()
     {
-        # code...
+        $payload = [
+            "users"       => $this->selectedUsersIds->flatten()->toArray(),
+            "offices"     => $this->selectedOfficesIds->flatten()->toArray(),
+            "withTrashed" => true
+        ];
+
+        $this->emit("updateNumbers", $payload);
     }
 }

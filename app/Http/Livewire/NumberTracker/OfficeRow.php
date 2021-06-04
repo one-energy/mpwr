@@ -29,9 +29,14 @@ class OfficeRow extends Component
 
     public bool $selectedTotal = false;
 
+    public string $sortBy = 'hours_worked';
+
+    public string $sortDirection = 'asc';
+
     public $listeners = [
         'regionSelected',
         'toggleUser',
+        'setDateOrPeriod',
         'sorted' => 'sortDailyNumbers',
     ];
 
@@ -39,7 +44,7 @@ class OfficeRow extends Component
     {
         $this->office = null;
 
-        $this->sortDailyNumbers('hours_worked', 'asc');
+        $this->sortDailyNumbers($this->sortBy, $this->sortDirection);
 
         $this->selectedTotal = $this->selected;
         $this->selectedUsers = collect();
@@ -111,7 +116,6 @@ class OfficeRow extends Component
                 return $selectedUser !== $userId;
             });
         }
-
         $this->isAnyUserSelected();
     }
 
@@ -119,9 +123,8 @@ class OfficeRow extends Component
     {
         $this->selected = $this->selectedUsers->isNotEmpty();
 
-        $this->emitUp('toggleOffice', $this->office, $this->selected);
-
         if (!$this->selected) {
+            $this->emitUp('toggleOffice', $this->office, $this->selected);
             $this->emit('officeSelected', $this->office->id, $this->selected);
         }
 
@@ -130,13 +133,31 @@ class OfficeRow extends Component
 
     public function sortDailyNumbers($sortBy, $sortDirection)
     {
+        $this->sortBy        = $sortBy;
+
+        $this->sortDirection = $sortDirection;
+
+        $this->getDailyNumbers();
+    }
+
+    public function setDateOrPeriod($date, $period)
+    {
+        $this->selectedDate = $date;
+        $this->period       = $period;
+        $this->office       = $this->findOffice($this->officeId);
+
+        $this->getDailyNumbers();
+    }
+
+    public function getDailyNumbers()
+    {
         $office = $this->office === null ? $this->findOffice($this->officeId) : $this->office;
 
-        $groupedUsers = $office->dailyNumbers->collect()->groupBy('user_id');
+        $groupedUsers = $office->dailyNumbers->groupBy('user_id')->collect();
 
-        $this->dailyNumbers = $sortDirection === 'asc'
-            ? $this->sortUsersAsc($groupedUsers, $sortBy)
-            : $this->sortUsersDesc($groupedUsers, $sortBy);
+        $this->dailyNumbers = $this->sortDirection === 'asc'
+        ? $this->sortUsersAsc($groupedUsers, $this->sortBy)
+        : $this->sortUsersDesc($groupedUsers, $this->sortBy);
     }
 
     private function sortUsersAsc(Collection $dailyNumbers, string $sortBy)
@@ -162,8 +183,7 @@ class OfficeRow extends Component
                     $query
                         ->when($this->withTrashed, fn($query) => $query->withTrashed())
                         ->when(!$this->withTrashed, fn($query) => $query->has('user'))
-                        ->inPeriod($this->period, new Carbon($this->selectedDate))
-                        ->groupBy('user_id');
+                        ->inPeriod($this->period, new Carbon($this->selectedDate));
                 },
             ]);
     }

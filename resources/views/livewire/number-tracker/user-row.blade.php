@@ -2,10 +2,11 @@
     <div class="grid grid-cols-12 cursor-pointer bg-white hover:bg-gray-100">
         <x-table-accordion.td class="col-span-4">
             <div class="flex ml-28">
-                <div class="flex" x-data>
+                <div class="flex" x-data wire:loading.remove>
                     <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
                             wire:model="isSelected" wire:click="selectUser()" type="checkbox" wire:click.stop="">
                 </div>
+                <x-svg.spinner wire:loading color="#9fa6b2" class="self-center hidden w-5 mr-2" />
                 @if($user->deleted_at != null)
                     <x-icon class="mr-2 w-6 h-6" icon="user-blocked"/>
                 @endif

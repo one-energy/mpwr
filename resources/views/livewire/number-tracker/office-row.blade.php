@@ -1,7 +1,7 @@
 <div class="cursor-pointer hover:bg-gray-100 @if($itsOpen) bg-gray-100 @endif">
     <div class="grid grid-cols-12" wire:click.stop="collapseOffice" >
         <x-table-accordion.child-td-arrow class="col-span-4" :open="$itsOpen">
-            <div class="flex">
+            <div class="flex" wire:loading.remove>
                 <input
                     class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
                     type="checkbox"
@@ -9,8 +9,9 @@
                     wire:model="selected"
                     wire:click.stop=""
                 />
-                <label>{{ $office->name }}</label>
             </div>
+            <x-svg.spinner wire:loading color="#9fa6b2" class="self-center hidden w-5 mr-2" />
+            <label>{{ $office->name }}</label>
         </x-table-accordion.child-td-arrow>
         <x-table-accordion.td by="hours_worked" sortedBy="$sortBy">
             <x-svg.spinner color="#9fa6b2" class="self-center hidden w-5" />

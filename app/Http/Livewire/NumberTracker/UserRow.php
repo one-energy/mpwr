@@ -21,7 +21,7 @@ class UserRow extends Component
     public function mount()
     {
         $this->userDailyNumbers = collect($this->userDailyNumbers);
-        $this->user             = User::withTrashed()->find($this->userDailyNumbers->first()['user_id']);
+        $this->user             = User::withTrashed()->find($this->userDailyNumbers[0]['user_id']);
     }
 
     public function render()
@@ -31,7 +31,7 @@ class UserRow extends Component
 
     public function selectUser()
     {
-        $this->emitUp('toggleUser', $this->user->id, $this->isSelected);
+        $this->emitUp('toggleUser', $this->user->id, $this->isSelected, $this->userDailyNumbers[0]['office_id']);
     }
 
     public function officeSelected(int $officeId, bool $selected)
