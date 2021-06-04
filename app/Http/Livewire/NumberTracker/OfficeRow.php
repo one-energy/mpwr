@@ -131,7 +131,7 @@ class OfficeRow extends Component
     {
         $office = $this->office === null ? $this->findOffice($this->officeId) : $this->office;
 
-        $groupedUsers = $office->dailyNumbers->collect()->groupBy('user_id');
+        $groupedUsers = $office->dailyNumbers->groupBy('user_id')->collect();
 
         $this->dailyNumbers = $sortDirection === 'asc'
             ? $this->sortUsersAsc($groupedUsers, $sortBy)
@@ -168,8 +168,7 @@ class OfficeRow extends Component
                     $query
                         ->when($this->withTrashed, fn($query) => $query->withTrashed())
                         ->when(!$this->withTrashed, fn($query) => $query->has('user'))
-                        ->inPeriod($this->period, new Carbon($this->selectedDate))
-                        ->groupBy('user_id');
+                        ->inPeriod($this->period, new Carbon($this->selectedDate));
                 },
             ]);
     }
