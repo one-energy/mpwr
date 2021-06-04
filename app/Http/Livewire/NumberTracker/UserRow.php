@@ -8,7 +8,7 @@ use Livewire\Component;
 
 class UserRow extends Component
 {
-    public Collection $userDailyNumbers;
+    public Collection | array $userDailyNumbers;
 
     public User $user;
 
@@ -20,7 +20,8 @@ class UserRow extends Component
 
     public function mount()
     {
-        $this->user = $this->userDailyNumbers->first()->user()->withTrashed()->first();
+        $this->userDailyNumbers = collect($this->userDailyNumbers);
+        $this->user             = User::withTrashed()->find($this->userDailyNumbers->first()['user_id']);
     }
 
     public function render()
@@ -35,7 +36,7 @@ class UserRow extends Component
 
     public function officeSelected(int $officeId, bool $selected)
     {
-        if ($this->userDailyNumbers[0]->office_id === $officeId) {
+        if ($this->userDailyNumbers[0]['office_id'] === $officeId) {
             $this->isSelected = $selected;
         }
     }

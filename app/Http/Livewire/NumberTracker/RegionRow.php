@@ -4,12 +4,23 @@ namespace App\Http\Livewire\NumberTracker;
 
 use App\Models\Office;
 use App\Models\Region;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
 class RegionRow extends Component
 {
-    public Region $region;
+    public int $regionId;
+
+    public ?Region $region;
+
+    public string $period;
+
+    public string $selectedDate;
+
+    public bool $withTrashed;
+
+    public Collection $offices;
 
     public Collection $selectedOfficesId;
 
@@ -19,20 +30,25 @@ class RegionRow extends Component
 
     public bool $itsOpen = false;
 
-    public int $quantityOfficesSelected = 0;
-
     protected $listeners = [
         'toggleOffice',
+        'sorted' => 'sortOffices',
     ];
 
     public function mount()
     {
+        $this->region = null;
+
+        $this->sortOffices('hours_worked', 'asc');
+
         $this->selectedUsersId   = collect();
         $this->selectedOfficesId = collect();
     }
 
     public function render()
     {
+        $this->region = $this->findRegion($this->regionId);
+
         return view('livewire.number-tracker.region-row');
     }
 
@@ -62,11 +78,6 @@ class RegionRow extends Component
         $this->emit('regionSelected', $this->region->id, $this->itsSelected);
     }
 
-    public function getOfficesProperty()
-    {
-        return $this->region->offices;
-    }
-
     public function anyOfficeSelected()
     {
         $this->itsSelected = $this->selectedOfficesId->isNotEmpty();
@@ -90,5 +101,56 @@ class RegionRow extends Component
                 return $dailyNumber->user_id;
             })->filter();
         })->flatten();
+    }
+
+    public function sortOffices($sortBy, $sortDirection)
+    {
+        $region = $this->region === null ? $this->findRegion($this->regionId) : $this->region;
+
+        $this->offices = $sortDirection === 'asc'
+            ? $this->sortOfficesAsc($region->offices, $sortBy)
+            : $this->sortOfficesDesc($region->offices, $sortBy);
+    }
+
+    private function sortOfficesAsc(Collection $offices, string $sortBy)
+    {
+        return $offices->sortBy(
+            fn(Office $office) => $office->dailyNumbers->count() ? $office->dailyNumbers->sum($sortBy) : 0
+        )->values();
+    }
+
+    private function sortOfficesDesc(Collection $offices, string $sortBy)
+    {
+        return $offices->sortByDesc(
+            fn(Office $office) => $office->dailyNumbers->count() ? $office->dailyNumbers->sum($sortBy) : 0
+        )->values();
+    }
+
+    private function findRegion($regionId)
+    {
+        return Region::query()
+            ->find($regionId)
+            ->load([
+                'offices' => function ($query) {
+                    $query->when($this->withTrashed, function ($query) {
+                        $query->withTrashed()
+                            ->where(function ($query) {
+                                $query->whereHas('dailyNumbers', function ($query) {
+                                    $query->inPeriod($this->period, new Carbon($this->selectedDate))->withTrashed();
+                                })
+                                    ->whereNotNull('deleted_at');
+                            })
+                            ->orWhereNull('deleted_at');
+                    })
+                        ->with([
+                            'dailyNumbers' => function ($query) {
+                                $query
+                                    ->when($this->withTrashed, fn($query) => $query->withTrashed())
+                                    ->when(!$this->withTrashed, fn($query) => $query->has('user'))
+                                    ->inPeriod($this->period, new Carbon($this->selectedDate));
+                            },
+                        ]);
+                }
+            ]);
     }
 }
