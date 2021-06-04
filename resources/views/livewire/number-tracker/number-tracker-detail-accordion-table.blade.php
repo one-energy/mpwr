@@ -7,8 +7,6 @@
         </style>
     @endpush
 
-    <p class="bg-gray-100">HueHue</p>
-
     <livewire:number-tracker.numbers-ratios />
 
     <livewire:number-tracker.total-overview key="total-overview" />

@@ -154,7 +154,7 @@ class NumberTrackerDetailAccordionTable extends Component
         $payload = [
             "users"       => $this->selectedUsersIds->flatten()->toArray(),
             "offices"     => $this->selectedOfficesIds->flatten()->toArray(),
-            "withTrashed" => true
+            "withTrashed" => $this->deleteds
         ];
 
         $this->emit("updateNumbers", $payload);
