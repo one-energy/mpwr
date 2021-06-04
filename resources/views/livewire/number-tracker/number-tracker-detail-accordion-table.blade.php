@@ -1,4 +1,13 @@
 <div>
+    @push('styles')
+        <style>
+            .parent-scope:hover .scope-child {
+                background-color: #f4f5f7;
+            }
+        </style>
+    @endpush
+
+    <p class="bg-gray-100">HueHue</p>
 
     <livewire:number-tracker.numbers-ratios />
 
@@ -29,42 +38,44 @@
             <div class="flex flex-col">
                 <div class="inline-block min-w-full align-middle">
                     @if(count($this->regions))
-                        <div class="grid grid-cols-12">
-                            <x-table-accordion.th-searchable class="sticky top-0 bg-white table-cell col-span-4 pl-10" by="deparmtent" :sortedBy="$sortBy" :direction="$sortDirection"></x-table-accordion.th-searchable>
-                            <x-table-accordion.th-searchable class="sticky top-0 bg-white table-cell" by="hours_worked" :sortedBy="$sortBy" :direction="$sortDirection">
-                                @lang('Hours Worked')
-                            </x-table-accordion.th-searchable>
-                            <x-table-accordion.th-searchable class="sticky top-0 bg-white table-cell" by="doors" :sortedBy="$sortBy" :direction="$sortDirection">
-                                @lang('Doors')
-                            </x-table-accordion.th-searchable>
-                            <x-table-accordion.th-searchable class="sticky top-0 bg-white table-cell" by="hours_knocked" :sortedBy="$sortBy" :direction="$sortDirection">
-                                @lang('Hours Knocked')
-                            </x-table-accordion.th-searchable>
-                            <x-table-accordion.th-searchable class="sticky top-0 bg-white table-cell" by="sets" :sortedBy="$sortBy" :direction="$sortDirection">
-                                @lang('Sets')
-                            </x-table-accordion.th-searchable>
-                            <x-table-accordion.th-searchable class="sticky top-0 bg-white table-cell" by="sats" :sortedBy="$sortBy" :direction="$sortDirection">
-                                @lang('Sats')
-                            </x-table-accordion.th-searchable>
-                            <x-table-accordion.th-searchable class="sticky top-0 bg-white table-cell" by="set_closes" :sortedBy="$sortBy" :direction="$sortDirection">
-                                @lang('Set Closes')
-                            </x-table-accordion.th-searchable>
-                            <x-table-accordion.th-searchable class="sticky top-0 bg-white table-cell" by="closer_sits" :sortedBy="$sortBy" :direction="$sortDirection">
-                                @lang('Closer Sits')
-                            </x-table-accordion.th-searchable>
-                            <x-table-accordion.th-searchable class="sticky top-0 bg-white table-cell" by="closes" :sortedBy="$sortBy" :direction="$sortDirection">
-                                @lang('Closes')
-                            </x-table-accordion.th-searchable>
+                        <div class="overflow-auto" style="height: 70vh">
+                            <div class="grid sticky top-0" style="grid-template-columns: repeat(4, minmax(80px, 80px)) repeat(8, minmax(153px, 153px))">
+                                <x-table-accordion.th-searchable class="sticky top-0 bg-white col-span-4 pl-10" by="deparmtent" :sortedBy="$sortBy" :direction="$sortDirection"></x-table-accordion.th-searchable>
+                                <x-table-accordion.th-searchable class="sticky top-0 bg-white" by="hours_worked" :sortedBy="$sortBy" :direction="$sortDirection">
+                                    @lang('Hours Worked')
+                                </x-table-accordion.th-searchable>
+                                <x-table-accordion.th-searchable class="sticky top-0 self-center bg-white" by="doors" :sortedBy="$sortBy" :direction="$sortDirection">
+                                    @lang('Doors')
+                                </x-table-accordion.th-searchable>
+                                <x-table-accordion.th-searchable class="sticky top-0 bg-white" by="hours_knocked" :sortedBy="$sortBy" :direction="$sortDirection">
+                                    @lang('Hours Knocked')
+                                </x-table-accordion.th-searchable>
+                                <x-table-accordion.th-searchable class="sticky top-0 bg-white" by="sets" :sortedBy="$sortBy" :direction="$sortDirection">
+                                    @lang('Sets')
+                                </x-table-accordion.th-searchable>
+                                <x-table-accordion.th-searchable class="sticky top-0 bg-white" by="sats" :sortedBy="$sortBy" :direction="$sortDirection">
+                                    @lang('Sats')
+                                </x-table-accordion.th-searchable>
+                                <x-table-accordion.th-searchable class="sticky top-0 bg-white" by="set_closes" :sortedBy="$sortBy" :direction="$sortDirection">
+                                    @lang('Set Closes')
+                                </x-table-accordion.th-searchable>
+                                <x-table-accordion.th-searchable class="sticky top-0 bg-white" by="closer_sits" :sortedBy="$sortBy" :direction="$sortDirection">
+                                    @lang('Closer Sits')
+                                </x-table-accordion.th-searchable>
+                                <x-table-accordion.th-searchable class="sticky top-0 bg-white" by="closes" :sortedBy="$sortBy" :direction="$sortDirection">
+                                    @lang('Closes')
+                                </x-table-accordion.th-searchable>
+                            </div>
+                            @foreach($this->regions as $region)
+                                <livewire:number-tracker.region-row
+                                    :regionId="$region->id"
+                                    :period="$period"
+                                    :selectedDate="$selectedDate"
+                                    :withTrashed="$deleteds"
+                                    key="region-{{$region->id}}"
+                                />
+                            @endforeach
                         </div>
-                        @foreach($this->regions as $region)
-                            <livewire:number-tracker.region-row
-                                :regionId="$region->id"
-                                :period="$period"
-                                :selectedDate="$selectedDate"
-                                :withTrashed="$deleteds"
-                                key="region-{{$region->id}}"
-                            />
-                        @endforeach
                     @else
                         <div class="h-96 ">
                             <div class="flex justify-center align-middle">
