@@ -34,6 +34,7 @@ class RegionRow extends Component
     protected $listeners = [
         'toggleOffice',
         'toggleUser',
+        'setDateOrPeriod',
         'sorted' => 'sortOffices',
     ];
 
@@ -144,6 +145,13 @@ class RegionRow extends Component
         $this->offices = $sortDirection === 'asc'
             ? $this->sortOfficesAsc($region->offices, $sortBy)
             : $this->sortOfficesDesc($region->offices, $sortBy);
+    }
+
+    public function setDateOrPeriod($date, $period)
+    {
+        $this->selectedDate = $date;
+        $this->period       = $period;
+        $this->region       = $this->findRegion($this->regionId);
     }
 
     private function sortOfficesAsc(Collection $offices, string $sortBy)

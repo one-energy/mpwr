@@ -32,6 +32,7 @@ class OfficeRow extends Component
     public $listeners = [
         'regionSelected',
         'toggleUser',
+        'setDateOrPeriod',
         'sorted' => 'sortDailyNumbers',
     ];
 
@@ -135,6 +136,13 @@ class OfficeRow extends Component
         $this->dailyNumbers = $sortDirection === 'asc'
             ? $this->sortUsersAsc($groupedUsers, $sortBy)
             : $this->sortUsersDesc($groupedUsers, $sortBy);
+    }
+
+    public function setDateOrPeriod($date, $period)
+    {
+        $this->selectedDate = $date;
+        $this->period       = $period;
+        $this->office       = $this->findOffice($this->officeId);
     }
 
     private function sortUsersAsc(Collection $dailyNumbers, string $sortBy)

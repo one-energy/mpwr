@@ -31,7 +31,7 @@ class UserRow extends Component
 
     public function selectUser()
     {
-        $this->emitUp('toggleUser', $this->user->id, $this->isSelected, $this->userDailyNumbers->first()->office_id);
+        $this->emitUp('toggleUser', $this->user->id, $this->isSelected, $this->userDailyNumbers['office_id']);
     }
 
     public function officeSelected(int $officeId, bool $selected)
