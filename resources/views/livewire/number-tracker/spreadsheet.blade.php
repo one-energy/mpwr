@@ -42,11 +42,11 @@
 
             div[name="pipe"]:not(:last-child)::after {
                 content: "";
-                top: -16px;
+                top: -15px;
                 bottom: 0;
                 right: 0;
                 position: absolute;
-                height: 54px;
+                height: 51px;
                 border-right: 2px solid #E5E7EB;
                 display: inline;
             }
@@ -116,16 +116,8 @@
                                         <span class="font-bold">@lang('Weekly Totals')</span>
                                         <div class="w-full flex flex-row items-center justify-between" style="margin-left: -10px">
                                             @foreach($this->indicators as $indicator)
-                                                <div
-                                                    class="cursor-default relative"
-                                                    x-data=""
-                                                    @mouseenter="$dispatch('open-popover', {ref: '{{ $label . $loop->index . $indicator['label'] }}'})"
-                                                    @mouseleave="$dispatch('close-popover', {ref: '{{ $label . $loop->index . $indicator['label'] }}'})"
-                                                >
+                                                <div class="cursor-default relative">
                                                     {{ $indicator['label'] }}
-                                                    <x-popover position="bottom" ref="{{ $label . $loop->index . $indicator['label'] }}">
-                                                        {{ $indicator['description'] }}
-                                                    </x-popover>
                                                 </div>
                                             @endforeach
                                         </div>
@@ -430,11 +422,11 @@
                             @endforeach
 
                             <x-table.tr class="relative">
-                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 border-t-2 border-l-2 border-r-2 border-gray-800">
+                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 border-2 border-gray-800">
                                     <span class="font-bold">Total</span>
                                 </td>
                                 @foreach($this->weeklyLabels[$key] as $label)
-                                    <td class="py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 border-l-2 border-r-2 border-t-2 border-gray-800">
+                                    <td class="py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 border-2 border-gray-800">
                                         <section class="relative text-center" style="display: grid; grid-template-columns: repeat(8, 1fr)">
                                             <div class="relative" name="pipe">
                                                 <span>
@@ -511,7 +503,7 @@
                                         </section>
                                     </td>
                                     @if ($loop->last)
-                                        <td class="py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 border-l-2 border-r-2 border-t-2 border-gray-800">
+                                        <td class="py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 border-2 border-gray-800">
                                             <section class="relative text-center" style="display: grid; grid-template-columns: repeat(8, 1fr)">
                                                 <div class="relative" name="pipe">
                                                     <span>
