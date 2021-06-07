@@ -34,7 +34,7 @@ class NumberTrackerDetail extends Component
 
     public $dateSelected;
 
-    public string $selectedPill = 'hours';
+    public string $selectedPill = 'hours worked';
 
     public int $selectedDepartment;
 
@@ -101,7 +101,7 @@ class NumberTrackerDetail extends Component
 
     public function getPillsProperty()
     {
-        return ['doors', 'hours', 'sets', 'set sits', 'sg sits', 'set closes', 'sg closes'];
+        return ['doors', 'hours worked', 'sets', 'set sits', 'sg sits', 'set closes', 'sg closes'];
     }
 
     private function getTopTenTrackers()
