@@ -902,17 +902,18 @@
                                                         </div>
                                                     @endforelse
                                                 @endif
-                                            @empty
-                                                <div class="table-row">
-                                                    <x-table-accordion.td class="table-cell pl-14">
-                                                        Empty
-                                                    </x-table-accordion.td>
-                                                </div>
-                                            @endforelse
-                                        @endif
-                                    @endforeach
-                                </x-slot>
-                            </x-table-accordion>
+                                            @endif
+                                        @empty
+                                            <div class="table-row">
+                                                <x-table-accordion.td class="table-cell pl-14">
+                                                    Empty
+                                                </x-table-accordion.td>
+                                            </div>
+                                        @endforelse
+                                    @endif
+                                @endforeach
+                            </x-slot>
+                        </x-table-accordion>
                         @else
                             <div class="h-96 ">
                                 <div class="flex justify-center align-middle">
