@@ -1,7 +1,7 @@
 @props(['actualSection', 'contents'])
 
 <div class="mr-4" x-data="{ 'showSectionModal': false }" @keydown.escape="showSectionModal = false" x-cloak>
-    <button class="bg-green-450 text-white focus:outline-none font-medium text-sm rounded shadow-md px-4 md:px-5 py-2.5"
+    <button class="bg-green-base text-white focus:outline-none font-medium text-sm rounded shadow-md px-4 md:px-5 py-2.5"
             @click="showSectionModal = true">
         Add Section
     </button>
@@ -58,7 +58,7 @@
 @if(!$contents)
     <div class="col-span-1" x-data="{ 'showContentModal': false }" @keydown.escape="showContentModal = false" x-cloak>
         <button
-            class="bg-green-450 text-white focus:outline-none font-medium text-sm rounded shadow-md px-4 md:px-5 py-2.5"
+            class="bg-green-base text-white focus:outline-none font-medium text-sm rounded shadow-md px-4 md:px-5 py-2.5"
             @click="showContentModal = true">
             Add Section
         </button>
@@ -120,7 +120,7 @@
 @endif
 @if($contents)
     <button
-        class="bg-green-450  text-white font-medium text-sm rounded shadow-md px-4 md:px-5 py-2.5 focus:outline-none"
+        class="bg-green-base  text-white font-medium text-sm rounded shadow-md px-4 md:px-5 py-2.5 focus:outline-none"
         wire:click="$set('showAddContentModal', true)"
     >
         Add Content
