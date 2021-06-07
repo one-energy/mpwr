@@ -9,6 +9,7 @@ use App\Models\User;
 use DateInterval;
 use DatePeriod;
 use DateTimeImmutable;
+use DateTimeInterface;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Livewire\Component;
@@ -17,6 +18,7 @@ use Livewire\Component;
  * @property-read Collection|Office[] $offices
  * @property-read array $periods
  * @property-read Collection $weeklyPeriods
+ * @property-read Collection $weeklyLabels
  * @property-read string $dateFormat
  * @property-read Collection|DailyNumber[] $users
  */
@@ -81,6 +83,10 @@ class Spreadsheet extends Component
                 $weekDays = new DatePeriod($chunk->first(), $interval, $chunk->last(), DatePeriod::EXCLUDE_START_DATE);
 
                 foreach ($weekDays as $day) {
+                    if ($this->isSunday($day)) {
+                        continue;
+                    }
+
                     $days[] = $day;
                 }
 
@@ -117,10 +123,7 @@ class Spreadsheet extends Component
                 'dailyNumbers' => function ($query) {
                     $query
                         ->where('office_id', $this->selectedOffice)
-                        ->whereBetween('date', [
-                            today()->startOfMonth()->format('Y-m-d'),
-                            today()->endOfMonth()->format('Y-m-d'),
-                        ])
+                        ->whereIn('date', $this->formattedDatesCollection($this->weeklyPeriods))
                         ->orderBy('date', 'asc');
                 },
             ])
@@ -141,20 +144,18 @@ class Spreadsheet extends Component
         foreach ($this->periodsLabel as $key => $period) {
             foreach ($this->weeklyLabels[$key] as $label) {
                 if ($this->users->isEmpty()) {
-                    $totals[$label] = [];
+                    $totals[$label] = $this->getMappedDailyNumbers(collect(), $label);
 
                     continue;
                 }
 
                 $dailyNumbers = $this->getDailyNumbersGroupedByDate($this->users);
 
-                $totals[$label] = isset($dailyNumbers[$label])
-                    ? $this->getMappedDailyNumbers($dailyNumbers, $label)
-                    : [];
+                $totals[$label] = $this->getMappedDailyNumbers($dailyNumbers, $label);
             }
         }
 
-        return array_chunk($totals, 7, true);
+        return array_chunk($totals, 6, true);
     }
 
     public function getDateFormatProperty()
@@ -181,9 +182,9 @@ class Spreadsheet extends Component
         return match (user()->role) {
             'Admin', 'Owner' => Office::oldest('name')->get(),
             'Department Manager' => $this->getOfficesFromDepartment(),
-            'Region Manager' => Office::oldest('name')->whereIn('region_id', user()->managedRegions->pluck('id'))->get(),
-            'Office Manager' => Office::oldest('name')->whereIn('id', user()->managedOffices->pluck('id'))->get(),
-            default => collect()
+            'Region Manager'     => Office::oldest('name')->whereIn('region_id', user()->managedRegions->pluck('id'))->get(),
+            'Office Manager'     => Office::oldest('name')->whereIn('id', user()->managedOffices->pluck('id'))->get(),
+            default              => collect()
         };
     }
 
@@ -250,16 +251,30 @@ class Spreadsheet extends Component
 
     private function getMappedDailyNumbers(Collection $dailyNumbers, string $key)
     {
+        $hasDailyNumbers = $dailyNumbers->isNotEmpty() && $dailyNumbers->has($key);
+
         return [
-            'doors'         => $dailyNumbers[$key]->sum('doors'),
-            'sets'          => $dailyNumbers[$key]->sum('sets'),
-            'set_closes'    => $dailyNumbers[$key]->sum('set_closes'),
-            'closes'        => $dailyNumbers[$key]->sum('closes'),
-            'hours_worked'  => $dailyNumbers[$key]->sum('hours_worked'),
-            'hours_knocked' => $dailyNumbers[$key]->sum('hours_knocked'),
-            'sats'          => $dailyNumbers[$key]->sum('sats'),
-            'closer_sits'   => $dailyNumbers[$key]->sum('closer_sits'),
-            'date'          => $dailyNumbers[$key]->first()->date,
+            'doors'         => $hasDailyNumbers ? $dailyNumbers[$key]->sum('doors') : 0,
+            'sets'          => $hasDailyNumbers ? $dailyNumbers[$key]->sum('sets') : 0,
+            'set_closes'    => $hasDailyNumbers ? $dailyNumbers[$key]->sum('set_closes') : 0,
+            'closes'        => $hasDailyNumbers ? $dailyNumbers[$key]->sum('closes') : 0,
+            'hours_worked'  => $hasDailyNumbers ? $dailyNumbers[$key]->sum('hours_worked') : 0,
+            'hours_knocked' => $hasDailyNumbers ? $dailyNumbers[$key]->sum('hours_knocked') : 0,
+            'sats'          => $hasDailyNumbers ? $dailyNumbers[$key]->sum('sats') : 0,
+            'closer_sits'   => $hasDailyNumbers ? $dailyNumbers[$key]->sum('closer_sits') : 0,
+            'date'          => $hasDailyNumbers ? $dailyNumbers[$key]->first()->date : null,
         ];
+    }
+
+    private function isSunday(DateTimeInterface $day)
+    {
+        return $day->format('w') === '0';
+    }
+
+    private function formattedDatesCollection(Collection $weeklyPeriods)
+    {
+        return $this->weeklyPeriods
+            ->flatten()
+            ->map(fn (DateTimeImmutable $date) => $date->format('Y-m-d'));
     }
 }
