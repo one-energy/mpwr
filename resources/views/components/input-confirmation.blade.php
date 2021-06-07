@@ -21,6 +21,11 @@
             @if(($disabledToUser && user()->role == $disabledToUser) || $disabled) disabled @endif/>
 
         <div class="absolute inset-y-0 right-0 flex items-center ">
+            @error($name)
+                <div class="pr-3">
+                    <x-svg.alert class="h-5 w-5 text-red-500"></x-svg.alert>
+                </div>
+            @enderror
             <button class="justify-center py-2 px-2 text-sm font-medium cursor-pointer focus:outline-none hover:bg-gray-50 bg-gray-200 text-white transition duration-150 ease-in-out" 
             type="button"  x-on:click="$dispatch('cancel-edit-input', {from: $event.target})">
                 <x-svg.cancel class="h-5 w-4"/>
@@ -30,11 +35,6 @@
                 <x-svg.confirm class="h-5 w-4"/>
             </button>
         </div>
-        @error($name)
-            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                <x-svg.alert class="h-5 w-5 text-red-500"></x-svg.alert>
-            </div>
-        @enderror
     </div>
 
     @error($name)

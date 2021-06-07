@@ -19,7 +19,7 @@
                                 <p>{{ $section->title }}</p>
                             @endif
                             @if($editingSection && $editingSection?->id == $section->id)
-                                <x-input-confirmation label="name" name="editingSection.title" wire x-cloak wire:click.prevent="" x-on:cancel-edit-input.window="$wire.closeEditingSection()" x-on:save-edit-input.window="$wire.saveSectionName({{$section->id}})"/>
+                                <x-input-confirmation label="name" name="editingSection.title" wire x-cloak wire:click.prevent="" x-on:cancel-edit-input.window="$wire.closeEditingSection()" x-on:save-edit-input.window="$wire.saveSectionName({{$section->id}}, {{$key}})"/>
                             @endif
                         </div>
                     <div>

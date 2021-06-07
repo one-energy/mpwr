@@ -36,19 +36,24 @@ class Folders extends Component
 
     public function setEditingSection(TrainingPageSection $section)
     {
+        $this->resetValidation('editingSection.title');
         $this->editingSection = $section;
     }
 
     public function closeEditingSection()
     {
         $this->editingSection = null;
+        $this->resetValidation('editingSection.title');
     }
 
-    public function saveSectionName(TrainingPageSection $section)
+    public function saveSectionName(TrainingPageSection $section, int $sectionsIndex)
     {
         $this->validate();
 
         $section->title = $this->editingSection->title;
         $section->save();
+
+        $this->sections[$sectionsIndex]->title = $section->title;
+        $this->editingSection = null;
     }
 }
