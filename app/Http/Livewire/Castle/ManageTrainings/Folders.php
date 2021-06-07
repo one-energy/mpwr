@@ -17,8 +17,10 @@ class Folders extends Component
 
     public bool $showActions = true;
 
+    public $editingSection;
+
     protected $rules = [
-        'sections.*.title' => 'required|string|min:6',
+        'editingSection.title' => 'required|string|min:6'
     ];
 
     public function render()
@@ -30,5 +32,23 @@ class Folders extends Component
     {
         $this->sectionDestroyRoute = route('castle.manage-trainings.deleteSection', $section->id);
         $this->dispatchBrowserEvent('on-destroy-section', ['section' => $section]);
+    }
+
+    public function setEditingSection(TrainingPageSection $section)
+    {
+        $this->editingSection = $section;
+    }
+
+    public function closeEditingSection()
+    {
+        $this->editingSection = null;
+    }
+
+    public function saveSectionName(TrainingPageSection $section)
+    {
+        $this->validate();
+
+        $section->title = $this->editingSection->title;
+        $section->save();
     }
 }

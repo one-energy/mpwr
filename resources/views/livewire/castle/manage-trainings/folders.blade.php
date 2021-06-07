@@ -11,12 +11,16 @@
                                 <button class="hover:bg-red-200 focus:outline-none p-2 rounded-full" wire:click.prevent="onDestroy({{ $section->id }})">
                                     <x-svg.trash class="w-5 h-5  text-red-600 fill-current" />
                                 </button>
-                                <button class="hover:bg-gray-100 p-3 rounded-full focus:outline-none" wire:click.prevent="" x-on:click="editing = !editing">
+                                <button class="hover:bg-gray-100 p-3 rounded-full focus:outline-none" wire:click.prevent="setEditingSection({{$section}})">
                                         <x-svg.pencil class="w-4 h-4 fill-current text-gray-800" />
                                 </button>
                             @endif                        
-                            <p x-show="!editing">{{ $section->title }}</p>
-                            <x-input-confirmation x-show="editing" label="name" name="sections.{{$key}}.title" wire x-cloak wire:click.prevent=""/>
+                            @if ($editingSection == null || $editingSection?->id != $section->id)
+                                <p>{{ $section->title }}</p>
+                            @endif
+                            @if($editingSection && $editingSection?->id == $section->id)
+                                <x-input-confirmation label="name" name="editingSection.title" wire x-cloak wire:click.prevent="" x-on:cancel-edit-input.window="$wire.closeEditingSection()" x-on:save-edit-input.window="$wire.saveSectionName({{$section->id}})"/>
+                            @endif
                         </div>
                     <div>
                         <x-svg.chevron-right class="text-gray-500 font-bold h-6 w-6" />

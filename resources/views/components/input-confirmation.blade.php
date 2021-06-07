@@ -24,10 +24,9 @@
             <button class="justify-center py-2 px-2 text-sm font-medium cursor-pointer focus:outline-none hover:bg-gray-50 bg-gray-200 text-white transition duration-150 ease-in-out" 
             type="button"  x-on:click="$dispatch('cancel-edit-input', {from: $event.target})">
                 <x-svg.cancel class="h-5 w-4"/>
-                
             </button>
             <button class="justify-center py-2 px-2 text-sm font-medium cursor-pointer focus:outline-none rounded-r-md border-r hover:bg-gray-50 bg-gray-200 text-white transition duration-150 ease-in-out" 
-                    type="button">
+            type="button" x-on:click="$dispatch('save-edit-input', {from: $event.target})">
                 <x-svg.confirm class="h-5 w-4"/>
             </button>
         </div>
