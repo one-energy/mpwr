@@ -116,16 +116,8 @@
                                         <span class="font-bold">@lang('Weekly Totals')</span>
                                         <div class="w-full flex flex-row items-center justify-between" style="margin-left: -10px">
                                             @foreach($this->indicators as $indicator)
-                                                <div
-                                                    class="cursor-default relative"
-                                                    x-data=""
-                                                    @mouseenter="$dispatch('open-popover', {ref: '{{ $label . $loop->index . $indicator['label'] }}'})"
-                                                    @mouseleave="$dispatch('close-popover', {ref: '{{ $label . $loop->index . $indicator['label'] }}'})"
-                                                >
+                                                <div class="cursor-default relative">
                                                     {{ $indicator['label'] }}
-                                                    <x-popover position="bottom" ref="{{ $label . $loop->index . $indicator['label'] }}">
-                                                        {{ $indicator['description'] }}
-                                                    </x-popover>
                                                 </div>
                                             @endforeach
                                         </div>
@@ -434,7 +426,7 @@
                                     <span class="font-bold">Total</span>
                                 </td>
                                 @foreach($this->weeklyLabels[$key] as $label)
-                                    <td class="py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 border-l-2 border-r-2 border-t-2 border-gray-800">
+                                    <td class="py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 border-2 border-gray-800">
                                         <section class="relative text-center" style="display: grid; grid-template-columns: repeat(8, 1fr)">
                                             <div class="relative" name="pipe">
                                                 <span>
@@ -511,7 +503,7 @@
                                         </section>
                                     </td>
                                     @if ($loop->last)
-                                        <td class="py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 border-l-2 border-r-2 border-t-2 border-gray-800">
+                                        <td class="py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 border-2 border-gray-800">
                                             <section class="relative text-center" style="display: grid; grid-template-columns: repeat(8, 1fr)">
                                                 <div class="relative" name="pipe">
                                                     <span>
