@@ -10,11 +10,11 @@
                     </div>
                     <div class="ml-3">
                         <p class="text-sm leading-5 font-medium text-gray-700 group-hover:text-gray-900">
-                            {{ user()->first_name }} {{ user()->last_name }}
+                            {{ user()->full_name }}
                         </p>
                         <p class="text-xs leading-4 font-medium text-gray-500 group-hover:text-gray-700 group-focus:underline transition ease-in-out duration-150">
                             @if(user()->office)
-                            {{ user()->office->name }}
+                                {{ user()->office->name }}
                             @endif
                         </p>
                     </div>
@@ -49,9 +49,9 @@
             </div>
             <div class="col-span-4 text-xl font-bold text-gray-900">
                 @if(user()->dailyNumbers->sum('sets') > 0)
-                {{number_format(user()->dailyNumbers->sum('doors') / user()->dailyNumbers->sum('sets'), 0)}}
+                    {{number_format(user()->dailyNumbers->sum('doors') / user()->dailyNumbers->sum('sets'), 0)}}
                 @else
-                -
+                    -
                 @endif
             </div>
         </div>
@@ -61,9 +61,9 @@
             </div>
             <div class="col-span-4 text-xl font-bold text-gray-900">
                 @if(user()->dailyNumbers->sum('sets') > 0)
-                {{number_format(user()->dailyNumbers->sum('hours') / user()->dailyNumbers->sum('sets'), 2)}}
+                    {{number_format(user()->dailyNumbers->sum('hours') / user()->dailyNumbers->sum('sets'), 2)}}
                 @else
-                -
+                    -
                 @endif
             </div>
         </div>
@@ -72,10 +72,10 @@
                 SIT RATIO
             </div>
             <div class="col-span-4 text-xl font-bold text-gray-900">
-                @if(user()->dailyNumbers->sum('sets') > 0)
-                {{number_format((user()->dailyNumbers->sum('set_sits') + user()->dailyNumbers->sum('sits')) / user()->dailyNumbers->sum('sets') * 100, 2)}}%
+                @if(user()->dailyNumbers->sum('sats') > 0 && user()->dailyNumbers->sum('set_sits') > 0)
+                    {{ number_format(user()->dailyNumbers->sum('sats') / user()->dailyNumbers->sum('set_sits'), 2) }}%
                 @else
-                -
+                    -
                 @endif
             </div>
         </div>
@@ -84,10 +84,10 @@
                 CLOSE RATIO
             </div>
             <div class="col-span-4 text-xl font-bold text-gray-900">
-                @if(user()->dailyNumbers->sum('set_sits') || user()->dailyNumbers->sum('sits') > 0)
-                {{number_format((user()->dailyNumbers->sum('set_closes') + user()->dailyNumbers->sum('closes')) / (user()->dailyNumbers->sum('set_sits') + user()->dailyNumbers->sum('sits')) * 100, 2)}}%
+                @if(user()->dailyNumbers->sum('closes') > 0 && user()->dailyNumbers->sum('closer_sits') > 0)
+                    {{ number_format(user()->dailyNumbers->sum('closes') / user()->dailyNumbers->sum('closer_sits'), 2) }}%
                 @else
-                -
+                    -
                 @endif
             </div>
         </div>
@@ -180,7 +180,6 @@
         <!-- Funnel Chart -->
         <div class="border-gray-200 border-2 m-1 p-2 rounded-lg" id="funnelChart">
             <div id="chartdiv"></div>
-            <!-- <div id="container"></div> -->
             <div class="grid grid-cols-3 place-items-stretch flex-wrap space-x-2">
                 <div id="doors">{{user()->dailyNumbers->sum('doors')}} Doors</div>
                 <div id="hours_worked">{{user()->dailyNumbers->sum('hours_worked')}} Hours Worked</div>
