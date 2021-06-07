@@ -119,80 +119,83 @@
     </div>
 @endif
 @if($contents)
-    <button
-        class="bg-green-base  text-white font-medium text-sm rounded shadow-md px-4 md:px-5 py-2.5 focus:outline-none"
-        wire:click="$set('showAddContentModal', true)"
-    >
-        Add Content
-    </button>
-    <div class="col-span-1 sm:col-span-3" x-data="addContentHandler()" x-cloak>
-        <div x-show="show" @keydown.escape.window="close" wire:loading.remove
-             class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center z-20">
-            <div x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
-                 x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
-                 x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-                 class="fixed inset-0 transition-opacity">
-                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-            </div>
-            <div
-                @click.away="close" x-transition:enter="ease-out duration-300"
-                x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-                x-transition:leave="ease-in duration-200"
-                x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-                x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                class="relative bottom-16 p-4 overflow-y-auto bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full"
-            >
-                <div class="absolute top-0 right-0 pt-4 pr-4">
-                    <button type="button" @click="close"
-                            class="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150"
-                            aria-label="Close">
-                        <x-svg.x class="w-5 h-5"/>
-                    </button>
+    <div>
+        <button
+            class="bg-green-base  text-white font-medium text-sm rounded shadow-md px-4 md:px-5 py-2.5 focus:outline-none"
+            wire:click="$set('showAddContentModal', true)"
+        >
+            Add Content
+        </button>
+        <div class="col-span-1 sm:col-span-3" x-data="addContentHandler()" x-cloak>
+            <div x-show="show" @keydown.escape.window="close" wire:loading.remove
+                class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center z-20">
+                <div x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+                    x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
+                    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                    class="fixed inset-0 transition-opacity">
+                    <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
                 </div>
-                <div class="sm:p-6">
-                    <div class="flex mt-4 mb-7">
-                        <button
-                            class="py-2 focus:outline-none rounded-l shadow-md w-96"
-                            :class="tabVideoSelected ? activeTabColors : inactiveTabColors"
-                            @click="changeTab('video')"
-                        >
-                            Video
-                        </button>
-                        <button
-                            class="py-2 focus:outline-none rounded-r shadow-md w-96"
-                            :class="tabFileSelected ? activeTabColors : inactiveTabColors"
-                            @click="changeTab('file')"
-                        >
-                            File
+                <div
+                    @click.away="close" x-transition:enter="ease-out duration-300"
+                    x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                    x-transition:leave="ease-in duration-200"
+                    x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                    x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    class="relative bottom-16 p-4 overflow-y-auto bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full"
+                >
+                    <div class="absolute top-0 right-0 pt-4 pr-4">
+                        <button type="button" @click="close"
+                                class="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150"
+                                aria-label="Close">
+                            <x-svg.x class="w-5 h-5"/>
                         </button>
                     </div>
+                    <div class="sm:p-6">
+                        <div class="flex mt-4 mb-7">
+                            <button
+                                class="py-2 focus:outline-none rounded-l shadow-md w-96"
+                                :class="tabVideoSelected ? activeTabColors : inactiveTabColors"
+                                @click="changeTab('video')"
+                            >
+                                Video
+                            </button>
+                            <button
+                                class="py-2 focus:outline-none rounded-r shadow-md w-96"
+                                :class="tabFileSelected ? activeTabColors : inactiveTabColors"
+                                @click="changeTab('file')"
+                            >
+                                File
+                            </button>
+                        </div>
 
-                    <div x-show="tabVideoSelected">
-                        <x-form wire:submit.prevent="storeVideo">
-                            <div class="flex flex-col space-y-5 my-4">
-                                <x-input label="Title" wire:model.defer="video.title" name="video.title"/>
-                                <x-input label="Video Url" wire:model.defer="video.video_url" name="video.video_url"/>
-                                <x-text-area label="Description" wire:model.defer="video.description"
-                                             name="video.description"></x-text-area>
-                            </div>
-                            <div class="mt-6">
-                                                        <span class="block w-full rounded-md shadow-sm">
-                                                            <x-button class="w-full flex" type="submit" color="green">
-                                                                {{ __('Save') }}
-                                                            </x-button>
-                                                        </span>
-                            </div>
-                        </x-form>
-                    </div>
+                        <div x-show="tabVideoSelected">
+                            <x-form wire:submit.prevent="storeVideo">
+                                <div class="flex flex-col space-y-5 my-4">
+                                    <x-input label="Title" wire:model.defer="video.title" name="video.title"/>
+                                    <x-input label="Video Url" wire:model.defer="video.video_url" name="video.video_url"/>
+                                    <x-text-area label="Description" wire:model.defer="video.description"
+                                                name="video.description"></x-text-area>
+                                </div>
+                                <div class="mt-6">
+                                                            <span class="block w-full rounded-md shadow-sm">
+                                                                <x-button class="w-full flex" type="submit" color="green">
+                                                                    {{ __('Save') }}
+                                                                </x-button>
+                                                            </span>
+                                </div>
+                            </x-form>
+                        </div>
 
-                    <div x-show="tabFileSelected">
-                        <x-drop-file :namedRoute="route('uploadSectionFile', [
-                                                    'section' => $actualSection->id
-                                                ])"/>
+                        <div x-show="tabFileSelected">
+                            <x-drop-file :namedRoute="route('uploadSectionFile', [
+                                                        'section' => $actualSection->id
+                                                    ])"/>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    
 @endif

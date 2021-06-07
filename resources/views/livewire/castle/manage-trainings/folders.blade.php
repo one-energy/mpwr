@@ -1,5 +1,5 @@
 <div>
-    <div class="grid grid-cols-1 gap-y-3 sm:gap-x-3 lg:gap-x-5 md:grid-cols-3">
+    <div class="grid grid-cols-1 gap-y-3 sm:gap-x-3 lg:gap-x-5 md:grid-cols-2 xl:grid-cols-3">
         @foreach ($sections as $key => $section)
             <a href="{{ route($showActions ? 'castle.manage-trainings.index' : 'trainings.index',[
                 'department' => $section->department_id,
