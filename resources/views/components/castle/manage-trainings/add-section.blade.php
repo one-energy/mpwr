@@ -102,12 +102,12 @@
                                     </div>
                                     <div class="grid" id="editor"></div>
                                     <div class="mt-6">
-                                                            <span class="block w-full rounded-md shadow-sm">
-                                                                <x-button class="w-full flex" type="submit"
-                                                                          color="green">
-                                                                    {{ __('Save') }}
-                                                                </x-button>
-                                                            </span>
+                                        <span class="block w-full rounded-md shadow-sm">
+                                            <x-button class="w-full flex" type="submit"
+                                                        color="green">
+                                                {{ __('Save') }}
+                                            </x-button>
+                                        </span>
                                     </div>
                                 </x-form>
                             </div>

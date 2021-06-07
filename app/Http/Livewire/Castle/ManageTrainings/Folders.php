@@ -55,5 +55,11 @@ class Folders extends Component
 
         $this->sections[$sectionsIndex]->title = $section->title;
         $this->editingSection = null;
+
+        alert()
+            ->livewire($this)
+            ->withTitle("Success")
+            ->withDescription("Your folder title was changed to " . $section->title)
+            ->send();
     }
 }
