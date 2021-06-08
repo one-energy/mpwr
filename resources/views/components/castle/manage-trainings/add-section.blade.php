@@ -1,14 +1,8 @@
 @props(['actualSection', 'contents', 'selectedTab'])
 
 <div class="mr-4" x-data="{ 'showSectionModal': false }" @keydown.escape="showSectionModal = false" x-cloak>
-<<<<<<< HEAD
     <button class="bg-green-base text-white focus:outline-none font-medium text-sm rounded shadow-md px-4 md:px-5 py-2.5"
             @click="showSectionModal = true">
-=======
-    <button
-        class="bg-green-base text-white focus:outline-none font-medium text-sm rounded shadow-md px-4 md:px-5 py-2.5"
-        @click="showSectionModal = true">
->>>>>>> develop
         Add Section
     </button>
     <div x-show="showSectionModal" wire:loading.remove
