@@ -87,14 +87,11 @@
                     <div
                         class="flex flex-col w-full overflow-y-auto"
                         :class="{
-                            'h-40': filteredOptions.length > 0,
-                            'h-10': filteredOptions.length < 1,
+                            'h-40': options.length > 0,
+                            'h-10': options.length < 1,
                         }"
                     >
-                        <template x-if="filteredOptions.length < 1">
-                            <p class="mt-2 ml-3 italic text-sm">No option found...</p>
-                        </template>
-                        <template x-for="(option, index) in filteredOptions" :key="option.key" class="overflow-auto">
+                        <template x-for="(option, index) in options" :key="option.key" class="overflow-auto">
                             <div
                                 class="cursor-pointer w-full hover:bg-gray-100"
                                 :class="{'bg-green-400 text-white hover:bg-red-400': option.selected}"
