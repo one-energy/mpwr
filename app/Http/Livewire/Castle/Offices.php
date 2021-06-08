@@ -49,6 +49,7 @@ class Offices extends Component
             ->when(user()->hasRole(Role::OFFICE_MANAGER), function (Builder $query) {
                 $query->whereIn('id', user()->managedOffices->pluck('id'));
             })
+            ->with(['managers', 'region.department'])
             ->search($this->search)
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate($this->perPage);
