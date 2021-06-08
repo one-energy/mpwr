@@ -411,7 +411,7 @@
                                     @else
                                         <div class="flex justify-center align-middle">
                                             <div class="text-sm text-center text-gray-700">
-                                                <x-svg.draw.empty class="@if($this->topTenCloses->count()) hidden @endif"/>
+                                                <x-svg.draw.empty/>
                                                 There are no top 10 closes for this period
                                             </div>
                                         </div>
