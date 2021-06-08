@@ -99,7 +99,7 @@
 
                     <div class="col-span-2 md:col-span-3 @if($customer->setter_id == user()->id) hidden @endif" wire:key="soldPrice">
                         <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc"
-                                          observation="Sold Price"/>
+                                          observation="Sold Price" atEnd="kW"/>
                     </div>
 
                     <div class="col-span-2 md:col-span-3">
@@ -120,7 +120,7 @@
 
                     <div class="col-span-2 md:col-span-3">
                         <x-input-currency wire:model="customer.setter_fee" label="Setter Comission Rate"
-                                          name="customer.setter_fee" disabled="{{$isSelfGen}}"/>
+                                          name="customer.setter_fee" disabled="{{$isSelfGen}}" atEnd="kW"/>
                     </div>
 
                     <div class="col-span-2 md:col-span-3">
@@ -136,7 +136,7 @@
 
                     <div class="col-span-2 md:col-span-3 @if($customer->setter_id == user()->id) hidden @endif" wire:key="salesRepFee">
                         <x-input-currency wire:model="customer.sales_rep_fee" label="Sales Rep Pay Rate"
-                                          name="customer.sales_rep_fee" readonly/>
+                                          name="customer.sales_rep_fee" atEnd="kW" readonly/>
                     </div>
 
                     <div class="col-span-2 md:col-span-1 @if($customer->setter_id == user()->id) hidden @endif"wire:key="margin">
