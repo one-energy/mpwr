@@ -7,14 +7,18 @@ use App\Models\Department;
 use App\Models\Financer;
 use App\Models\Financing;
 use App\Models\Rates;
+use App\Models\StockPointsCalculationBases;
 use App\Models\Term;
 use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Edit extends Component
 {
+    use AuthorizesRequests;
+
     public Customer $customer;
 
     public ?User $setter;
@@ -23,7 +27,9 @@ class Edit extends Component
 
     public bool $installed;
 
-    public int $grossRepComission;
+    public float $grossRepComission;
+
+    public float $netRepComission;
 
     public bool $isSelfGen;
 
@@ -58,7 +64,6 @@ class Edit extends Component
 
     public function mount(Customer $customer)
     {
-        $this->setSelfGen();
         $this->setter = User::find($customer->setter_id);
         if (user()->role != 'Admin' && user()->role != 'Owner') {
             $this->departmentId = user()->department_id;
@@ -72,6 +77,7 @@ class Edit extends Component
         $this->customer->calcComission();
         $this->customer->calcMargin();
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
+        $this->netRepComission   = $this->calculateNetRepCommission();
         $this->salesReps         = user()->getPermittedUsers($this->departmentId)->toArray();
         $this->setters           = User::whereDepartmentId($this->departmentId)
                                 ->where('id', '!=', user()->id)
@@ -90,9 +96,12 @@ class Edit extends Component
 
     public function update()
     {
+        $this->authorize('update', $this->customer);
 
         $salesRep   = User::find($this->customer->sales_rep_id);
         $commission = $this->calculateCommission($this->customer);
+
+        $this->validate();
 
         $this->customer->commission                  = $commission;
         $this->customer->sales_rep_recruiter_id      = $salesRep->recruiter_id;
@@ -109,20 +118,20 @@ class Edit extends Component
         $this->customer->misc_override_two           = $salesRep->misc_override_two;
         $this->customer->payee_two                   = $salesRep->payee_two;
         $this->customer->note_two                    = $salesRep->note_two;
-        $this->customer->financing_id = $this->customer->financing_id != "" ? $this->customer->financing_id : null;
-        $this->customer->financer_id = $this->customer->financer_id != "" ? $this->customer->financer_id : null;
-        $this->customer->term_id = $this->customer->term_id != "" ? $this->customer->term_id : null;
-        $this->validate();
+        $this->customer->financing_id                = $this->customer->financing_id != '' ? $this->customer->financing_id : null;
+        $this->customer->financer_id                 = $this->customer->financer_id != '' ? $this->customer->financer_id : null;
+        $this->customer->term_id                     = $this->customer->term_id != '' ? $this->customer->term_id : null;
 
         DB::transaction(function () {
             $this->customer->save();
             if ($this->customer->term_id) {
+                $this->createStockPoint();
                 if (!$this->customer->userEniumPoint()->exists() && $this->customer->panel_sold) {
                     $this->customer->userEniumPoint()->create([
                         'user_sales_rep_id' => $this->customer->sales_rep_id,
-                        'points'            => $this->customer->term->amount > 0 ? round($this->customer->epc/$this->customer->term->amount) : 0,
+                        'points'            => $this->customer->term->amount > 0 ? round($this->customer->totalSoldPrice / $this->customer->term->amount) : 0,
                         'set_date'          => Carbon::now(),
-                        'expiration_date'   => Carbon::now()->addYear()
+                        'expiration_date'   => Carbon::now()->addYear(),
                     ]);
                 }
             }
@@ -132,12 +141,17 @@ class Edit extends Component
             ->withTitle(__('Home Owner updated!'))
             ->send();
 
-        return redirect(route('customers.show', $this->customer->id));
+        return redirect()->route('home');
     }
 
     public function delete()
     {
-        $this->customer->delete();
+        $this->authorize('update', $this->customer);
+
+        DB::transaction(function () {
+            $this->customer->stockPoint()->delete();
+            $this->customer->delete();
+        });
 
         alert()
             ->withTitle(__('Home Owner deleted!'))
@@ -146,8 +160,25 @@ class Edit extends Component
         return redirect()->route('home');
     }
 
+    public function createStockPoint ()
+    {
+        if (!$this->customer->stockPoint()->exists() && $this->customer->panel_sold) {
+            $this->customer->stockPoint()->create([
+                'stock_recruiter'       => StockPointsCalculationBases::find(StockPointsCalculationBases::RECRUIT_ID)->stock_base_point,
+                'stock_setting'         => StockPointsCalculationBases::find(StockPointsCalculationBases::SETTING_ID)->stock_base_point,
+                'stock_personal_sale'   => StockPointsCalculationBases::find(StockPointsCalculationBases::PERSONAL_SALES_ID)->stock_base_point,
+                'stock_pod_leader_team' => StockPointsCalculationBases::find(StockPointsCalculationBases::POD_LEADER_TEAM_ID)->stock_base_point,
+                'stock_manager'         => StockPointsCalculationBases::find(StockPointsCalculationBases::OFFICE_MANAGER_ID)->stock_base_point,
+                'stock_divisional'      => StockPointsCalculationBases::find(StockPointsCalculationBases::DIVISIONAL_ID)->stock_base_point,
+                'stock_regional'        => StockPointsCalculationBases::find(StockPointsCalculationBases::REGIONAL_MANAGER_ID)->stock_base_point,
+                'stock_department'      => StockPointsCalculationBases::find(StockPointsCalculationBases::DEPARTMENT_ID)->stock_base_point,
+            ]);
+        }
+    }
+
     public function setSelfGen()
     {
+
         $this->customer->setter_fee = 0;
         $this->isSelfGen            = true;
     }
@@ -170,6 +201,7 @@ class Edit extends Component
     {
         if ($setterId) {
             $this->isSelfGen = false;
+            $this->setter    = User::find($setterId);
         } else {
             $this->setSelfGen();
         }
@@ -188,6 +220,11 @@ class Edit extends Component
             ) - (float)$customer->adders;
     }
 
+    public function calculateNetRepCommission()
+    {
+        return $this->grossRepComission - $this->customer->adders;
+    }
+
     public function getSalesRepFee()
     {
         return Rates::whereRole('Sales Rep')->orderBy('rate', 'desc')->first();
@@ -201,7 +238,7 @@ class Edit extends Component
     public function getSetterRate($userId)
     {
         if ($userId) {
-            $this->customer->setter_fee = $this->getUserRate($userId);
+            $this->customer->setter_fee = $this->customer->setter_fee ?? $this->getUserRate($userId);
         } else {
             $this->customer->setter_fee = 0;
         }
@@ -226,7 +263,7 @@ class Edit extends Component
     public function calculateGrossRepComission(Customer $customer)
     {
         if ($customer->margin && $customer->system_size) {
-            return $customer->margin * $customer->system_size * 1000;
+            return round((float) $customer->margin * (float) $customer->system_size * Customer::K_WATTS, 2);
         }
 
         return 0;

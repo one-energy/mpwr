@@ -229,10 +229,8 @@ class UsersController extends Controller
             ->get();
     }
 
-    public function getOfficesManager($regionId)
+    public function getOfficesManager(Region $region)
     {
-        $region = Region::whereId($regionId)->first();
-
         $usersQuery = User::query()->select('users.*');
 
         return $usersQuery->whereRole('Office Manager')

@@ -99,6 +99,8 @@ class Customer extends Model
         'PACE',
     ];
 
+    const K_WATTS = 1000;
+
     public function scopeInstalled($query)
     {
         return $query->where('opened_by_id', '=', user()->id)
@@ -156,6 +158,11 @@ class Customer extends Model
         return $this->belongsTo(User::class, 'department_manager_id');
     }
 
+    public function stockPoint()
+    {
+        return $this->hasOne(CustomersStockPoint::class);
+    }
+    
     public function userEniumPoint()
     {
         return $this->hasOne(UserCustomersEniumPoints::class);
@@ -171,10 +178,26 @@ class Customer extends Model
         return User::find($this->setter_id);
     }
 
+    public function getTotalSoldPriceAttribute()
+    {
+        return (float) $this->epc * (float) $this->system_size * self::K_WATTS;
+    }
+
+    public function getSalesEniumPointAttribute()
+    {
+        if ($this->term_id) {
+            $term = Term::find($this->term_id);
+            return round($this->getTotalSoldPriceAttribute()/$term->amount);
+        }
+
+        return 0;
+
+    }
+
     public function calcComission()
     {
         if ($this->epc >= 0 && $this->sales_rep_fee >= 0 && $this->setter_fee >= 0 && $this->system_size && $this->adders >= 0) {
-            $this->sales_rep_comission = ((floatval($this->epc) - floatval($this->sales_rep_fee) - floatval($this->setter_fee)) * (floatval($this->system_size) * 1000)) - floatval($this->adders);
+            $this->sales_rep_comission = round((float) $this->sales_rep_fee * (float) $this->system_size * self::K_WATTS, 2);
         } else {
             $this->sales_rep_comission = 0;
         }
@@ -183,7 +206,7 @@ class Customer extends Model
     public function calcMargin()
     {
         if ($this->epc) {
-            $this->margin = floatval($this->epc) - floatval($this->setter_fee);
+            $this->margin = round((float)$this->epc - (float)$this->sales_rep_fee - (float) $this->setter_fee, 2);
         } else {
             $this->margin = 0;
         }

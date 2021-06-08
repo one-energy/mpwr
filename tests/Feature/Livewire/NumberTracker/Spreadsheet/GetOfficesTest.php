@@ -70,7 +70,9 @@ class GetOfficesTest extends TestCase
 
         $this->actingAs($john);
 
-        $component = Livewire::test(Spreadsheet::class)->assertHasNoErrors();
+        $component = Livewire::test(Spreadsheet::class)
+            ->assertHasNoErrors()
+            ->assertSet('selectedOffice', $offices01->sortBy('name', SORT_NATURAL)->first()->id);
 
         $offices01->each(fn(Office $office) => $component->assertSee($office->name));
         $offices02->each(fn(Office $office) => $component->assertDontSee($office->name));
@@ -146,5 +148,18 @@ class GetOfficesTest extends TestCase
 
         $officesFromRegion01->each(fn(Office $office) => $component->assertSee($office->name));
         $officesFromRegion02->each(fn(Office $office) => $component->assertDontSee($office->name));
+    }
+
+    /** @test */
+    public function it_should_return_an_empty_collection_if_the_department_has_no_office_related()
+    {
+        $john = User::factory()->create(['role' => 'Department Manager']);
+
+        $this->actingAs($john);
+
+        Livewire::test(Spreadsheet::class)
+            ->assertHasNoErrors()
+            ->assertSet('offices', collect())
+            ->assertSet('selectedOffice', 0);
     }
 }

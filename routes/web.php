@@ -129,7 +129,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/profile/change-password', ProfileChangePasswordController::class)->name('profile.change-password');
 
     Route::resource('/customers', CustomerController::class)->except('store', 'update')->names('customers');
-    Route::put('/customers/{customer}/active', [CustomerController::class, 'Active'])->name('customers.active');
+    Route::put('/customers/{customer}/active', [CustomerController::class, 'active'])->name('customers.active');
     Route::delete('/customers/{customer}', [CustomerController::class, 'delete'])->name('customers.delete');
     Route::get('/leaderboard', ScoreboardController::class)->name('leaderboard');
     Route::get('/trainings/{department?}/{section?}/{search?}', [TrainingController::class, 'index'])->name('trainings.index');
@@ -141,17 +141,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/number-tracking/create', [NumberTrackingController::class, 'store'])->name('number-tracking.store');
 
     Route::get('/number-tracking/spreadsheet', [NumberTrackingController::class, 'spreadsheet'])
-        ->middleware('role:Admin|Owner|Department Manager|Region Manager')
+        ->middleware('role:Admin|Owner|Department Manager|Region Manager|Office Manager')
         ->name('number-tracking.spreadsheet');
     Route::post('/number-tracking/spreadsheet', [NumberTrackingController::class, 'updateOrCreateDailyNumbers'])
         ->middleware('role:Admin|Owner|Department Manager|Region Manager')
         ->name('number-tracking.spreadsheet.updateOrCreate');
 
-    Route::post('/get-offices-managers/{regionId}', [UsersController::class, 'getOfficesManager'])->name('getOfficesManager');
+    Route::get('/get-offices-managers/{region?}', [UsersController::class, 'getOfficesManager'])->name('getOfficesManager');
     Route::post('/get-regions-managers/{departmentId}', [UsersController::class, 'getRegionsManager'])->name('getRegionsManager');
     Route::post('/get-users', [UsersController::class, 'getUsers'])->name('getUsers');
 
-    Route::post('/get-regions/{departmentId?}', [RegionController::class, 'getRegions'])->name('getRegions');
+    Route::get('/get-regions/{department?}', [RegionController::class, 'getRegions'])->name('getRegions');
 
     Route::post('/get-departments', [DepartmentController::class, 'getDepartments'])->name('getDepartments');
 
