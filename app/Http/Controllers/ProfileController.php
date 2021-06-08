@@ -10,7 +10,11 @@ class ProfileController extends Controller
 {
     public function index()
     {
-        return view('profile.index');
+        return view('profile.index', [
+            'userLevel'       => user()->level() ?? null,
+            'userEniumPoints' => user()->eniumPoints() ?? 0,
+            'stockPoints'     => user()->stockPoints()
+        ]);
     }
 
     public function showData(User $user)

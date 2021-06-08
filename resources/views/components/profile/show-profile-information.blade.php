@@ -10,11 +10,11 @@
                     </div>
                     <div class="ml-3">
                         <p class="text-sm leading-5 font-medium text-gray-700 group-hover:text-gray-900">
-                            {{ user()->first_name }} {{ user()->last_name }}
+                            {{ user()->full_name }}
                         </p>
                         <p class="text-xs leading-4 font-medium text-gray-500 group-hover:text-gray-700 group-focus:underline transition ease-in-out duration-150">
                             @if(user()->office)
-                            {{ user()->office->name }}
+                                {{ user()->office->name }}
                             @endif
                         </p>
                     </div>
@@ -49,21 +49,21 @@
             </div>
             <div class="col-span-4 text-xl font-bold text-gray-900">
                 @if(user()->dailyNumbers->sum('sets') > 0)
-                {{number_format(user()->dailyNumbers->sum('doors') / user()->dailyNumbers->sum('sets'), 0)}}
+                    {{number_format(user()->dailyNumbers->sum('doors') / user()->dailyNumbers->sum('sets'), 0)}}
                 @else
-                -
+                    -
                 @endif
             </div>
         </div>
         <div class="flex justify-between grid grid-cols-4 row-gap-1 col-gap-4 border-gray-200 border-2 m-1 p-2 rounded-lg">
             <div class="col-span-4 text-xs text-gray-900">
-                HPS RATIO
+                HWPS RATIO
             </div>
             <div class="col-span-4 text-xl font-bold text-gray-900">
                 @if(user()->dailyNumbers->sum('sets') > 0)
-                {{number_format(user()->dailyNumbers->sum('hours') / user()->dailyNumbers->sum('sets'), 2)}}
+                    {{number_format(user()->dailyNumbers->sum('hours') / user()->dailyNumbers->sum('sets'), 2)}}
                 @else
-                -
+                    -
                 @endif
             </div>
         </div>
@@ -72,10 +72,10 @@
                 SIT RATIO
             </div>
             <div class="col-span-4 text-xl font-bold text-gray-900">
-                @if(user()->dailyNumbers->sum('sets') > 0)
-                {{number_format((user()->dailyNumbers->sum('set_sits') + user()->dailyNumbers->sum('sits')) / user()->dailyNumbers->sum('sets') * 100, 2)}}%
+                @if(user()->dailyNumbers->sum('sats') > 0 && user()->dailyNumbers->sum('set_sits') > 0)
+                    {{ number_format(user()->dailyNumbers->sum('sats') / user()->dailyNumbers->sum('set_sits'), 2) }}%
                 @else
-                -
+                    -
                 @endif
             </div>
         </div>
@@ -84,10 +84,10 @@
                 CLOSE RATIO
             </div>
             <div class="col-span-4 text-xl font-bold text-gray-900">
-                @if(user()->dailyNumbers->sum('set_sits') || user()->dailyNumbers->sum('sits') > 0)
-                {{number_format((user()->dailyNumbers->sum('set_closes') + user()->dailyNumbers->sum('closes')) / (user()->dailyNumbers->sum('set_sits') + user()->dailyNumbers->sum('sits')) * 100, 2)}}%
+                @if(user()->dailyNumbers->sum('closes') > 0 && user()->dailyNumbers->sum('closer_sits') > 0)
+                    {{ number_format(user()->dailyNumbers->sum('closes') / user()->dailyNumbers->sum('closer_sits'), 2) }}%
                 @else
-                -
+                    -
                 @endif
             </div>
         </div>
@@ -180,10 +180,9 @@
         <!-- Funnel Chart -->
         <div class="border-gray-200 border-2 m-1 p-2 rounded-lg" id="funnelChart">
             <div id="chartdiv"></div>
-            <!-- <div id="container"></div> -->
             <div class="grid grid-cols-3 place-items-stretch flex-wrap space-x-2">
                 <div id="doors">{{user()->dailyNumbers->sum('doors')}} Doors</div>
-                <div id="hours">{{user()->dailyNumbers->sum('hours')}} Hours</div>
+                <div id="hours_worked">{{user()->dailyNumbers->sum('hours_worked')}} Hours Worked</div>
                 <div id="sits">{{user()->dailyNumbers->sum('sits')}} Sits</div>
                 <div id="sets">{{user()->dailyNumbers->sum('sets')}} Sets</div>
                 <div id="setCloses" class="col-span-2">{{user()->dailyNumbers->sum('set_closes')}} Set Closes</div>
@@ -196,7 +195,7 @@
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
     const doors = {!!json_encode(user()->dailyNumbers->sum('doors')) !!};
-    const hours = {!!json_encode(user()->dailyNumbers->sum('hours')) !!};
+    const hoursWorked = {!!json_encode(user()->dailyNumbers->sum('hours_worked')) !!};
     const sits = {!!json_encode(user()->dailyNumbers->sum('sits')) !!};
     const sets = {!!json_encode(user()->dailyNumbers->sum('sets')) !!};
     const set_closes = {!!json_encode(user()->dailyNumbers->sum('set_closes')) !!};
@@ -204,14 +203,14 @@
         // Themes begin
         am4core.useTheme(am4themes_animated);
         // Themes end
-        if (doors && hours && sits && sets && set_closes) {
+        if (doors && hoursWorked && sits && sets && set_closes) {
             var chart = am4core.create("chartdiv", am4charts.SlicedChart);
             chart.data = [{
                 "name": "doors",
                 "value2": doors
             }, {
-                "name": "hours",
-                "value2": hours
+                "name": "hours worked",
+                "value2": hoursWorked
             }, {
                 "name": "sits",
                 "value2": sits
@@ -227,14 +226,14 @@
             series1.dataFields.value = "value2";
             series1.dataFields.category = "name";
             series1.labels.template.disabled = true;
-            document.getElementById("hours").style.color = "#67B7DC";
+            document.getElementById("hours_worked").style.color = "#67B7DC";
             document.getElementById("doors").style.color = "#648FD5";
             document.getElementById("sits").style.color = "#6670DB";
             document.getElementById("sets").style.color = "#8067DC";
             document.getElementById("setCloses").style.color = "#A367DC";
         } else {
             document.getElementById("chartdiv").innerHTML = "No data to display";
-            document.getElementById("hours").innerHTML = "";
+            document.getElementById("hours_worked").innerHTML = "";
             document.getElementById("doors").innerHTML = "";
             document.getElementById("sits").innerHTML ="";
             document.getElementById("sets").innerHTML = "";

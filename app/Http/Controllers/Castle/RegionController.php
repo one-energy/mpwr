@@ -16,14 +16,14 @@ class RegionController extends Controller
     {
         return Region::query()
             ->with('department')
-            ->when(user()->role == 'Department Manager', function (Builder $query) use ($department) {
-                $query->where('department_id', '=', $department->id);
+            ->when(user()->hasRole('Department Manager'), function (Builder $query) use ($department) {
+                $query->whereDepartmentId($department->id);
             })
-            ->when(user()->role == 'Region Manager', function (Builder $query) {
-                $query->where('region_manager_id', '=', user()->id);
+            ->when(user()->hasRole('Region Manager'), function (Builder $query) {
+                $query->whereRegionManagerId(user()->id);
             })
-            ->when(user()->role == 'Office Manager', function (Builder $query) {
-                $query->where('id', '=', user()->office->region->id);
+            ->when(user()->hasRole('Office Manager'), function (Builder $query) {
+                $query->whereId(user()->office->region->id);
             })
             ->get();
     }

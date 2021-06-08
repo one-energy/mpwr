@@ -8,7 +8,7 @@
                 </div>
             </div>
             <div class="col-span-1 p-3 rounded-md bg-green-light space-y-3">
-                <div class="text-base font-semibold uppercase text-green-base">H.P. Set</div>
+                <div class="text-base font-semibold uppercase text-green-base">HW.P. Set</div>
                 <div class="text-xl font-bold text-green-base">
                     {{$this->getHps()}}
                 </div>
@@ -44,6 +44,33 @@
 
     <div class="mt-3 overflow-auto flex flex-row space-x-4 p-3">
         <div style="min-width: fit-content; flex: 0 0 auto" class="w-48 border-2 border-gray-200 rounded-md p-3 space-y-1">
+            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold uppercase">
+                Hours Worked
+            </div>
+            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold">
+                {{$this->getNumberTrackerSumOf('hoursWorked')}}
+            </div>
+            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
+                @if($this->getNumberTrackerDifferenceToLasNumbersOf('hoursWorked') >= 0)
+                    <x-svg.arrow-up class="text-green-base"/>
+                @else
+                    <x-svg.arrow-down class="text-red-600"/>
+                @endif
+                <span class="
+                    text-base
+                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('hoursWorked') >= 0)
+                    text-green-base
+@else
+                    text-red-600
+@endif
+                    ">
+                        {{$this->getNumberTrackerDifferenceToLasNumbersOf('hoursWorked')}}
+                    </span>
+            </div>
+            <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
+        </div>
+
+        <div style="min-width: fit-content; flex: 0 0 auto" class="w-48 border-2 border-gray-200 rounded-md p-3 space-y-1">
             <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold uppercase">Doors</div>
             <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold">{{$this->getNumberTrackerSumOf('doors')}}</div>
             <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
@@ -66,27 +93,32 @@
             <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
         </div>
         <div style="min-width: fit-content; flex: 0 0 auto" class="w-48 border-2 border-gray-200 rounded-md p-3 space-y-1" >
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">Hours</div>
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold text-gray-900">{{$this->getNumberTrackerSumOf('hours')}}</div>
+            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">
+                Hours Knocked
+            </div>
+            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold text-gray-900">
+                {{$this->getNumberTrackerSumOf('hoursKnocked')}}
+            </div>
             <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
-                @if($this->getNumberTrackerDifferenceToLasNumbersOf('hours') >= 0)
+                @if($this->getNumberTrackerDifferenceToLasNumbersOf('hoursKnocked') >= 0)
                     <x-svg.arrow-up class="text-green-base"/>
                 @else
                     <x-svg.arrow-down class="text-red-600"/>
                 @endif
                 <span class="
                     text-base
-                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('hours') >= 0)
-                        text-green-base
-                    @else
-                        text-red-600
-                    @endif
-                ">
-                        {{$this->getNumberTrackerDifferenceToLasNumbersOf('hours')}}
+                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('hoursKnocked') >= 0)
+                    text-green-base
+@else
+                    text-red-600
+@endif
+                    ">
+                        {{$this->getNumberTrackerDifferenceToLasNumbersOf('hoursKnocked')}}
                     </span>
             </div>
             <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
         </div>
+
         <div style="min-width: fit-content; flex: 0 0 auto" class="w-48 border-2 border-gray-200 rounded-md p-3 space-y-1" >
             <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">Sets</div>
             <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold text-gray-900">{{$this->getNumberTrackerSumOf('sets')}}</div>
@@ -110,58 +142,6 @@
             <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
         </div>
 
-        <div style="min-width: fit-content; flex: 0 0 auto" class="w-48 border-2 border-gray-200 rounded-md p-3 space-y-1">
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold uppercase">
-                Hours Worked
-            </div>
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold">
-                {{$this->getNumberTrackerSumOf('hoursWorked')}}
-            </div>
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
-                @if($this->getNumberTrackerDifferenceToLasNumbersOf('hoursWorked') >= 0)
-                    <x-svg.arrow-up class="text-green-base"/>
-                @else
-                    <x-svg.arrow-down class="text-red-600"/>
-                @endif
-                <span class="
-                    text-base
-                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('hoursWorked') >= 0)
-                        text-green-base
-                    @else
-                        text-red-600
-                    @endif
-                ">
-                        {{$this->getNumberTrackerDifferenceToLasNumbersOf('hoursWorked')}}
-                    </span>
-            </div>
-            <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
-        </div>
-        <div style="min-width: fit-content; flex: 0 0 auto" class="w-48 border-2 border-gray-200 rounded-md p-3 space-y-1" >
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">
-                Hours Knocked
-            </div>
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold text-gray-900">
-                {{$this->getNumberTrackerSumOf('hoursKnocked')}}
-            </div>
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
-                @if($this->getNumberTrackerDifferenceToLasNumbersOf('hoursKnocked') >= 0)
-                    <x-svg.arrow-up class="text-green-base"/>
-                @else
-                    <x-svg.arrow-down class="text-red-600"/>
-                @endif
-                <span class="
-                    text-base
-                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('hoursKnocked') >= 0)
-                        text-green-base
-                    @else
-                        text-red-600
-                    @endif
-                ">
-                        {{$this->getNumberTrackerDifferenceToLasNumbersOf('hoursKnocked')}}
-                    </span>
-            </div>
-            <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
-        </div>
         <div style="min-width: fit-content; flex: 0 0 auto" class="w-48 border-2 border-gray-200 rounded-md p-3 space-y-1" >
             <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">
                 Sats
@@ -789,6 +769,119 @@
                                                         </div>
                                                     </x-table-accordion.td>
                                                 </div>
+                                                @if($office['itsOpen'])
+                                                    @forelse($office['sortedDailyNumbers'] as $dailyNumberIndex => $dailyNumber)
+                                                        <div class="table-row hover:bg-gray-100" wire:key="{{$regionIndex}}-{{$officeIndex}}-{{$dailyNumberIndex}}">
+                                                            <x-table-accordion.td class="table-cell pl-28">
+                                                                <div class="flex items-center" x-data >
+                                                                    <div class="flex items-center" wire:loading.remove>
+                                                                        <input class="form-checkbox items-center h-4 w-4 text-green-base transition duration-150 ease-in-out mr-2"
+                                                                               wire:model="itsOpenRegions.{{$regionIndex}}.sortedOffices.{{$officeIndex}}.sortedDailyNumbers.{{$dailyNumberIndex}}.selected"
+                                                                               type="checkbox" x-on:change="$wire.selectDailyNumberUser({{$regionIndex}}, {{$officeIndex}}, {{$dailyNumberIndex}})" wire:click.stop="">
+                                                                    </div>
+                                                                    <div class="flex items-center mr-2 w-6 h-6" wire:loading>
+                                                                        <x-svg.spinner
+                                                                            color="#9fa6b2"
+                                                                            class="self-center ">
+                                                                        </x-svg.spinner>
+                                                                    </div>
+                                                                    <div class="flex items-center">
+                                                                        @if ($dailyNumber['user']['deleted_at'] != null)
+                                                                            <x-icon class="mr-2 w-6 h-6" icon="user-blocked"/>
+                                                                        @endif
+                                                                        <label>{{$dailyNumber['user']['full_name']}}</label>
+                                                                    </div>
+                                                                </div>
+                                                            </x-table-accordion.td>
+                                                            <x-table-accordion.td class="table-cell" by="hours_worked" sortedBy="$sortBy">
+                                                                <x-svg.spinner
+                                                                    color="#9fa6b2"
+                                                                    class="self-center hidden w-5"
+                                                                    wire:loading wire:target="initRegionsData">
+                                                                </x-svg.spinner>
+                                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                                    {{$dailyNumber['hours_worked'] ?? 0}}
+                                                                </div>
+                                                            </x-table-accordion.td>
+                                                            <x-table-accordion.td class="table-cell" by="doors" sortedBy="$sortBy">
+                                                                <x-svg.spinner
+                                                                    color="#9fa6b2"
+                                                                    class="self-center hidden w-5"
+                                                                    wire:loading wire:target="initRegionsData">
+                                                                </x-svg.spinner>
+                                                                <div class="@if($dailyNumber['deleted_at'] != null || $dailyNumber['user']['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                                    {{$dailyNumber['doors'] ?? 0}}
+                                                                </div>
+                                                            </x-table-accordion.td>
+                                                            <x-table-accordion.td class="table-cell" by="hours_knocked" sortedBy="$sortBy">
+                                                                <x-svg.spinner
+                                                                    color="#9fa6b2"
+                                                                    class="self-center hidden w-5"
+                                                                    wire:loading wire:target="initRegionsData">
+                                                                </x-svg.spinner>
+                                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                                    {{$dailyNumber['hours_knocked'] ?? 0}}
+                                                                </div>
+                                                            </x-table-accordion.td>
+                                                            <x-table-accordion.td class="table-cell" by="sets" sortedBy="$sortBy">
+                                                                <x-svg.spinner
+                                                                    color="#9fa6b2"
+                                                                    class="self-center hidden w-5"
+                                                                    wire:loading wire:target="initRegionsData">
+                                                                </x-svg.spinner>
+                                                                <div class="@if($dailyNumber['deleted_at'] != null || $dailyNumber['user']['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                                    {{$dailyNumber['sets'] ?? 0}}
+                                                                </div>
+                                                            </x-table-accordion.td>
+                                                            <x-table-accordion.td class="table-cell" by="sats" sortedBy="$sortBy">
+                                                                <x-svg.spinner
+                                                                    color="#9fa6b2"
+                                                                    class="self-center hidden w-5"
+                                                                    wire:loading wire:target="initRegionsData">
+                                                                </x-svg.spinner>
+                                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                                    {{$dailyNumber['sats'] ?? 0}}
+                                                                </div>
+                                                            </x-table-accordion.td>
+                                                            <x-table-accordion.td class="table-cell" by="set_closes" sortedBy="$sortBy">
+                                                                <x-svg.spinner
+                                                                    color="#9fa6b2"
+                                                                    class="self-center hidden w-5"
+                                                                    wire:loading wire:target="initRegionsData">
+                                                                </x-svg.spinner>
+                                                                <div class="@if($dailyNumber['deleted_at'] != null || $dailyNumber['user']['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                                    {{$dailyNumber['set_closes'] ?? 0}}
+                                                                </div>
+                                                            </x-table-accordion.td>
+                                                            <x-table-accordion.td class="table-cell" by="closer_sits" sortedBy="$sortBy">
+                                                                <x-svg.spinner
+                                                                    color="#9fa6b2"
+                                                                    class="self-center hidden w-5"
+                                                                    wire:loading wire:target="initRegionsData">
+                                                                </x-svg.spinner>
+                                                                <div wire:loading.remove wire:target="initRegionsData">
+                                                                    {{$dailyNumber['closer_sits'] ?? 0}}
+                                                                </div>
+                                                            </x-table-accordion.td>
+                                                            <x-table-accordion.td class="table-cell" by="closes" sortedBy="$sortBy">
+                                                                <x-svg.spinner
+                                                                    color="#9fa6b2"
+                                                                    class="self-center hidden w-5"
+                                                                    wire:loading wire:target="initRegionsData">
+                                                                </x-svg.spinner>
+                                                                <div class="@if($dailyNumber['deleted_at'] != null || $dailyNumber['user']['deleted_at'] != null) text-red-500 @endif" wire:loading.remove wire:target="initRegionsData">
+                                                                    {{$dailyNumber['closes'] ?? 0}}
+                                                                </div>
+                                                            </x-table-accordion.td>
+                                                        </div>
+                                                    @empty
+                                                        <div class="table-row">
+                                                            <x-table-accordion.td class="table-cell pl-28">
+                                                                Empty
+                                                            </x-table-accordion.td>
+                                                        </div>
+                                                    @endforelse
+                                                @endif
                                             @endif
                                         @empty
                                             <div class="table-row">
@@ -801,12 +894,13 @@
                                 @endforeach
                             </x-slot>
                         </x-table-accordion>
-                    @else
-                        <div class="h-96 ">
-                            <div class="flex justify-center align-middle">
-                                <div class="text-sm text-center text-gray-700">
-                                    <x-svg.draw.empty></x-svg.draw.empty>
-                                    No data yet.
+                        @else
+                            <div class="h-96 ">
+                                <div class="flex justify-center align-middle">
+                                    <div class="text-sm text-center text-gray-700">
+                                        <x-svg.draw.empty></x-svg.draw.empty>
+                                        No data yet.
+                                    </div>
                                 </div>
                             </div>
                         </div>

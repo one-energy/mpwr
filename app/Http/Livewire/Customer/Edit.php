@@ -10,12 +10,15 @@ use App\Models\Rates;
 use App\Models\StockPointsCalculationBases;
 use App\Models\Term;
 use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Edit extends Component
 {
+    use AuthorizesRequests;
+
     public Customer $customer;
 
     public ?User $setter;
@@ -93,6 +96,7 @@ class Edit extends Component
 
     public function update()
     {
+        $this->authorize('update', $this->customer);
 
         $salesRep   = User::find($this->customer->sales_rep_id);
         $commission = $this->calculateCommission($this->customer);
@@ -114,9 +118,9 @@ class Edit extends Component
         $this->customer->misc_override_two           = $salesRep->misc_override_two;
         $this->customer->payee_two                   = $salesRep->payee_two;
         $this->customer->note_two                    = $salesRep->note_two;
-        $this->customer->financing_id = $this->customer->financing_id != "" ? $this->customer->financing_id : null;
-        $this->customer->financer_id = $this->customer->financer_id != "" ? $this->customer->financer_id : null;
-        $this->customer->term_id = $this->customer->term_id != "" ? $this->customer->term_id : null;
+        $this->customer->financing_id                = $this->customer->financing_id != '' ? $this->customer->financing_id : null;
+        $this->customer->financer_id                 = $this->customer->financer_id != '' ? $this->customer->financer_id : null;
+        $this->customer->term_id                     = $this->customer->term_id != '' ? $this->customer->term_id : null;
 
         DB::transaction(function () {
             $this->customer->save();
@@ -125,9 +129,9 @@ class Edit extends Component
                 if (!$this->customer->userEniumPoint()->exists() && $this->customer->panel_sold) {
                     $this->customer->userEniumPoint()->create([
                         'user_sales_rep_id' => $this->customer->sales_rep_id,
-                        'points'            => $this->customer->term->amount > 0 ? round($this->customer->totalSoldPrice/$this->customer->term->amount) : 0,
+                        'points'            => $this->customer->term->amount > 0 ? round($this->customer->totalSoldPrice / $this->customer->term->amount) : 0,
                         'set_date'          => Carbon::now(),
-                        'expiration_date'   => Carbon::now()->addYear()
+                        'expiration_date'   => Carbon::now()->addYear(),
                     ]);
                 }
             }
@@ -137,11 +141,13 @@ class Edit extends Component
             ->withTitle(__('Home Owner updated!'))
             ->send();
 
-        return redirect(route('customers.show', $this->customer->id));
+        return redirect()->route('home');
     }
 
     public function delete()
     {
+        $this->authorize('update', $this->customer);
+
         DB::transaction(function () {
             $this->customer->stockPoint()->delete();
             $this->customer->delete();
@@ -154,8 +160,8 @@ class Edit extends Component
         return redirect()->route('home');
     }
 
-    public function createStockPoint () 
-    {   
+    public function createStockPoint ()
+    {
         if (!$this->customer->stockPoint()->exists() && $this->customer->panel_sold) {
             $this->customer->stockPoint()->create([
                 'stock_recruiter'       => StockPointsCalculationBases::find(StockPointsCalculationBases::RECRUIT_ID)->stock_base_point,
@@ -165,7 +171,7 @@ class Edit extends Component
                 'stock_manager'         => StockPointsCalculationBases::find(StockPointsCalculationBases::OFFICE_MANAGER_ID)->stock_base_point,
                 'stock_divisional'      => StockPointsCalculationBases::find(StockPointsCalculationBases::DIVISIONAL_ID)->stock_base_point,
                 'stock_regional'        => StockPointsCalculationBases::find(StockPointsCalculationBases::REGIONAL_MANAGER_ID)->stock_base_point,
-                'stock_department'      => StockPointsCalculationBases::find(StockPointsCalculationBases::DEPARTMENT_ID)->stock_base_point
+                'stock_department'      => StockPointsCalculationBases::find(StockPointsCalculationBases::DEPARTMENT_ID)->stock_base_point,
             ]);
         }
     }
@@ -195,7 +201,7 @@ class Edit extends Component
     {
         if ($setterId) {
             $this->isSelfGen = false;
-            $this->setter = User::find($setterId);
+            $this->setter    = User::find($setterId);
         } else {
             $this->setSelfGen();
         }
