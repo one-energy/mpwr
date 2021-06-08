@@ -97,6 +97,7 @@ class OfficeController extends Controller
     public function edit(Office $office)
     {
         $regions = Region::query()
+            ->with('department')
             ->when(user()->hasRole(Role::DEPARTMENT_MANAGER), function (Builder $query) {
                 $query->where('department_id', user()->department_id);
             })
@@ -114,7 +115,7 @@ class OfficeController extends Controller
             ->get();
 
         return view('castle.offices.edit', [
-            'office'  => $office,
+            'office'  => $office->load(['managers', 'region']),
             'regions' => $regions,
             'users'   => $users,
         ]);
@@ -122,17 +123,9 @@ class OfficeController extends Controller
 
     public function update(Office $office)
     {
-        request()->validate([
-            'name'      => 'required|string|min:3|max:255',
-            'region_id' => 'required|exists:regions,id',
-        ], [
-            'region_id.required' => 'The region field is required.',
-        ]);
+        request()->validate(['name' => 'required|string|min:3|max:255']);
 
-        $office->update([
-            'name'      => request()->name,
-            'region_id' => request()->region_id,
-        ]);
+        $office->update(['name' => request()->name]);
 
         alert()
             ->withTitle(__('Office updated!'))

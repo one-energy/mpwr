@@ -103,7 +103,7 @@ class RegionController extends Controller
     public function edit(Region $region)
     {
         return view('castle.regions.edit', [
-            'region'      => $region,
+            'region'      => $region->load('managers'),
             'users'       => User::query()->where('role', Role::REGION_MANAGER)->get(),
             'departments' => Department::all(),
         ]);
@@ -111,10 +111,7 @@ class RegionController extends Controller
 
     public function update(Region $region)
     {
-        request()->validate(
-            ['name' => 'required|string|min:3|max:255'],
-            ['region_id.required' => 'The region field is required.']
-        );
+        request()->validate(['name' => 'required|string|min:3|max:255']);
 
         $region->update(['name' => request()->name]);
 
