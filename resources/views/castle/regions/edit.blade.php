@@ -8,45 +8,28 @@
         </div>
         <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
             <x-form class="px-8" :route="route('castle.regions.update', $region)" put>
-                <div x-data="{ selectedDepartment: null,
-                              selectedRegionManager: null,
-                              token: document.head.querySelector('meta[name=csrf-token]').content,
-                              departments: null,
-                              regionsManager: null }"
-                     x-init="$watch('selectedDepartment',
-                                     (department) => {
-                                    const url = '{{ route('getRegionsManager', ':department') }}'.replace(':department', department);
-                                    fetch(url, {method: 'post',  headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-TOKEN': token
-                                    }}).then(res => res.json()).then((regionManagerData) => { regionsManager = regionManagerData }) }),
-                            fetch('{{ route('getDepartments') }}',{method: 'post',  headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-TOKEN': token
-                                    }}).then(res=> res.json()).then( (departmentsData) => {
-                                            departments = departmentsData
-                                            selectedRegionManager = '{{ $region->regionManager->id ?? 1}}'
-                                            selectedDepartment = '{{$region->department_id ?? 1}}'
-                                    })">
+                <div>
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
                         <div class="md:col-span-3 col-span-2">
                             <x-input label="Region Name" name="name" value="{{ $region->name }}"/>
                         </div>
                         @if(user()->notHaveRoles(['Admin', 'Owner']))
-                            <div class="md:col-span-3 col-span-2 hidden">
-                                <x-select x-model="selectedDepartment" label="Department" name="department_id">
-                                    <template x-for="department in departments" :key="department.id">
-                                        <option :value="department.id" x-text="department.name"></option>
-                                    </template>
-                                </x-select>
+                            <div class="md:col-span-3 col-span-2">
+                                <x-input
+                                    label="Department"
+                                    :value="$region->department->name"
+                                    name="department_id"
+                                    disabled
+                                />
                             </div>
                         @else
                             <div class="md:col-span-3 col-span-2">
-                                <x-select x-model="selectedDepartment" label="Department" name="department_id">
-                                    <template x-for="department in departments" :key="department.id">
-                                        <option :value="department.id" x-text="department.name"></option>
-                                    </template>
-                                </x-select>
+                                <x-input
+                                    label="Department"
+                                    :value="$region->department->name"
+                                    name="department_id"
+                                    disabled
+                                />
                             </div>
                         @endif
 
@@ -55,9 +38,9 @@
                                 <span class="block text-sm font-medium leading-5 text-gray-700 mb-1">Managers</span>
                                 <div class="border-2 border-gray-200 rounded w-full">
                                     <ul class="space-y-2 p-4">
-                                        <template x-if="regionsManager" x-for="manager in regionsManager" :key="manager.id">
-                                            <li x-text="manager.full_name"></li>
-                                        </template>
+                                        @foreach($region->managers as $manager)
+                                            <li>{{ $manager->full_name }}</li>
+                                        @endforeach
                                     </ul>
                                 </div>
                             </div>
@@ -66,9 +49,9 @@
                                 <span class="block text-sm font-medium leading-5 text-gray-700">Managers</span>
                                 <div class="border-2 border-gray-200 rounded w-full">
                                     <ul class="space-y-2 p-4">
-                                        <template x-if="regionsManager" x-for="manager in regionsManager" :key="manager.id">
-                                            <li x-text="manager.full_name"></li>
-                                        </template>
+                                        @foreach($region->managers as $manager)
+                                            <li>{{ $manager->full_name }}</li>
+                                        @endforeach
                                     </ul>
                                 </div>
                             </div>
