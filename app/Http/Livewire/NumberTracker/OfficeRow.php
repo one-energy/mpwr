@@ -66,7 +66,8 @@ class OfficeRow extends Component
     {
         if ($this->selected) {
             $this->selectedUsers = $this->selectedUsers->merge(
-                $this->office->dailyNumbers->unique('user_id')->pluck('user_id'));
+                $this->office->dailyNumbers->unique('user_id')->pluck('user_id')
+            );
         } else {
             $this->selectedUsers = $this->selectedUsers->empty();
         }
@@ -134,7 +135,6 @@ class OfficeRow extends Component
     public function sortDailyNumbers($sortBy, $sortDirection)
     {
         $this->sortBy        = $sortBy;
-
         $this->sortDirection = $sortDirection;
 
         $this->getDailyNumbers();
@@ -151,7 +151,7 @@ class OfficeRow extends Component
 
     public function getDailyNumbers()
     {
-        $office = $this->office === null ? $this->findOffice($this->officeId) : $this->office;
+        $office = $this->office ?? $this->findOffice($this->officeId);
 
         $groupedUsers = $office->dailyNumbers->groupBy('user_id')->collect();
 
