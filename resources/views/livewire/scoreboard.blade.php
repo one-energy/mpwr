@@ -6,8 +6,8 @@
                     <span class="
                         bg-white inline-block py-2 text-sm font-semibold cursor-pointer
                             @if($period == 'd')
-                        border-b-2 border-green-base text-green-base
-@else text-gray-900
+                                border-b-2 border-green-base text-green-base
+                            @else text-gray-900
                                 hover:text-gray-800
                             @endIf
                         "
@@ -19,8 +19,8 @@
                     <span class="
                         bg-white inline-block py-2 text-sm font-semibold cursor-pointer
                             @if($period == 'w')
-                        border-b-2 border-green-base text-green-base
-@else text-gray-900
+                                border-b-2 border-green-base text-green-base
+                            @else text-gray-900
                                 hover:text-gray-800
                             @endIf
                         "
@@ -32,8 +32,8 @@
                     <span class="
                         bg-white inline-block py-2 text-sm font-semibold cursor-pointer
                             @if($period == 'm')
-                        border-b-2 border-green-base text-green-base
-@else text-gray-900
+                                border-b-2 border-green-base text-green-base
+                            @else text-gray-900
                                 hover:text-gray-800
                             @endIf
                         "
@@ -161,10 +161,11 @@
                                         <x-table>
                                             <x-slot name="header">
                                                 <x-table.th-tr>
-                                                    <x-table.th by="rank">@lang('Rank')</x-table.th>
-                                                    <x-table.th by="representative">@lang('Representative')</x-table.th>
-                                                    <x-table.th by="doors">@lang('Doors')</x-table.th>
-                                                    <x-table.th by="office">@lang('Office')</x-table.th>
+                                                    <x-table.th>@lang('Rank')</x-table.th>
+                                                    <x-table.th>@lang('Representative')</x-table.th>
+                                                    <x-table.th>@lang('Doors')</x-table.th>
+                                                    <x-table.th>@lang('Region')</x-table.th>
+                                                    <x-table.th>@lang('Office')</x-table.th>
                                                 </x-table.th-tr>
                                             </x-slot>
                                             <x-slot name="body">
@@ -184,17 +185,17 @@
                                                             {{ $user->full_name }}
                                                         </x-table.td>
                                                         <x-table.td>{{ $user->doors_total }}</x-table.td>
+                                                        <x-table.td>{{ $user->office ? $user->office->region->name : html_entity_decode('&#8212;') }}</x-table.td>
                                                         <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
                                                     </x-table.tr>
                                                 @endforeach
                                             </x-slot>
                                         </x-table>
                                     @else
-                                        <div class="h-96">
-                                            <div class="flex justify-center align-middle">
-                                                <div class="text-sm text-center text-gray-700">
-                                                    No data for this period.
-                                                </div>
+                                        <div class="flex justify-center align-middle">
+                                            <div class="text-sm text-center text-gray-700">
+                                                <x-svg.draw.empty/>
+                                                There are no top 10 doors for this period
                                             </div>
                                         </div>
                                     @endif
@@ -216,10 +217,11 @@
                                         <x-table>
                                             <x-slot name="header">
                                                 <x-table.th-tr>
-                                                    <x-table.th by="rank">@lang('Rank')</x-table.th>
-                                                    <x-table.th by="representative">@lang('Representative')</x-table.th>
-                                                    <x-table.th by="hours">@lang('Hours')</x-table.th>
-                                                    <x-table.th by="office">@lang('Office')</x-table.th>
+                                                    <x-table.th>@lang('Rank')</x-table.th>
+                                                    <x-table.th>@lang('Representative')</x-table.th>
+                                                    <x-table.th>@lang('Hours')</x-table.th>
+                                                    <x-table.th>@lang('Region')</x-table.th>
+                                                    <x-table.th>@lang('Office')</x-table.th>
                                                 </x-table.th-tr>
                                             </x-slot>
                                             <x-slot name="body">
@@ -237,17 +239,17 @@
                                                         </x-table.td>
                                                         <x-table.td>{{ $user->full_name }}</x-table.td>
                                                         <x-table.td>{{ $user->hours_worked_total }}</x-table.td>
+                                                        <x-table.td>{{ $user->office ? $user->office->region->name : html_entity_decode('&#8212;') }}</x-table.td>
                                                         <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
                                                     </x-table.tr>
                                                 @endforeach
                                             </x-slot>
                                         </x-table>
                                     @else
-                                        <div class="h-96">
-                                            <div class="flex justify-center align-middle">
-                                                <div class="text-sm text-center text-gray-700">
-                                                    No data for this period.
-                                                </div>
+                                        <div class="flex justify-center align-middle">
+                                            <div class="text-sm text-center text-gray-700">
+                                                <x-svg.draw.empty></x-svg.draw.empty>
+                                                There are no top 10 hours worked for this period.
                                             </div>
                                         </div>
                                     @endif
@@ -269,10 +271,11 @@
                                         <x-table>
                                             <x-slot name="header">
                                                 <x-table.th-tr>
-                                                    <x-table.th by="rank">@lang('Rank')</x-table.th>
-                                                    <x-table.th by="representative">@lang('Representative')</x-table.th>
-                                                    <x-table.th by="sets">@lang('Sets')</x-table.th>
-                                                    <x-table.th by="office">@lang('Office')</x-table.th>
+                                                    <x-table.th>@lang('Rank')</x-table.th>
+                                                    <x-table.th>@lang('Representative')</x-table.th>
+                                                    <x-table.th>@lang('Sets')</x-table.th>
+                                                    <x-table.th>@lang('Region')</x-table.th>
+                                                    <x-table.th>@lang('Office')</x-table.th>
                                                 </x-table.th-tr>
                                             </x-slot>
                                             <x-slot name="body">
@@ -290,17 +293,17 @@
                                                         </x-table.td>
                                                         <x-table.td>{{ $user->full_name }}</x-table.td>
                                                         <x-table.td>{{ $user->sets_total }}</x-table.td>
+                                                        <x-table.td>{{ $user->office ? $user->office->region->name : html_entity_decode('&#8212;') }}</x-table.td>
                                                         <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
                                                     </x-table.tr>
                                                 @endforeach
                                             </x-slot>
                                         </x-table>
                                     @else
-                                        <div class="h-96">
-                                            <div class="flex justify-center align-middle">
-                                                <div class="text-sm text-center text-gray-700">
-                                                    No data for this period.
-                                                </div>
+                                        <div class="flex justify-center align-middle">
+                                            <div class="text-sm text-center text-gray-700">
+                                                <x-svg.draw.empty></x-svg.draw.empty>
+                                                There are no top 10 sets for this period.
                                             </div>
                                         </div>
                                     @endif
@@ -322,10 +325,11 @@
                                         <x-table>
                                             <x-slot name="header">
                                                 <x-table.th-tr>
-                                                    <x-table.th by="rank">@lang('Rank')</x-table.th>
-                                                    <x-table.th by="representative">@lang('Representative')</x-table.th>
-                                                    <x-table.th by="set_closes">@lang('Set Closes')</x-table.th>
-                                                    <x-table.th by="office">@lang('Office')</x-table.th>
+                                                    <x-table.th>@lang('Rank')</x-table.th>
+                                                    <x-table.th>@lang('Representative')</x-table.th>
+                                                    <x-table.th>@lang('Set Closes')</x-table.th>
+                                                    <x-table.th>@lang('Region')</x-table.th>
+                                                    <x-table.th>@lang('Office')</x-table.th>
                                                 </x-table.th-tr>
                                             </x-slot>
                                             <x-slot name="body">
@@ -344,17 +348,17 @@
                                                         </x-table.td>
                                                         <x-table.td>{{ $user->full_name }}</x-table.td>
                                                         <x-table.td>{{ $user->set_closes_total }}</x-table.td>
+                                                        <x-table.td>{{ $user->office ? $user->office->region->name : html_entity_decode('&#8212;') }}</x-table.td>
                                                         <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
                                                     </x-table.tr>
                                                 @endforeach
                                             </x-slot>
                                         </x-table>
                                     @else
-                                        <div class="h-96">
-                                            <div class="flex justify-center align-middle">
-                                                <div class="text-sm text-center text-gray-700">
-                                                    No data for this period.
-                                                </div>
+                                        <div class="flex justify-center align-middle">
+                                            <div class="text-sm text-center text-gray-700">
+                                                <x-svg.draw.empty></x-svg.draw.empty>
+                                                There are no top 10 set closes for this period
                                             </div>
                                         </div>
                                     @endif
@@ -376,18 +380,11 @@
                                         <x-table>
                                             <x-slot name="header">
                                                 <x-table.th-tr>
-                                                    <x-table.th by="rank">
-                                                        @lang('Rank')
-                                                    </x-table.th>
-                                                    <x-table.th by="representative">
-                                                        @lang('Representative')
-                                                    </x-table.th>
-                                                    <x-table.th by="closes">
-                                                        @lang('Closes')
-                                                    </x-table.th>
-                                                    <x-table.th by="office">
-                                                        @lang('Office')
-                                                    </x-table.th>
+                                                    <x-table.th >@lang('Rank')</x-table.th>
+                                                    <x-table.th >@lang('Representative')</x-table.th>
+                                                    <x-table.th >@lang('Closes')</x-table.th>
+                                                    <x-table.th >@lang('Region')</x-table.th>
+                                                    <x-table.th >@lang('Office')</x-table.th>
                                                 </x-table.th-tr>
                                             </x-slot>
                                             <x-slot name="body">
@@ -405,17 +402,17 @@
                                                         </x-table.td>
                                                         <x-table.td>{{ $user->full_name }}</x-table.td>
                                                         <x-table.td>{{ $user->closes_total }}</x-table.td>
+                                                        <x-table.td>{{ $user->office ?  $user->office->name : html_entity_decode('&#8212;') }}</x-table.td>
                                                         <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
                                                     </x-table.tr>
                                                 @endforeach
                                             </x-slot>
                                         </x-table>
                                     @else
-                                        <div class="h-96">
-                                            <div class="flex justify-center align-middle">
-                                                <div class="text-sm text-center text-gray-700">
-                                                    No data for this period.
-                                                </div>
+                                        <div class="flex justify-center align-middle">
+                                            <div class="text-sm text-center text-gray-700">
+                                                <x-svg.draw.empty class="@if($this->topTenCloses->count()) hidden @endif"/>
+                                                There are no top 10 closes for this period
                                             </div>
                                         </div>
                                     @endif
