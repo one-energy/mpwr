@@ -22,33 +22,29 @@ class Users extends Component
     public function render()
     {
         $this->roles = User::ROLES;
-        $query       = User::with('office')->select('users.*');
-        if (user()->role == 'Office Manager') {
-            $userOfficeId = user()->id;
-            $query->join('offices', function ($join) use ($userOfficeId) {
-                $join->on('users.office_id', '=', 'offices.id')
-                    ->where('offices.office_manager_id', '=', $userOfficeId);
-            });
+        $query       = User::query();
+
+        if (user()->hasRole('Office Manager')) {
+            $query->whereHas('office', fn ($query) => $query->where('office_manager_id', user()->id));
         }
-        if (user()->role == 'Region Manager') {
-            $userRegionId = user()->id;
-            $query->join('offices', 'users.office_id', '=', 'offices.id');
-            $query->join('regions', function ($join) use ($userRegionId) {
-                $join->on('offices.region_id', '=', 'regions.id')
-                    ->where('regions.region_manager_id', '=', $userRegionId);
-            });
+
+        if (user()->hasRole('Region Manager')) {
+            $query->whereHas('office.region', fn ($query) => $query->where('region_manager_id', user()->id));
         }
-        if (user()->role == 'Department Manager') {
-            $query->whereDepartmentId(user()->department_id)
+
+        if (user()->hasRole('Department Manager')) {
+            $query->where('department_id', user()->department_id)
                 ->where('role', '!=', 'Admin')
                 ->where('role', '!=', 'Owner');
         }
-        if (user()->role == 'Admin') {
+
+        if (user()->hasRole('Admin')) {
             $query->where('role', '!=', 'Owner');
         }
 
         return view('livewire.castle.users', [
             'users' => $query
+                ->with(['office', 'department'])
                 ->search($this->search)
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage),
@@ -67,22 +63,22 @@ class Users extends Component
         return $roleTitle;
     }
 
-    public function canEditUser($editableUser)
+    public function canEditUser(User $editableUser)
     {
-        if (user()->role == 'Office Manager') {
-            return $editableUser->role == 'Sales Rep' || $editableUser->role == 'Setter' || $editableUser->role == 'Office Manager';
+        if (user()->hasRole('Office Manager')) {
+            return $editableUser->hasAnyRole(['Sales Rep', 'Setter', 'Office Manager']);
         }
 
-        if (user()->role == 'Region Manager') {
-            return $editableUser->role != 'Department Manager' && $editableUser->role != 'Admin' && $editableUser->role != 'Owner';
+        if (user()->hasRole('Region Manager')) {
+            return $editableUser->notHaveRoles(['Department Manager', 'Admin', 'Owner']);
         }
 
-        if (user()->role == 'Department Manager') {
-            return $editableUser->role != 'Admin' && $editableUser->role != 'Owner';
+        if (user()->hasRole('Department Manager')) {
+            return $editableUser->notHaveRoles(['Admin', 'Owner']);
         }
 
-        if (user()->role == 'Admin') {
-            return $editableUser->role != 'Owner';
+        if (user()->hasRole('Admin')) {
+            return $editableUser->notHaveRoles(['Owner']);
         }
 
         return true;
