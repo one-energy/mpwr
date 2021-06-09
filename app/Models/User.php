@@ -207,6 +207,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Customer::class, 'region_manager_id');
     }
 
+    public function customersOfSalesRepsRecuited()
+    {
+        return $this->hasMany(Customer::class, 'sales_rep_recruiter_id');
+    }
+
     public function customersDepartmentManager()
     {
         return $this->hasMany(Customer::class, 'department_manager_id');
@@ -487,11 +492,11 @@ class User extends Authenticatable implements MustVerifyEmail
                                   $stockPointsOfSalesRepRecruited->sum(fn($customer) => $customer->stockPoint->stock_recruiter) +
                                   $stockPointsOfDepartment->sum(fn($customer) => $customer->stockPoint->stock_department) +
                                   $stockPointsOfRegionManager->sum(fn($customer) => $customer->stockPoint->stock_regional) +
-                                  $stockPointsOfOfficeManager->sum(fn($customer) => $customer->stockPoint->stock_manager) 
+                                  $stockPointsOfOfficeManager->sum(fn($customer) => $customer->stockPoint->stock_manager)
         ];
     }
 
-    public function getStockPointsOf ($query) 
+    public function getStockPointsOf ($query)
     {
         return $query->whereHas('stockPoint', function ($query) {
             $query->whereYear('created_at', Carbon::now());
