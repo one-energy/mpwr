@@ -101,7 +101,7 @@ class NumberTrackerDetail extends Component
 
     public function getPillsProperty()
     {
-        return ['hours worked', 'doors', 'hours knocked', 'sets', 'sats', 'sg sits', 'set closes', 'sg closes'];
+        return ['hours worked', 'doors', 'hours knocked', 'sets', 'sats', 'set closes', 'closer sits', 'closers'];
     }
 
     private function getTopTenTrackers()
@@ -153,14 +153,6 @@ class NumberTrackerDetail extends Component
     private function getTotalRawQuery(string $pill)
     {
         $rawQuery = sprintf('SUM(%s) as total', $pill);
-
-        if ($pill === 'sg_sits') {
-            $rawQuery = 'SUM(sits + set_sits) as total';
-        }
-
-        if ($pill === 'sg_closes') {
-            $rawQuery = 'SUM(closes + set_closes) as total';
-        }
 
         return $rawQuery;
     }
