@@ -5,12 +5,15 @@ namespace App\Http\Livewire\Castle;
 use App\Models\Office;
 use App\Models\Region;
 use App\Traits\Livewire\FullTable;
+use Illuminate\Support\Collection;
 use Livewire\Component;
 
 class ManageOffice extends Component
 {
     use FullTable;
     
+    public Collection $offices;
+
     public $region;
 
     public function sortBy()
@@ -25,22 +28,16 @@ class ManageOffice extends Component
 
     public function render()
     {
-        $officeQuery = Office::query()
-            ->select('offices.*')
-            ->join('regions', 'offices.region_id', '=', 'regions.id');
+        $this->offices = Office::query()
+            ->with('region')
+            ->when(user()->notHaveRoles(['Admin', 'Owner']), function($query) {
+                $query->where('regions.department_id', '=', user()->department_id);
+            })
+            ->search($this->search)                
+            ->orderBy('offices.name')
+            ->get();
 
-        if (user()->role == 'Admin' || user()->role == 'Owner') {
-            $office = $officeQuery;
-        } else {
-            $office = $officeQuery->where('regions.department_id', '=', user()->department_id);
-        }
-        
-        return view('livewire.castle.manage-office', [
-            'offices' => $office
-                ->search($this->search)                
-                ->orderBy('offices.name')
-                ->get(),
-        ]);
+        return view('livewire.castle.manage-office');
     }
 
     public function addOfficeToRegion($office)
@@ -59,5 +56,10 @@ class ManageOffice extends Component
         $changeOffice['region_id'] = Region::whereDepartmentId($changeOffice->region->department_id)->first()->id;
 
         $changeOffice->update();
+    }
+
+    public function existsOfficesOnRegion()
+    {
+        return $this->offices->contains(fn ($office) => $office->region_id == $this->region->id);
     }
 }
