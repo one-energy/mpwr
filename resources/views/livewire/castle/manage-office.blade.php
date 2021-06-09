@@ -63,11 +63,7 @@
                                         <x-svg.chevron-left class="w-7 text-gray-500"/>
                                     </div>
                                     <div class="col-span-5 h-full truncate">
-                                        @if($office->region_id)
-                                            {{$office->name}} - {{$office->region->name}}
-                                        @else
-                                            {{$office->name}} - Without region
-                                        @endif
+                                        {{$office->name}}
                                     </div>
                                 </div>
                             @endif
