@@ -35,7 +35,7 @@
                         @if(user()->role != "Admin" && user()->role != "Owner")
                             <div class="md:col-span-3 col-span-2 hidden">
                                 <x-select x-model="selectedDepartment" label="Department" name="department_id">
-                                    <template x-for="department in departments" :key="department.id">
+                                    <template x-if="departments" x-for="department in departments" :key="department.id">
                                         <option :value="department.id" x-text="department.name"></option>
                                     </template>
                                 </x-select>
@@ -43,20 +43,23 @@
                         @else
                             <div class="md:col-span-3 col-span-2">
                                 <x-select x-model="selectedDepartment" label="Department" name="department_id">
-                                    <template x-for="department in departments" :key="department.id">
+                                    <template  x-if="departments" x-for="department in departments" :key="department.id">
                                         <option :value="department.id" x-text="department.name"></option>
                                     </template>
                                 </x-select>
                             </div>
                         @endif
-
                         @if(user()->role != "Admin" && user()->role != "Owner")
                             <div class="md:col-span-3 col-span-2 @if(user()->role == 'Region Manager') hidden @endif">
                                 <x-select x-model="selectedRegionManager" label="Region Manager"
                                           name="region_manager_id">
-                                    <template x-for="manager in regionsManager" :key="manager.id">
+                                    <template x-if="regionsManager" x-for="manager in regionsManager" :key="manager.id">
                                         <option :value="manager.id"
                                                 x-text="manager.first_name + ' ' + manager.last_name"></option>
+                                    </template>
+                                    
+                                    <template x-if="!regionsManager?.length" x-for="manager in regionsManager" :key="manager.id">
+                                        <option value="" >No one regional manager was found</option>
                                     </template>
                                 </x-select>
                             </div>
@@ -64,9 +67,12 @@
                             <div class="md:col-span-3 col-span-2">
                                 <x-select x-model="selectedRegionManager" label="Region Manager"
                                           name="region_manager_id">
-                                    <template x-for="manager in regionsManager" :key="manager.id">
+                                    <template x-if="regionsManager" x-for="manager in regionsManager" :key="manager.id">
                                         <option :value="manager.id"
                                                 x-text="manager.first_name + ' ' + manager.last_name"></option>
+                                    </template>
+                                    <template x-if="!regionsManager?.length">
+                                        <option value="" >No one regional manager was found</option>
                                     </template>
                                 </x-select>
                             </div>
