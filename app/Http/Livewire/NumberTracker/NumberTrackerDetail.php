@@ -101,7 +101,7 @@ class NumberTrackerDetail extends Component
 
     public function getPillsProperty()
     {
-        return ['doors', 'hours worked', 'sets', 'set sits', 'sg sits', 'set closes', 'sg closes'];
+        return ['hours worked', 'doors', 'hours knocked', 'sets', 'sats', 'sg sits', 'set closes', 'sg closes'];
     }
 
     private function getTopTenTrackers()
