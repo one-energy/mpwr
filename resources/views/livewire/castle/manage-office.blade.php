@@ -24,9 +24,9 @@
                             <div class="hover:bg-gray-100 h-8 p-1 grid grid-cols-6" wire:click="addOfficeToRegion({{$office->id}})">
                                 <div class="text-right col-span-5 truncate">
                                     @if($office->region_id)
-                                        {{$office->region->name}} - {{$office->name}}
+                                    {{$office->name}} - {{$office->region->name}}
                                     @else
-                                        Without region - {{$office->name}}
+                                    {{$office->name}} - Without region
                                     @endif
                                 </div>
                                 <div class="float-right col-span-1">
