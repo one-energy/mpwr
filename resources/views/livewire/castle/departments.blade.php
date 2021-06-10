@@ -36,7 +36,7 @@
                                     @foreach($departments as $department)
                                         <x-table.tr :loop="$loop">
                                             <x-table.td>{{ $department->name }}</x-table.td>
-                                            <x-table.td>{{ $department->departmentAdmin->first_name }} {{ $department->departmentAdmin->last_name }}</x-table.td>
+                                            <x-table.td>{{ $department->departmentAdmin?->full_name ?? html_entity_decode('&#8212;') }}</x-table.td>
                                             <x-table.td>
                                                 <x-link :href="route('castle.departments.edit', $department)"
                                                         class="text-sm">Edit
