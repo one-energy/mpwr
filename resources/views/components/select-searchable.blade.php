@@ -20,8 +20,8 @@
     $id        = $id   ?? $name  ?? null;
     $hasError = $errors->has($name);
     $hasError
-        ? $class .= ' border-red-400 text-red-600 focus:ring-red-500 focus:border-red-500'
-        : $class .= ' border-gray-300 text-gray-600 focus:ring-indigo-500 focus:border-indigo-500';
+        ? $class .= 'flex border-red-400 text-red-600 focus:ring-red-500 focus:border-red-500'
+        : $class .= 'flex border-gray-300 text-gray-600 focus:ring-indigo-500 focus:border-indigo-500';
 @endphp
 
 <div x-data="{
@@ -132,7 +132,12 @@ x-init="() => {
         <button {{ $attributes->merge(['class' => $class]) }}
             x-on:click="togglePopover"
             type="button">
-            <span class="block truncate text-black" x-text="getLabel()"></span>
+            <div class="flex justify-between">
+                <span class="block truncate text-black @if($showAlert) italic @endif" x-text="getLabel()"></span>
+                @if ($showAlert)
+                    <x-svg.alert class="h-5"/>
+                @endif
+            </div>
         </button>
         <span class="absolute inset-y-0 right-0 flex items-center pr-2 cursor-pointer">
             <x-icon class="text-gray-400  hover:text-red-500"
