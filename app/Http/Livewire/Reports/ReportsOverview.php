@@ -35,12 +35,14 @@ class ReportsOverview extends Component
 
     public function mount()
     {
-        $this->sortBy = "date_of_sale";
-        $this->sortDirection = "desc";
-        $this->departmentId = Department::first()->id;
+        $this->sortBy        = 'date_of_sale';
+        $this->sortDirection = 'desc';
+        $this->departmentId  = Department::first()->id;
+
         if (user()->hasAnyRole(['Admin', 'Owner'])) {
             $this->personalCustomers = false;
         }
+
         $this->startDate = Carbon::create($this->startDate)->firstOfYear()->startOfDay()->toString();
         $this->finalDate = Carbon::create($this->finalDate)->endOfDay()->toString();
     }
@@ -94,6 +96,23 @@ class ReportsOverview extends Component
                 ->orderByRaw($this->sortBy . ' ' . $this->sortDirection)
                 ->paginate($this->perPage),
         ]);
+    }
+
+    public function paid(Customer $customer)
+    {
+        $fields = [
+            'panel_sold' => true,
+            'paid_date'  => now()
+        ];
+
+        if ($customer->panel_sold) {
+            $fields = [
+                'panel_sold' => false,
+                'paid_date'  => null
+            ];
+        }
+
+        $customer->update($fields);
     }
 
     public function getUserCustomers()
