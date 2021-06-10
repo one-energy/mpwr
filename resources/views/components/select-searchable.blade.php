@@ -6,6 +6,7 @@
     'optionValue' => null,
     'optionLabel' => null,
     'noneOption'  => false,
+    'showAlert'   => false,
     'label'       => null,
     'name'        => null,
     'id'          => null,
