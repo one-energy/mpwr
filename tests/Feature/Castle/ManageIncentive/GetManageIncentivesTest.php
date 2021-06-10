@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Castle;
+namespace Tests\Feature\Castle\ManageIncentive;
 
 use App\Models\Department;
 use App\Models\Incentive;
