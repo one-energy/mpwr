@@ -30,6 +30,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $opened_by_id
  * @property float $margin
  * @property \datetime $date_of_sale
+ * @property \Illuminate\Support\Carbon|null $paid_date
  * @property int $sales_rep_comission
  * @property int|null $enium_points
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -78,13 +79,19 @@ class Customer extends Model
         'commission',
         'created_at',
         'updated_at',
-        'is_active'
+        'is_active',
+        'panel_sold',
+        'paid_date'
     ];
 
     protected $casts = [
         'panel_sold'   => 'boolean',
         'is_active'    => 'boolean',
         'date_of_sale' => 'datetime:Y-m-d',
+    ];
+
+    protected $dates = [
+        'paid_date'
     ];
 
     const RANGE_DATES = [
