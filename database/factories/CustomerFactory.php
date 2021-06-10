@@ -28,6 +28,7 @@ class CustomerFactory extends Factory
             'pay'           => $pay,
             'financing'     => $this->faker->word,
             'date_of_sale'  => Carbon::now(),
+            'paid_date'     => Carbon::now(),
             'financing_id'  => Financing::factory()->create()->id,
             'adders'        => $adders,
             'epc'           => $epc + 100,
