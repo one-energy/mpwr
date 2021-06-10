@@ -114,6 +114,7 @@
                             options="setters"
                             name="customer.setter_id"
                             label="Setter"
+                            :showAlert="$setter->deleted_at != null"
                             noneOption
                             placeholder="{{$customer->setter_id ? $setter->first_name . ' ' . $setter->last_name  : 'Self Gen'}}"/>
                     </div>
