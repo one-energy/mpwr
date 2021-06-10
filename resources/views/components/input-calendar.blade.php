@@ -31,6 +31,7 @@
                     this.getDateValue(day.getUTCDate());
                 } else {
                     this.dateFormatted = new Date(this.year, this.month, day.getUTCDate()).toDateString();
+                    console.log(this.dateValue, this.dateFormatted)
                 }
             },
 
@@ -42,12 +43,12 @@
 
             isSelectedDate(date) {
                 const d = new Date(this.year, this.month, date);
-                return this.dateValue === d.toDateString() ? true : false;
+                return this.dateFormatted === d.toDateString() ? true : false;
             },
 
             getDateValue(date) {
                 let selectedDate = new Date(this.year, this.month, date);
-                this.dateValue = selectedDate.toDateString();
+                this.dateFormatted = selectedDate.toDateString();
                 this.showDatepicker = false;
             },
 
