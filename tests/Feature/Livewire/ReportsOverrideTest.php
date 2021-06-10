@@ -194,7 +194,75 @@ class ReportsOverrideTest extends TestCase
         $this->assertSame(900000.0, $component->payload['effects']['returns']['getUserTotalCommission']);
     }
 
-    private function makeCustomer($attr)
+    /** @test */
+    public function it_should_be_possible_see_paid_column()
+    {
+        $this->actingAs($this->admin);
+
+        Livewire::test(ReportsOverview::class)
+            ->assertSee('Paid')
+            ->assertHasNoErrors();
+    }
+
+    /** @test */
+    public function it_should_be_possible_mark_a_pending_customer_as_paid()
+    {
+        $this->actingAs($this->admin);
+
+        $customer = $this->makeCustomer([
+            'panel_sold' => false,
+            'is_active'  => true,
+            'paid_date'  => null
+        ]);
+
+        $this->assertNull($customer->paid_date);
+
+        Livewire::test(ReportsOverview::class)
+            ->assertSee('Paid')
+            ->assertSee($customer->first_name)
+            ->call('paid', $customer->id)
+            ->assertHasNoErrors();
+
+        $customer->refresh();
+
+        $this->assertTrue($customer->panel_sold);
+        $this->assertNotNull($customer->paid_date);
+        $this->assertDatabaseHas($customer->getTable(), [
+            'id'         => $customer->id,
+            'panel_sold' => true
+        ]);
+    }
+
+    /** @test */
+    public function it_should_be_possible_to_unmark_a_paid_customer()
+    {
+        $this->actingAs($this->admin);
+
+        $customer = $this->makeCustomer([
+            'panel_sold' => true,
+            'is_active'  => true,
+            'paid_date'  => now()
+        ]);
+
+        $this->assertNotNull($customer->paid_date);
+
+        Livewire::test(ReportsOverview::class, ['selectedStatus' => 'installed'])
+            ->assertSee('Paid')
+            ->assertSee($customer->first_name)
+            ->call('paid', $customer->id)
+            ->assertHasNoErrors();
+
+        $customer->refresh();
+
+        $this->assertFalse($customer->panel_sold);
+        $this->assertNull($customer->paid_date);
+        $this->assertDatabaseHas($customer->getTable(), [
+            'id'         => $customer->id,
+            'panel_sold' => false
+        ]);
+    }
+
+    private function makeCustomer($attr): Customer
     {
         return Customer::factory()->create(array_merge([
             'setter_id'             => $this->setter,
