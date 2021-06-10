@@ -4,6 +4,7 @@ namespace Tests\Feature\Livewire\Customer;
 
 use App\Http\Livewire\Customer\Edit;
 use App\Models\Customer;
+use App\Models\Department;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -16,9 +17,10 @@ class DeleteCustomerTest extends TestCase
     /** @test */
     public function it_should_allow_user_sales_rep_delete_a_customer()
     {
-        $john     = User::factory()->create(['role' => 'Admin']);
-        $customer = Customer::factory()->create([
-            'sales_rep_id' => $john->id
+        $department = Department::factory()->create();
+        $john       = User::factory()->create(['role' => 'Admin', 'department_id' => $department->id]);
+        $customer   = Customer::factory()->create([
+            'sales_rep_id' => $john->id,
         ]);
 
         $this->actingAs($john);
@@ -33,9 +35,11 @@ class DeleteCustomerTest extends TestCase
     /** @test */
     public function it_should_allow_user_opened_by_delete_a_customer()
     {
-        $john     = User::factory()->create(['role' => 'Admin']);
-        $customer = Customer::factory()->create([
-            'opened_by_id' => $john->id
+        $department = Department::factory()->create();
+        $john       = User::factory()->create(['role' => 'Admin', 'department_id' => $department->id]);
+        $customer   = Customer::factory()->create([
+            'sales_rep_id' => $john->id,
+            'opened_by_id' => $john->id,
         ]);
 
         $this->actingAs($john);
@@ -50,11 +54,14 @@ class DeleteCustomerTest extends TestCase
     /** @test */
     public function it_should_forbidden_delete_a_customer_that_isnt_the_sales_rep_or_the_user_that_opened()
     {
-        $john = User::factory()->create(['role' => 'Admin']);
-        $mary = User::factory()->create(['role' => 'Admin']);
+        $department01 = Department::factory()->create();
+        $department02 = Department::factory()->create();
+
+        $john = User::factory()->create(['role' => 'Admin', 'department_id' => $department01->id]);
+        $mary = User::factory()->create(['role' => 'Admin', 'department_id' => $department02->id]);
 
         $customer = Customer::factory()->create([
-            'sales_rep_id' => $mary->id
+            'sales_rep_id' => $mary->id,
         ]);
 
         $this->actingAs($john);
@@ -64,7 +71,7 @@ class DeleteCustomerTest extends TestCase
             ->assertForbidden();
 
         $this->assertDatabaseHas($customer->getTable(), [
-            'id' => $customer->id
+            'id' => $customer->id,
         ]);
         $this->assertNull($customer->fresh()->deleted_at);
     }
