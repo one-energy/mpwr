@@ -48,6 +48,7 @@
 
             getDateValue(date) {
                 let selectedDate = new Date(this.year, this.month, date);
+                this.dateValue = selectedDate;
                 this.dateFormatted = selectedDate.toDateString();
                 this.showDatepicker = false;
             },
