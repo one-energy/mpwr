@@ -22,32 +22,9 @@ class Users extends Component
     public function render()
     {
         $this->roles = User::ROLES;
-        $query       = User::query();
-
-        if (user()->hasRole('Office Manager')) {
-            $query->whereHas('office', fn ($query) => $query->where('office_manager_id', user()->id));
-        }
-
-        if (user()->hasRole('Region Manager')) {
-            $query->whereHas('office.region', fn ($query) => $query->where('region_manager_id', user()->id));
-        }
-
-        if (user()->hasRole('Department Manager')) {
-            $query->where('department_id', user()->department_id)
-                ->where('role', '!=', 'Admin')
-                ->where('role', '!=', 'Owner');
-        }
-
-        if (user()->hasRole('Admin')) {
-            $query->where('role', '!=', 'Owner');
-        }
 
         return view('livewire.castle.users', [
-            'users' => $query
-                ->with(['office', 'department'])
-                ->search($this->search)
-                ->orderBy($this->sortBy, $this->sortDirection)
-                ->paginate($this->perPage),
+            'users' => $this->getUsers()
         ]);
     }
 
@@ -115,5 +92,28 @@ class Users extends Component
         }
 
         $this->userOffices = $user->office->name;
+    }
+
+    private function getUsers()
+    {
+        return User::query()
+            ->when(user()->hasRole('Office Manager'), function ($query) {
+                $query->whereHas('office', fn($query) => $query->where('office_manager_id', user()->id));
+            })
+            ->when(user()->hasRole('Region Manager'), function ($query) {
+                $query->whereHas('office.region', fn($query) => $query->where('region_manager_id', user()->id));
+            })
+            ->when(user()->hasRole('Department Manager'), function ($query) {
+                $query->where('department_id', user()->department_id)
+                    ->where('role', '!=', 'Admin')
+                    ->where('role', '!=', 'Owner');
+            })
+            ->when(user()->hasRole('Admin'), function ($query) {
+                $query->where('role', '!=', 'Owner');
+            })
+            ->with(['office', 'department'])
+            ->search($this->search)
+            ->orderBy($this->sortBy, $this->sortDirection)
+            ->paginate($this->perPage);
     }
 }
