@@ -20,15 +20,16 @@
                                     </x-nav.link>
 
                                     @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
-                                        <x-nav.link :href="route('castle.rates.index')" class="ml-4"
+                                        <x-nav.link :href="route('castle.rates.index')" class="ml-4 hidden lg:block"
                                                     :active="is_active('castle.rates.index')">
                                             @lang('Manage Compensations')
                                         </x-nav.link>
                                     @endif
 
-                                    @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager', 'Region Manager']))                                        <x-nav.link
+                                    @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager', 'Region Manager']))                                        
+                                        <x-nav.link
                                             :href="route('castle.manage-trainings.index', ['department' => user()->department_id] )"
-                                            class="ml-4"
+                                            class="ml-4 hidden lg:block"
                                             :active="is_active('castle.manage-trainings.index')">
                                             @lang('Manage Trainings')
                                         </x-nav.link>
@@ -42,7 +43,8 @@
                                     @endif
 
                                     @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
-                                        <x-nav.link :href="route('castle.incentives.index')" class="ml-4"
+                                        <x-nav.link :href="route('castle.incentives.index')" 
+                                                    class="ml-4 hidden lg:block"
                                                     :active="is_active('castle.incentives.*')">
                                             @lang('Incentives')
                                         </x-nav.link>
@@ -96,10 +98,46 @@
                             </div>
                         </div>
 
-                        @if(user()->userLevel() != 'Sales Rep' && user()->userLevel() != 'Setter')
+                        @if(user()->userLevel() != 'Sales Rep' && user()->userLevel() != 'Setter' && !is_active('castle.*'))
                             <x-nav.castle-icon/>
-                    @endif
-                    <!--
+                        @endif
+
+                        <div class="h-full lg:hidden" @click.away="open = false" class="ml-3 relative" x-data="{ open: false }">
+                            <div class="items-center">
+                                <div @click="open = !open"
+                                        class="flex rounded-full text-gray-500 hover:text-gray-700 items-center px-1 pt-1 text-sm font-medium leading-5 transition duration-150 ease-in-out">
+                                    <x-svg.dots class="h-6"/>
+                                </div>
+                            </div>
+                            <div x-cloak x-show="open" x-transition:enter="transition ease-out duration-100"
+                                 x-transition:enter-start="transform opacity-0 scale-95"
+                                 x-transition:enter-end="transform opacity-100 scale-100"
+                                 x-transition:leave="transition ease-in duration-75"
+                                 x-transition:leave-start="transform opacity-100 scale-100"
+                                 x-transition:leave-end="transform opacity-0 scale-95"
+                                 class="absolute right-10 mt-2 rounded-md shadow-lg z-10">
+                                <div class="flex flex-col py-1 rounded-md bg-white shadow-xs">
+                                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
+                                        <a class="px-4 py-2 text-gray-600 font-medium transition ease-in-out duration-150" href="{{route('castle.rates.index')}}">
+                                            @lang('Manage Compensations')
+                                        </a>
+                                    @endif
+
+                                    @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager', 'Region Manager']))                                        
+                                        <a class="px-4 py-2 text-gray-600 font-medium transition ease-in-out duration-150" href="{{route('castle.manage-trainings.index', ['department' => user()->department_id] )}}">
+                                            @lang('Manage Trainings')
+                                        </a>
+                                    @endif
+
+                                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
+                                        <a class="px-4 py-2 text-gray-600 font-medium transition ease-in-out duration-150" href="{{route('castle.incentives.index')}}">
+                                            @lang('Incentives')
+                                        </a>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                         <!--
                         <button
                             class="p-1 border-2 border-transparent text-gray-400 rounded-full hover:text-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"
                             aria-label="Notifications">
