@@ -32,7 +32,7 @@ class NumberTrackerDetail extends Component
 
     public $dateSelected;
 
-    public string $selectedPill = 'hours';
+    public string $selectedPill = 'hours worked';
 
     public int $selectedDepartment;
 
@@ -82,7 +82,7 @@ class NumberTrackerDetail extends Component
 
     public function getPillsProperty()
     {
-        return ['doors', 'hours', 'sets', 'set sits', 'sg sits', 'set closes', 'sg closes'];
+        return ['hours worked', 'doors', 'hours knocked', 'sets', 'sats', 'set closes', 'closer sits', 'closes'];
     }
 
     public function updateNumbers($payload)
@@ -123,14 +123,6 @@ class NumberTrackerDetail extends Component
     private function getTotalRawQuery(string $pill)
     {
         $rawQuery = sprintf('SUM(%s) as total', $pill);
-
-        if ($pill === 'sg_sits') {
-            $rawQuery = 'SUM(sits + set_sits) as total';
-        }
-
-        if ($pill === 'sg_closes') {
-            $rawQuery = 'SUM(closes + set_closes) as total';
-        }
 
         return $rawQuery;
     }

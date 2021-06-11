@@ -9,6 +9,7 @@ use App\Models\User;
 use DateInterval;
 use DatePeriod;
 use DateTimeImmutable;
+use DateTimeInterface;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Livewire\Component;
@@ -17,6 +18,7 @@ use Livewire\Component;
  * @property-read Collection|Office[] $offices
  * @property-read array $periods
  * @property-read Collection $weeklyPeriods
+ * @property-read Collection $weeklyLabels
  * @property-read string $dateFormat
  * @property-read Collection|DailyNumber[] $users
  */
@@ -44,50 +46,35 @@ class Spreadsheet extends Component
 
     public function getPeriodsProperty()
     {
-        $date = DateTimeImmutable::createFromMutable(today());
+        $weeks = [];
 
-        $firsDayOfMonth = $date->modify('first day of this month');
-        $lasDayOfMonth  = $date->modify('last day of this month');
-        $interval       = new DateInterval('P7D');
+        $currentWeek    = DateTimeImmutable::createFromMutable(today());
+        $firstDayOfWeek = $currentWeek->modify(today()->startOfWeek());
+        $lastDayOfWeek  = $currentWeek->modify(today()->endOfWeek()->subDay());
 
-        $period = new DatePeriod(
-            $firsDayOfMonth,
-            $interval,
-            $lasDayOfMonth,
-            DatePeriod::EXCLUDE_START_DATE
-        );
+        $weeks[] = $firstDayOfWeek;
+        $weeks[] = $lastDayOfWeek;
 
-        $weeks = [$firsDayOfMonth];
+        $subWeeks = collect()->times(3)->map(function ($number) {
+            $today       = DateTimeImmutable::createFromMutable(today());
+            $currentWeek = today()->subWeeks($number);
 
-        foreach ($period as $date) {
-            $weeks[] = $date->modify('-1 day');
-            $weeks[] = $date;
-        }
+            return [
+                $today->modify($currentWeek->startOfWeek()),
+                $today->modify($currentWeek->endOfWeek()->subDay()),
+            ];
+        })
+            ->flatten()
+            ->toArray();
 
-        $weeks[] = $lasDayOfMonth;
-
-        return $weeks;
+        return array_merge($weeks, $subWeeks);
     }
 
     public function getWeeklyPeriodsProperty()
     {
-        $interval = new DateInterval('P1D');
-
         return collect($this->periods)
             ->chunk(2)
-            ->map(function (Collection $chunk) use ($interval) {
-                $days = [$chunk->first()];
-
-                $weekDays = new DatePeriod($chunk->first(), $interval, $chunk->last(), DatePeriod::EXCLUDE_START_DATE);
-
-                foreach ($weekDays as $day) {
-                    $days[] = $day;
-                }
-
-                $days[] = $chunk->last();
-
-                return $days;
-            });
+            ->map(fn (Collection $chunk) => $this->getDaysFrom($chunk));
     }
 
     public function getWeeklyLabelsProperty()
@@ -95,7 +82,14 @@ class Spreadsheet extends Component
         return collect($this->weeklyPeriods)
             ->map(function (array $periods) {
                 return collect($periods)
-                    ->map(fn(DateTimeImmutable $date) => $date->format($this->dateFormat));
+                    ->map(function (DateTimeImmutable $date) {
+                        if ($this->isSunday($date)) {
+                            return null;
+                        }
+
+                        return $date->format($this->dateFormat);
+                    })
+                    ->filter();
             });
     }
 
@@ -118,7 +112,7 @@ class Spreadsheet extends Component
                     $query
                         ->where('office_id', $this->selectedOffice)
                         ->whereBetween('date', [
-                            today()->startOfMonth()->format('Y-m-d'),
+                            today()->subWeeks(3)->startOfWeek()->format('Y-m-d'),
                             today()->endOfMonth()->format('Y-m-d'),
                         ])
                         ->orderBy('date', 'asc');
@@ -141,20 +135,18 @@ class Spreadsheet extends Component
         foreach ($this->periodsLabel as $key => $period) {
             foreach ($this->weeklyLabels[$key] as $label) {
                 if ($this->users->isEmpty()) {
-                    $totals[$label] = [];
+                    $totals[$label] = $this->getMappedDailyNumbers(collect(), $label);
 
                     continue;
                 }
 
                 $dailyNumbers = $this->getDailyNumbersGroupedByDate($this->users);
 
-                $totals[$label] = isset($dailyNumbers[$label])
-                    ? $this->getMappedDailyNumbers($dailyNumbers, $label)
-                    : [];
+                $totals[$label] = $this->getMappedDailyNumbers($dailyNumbers, $label);
             }
         }
 
-        return array_chunk($totals, 7, true);
+        return array_chunk($totals, 6, true);
     }
 
     public function getDateFormatProperty()
@@ -181,9 +173,9 @@ class Spreadsheet extends Component
         return match (user()->role) {
             'Admin', 'Owner' => Office::oldest('name')->get(),
             'Department Manager' => $this->getOfficesFromDepartment(),
-            'Region Manager' => Office::oldest('name')->whereIn('region_id', user()->managedRegions->pluck('id'))->get(),
-            'Office Manager' => Office::oldest('name')->whereIn('id', user()->managedOffices->pluck('id'))->get(),
-            default => collect()
+            'Region Manager'     => Office::oldest('name')->whereIn('region_id', user()->managedRegions->pluck('id'))->get(),
+            'Office Manager'     => Office::oldest('name')->whereIn('id', user()->managedOffices->pluck('id'))->get(),
+            default              => collect()
         };
     }
 
@@ -250,16 +242,52 @@ class Spreadsheet extends Component
 
     private function getMappedDailyNumbers(Collection $dailyNumbers, string $key)
     {
+        $hasDailyNumbers = $dailyNumbers->isNotEmpty() && $dailyNumbers->has($key);
+
         return [
-            'doors'         => $dailyNumbers[$key]->sum('doors'),
-            'sets'          => $dailyNumbers[$key]->sum('sets'),
-            'set_closes'    => $dailyNumbers[$key]->sum('set_closes'),
-            'closes'        => $dailyNumbers[$key]->sum('closes'),
-            'hours_worked'  => $dailyNumbers[$key]->sum('hours_worked'),
-            'hours_knocked' => $dailyNumbers[$key]->sum('hours_knocked'),
-            'sats'          => $dailyNumbers[$key]->sum('sats'),
-            'closer_sits'   => $dailyNumbers[$key]->sum('closer_sits'),
-            'date'          => $dailyNumbers[$key]->first()->date,
+            'doors'         => $hasDailyNumbers ? $dailyNumbers[$key]->sum('doors') : 0,
+            'sets'          => $hasDailyNumbers ? $dailyNumbers[$key]->sum('sets') : 0,
+            'set_closes'    => $hasDailyNumbers ? $dailyNumbers[$key]->sum('set_closes') : 0,
+            'closes'        => $hasDailyNumbers ? $dailyNumbers[$key]->sum('closes') : 0,
+            'hours_worked'  => $hasDailyNumbers ? $dailyNumbers[$key]->sum('hours_worked') : 0,
+            'hours_knocked' => $hasDailyNumbers ? $dailyNumbers[$key]->sum('hours_knocked') : 0,
+            'sats'          => $hasDailyNumbers ? $dailyNumbers[$key]->sum('sats') : 0,
+            'closer_sits'   => $hasDailyNumbers ? $dailyNumbers[$key]->sum('closer_sits') : 0,
+            'date'          => $hasDailyNumbers ? $dailyNumbers[$key]->first()->date : null,
         ];
+    }
+
+    private function getDaysFrom(Collection $chunk)
+    {
+        $interval = new DateInterval('P1D');
+
+        $firstPiece  = $chunk->first();
+        $secondPiece = $chunk->last();
+
+        $days = [$firstPiece];
+
+        $weekDays = new DatePeriod($firstPiece, $interval, $secondPiece, DatePeriod::EXCLUDE_START_DATE);
+
+        foreach ($weekDays as $day) {
+            if ($this->isSunday($day)) {
+                continue;
+            }
+
+            $days[] = $day;
+        }
+
+        return $days;
+    }
+
+    private function isSunday(DateTimeInterface $day)
+    {
+        return $day->format('w') === '0';
+    }
+
+    private function formattedDatesCollection(Collection $weeklyPeriods)
+    {
+        return $weeklyPeriods
+            ->flatten()
+            ->map(fn (DateTimeImmutable $date) => $date->format('Y-m-d'));
     }
 }

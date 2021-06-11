@@ -33,21 +33,22 @@ class Offices extends Component
     public function render()
     {
         $offices = Office::query()
-            ->when(user()->role == 'Region Manager', function (Builder $query) {
+            ->when(user()->hasRole('Region Manager'), function (Builder $query) {
                 $query->whereHas('region', function (Builder $query) {
                     $query->where('region_manager_id', '=', user()->id);
                 });
             })
-            ->when(user()->role == 'Department Manager', function (Builder $query) {
+            ->when(user()->hasRole('Department Manager'), function (Builder $query) {
                 $regionIds = Region::query()
                     ->where('department_id', '=', user()->department_id)
                     ->pluck('id');
 
                 $query->whereIn('region_id', $regionIds);
             })
-            ->when(user()->role == 'Office Manager', function (Builder $query) {
+            ->when(user()->hasRole('Office Manager'), function (Builder $query) {
                 $query->where('office_manager_id', '=', user()->id);
             })
+            ->with(['region.department', 'officeManager'])
             ->search($this->search)
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate($this->perPage);

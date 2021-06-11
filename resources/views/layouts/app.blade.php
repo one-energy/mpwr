@@ -16,12 +16,10 @@
     <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
     <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
     <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
-    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script src="{{ asset('js/app.js') }}" defer></script>
     <link rel="manifest" href="{{asset('manifest.json')}}">
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link rel="apple-touch-icon" sizes="60x60" href="assets/images/icon/ios/icon-60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="assets/images/icon/ios/icon-72.png">

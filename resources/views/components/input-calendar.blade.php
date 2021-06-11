@@ -15,7 +15,8 @@
             MONTH_NAMES: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
             DAYS: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
             showDatepicker: false,
-            datepickerValue: '{{$value}}',
+            dateValue: @entangle($wire),
+            dateFormatted: null,
             month: '',
             year: '',
             no_of_days: [],
@@ -23,14 +24,15 @@
             days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
 
             initDate() {
-                let day = this.datepickerValue ? new Date(this.datepickerValue) : new Date();
-                console.log(this.datepickerValue)
+                let day = this.dateValue ? new Date(this.dateValue) : new Date();
                 this.month = day.getUTCMonth();
                 this.year = day.getUTCFullYear();
-                if (!this.datepickerValue) {
+                if (!this.dateValue) {
                     this.getDateValue(day.getUTCDate());
+                } else {
+                    this.dateFormatted = new Date(this.year, this.month, day.getUTCDate()).toDateString();
+                    console.log(this.dateValue, this.dateFormatted)
                 }
-                this.datepickerValue = new Date(this.year, this.month, day.getUTCDate()).toDateString();
             },
 
             isToday(date) {
@@ -41,13 +43,13 @@
 
             isSelectedDate(date) {
                 const d = new Date(this.year, this.month, date);
-                return this.datepickerValue === d.toDateString() ? true : false;
+                return this.dateFormatted === d.toDateString() ? true : false;
             },
 
             getDateValue(date) {
                 let selectedDate = new Date(this.year, this.month, date);
-                this.datepickerValue = selectedDate.toDateString();
-                @this.set('{{$wire}}', this.datepickerValue);
+                this.dateValue = selectedDate;
+                this.dateFormatted = selectedDate.toDateString();
                 this.showDatepicker = false;
             },
 
@@ -74,7 +76,7 @@
     <label for="{{ $name }}" class="block text-sm font-medium leading-5 text-gray-700">{{ $label }}</label>
     <div class="mt-1 relative rounded-md shadow-sm">
         <input type="datetime" {{ $attributes->except('class')->merge(['class' => $class]) }}
-            x-model="datepickerValue"
+            x-model="dateFormatted"
             @click="showDatepicker = !showDatepicker" @keydown.escape="showDatepicker = false"
             @if(($disabledToUser && user()->role == $disabledToUser) || $disabled) disabled @endif
             readonly>

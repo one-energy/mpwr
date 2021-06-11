@@ -106,7 +106,7 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     protected $appends = [
-        'full_name'
+        'full_name',
     ];
 
     public function office()
