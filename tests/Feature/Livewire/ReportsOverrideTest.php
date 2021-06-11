@@ -195,12 +195,18 @@ class ReportsOverrideTest extends TestCase
     }
 
     /** @test */
-    public function it_should_be_possible_see_paid_column()
+    public function it_should_be_possible_see_paid_column_if_user_has_admin_role()
     {
         $this->actingAs($this->admin);
 
         Livewire::test(ReportsOverview::class)
             ->assertSee('Paid')
+            ->assertHasNoErrors();
+
+        $this->actingAs($this->setter);
+
+        Livewire::test(ReportsOverview::class)
+            ->assertDontSee('Paid')
             ->assertHasNoErrors();
     }
 
@@ -260,6 +266,32 @@ class ReportsOverrideTest extends TestCase
             'id'         => $customer->id,
             'panel_sold' => false
         ]);
+    }
+
+    /** @test */
+    public function it_should_forbidden_if_mark_as_paid_if_the_user_is_not_admin()
+    {
+        $this->actingAs($this->setter);
+
+        $customer = $this->makeCustomer([
+            'panel_sold'   => false,
+            'is_active'    => true,
+            'paid_date'    => null,
+            'opened_by_id' => $this->regionManager->id
+        ]);
+
+        $this->assertFalse($customer->panel_sold);
+        $this->assertNull($customer->paid_date);
+
+        Livewire::test(ReportsOverview::class)
+            ->assertDontSee('Paid')
+            ->assertSee($customer->first_name)
+            ->call('paid', $customer->id)
+            ->assertForbidden();
+
+        $customer->refresh();
+        $this->assertFalse($customer->panel_sold);
+        $this->assertNull($customer->paid_date);
     }
 
     private function makeCustomer($attr): Customer
