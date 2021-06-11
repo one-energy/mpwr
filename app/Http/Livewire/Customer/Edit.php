@@ -64,7 +64,7 @@ class Edit extends Component
 
     public function mount(Customer $customer)
     {
-        $this->setter = User::find($customer->setter_id);
+        $this->setter = User::withTrashed()->find($customer->setter_id);
         if (user()->notHaveRoles(["Admin", "Owner"])) {
             $this->departmentId = user()->department_id;
         } else {
