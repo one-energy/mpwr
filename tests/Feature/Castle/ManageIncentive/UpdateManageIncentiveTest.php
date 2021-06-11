@@ -5,6 +5,7 @@ namespace Tests\Feature\Castle\ManageIncentive;
 use App\Models\Department;
 use App\Models\Incentive;
 use App\Models\User;
+use App\Role\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
@@ -16,10 +17,12 @@ class UpdateManageIncentiveTest extends TestCase
     /** @test */
     public function it_should_show_the_edit_form_for_top_level_roles()
     {
-        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
-        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
+        $departmentManager = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($departmentManager->id);
+        $departmentManager->update(['department_id' => $department->id]);
 
         $incentive = Incentive::factory()->create();
 
@@ -32,10 +35,9 @@ class UpdateManageIncentiveTest extends TestCase
     /** @test */
     public function it_should_block_the_edit_form_for_non_top_level_roles()
     {
-
         $incentive = Incentive::factory()->create();
 
-        $this->actingAs(User::factory()->create(['role' => 'Setter']))
+        $this->actingAs(User::factory()->create(['role' => Role::SETTER]))
             ->get(route('castle.incentives.edit', $incentive->id))
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
@@ -43,10 +45,12 @@ class UpdateManageIncentiveTest extends TestCase
     /** @test */
     public function it_should_update_an_incentive()
     {
-        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
-        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
+        $departmentManager = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($departmentManager->id);
+        $departmentManager->update(['department_id' => $department->id]);
 
         $incentive       = Incentive::factory()->create([
             'name'          => 'Incentive',

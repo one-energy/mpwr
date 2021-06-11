@@ -7,6 +7,7 @@ use App\Models\DailyNumber;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
+use App\Role\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -20,20 +21,28 @@ class GetUsersTest extends TestCase
     /** @test */
     public function it_should_return_users_from_selected_office()
     {
-        $john = User::factory()->create(['role' => 'Admin']);
-        $mary = User::factory()->create(['role' => 'Region Manager']);
-        $ann  = User::factory()->create(['role' => 'Office Manager']);
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+        $mary = User::factory()->create(['role' => Role::REGION_MANAGER]);
+        $ann  = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
 
-        $region   = Region::factory()->create(['region_manager_id' => $mary->id]);
-        $office01 = Office::factory()->create(['region_id' => $region->id, 'office_manager_id' => $ann->id]);
-        $office02 = Office::factory()->create(['region_id' => $region->id, 'office_manager_id' => $ann->id]);
+        /** @var Region $region */
+        $region = Region::factory()->create();
+        $region->managers()->attach($mary->id);
+
+        /** @var Office $office01 */
+        $office01 = Office::factory()->create(['region_id' => $region->id]);
+        $office01->managers()->attach($ann->id);
+
+        /** @var Office $office02 */
+        $office02 = Office::factory()->create(['region_id' => $region->id]);
+        $office02->managers()->attach($ann->id);
 
         User::factory()->times(10)->create([
-            'role'      => 'Setter',
+            'role'      => Role::SETTER,
             'office_id' => $office01->id
         ]);
         User::factory()->times(10)->create([
-            'role'      => 'Setter',
+            'role'      => Role::SETTER,
             'office_id' => $office02->id
         ]);
 
@@ -53,7 +62,9 @@ class GetUsersTest extends TestCase
 
     private function getUsersGroupedByDailyNumbers(Office $office): Collection
     {
-        return User::where('office_id', $office->id)->get()
+        return User::where('office_id', $office->id)
+            ->with('dailyNumbers')
+            ->get()
             ->map(function (User $user) {
                 $user->dailyNumbers = $user->dailyNumbers->groupBy(function (DailyNumber $dailyNumber) {
                     return (new Carbon($dailyNumber->date))->format('F dS');

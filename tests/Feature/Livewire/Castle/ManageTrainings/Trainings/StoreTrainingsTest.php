@@ -7,6 +7,7 @@ use App\Models\Department;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
 use App\Models\User;
+use App\Role\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -18,7 +19,7 @@ class StoreTrainingsTest extends TestCase
     /** @test */
     public function it_should_be_possible_store_a_video()
     {
-        $john = User::factory()->create(['role' => 'Admin']);
+        $john = User::factory()->create(['role' => Role::ADMIN]);
 
         $department = Department::factory()->create();
         $section    = TrainingPageSection::factory()->create(['department_id' => $department->id]);
@@ -46,7 +47,7 @@ class StoreTrainingsTest extends TestCase
     /** @test */
     public function it_should_require_title_to_store_video()
     {
-        $john = User::factory()->create(['role' => 'Admin']);
+        $john = User::factory()->create(['role' => Role::ADMIN]);
 
         $department = Department::factory()->create();
         TrainingPageSection::factory()->create(['department_id' => $department->id]);
@@ -65,7 +66,7 @@ class StoreTrainingsTest extends TestCase
     /** @test */
     public function it_should_require_video_url_to_store_video()
     {
-        $john = User::factory()->create(['role' => 'Admin']);
+        $john = User::factory()->create(['role' => Role::ADMIN]);
 
         $department = Department::factory()->create();
         TrainingPageSection::factory()->create(['department_id' => $department->id]);
@@ -84,7 +85,7 @@ class StoreTrainingsTest extends TestCase
     /** @test */
     public function it_should_require_description_to_store_video()
     {
-        $john = User::factory()->create(['role' => 'Admin']);
+        $john = User::factory()->create(['role' => Role::ADMIN]);
 
         $department = Department::factory()->create();
         TrainingPageSection::factory()->create(['department_id' => $department->id]);

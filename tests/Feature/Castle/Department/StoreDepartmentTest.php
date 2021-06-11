@@ -148,16 +148,11 @@ class StoreDepartmentTest extends TestCase
     /** @test */
     public function it_should_block_the_create_form_for_non_top_level_roles()
     {
-        $setter = User::factory()->create([
-            'role' => 'Setter',
-        ]);
+        $setter = User::factory()->create(['role' => Role::SETTER]);
 
-        $department = Department::factory()->create([
-            'department_manager_id' => $setter->id,
-        ]);
-
-        $setter->department_id = $department->id;
-        $setter->save();
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($setter->id);
 
         $this->actingAs($setter)
             ->get(route('castle.departments.create'))
@@ -167,9 +162,11 @@ class StoreDepartmentTest extends TestCase
     /** @test */
     public function it_should_show_the_create_form_for_top_level_roles()
     {
-        $admin = User::factory()->create(['role' => 'Admin']);
+        $admin = User::factory()->create(['role' => Role::ADMIN]);
 
-        Department::factory()->create(['department_manager_id' => $admin->id]);
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($admin->id);
 
         $this->actingAs($admin)
             ->get(route('castle.departments.create'))
@@ -180,14 +177,11 @@ class StoreDepartmentTest extends TestCase
     /** @test */
     public function it_should_require_all_fields_to_store_a_new_department()
     {
-        $admin = User::factory()->create(['role' => 'Admin']);
+        $admin = User::factory()->create(['role' => Role::ADMIN]);
 
         $this->actingAs($admin)
             ->post(route('castle.departments.store'), [])
-            ->assertSessionHasErrors([
-                'name',
-                'department_manager_id',
-            ]);
+            ->assertSessionHasErrors(['name']);
     }
 
     private function makeData(array $attributes = []): array

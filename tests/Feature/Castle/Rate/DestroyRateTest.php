@@ -5,6 +5,7 @@ namespace Tests\Feature\Castle\Rate;
 use App\Models\Department;
 use App\Models\Rates;
 use App\Models\User;
+use App\Role\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
@@ -16,17 +17,19 @@ class DestroyRateTest extends TestCase
     /** @test */
     public function it_should_destroy_an_rate()
     {
-        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
-        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
+        $departmentManager = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
 
-        User::factory()->create(['role' => 'Sales Rep']);
-        User::factory()->create(['role' => 'Setter']);
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($departmentManager->id);
+        $departmentManager->update(['department_id' => $department->id]);
+
+        User::factory()->create(['role' => Role::SALES_REP]);
+        User::factory()->create(['role' => Role::SETTER]);
 
         $rate = Rates::factory()->create([
             'department_id' => $department->id,
-            'role'          => 'Sales Rep',
+            'role'          => Role::SALES_REP,
         ]);
 
         $this->actingAs($departmentManager)

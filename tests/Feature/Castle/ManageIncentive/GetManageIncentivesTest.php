@@ -5,7 +5,9 @@ namespace Tests\Feature\Castle\ManageIncentive;
 use App\Models\Department;
 use App\Models\Incentive;
 use App\Models\User;
+use App\Role\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class GetManageIncentivesTest extends TestCase
@@ -24,10 +26,12 @@ class GetManageIncentivesTest extends TestCase
     /** @test */
     public function it_should_list_all_incentives()
     {
-        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
-        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
+        $departmentManager = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($departmentManager->id);
+        $departmentManager->update(['department_id' => $department->id]);
 
         $incentives = Incentive::factory()->count(6)->create([
             'department_id' => $department->id,
@@ -35,9 +39,8 @@ class GetManageIncentivesTest extends TestCase
 
         $this->actingAs($departmentManager);
 
-        $response = $this->get(route('castle.incentives.index'));
-
-        $response->assertStatus(200)
+        $response = $this->get(route('castle.incentives.index'))
+            ->assertStatus(Response::HTTP_OK)
             ->assertViewIs('castle.incentives.index');
 
         foreach ($incentives as $incentive) {

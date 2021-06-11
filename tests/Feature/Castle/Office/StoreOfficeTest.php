@@ -190,16 +190,12 @@ class StoreOfficeTest extends TestCase
     /** @test */
     public function it_should_block_the_create_form_for_non_top_level_roles()
     {
-        $setter = User::factory()->create([
-            'role' => 'Setter',
-        ]);
+        $setter = User::factory()->create(['role' => Role::SETTER]);
+        $ann    = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
 
-        $department = Department::factory()->create([
-            'department_manager_id' => $setter->id,
-        ]);
-
-        $setter->department_id = $department->id;
-        $setter->save();
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($ann->id);
 
         $this->actingAs($setter)
             ->get(route('castle.offices.create'))
@@ -209,10 +205,12 @@ class StoreOfficeTest extends TestCase
     /** @test */
     public function it_should_show_the_create_form_for_top_level_roles()
     {
-        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
-        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
+        $departmentManager = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($departmentManager->id);
+        $departmentManager->update(['department_id' => $department->id]);
 
         $this
             ->actingAs($departmentManager)
@@ -224,13 +222,18 @@ class StoreOfficeTest extends TestCase
     /** @test */
     public function it_should_store_a_new_office()
     {
-        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
-        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
+        $departmentManager = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
 
-        $region        = Region::factory()->create(['region_manager_id' => $this->user->id]);
-        $officeManager = User::factory()->create(['role' => 'Office Manager']);
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($departmentManager->id);
+        $departmentManager->update(['department_id' => $department->id]);
+
+        /** @var Region $region */
+        $region = Region::factory()->create();
+        $region->managers()->attach($this->user->id);
+
+        $officeManager = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
 
         $data = [
             'name'              => 'Office',
@@ -250,18 +253,16 @@ class StoreOfficeTest extends TestCase
     /** @test */
     public function it_should_require_all_fields_to_store_a_new_office()
     {
-        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
-        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
+        $departmentManager = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($departmentManager->id);
+        $departmentManager->update(['department_id' => $department->id]);
 
         $this->actingAs($departmentManager)
             ->post(route('castle.offices.store'), [])
-            ->assertSessionHasErrors([
-                'name',
-                'region_id',
-                'office_manager_id',
-            ]);
+            ->assertSessionHasErrors(['name', 'region_id']);
     }
 
     private function makeData(array $attributes = []): array

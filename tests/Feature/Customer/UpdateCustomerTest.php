@@ -6,6 +6,7 @@ use App\Http\Livewire\Customer\Edit;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\User;
+use App\Role\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Livewire\Livewire;
@@ -18,7 +19,7 @@ class UpdateCustomerTest extends TestCase
     /** @test */
     public function it_should_show_the_edit_form()
     {
-        $john       = User::factory()->create(['role' => 'Department Manager']);
+        $john       = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
         $department = Department::factory()->create();
         $customer   = Customer::factory()->create();
 
@@ -35,7 +36,7 @@ class UpdateCustomerTest extends TestCase
     {
         $this->markTestSkipped('must be revisited.');
 
-        $john       = User::factory()->create(['role' => 'Department Manager']);
+        $john       = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
         $department = Department::factory()->create();
         $customer   = Customer::factory()->create(['adders' => 30.5]);
 
@@ -57,7 +58,7 @@ class UpdateCustomerTest extends TestCase
     public function it_should_block_updating_a_form_for_non_top_level_roles()
     {
         $this->actingAs(User::factory()->create([
-            'role'          => 'Setter',
+            'role'          => Role::SETTER,
             'department_id' => Department::factory()->create(),
         ]));
 
@@ -71,7 +72,7 @@ class UpdateCustomerTest extends TestCase
     /** @test */
     public function it_should_inactivate_a_customer()
     {
-        $john     = User::factory()->create(['role' => 'Admin']);
+        $john     = User::factory()->create(['role' => Role::ADMIN]);
         $customer = Customer::factory()->create([
             'is_active'    => true,
             'sales_rep_id' => $john->id,
@@ -91,7 +92,7 @@ class UpdateCustomerTest extends TestCase
     /** @test */
     public function it_should_activate_a_customer()
     {
-        $john     = User::factory()->create(['role' => 'Admin']);
+        $john     = User::factory()->create(['role' => Role::ADMIN]);
         $customer = Customer::factory()->create([
             'is_active'    => false,
             'sales_rep_id' => $john->id,

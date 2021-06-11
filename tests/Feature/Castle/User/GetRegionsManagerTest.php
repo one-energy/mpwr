@@ -30,7 +30,9 @@ class GetRegionsManagerTest extends TestCase
         $alice  = User::factory()->create(['role' => Role::REGION_MANAGER]);
         $joseph = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
 
-        $department = Department::factory()->create(['department_manager_id' => $mary->id]);
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($mary->id);
 
         $zack->update(['department_id' => $department->id]);
         $joseph->update(['department_id' => $department->id]);

@@ -11,6 +11,7 @@ use App\Models\MultiplierOfYear;
 use App\Models\Rates;
 use App\Models\Term;
 use App\Models\User;
+use App\Role\Role;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -26,7 +27,7 @@ class CustomerTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = User::factory()->create(['role' => 'Admin']);
+        $this->user = User::factory()->create(['role' => Role::ADMIN]);
         Department::factory()->count(6)->create();
 
         MultiplierOfYear::factory()->create(['year' => now()->year]);
@@ -52,14 +53,12 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_filter_by_active_customers()
     {
-        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
-        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $departmentManager->department_id = $department->id;
+        [$departmentManager, $department] = $this->createVP();
+
         Financing::factory()->create();
         Financer::factory()->create();
         Term::factory()->create();
         Rates::factory()->create();
-        $departmentManager->save();
 
         $setter = User::factory()->create([
             'role'          => 'Setter',
@@ -91,10 +90,7 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_filter_by_inactive_customers()
     {
-        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
-        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
+        [$departmentManager, $department] = $this->createVP();
 
         $setter            = User::factory()->create([
             'role'          => 'Setter',
@@ -154,10 +150,10 @@ class CustomerTest extends TestCase
 
         $financing = Financing::factory()->create();
         $financer  = Financer::factory()->create();
-        $user      = User::factory()->create(['role' => 'Department Manager']);
-        $regionMng = User::factory()->create(['role' => 'Region Manager']);
-        $officeMng = User::factory()->create(['role' => 'Office Manager']);
-        $userOne   = User::factory()->create(['role' => 'Setter']);
+        $user      = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+        $regionMng = User::factory()->create(['role' => Role::REGION_MANAGER]);
+        $officeMng = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
+        $userOne   = User::factory()->create(['role' => Role::SETTER]);
         $userTwo   = User::factory()->create([
             'recruiter_id'                => $userOne->id,
             'referral_override'           => 10,
@@ -218,6 +214,7 @@ class CustomerTest extends TestCase
             'setter_fee'    => 2.3,
             'sales_rep_fee' => 2.6,
         ])->make();
+
         $customer->calcMargin();
 
         $this->assertEquals($customer->margin, 1.6);
