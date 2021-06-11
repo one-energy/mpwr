@@ -111,7 +111,7 @@ class Users extends Component
             ->when(user()->hasRole('Admin'), function ($query) {
                 $query->where('role', '!=', 'Owner');
             })
-            ->with(['office', 'department'])
+            ->with(['office', 'department', 'managedOffices'])
             ->search($this->search)
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate($this->perPage);
