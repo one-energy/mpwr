@@ -36,16 +36,17 @@ class Regions extends Component
     public function render()
     {
         $regions = Region::query()
-            ->when(user()->role == 'Department Manager', function (Builder $query) {
+            ->when(user()->hasRole('Department Manager'), function (Builder $query) {
                 $departmentIds = Department::query()
                     ->where('department_manager_id', '=', user()->id)
                     ->pluck('id');
 
                 $query->whereIn('department_id', $departmentIds);
             })
-            ->when(user()->role == 'Region Manager', function (Builder $query) {
+            ->when(user()->hasRole('Region Manager'), function (Builder $query) {
                 $query->where('region_manager_id', '=', user()->id);
             })
+            ->with(['department', 'regionManager'])
             ->search($this->search)
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate($this->perPage);

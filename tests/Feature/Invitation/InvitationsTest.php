@@ -1,17 +1,17 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Invitation;
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\Builders\InvitationBuilder;
 use Tests\Builders\UserBuilder;
+use Tests\TestCase;
 
-class InvitationsTest extends FeatureTest
+class InvitationsTest extends TestCase
 {
-    use WithFaker;
-
-    //region Form View
+    use RefreshDatabase;
 
     /** @test */
     public function it_should_open_a_form_to_accept_the_invitation()
@@ -32,8 +32,6 @@ class InvitationsTest extends FeatureTest
             ->assertViewIs('auth.register-with-invitation')
             ->assertViewHas('email', 'jo*****th@em**l.com');
     }
-
-    //endregion
 
     /** @test */
     public function registering_with_an_invitation()
@@ -68,15 +66,8 @@ class InvitationsTest extends FeatureTest
     {
         $invitation = (new InvitationBuilder)->isAMaster()->withEmail('joe-smith@email.com')->save()->get();
 
-        $data = [
-            'first_name' => '',
-            'last_name'  => '',
-        ];
-
-        $response = $this->post(route('register.with-invitation', $invitation), $data);
-
-        $response->assertSessionHasErrors(
-            [
+        $this->post(route('register.with-invitation', $invitation), [])
+            ->assertSessionHasErrors([
                 'first_name',
                 'last_name',
             ]);
@@ -87,15 +78,12 @@ class InvitationsTest extends FeatureTest
     {
         $invitation = (new InvitationBuilder)->isAMaster()->withEmail('joe-smith@email.com')->save()->get();
 
-        $data = [
-            'first_name' => '12',
-            'last_name'  => '12',
-        ];
-
-        $response = $this->post(route('register.with-invitation', $invitation), $data);
-
-        $response->assertSessionHasErrors(
-            [
+        $this
+            ->post(route('register.with-invitation', $invitation), [
+                'first_name' => '12',
+                'last_name'  => '12',
+            ])
+            ->assertSessionHasErrors([
                 'first_name',
                 'last_name',
             ]);
@@ -106,15 +94,11 @@ class InvitationsTest extends FeatureTest
     {
         $invitation = (new InvitationBuilder)->isAMaster()->withEmail('joe-smith@email.com')->save()->get();
 
-        $data = [
-            'first_name' => str_repeat('*', 256),
-            'last_name'  => str_repeat('*', 256),
-        ];
-
-        $response = $this->post(route('register.with-invitation', $invitation), $data);
-
-        $response->assertSessionHasErrors(
-            [
+        $this
+            ->post(route('register.with-invitation', $invitation), [
+                'first_name' => Str::random(256),
+                'last_name'  => Str::random(256),
+            ])->assertSessionHasErrors([
                 'first_name',
                 'last_name',
             ]);
@@ -125,9 +109,10 @@ class InvitationsTest extends FeatureTest
     {
         $invitation = (new InvitationBuilder)->isAMaster()->withEmail('joe-smith@email.com')->save()->get();
 
-        $this->post(route('register.with-invitation', $invitation), [
-            'email_confirmation' => 'nothing@nothing.com',
-        ])
+        $this
+            ->post(route('register.with-invitation', $invitation), [
+                'email_confirmation' => 'nothing@nothing.com',
+            ])
             ->assertSessionHasErrors([
                 'email' => __('validation.confirmed', ['attribute' => 'email']),
             ]);
@@ -138,7 +123,8 @@ class InvitationsTest extends FeatureTest
     {
         $invitation = (new InvitationBuilder)->isAMaster()->withEmail('joe-smith@email.com')->save()->get();
 
-        $this->post(route('register.with-invitation', $invitation), [])
+        $this
+            ->post(route('register.with-invitation', $invitation), [])
             ->assertSessionHasErrors([
                 'password' => __('validation.required', ['attribute' => 'password']),
             ]);
@@ -149,11 +135,13 @@ class InvitationsTest extends FeatureTest
     {
         $invitation = (new InvitationBuilder)->isAMaster()->withEmail('joe-smith@email.com')->save()->get();
 
-        $this->post(route('register.with-invitation', $invitation), [
-            'password' => '1234567',
-        ])->assertSessionHasErrors([
-            'password' => __('validation.min.string', ['attribute' => 'password', 'min' => 8]),
-        ]);
+        $this
+            ->post(route('register.with-invitation', $invitation), [
+                'password' => '1234567',
+            ])
+            ->assertSessionHasErrors([
+                'password' => __('validation.min.string', ['attribute' => 'password', 'min' => 8]),
+            ]);
     }
 
     /** @test */
@@ -161,11 +149,12 @@ class InvitationsTest extends FeatureTest
     {
         $invitation = (new InvitationBuilder)->isAMaster()->withEmail('joe-smith@email.com')->save()->get();
 
-        $this->post(route('register.with-invitation', $invitation), [
-            'password' => str_repeat('*', 129),
-        ])->assertSessionHasErrors([
-            'password' => __('validation.max.string', ['attribute' => 'password', 'max' => 128]),
-        ]);
+        $this
+            ->post(route('register.with-invitation', $invitation), [
+                'password' => Str::random(129),
+            ])
+            ->assertSessionHasErrors([
+                'password' => __('validation.max.string', ['attribute' => 'password', 'max' => 128]),
+            ]);
     }
-    //endregion
 }

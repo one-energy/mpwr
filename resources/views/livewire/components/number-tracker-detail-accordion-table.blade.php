@@ -8,7 +8,7 @@
                 </div>
             </div>
             <div class="col-span-1 p-3 rounded-md bg-green-light space-y-3">
-                <div class="text-base font-semibold uppercase text-green-base">H.P. Set</div>
+                <div class="text-base font-semibold uppercase text-green-base">HW.P. Set</div>
                 <div class="text-xl font-bold text-green-base">
                     {{$this->getHps()}}
                 </div>
@@ -44,6 +44,33 @@
 
     <div class="mt-3 overflow-auto flex flex-row space-x-4 p-3">
         <div style="min-width: fit-content; flex: 0 0 auto" class="w-48 border-2 border-gray-200 rounded-md p-3 space-y-1">
+            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold uppercase">
+                Hours Worked
+            </div>
+            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold">
+                {{$this->getNumberTrackerSumOf('hoursWorked')}}
+            </div>
+            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
+                @if($this->getNumberTrackerDifferenceToLasNumbersOf('hoursWorked') >= 0)
+                    <x-svg.arrow-up class="text-green-base"/>
+                @else
+                    <x-svg.arrow-down class="text-red-600"/>
+                @endif
+                <span class="
+                    text-base
+                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('hoursWorked') >= 0)
+                    text-green-base
+@else
+                    text-red-600
+@endif
+                    ">
+                        {{$this->getNumberTrackerDifferenceToLasNumbersOf('hoursWorked')}}
+                    </span>
+            </div>
+            <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
+        </div>
+
+        <div style="min-width: fit-content; flex: 0 0 auto" class="w-48 border-2 border-gray-200 rounded-md p-3 space-y-1">
             <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold uppercase">Doors</div>
             <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold">{{$this->getNumberTrackerSumOf('doors')}}</div>
             <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
@@ -66,27 +93,32 @@
             <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
         </div>
         <div style="min-width: fit-content; flex: 0 0 auto" class="w-48 border-2 border-gray-200 rounded-md p-3 space-y-1" >
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">Hours</div>
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold text-gray-900">{{$this->getNumberTrackerSumOf('hours')}}</div>
+            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">
+                Hours Knocked
+            </div>
+            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold text-gray-900">
+                {{$this->getNumberTrackerSumOf('hoursKnocked')}}
+            </div>
             <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
-                @if($this->getNumberTrackerDifferenceToLasNumbersOf('hours') >= 0)
+                @if($this->getNumberTrackerDifferenceToLasNumbersOf('hoursKnocked') >= 0)
                     <x-svg.arrow-up class="text-green-base"/>
                 @else
                     <x-svg.arrow-down class="text-red-600"/>
                 @endif
                 <span class="
                     text-base
-                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('hours') >= 0)
-                        text-green-base
-                    @else
-                        text-red-600
-                    @endif
-                ">
-                        {{$this->getNumberTrackerDifferenceToLasNumbersOf('hours')}}
+                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('hoursKnocked') >= 0)
+                    text-green-base
+@else
+                    text-red-600
+@endif
+                    ">
+                        {{$this->getNumberTrackerDifferenceToLasNumbersOf('hoursKnocked')}}
                     </span>
             </div>
             <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
         </div>
+
         <div style="min-width: fit-content; flex: 0 0 auto" class="w-48 border-2 border-gray-200 rounded-md p-3 space-y-1" >
             <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">Sets</div>
             <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold text-gray-900">{{$this->getNumberTrackerSumOf('sets')}}</div>
@@ -110,58 +142,6 @@
             <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
         </div>
 
-        <div style="min-width: fit-content; flex: 0 0 auto" class="w-48 border-2 border-gray-200 rounded-md p-3 space-y-1">
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold uppercase">
-                Hours Worked
-            </div>
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold">
-                {{$this->getNumberTrackerSumOf('hoursWorked')}}
-            </div>
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
-                @if($this->getNumberTrackerDifferenceToLasNumbersOf('hoursWorked') >= 0)
-                    <x-svg.arrow-up class="text-green-base"/>
-                @else
-                    <x-svg.arrow-down class="text-red-600"/>
-                @endif
-                <span class="
-                    text-base
-                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('hoursWorked') >= 0)
-                        text-green-base
-                    @else
-                        text-red-600
-                    @endif
-                ">
-                        {{$this->getNumberTrackerDifferenceToLasNumbersOf('hoursWorked')}}
-                    </span>
-            </div>
-            <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
-        </div>
-        <div style="min-width: fit-content; flex: 0 0 auto" class="w-48 border-2 border-gray-200 rounded-md p-3 space-y-1" >
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">
-                Hours Knocked
-            </div>
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-xl font-bold text-gray-900">
-                {{$this->getNumberTrackerSumOf('hoursKnocked')}}
-            </div>
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="flex text-xs font-semibold text-green-base">
-                @if($this->getNumberTrackerDifferenceToLasNumbersOf('hoursKnocked') >= 0)
-                    <x-svg.arrow-up class="text-green-base"/>
-                @else
-                    <x-svg.arrow-down class="text-red-600"/>
-                @endif
-                <span class="
-                    text-base
-                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('hoursKnocked') >= 0)
-                        text-green-base
-                    @else
-                        text-red-600
-                    @endif
-                ">
-                        {{$this->getNumberTrackerDifferenceToLasNumbersOf('hoursKnocked')}}
-                    </span>
-            </div>
-            <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
-        </div>
         <div style="min-width: fit-content; flex: 0 0 auto" class="w-48 border-2 border-gray-200 rounded-md p-3 space-y-1" >
             <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">
                 Sats
@@ -801,12 +781,13 @@
                                 @endforeach
                             </x-slot>
                         </x-table-accordion>
-                    @else
-                        <div class="h-96 ">
-                            <div class="flex justify-center align-middle">
-                                <div class="text-sm text-center text-gray-700">
-                                    <x-svg.draw.empty></x-svg.draw.empty>
-                                    No data yet.
+                        @else
+                            <div class="h-96 ">
+                                <div class="flex justify-center align-middle">
+                                    <div class="text-sm text-center text-gray-700">
+                                        <x-svg.draw.empty></x-svg.draw.empty>
+                                        No data yet.
+                                    </div>
                                 </div>
                             </div>
                         </div>

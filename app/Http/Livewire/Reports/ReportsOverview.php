@@ -89,6 +89,7 @@ class ReportsOverview extends Component
                 ->when($this->cancelledStatus(), function ($query) {
                     $query->whereIsActive(false);
                 })
+                ->with(['financer', 'userSetter', 'userSalesRep', 'financingType'])
                 ->search($this->search)
                 ->orderByRaw($this->sortBy . ' ' . $this->sortDirection)
                 ->paginate($this->perPage),
