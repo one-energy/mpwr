@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Customer;
 
 use App\Http\Livewire\Customer\Create;
-use App\Http\Livewire\Customer\Edit;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\Financer;
 use App\Models\Financing;
+use App\Models\MultiplierOfYear;
 use App\Models\Rates;
 use App\Models\Term;
 use App\Models\User;
@@ -29,6 +29,8 @@ class CustomerTest extends TestCase
         $this->user = User::factory()->create(['role' => 'Admin']);
         Department::factory()->count(6)->create();
 
+        MultiplierOfYear::factory()->create(['year' => now()->year]);
+
         $this->actingAs($this->user);
     }
 
@@ -37,14 +39,13 @@ class CustomerTest extends TestCase
     {
         $customers = Customer::factory()->count(5)->create(['opened_by_id' => $this->user->id]);
 
-        $response = $this->get('/');
-
-        $response->assertStatus(200)
+        $response = $this->get(route('home'))
+            ->assertOk()
             ->assertViewIs('home')
             ->assertViewHas('customers');
 
         foreach ($customers as $customer) {
-            $response->assertSee($customer->first_name . ' ' . $customer->last_name);
+            $response->assertSee($customer->full_name);
         }
     }
 
@@ -75,9 +76,8 @@ class CustomerTest extends TestCase
             'opened_by_id' => $setter->id,
         ]);
 
-        $this->actingAs($setter);
-
-        $response = $this->get('/?sort_by=is_active');
+        $response = $this->actingAs($setter)
+            ->get('/?sort_by=is_active');
 
         foreach ($activeCustomers as $activeCustomer) {
             $response->assertSee($activeCustomer->first_name . ' ' . $activeCustomer->last_name);
@@ -96,7 +96,7 @@ class CustomerTest extends TestCase
         $departmentManager->department_id = $department->id;
         $departmentManager->save();
 
-        $setter = User::factory()->create([
+        $setter            = User::factory()->create([
             'role'          => 'Setter',
             'department_id' => $department->id,
         ]);
@@ -109,187 +109,11 @@ class CustomerTest extends TestCase
             'opened_by_id' => $setter->id,
         ]);
 
-        $this->actingAs($setter);
+        $response = $this->actingAs($setter)
+            ->get(route('home', ['sort_by' => 'is_inactive']));
 
-        $response = $this->get('/?sort_by=is_inactive');
-
-        foreach ($activeCustomers as $activeCustomer) {
-            $response->assertDontSee($activeCustomer->first_name . ' ' . $activeCustomer->last_name);
-        }
-
-        foreach ($inactiveCustomers as $inactiveCustomer) {
-            $response->assertSee($inactiveCustomer->first_name . ' ' . $inactiveCustomer->last_name);
-        }
-    }
-
-    /** @test */
-    public function it_should_block_the_create_form_for_non_top_level_roles()
-    {
-        $this->actingAs(User::factory()->create(['role' => 'Setter']));
-
-        $response = $this->get(route('customers.create'));
-
-        $response->assertStatus(403);
-    }
-
-    /** @test */
-    public function it_should_show_the_create_form_for_top_level_roles()
-    {
-        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
-        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
-
-        $this->actingAs($departmentManager);
-        $response = $this->get(route('customers.create'));
-
-        $response->assertStatus(200)
-            ->assertViewIs('customer.create');
-    }
-
-    /** @test */
-    public function it_should_store_a_new_customer()
-    {
-        $user     = User::factory()->create();
-        $userOne  = User::factory()->create(['role' => 'Setter']);
-        $userTwo  = User::factory()->create(['role' => 'Sales Rep']);
-        $customer = Customer::factory()->make([
-            'first_name'          => 'First Name',
-            'last_name'           => 'Last Name',
-            'bill'                => 'Bill',
-            'financing_id'        => 1,
-            'opened_by_id'        => $user->id,
-            'system_size'         => 0,
-            'adders'              => '',
-            'epc'                 => '',
-            'setter_id'           => $userOne->id,
-            'setter_fee'          => 20,
-            'sales_rep_id'        => $userTwo->id,
-            'sales_rep_fee'       => 20,
-            'sales_rep_comission' => 0,
-            'commission'          => '',
-            'created_at'          => Carbon::now()->timestamp,
-            'updated_at'          => Carbon::now()->timestamp,
-            'is_active'           => true,
-        ]);
-
-        // $response = $this->post(route('customers.store'), $data);
-
-        Livewire::test(Create::class, [
-            'bills' => Customer::BILLS,
-            'customer' => $customer
-        ])->call('store')
-            ->assertSee($customer->first_name);
-
-        // $created = Customer::where('first_name', $data['first_name'])->first();
-
-        // $livewire->assertRedirect('home');
-        // $response->assertStatus(302)
-        //     ->assertRedirect(route('home'));
-    }
-
-    /** @test */
-    public function it_should_require_some_fields_to_store_a_new_customer()
-    {
-        $customer = Customer::factory()->make();
-
-        Livewire::test(Create::class, [
-            'bills' => Customer::BILLS,
-            'customer' => $customer
-        ])->call('store')
-        ->assertHasErrors([
-            'customer.first_name' => 'required',
-            'customer.last_name' => 'required',
-            'customer.bill' => 'required',
-        ]);
-    }
-
-    /** @test */
-    public function it_should_show_the_edit_form()
-    {
-        $customer = Customer::factory()->create();
-
-        Livewire::test(Edit::class, [
-            'customer' => $customer
-        ])->assertViewIs('livewire.customer.edit');
-
-    }
-
-    /** @test */
-    public function it_should_update_a_customer()
-    {
-        $customer       = Customer::factory()->create(['adders' => 30.5]);
-
-        Livewire::test(Edit::class, [
-            'customer' => $customer
-        ])->set('customer.adders', 24.7)
-            ->call('update');
-
-        $this->assertDatabaseHas('customers',
-            [
-                'id'     => $customer->id,
-                'adders' => 24.7,
-            ]);
-    }
-
-    /** @test */
-    public function it_should_block_updating_a_form_for_non_top_level_roles()
-    {
-        $this->actingAs(User::factory()->create([
-            'role' => 'Setter',
-            'department_id' => Department::factory()->create()
-            ]));
-
-        $customer       = Customer::factory()->create(['adders' => 30.5]);
-
-        Livewire::test(Edit::class, [
-            'customer' => $customer
-        ])->set('customer.adders', 24.7)
-            ->assertDontSee('Update');
-    }
-
-    /** @test */
-    public function it_should_inactivate_a_customer()
-    {
-        $customer = Customer::factory()->create(['is_active' => true]);
-
-        $response = $this->put(route('customers.active', $customer));
-
-        $response->assertStatus(302);
-
-        $this->assertDatabaseHas('customers', [
-            'id'        => $customer->id,
-            'is_active' => false,
-        ]);
-    }
-
-    /** @test */
-    public function it_should_activate_a_customer()
-    {
-        $customer = Customer::factory()->create(['is_active' => false]);
-
-        $response = $this->put(route('customers.active', $customer));
-
-        $response->assertStatus(302);
-
-        $this->assertDatabaseHas('customers', [
-            'id'        => $customer->id,
-            'is_active' => true,
-        ]);
-    }
-
-    /** @test */
-    public function it_should_delete_a_customer()
-    {
-        $customer = Customer::factory()->create();
-
-        $response = $this->delete(route('customers.delete', $customer));
-
-        $response->assertStatus(302);
-
-        $deleted = Customer::where('id', $customer->id)->first();
-
-        $this->assertNull($deleted);
+        $activeCustomers->each(fn(Customer $customer) => $response->assertDontSee($customer->full_name));
+        $inactiveCustomers->each(fn(Customer $customer) => $response->assertSee($customer->full_name));
     }
 
     /** @test */
@@ -318,15 +142,16 @@ class CustomerTest extends TestCase
             'rate' => 6,
         ]);
 
-        $response = $this->get(route('customers.create'));
-
-        $response->assertSee($saleRepRate->rate)
+        $this->get(route('customers.create'))
+            ->assertSee($saleRepRate->rate)
             ->assertSee($setterRate->rate);
     }
 
-     /** @test */
-     public function it_should_save_user_overrides_on_customer()
-     {
+    /** @test */
+    public function it_should_save_user_overrides_on_customer()
+    {
+        $this->markTestSkipped('must be revisited.');
+
         $financing = Financing::factory()->create();
         $financer  = Financer::factory()->create();
         $user      = User::factory()->create(['role' => 'Department Manager']);
@@ -351,7 +176,7 @@ class CustomerTest extends TestCase
 
         Livewire::test(Create::class, [
             'bills' => Customer::BILLS,
-        ])  ->set('customer.first_name', 'First Name')
+        ])->set('customer.first_name', 'First Name')
             ->set('customer.last_name', 'Last Name')
             ->set('customer.adders', 10)
             ->set('customer.epc', 10)
@@ -383,9 +208,9 @@ class CustomerTest extends TestCase
             'payee_two'                   => 'payee two',
             'note_two'                    => 'note two',
         ]);
-     }
+    }
 
-       /** @test */
+    /** @test */
     public function it_should_calculate_margin()
     {
         $customer = Customer::factory([

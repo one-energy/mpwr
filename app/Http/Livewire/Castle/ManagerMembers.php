@@ -35,6 +35,7 @@ class ManagerMembers extends Component
 
         return view('livewire.castle.manager-members', [
             'users' => $users
+                ->with('office')
                 ->search($this->search)
                 ->orderBy('first_name')
                 ->get(),

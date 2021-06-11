@@ -54,7 +54,10 @@ class DestroyDepartmentTest extends TestCase
 
         [$firstRegion, $secondRegion] = Region::factory()
             ->times(2)
-            ->create(['department_id' => $department->id]);
+            ->create([
+                'department_id'     => $department->id,
+                'region_manager_id' => User::factory()->create(['role' => 'Region Manager'])->id,
+            ]);
 
         $this->actingAs($this->admin);
 
@@ -80,10 +83,16 @@ class DestroyDepartmentTest extends TestCase
 
         [$firstRegion, $secondRegion] = Region::factory()
             ->times(2)
-            ->create(['department_id' => $department->id]);
+            ->create([
+                'department_id' => $department->id,
+            ]);
 
-        $officeFromFirstRegion  = Office::factory()->create(['region_id' => $firstRegion->id]);
-        $officeFromSecondRegion = Office::factory()->create(['region_id' => $secondRegion->id]);
+        $officeFromFirstRegion  = Office::factory()->create([
+            'region_id' => $firstRegion->id,
+        ]);
+        $officeFromSecondRegion = Office::factory()->create([
+            'region_id' => $secondRegion->id,
+        ]);
 
         $this->actingAs($this->admin);
 
@@ -110,10 +119,16 @@ class DestroyDepartmentTest extends TestCase
 
         [$firstRegion, $secondRegion] = Region::factory()
             ->times(2)
-            ->create(['department_id' => $department->id]);
+            ->create([
+                'department_id' => $department->id,
+            ]);
 
-        $officeFromFirstRegion  = Office::factory()->create(['region_id' => $firstRegion->id]);
-        $officeFromSecondRegion = Office::factory()->create(['region_id' => $secondRegion->id]);
+        $officeFromFirstRegion  = Office::factory()->create([
+            'region_id' => $firstRegion->id,
+        ]);
+        $officeFromSecondRegion = Office::factory()->create([
+            'region_id' => $secondRegion->id,
+        ]);
 
         $zack = $this->makeUserFromOffice($officeFromFirstRegion);
         $jack = $this->makeUserFromOffice($officeFromSecondRegion);
