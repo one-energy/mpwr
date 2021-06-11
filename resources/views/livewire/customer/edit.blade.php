@@ -33,7 +33,7 @@
 
                     <div class="col-span-2 md:col-span-3">
                         <x-input-calendar wire label="Date of Sale"
-                                          name="customer.date_of_sale" :value="$customer->date_of_sale"/>
+                                          name="customer.date_of_sale"/>
                     </div>
 
                     <div class="col-span-1 @if($customer->setter_id == user()->id) md:col-span-3 @else md:col-span-2 @endif">
