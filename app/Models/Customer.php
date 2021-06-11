@@ -13,6 +13,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property int|null $financing_id
  * @property int|null $financer_id
+ * @property int|null $department_manager_id
+ * @property int|null $region_manager_id
+ * @property int|null $office_manager_id
  * @property int|null $term_id
  * @property string $first_name
  * @property string $last_name
