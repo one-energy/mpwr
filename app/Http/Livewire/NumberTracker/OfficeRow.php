@@ -66,7 +66,6 @@ class OfficeRow extends Component
     {
         if ($this->selected) {
             $this->selectedUsers = $this->selectedUsers->merge(
-
                 $this->office->dailyNumbers()
                     ->when($this->withTrashed, function($query) {
                         $query->withTrashed();
@@ -139,7 +138,6 @@ class OfficeRow extends Component
     public function sortDailyNumbers($sortBy, $sortDirection)
     {
         $this->sortBy        = $sortBy;
-
         $this->sortDirection = $sortDirection;
 
         $this->getDailyNumbers();
@@ -156,7 +154,7 @@ class OfficeRow extends Component
 
     public function getDailyNumbers()
     {
-        $office = $this->office === null ? $this->findOffice($this->officeId) : $this->office;
+        $office = $this->office ?? $this->findOffice($this->officeId);
 
         $groupedUsers = $office->dailyNumbers->groupBy('user_id')->collect();
 
@@ -183,14 +181,14 @@ class OfficeRow extends Component
     {
         return Office::query()
             ->when($this->withTrashed, fn($query) => $query->withTrashed())
-            ->with([
+            ->find($officeId)
+            ->load([
                 'dailyNumbers' => function ($query) {
                     $query
                         ->when($this->withTrashed, fn($query) => $query->withTrashed())
                         ->when(!$this->withTrashed, fn($query) => $query->has('user'))
                         ->inPeriod($this->period, new Carbon($this->selectedDate));
                 },
-            ])
-            ->find($officeId);
+            ]);
     }
 }

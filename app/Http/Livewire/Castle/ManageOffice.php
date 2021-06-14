@@ -10,7 +10,7 @@ use Livewire\Component;
 class ManageOffice extends Component
 {
     use FullTable;
-    
+
     public $region;
 
     public function sortBy()
@@ -25,21 +25,17 @@ class ManageOffice extends Component
 
     public function render()
     {
-        $officeQuery = Office::query()
-            ->select('offices.*')
-            ->join('regions', 'offices.region_id', '=', 'regions.id');
+        $offices = Office::query()
+            ->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
+                $query->whereHas('region', fn ($query) => $query->where('department_id', user()->department_id));
+            })
+            ->with('region')
+            ->search($this->search)
+            ->orderBy('offices.name')
+            ->get();
 
-        if (user()->role == 'Admin' || user()->role == 'Owner') {
-            $office = $officeQuery;
-        } else {
-            $office = $officeQuery->where('regions.department_id', '=', user()->department_id);
-        }
-        
         return view('livewire.castle.manage-office', [
-            'offices' => $office
-                ->search($this->search)                
-                ->orderBy('offices.name')
-                ->get(),
+            'offices' => $offices
         ]);
     }
 

@@ -1,4 +1,4 @@
-<div>
+<div x-data="{}" x-init="window.addEventListener('beforeunload', (event) => { $wire.cleanRegionCache() });">
     @push('styles')
         <style>
             .parent-scope:hover .scope-child {
@@ -6,8 +6,6 @@
             }
         </style>
     @endpush
-
-    <p class="bg-gray-100">HueHue</p>
 
     <livewire:number-tracker.numbers-ratios />
 

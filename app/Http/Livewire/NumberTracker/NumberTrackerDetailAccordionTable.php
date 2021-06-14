@@ -7,6 +7,7 @@ use App\Models\Region;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 
 /**
@@ -18,10 +19,6 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public bool $deleteds = false;
 
-    public Collection $selectedUsersIds;
-
-    public Collection $selectedOfficesIds;
-
     public string $period;
 
     public $selectedDate;
@@ -30,14 +27,11 @@ class NumberTrackerDetailAccordionTable extends Component
 
     protected $listeners = [
         'setDateOrPeriod',
-        'updateIds'
+        'updateIds',
     ];
 
     public function mount()
     {
-        $this->selectedUsersIds   = collect([]);
-        $this->selectedOfficesIds = collect([]);
-
         $this->selectedDepartment = $this->getDepartmentId();
 
         $this->sortBy = 'hours_worked';
@@ -130,36 +124,32 @@ class NumberTrackerDetailAccordionTable extends Component
         return $departmentId ?? 0;
     }
 
-    public function toggleRegion(array $offices, $insert)
+    public function updateIds()
     {
-        if ($insert) {
-            $this->selectedOfficesIds->merge($offices);
-        } else {
-            $this->selectedOfficesIds->except($offices);
-        }
+        $officeKey  =  sprintf('%s-region-offices-ids', user()->id);
+        $userKey    =  sprintf('%s-region-users-ids', user()->id);
+
+        $offices = collect(json_decode(Cache::get($officeKey)));
+        $users   = collect(json_decode(Cache::get($userKey)));
+
+        $this->emitUpdateNumbersEvent($offices, $users);
     }
 
-    public function updateIds(int $regionId, array $officesIds, array $usersIds)
+    public function emitUpdateNumbersEvent(Collection $offices, Collection $users)
     {
-        if (count($officesIds) > 0) {
-            $this->selectedOfficesIds[$regionId] = $officesIds;
-            $this->selectedUsersIds[$regionId]   = $usersIds;
-        } else {
-            $this->selectedOfficesIds[$regionId] = [];
-            $this->selectedUsersIds[$regionId] = [];
-        }
-
-        $this->emitUpdateNumbersEvent();
+        $this->emit('updateNumbers', [
+            'users'       => $users->flatten()->toArray(),
+            'offices'     => $offices->flatten()->toArray(),
+            'withTrashed' => $this->deleteds,
+        ]);
     }
 
-    public function emitUpdateNumbersEvent()
+    public function cleanRegionCache()
     {
-        $payload = [
-            "users"       => $this->selectedUsersIds->flatten()->toArray(),
-            "offices"     => $this->selectedOfficesIds->flatten()->toArray(),
-            "withTrashed" => true
-        ];
+        $officeKey  =  sprintf('%s-region-offices-ids', user()->id);
+        $userKey    =  sprintf('%s-region-users-ids', user()->id);
 
-        $this->emit("updateNumbers", $payload);
+        Cache::forget($officeKey);
+        Cache::forget($userKey);
     }
 }

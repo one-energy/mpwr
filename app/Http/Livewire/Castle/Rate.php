@@ -19,16 +19,13 @@ class Rate extends Component
     {
         $ratesQuery = Rates::query();
 
-        if (user()->role == 'Department Manager') {
+        if (user()->hasRole('Department Manager')) {
             $ratesQuery->where('rates.department_id', '=', user()->department_id);
-        }
-
-        if (user()->role == 'Owner' || user()->role == 'Admin') {
-            $ratesQuery;
         }
 
         return view('livewire.castle.rate', [
             'rates' => $ratesQuery
+                ->with('department')
                 ->search($this->search)
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage),

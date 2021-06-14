@@ -18,11 +18,9 @@ class NumberTrackerDetail extends Component
 {
     use FullTable;
 
-    public array $unselectedRegions = [];
+    public array $selectedUsersIds = [];
 
-    public array $unselectedOffices = [];
-
-    public array $unselectedUserDailyNumbers = [];
+    public array $selectedOfficesIds = [];
 
     public string $period = 'd';
 
@@ -34,14 +32,14 @@ class NumberTrackerDetail extends Component
 
     public $dateSelected;
 
-    public string $selectedPill = 'hours';
+    public string $selectedPill = 'hours worked';
 
     public int $selectedDepartment;
 
     protected $listeners = [
         'sumTotalNumbers',
         'loadingSumNumberTracker',
-        'updateLeaderBoard'    => 'getUnselectedCollections',
+        'updateNumbers',
         'onSelectedDepartment' => 'changeSelectedDepartment',
     ];
 
@@ -76,23 +74,6 @@ class NumberTrackerDetail extends Component
         $this->emit('setDateOrPeriod', $this->dateSelected, $this->period);
     }
 
-    public function updateLeaderBoardCard(
-        $unselectedRegions,
-        $unselectedOffices,
-        $unselectedUserDailyNumbers,
-        $withDeleteds
-    ) {
-        $this->deleteds = $withDeleteds;
-        $this->getUnselectedCollections($unselectedRegions, $unselectedOffices, $unselectedUserDailyNumbers);
-    }
-
-    public function getUnselectedCollections($unselectedRegions, $unselectedOffices, $unselectedUserDailyNumbers)
-    {
-        $this->unselectedRegions          = $unselectedRegions;
-        $this->unselectedOffices          = $unselectedOffices;
-        $this->unselectedUserDailyNumbers = $unselectedUserDailyNumbers;
-    }
-
     public function changeSelectedDepartment(int $departmentId)
     {
         $this->selectedDepartment = $departmentId;
@@ -101,7 +82,13 @@ class NumberTrackerDetail extends Component
 
     public function getPillsProperty()
     {
-        return ['doors', 'hours', 'sets', 'set sits', 'sg sits', 'set closes', 'sg closes'];
+        return ['hours worked', 'doors', 'hours knocked', 'sets', 'sats', 'set closes', 'closer sits', 'closes'];
+    }
+
+    public function updateNumbers($payload)
+    {
+        $this->selectedUsersIds = $payload["users"];
+        $this->selectedOfficesIds = $payload["offices"];
     }
 
     private function getTopTenTrackers()
@@ -111,38 +98,21 @@ class NumberTrackerDetail extends Component
         }
 
         return DailyNumber::query()
-            ->withTrashed()
-            ->with([
-                'user' => function ($query) {
-                    $query->when($this->deleteds, function ($query) {
-                        $query->withTrashed();
-                    });
-                },
-            ])
-            ->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
-                $query->whereHas('user', function ($query) {
-                    $query
-                        ->where('department_id', user()->department_id)
-                        ->withTrashed();
-                });
-            })
-            ->when(!$this->deleteds, function ($query) {
-                $query->has('user');
-            })
-            ->inPeriod($this->period, new Carbon($this->dateSelected))
-            ->whereHas('office', function ($query) {
-                $query->whereNotIn('region_id', $this->unselectedRegions);
-            })
-            ->whereNotIn('office_id', $this->unselectedOffices)
-            ->whereNotIn('user_id', $this->unselectedUserDailyNumbers)
-            ->orderBy('total', 'desc')
-            ->groupBy('user_id')
-            ->select(
-                DB::raw($this->getTotalRawQuery($this->getSluggedPill())),
-                'user_id'
-            )
-            ->limit(10)
-            ->get();
+        ->withTrashed()
+        ->with('user', function($query) {
+            $query->withTrashed();
+        })
+        ->whereIn('user_id', $this->selectedUsersIds)
+        ->whereIn('office_id', $this->selectedOfficesIds)
+        ->inPeriod($this->period, new Carbon($this->date))
+        ->orderBy('total', 'desc')
+        ->groupBy('user_id')
+        ->select(
+            DB::raw($this->getTotalRawQuery($this->getSluggedPill())),
+            'user_id'
+        )
+        ->limit(10)
+        ->get();
     }
 
     private function getSluggedPill()
@@ -153,14 +123,6 @@ class NumberTrackerDetail extends Component
     private function getTotalRawQuery(string $pill)
     {
         $rawQuery = sprintf('SUM(%s) as total', $pill);
-
-        if ($pill === 'sg_sits') {
-            $rawQuery = 'SUM(sits + set_sits) as total';
-        }
-
-        if ($pill === 'sg_closes') {
-            $rawQuery = 'SUM(closes + set_closes) as total';
-        }
 
         return $rawQuery;
     }

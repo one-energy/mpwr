@@ -4,19 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
-    public function __invoke(Request $request)
+    public function __invoke()
     {
-        $userId = Auth::user()->id;
-
-        $query = Customer::query()->where(function ($query) use ($userId) {
-            $query->orWhere('opened_by_id', $userId)
-            ->orWhere('sales_rep_id',$userId)
-            ->orWhere('setter_id', $userId);
+        $query = Customer::query()->where(function ($query) {
+            $query->orWhere('opened_by_id', user()->id)
+                ->orWhere('sales_rep_id', user()->id)
+                ->orWhere('setter_id', user()->id);
         });
 
         $sortTypes = [
@@ -26,10 +22,10 @@ class HomeController extends Controller
         ];
 
         $query
-            ->when(request()->has('sort_by') && request()->sort_by == 'is_active', function (Builder $query) {
+            ->when(request()->has('sort_by') && request()->sort_by === 'is_active', function (Builder $query) {
                 $query->whereIsActive(true);
             })
-            ->when(request()->has('sort_by') && request()->sort_by == 'is_inactive', function (Builder $query) {
+            ->when(request()->has('sort_by') && request()->sort_by === 'is_inactive', function (Builder $query) {
                 $query->whereIsActive(false);
             });
             

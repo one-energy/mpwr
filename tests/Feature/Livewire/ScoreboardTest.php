@@ -17,7 +17,7 @@ class ScoreboardTest extends TestCase
     /** @test */
     public function it_should_not_show_users_from_another_department_in_scoring()
     {
-        $john = User::factory()->create(['role' => 'Admin']);
+        $john                                        = User::factory()->create(['role' => 'Admin']);
         [$setter01, $setter02, $setter03, $setter04] = User::factory()->times(4)->create(['role' => 'Setter']);
 
         $department01 = Department::factory()->create();
@@ -32,22 +32,22 @@ class ScoreboardTest extends TestCase
         DailyNumber::factory()->create([
             'user_id' => $setter01->id,
             'doors'   => 10,
-            'date'    => now()->format('Y-m-d')
+            'date'    => now()->format('Y-m-d'),
         ]);
         DailyNumber::factory()->create([
             'user_id' => $setter02->id,
             'doors'   => 20,
-            'date'    => now()->format('Y-m-d')
+            'date'    => now()->format('Y-m-d'),
         ]);
         DailyNumber::factory()->create([
             'user_id' => $setter03->id,
             'doors'   => 10,
-            'date'    => now()->format('Y-m-d')
+            'date'    => now()->format('Y-m-d'),
         ]);
         DailyNumber::factory()->create([
             'user_id' => $setter04->id,
             'doors'   => 10,
-            'date'    => now()->format('Y-m-d')
+            'date'    => now()->format('Y-m-d'),
         ]);
 
         $this->actingAs($john);
@@ -64,7 +64,7 @@ class ScoreboardTest extends TestCase
     /** @test */
     public function it_should_show_top_ten_doors_on_day_period()
     {
-        $john = User::factory()->create(['role' => 'Admin']);
+        $john                  = User::factory()->create(['role' => 'Admin']);
         [$setter01, $setter02] = User::factory()->times(2)->create(['role' => 'Setter']);
 
         $department = Department::factory()->create();
@@ -77,12 +77,12 @@ class ScoreboardTest extends TestCase
         DailyNumber::factory()->times(10)->create([
             'user_id' => $setter01->id,
             'doors'   => 10,
-            'date'    => $today->format('Y-m-d')
+            'date'    => $today->format('Y-m-d'),
         ]);
         DailyNumber::factory()->times(10)->create([
             'user_id' => $setter02->id,
             'doors'   => 10,
-            'date'    => $today->addDay()->format('Y-m-d')
+            'date'    => $today->addDay()->format('Y-m-d'),
         ]);
 
         $this->actingAs($john);
