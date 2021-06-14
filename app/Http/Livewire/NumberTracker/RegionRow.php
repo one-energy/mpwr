@@ -87,8 +87,17 @@ class RegionRow extends Component
         $this->itsSelected = $this->selectedOfficesId->isNotEmpty();
     }
 
-    public function toggleOffice(Office $office, bool $insert)
+    public function toggleOffice($officeId, bool $insert)
     {
+        $office = Office::query()
+            ->when($this->withTrashed, function($query) {
+                $query->withTrashed();
+            })
+            ->with(['dailyNumbers' => function($query) {
+                $query->when($this->withTrashed, function($query) {
+                    $query->withTrashed();
+                });
+            }])->find($officeId);
         if ($insert) {
             $this->selectedOfficesId->push($office->id);
             $this->selectedUsersId = $this->selectedUsersId->merge($office->dailyNumbers->unique('user_id')->map->user_id);
