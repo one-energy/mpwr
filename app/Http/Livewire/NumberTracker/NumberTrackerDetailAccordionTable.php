@@ -69,6 +69,9 @@ class NumberTrackerDetailAccordionTable extends Component
     public function getRegionsProperty()
     {
         $regions = Region::query()
+            ->when($this->deleteds, function($query) {
+                $query->withTrashed();
+            })
             ->where('department_id', $this->selectedDepartment)
             ->with([
                 'offices' => function ($query) {

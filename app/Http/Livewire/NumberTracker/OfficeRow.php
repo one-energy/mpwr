@@ -177,14 +177,17 @@ class OfficeRow extends Component
     private function findOffice(int $officeId)
     {
         return Office::query()
-            ->find($officeId)
-            ->load([
+        ->when($this->withTrashed, function($query) {
+            $query->withTrashed();
+        })
+            ->with([
                 'dailyNumbers' => function ($query) {
                     $query
                         ->when($this->withTrashed, fn($query) => $query->withTrashed())
                         ->when(!$this->withTrashed, fn($query) => $query->has('user'))
                         ->inPeriod($this->period, new Carbon($this->selectedDate));
                 },
-            ]);
+            ])
+            ->find($officeId);
     }
 }

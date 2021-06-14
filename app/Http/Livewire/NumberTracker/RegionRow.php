@@ -171,8 +171,10 @@ class RegionRow extends Component
     private function findRegion($regionId)
     {
         return Region::query()
-            ->find($regionId)
-            ->load([
+            ->when($this->withTrashed, function($query) {
+                $query->withTrashed();
+            })
+            ->with([
                 'offices' => function ($query) {
                     $query->when($this->withTrashed, function ($query) {
                         $query->withTrashed()
@@ -193,6 +195,7 @@ class RegionRow extends Component
                             },
                         ]);
                 }
-            ]);
+            ])
+            ->find($regionId);
     }
 }
