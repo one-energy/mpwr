@@ -64,8 +64,9 @@ class Edit extends Component
 
     public function mount(Customer $customer)
     {
-        $this->setter = User::withTrashed()->find($customer->setter_id);
-        if (user()->notHaveRoles(["Admin", "Owner"])) {
+        $this->setter = $this->getSetter($customer);
+
+        if (user()->notHaveRoles(['Admin', 'Owner'])) {
             $this->departmentId = user()->department_id;
         } else {
             $this->departmentId = $customer->userSalesRep->department_id;
@@ -80,8 +81,8 @@ class Edit extends Component
         $this->netRepComission   = $this->calculateNetRepCommission();
         $this->salesReps         = user()->getPermittedUsers($this->departmentId)->toArray();
         $this->setters           = User::whereDepartmentId($this->departmentId)
-                                ->where('id', '!=', user()->id)
-                                ->orderBy('first_name')->get()->toArray();
+            ->where('id', '!=', user()->id)
+            ->orderBy('first_name')->get()->toArray();
 
         return view('livewire.customer.edit', [
             'departments' => Department::all(),
@@ -160,7 +161,7 @@ class Edit extends Component
         return redirect()->route('home');
     }
 
-    public function createStockPoint ()
+    public function createStockPoint()
     {
         if (!$this->customer->stockPoint()->exists() && $this->customer->panel_sold) {
             $this->customer->stockPoint()->create([
@@ -178,7 +179,6 @@ class Edit extends Component
 
     public function setSelfGen()
     {
-
         $this->customer->setter_fee = 0;
         $this->isSelfGen            = true;
     }
@@ -263,9 +263,17 @@ class Edit extends Component
     public function calculateGrossRepComission(Customer $customer)
     {
         if ($customer->margin && $customer->system_size) {
-            return round((float) $customer->margin * (float) $customer->system_size * Customer::K_WATTS, 2);
+            return round((float)$customer->margin * (float)$customer->system_size * Customer::K_WATTS, 2);
         }
 
         return 0;
+    }
+
+    private function getSetter(Customer $customer)
+    {
+        return User::withTrashed()->find($customer->setter_id) ?? (new User([
+            'first_name' => 'Setter',
+            'last_name'  => 'Deleted',
+        ]))->forceFill(['deleted_at' => today()]);
     }
 }
