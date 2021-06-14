@@ -27,6 +27,10 @@ class RegionRow extends Component
 
     public bool $itsOpen = false;
 
+    public string $sortBy = 'hours_worked';
+
+    public string $sortDirection = 'asc';
+
     protected $listeners = [
         'toggleOffice',
         'toggleUser',
@@ -38,7 +42,7 @@ class RegionRow extends Component
     {
         $this->region = null;
 
-        $this->sortOffices('hours_worked', 'asc');
+        $this->sortOffices($this->sortBy, $this->sortDirection);
     }
 
     public function render()
@@ -60,25 +64,41 @@ class RegionRow extends Component
     public function collapseRegion()
     {
         $this->itsOpen = !$this->itsOpen;
+
+        if ($this->itsOpen) {
+            $this->sortOffices($this->sortBy, $this->sortDirection);
+        }
     }
 
     public function anyOfficeSelected()
     {
-        $this->itsSelected = $this->getIdsFromCache($this->getCacheKey('offices'))->isNotEmpty();
+        $cacheIds  = $this->getIdsFromCache($this->getCacheKey('offices'));
+        $officeIds = $this->offices->map->id;
+
+        $this->itsSelected = $cacheIds->contains(fn($officeId) => in_array($officeId, $officeIds->toArray()));
     }
 
     public function isAnyUserSelected()
     {
-        $this->itsSelected = $this->getIdsFromCache($this->getCacheKey('users'))->isNotEmpty();
+        $cacheIds = $this->getIdsFromCache($this->getCacheKey('users'));
+        $userIds  = collect($this->offices)
+            ->lazy()
+            ->map(fn(Office $office) => $office->dailyNumbers->unique('user_id')->pluck('user_id'))
+            ->flatten();
+
+        $this->itsSelected = $cacheIds->contains(fn($userId) => in_array($userId, $userIds->toArray()));
     }
 
     public function sortOffices($sortBy, $sortDirection)
     {
+        $this->sortBy        = $sortBy;
+        $this->sortDirection = $sortDirection;
+
         $region = $this->region ?? $this->findRegion($this->regionId);
 
         $this->offices = $sortDirection === 'asc'
-            ? $this->sortOfficesAsc($region->offices, $sortBy)
-            : $this->sortOfficesDesc($region->offices, $sortBy);
+            ? $this->sortOfficesAsc($region->offices, $this->sortBy)
+            : $this->sortOfficesDesc($region->offices, $this->sortBy);
     }
 
     public function setDateOrPeriod($date, $period)
@@ -91,14 +111,14 @@ class RegionRow extends Component
     private function sortOfficesAsc(Collection $offices, string $sortBy)
     {
         return $offices->sortBy(
-            fn(Office $office) => $office->dailyNumbers->count() ? $office->dailyNumbers->sum($sortBy) : 0
+            fn(Office $office) => $office->dailyNumbers->isNotEmpty() ? $office->dailyNumbers->sum($sortBy) : 0
         )->values();
     }
 
     private function sortOfficesDesc(Collection $offices, string $sortBy)
     {
         return $offices->sortByDesc(
-            fn(Office $office) => $office->dailyNumbers->count() ? $office->dailyNumbers->sum($sortBy) : 0
+            fn(Office $office) => $office->dailyNumbers->isNotEmpty() ? $office->dailyNumbers->sum($sortBy) : 0
         )->values();
     }
 
@@ -183,7 +203,7 @@ class RegionRow extends Component
 
     private function getIdsFromCache(string $key): Collection
     {
-        $payload  = Cache::get($key);
+        $payload = Cache::get($key);
 
         if ($payload === null || $payload === '') {
             return collect();
@@ -244,7 +264,7 @@ class RegionRow extends Component
         $idsList  = collect($idsToRemove)->flatten()->toArray();
         $cacheKey = $this->getCacheKey($type);
         $ids      = $this->getIdsFromCache($cacheKey);
-        $ids      = $ids->filter(fn ($id) => !in_array($id, $idsList));
+        $ids      = $ids->filter(fn($id) => !in_array($id, $idsList));
 
         Cache::put($cacheKey, json_encode($ids->toArray()));
     }
