@@ -60,6 +60,10 @@ class OfficeRow extends Component
     public function collapseOffice()
     {
         $this->itsOpen = !$this->itsOpen;
+
+        if ($this->itsOpen) {
+            $this->sortDailyNumbers($this->sortBy, $this->sortDirection);
+        }
     }
 
     public function selectOffice()
@@ -151,13 +155,12 @@ class OfficeRow extends Component
 
     public function getDailyNumbers()
     {
-        $office = $this->office ?? $this->findOffice($this->officeId);
-
-        $groupedUsers = $office->dailyNumbers->groupBy('user_id')->collect();
+        $this->office = $this->findOffice($this->officeId);
+        $groupedUsers = $this->office->dailyNumbers->groupBy('user_id')->collect();
 
         $this->dailyNumbers = $this->sortDirection === 'asc'
-        ? $this->sortUsersAsc($groupedUsers, $this->sortBy)
-        : $this->sortUsersDesc($groupedUsers, $this->sortBy);
+            ? $this->sortUsersAsc($groupedUsers, $this->sortBy)
+            : $this->sortUsersDesc($groupedUsers, $this->sortBy);
     }
 
     private function sortUsersAsc(Collection $dailyNumbers, string $sortBy)
