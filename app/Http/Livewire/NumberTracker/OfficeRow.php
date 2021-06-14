@@ -155,9 +155,8 @@ class OfficeRow extends Component
 
     public function getDailyNumbers()
     {
-        $office = $this->office ?? $this->findOffice($this->officeId);
-
-        $groupedUsers = $office->dailyNumbers->groupBy('user_id')->collect();
+        $this->office = $this->findOffice($this->officeId);
+        $groupedUsers = $this->office->dailyNumbers->groupBy('user_id')->collect();
 
         $this->dailyNumbers = $this->sortDirection === 'asc'
             ? $this->sortUsersAsc($groupedUsers, $this->sortBy)

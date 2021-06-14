@@ -93,12 +93,11 @@ class RegionRow extends Component
     {
         $this->sortBy        = $sortBy;
         $this->sortDirection = $sortDirection;
-
-        $region = $this->region ?? $this->findRegion($this->regionId);
+        $this->region        = $this->findRegion($this->regionId);
 
         $this->offices = $sortDirection === 'asc'
-            ? $this->sortOfficesAsc($region->offices, $this->sortBy)
-            : $this->sortOfficesDesc($region->offices, $this->sortBy);
+            ? $this->sortOfficesAsc($this->region->offices, $this->sortBy)
+            : $this->sortOfficesDesc($this->region->offices, $this->sortBy);
     }
 
     public function setDateOrPeriod($date, $period)
