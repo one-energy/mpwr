@@ -124,7 +124,7 @@ class RegionRow extends Component
             ->find($officeId)
             ->load(['dailyNumbers' => function ($query) {
                 $query->inPeriod($this->period, new Carbon($this->selectedDate))
-                    ->inPeriod($this->period, new Carbon($this->selectedDate))->when($this->withTrashed, fn ($query) => $query->withTrashed())
+                    ->when($this->withTrashed, fn ($query) => $query->withTrashed())
                     ->when(!$this->withTrashed, fn ($query) => $query->has('user'));
             }]);
 
@@ -219,7 +219,7 @@ class RegionRow extends Component
     {
         $cacheKey = $this->getCacheKey('offices');
         $ids      = $this->getIdsFromCache($cacheKey);
-        $ids      = $ids->merge($this->region->offices->map->id);
+        $ids      = $ids->merge($this->getOfficesIds());
 
         Cache::put($cacheKey, json_encode($ids->toArray()));
     }
@@ -266,9 +266,27 @@ class RegionRow extends Component
     private function getUniqueUsersIds()
     {
         return $this->region->offices->map(function ($office) {
-            return $office->dailyNumbers->unique('user_id')->map(function ($dailyNumber) {
-                return $dailyNumber->user_id;
-            })->filter();
+            return $office->dailyNumbers()
+                ->inPeriod($this->period, new Carbon($this->selectedDate))
+                ->when($this->withTrashed, function($query) {
+                    $query->withTrashed();
+                })
+                ->when(!$this->withTrashed, function($query) {
+                    $query->has('user');
+                })
+                ->select('user_id')
+                ->get()
+                ->map(function ($dailyNumber) {
+                    return $dailyNumber->user_id;
+                })->filter();
         })->flatten();
+    }
+
+    private function getOfficesIds()
+    {
+        return $this->region->offices()
+                            ->when($this->withTrashed, fn ($query) => $query->withTrashed())
+                            ->get()
+                            ->map->id;
     }
 }
