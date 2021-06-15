@@ -29,7 +29,7 @@
                                     @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager', 'Region Manager']))                                        
                                         <x-nav.link
                                             :href="route('castle.manage-trainings.index', ['department' => user()->department_id] )"
-                                            class="ml-4 hidden headerLimit:block"
+                                            class="ml-4 hidden lg:block"
                                             :active="is_active('castle.manage-trainings.index')">
                                             @lang('Manage Trainings')
                                         </x-nav.link>
@@ -44,7 +44,7 @@
 
                                     @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
                                         <x-nav.link :href="route('castle.incentives.index')" 
-                                                    class="ml-4 hidden headerLimit:block"
+                                                    class="ml-4 hidden lg:block"
                                                     :active="is_active('castle.incentives.*')">
                                             @lang('Incentives')
                                         </x-nav.link>
@@ -77,11 +77,11 @@
                                     </x-nav.link>
                                     <x-nav.link
                                         :href="route('trainings.index', ['department' => user()->department_id])"
-                                        class="ml-8 hidden headerLimit:block"
+                                        class="ml-8 hidden lg:block"
                                         :active="is_active('trainings.*')">
                                         @lang('Files & Training')
                                     </x-nav.link>
-                                    <x-nav.link :href="route('incentives.index')" class="ml-8 hidden headerLimit:block"
+                                    <x-nav.link :href="route('incentives.index')" class="ml-8 hidden lg:block"
                                                 :active="is_active('incentives.*')">
                                         @lang('Incentives')
                                     </x-nav.link>
@@ -102,7 +102,7 @@
                             <x-nav.castle-icon/>
                         @endif
 
-                        <div class="h-full headerLimit:hidden" @click.away="open = false" class="ml-3 relative" x-data="{ open: false }">
+                        <div class="h-full lg:hidden" @click.away="open = false" class="ml-3 relative" x-data="{ open: false }">
                             <div class="items-center">
                                 <div @click="open = !open"
                                         class="flex rounded-full text-gray-500 hover:text-gray-700 items-center px-1 pt-1 text-sm font-medium leading-5 transition duration-150 ease-in-out">
@@ -136,11 +136,11 @@
                                             </a>
                                         @endif
                                     @else
-                                        <a class="px-4 py-2 text-gray-600 font-medium transition ease-in-out duration-150" href="{{route('incentives.index')}}">
+                                        <a class="px-4 py-2 text-gray-600 font-medium transition ease-in-out duration-150" href="{{route('trainings.index', ['department' => user()->department_id])}}">
                                             @lang('Files & Training')
                                         </a>
 
-                                        <a class="px-4 py-2 text-gray-600 font-medium transition ease-in-out duration-150" href="{{route('trainings.index', ['department' => user()->department_id])}}">
+                                        <a class="px-4 py-2 text-gray-600 font-medium transition ease-in-out duration-150" href="{{route('incentives.index')}}">
                                             @lang('Incentives')
                                         </a>
                                     @endif
