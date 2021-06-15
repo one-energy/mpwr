@@ -52,7 +52,7 @@ class UserInfoTab extends Component
 
     public Collection | array $selectedManagers;
 
-    public null | int $reportsTo;
+    public $reportsTo = null;
 
     public function mount(User $user)
     {
@@ -141,7 +141,7 @@ class UserInfoTab extends Component
     {
         $this->validate();
         $this->user->phone_number = preg_replace('/\D/', '', $this->user->phone_number);
-        $this->user->office_id = $this->user->office_id == "" ? null : $this->user->office_id;
+        $this->user->office_id    = $this->user->office_id === '' ? null : $this->user->office_id;
 
         $this->user->save();
 
@@ -196,7 +196,8 @@ class UserInfoTab extends Component
             Role::ADMIN, Role::OWNER, Role::SALES_REP, Role::SETTER => $this->user->office ? collect() : null,
             Role::DEPARTMENT_MANAGER => $this->user->managedDepartments,
             Role::REGION_MANAGER     => $this->user->managedRegions,
-            Role::OFFICE_MANAGER     => $this->user->managedOffices
+            Role::OFFICE_MANAGER     => $this->user->managedOffices,
+            default                  => null
         };
     }
 
@@ -210,7 +211,7 @@ class UserInfoTab extends Component
         $canChange = User::userCanChangeRole($this->user);
 
         if ($canChange['status']) {
-            $this->syncManagersOf();
+            $this->cleanSelectedManagers();
             $this->changeUserPay();
 
             return;
@@ -235,27 +236,34 @@ class UserInfoTab extends Component
         $this->showWarningRoleModal = false;
     }
 
-    public function syncManagersOf()
+    public function cleanSelectedManagers()
     {
         $this->selectedManagers = collect();
     }
 
-    public function getManagerOfProperty()
+    public function getManagersProperty()
     {
-        return match ($this->selectedRole) {
-            Role::DEPARTMENT_MANAGER => Department::query()
+        if ($this->selectedRole === Role::DEPARTMENT_MANAGER) {
+            return Department::query()
                 ->where('id', $this->user->department_id)
-                ->get(),
-            Role::OFFICE_MANAGER => Department::query()
-                ->where('id', $this->user->department_id)
-                ->first()
-                ->load('offices')
-                ->offices,
-            Role::REGION_MANAGER => Region::query()
+                ->get();
+        }
+
+        if ($this->selectedRole === Role::OFFICE_MANAGER) {
+            return Office::query()
+                ->whereHas('region.department',
+                    fn($query) => $query->where('departments.id', $this->user->department_id)
+                )
+                ->get();
+        }
+
+        if ($this->selectedRole === Role::REGION_MANAGER) {
+            return Region::query()
                 ->where('department_id', $this->user->department_id)
-                ->get(),
-            default => collect(),
-        };
+                ->get();
+        }
+
+        return collect();
     }
 
     private function detachOffices(User $user)
@@ -357,8 +365,12 @@ class UserInfoTab extends Component
         $officeId = $user->office_id;
 
         if ($officeId === null && Department::where('id', $user->department_id)->exists()) {
+            /** @var Department|null $department */
             $department = Department::find($user->department_id);
-            $officeId   = $department->offices->first()->id;
+
+            if ($department !== null && $department->offices->isNotEmpty()) {
+                $officeId = $department->offices->first()->id;
+            }
         }
 
         return $officeId;
