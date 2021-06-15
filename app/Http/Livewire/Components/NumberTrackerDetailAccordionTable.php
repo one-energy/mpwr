@@ -463,11 +463,11 @@ class NumberTrackerDetailAccordionTable extends Component
         }
     }
 
-    public function getHps()
+    public function getHKps()
     {
         if (isset($this->totals)) {
             return $this->totals['sets'] > 0
-                ? number_format($this->totals['hoursWorked'] / $this->totals['sets'], 2)
+                ? number_format($this->totals['hoursKnocked'] / $this->totals['sets'], 2)
                 : '-';
         }
     }
@@ -475,8 +475,8 @@ class NumberTrackerDetailAccordionTable extends Component
     public function getSitRatio()
     {
         if (isset($this->totals)) {
-            return $this->totals['sets'] > 0
-                ? number_format(($this->totals['sits'] + $this->totals['setSits']) / $this->totals['sets'], 2)
+            return $this->totals['sats'] > 0
+                ? number_format($this->totals['sets'] / $this->totals['sats'], 2)
                 : '-';
         }
     }
@@ -484,11 +484,8 @@ class NumberTrackerDetailAccordionTable extends Component
     public function getCloseRatio()
     {
         if (isset($this->totals)) {
-            return $this->totals['sits'] + $this->totals['setSits'] > 0
-                ? number_format(
-                    ($this->totals['setCloses'] + $this->totals['closes']) / ($this->totals['sits'] + $this->totals['setSits']),
-                    2
-                )
+            return $this->totals['closes'] > 0
+                ? number_format($this->totals['closerSits'] / $this->totals['closes'], 2)
                 : '-';
         }
     }
