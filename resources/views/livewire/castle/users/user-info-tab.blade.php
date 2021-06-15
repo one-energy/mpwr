@@ -320,18 +320,18 @@
                     </div>
 
                     <div class="w-full">
-                    @if ($selectedRole !== 'Sales Rep' && $selectedRole !== 'Setter')
+                        <div class="@if($selectedRole === 'Sales Rep' || $selectedRole === 'Setter') hidden @endif">
                             <x-multiselect
                                 class="sm:flex-1"
                                 trackBy="id"
                                 labeledBy="name"
                                 label="Manager Of"
                                 name="selectedManagers"
-                                :options="$this->managerOf"
+                                :options="$this->managers"
                                 wire:model="selectedManagers"
-                                wire:key="{{ $this->managerOf->count() }}"
+                                wire:key="{{ $this->managers->count() }}-{{ $selectedRole }}"
                             />
-                        @endif
+                        </div>
                     </div>
                 </div>
 
