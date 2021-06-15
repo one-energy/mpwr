@@ -124,7 +124,7 @@
     <script>
         function dropdown() {
             return {
-                model: @entangle($attributes->wire('model')),
+                model: @if ($attributes->has('wire:model')) @entangle($attributes->wire('model')) @else [] @endif,
                 baseOptions: @json($options),
                 searchable: '{{ $searchable }}' === 'true',
                 search: '',
