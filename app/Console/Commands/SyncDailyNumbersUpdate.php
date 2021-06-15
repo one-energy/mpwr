@@ -17,8 +17,13 @@ class SyncDailyNumbersUpdate extends Command
         $dailyNumbers->map(function($number) {
             if ($number->hours_knocked == 0) {
                 $number->hours_knocked = $number->hours;
-                $number->save();
             }
+
+            if ($number->sats == 0) {
+                $number->sats = $number->set_sits;
+            }
+
+            $number->save();
         });
         return 0;
     }
