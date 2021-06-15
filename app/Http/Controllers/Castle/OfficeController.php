@@ -32,26 +32,24 @@ class OfficeController extends Controller
 
     public function create()
     {
-        $regionsQuery = Region::query()->select('regions.*');
-        $usersQuery   = User::query()->whereRole('Office Manager');
+        $regions = Region::query()
+            ->when(user()->hasRole(Role::DEPARTMENT_MANAGER), function (Builder $query) {
+                $query->whereIn('department_id', user()->managedDepartments->pluck('id'));
+            })
+            ->when(user()->hasRole(Role::REGION_MANAGER), function (Builder $query) {
+                $query->whereIn('id', user()->managedRegions->pluck('id'));
+            })
+            ->get();
 
-        if (user()->hasAnyRole([Role::ADMIN, Role::OWNER])) {
-            $users   = $usersQuery->get();
-            $regions = $regionsQuery->get();
-        }
 
-        if (user()->hasRole(Role::DEPARTMENT_MANAGER)) {
-            $regions = $regionsQuery
-                ->join('departments', function ($join) {
-                    $join->on('regions.department_id', '=', 'departments.id')
-                        ->where('departments.department_manager_id', '=', user()->id);
-                })->get();
-            $users   = $usersQuery->whereDepartmentId(user()->department_id)->get();
-        }
-        if (user()->hasRole(Role::REGION_MANAGER)) {
-            $regions = $regionsQuery->whereRegionManagerId(user()->id)->get();
-            $users   = $usersQuery->whereDepartmentId(user()->department_id)->get();
-        }
+        $users = User::query()
+            ->where('role', Role::OFFICE_MANAGER)
+            ->when(user()->hasRole(Role::DEPARTMENT_MANAGER), function ($query) {
+                $query->whereIn('department_id', user()->managedDepartments->pluck('id'));
+            })
+            ->when(user()->hasRole(Role::REGION_MANAGER), function ($query) {
+                $query->whereIn('department_id', user()->department_id);
+            });
 
         return view('castle.offices.create', [
             'regions' => $regions,
