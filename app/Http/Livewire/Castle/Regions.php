@@ -43,7 +43,7 @@ class Regions extends Component
             ->when(user()->hasRole(Role::REGION_MANAGER), function (Builder $query) {
                 $query->whereIn('id', user()->managedRegions->pluck('id'));
             })
-            ->with(['department', 'regionManager'])
+            ->with(['department', 'managers'])
             ->search($this->search)
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate($this->perPage);

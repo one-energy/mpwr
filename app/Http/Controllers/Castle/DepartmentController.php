@@ -50,6 +50,7 @@ class DepartmentController extends Controller
             if ($managerIds->isNotEmpty()) {
                 $managers = User::query()
                     ->whereIn('id', $managerIds->toArray())
+                    ->with('managedDepartments')
                     ->get();
 
                 $managers->each(function (User $user) {
@@ -84,18 +85,9 @@ class DepartmentController extends Controller
 
     public function update(Department $department)
     {
-        $validated = request()->validate([
-            'name'                  => 'required|string|min:3|max:255',
-            'department_manager_id' => 'required',
-        ], [
-            'department_id.required'         => 'The department field is required.',
-            'department_manager_id.required' => 'The department manager field is required.',
-        ]);
+        request()->validate(['name' => 'required|string|min:3|max:255']);
 
-        $department->name                  = $validated['name'];
-        $department->department_manager_id = $validated['department_manager_id'];
-
-        $department->save();
+        $department->update(['name' => request()->name]);
 
         alert()
             ->withTitle(__('Department Updated!'))
