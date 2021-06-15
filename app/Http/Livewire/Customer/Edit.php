@@ -64,8 +64,9 @@ class Edit extends Component
 
     public function mount(Customer $customer)
     {
-        $this->setter = User::withTrashed()->find($customer->setter_id);
-        if (user()->notHaveRoles(["Admin", "Owner"])) {
+        $this->setter = $this->getSetter($customer);
+
+        if (user()->notHaveRoles(['Admin', 'Owner'])) {
             $this->departmentId = user()->department_id;
         } else {
             $this->departmentId = $customer->userSalesRep->department_id;
@@ -266,5 +267,13 @@ class Edit extends Component
         }
 
         return 0;
+    }
+
+    private function getSetter(Customer $customer)
+    {
+        return User::withTrashed()->find($customer->setter_id) ?? (new User([
+            'first_name' => 'Setter',
+            'last_name'  => 'Deleted',
+        ]))->forceFill(['deleted_at' => today()]);
     }
 }
