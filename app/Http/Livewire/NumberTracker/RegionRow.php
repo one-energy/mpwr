@@ -91,14 +91,14 @@ class RegionRow extends Component
     private function sortOfficesAsc(Collection $offices, string $sortBy)
     {
         return $offices->sortBy(
-            fn(Office $office) => $office->dailyNumbers->count() ? $office->dailyNumbers->sum($sortBy) : 0
+            fn (Office $office) => $office->dailyNumbers->count() ? $office->dailyNumbers->sum($sortBy) : 0
         )->values();
     }
 
     private function sortOfficesDesc(Collection $offices, string $sortBy)
     {
         return $offices->sortByDesc(
-            fn(Office $office) => $office->dailyNumbers->count() ? $office->dailyNumbers->sum($sortBy) : 0
+            fn (Office $office) => $office->dailyNumbers->count() ? $office->dailyNumbers->sum($sortBy) : 0
         )->values();
     }
 
@@ -118,7 +118,7 @@ class RegionRow extends Component
     public function toggleOffice(int $officeId, bool $insert)
     {
         $office = Office::query()
-            ->when($this->withTrashed, function($query) {
+            ->when($this->withTrashed, function ($query) {
                 $query->withTrashed();
             })
             ->find($officeId)
@@ -162,7 +162,7 @@ class RegionRow extends Component
     private function findRegion($regionId)
     {
         return Region::query()
-            ->when($this->withTrashed, function($query) {
+            ->when($this->withTrashed, function ($query) {
                 $query->withTrashed();
             })
             ->find($regionId)
@@ -181,8 +181,8 @@ class RegionRow extends Component
                         ->with([
                             'dailyNumbers' => function ($query) {
                                 $query
-                                    ->when($this->withTrashed, fn($query) => $query->withTrashed())
-                                    ->when(!$this->withTrashed, fn($query) => $query->has('user'))
+                                    ->when($this->withTrashed, fn ($query) => $query->withTrashed())
+                                    ->when(!$this->withTrashed, fn ($query) => $query->has('user'))
                                     ->inPeriod($this->period, new Carbon($this->selectedDate));
                             },
                         ]);
@@ -228,7 +228,7 @@ class RegionRow extends Component
     {
         $cacheKey = $this->getCacheKey('users');
         $ids      = $this->getIdsFromCache($cacheKey);
-        $ids      = $ids->filter(fn($id) => !in_array($id, $this->getUniqueUsersIds()->toArray()));
+        $ids      = $ids->filter(fn ($id) => !in_array($id, $this->getUniqueUsersIds()->toArray()));
 
         Cache::put($cacheKey, json_encode($ids), 60);
     }
@@ -238,7 +238,7 @@ class RegionRow extends Component
         $cacheKey = $this->getCacheKey('offices');
         $ids      = $this->getIdsFromCache($cacheKey);
         $ids      = $ids->filter(
-            fn($id) => !in_array($id, collect($this->region->offices->map->id)->toArray())
+            fn ($id) => !in_array($id, collect($this->region->offices->map->id)->toArray())
         );
 
         Cache::put($cacheKey, json_encode($ids), 60);
@@ -264,17 +264,17 @@ class RegionRow extends Component
     }
 
     private function getUniqueUsersIds()
-    {   
+    {
         return $this->region->offices()
             ->when($this->withTrashed, fn ($query) => $query->withTrashed())
             ->when(!$this->withTrashed, fn ($query) => $query->has('dailynumbers.user'))
             ->get()->map(function ($office) {
                 return $office->dailyNumbers()
                     ->inPeriod($this->period, new Carbon($this->selectedDate))
-                    ->when($this->withTrashed, function($query) {
+                    ->when($this->withTrashed, function ($query) {
                         $query->withTrashed();
                     })
-                    ->when(!$this->withTrashed, function($query) {
+                    ->when(!$this->withTrashed, function ($query) {
                         $query->has('user');
                     })
                     ->select('user_id')
@@ -288,8 +288,8 @@ class RegionRow extends Component
     private function getOfficesIds()
     {
         return $this->region->offices()
-                            ->when($this->withTrashed, fn ($query) => $query->withTrashed())
-                            ->get()
-                            ->map->id;
+            ->when($this->withTrashed, fn ($query) => $query->withTrashed())
+            ->get()
+            ->map->id;
     }
 }
