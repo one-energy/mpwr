@@ -53,7 +53,9 @@ class GetUsersTest extends TestCase
 
     private function getUsersGroupedByDailyNumbers(Office $office): Collection
     {
-        return User::where('office_id', $office->id)->get()
+        return User::query()
+            ->with('dailyNumbers')
+            ->where('office_id', $office->id)->get()
             ->map(function (User $user) {
                 $user->dailyNumbers = $user->dailyNumbers->groupBy(function (DailyNumber $dailyNumber) {
                     return (new Carbon($dailyNumber->date))->format('F dS');
