@@ -164,22 +164,23 @@ class DailyEntry extends Component
     public function getOfficeQuery()
     {
         $query = Office::query()
+            ->with('region')
             ->select('offices.*')
             ->join('regions', 'region_id', '=', 'regions.id');
 
-        if (user()->role == 'Admin' || user()->role == 'Owner') {
+        if (user()->hasAnyRole(['Admin', 'Owner'])) {
             $query->orWhere('regions.department_id', '=', 0);
         }
 
-        if (user()->role == 'Department Manager') {
+        if (user()->hasRole('Department Manager')) {
             $query->orWhere('regions.department_id', '=', user()->department_id);
         }
 
-        if (user()->role == 'Region Manager') {
+        if (user()->hasRole('Region Manager')) {
             $query->orWhere('regions.region_manager_id', '=', user()->id);
         }
 
-        if (user()->role == 'Office Manager') {
+        if (user()->hasRole('Office Manager')) {
             $query->orWhere('offices.office_manager_id', '=', user()->id);
         }
 
