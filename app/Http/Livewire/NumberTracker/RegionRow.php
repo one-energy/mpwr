@@ -123,7 +123,9 @@ class RegionRow extends Component
             })
             ->find($officeId)
             ->load(['dailyNumbers' => function ($query) {
-                $query->when($this->withTrashed, fn ($query) => $query->withTrashed());
+                $query->inPeriod($this->period, new Carbon($this->selectedDate))
+                    ->inPeriod($this->period, new Carbon($this->selectedDate))->when($this->withTrashed, fn ($query) => $query->withTrashed())
+                    ->when(!$this->withTrashed, fn ($query) => $query->has('user'));
             }]);
 
         if ($insert) {

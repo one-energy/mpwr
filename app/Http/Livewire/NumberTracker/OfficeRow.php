@@ -67,9 +67,14 @@ class OfficeRow extends Component
         if ($this->selected) {
             $this->selectedUsers = $this->selectedUsers->merge(
                 $this->office->dailyNumbers()
+                    ->inPeriod($this->period, new Carbon($this->selectedDate))
                     ->when($this->withTrashed, function($query) {
                         $query->withTrashed();
-                    })->select('user_id')->distinct()->pluck('user_id')
+                    })
+                    ->when(!$this->withTrashed, function($query) {
+                        $query->has('user');
+                    })
+                    ->select('user_id')->distinct()->pluck('user_id')
                 );
         } else {
             $this->selectedUsers = $this->selectedUsers->empty();
