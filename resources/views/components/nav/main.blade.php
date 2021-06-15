@@ -26,7 +26,7 @@
                                         </x-nav.link>
                                     @endif
 
-                                    @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager', 'Region Manager']))                                        
+                                    @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager', 'Region Manager']))
                                         <x-nav.link
                                             :href="route('castle.manage-trainings.index', ['department' => user()->department_id] )"
                                             class="ml-4 hidden lg:block"
@@ -43,7 +43,7 @@
                                     @endif
 
                                     @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
-                                        <x-nav.link :href="route('castle.incentives.index')" 
+                                        <x-nav.link :href="route('castle.incentives.index')"
                                                     class="ml-4 hidden lg:block"
                                                     :active="is_active('castle.incentives.*')">
                                             @lang('Incentives')
@@ -105,7 +105,7 @@
                         <div class="h-full lg:hidden" @click.away="open = false" class="ml-3 relative" x-data="{ open: false }">
                             <div class="items-center">
                                 <div @click="open = !open"
-                                        class="flex rounded-full text-gray-500 hover:text-gray-700 items-center px-1 pt-1 text-sm font-medium leading-5 transition duration-150 ease-in-out">
+                                        class="cursor-pointer flex rounded-full text-gray-500 hover:text-gray-700 items-center px-1 pt-1 text-sm font-medium leading-5 transition duration-150 ease-in-out">
                                     <x-svg.dots class="h-6"/>
                                 </div>
                             </div>
@@ -124,7 +124,7 @@
                                             </a>
                                         @endif
 
-                                        @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager', 'Region Manager']))                                        
+                                        @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager', 'Region Manager']))
                                             <a class="px-4 py-2 text-gray-600 font-medium transition ease-in-out duration-150" href="{{route('castle.manage-trainings.index', ['department' => user()->department_id] )}}">
                                                 @lang('Manage Trainings')
                                             </a>
