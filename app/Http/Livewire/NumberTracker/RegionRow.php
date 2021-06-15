@@ -264,22 +264,25 @@ class RegionRow extends Component
     }
 
     private function getUniqueUsersIds()
-    {
-        return $this->region->offices->map(function ($office) {
-            return $office->dailyNumbers()
-                ->inPeriod($this->period, new Carbon($this->selectedDate))
-                ->when($this->withTrashed, function($query) {
-                    $query->withTrashed();
-                })
-                ->when(!$this->withTrashed, function($query) {
-                    $query->has('user');
-                })
-                ->select('user_id')
-                ->get()
-                ->map(function ($dailyNumber) {
-                    return $dailyNumber->user_id;
-                })->filter();
-        })->flatten();
+    {   
+        return $this->region->offices()
+            ->when($this->withTrashed, fn ($query) => $query->withTrashed())
+            ->when(!$this->withTrashed, fn ($query) => $query->has('dailynumbers.user'))
+            ->get()->map(function ($office) {
+                return $office->dailyNumbers()
+                    ->inPeriod($this->period, new Carbon($this->selectedDate))
+                    ->when($this->withTrashed, function($query) {
+                        $query->withTrashed();
+                    })
+                    ->when(!$this->withTrashed, function($query) {
+                        $query->has('user');
+                    })
+                    ->select('user_id')
+                    ->get()
+                    ->map(function ($dailyNumber) {
+                        return $dailyNumber->user_id;
+                    })->filter();
+            })->flatten();
     }
 
     private function getOfficesIds()
