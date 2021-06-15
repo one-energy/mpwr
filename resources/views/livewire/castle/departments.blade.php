@@ -1,4 +1,17 @@
 <div>
+    @push('styles')
+        <style>
+            .manager-popover { display: block; }
+            .manager-icon { display: none; }
+
+            @media only screen and (max-width: 909px) {
+                .manager-popover { display: none; }
+                .manager-icon { display: flex; justify-content: center }
+                .table-container { overflow-x: auto }
+            }
+        </style>
+    @endpush
+
     <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
         <div class="px-4 py-5 sm:px-6">
             <div class="flex justify-between mb-4">
@@ -16,84 +29,80 @@
 
             <div class="mt-6">
                 <div class="flex flex-col">
-                    <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-                        <div class="align-middle inline-block min-w-full overflow-hidden">
-                            <x-table :pagination="$departments->links()">
-                                <x-slot name="header">
-                                    <x-table.th-tr>
-                                        <x-table.th-searchable by="departments.name" :sortedBy="$sortBy"
-                                                               :direction="$sortDirection">
-                                            @lang('Department')
-                                        </x-table.th-searchable>
-                                        <x-table.th>
-                                            @lang('Vp')
-                                        </x-table.th>
-                                        <x-table.th></x-table.th>
-                                        <x-table.th></x-table.th>
-                                    </x-table.th-tr>
-                                </x-slot>
-                                <x-slot name="body">
-                                    @foreach($departments as $department)
-                                        <x-table.tr :loop="$loop">
-                                            <x-table.td>{{ $department->name }}</x-table.td>
-                                            <x-table.td x-data="{ open: false }" class="relative">
-                                                <div class="flex items-center">
-                                                    @if ($department->managers->isNotEmpty())
-                                                        <div class="hidden md:block">
-                                                            <x-popover left :ref="$loop->index">
-                                                                <ul class="text-sm space-y-3">
-                                                                    @foreach($department->managers as $manager)
-                                                                        <li class="flex" style="white-space: break-spaces">
-                                                                            <span> {{ $manager->full_name }}</span>
-                                                                        </li>
-                                                                    @endforeach
-                                                                </ul>
-                                                            </x-popover>
-                                                            <div class="flex items-baseline space-x-1">
-                                                                <x-icon
-                                                                    x-data=""
-                                                                    @mouseenter="$dispatch('open-popover', {ref: '{{ $loop->index }}'})"
-                                                                    @mouseleave="$dispatch('close-popover', {ref: '{{ $loop->index }}'})"
-                                                                    icon="user"
-                                                                    class="w-3.5 h-auto mr-2.5"
-                                                                />
-                                                                <span>
+                    <x-table class="table-container" :pagination="$departments->links()">
+                        <x-slot name="header">
+                            <x-table.th-tr>
+                                <x-table.th-searchable by="departments.name" :sortedBy="$sortBy"
+                                                       :direction="$sortDirection">
+                                    @lang('Department')
+                                </x-table.th-searchable>
+                                <x-table.th>
+                                    @lang('Vp')
+                                </x-table.th>
+                                <x-table.th></x-table.th>
+                                <x-table.th></x-table.th>
+                            </x-table.th-tr>
+                        </x-slot>
+                        <x-slot name="body">
+                            @foreach($departments as $department)
+                                <x-table.tr :loop="$loop">
+                                    <x-table.td>{{ $department->name }}</x-table.td>
+                                    <x-table.td x-data="{ open: false }" class="relative">
+                                        <div class="flex items-center">
+                                            @if ($department->managers->isNotEmpty())
+                                                <div class="manager-popover">
+                                                    <x-popover left :ref="$loop->index">
+                                                        <ul class="text-sm space-y-3">
+                                                            @foreach($department->managers as $manager)
+                                                                <li class="flex" style="white-space: break-spaces">
+                                                                    <span> {{ $manager->full_name }}</span>
+                                                                </li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </x-popover>
+                                                    <div class="flex items-baseline space-x-1">
+                                                        <x-icon
+                                                            x-data=""
+                                                            @mouseenter="$dispatch('open-popover', {ref: '{{ $loop->index }}'})"
+                                                            @mouseleave="$dispatch('close-popover', {ref: '{{ $loop->index }}'})"
+                                                            icon="user"
+                                                            class="w-3.5 h-auto mr-2.5"
+                                                        />
+                                                        <span>
                                                                     {{ $this->getManagersName($department->managers) }}
-                                                                    @if ($department->managers->count() > 3)...@endif
+                                                            @if ($department->managers->count() > 3)...@endif
                                                                 </span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="block md:hidden">
-                                                            <span wire:click="openManagersListModal({{ $department }})">
+                                                    </div>
+                                                </div>
+                                                <div class="manager-icon">
+                                                            <span class="cursor-pointer" wire:click="openManagersListModal({{ $department }})">
                                                                <x-icon icon="user" class="w-3.5 h-auto mr-2.5"/>
                                                             </span>
-                                                        </div>
-                                                    @else
-                                                        &#8212;
-                                                    @endif
                                                 </div>
-                                            </x-table.td>
-                                            <x-table.td>
-                                                <x-link
-                                                    :href="route('castle.departments.edit', $department)"
-                                                    class="text-sm"
-                                                >
-                                                    Edit
-                                                </x-link>
-                                            </x-table.td>
-                                            <x-table.td>
-                                                <x-link color="red" class="text-sm" type="button"
-                                                        x-on:click="$dispatch('confirm', {from: $event.target})"
-                                                        wire:click="setDeletingDepartment({{$department->id}})">
-                                                    Delete
-                                                </x-link>
-                                            </x-table.td>
-                                        </x-table.tr>
-                                    @endforeach
-                                </x-slot>
-                            </x-table>
-                        </div>
-                    </div>
+                                            @else
+                                                &#8212;
+                                            @endif
+                                        </div>
+                                    </x-table.td>
+                                    <x-table.td>
+                                        <x-link
+                                            :href="route('castle.departments.edit', $department)"
+                                            class="text-sm"
+                                        >
+                                            Edit
+                                        </x-link>
+                                    </x-table.td>
+                                    <x-table.td>
+                                        <x-link color="red" class="text-sm" type="button"
+                                                x-on:click="$dispatch('confirm', {from: $event.target})"
+                                                wire:click="setDeletingDepartment({{$department->id}})">
+                                            Delete
+                                        </x-link>
+                                    </x-table.td>
+                                </x-table.tr>
+                            @endforeach
+                        </x-slot>
+                    </x-table>
 
                     <div x-data="showManagersModalHandler()" @on-show-managers.window="open" x-cloak>
                         <div x-show="isOpen" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity">

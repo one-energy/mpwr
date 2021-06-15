@@ -1,4 +1,17 @@
 <div>
+    @push('styles')
+        <style>
+            .manager-popover { display: block; }
+            .manager-icon { display: none; }
+
+            @media only screen and (max-width: 1067px) {
+                .manager-popover { display: none; }
+                .manager-icon { display: flex; justify-content: center }
+                .table-container { overflow-x: auto }
+            }
+        </style>
+    @endpush
+
     <div>
         <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
             <div class="px-4 py-5 sm:px-6">
@@ -19,92 +32,140 @@
 
                 <div class="mt-6">
                     <div class="flex flex-col">
-                        <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-                            <div class="align-middle inline-block min-w-full overflow-hidden">
-                                <x-table :pagination="$offices->links()">
-                                    <x-slot name="header">
-                                        <x-table.th-tr>
-                                            @if (user()->hasAnyRole(['Admin', 'Owner']))
-                                                <x-table.th-searchable by="offices.name" :sortedBy="$sortBy"
-                                                                       :direction="$sortDirection">
-                                                    @lang('Department')
-                                                </x-table.th-searchable>
-                                            @endif
-                                            <x-table.th>
-                                                @lang('Office')
-                                            </x-table.th>
-                                            <x-table.th>
-                                                @lang('Region')
-                                            </x-table.th>
-                                            <x-table.th>
-                                                @lang('Manager')
-                                            </x-table.th>
-                                            <x-table.th></x-table.th>
-                                            <x-table.th></x-table.th>
-                                        </x-table.th-tr>
-                                    </x-slot>
-                                    <x-slot name="body">
-                                        @foreach ($offices as $office)
-                                            <x-table.tr :loop="$loop">
-                                                @if (user()->hasAnyRole(['Admin', 'Owner']))
-                                                    <x-table.td>{{ $office->region->department->name }}</x-table.td>
-                                                @endif
-                                                <x-table.td>{{ $office->name }}</x-table.td>
-                                                <x-table.td>{{ $office->region->name }}</x-table.td>
-                                                    <x-table.td x-data="{ open: false }" class="relative">
-                                                        @if ($office->managers->isNotEmpty())
-                                                            <div class="hidden md:block">
-                                                                <x-popover left :ref="$loop->index">
-                                                                    <ul class="text-sm space-y-3">
-                                                                        @foreach($office->managers as $manager)
-                                                                            <li class="flex" style="white-space: break-spaces">
-                                                                                <span> {{ $manager->full_name }}</span>
-                                                                            </li>
-                                                                        @endforeach
-                                                                    </ul>
-                                                                </x-popover>
-                                                                <div class="flex items-baseline space-x-1">
-                                                                    <x-icon
-                                                                        x-data=""
-                                                                        @mouseenter="$dispatch('open-popover', {ref: '{{ $loop->index }}'})"
-                                                                        @mouseleave="$dispatch('close-popover', {ref: '{{ $loop->index }}'})"
-                                                                        icon="user"
-                                                                        class="w-3.5 h-auto mr-2.5"
-                                                                    />
-                                                                    <span>
+                        <x-table class="table-container" :pagination="$offices->links()">
+                            <x-slot name="header">
+                                <x-table.th-tr>
+                                    @if (user()->hasAnyRole(['Admin', 'Owner']))
+                                        <x-table.th-searchable by="offices.name" :sortedBy="$sortBy" :direction="$sortDirection">
+                                            @lang('Department')
+                                        </x-table.th-searchable>
+                                    @endif
+                                    <x-table.th>
+                                        @lang('Office')
+                                    </x-table.th>
+                                    <x-table.th>
+                                        @lang('Region')
+                                    </x-table.th>
+                                    <x-table.th>
+                                        @lang('Manager')
+                                    </x-table.th>
+                                    <x-table.th></x-table.th>
+                                    <x-table.th></x-table.th>
+                                </x-table.th-tr>
+                            </x-slot>
+                            <x-slot name="body">
+                                @foreach ($offices as $office)
+                                    <x-table.tr :loop="$loop">
+                                        @if (user()->hasAnyRole(['Admin', 'Owner']))
+                                            <x-table.td>{{ $office->region->department->name }}</x-table.td>
+                                        @endif
+                                        <x-table.td>{{ $office->name }}</x-table.td>
+                                        <x-table.td>{{ $office->region->name }}</x-table.td>
+                                        <x-table.td x-data="{ open: false }" class="relative">
+                                            @if ($office->managers->isNotEmpty())
+                                                <div class="manager-popover">
+                                                    <x-popover left :ref="$loop->index">
+                                                        <ul class="text-sm space-y-3">
+                                                            @foreach($office->managers as $manager)
+                                                                <li class="flex" style="white-space: break-spaces">
+                                                                    <span> {{ $manager->full_name }}</span>
+                                                                </li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </x-popover>
+                                                    <div class="flex items-baseline space-x-1">
+                                                        <x-icon
+                                                            x-data=""
+                                                            @mouseenter="$dispatch('open-popover', {ref: '{{ $loop->index }}'})"
+                                                            @mouseleave="$dispatch('close-popover', {ref: '{{ $loop->index }}'})"
+                                                            icon="user"
+                                                            class="w-3.5 h-auto mr-2.5"
+                                                        />
+                                                        <span>
                                                                     {{ $this->getManagersName($office->managers) }}
-                                                                        @if ($office->managers->count() > 3)...@endif
+                                                            @if ($office->managers->count() > 3)...@endif
                                                                 </span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="block md:hidden">
-                                                            <span wire:click="openManagersListModal({{ $office }})">
+                                                    </div>
+                                                </div>
+                                                <div class="manager-icon">
+                                                                <span class="cursor-pointer" wire:click="openManagersListModal({{ $office }})">
                                                                <x-icon icon="user" class="w-3.5 h-auto mr-2.5"/>
                                                             </span>
-                                                            </div>
-                                                        @else
-                                                            &#8212;
-                                                        @endif
-                                                    </x-table.td>
-                                                <x-table.td>
-                                                    <x-link :href="route('castle.offices.edit', $office)"
-                                                            class="text-sm">Edit
-                                                    </x-link>
+                                                </div>
+                                            @else
+                                                &#8212;
+                                            @endif
+                                        </x-table.td>
+                                        <x-table.td>
+                                            <x-link :href="route('castle.offices.edit', $office)"
+                                                    class="text-sm">Edit
+                                            </x-link>
 
-                                                </x-table.td>
-                                                <x-table.td>
-                                                    @if (user()->hasAnyRole(['Admin', 'Owner', 'Department Manager', 'Region Manager']))
-                                                        <x-link color="red" class="text-sm" type="button"
-                                                                wire:click="setDeletingOffice({{$office->id}})"
-                                                                x-on:click="$dispatch('confirm')">
-                                                            Delete
-                                                        </x-link>
-                                                    @endIf
-                                                </x-table.td>
-                                            </x-table.tr>
-                                        @endforeach
-                                    </x-slot>
-                                </x-table>
+                                        </x-table.td>
+                                        <x-table.td>
+                                            @if (user()->hasAnyRole(['Admin', 'Owner', 'Department Manager', 'Region Manager']))
+                                                <x-link color="red" class="text-sm" type="button"
+                                                        wire:click="setDeletingOffice({{$office->id}})"
+                                                        x-on:click="$dispatch('confirm')">
+                                                    Delete
+                                                </x-link>
+                                            @endIf
+                                        </x-table.td>
+                                    </x-table.tr>
+                                @endforeach
+                            </x-slot>
+                        </x-table>
+
+                        <div x-data="showManagersModalHandler()" @on-show-managers.window="open" x-cloak>
+                            <div x-show="isOpen" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity">
+                                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+                            </div>
+                            <div
+                                x-show="isOpen"
+                                @click.away="close"
+                                x-transition:enter="ease-out duration-300"
+                                x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                                x-transition:leave="ease-in duration-200"
+                                x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                                x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
+                                <div class="absolute top-0 right-0 pt-4 pr-4">
+                                    <button
+                                        @click="close"
+                                        class="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150"
+                                        aria-label="Close"
+                                    >
+                                        <x-svg.x class="w-5 h-5" />
+                                    </button>
+                                </div>
+                                <div class="px-4 py-5 sm:p-6">
+                                    <h3 class="text-lg font-medium leading-6 text-gray-900 mb-5" id="modal-headline">
+                                        Managers List
+                                    </h3>
+                                    <template x-if="hasManagers">
+                                        <ul class="space-y-2 text-sm mb-3">
+                                            <template x-for="manager in managers">
+                                                <li x-text="manager.full_name"></li>
+                                            </template>
+                                            <template x-if="quantity > 4">
+                                                <li>...</li>
+                                            </template>
+                                        </ul>
+                                    </template>
+                                    <template x-if="!hasManagers">
+                                        <p class="font-light italic text-sm mb-4">
+                                            Office without managers
+                                        </p>
+                                    </template>
+                                    <div class="flex justify-end">
+                                        <button
+                                            @click="close"
+                                            class="rounded-md px-4 py-2 text-base font-medium leading-6 border-2 text-gray-500 border-gray-500 hover:text-gray-600 hover:border-gray-600 focus:border-gray-500 focus:shadow-outline-gray active:bg-gray-50">
+                                            Close
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
