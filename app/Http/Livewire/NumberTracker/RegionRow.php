@@ -74,16 +74,11 @@ class RegionRow extends Component
 
     public function sortOffices($sortBy, $sortDirection)
     {
-        $region = $this->region ?? $this->findRegion($this->regionId);
-
-        $offices = $region->offices()
-                        ->when($this->withTrashed, fn($query) => $query->withTrashed())
-                        ->when(!$this->withTrashed, fn($query) => $query->has('dailyNumbers.user'))
-                        ->get();
+        $region = $this->findRegion($this->regionId);
                         
         $this->offices = $sortDirection === 'asc'
-            ? $this->sortOfficesAsc($offices, $sortBy)
-            : $this->sortOfficesDesc($offices, $sortBy);
+            ? $this->sortOfficesAsc($region->offices, $sortBy)
+            : $this->sortOfficesDesc($region->offices, $sortBy);
     }
 
     public function setDateOrPeriod($date, $period)

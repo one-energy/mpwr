@@ -159,7 +159,7 @@ class OfficeRow extends Component
 
     public function getDailyNumbers()
     {
-        $office = $this->office ?? $this->findOffice($this->officeId);
+        $office = $this->findOffice($this->officeId);
 
         $groupedUsers = $office->dailyNumbers->groupBy('user_id')->collect();
 
