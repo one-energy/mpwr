@@ -151,10 +151,8 @@ class RegionRow extends Component
             $this->attachIn('offices', $office->id);
             $this->attachIn('users', $office->dailyNumbers->unique('user_id')->map->user_id);
         } else {
-            $usersIds = $office->dailyNumbers->unique('user_id')->map->user_id;
-
             $this->detachFrom('offices', $office->id);
-            $this->detachFrom('offices', $usersIds);
+            $this->detachFrom('users', $office->dailyNumbers->unique('user_id')->map->user_id);
         }
         $this->anyOfficeSelected();
         $this->updateIds();

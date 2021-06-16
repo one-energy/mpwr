@@ -42,58 +42,6 @@
         @endforeach
 
         <div style="min-width: fit-content; flex: 0 0 auto" class="w-56 border-2 border-gray-200 rounded-md p-3 space-y-1">
-            <div class="text-base font-semibold text-gray-900 uppercase">Sits</div>
-            <div class="grid grid-cols-4 gap-1">
-                <div class="text-sm self-center col-span-3">
-                    <span>Set</span>
-                    <span class="text-xl font-bold text-gray-900 ml-2">
-                        {{ $this->sumDailyNumbersBy('set_sits') }}
-                    </span>
-                </div>
-                <div class="flex text-xs font-semibold place-self-end col-span-1 items-center">
-                    @if($this->differenceFromLastDailyNumbersBy('set_sits') >= 0)
-                        <x-svg.arrow-up class="text-green-base"/>
-                    @else
-                        <x-svg.arrow-down class="text-red-600"/>
-                    @endif
-                    <span class="text-base
-                        @if($this->differenceFromLastDailyNumbersBy('set_sits') >= 0)
-                            text-green-base
-                        @else
-                            text-red-600
-                        @endif
-                    ">
-                        {{ $this->differenceFromLastDailyNumbersBy('set_sits') }}
-                    </span>
-                </div>
-            </div>
-            <div class="grid grid-cols-4 gap-1">
-                <div class="text-sm self-center col-span-3">
-                    <span>SG</span>
-                    <span class="text-xl font-bold text-gray-900 ml-2">
-                        {{ $this->sumDailyNumbersBy('sits') }}
-                    </span>
-                </div>
-                <div class="flex text-xs font-semibold place-self-end col-span-1 items-center">
-                    @if($this->differenceFromLastDailyNumbersBy('sits') >= 0)
-                        <x-svg.arrow-up class="text-green-base"/>
-                    @else
-                        <x-svg.arrow-down class="text-red-600"/>
-                    @endif
-                    <span class="text-base
-                        @if($this->differenceFromLastDailyNumbersBy('sits') >= 0)
-                            text-green-base
-                        @else
-                            text-red-600
-                        @endif
-                    ">
-                        {{ $this->differenceFromLastDailyNumbersBy('sits') }}
-                    </span>
-                </div>
-            </div>
-        </div>
-
-        <div style="min-width: fit-content; flex: 0 0 auto" class="w-56 border-2 border-gray-200 rounded-md p-3 space-y-1">
             <div class="text-base font-semibold text-gray-900 uppercase">Closes</div>
             <div class="grid grid-cols-4 gap-1">
                 <div class="text-sm self-center col-span-3">
