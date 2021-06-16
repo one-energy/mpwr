@@ -222,7 +222,7 @@ class Edit extends Component
 
     public function calculateNetRepCommission()
     {
-        return $this->grossRepComission - $this->customer->adders;
+        return (float)$this->grossRepComission - (float)$this->customer->adders;
     }
 
     public function getSalesRepFee()
