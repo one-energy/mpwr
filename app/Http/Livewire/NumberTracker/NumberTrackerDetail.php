@@ -62,7 +62,7 @@ class NumberTrackerDetail extends Component
     public function render()
     {
         $this->topTenTrackers = $this->getTopTenTrackers();
-        $this->topTenTeams    = $this->getToTenTeams();
+        $this->topTenTeams    = $this->getTopTenTeams();
 
         return view('livewire.number-tracker.number-tracker-detail');
     }
@@ -163,7 +163,7 @@ class NumberTrackerDetail extends Component
             ->get();
     }
 
-    private function getToTenTeams(): Collection
+    private function getTopTenTeams(): Collection
     {
         if (!in_array($this->selectedTeamLeaderboardPill, $this->teamLeaderboardPills, true)) {
             return collect();
