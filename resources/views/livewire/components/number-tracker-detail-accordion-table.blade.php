@@ -196,60 +196,6 @@
         </div>
 
         <div style="min-width: fit-content; flex: 0 0 auto" class="w-56 border-2 border-gray-200 rounded-md p-3 space-y-1" >
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">Sits</div>
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="grid grid-cols-4 gap-1">
-                <div class="text-sm self-center col-span-3">
-                    <span>Set</span>
-                    <span class="text-xl font-bold text-gray-900 ml-2">
-                            {{$this->getNumberTrackerSumOf('setSits')}}
-                        </span>
-                </div>
-                <div class="flex text-xs font-semibold place-self-end col-span-1 items-center">
-                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('setSits') >= 0)
-                        <x-svg.arrow-up class="text-green-base text-base"/>
-                    @else
-                        <x-svg.arrow-down class="text-red-600"/>
-                    @endif
-                    <span class="
-                        text-base
-                        @if($this->getNumberTrackerDifferenceToLasNumbersOf('setSits') >= 0)
-                            text-green-base
-                        @else
-                            text-red-600
-                        @endif
-                    ">
-                            {{$this->getNumberTrackerDifferenceToLasNumbersOf('setSits')}}
-                        </span>
-                </div>
-            </div>
-            <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="grid grid-cols-4 gap-1">
-                <div class="text-sm self-center col-span-3">
-                    <span>SG</span>
-                    <span class="text-xl font-bold text-gray-900 ml-2">
-                            {{$this->getNumberTrackerSumOf('sits')}}
-                        </span>
-                </div>
-                <div class="flex text-xs font-semibold place-self-end col-span-1 items-center">
-                    @if($this->getNumberTrackerDifferenceToLasNumbersOf('sits')>= 0)
-                        <x-svg.arrow-up class="text-green-base"/>
-                    @else
-                        <x-svg.arrow-down class="text-red-600"/>
-                    @endif
-                    <span class="
-                        text-base
-                        @if($this->getNumberTrackerDifferenceToLasNumbersOf('sits') >= 0)
-                            text-green-base
-                        @else
-                            text-red-600
-                        @endif
-                    ">
-                            {{$this->getNumberTrackerDifferenceToLasNumbersOf('sits')}}
-                        </span>
-                </div>
-            </div>
-            <x-card-pulse-loading wire:loading.flex wire:target="selectRegion, selectOffice, selectDailyNumberUser"/>
-        </div>
-        <div style="min-width: fit-content; flex: 0 0 auto" class="w-56 border-2 border-gray-200 rounded-md p-3 space-y-1" >
             <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="text-base font-semibold text-gray-900 uppercase">Closes</div>
             <div wire:loading.remove wire:target="selectRegion, selectOffice, selectDailyNumberUser" class="grid grid-cols-4 gap-1">
                 <div class="text-sm self-center col-span-3">
