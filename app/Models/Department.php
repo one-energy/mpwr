@@ -56,6 +56,11 @@ class Department extends Model
         return $this->hasManyThrough(Office::class, Region::class);
     }
 
+    public function officesTrashedParents()
+    {
+        return $this->hasManyThrough(Office::class, Region::class)->withTrashedParents();
+    }
+
     public function trainingPageSections()
     {
         return $this->hasMany(TrainingPageSection::class);
