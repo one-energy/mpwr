@@ -352,7 +352,7 @@
                                         {{ $this->formatNumber($this->getSalesRepCommission($customer)) }}
                                     </x-table.td>
                                     <x-table.td class="{{ $this->statusColorFor($customer) }}">
-                                        {{$customer->financingtype?->name ?? '-'}}
+                                        {{$customer->financingType?->name ?? '-'}}
                                     </x-table.td>
                                     <x-table.td class="{{ $this->statusColorFor($customer) }}">
                                         {{$customer->financer?->name ?? '-'}}
