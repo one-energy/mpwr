@@ -32,8 +32,8 @@ class Departments extends Component
     public function render()
     {
         return view('livewire.castle.departments', [
-            'departments' => Department::join('users', 'users.id', '=', 'departments.department_manager_id')
-                ->select('departments.*', 'users.first_name', 'users.last_name')
+            'departments' => Department::query()
+                ->with('departmentAdmin')
                 ->search($this->search)
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage),

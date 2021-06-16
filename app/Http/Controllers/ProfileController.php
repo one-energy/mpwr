@@ -36,9 +36,7 @@ class ProfileController extends Controller
             'photo_url'   => ['nullable'],
         ])->validate();
 
-        user()
-            ->forceFill($data)
-            ->save();
+        user()->forceFill($data)->save();
 
         alert()
             ->withTitle(__('Your profile has been updated!'))

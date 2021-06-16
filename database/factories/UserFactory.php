@@ -29,7 +29,6 @@ class UserFactory extends Factory
             'department_manager_override' => 10,
             'region_manager_override'     => 10,
             'office_manager_override'     => 10,
-            'department_id'               => Department::factory()
         ];
     }
 }
