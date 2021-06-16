@@ -147,56 +147,44 @@
                             </button>
                         </div>
                         <div class="sm:p-6">
-                            <div class="flex mt-4 mb-7" x-show="topTab === 'training'">
-                                <button class="py-2 focus:outline-none rounded-l shadow-md w-96"
-                                    :class="tabVideoSelected ? activeTabColors : inactiveTabColors" @click="changeTab('video')">
+                            <div class="flex mt-4 mb-7">
+                                <button
+                                    class="py-2 focus:outline-none rounded-l shadow-md w-96"
+                                    :class="tabVideoSelected ? activeTabColors : inactiveTabColors"
+                                    @click="changeTab('video')"
+                                >
                                     Video
                                 </button>
-                                <button class="py-2 focus:outline-none rounded-r shadow-md w-96"
-                                    :class="tabFileSelected ? activeTabColors : inactiveTabColors" @click="changeTab('file')">
+                                <button
+                                    class="py-2 focus:outline-none rounded-r shadow-md w-96"
+                                    :class="tabFileSelected ? activeTabColors : inactiveTabColors"
+                                    @click="changeTab('file')"
+                                >
                                     File
                                 </button>
                             </div>
-                            <div class="sm:p-6">
-                                <div class="flex mt-4 mb-7">
-                                    <button
-                                        class="py-2 focus:outline-none rounded-l shadow-md w-96"
-                                        :class="tabVideoSelected ? activeTabColors : inactiveTabColors"
-                                        @click="changeTab('video')"
-                                    >
-                                        Video
-                                    </button>
-                                    <button
-                                        class="py-2 focus:outline-none rounded-r shadow-md w-96"
-                                        :class="tabFileSelected ? activeTabColors : inactiveTabColors"
-                                        @click="changeTab('file')"
-                                    >
-                                        File
-                                    </button>
-                                </div>
 
-                                <div x-show="tabVideoSelected && topTab === 'training'">
-                                    <x-form wire:submit.prevent="storeVideo">
-                                        <div class="flex flex-col space-y-5 my-4">
-                                            <x-input label="Title" wire:model.defer="video.title" name="video.title" />
-                                            <x-input label="Video Url" wire:model.defer="video.video_url" name="video.video_url" />
-                                            <x-text-area label="Description" wire:model.defer="video.description"
-                                                name="video.description"></x-text-area>
-                                        </div>
-                                        <div class="mt-6">
-                                            <span class="block w-full rounded-md shadow-sm">
-                                                <x-button class="w-full flex" type="submit" color="green">
-                                                    {{ __('Save') }}
-                                                </x-button>
-                                            </span>
-                                        </div>
-                                    </x-form>
-                                </div>
+                            <div x-show="tabVideoSelected && topTab === 'training'">
+                                <x-form wire:submit.prevent="storeVideo">
+                                    <div class="flex flex-col space-y-5 my-4">
+                                        <x-input label="Title" wire:model.defer="video.title" name="video.title" />
+                                        <x-input label="Video Url" wire:model.defer="video.video_url" name="video.video_url" />
+                                        <x-text-area label="Description" wire:model.defer="video.description"
+                                            name="video.description"></x-text-area>
+                                    </div>
+                                    <div class="mt-6">
+                                        <span class="block w-full rounded-md shadow-sm">
+                                            <x-button class="w-full flex" type="submit" color="green">
+                                                {{ __('Save') }}
+                                            </x-button>
+                                        </span>
+                                    </div>
+                                </x-form>
+                            </div>
 
-                                <div x-show="tabFileSelected || topTab === 'files'">
-                                    <x-drop-file :namedRoute="route('uploadSectionFile', ['section' => $actualSection->id])"
-                                        :meta="['training_type' => $selectedTab]" />
-                                </div>
+                            <div x-show="tabFileSelected || topTab === 'files'">
+                                <x-drop-file :namedRoute="route('uploadSectionFile', ['section' => $actualSection->id])"
+                                    :meta="['training_type' => $selectedTab]" />
                             </div>
                         </div>
                     </div>
