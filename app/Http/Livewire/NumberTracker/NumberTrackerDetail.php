@@ -47,6 +47,7 @@ class NumberTrackerDetail extends Component
     protected $listeners = [
         'sumTotalNumbers',
         'loadingSumNumberTracker',
+        'toggleDelete',
         'updateLeaderBoard'    => 'getUnselectedCollections',
         'onSelectedDepartment' => 'changeSelectedDepartment',
     ];
@@ -69,6 +70,11 @@ class NumberTrackerDetail extends Component
     public function sortBy()
     {
         return 'doors';
+    }
+
+    public function toggleDelete($value)
+    {
+        $this->deleteds = $value;
     }
 
     public function setPeriod($p)
@@ -177,9 +183,7 @@ class NumberTrackerDetail extends Component
 
     private function getTotalRawQuery(string $pill)
     {
-        $rawQuery = sprintf('SUM(%s) as total', $pill);
-
-        return $rawQuery;
+        return sprintf('SUM(%s) as total', $pill);
     }
 
     private function getDepartmentId()
@@ -204,30 +208,55 @@ class NumberTrackerDetail extends Component
 
     private function getTopTenTeamsByCpr(): Collection
     {
+        $relationName = $this->deleteds ? 'officesTrashedParents' : 'offices';
+
         return Department::query()
             ->with([
-                'offices' => function ($query) {
-                    $query->whereHas('users', fn ($query) => $query->where('role', 'Sales Rep'));
-                },
-                'offices.dailyNumbers' => function ($query) {
+                $relationName => function ($query) {
                     $query
+                        ->when($this->deleteds, function ($query) {
+                            $query
+                                ->withTrashed()
+                                ->whereHas('users', function ($query) {
+                                    $query->withTrashed()->where('role', 'Sales Rep');
+                                });
+                        })
+                        ->when(!$this->deleteds, function ($query) {
+                            $query->whereHas('users', fn ($query) => $query->where('role', 'Sales Rep'));
+                        });
+                },
+                "{$relationName}.dailyNumbers" => function ($query) {
+                    $query
+                        ->when($this->deleteds, fn($query) => $query->withTrashed())
                         ->inPeriod($this->period, new Carbon($this->dateSelected))
                         ->groupBy(['user_id', 'office_id'])
                         ->select(['user_id', 'office_id', DB::raw('SUM(closes) as closes_total')]);
                 },
             ])
-            ->withCount(['users as sales_rep_total' => fn($query) => $query->where('role', 'Sales Rep')])
+            ->when($this->deleteds, function ($query) {
+                $query->withTrashed()
+                    ->withCount([
+                        'users as sales_rep_total' => function ($query) {
+                            $query->withTrashed()->where('role', 'Sales Rep');
+                        },
+                    ]);
+            })
+            ->when(!$this->deleteds, function ($query) {
+                $query->withCount([
+                    'users as sales_rep_total' => fn($query) => $query->where('role', 'Sales Rep'),
+                ]);
+            })
             ->limit(10)
             ->get()
-            ->map(function (Department $department) {
-                if ($department->offices->isEmpty()) {
+            ->map(function (Department $department) use ($relationName) {
+                if ($department->{$relationName}->isEmpty()) {
                     return $this->buildDepartment($department);
                 }
 
                 $total = 0;
 
                 if ($department->sales_rep_total > 0) {
-                    $total = $this->getSumOfClosesTotal($department) / $department->sales_rep_total;
+                    $total = $this->getSumOfClosesTotal($department, $relationName) / $department->sales_rep_total;
                 }
 
                 return $this->buildDepartment($department, $total);
@@ -235,10 +264,10 @@ class NumberTrackerDetail extends Component
             ->sortByDesc('total');
     }
 
-    private function getSumOfClosesTotal(Department $department)
+    private function getSumOfClosesTotal(Department $department, string $relationName)
     {
         return $department
-            ->offices
+            ->{$relationName}
             ->filter(fn (Office $office) => $office->dailyNumbers->isNotEmpty())
             ->map
             ->dailyNumbers
