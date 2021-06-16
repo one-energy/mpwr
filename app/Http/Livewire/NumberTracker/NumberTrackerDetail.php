@@ -4,6 +4,7 @@ namespace App\Http\Livewire\NumberTracker;
 
 use App\Models\DailyNumber;
 use App\Models\Department;
+use App\Models\Office;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -12,7 +13,8 @@ use Illuminate\Support\Str;
 use Livewire\Component;
 
 /**
- * @property-read array $pills
+ * @property-read array $leaderboardPills
+ * @property-read array $teamLeaderboardPills
  */
 class NumberTrackerDetail extends Component
 {
@@ -30,11 +32,15 @@ class NumberTrackerDetail extends Component
 
     public Collection $topTenTrackers;
 
+    public Collection $topTenTeams;
+
     public $date;
 
     public $dateSelected;
 
-    public string $selectedPill = 'hours worked';
+    public string $selectedLeaderboardPill = 'hours worked';
+
+    public string $selectedTeamLeaderboardPill = 'c.p.r';
 
     public int $selectedDepartment;
 
@@ -55,6 +61,7 @@ class NumberTrackerDetail extends Component
     public function render()
     {
         $this->topTenTrackers = $this->getTopTenTrackers();
+        $this->topTenTeams    = $this->getToTenTeams();
 
         return view('livewire.number-tracker.number-tracker-detail');
     }
@@ -99,14 +106,19 @@ class NumberTrackerDetail extends Component
         $this->topTenTrackers     = $this->getTopTenTrackers();
     }
 
-    public function getPillsProperty()
+    public function getLeaderboardPillsProperty()
     {
         return ['hours worked', 'doors', 'hours knocked', 'sets', 'sats', 'set closes', 'closer sits', 'closes'];
     }
 
+    public function getTeamLeaderboardPillsProperty()
+    {
+        return ['c.p.r', 'accounts'];
+    }
+
     private function getTopTenTrackers()
     {
-        if (!in_array($this->selectedPill, $this->pills, true)) {
+        if (!in_array($this->selectedLeaderboardPill, $this->leaderboardPills, true)) {
             return collect();
         }
 
@@ -138,16 +150,29 @@ class NumberTrackerDetail extends Component
             ->orderBy('total', 'desc')
             ->groupBy('user_id')
             ->select(
-                DB::raw($this->getTotalRawQuery($this->getSluggedPill())),
+                DB::raw($this->getTotalRawQuery($this->getSluggedPill($this->selectedLeaderboardPill))),
                 'user_id'
             )
             ->limit(10)
             ->get();
     }
 
-    private function getSluggedPill()
+    private function getToTenTeams(): Collection
     {
-        return strtolower(Str::slug($this->selectedPill, '_'));
+        if (!in_array($this->selectedTeamLeaderboardPill, $this->teamLeaderboardPills, true)) {
+            return collect();
+        }
+
+        if ($this->getSluggedPill($this->selectedTeamLeaderboardPill) === 'cpr') {
+            return $this->getTopTenTeamsByCpr();
+        }
+
+        return $this->getToTenTeamsByAccount();
+    }
+
+    private function getSluggedPill(string $value)
+    {
+        return strtolower(Str::slug($value, '_'));
     }
 
     private function getTotalRawQuery(string $pill)
@@ -162,5 +187,73 @@ class NumberTrackerDetail extends Component
         return user()->hasAnyRole(['Admin', 'Owner'])
             ? Department::oldest('name')->first()->id
             : (user()->department_id ?? 0);
+    }
+
+    private function getToTenTeamsByAccount(): Collection
+    {
+        return Department::query()
+            ->when($this->deleteds, function ($query) {
+                $query->withTrashed()
+                    ->withCount(['users as total' => fn($query) => $query->withTrashed()]);
+            })
+            ->when(!$this->deleteds, fn($query) => $query->withCount('users as total'))
+            ->latest('total')
+            ->limit(10)
+            ->get();
+    }
+
+    private function getTopTenTeamsByCpr(): Collection
+    {
+        return Department::query()
+            ->with([
+                'offices' => function ($query) {
+                    $query->whereHas('users', fn ($query) => $query->where('role', 'Sales Rep'));
+                },
+                'offices.dailyNumbers' => function ($query) {
+                    $query
+                        ->inPeriod($this->period, new Carbon($this->dateSelected))
+                        ->groupBy(['user_id', 'office_id'])
+                        ->select(['user_id', 'office_id', DB::raw('SUM(closes) as closes_total')]);
+                },
+            ])
+            ->withCount(['users as sales_rep_total' => fn($query) => $query->where('role', 'Sales Rep')])
+            ->limit(10)
+            ->get()
+            ->map(function (Department $department) {
+                if ($department->offices->isEmpty()) {
+                    return $this->buildDepartment($department);
+                }
+
+                $total = 0;
+
+                if ($department->sales_rep_total > 0) {
+                    $total = $this->getSumOfClosesTotal($department) / $department->sales_rep_total;
+                }
+
+                return $this->buildDepartment($department, $total);
+            })
+            ->sortByDesc('total');
+    }
+
+    private function getSumOfClosesTotal(Department $department)
+    {
+        return $department
+            ->offices
+            ->filter(fn (Office $office) => $office->dailyNumbers->isNotEmpty())
+            ->map
+            ->dailyNumbers
+            ->flatten()
+            ->sum('closes_total');
+    }
+
+    private function buildDepartment(Department $department, int $total = 0)
+    {
+        return (new Department([
+            'name'  => $department->name,
+        ]))->forceFill([
+            'id'         => $department->id,
+            'deleted_at' => $department->deleted_at,
+            'total'      => $total,
+        ]);
     }
 }
