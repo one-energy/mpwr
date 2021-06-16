@@ -31,6 +31,11 @@ class Department extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $fillable = [
+        'department_manager_id',
+        'name',
+    ];
+
     public function departmentAdmin()
     {
         return $this->belongsTo(User::class, 'department_manager_id');
