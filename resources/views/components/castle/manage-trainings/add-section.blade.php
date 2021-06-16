@@ -147,7 +147,7 @@
                             </button>
                         </div>
                         <div class="sm:p-6">
-                            <div class="flex mt-4 mb-7">
+                            <div class="flex mt-4 mb-7" x-show="tabVideoSelected && topTab === 'training'">
                                 <button
                                     class="py-2 focus:outline-none rounded-l shadow-md w-96"
                                     :class="tabVideoSelected ? activeTabColors : inactiveTabColors"
