@@ -15,7 +15,7 @@ class DailyNumbersSeeder extends Seeder
     public function run()
     {
         User::query()
-            ->where('role', 'Setter')
+            ->whereIn('role', ['Setter', 'Sales Rep'])
             ->each(function (User $user) {
                 foreach ($this->weeklyPeriods() as $day) {
                     DailyNumber::factory()->create([
