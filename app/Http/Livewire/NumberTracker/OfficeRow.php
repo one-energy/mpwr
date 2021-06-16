@@ -70,13 +70,21 @@ class OfficeRow extends Component
     {
         if ($this->selected) {
             $this->selectedUsers = $this->selectedUsers->merge(
-                $this->office->dailyNumbers->unique('user_id')->pluck('user_id')
-            );
+                $this->office->dailyNumbers()
+                    ->inPeriod($this->period, new Carbon($this->selectedDate))
+                    ->when($this->withTrashed, function($query) {
+                        $query->withTrashed();
+                    })
+                    ->when(!$this->withTrashed, function($query) {
+                        $query->has('user');
+                    })
+                    ->select('user_id')->distinct()->pluck('user_id')
+                );
         } else {
             $this->selectedUsers = $this->selectedUsers->empty();
         }
-
-        $this->emitUp('toggleOffice', $this->office, $this->selected);
+        
+        $this->emitUp('toggleOffice', $this->office->id, $this->selected);
         $this->emit('officeSelected', $this->office->id, $this->selected);
         $this->isAnyUserSelected();
     }
@@ -129,7 +137,7 @@ class OfficeRow extends Component
         $this->selected = $this->selectedUsers->isNotEmpty();
 
         if (!$this->selected) {
-            $this->emitUp('toggleOffice', $this->office, $this->selected);
+            $this->emitUp('toggleOffice', $this->office->id, $this->selected);
             $this->emit('officeSelected', $this->office->id, $this->selected);
         }
 
@@ -180,6 +188,7 @@ class OfficeRow extends Component
     private function findOffice(int $officeId)
     {
         return Office::query()
+            ->when($this->withTrashed, fn($query) => $query->withTrashed())
             ->find($officeId)
             ->load([
                 'dailyNumbers' => function ($query) {
