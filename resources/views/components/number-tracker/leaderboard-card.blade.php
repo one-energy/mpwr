@@ -1,6 +1,6 @@
 @props(['trackers','pills'])
 
-<section class="p-4 border-2 border-gray-200 rounded-md">
+<section class="p-4 border-2 border-gray-200 rounded-md mb-5">
     <div class="flex text-center mb-5">
         <h3 class="text-lg text-gray-900 font-medium mr-3">Leaderboard</h3>
         <x-svg.spinner wire:loading
@@ -12,7 +12,7 @@
     <section
         x-data="{
             pills: {{ json_encode($pills) }},
-            selectedPill: @entangle('selectedPill'),
+            selectedPill: @entangle('selectedLeaderboardPill'),
             isTheSelectedPill(pill) {
                 return this.selectedPill === pill;
             },
