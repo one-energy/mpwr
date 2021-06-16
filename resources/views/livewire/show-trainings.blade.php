@@ -58,6 +58,7 @@
                             key="videos-list-{{ $contents->count() }}"
                             :currentSection="$actualSection"
                             :contents="$contents"
+                            :showActions="false"
                         />
                     </div>
 
@@ -65,7 +66,7 @@
                         <livewire:list-files
                             key="training-list-{{ $groupedFiles['training']->count() }}"
                             :files="$groupedFiles['training']"
-                            :showDeleteButton="true"
+                            :showDeleteButton="false"
                         />
                     </div>
                 </div>
@@ -76,7 +77,7 @@
                         <livewire:list-files
                             key="files-list-{{ $groupedFiles['files']->count() }}"
                             :files="$groupedFiles['files']"
-                            :showDeleteButton="true"
+                            :showDeleteButton="false"
                         />
                     </div>
                 </div>

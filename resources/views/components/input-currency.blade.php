@@ -1,4 +1,4 @@
-@props(['label', 'name', 'value', 'tooltip', 'observation', 'disabledToUser', 'maxSize' => 100000, 'disabled', 'atEnd' => 'USD', 'wire' => null])
+@props(['label', 'name', 'value', 'tooltip', 'observation', 'disabledToUser', 'maxSize' => 100000, 'disabled' => false, 'atEnd' => 'USD', 'wire' => null])
 
 @php
     $class = 'form-input block w-full pl-7 pr-12 sm:text-sm sm:leading-5';
@@ -8,7 +8,6 @@
     $tooltip        = $tooltip ?? null;
     $observation    = $observation ?? null;
     $disabledToUser = $disabledToUser ?? null;
-    $disabled       = $disabled ?? false;
     $wire = $wire && is_bool($wire) ? $name : $wire;
 @endphp
 

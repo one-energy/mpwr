@@ -33,7 +33,7 @@
 
                     <div class="col-span-2 md:col-span-3">
                         <x-input-calendar wire label="Date of Sale"
-                                          name="customer.date_of_sale" :value="$customer->date_of_sale"/>
+                                          name="customer.date_of_sale"/>
                     </div>
 
                     <div class="col-span-1 @if($customer->setter_id == user()->id) md:col-span-3 @else md:col-span-2 @endif">
@@ -114,6 +114,7 @@
                             options="setters"
                             name="customer.setter_id"
                             label="Setter"
+                            :showAlert="$setter->deleted_at != null"
                             noneOption
                             placeholder="{{$customer->setter_id ? $setter->first_name . ' ' . $setter->last_name  : 'Self Gen'}}"/>
                     </div>
@@ -136,7 +137,7 @@
 
                     <div class="col-span-2 md:col-span-3 @if($customer->setter_id == user()->id) hidden @endif" wire:key="salesRepFee">
                         <x-input-currency wire:model="customer.sales_rep_fee" label="Sales Rep Pay Rate"
-                                          name="customer.sales_rep_fee" readonly/>
+                                          name="customer.sales_rep_fee" :disabled="user()->notHaveRoles(['Region Manager'])"/>
                     </div>
 
                     <div class="col-span-2 md:col-span-1 @if($customer->setter_id == user()->id) hidden @endif"wire:key="margin">
