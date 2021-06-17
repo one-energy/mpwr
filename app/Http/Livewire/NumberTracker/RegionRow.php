@@ -202,7 +202,7 @@ class RegionRow extends Component
 
     private function getSelectedIdsCacheKey(string $key)
     {
-        return sprintf('user-%s-region-%s-ids', user()->id, $key);
+        return sprintf('user-%s-department-%s-region-%s-ids', user()->id, $this->region->department_id, $key);
     }
 
     private function getIdsFromCache(string $key): Collection
