@@ -73,6 +73,7 @@
                 :selected="$itsSelected"
                 :period="$period"
                 :selectedDate="$selectedDate"
+                :selectedUsers="$selectedUsers"
                 :withTrashed="$withTrashed"
                 key="office-{{$office->id}}"
             />
