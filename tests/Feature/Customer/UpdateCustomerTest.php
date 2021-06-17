@@ -6,6 +6,7 @@ use App\Http\Livewire\Customer\Edit;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\User;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Livewire\Livewire;
@@ -33,7 +34,6 @@ class UpdateCustomerTest extends TestCase
     /** @test */
     public function it_should_update_a_customer()
     {
-        $this->markTestSkipped('must be revisited.');
 
         $john       = User::factory()->create(['role' => 'Department Manager']);
         $department = Department::factory()->create();

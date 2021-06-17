@@ -104,6 +104,7 @@ class Edit extends Component
 
         $this->validate();
 
+        dd($this->customer);
         $this->customer->commission                  = $commission;
         $this->customer->sales_rep_recruiter_id      = $salesRep->recruiter_id;
         $this->customer->referral_override           = $salesRep->referral_override;
