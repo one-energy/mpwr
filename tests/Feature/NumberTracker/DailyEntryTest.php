@@ -9,14 +9,13 @@ use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
 class DailyEntryTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private User $dptManager;
 
@@ -105,8 +104,6 @@ class DailyEntryTest extends TestCase
     /** @test */
     public function it_should_show_sum_of_daily_entry()
     {
-        // $this->markTestSkipped('must be revisited.');
-
         Livewire::test(DailyEntry::class)
              ->set('officeSelected', $this->office->id)
              ->set('dateSelected', Carbon::now())
