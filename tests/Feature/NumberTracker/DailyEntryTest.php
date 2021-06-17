@@ -115,7 +115,6 @@ class DailyEntryTest extends TestCase
     /** @test */
     public function it_should_show_deleted_user_that_has_a_daily_entry()
     {
-        $this->markTestSkipped('must be revisited.');
 
         $user = User::factory()->create([
             'role'          => 'Sales Rep',
@@ -125,9 +124,10 @@ class DailyEntryTest extends TestCase
         ]);
 
         DailyNumber::factory()->create([
-            'user_id' => $user->id,
-            'date'    => Carbon::yesterday(),
-            'doors'   => 15,
+            'user_id'   => $user->id,
+            'office_id' => $this->office->id,
+            'date'      => Carbon::yesterday(),
+            'doors'     => 15,
         ]);
         Livewire::test(DailyEntry::class)
             ->set('officeSelected', $this->office->id)
