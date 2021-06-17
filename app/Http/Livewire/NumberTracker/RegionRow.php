@@ -40,21 +40,25 @@ class RegionRow extends Component
 
     public function mount()
     {
-        $this->region = null;
+        Cache::forget(sprintf('%s-region-%s-trashed-%s', user()->id, $this->regionId, 1));
+        Cache::forget(sprintf('%s-region-%s-trashed-%s', user()->id, $this->regionId, 0));
+
+        $this->region = $this->findRegion($this->regionId);
 
         $this->sortOffices($this->sortBy, $this->sortDirection);
     }
 
     public function render()
     {
-        $this->region = $this->findRegion($this->regionId);
-
-        return view('livewire.number-tracker.region-row');
+        return view('livewire.number-tracker.region-row')
+            ->with([
+                'selectedUsers' => $this->getIdsFromCache($this->getSelectedIdsCacheKey('users')),
+            ]);
     }
 
     public function hydrateRegion()
     {
-        $this->region->load($this->getEagerLoadingRelation());
+        $this->region = $this->findRegion($this->regionId);
     }
 
     public function sumOf($property)
@@ -77,7 +81,7 @@ class RegionRow extends Component
 
     public function anyOfficeSelected()
     {
-        $cacheIds  = $this->getIdsFromCache($this->getCacheKey('offices'));
+        $cacheIds  = $this->getIdsFromCache($this->getSelectedIdsCacheKey('offices'));
         $officeIds = $this->offices->map->id;
 
         $this->itsSelected = $cacheIds->contains(
@@ -87,7 +91,7 @@ class RegionRow extends Component
 
     public function isAnyUserSelected()
     {
-        $cacheIds = $this->getIdsFromCache($this->getCacheKey('users'));
+        $cacheIds = $this->getIdsFromCache($this->getSelectedIdsCacheKey('users'));
         $userIds  = collect($this->offices)
             ->lazy()
             ->map(fn(Office $office) => $office->dailyNumbers->unique('user_id')->pluck('user_id'))
@@ -102,11 +106,11 @@ class RegionRow extends Component
     {
         $this->sortBy        = $sortBy;
         $this->sortDirection = $sortDirection;
-        $this->region        = $this->findRegion($this->regionId);
+        $region              = $this->region ?? $this->findRegion($this->regionId);
 
         $this->offices = $sortDirection === 'asc'
-            ? $this->sortOfficesAsc($this->region->offices, $this->sortBy)
-            : $this->sortOfficesDesc($this->region->offices, $this->sortBy);
+            ? $this->sortOfficesAsc($region->offices, $this->sortBy)
+            : $this->sortOfficesDesc($region->offices, $this->sortBy);
     }
 
     public function setDateOrPeriod($date, $period)
@@ -180,15 +184,25 @@ class RegionRow extends Component
 
     private function findRegion($regionId)
     {
-        return Region::query()
-            ->when($this->withTrashed, fn($query) => $query->withTrashed())
-            ->find($regionId)
-            ->load($this->getEagerLoadingRelation());
+        $region = Cache::rememberForever($this->getRegionCacheKey(), function () use ($regionId) {
+            return Region::query()
+                ->when($this->withTrashed, fn($query) => $query->withTrashed())
+                ->find($regionId);
+        });
+
+        return $region->load($this->getEagerLoadingRelation());
     }
 
-    private function getCacheKey(string $key)
+    private function getRegionCacheKey()
     {
-        return sprintf('%s-region-%s-ids', user()->id, $key);
+        $trashed = $this->withTrashed ? 1 : 0;
+
+        return sprintf('user-%s-region-%s-trashed-%s', user()->id, $this->regionId, $trashed);
+    }
+
+    private function getSelectedIdsCacheKey(string $key)
+    {
+        return sprintf('user-%s-region-%s-ids', user()->id, $key);
     }
 
     private function getIdsFromCache(string $key): Collection
@@ -204,7 +218,7 @@ class RegionRow extends Component
 
     private function setRegionUsersIds()
     {
-        $cacheKey = $this->getCacheKey('users');
+        $cacheKey = $this->getSelectedIdsCacheKey('users');
         $ids      = $this->getIdsFromCache($cacheKey);
         $ids      = $ids->merge($this->getUniqueUsersIds());
 
@@ -213,7 +227,7 @@ class RegionRow extends Component
 
     private function setRegionOfficesIds()
     {
-        $cacheKey = $this->getCacheKey('offices');
+        $cacheKey = $this->getSelectedIdsCacheKey('offices');
         $ids      = $this->getIdsFromCache($cacheKey);
         $ids      = $ids->merge($this->getOfficesIds());
 
@@ -222,7 +236,7 @@ class RegionRow extends Component
 
     private function detachRegionUsersIds()
     {
-        $cacheKey = $this->getCacheKey('users');
+        $cacheKey = $this->getSelectedIdsCacheKey('users');
         $ids      = $this->getIdsFromCache($cacheKey);
         $ids      = $ids->filter(fn($id) => !in_array($id, $this->getUniqueUsersIds()->toArray()));
 
@@ -231,7 +245,7 @@ class RegionRow extends Component
 
     private function detachRegionOfficesIds()
     {
-        $cacheKey = $this->getCacheKey('offices');
+        $cacheKey = $this->getSelectedIdsCacheKey('offices');
         $ids      = $this->getIdsFromCache($cacheKey);
         $ids      = $ids->filter(
             fn($id) => !in_array($id, collect($this->region->offices->map->id)->toArray())
@@ -242,7 +256,7 @@ class RegionRow extends Component
 
     private function attachIn(string $type, $id)
     {
-        $cacheKey = $this->getCacheKey($type);
+        $cacheKey = $this->getSelectedIdsCacheKey($type);
         $ids      = $this->getIdsFromCache($cacheKey);
         $ids      = $ids->merge($id);
 
@@ -252,18 +266,19 @@ class RegionRow extends Component
     private function detachFrom(string $type, $idsToRemove)
     {
         $idsList  = collect($idsToRemove)->flatten()->toArray();
-        $cacheKey = $this->getCacheKey($type);
-        $ids      = $this->getIdsFromCache($cacheKey);
-        $ids      = $ids->filter(fn($id) => !in_array($id, $idsList));
+        $cacheKey = $this->getSelectedIdsCacheKey($type);
+        $ids      = array_diff($this->getIdsFromCache($cacheKey)->toArray(), $idsList);
 
-        Cache::put($cacheKey, json_encode($ids->toArray()));
+        Cache::put($cacheKey, json_encode($ids));
     }
 
     private function getUniqueUsersIds()
     {
-        return $this->region->offices->map(function ($office) {
-            return $office->dailyNumbers->unique('user_id')->map->user_id->filter();
-        })->flatten();
+        return $this->region
+            ->offices
+            ->map(fn($office) => $office->dailyNumbers->unique('user_id')->map->user_id)
+            ->flatten()
+            ->filter();
     }
 
     private function getOfficesIds()
@@ -293,7 +308,7 @@ class RegionRow extends Component
                                 ->inPeriod($this->period, new Carbon($this->selectedDate));
                         },
                     ]);
-            }
+            },
         ];
     }
 }
