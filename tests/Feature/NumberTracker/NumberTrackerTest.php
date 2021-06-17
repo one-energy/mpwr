@@ -109,6 +109,8 @@ class NumberTrackerTest extends TestCase
             ->assertSet('period', 'm');
     }
 
+    //this test needs to be replaced on inside a user row, dont works here.
+
     /** @test */
     public function it_should_show_icon_when_user_is_deleted()
     {
@@ -123,6 +125,7 @@ class NumberTrackerTest extends TestCase
 
         DailyNumber::factory()->create([
             'user_id' => $user->id,
+            'office_id' => $this->office->id,
             'date'    => Carbon::yesterday(),
             'doors'   => 15,
         ]);
