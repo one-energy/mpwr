@@ -45,6 +45,8 @@ class NumberTrackerDetailAccordionTable extends Component
     public function updatedSelectedDepartment()
     {
         $this->emitUp('onSelectedDepartment', $this->selectedDepartment);
+        $this->clearRegionCache();
+        $this->updateIds();
     }
 
     public function sortBy()
@@ -63,7 +65,7 @@ class NumberTrackerDetailAccordionTable extends Component
     public function getRegionsProperty()
     {
         $regions = Region::query()
-            ->when($this->deleteds, function($query) {
+            ->when($this->deleteds, function ($query) {
                 $query->withTrashed();
             })
             ->where('department_id', $this->selectedDepartment)
@@ -126,11 +128,11 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function updateIds()
     {
-        $officeKey  =  sprintf('user-%s-region-offices-ids', user()->id);
-        $userKey    =  sprintf('user-%s-region-users-ids', user()->id);
+        $officeKey = sprintf('user-%s-department-%s-region-offices-ids', user()->id, $this->selectedDepartment);
+        $userKey   = sprintf('user-%s-department-%s-region-users-ids', user()->id, $this->selectedDepartment);
 
-        $offices = collect(json_decode(Cache::get($officeKey)));
-        $users   = collect(json_decode(Cache::get($userKey)));
+        $offices = collect(json_decode(Cache::get($officeKey), true));
+        $users   = collect(json_decode(Cache::get($userKey), true));
 
         $this->emitUpdateNumbersEvent($offices, $users);
     }
@@ -144,10 +146,10 @@ class NumberTrackerDetailAccordionTable extends Component
         ]);
     }
 
-    public function cleanRegionCache()
+    public function clearRegionCache()
     {
-        $officeKey  =  sprintf('user-%s-region-offices-ids', user()->id);
-        $userKey    =  sprintf('user-%s-region-users-ids', user()->id);
+        $officeKey = sprintf('user-%s-department-%s-region-offices-ids', user()->id, $this->selectedDepartment);
+        $userKey   = sprintf('user-%s-department-%s-region-users-ids', user()->id, $this->selectedDepartment);
 
         Cache::forget($officeKey);
         Cache::forget($userKey);
