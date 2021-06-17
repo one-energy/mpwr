@@ -5,6 +5,7 @@ namespace App\Http\Livewire\NumberTracker;
 use App\Models\Office;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 
 class OfficeRow extends Component
@@ -42,19 +43,28 @@ class OfficeRow extends Component
 
     public function mount()
     {
-        $this->office = null;
+        Cache::forget(sprintf('user-%s-office-%s-trashed-%s', user()->id, $this->officeId, 1));
+        Cache::forget(sprintf('user-%s-office-%s-trashed-%s', user()->id, $this->officeId, 0));
+
+        $this->office        = $this->findOffice($this->officeId);
+        $this->selectedTotal = $this->selected;
+
+        $usersIds            = $this->getUniqueUsersIds();
+        $this->selectedUsers = $this->selectedUsers->filter(
+            fn($userId) => in_array($userId, $usersIds->toArray(), true)
+        );
 
         $this->sortDailyNumbers($this->sortBy, $this->sortDirection);
-
-        $this->selectedTotal = $this->selected;
-        $this->selectedUsers = collect();
     }
 
     public function render()
     {
-        $this->office = $this->findOffice($this->officeId);
-
         return view('livewire.number-tracker.office-row');
+    }
+
+    public function hydrateOffice()
+    {
+        $this->office = $this->findOffice($this->officeId);
     }
 
     public function collapseOffice()
@@ -69,21 +79,11 @@ class OfficeRow extends Component
     public function selectOffice()
     {
         if ($this->selected) {
-            $this->selectedUsers = $this->selectedUsers->merge(
-                $this->office->dailyNumbers()
-                    ->inPeriod($this->period, new Carbon($this->selectedDate))
-                    ->when($this->withTrashed, function($query) {
-                        $query->withTrashed();
-                    })
-                    ->when(!$this->withTrashed, function($query) {
-                        $query->has('user');
-                    })
-                    ->select('user_id')->distinct()->pluck('user_id')
-                );
+            $this->selectedUsers = $this->selectedUsers->merge($this->getUniqueUsersIds());
         } else {
-            $this->selectedUsers = $this->selectedUsers->empty();
+            $this->selectedUsers = collect();
         }
-        
+
         $this->emitUp('toggleOffice', $this->office->id, $this->selected);
         $this->emit('officeSelected', $this->office->id, $this->selected);
         $this->isAnyUserSelected();
@@ -95,10 +95,14 @@ class OfficeRow extends Component
         $this->selectOffice();
     }
 
-    public function regionSelected(int $regionId, bool $selected)
+    public function regionSelected(int $regionId, bool $selected, Collection $selectedUsersIds)
     {
         if ($this->office->region_id === $regionId) {
-            $this->selected = $selected;
+            $this->selected      = $selected;
+            $usersIds            = $this->getUniqueUsersIds();
+            $this->selectedUsers = $selectedUsersIds->filter(
+                fn($userId) => in_array($userId, $usersIds->toArray(), true)
+            );
             $this->emit('officeSelected', $this->office->id, $selected);
         }
     }
@@ -115,11 +119,6 @@ class OfficeRow extends Component
         return $value > 0 ? $value : html_entity_decode('&#8212;');
     }
 
-    public function getUsersDailyNumbersProperty()
-    {
-        return $this->office->dailyNumbers->groupBy('user_id');
-    }
-
     public function toggleUser(int $userId, bool $isSelected)
     {
         if ($isSelected) {
@@ -129,6 +128,7 @@ class OfficeRow extends Component
                 return $selectedUser !== $userId;
             });
         }
+
         $this->isAnyUserSelected();
     }
 
@@ -163,12 +163,19 @@ class OfficeRow extends Component
 
     public function getDailyNumbers()
     {
-        $this->office = $this->findOffice($this->officeId);
-        $groupedUsers = $this->office->dailyNumbers->groupBy('user_id')->collect();
+        $office       = $this->office ?? $this->findOffice($this->officeId);
+        $groupedUsers = $office->dailyNumbers->groupBy('user_id')->collect();
 
         $this->dailyNumbers = $this->sortDirection === 'asc'
             ? $this->sortUsersAsc($groupedUsers, $this->sortBy)
             : $this->sortUsersDesc($groupedUsers, $this->sortBy);
+    }
+
+    private function getCacheKey()
+    {
+        $trashed = $this->withTrashed ? 1 : 0;
+
+        return sprintf('user-%s-office-%s-trashed-%s', user()->id, $this->officeId, $trashed);
     }
 
     private function sortUsersAsc(Collection $dailyNumbers, string $sortBy)
@@ -187,16 +194,29 @@ class OfficeRow extends Component
 
     private function findOffice(int $officeId)
     {
-        return Office::query()
-            ->when($this->withTrashed, fn($query) => $query->withTrashed())
-            ->find($officeId)
-            ->load([
-                'dailyNumbers' => function ($query) {
-                    $query
-                        ->when($this->withTrashed, fn($query) => $query->withTrashed())
-                        ->when(!$this->withTrashed, fn($query) => $query->has('user'))
-                        ->inPeriod($this->period, new Carbon($this->selectedDate));
-                },
-            ]);
+        $office = Cache::rememberForever($this->getCacheKey(), function () use ($officeId) {
+            return Office::query()
+                ->when($this->withTrashed, fn($query) => $query->withTrashed())
+                ->find($officeId);
+        });
+
+        return $office->load($this->getEagerLoadingRelation());
+    }
+
+    private function getEagerLoadingRelation(): array
+    {
+        return [
+            'dailyNumbers' => function ($query) {
+                $query
+                    ->when($this->withTrashed, fn($query) => $query->withTrashed())
+                    ->when(!$this->withTrashed, fn($query) => $query->has('user'))
+                    ->inPeriod($this->period, new Carbon($this->selectedDate));
+            },
+        ];
+    }
+
+    private function getUniqueUsersIds(): Collection
+    {
+        return $this->office->dailyNumbers->unique('user_id')->pluck('user_id');
     }
 }

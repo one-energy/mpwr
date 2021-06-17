@@ -1,4 +1,4 @@
-<div x-data="{}" x-init="window.addEventListener('beforeunload', (event) => { $wire.cleanRegionCache() });">
+<div x-data="{}" x-init="window.addEventListener('beforeunload', (event) => { $wire.clearRegionCache() });">
     @push('styles')
         <style>
             .parent-scope:hover .scope-child {
