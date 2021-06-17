@@ -126,8 +126,8 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function updateIds()
     {
-        $officeKey  =  sprintf('%s-region-offices-ids', user()->id);
-        $userKey    =  sprintf('%s-region-users-ids', user()->id);
+        $officeKey  =  sprintf('user-%s-region-offices-ids', user()->id);
+        $userKey    =  sprintf('user-%s-region-users-ids', user()->id);
 
         $offices = collect(json_decode(Cache::get($officeKey)));
         $users   = collect(json_decode(Cache::get($userKey)));
@@ -146,8 +146,8 @@ class NumberTrackerDetailAccordionTable extends Component
 
     public function cleanRegionCache()
     {
-        $officeKey  =  sprintf('%s-region-offices-ids', user()->id);
-        $userKey    =  sprintf('%s-region-users-ids', user()->id);
+        $officeKey  =  sprintf('user-%s-region-offices-ids', user()->id);
+        $userKey    =  sprintf('user-%s-region-users-ids', user()->id);
 
         Cache::forget($officeKey);
         Cache::forget($userKey);
