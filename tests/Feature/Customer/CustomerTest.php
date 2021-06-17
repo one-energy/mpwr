@@ -21,10 +21,19 @@ class CustomerTest extends TestCase
     use RefreshDatabase;
 
     public User $user;
+    public User $regionMng;
+    public User $officeMng;
+    public Financing $financing;
+    public financer $financer;
 
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->financing = Financing::factory()->create();
+        $this->financer  = Financer::factory()->create();
+        $this->regionMng = User::factory()->create(['role' => 'Region Manager']);
+        $this->officeMng = User::factory()->create(['role' => 'Office Manager']);
 
         $this->user = User::factory()->create(['role' => 'Admin']);
         Department::factory()->count(6)->create();
@@ -150,19 +159,13 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_save_user_overrides_on_customer()
     {
-        $this->markTestSkipped('must be revisited.');
-
-        $financing = Financing::factory()->create();
-        $financer  = Financer::factory()->create();
         $user      = User::factory()->create(['role' => 'Department Manager']);
-        $regionMng = User::factory()->create(['role' => 'Region Manager']);
-        $officeMng = User::factory()->create(['role' => 'Office Manager']);
         $userOne   = User::factory()->create(['role' => 'Setter']);
         $userTwo   = User::factory()->create([
             'recruiter_id'                => $userOne->id,
             'referral_override'           => 10,
-            'office_manager_id'           => $officeMng->id,
-            'region_manager_id'           => $regionMng->id,
+            'office_manager_id'           => $this->officeMng->id,
+            'region_manager_id'           => $this->regionMng->id,
             'department_manager_id'       => $user->id,
             'office_manager_override'     => 10,
             'region_manager_override'     => 20,
@@ -181,8 +184,8 @@ class CustomerTest extends TestCase
             ->set('customer.adders', 10)
             ->set('customer.epc', 10)
             ->set('customer.date_of_sale', Carbon::now())
-            ->set('customer.financing_id', $financing->id)
-            ->set('customer.financer_id', $financer->id)
+            ->set('customer.financing_id', $this->financing->id)
+            ->set('customer.financer_id', $this->financer->id)
             ->set('customer.bill', 'Bill')
             ->set('customer.system_size', 4)
             ->set('customer.setter_id', $userOne->id)
@@ -196,8 +199,8 @@ class CustomerTest extends TestCase
         $this->assertDatabaseHas('customers', [
             'sales_rep_recruiter_id'      => $userOne->id,
             'referral_override'           => 10,
-            'office_manager_id'           => $officeMng->id,
-            'region_manager_id'           => $regionMng->id,
+            'office_manager_id'           => $this->officeMng->id,
+            'region_manager_id'           => $this->regionMng->id,
             'department_manager_id'       => $user->id,
             'office_manager_override'     => 10,
             'region_manager_override'     => 20,
