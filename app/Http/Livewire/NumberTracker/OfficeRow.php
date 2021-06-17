@@ -95,11 +95,14 @@ class OfficeRow extends Component
         $this->selectOffice();
     }
 
-    public function regionSelected(int $regionId, bool $selected, Collection $userIds)
+    public function regionSelected(int $regionId, bool $selected, Collection $selectedUsersIds)
     {
         if ($this->office->region_id === $regionId) {
             $this->selected      = $selected;
-            $this->selectedUsers = $userIds;
+            $usersIds            = $this->getUniqueUsersIds();
+            $this->selectedUsers = $selectedUsersIds->filter(
+                fn($userId) => in_array($userId, $usersIds->toArray(), true)
+            );
             $this->emit('officeSelected', $this->office->id, $selected);
         }
     }
