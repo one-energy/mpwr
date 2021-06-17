@@ -9,13 +9,14 @@ use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
 class DailyEntryTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     private User $dptManager;
 
@@ -79,14 +80,16 @@ class DailyEntryTest extends TestCase
         $this->actingAs($this->dptManager);
 
         $this->officeManagerEntry = DailyNumber::factory()->create([
-            'user_id' => $this->officeManager->id,
-            'date'    => Carbon::now(),
-            'doors'   => 15,
+            'user_id'   => $this->officeManager->id,
+            'office_id' => $this->office->id,
+            'date'      => Carbon::now(),
+            'doors'     => 15,
         ]);
         $this->johnEntry = DailyNumber::factory()->create([
-            'user_id' => $this->john->id,
-            'date'    => Carbon::now(),
-            'doors'   => 15,
+            'user_id'   => $this->john->id,
+            'office_id' => $this->office->id,
+            'date'      => Carbon::now(),
+            'doors'     => 15,
         ]);
     }
 
@@ -102,7 +105,7 @@ class DailyEntryTest extends TestCase
     /** @test */
     public function it_should_show_sum_of_daily_entry()
     {
-        $this->markTestSkipped('must be revisited.');
+        // $this->markTestSkipped('must be revisited.');
 
         Livewire::test(DailyEntry::class)
              ->set('officeSelected', $this->office->id)
