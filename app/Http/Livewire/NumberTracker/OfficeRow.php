@@ -57,6 +57,11 @@ class OfficeRow extends Component
         return view('livewire.number-tracker.office-row');
     }
 
+    public function hydrateOffice()
+    {
+        $this->office->load($this->getEagerLoadingRelation());
+    }
+
     public function collapseOffice()
     {
         $this->itsOpen = !$this->itsOpen;
@@ -70,20 +75,12 @@ class OfficeRow extends Component
     {
         if ($this->selected) {
             $this->selectedUsers = $this->selectedUsers->merge(
-                $this->office->dailyNumbers()
-                    ->inPeriod($this->period, new Carbon($this->selectedDate))
-                    ->when($this->withTrashed, function($query) {
-                        $query->withTrashed();
-                    })
-                    ->when(!$this->withTrashed, function($query) {
-                        $query->has('user');
-                    })
-                    ->select('user_id')->distinct()->pluck('user_id')
-                );
+                $this->office->dailyNumbers->unique('user_id')->pluck('user_id')
+            );
         } else {
-            $this->selectedUsers = $this->selectedUsers->empty();
+            $this->selectedUsers = collect();
         }
-        
+
         $this->emitUp('toggleOffice', $this->office->id, $this->selected);
         $this->emit('officeSelected', $this->office->id, $this->selected);
         $this->isAnyUserSelected();
@@ -115,11 +112,6 @@ class OfficeRow extends Component
         return $value > 0 ? $value : html_entity_decode('&#8212;');
     }
 
-    public function getUsersDailyNumbersProperty()
-    {
-        return $this->office->dailyNumbers->groupBy('user_id');
-    }
-
     public function toggleUser(int $userId, bool $isSelected)
     {
         if ($isSelected) {
@@ -129,6 +121,7 @@ class OfficeRow extends Component
                 return $selectedUser !== $userId;
             });
         }
+
         $this->isAnyUserSelected();
     }
 
@@ -190,13 +183,18 @@ class OfficeRow extends Component
         return Office::query()
             ->when($this->withTrashed, fn($query) => $query->withTrashed())
             ->find($officeId)
-            ->load([
-                'dailyNumbers' => function ($query) {
-                    $query
-                        ->when($this->withTrashed, fn($query) => $query->withTrashed())
-                        ->when(!$this->withTrashed, fn($query) => $query->has('user'))
-                        ->inPeriod($this->period, new Carbon($this->selectedDate));
-                },
-            ]);
+            ->load($this->getEagerLoadingRelation());
+    }
+
+    private function getEagerLoadingRelation(): array
+    {
+        return [
+            'dailyNumbers' => function ($query) {
+                $query
+                    ->when($this->withTrashed, fn($query) => $query->withTrashed())
+                    ->when(!$this->withTrashed, fn($query) => $query->has('user'))
+                    ->inPeriod($this->period, new Carbon($this->selectedDate));
+            },
+        ];
     }
 }

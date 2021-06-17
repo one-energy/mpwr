@@ -52,6 +52,11 @@ class RegionRow extends Component
         return view('livewire.number-tracker.region-row');
     }
 
+    public function hydrateRegion()
+    {
+        $this->region->load($this->getEagerLoadingRelation());
+    }
+
     public function sumOf($property)
     {
         $sum = $this->region->offices->sum(function ($office) use ($property) {
@@ -75,7 +80,9 @@ class RegionRow extends Component
         $cacheIds  = $this->getIdsFromCache($this->getCacheKey('offices'));
         $officeIds = $this->offices->map->id;
 
-        $this->itsSelected = $cacheIds->contains(fn($officeId) => in_array($officeId, $officeIds->toArray()));
+        $this->itsSelected = $cacheIds->contains(
+            fn($officeId) => in_array($officeId, $officeIds->toArray())
+        );
     }
 
     public function isAnyUserSelected()
@@ -86,7 +93,9 @@ class RegionRow extends Component
             ->map(fn(Office $office) => $office->dailyNumbers->unique('user_id')->pluck('user_id'))
             ->flatten();
 
-        $this->itsSelected = $cacheIds->contains(fn($userId) => in_array($userId, $userIds->toArray()));
+        $this->itsSelected = $cacheIds->contains(
+            fn($userId) => in_array($userId, $userIds->toArray())
+        );
     }
 
     public function sortOffices($sortBy, $sortDirection)
@@ -130,22 +139,14 @@ class RegionRow extends Component
             $this->detachRegionUsersIds();
             $this->detachRegionOfficesIds();
         }
+
         $this->emit('regionSelected', $this->region->id, $this->itsSelected);
         $this->updateIds();
     }
 
     public function toggleOffice(int $officeId, bool $insert)
     {
-        $office = Office::query()
-            ->when($this->withTrashed, function ($query) {
-                $query->withTrashed();
-            })
-            ->find($officeId)
-            ->load(['dailyNumbers' => function ($query) {
-                $query->inPeriod($this->period, new Carbon($this->selectedDate))
-                    ->when($this->withTrashed, fn ($query) => $query->withTrashed())
-                    ->when(!$this->withTrashed, fn ($query) => $query->has('user'));
-            }]);
+        $office = $this->region->offices->firstWhere('id', $officeId);
 
         if ($insert) {
             $this->attachIn('offices', $office->id);
@@ -166,6 +167,7 @@ class RegionRow extends Component
         } else {
             $this->detachFrom('users', $userId);
         }
+
         $this->updateIds();
 
         $this->isAnyUserSelected();
@@ -179,32 +181,9 @@ class RegionRow extends Component
     private function findRegion($regionId)
     {
         return Region::query()
-            ->when($this->withTrashed, function ($query) {
-                $query->withTrashed();
-            })
+            ->when($this->withTrashed, fn($query) => $query->withTrashed())
             ->find($regionId)
-            ->load([
-                'offices' => function ($query) {
-                    $query->when($this->withTrashed, function ($query) {
-                        $query->withTrashed()
-                            ->where(function ($query) {
-                                $query->whereHas('dailyNumbers', function ($query) {
-                                    $query->inPeriod($this->period, new Carbon($this->selectedDate))->withTrashed();
-                                })
-                                    ->whereNotNull('deleted_at');
-                            })
-                            ->orWhereNull('deleted_at');
-                    })
-                        ->with([
-                            'dailyNumbers' => function ($query) {
-                                $query
-                                    ->when($this->withTrashed, fn ($query) => $query->withTrashed())
-                                    ->when(!$this->withTrashed, fn ($query) => $query->has('user'))
-                                    ->inPeriod($this->period, new Carbon($this->selectedDate));
-                            },
-                        ]);
-                }
-            ]);
+            ->load($this->getEagerLoadingRelation());
     }
 
     private function getCacheKey(string $key)
@@ -245,7 +224,7 @@ class RegionRow extends Component
     {
         $cacheKey = $this->getCacheKey('users');
         $ids      = $this->getIdsFromCache($cacheKey);
-        $ids      = $ids->filter(fn ($id) => !in_array($id, $this->getUniqueUsersIds()->toArray()));
+        $ids      = $ids->filter(fn($id) => !in_array($id, $this->getUniqueUsersIds()->toArray()));
 
         Cache::put($cacheKey, json_encode($ids), 60);
     }
@@ -255,7 +234,7 @@ class RegionRow extends Component
         $cacheKey = $this->getCacheKey('offices');
         $ids      = $this->getIdsFromCache($cacheKey);
         $ids      = $ids->filter(
-            fn ($id) => !in_array($id, collect($this->region->offices->map->id)->toArray())
+            fn($id) => !in_array($id, collect($this->region->offices->map->id)->toArray())
         );
 
         Cache::put($cacheKey, json_encode($ids), 60);
@@ -282,31 +261,39 @@ class RegionRow extends Component
 
     private function getUniqueUsersIds()
     {
-        return $this->region->offices()
-            ->when($this->withTrashed, fn ($query) => $query->withTrashed())
-            ->when(!$this->withTrashed, fn ($query) => $query->has('dailynumbers.user'))
-            ->get()->map(function ($office) {
-                return $office->dailyNumbers()
-                    ->inPeriod($this->period, new Carbon($this->selectedDate))
-                    ->when($this->withTrashed, function ($query) {
-                        $query->withTrashed();
-                    })
-                    ->when(!$this->withTrashed, function ($query) {
-                        $query->has('user');
-                    })
-                    ->select('user_id')
-                    ->get()
-                    ->map(function ($dailyNumber) {
-                        return $dailyNumber->user_id;
-                    })->filter();
-            })->flatten();
+        return $this->region->offices->map(function ($office) {
+            return $office->dailyNumbers->unique('user_id')->map->user_id->filter();
+        })->flatten();
     }
 
     private function getOfficesIds()
     {
-        return $this->region->offices()
-            ->when($this->withTrashed, fn ($query) => $query->withTrashed())
-            ->get()
-            ->map->id;
+        return $this->region->offices->map->id;
+    }
+
+    private function getEagerLoadingRelation(): array
+    {
+        return [
+            'offices' => function ($query) {
+                $query->when($this->withTrashed, function ($query) {
+                    $query->withTrashed()
+                        ->where(function ($query) {
+                            $query->whereHas('dailyNumbers', function ($query) {
+                                $query->inPeriod($this->period, new Carbon($this->selectedDate))->withTrashed();
+                            })
+                                ->whereNotNull('deleted_at');
+                        })
+                        ->orWhereNull('deleted_at');
+                })
+                    ->with([
+                        'dailyNumbers' => function ($query) {
+                            $query
+                                ->when($this->withTrashed, fn($query) => $query->withTrashed())
+                                ->when(!$this->withTrashed, fn($query) => $query->has('user'))
+                                ->inPeriod($this->period, new Carbon($this->selectedDate));
+                        },
+                    ]);
+            }
+        ];
     }
 }
