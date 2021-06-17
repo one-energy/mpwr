@@ -6,7 +6,6 @@ use App\Http\Livewire\Customer\Edit;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Livewire\Livewire;
@@ -19,7 +18,7 @@ class UpdateCustomerTest extends TestCase
     /** @test */
     public function it_should_show_the_edit_form()
     {
-        $john       = User::factory()->create(['role' => 'Department Manager']);
+        $john       = User::factory()->create(['role' => 'Admin']);
         $department = Department::factory()->create();
         $customer   = Customer::factory()->create();
 
@@ -37,7 +36,10 @@ class UpdateCustomerTest extends TestCase
 
         $john       = User::factory()->create(['role' => 'Department Manager']);
         $department = Department::factory()->create();
-        $customer   = Customer::factory()->create(['adders' => 30.5]);
+        $customer   = Customer::factory()->create([
+            'sales_rep_id' => $john->id,
+            'adders' => 30.5
+        ]);
 
         $john->update(['department_id' => $department->id]);
 
