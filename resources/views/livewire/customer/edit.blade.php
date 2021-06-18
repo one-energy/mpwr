@@ -319,6 +319,7 @@
             </div>
         </div>
     </div>
+    <x-search-select/>
     @if (session('message'))
         <x-alert class="mb-4">
             {{ session('message') }}
