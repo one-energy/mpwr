@@ -231,7 +231,7 @@
                             <x-input-phone label="Phone Number" name="user.phone_number" wire:model="user.phone_number" disabled="{{user()->id == $user->id}}"/>
                         </div>
 
-                        @if(user()->role != "Admin" && user()->role != "Owner")
+                        @if(user()->notHaveRoles(['Admin', 'Owner']))
                             <div class="md:col-span-3 col-span-2 hidden">
                                 <x-select wire:model="user.department_id" label="Department" name="user.department_id" disabled="{{user()->id == $user->id}}">
                                     @foreach($departments as $department)
@@ -251,7 +251,7 @@
 
                         <div class="md:col-span-3 col-span-2">
                             <x-select wire:model="user.office_id" label="Office" name="user.office_id" disabled="{{user()->id == $user->id}}">
-                                @if($user->role != "Office Manager" && $user->role != "Sales Rep" && $user->role != "Setter")
+                                @if($user->notHaveRoles(['Office Manager', 'Sales Rep', 'Setter']))
                                     <option value="">
                                         None
                                     </option>
