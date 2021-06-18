@@ -126,20 +126,6 @@ class CustomerTest extends TestCase
     }
 
     /** @test */
-    public function it_should_calculate_comission()
-    {
-        $customer                = new Customer();
-        $customer->system_size   = 4.5;
-        $customer->adders        = 300;
-        $customer->epc           = 4.7;
-        $customer->setter_fee    = 0.2;
-        $customer->sales_rep_fee = 3.1;
-        $customer->calcComission();
-
-        $this->assertEquals($customer->sales_rep_comission, 13950.00);
-    }
-
-    /** @test */
     public function it_should_show_sales_rep_and_setter_fees()
     {
         $saleRepRate = Rates::factory()->create([
@@ -211,18 +197,5 @@ class CustomerTest extends TestCase
             'payee_two'                   => 'payee two',
             'note_two'                    => 'note two',
         ]);
-    }
-
-    /** @test */
-    public function it_should_calculate_margin()
-    {
-        $customer = Customer::factory([
-            'epc'           => 6.5,
-            'setter_fee'    => 2.3,
-            'sales_rep_fee' => 2.6,
-        ])->make();
-        $customer->calcMargin();
-
-        $this->assertEquals($customer->margin, 1.6);
     }
 }
