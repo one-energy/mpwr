@@ -92,7 +92,11 @@
                                             {{ $this->user->office->name }}
                                         </div>
                                     </div>
-                                    <div class="ml-2 flex-shrink-0 flex">
+                                    <div class="ml-2 space-x-2 flex-shrink-0 flex">
+                                        <span
+                                            class="px-2 inline-flex text-xs font-semibold rounded-full bg-green-base  text-white">
+                                            Reports to
+                                        </span>
                                         <span
                                             class="px-2 inline-flex text-xs font-semibold rounded-full {{ $user->role === 'owner' ? 'bg-green-base text-green-base' : 'bg-gray-200 text-gray-600' }}">
                                             {{ Str::ucfirst($user->role) }}
