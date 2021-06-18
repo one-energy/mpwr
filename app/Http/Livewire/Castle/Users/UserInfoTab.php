@@ -2,12 +2,12 @@
 
 namespace App\Http\Livewire\Castle\Users;
 
+use App\Enum\Role;
 use App\Models\Department;
 use App\Models\Office;
 use App\Models\Rates;
 use App\Models\Region;
 use App\Models\User;
-use App\Enum\Role;
 use App\Rules\Castle\DepartmentHasOffice;
 use App\Traits\Livewire\Actions;
 use Illuminate\Support\Collection;
@@ -93,11 +93,10 @@ class UserInfoTab extends Component
         $this->offices     = optional($department)->offices ?? collect();
 
         if ($this->user->department !== null) {
-            $this->departmentUsers        = $this->user->department->users()->where('id', '!=',
-                $this->user->id)->orderBy('first_name')->orderBy('last_name')->get();
-            $this->departmentManagerUsers = $this->user->department->users()->whereRole('Department Manager')->orderBy('first_name')->orderBy('last_name')->get();
-            $this->regionManagerUsers     = $this->user->department->users()->whereRole('Region Manager')->orderBy('first_name')->orderBy('last_name')->get();
-            $this->officeManagerUsers     = $this->user->department->users()->whereRole('Office Manager')->orderBy('first_name')->orderBy('last_name')->get();
+            $this->departmentUsers        = $this->user->department->users()->where('id', '!=', $this->user->id)->orderBy('first_name')->orderBy('last_name')->get();
+            $this->departmentManagerUsers = $this->user->department->users()->whereRole(Role::DEPARTMENT_MANAGER)->orderBy('first_name')->orderBy('last_name')->get();
+            $this->regionManagerUsers     = $this->user->department->users()->whereRole(Role::REGION_MANAGER)->orderBy('first_name')->orderBy('last_name')->get();
+            $this->officeManagerUsers     = $this->user->department->users()->whereRole(Role::OFFICE_MANAGER)->orderBy('first_name')->orderBy('last_name')->get();
         }
 
         $this->getAssignedTeams();
