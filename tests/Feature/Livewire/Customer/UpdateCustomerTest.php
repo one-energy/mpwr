@@ -5,6 +5,7 @@ namespace Tests\Feature\Livewire\Customer;
 use App\Http\Livewire\Customer\Edit;
 use App\Models\Customer;
 use App\Models\Department;
+use App\Models\Financer;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -33,17 +34,20 @@ class UpdateCustomerTest extends TestCase
     /** @test */
     public function it_should_allow_user_opened_by_update_a_customer()
     {
+        $financer   = Financer::factory()->create();
         $department = Department::factory()->create();
         $john       = User::factory()->create(['role' => 'Admin', 'department_id' => $department->id]);
         $customer   = Customer::factory()->create([
-            'sales_rep_id' => $department->id,
+            'sales_rep_id' => $john->id,
             'opened_by_id' => $john->id,
+            'financer_id'  => $financer->id
         ]);
 
         $this->actingAs($john);
 
         Livewire::test(Edit::class, ['customer' => $customer])
             ->call('update')
+            ->assertHasNoErrors()
             ->assertOk();
     }
 
