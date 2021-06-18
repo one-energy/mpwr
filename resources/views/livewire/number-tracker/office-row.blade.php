@@ -11,7 +11,7 @@
                 />
             </div>
             <x-svg.spinner wire:loading color="#9fa6b2" class="self-center hidden w-5 mr-2" />
-            <label>{{ $office->name }}</label>
+            <label>{{ Str::limit($office->name, 20) }}</label>
         </x-table-accordion.child-td-arrow>
         <x-table-accordion.td class="group-hover:bg-gray-100 {{ $itsOpen ? 'bg-gray-100' : '' }} " by="hours_worked" sortedBy="$sortBy">
             <x-svg.spinner color="#9fa6b2" class="self-center hidden w-5" />
