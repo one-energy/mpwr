@@ -8,7 +8,7 @@ use App\Models\Office;
 use App\Models\Region;
 use App\Models\TrainingPageSection;
 use App\Models\User;
-use App\Role\Role;
+use App\Enum\Role;
 use Illuminate\Database\Seeder;
 
 class BootstrapSeeder extends Seeder

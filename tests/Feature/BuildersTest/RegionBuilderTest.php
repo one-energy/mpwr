@@ -4,7 +4,7 @@ namespace Tests\Feature\BuildersTest;
 
 use App\Models\Office;
 use App\Models\User;
-use App\Role\Role;
+use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Builders\RegionBuilder;
 use Tests\Builders\UserBuilder;

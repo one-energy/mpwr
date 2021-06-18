@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Castle;
 use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\User;
-use App\Role\Role;
+use App\Enum\Role;
 use App\Rules\UserHasRole;
 use Illuminate\Support\Facades\DB;
 

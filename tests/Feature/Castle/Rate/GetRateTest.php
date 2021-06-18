@@ -5,7 +5,7 @@ namespace Tests\Feature\Castle\Rate;
 use App\Models\Department;
 use App\Models\Rates;
 use App\Models\User;
-use App\Role\Role;
+use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;

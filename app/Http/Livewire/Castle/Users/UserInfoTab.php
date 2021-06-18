@@ -7,7 +7,7 @@ use App\Models\Office;
 use App\Models\Rates;
 use App\Models\Region;
 use App\Models\User;
-use App\Role\Role;
+use App\Enum\Role;
 use App\Rules\Castle\DepartmentHasOffice;
 use App\Traits\Livewire\Actions;
 use Illuminate\Support\Collection;

@@ -6,7 +6,7 @@ use App\Http\Livewire\Scoreboard;
 use App\Models\DailyNumber;
 use App\Models\Department;
 use App\Models\User;
-use App\Role\Role;
+use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;

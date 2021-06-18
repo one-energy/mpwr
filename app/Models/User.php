@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Role\Role;
+use App\Enum\Role;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -538,11 +538,11 @@ class User extends Authenticatable implements MustVerifyEmail
                                   $stockPointsOfSalesRepRecruited->sum(fn($customer) => $customer->stockPoint->stock_recruiter) +
                                   $stockPointsOfDepartment->sum(fn($customer) => $customer->stockPoint->stock_department) +
                                   $stockPointsOfRegionManager->sum(fn($customer) => $customer->stockPoint->stock_regional) +
-                                  $stockPointsOfOfficeManager->sum(fn($customer) => $customer->stockPoint->stock_manager) 
+                                  $stockPointsOfOfficeManager->sum(fn($customer) => $customer->stockPoint->stock_manager)
         ];
     }
 
-    public function getStockPointsOf ($query) 
+    public function getStockPointsOf ($query)
     {
         return $query->whereHas('stockPoint', function ($query) {
             $query->whereYear('created_at', Carbon::now());

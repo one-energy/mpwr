@@ -6,7 +6,7 @@ use App\Http\Livewire\NumberTracker\NumberTrackerDetail;
 use App\Models\DailyNumber;
 use App\Models\Department;
 use App\Models\User;
-use App\Role\Role;
+use App\Enum\Role;
 use Livewire\Livewire;
 use Tests\Feature\FeatureTest;
 

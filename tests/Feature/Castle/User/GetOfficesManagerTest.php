@@ -5,7 +5,7 @@ namespace Tests\Feature\Castle\User;
 use App\Models\Department;
 use App\Models\Region;
 use App\Models\User;
-use App\Role\Role;
+use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

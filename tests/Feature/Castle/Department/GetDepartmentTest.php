@@ -4,7 +4,7 @@ namespace Tests\Feature\Castle\Department;
 
 use App\Models\Department;
 use App\Models\User;
-use App\Role\Role;
+use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

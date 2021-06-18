@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Castle;
 use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\Incentive;
-use App\Role\Role;
+use App\Enum\Role;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ManageIncentivesController extends Controller

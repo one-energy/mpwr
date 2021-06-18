@@ -4,7 +4,7 @@ namespace Tests\Feature\Castle\Region;
 
 use App\Models\Region;
 use App\Models\User;
-use App\Role\Role;
+use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;

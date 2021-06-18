@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\Department;
 use App\Models\Region;
 use App\Models\User;
-use App\Role\Role;
+use App\Enum\Role;
 use Illuminate\Database\Seeder;
 
 class RegionsSeeder extends Seeder

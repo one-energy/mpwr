@@ -3,7 +3,7 @@
 namespace App\Http\Livewire\Castle;
 
 use App\Models\User;
-use App\Role\Role;
+use App\Enum\Role;
 use App\Traits\Livewire\FullTable;
 use Livewire\Component;
 

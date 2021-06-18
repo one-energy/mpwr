@@ -11,7 +11,7 @@ use App\Models\MultiplierOfYear;
 use App\Models\Rates;
 use App\Models\Term;
 use App\Models\User;
-use App\Role\Role;
+use App\Enum\Role;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;

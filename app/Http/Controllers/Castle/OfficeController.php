@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
-use App\Role\Role;
+use App\Enum\Role;
 use App\Rules\UserHasRole;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;

@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Department;
 use App\Models\User;
-use App\Role\Role;
+use App\Enum\Role;
 use Illuminate\Database\Seeder;
 
 class DepartmentsSeeder extends Seeder

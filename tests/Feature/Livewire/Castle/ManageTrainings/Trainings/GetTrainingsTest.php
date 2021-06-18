@@ -6,7 +6,7 @@ use App\Http\Livewire\Castle\ManageTrainings\Trainings;
 use App\Models\Department;
 use App\Models\TrainingPageSection;
 use App\Models\User;
-use App\Role\Role;
+use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;

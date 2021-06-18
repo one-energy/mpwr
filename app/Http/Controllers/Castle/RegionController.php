@@ -7,7 +7,7 @@ use App\Models\Department;
 use App\Models\Region;
 use App\Models\TrainingPageSection;
 use App\Models\User;
-use App\Role\Role;
+use App\Enum\Role;
 use App\Rules\UserHasRole;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;

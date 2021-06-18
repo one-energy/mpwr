@@ -4,7 +4,7 @@ namespace Tests\Feature\NumberTracker;
 
 use App\Models\DailyNumber;
 use App\Models\User;
-use App\Role\Role;
+use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

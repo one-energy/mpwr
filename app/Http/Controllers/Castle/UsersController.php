@@ -9,7 +9,7 @@ use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
 use App\Notifications\UserInvitation;
-use App\Role\Role;
+use App\Enum\Role;
 use App\Rules\Castle\MasterEmailUnique;
 use App\Rules\Castle\MasterEmailYourSelf;
 use Illuminate\Support\Str;

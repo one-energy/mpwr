@@ -8,7 +8,7 @@ use App\Models\SectionFile;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
 use App\Models\User;
-use App\Role\Role;
+use App\Enum\Role;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;

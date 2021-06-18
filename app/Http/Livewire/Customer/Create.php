@@ -9,7 +9,7 @@ use App\Models\Financing;
 use App\Models\Rates;
 use App\Models\Term;
 use App\Models\User;
-use App\Role\Role;
+use App\Enum\Role;
 use Carbon\Carbon;
 use Livewire\Component;
 

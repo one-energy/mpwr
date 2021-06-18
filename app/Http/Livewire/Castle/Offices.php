@@ -5,7 +5,7 @@ namespace App\Http\Livewire\Castle;
 use App\Models\DailyNumber;
 use App\Models\Office;
 use App\Models\Region;
-use App\Role\Role;
+use App\Enum\Role;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
