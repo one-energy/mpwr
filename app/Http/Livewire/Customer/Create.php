@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Customer;
 
+use App\Enum\Role;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\Financer;
@@ -9,7 +10,6 @@ use App\Models\Financing;
 use App\Models\Rates;
 use App\Models\Term;
 use App\Models\User;
-use App\Enum\Role;
 use Carbon\Carbon;
 use Livewire\Component;
 
