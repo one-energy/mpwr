@@ -8,7 +8,6 @@ use App\Models\Department;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
-use App\View\Components\Icon;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -109,11 +108,14 @@ class NumberTrackerTest extends TestCase
             ->assertSet('period', 'm');
     }
 
-    //this test needs to be replaced on inside a user row, dont works here.
-
     /** @test */
     public function it_should_show_icon_when_user_is_deleted()
     {
+        /**
+         * @TODO:
+         * This test needs to be replaced on inside a user row, dont works here.
+         */
+
         $this->markTestSkipped('must be revisited.');
 
         $user = User::factory()->create([
@@ -124,10 +126,10 @@ class NumberTrackerTest extends TestCase
         ]);
 
         DailyNumber::factory()->create([
-            'user_id' => $user->id,
+            'user_id'   => $user->id,
             'office_id' => $this->office->id,
-            'date'    => Carbon::yesterday(),
-            'doors'   => 15,
+            'date'      => Carbon::yesterday(),
+            'doors'     => 15,
         ]);
 
         Livewire::test(NumberTrackerDetail::class)
