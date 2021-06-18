@@ -40,9 +40,6 @@ class RegionRow extends Component
 
     public function mount()
     {
-        Cache::forget(sprintf('%s-region-%s-trashed-%s', user()->id, $this->regionId, 1));
-        Cache::forget(sprintf('%s-region-%s-trashed-%s', user()->id, $this->regionId, 0));
-
         $this->region = $this->findRegion($this->regionId);
 
         $this->sortOffices($this->sortBy, $this->sortDirection);
@@ -184,20 +181,10 @@ class RegionRow extends Component
 
     private function findRegion($regionId)
     {
-        $region = Cache::rememberForever($this->getRegionCacheKey(), function () use ($regionId) {
-            return Region::query()
-                ->when($this->withTrashed, fn($query) => $query->withTrashed())
-                ->find($regionId);
-        });
-
-        return $region->load($this->getEagerLoadingRelation());
-    }
-
-    private function getRegionCacheKey()
-    {
-        $trashed = $this->withTrashed ? 1 : 0;
-
-        return sprintf('user-%s-region-%s-trashed-%s', user()->id, $this->regionId, $trashed);
+        return Region::query()
+            ->when($this->withTrashed, fn($query) => $query->withTrashed())
+            ->find($regionId)
+            ->load($this->getEagerLoadingRelation());
     }
 
     private function getSelectedIdsCacheKey(string $key)
