@@ -7,7 +7,6 @@
     }
     $disabledToUser = $disabledToUser ?? null;
     $disabled = $disabled ?? false;
-
     $wire = $wire && is_bool($wire) ? $name : $wire;
 @endphp
 
