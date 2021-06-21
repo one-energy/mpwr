@@ -7,6 +7,7 @@ use App\Models\Department;
 use App\Traits\Livewire\FullTable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Response;
 use Livewire\Component;
 
 class ReportsOverview extends Component
@@ -38,9 +39,11 @@ class ReportsOverview extends Component
         $this->sortBy        = 'date_of_sale';
         $this->sortDirection = 'desc';
         $this->departmentId  = Department::first()->id;
+
         if (user()->hasAnyRole(['Admin', 'Owner'])) {
             $this->personalCustomers = false;
         }
+
         $this->startDate = Carbon::create($this->startDate)->firstOfYear()->startOfDay()->toString();
         $this->finalDate = Carbon::create($this->finalDate)->endOfDay()->toString();
     }
@@ -94,6 +97,25 @@ class ReportsOverview extends Component
                 ->orderByRaw($this->sortBy . ' ' . $this->sortDirection)
                 ->paginate($this->perPage),
         ]);
+    }
+
+    public function paid(Customer $customer)
+    {
+        abort_if(user()->notHaveRoles(['Admin']), Response::HTTP_FORBIDDEN);
+
+        $fields = [
+            'panel_sold' => true,
+            'paid_date'  => now(),
+        ];
+
+        if ($customer->panel_sold) {
+            $fields = [
+                'panel_sold' => false,
+                'paid_date'  => null,
+            ];
+        }
+
+        $customer->update($fields);
     }
 
     private function getRelations()
