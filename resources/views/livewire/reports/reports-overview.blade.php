@@ -312,7 +312,7 @@
                                     <x-table.td>{{ $this->formatNumber($this->getSetterCommission($customer)) }}</x-table.td>
                                     @if(user()->role != "Setter")
                                         <x-table.td>{{ $this->formatNumber($this->getSalesRepCommission($customer)) }}</x-table.td>
-                                        <x-table.td>{{$customer->financingtype?->name ?? '-'}}</x-table.td>
+                                        <x-table.td>{{$customer->financingType?->name ?? '-'}}</x-table.td>
                                         <x-table.td>{{$customer->financer?->name ?? '-'}}</x-table.td>
                                         @if(user()->role != "Sales Rep")
                                             <x-table.td>{{$customer->recruiterOfSalesRep?->first_name ?? '-'}} {{$customer->recruiterOfSalesRep?->last_name}}</x-table.td>

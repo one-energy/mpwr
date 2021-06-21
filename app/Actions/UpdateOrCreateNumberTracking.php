@@ -42,6 +42,7 @@ class UpdateOrCreateNumberTracking
             if ($dailyNumber !== null) {
                 $dailyNumber->delete();
             }
+
         });
     }
 
@@ -54,9 +55,9 @@ class UpdateOrCreateNumberTracking
             'date'                    => 'nullable|date',
             'numbers'                 => 'required|array',
             'numbers.*.hours_worked'  => 'required|integer|min:0',
-            'numbers.*.doors'         => 'required|integer|min:0',
+            'numbers.*.doors'         => 'required|integer|min:0|gte:numbers.*.sets',
             'numbers.*.hours_knocked' => 'required|integer|min:0',
-            'numbers.*.sets'          => 'required|integer|min:0',
+            'numbers.*.sets'          => 'required|integer|min:0|gte:numbers.*.closes',
             'numbers.*.sats'          => 'required|integer|min:0',
             'numbers.*.set_closes'    => 'required|integer|min:0',
             'numbers.*.closer_sits'   => 'required|integer|min:0',

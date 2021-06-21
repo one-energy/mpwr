@@ -4,6 +4,7 @@ namespace Tests\Feature\Livewire\NumberTracker\NumberTrackerDetail;
 
 use App\Http\Livewire\NumberTracker\NumberTrackerDetail;
 use App\Models\DailyNumber;
+use App\Models\Department;
 use App\Models\User;
 use Livewire\Livewire;
 use Tests\Feature\FeatureTest;
@@ -13,10 +14,17 @@ class GetTopTenTrackersTest extends FeatureTest
     /** @test */
     public function it_should_be_possible_order_by_doors()
     {
-        $john = User::factory()->create(['role' => 'Admin']);
+        $john       = User::factory()->create(['role' => 'Admin']);
+        $department = Department::factory()->create();
 
-        $setter01 = User::factory()->create(['role' => 'Setter']);
-        $setter02 = User::factory()->create(['role' => 'Setter']);
+        $setter01 = User::factory()->create([
+            'department_id' => $department->id,
+            'role'          => 'Setter',
+        ]);
+        $setter02 = User::factory()->create([
+            'department_id' => $department->id,
+            'role'          => 'Setter',
+        ]);
 
         DailyNumber::factory()->create([
             'user_id' => $setter01->id,
@@ -42,9 +50,20 @@ class GetTopTenTrackersTest extends FeatureTest
     public function it_should_be_possible_order_by_sg_sits()
     {
         $john = User::factory()->create(['role' => 'Admin']);
+        $mary = User::factory()->create(['role' => 'Department Manager']);
 
-        $setter01 = User::factory()->create(['role' => 'Sales Rep']);
-        $setter02 = User::factory()->create(['role' => 'Sales Rep']);
+        $department = Department::factory()->create([
+            'department_manager_id' => $mary->id,
+        ]);
+
+        $setter01 = User::factory()->create([
+            'role'          => 'Sales Rep',
+            'department_id' => $department->id,
+        ]);
+        $setter02 = User::factory()->create([
+            'role'          => 'Sales Rep',
+            'department_id' => $department->id,
+        ]);
 
         DailyNumber::factory()->create([
             'user_id'  => $setter01->id,
@@ -61,10 +80,10 @@ class GetTopTenTrackersTest extends FeatureTest
 
         $this->actingAs($john);
 
-        Livewire::test(NumberTrackerDetail::class)
+        Livewire::test(NumberTrackerDetail::class, ['selectedDepartment' => $department->id])
             ->set('selectedPill', 'sg sits')
-            ->assertSet('selectedPill', 'sg_sits')
+            ->assertSet('selectedPill', 'sg sits')
             ->assertCount('topTenTrackers', 2)
-            ->assertSeeInOrder([$setter02->full_name, $setter01->full_name]);
+            ->assertSeeInOrder([$setter01->full_name, $setter02->full_name]);
     }
 }

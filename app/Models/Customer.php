@@ -125,8 +125,7 @@ class Customer extends Model
 
     public function scopeInstalled($query)
     {
-        return $query
-            ->where('opened_by_id', '=', user()->id)
+        return $query->where('sales_rep_id', '=', user()->id)
             ->where('panel_sold', '=', true)
             ->where('is_active', '=', true);
     }
@@ -242,6 +241,11 @@ class Customer extends Model
         }
 
         return 0;
+    }
+
+    public function getFullNameAttribute()
+    {
+        return sprintf('%s %s', $this->first_name, $this->last_name);
     }
 
     public function calcComission()

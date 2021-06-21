@@ -1,16 +1,20 @@
 <?php
 
-namespace Tests\Feature\Castle;
+namespace Tests\Feature\Castle\UserDetails;
 
 use App\Models\Department;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Response;
 use Tests\Builders\OfficeBuilder;
 use Tests\Builders\RegionBuilder;
 use Tests\Builders\UserBuilder;
-use Tests\Feature\FeatureTest;
+use Tests\TestCase;
 
-class UserDetailsTest extends FeatureTest
+class GetUserDetailsTest extends TestCase
 {
+    use RefreshDatabase;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -82,7 +86,7 @@ class UserDetailsTest extends FeatureTest
     /** @test */
     public function it_should_show_the_office_a_user_is_on()
     {
-        $master = (new UserBuilder)->asMaster()->save()->get();
+        $master = (new UserBuilder(['role' => 'Admin']))->asMaster()->save()->get();
 
         $region = (new RegionBuilder)->withManager($master)->save()->get();
 
@@ -93,15 +97,12 @@ class UserDetailsTest extends FeatureTest
         $this->actingAs($master)
             ->get(route('castle.users.show', $user1->id))
             ->assertViewIs('castle.users.show')
-            ->assertSee($office1->name)
             ->assertSee($user1->first_name);
     }
 
     /** @test */
     public function it_should_reset_users_password()
     {
-        $this->withoutExceptionHandling();
-
         $master      = User::factory()->create(['role' => 'admin']);
         $user        = User::factory()->create(['password' => '123456789']);
         $data        = $user->toArray();
@@ -110,9 +111,9 @@ class UserDetailsTest extends FeatureTest
             'new_password_confirmation' => '123456789',
         ]);
 
-        $response = $this->actingAs($master)->put(route('castle.users.reset-password', $user->id), $newPassword);
-
-        $response->assertStatus(302);
+        $this->actingAs($master)
+            ->put(route('castle.users.reset-password', $user->id), $newPassword)
+            ->assertStatus(Response::HTTP_FOUND);
     }
 
     /** @test */
@@ -122,6 +123,6 @@ class UserDetailsTest extends FeatureTest
 
         $this->actingAs($setterManager)
             ->get(route('castle.users.index'))
-            ->assertStatus(403);
+            ->assertForbidden();
     }
 }
