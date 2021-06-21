@@ -179,6 +179,9 @@ class CustomerTest extends TestCase
             ->set('customer.sales_rep_id', $userTwo->id)
             ->set('customer.sales_rep_fee', 20)
             ->set('customer.sales_rep_comission', 0)
+            ->set('customer.sales_rep_comission', 0)
+            ->set('stockPoints', 0)
+            ->set('grossRepComission', 0)
             ->set('customer.margin', 0)
             ->call('store');
 
