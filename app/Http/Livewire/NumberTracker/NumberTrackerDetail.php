@@ -20,11 +20,9 @@ class NumberTrackerDetail extends Component
 {
     use FullTable;
 
-    public array $unselectedRegions = [];
+    public array $selectedUsersIds = [];
 
-    public array $unselectedOffices = [];
-
-    public array $unselectedUserDailyNumbers = [];
+    public array $selectedOfficesIds = [];
 
     public string $period = 'd';
 
@@ -49,6 +47,7 @@ class NumberTrackerDetail extends Component
         'loadingSumNumberTracker',
         'toggleDelete',
         'updateLeaderBoard'    => 'getUnselectedCollections',
+        'updateNumbers',
         'onSelectedDepartment' => 'changeSelectedDepartment',
     ];
 
@@ -89,23 +88,6 @@ class NumberTrackerDetail extends Component
         $this->emit('setDateOrPeriod', $this->dateSelected, $this->period);
     }
 
-    public function updateLeaderBoardCard(
-        $unselectedRegions,
-        $unselectedOffices,
-        $unselectedUserDailyNumbers,
-        $withDeleteds
-    ) {
-        $this->deleteds = $withDeleteds;
-        $this->getUnselectedCollections($unselectedRegions, $unselectedOffices, $unselectedUserDailyNumbers);
-    }
-
-    public function getUnselectedCollections($unselectedRegions, $unselectedOffices, $unselectedUserDailyNumbers)
-    {
-        $this->unselectedRegions          = $unselectedRegions;
-        $this->unselectedOffices          = $unselectedOffices;
-        $this->unselectedUserDailyNumbers = $unselectedUserDailyNumbers;
-    }
-
     public function changeSelectedDepartment(int $departmentId)
     {
         $this->selectedDepartment = $departmentId;
@@ -122,6 +104,12 @@ class NumberTrackerDetail extends Component
         return ['c.p.r', 'accounts'];
     }
 
+    public function updateNumbers($payload)
+    {
+        $this->selectedUsersIds   = $payload['users'];
+        $this->selectedOfficesIds = $payload['offices'];
+    }
+
     private function getTopTenTrackers()
     {
         if (!in_array($this->selectedLeaderboardPill, $this->leaderboardPills, true)) {
@@ -130,29 +118,10 @@ class NumberTrackerDetail extends Component
 
         return DailyNumber::query()
             ->withTrashed()
-            ->with([
-                'user' => function ($query) {
-                    $query->when($this->deleteds, function ($query) {
-                        $query->withTrashed();
-                    });
-                },
-            ])
-            ->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
-                $query->whereHas('user', function ($query) {
-                    $query
-                        ->where('department_id', user()->department_id)
-                        ->withTrashed();
-                });
-            })
-            ->when(!$this->deleteds, function ($query) {
-                $query->has('user');
-            })
-            ->inPeriod($this->period, new Carbon($this->dateSelected))
-            ->whereHas('office', function ($query) {
-                $query->whereNotIn('region_id', $this->unselectedRegions);
-            })
-            ->whereNotIn('office_id', $this->unselectedOffices)
-            ->whereNotIn('user_id', $this->unselectedUserDailyNumbers)
+            ->with('user', fn($query) => $query->withTrashed())
+            ->whereIn('user_id', $this->selectedUsersIds)
+            ->whereIn('office_id', $this->selectedOfficesIds)
+            ->inPeriod($this->period, new Carbon($this->date))
             ->orderBy('total', 'desc')
             ->groupBy('user_id')
             ->select(
@@ -212,7 +181,7 @@ class NumberTrackerDetail extends Component
 
         return Department::query()
             ->with([
-                $relationName => function ($query) {
+                $relationName                  => function ($query) {
                     $query
                         ->when($this->deleteds, function ($query) {
                             $query
@@ -222,7 +191,7 @@ class NumberTrackerDetail extends Component
                                 });
                         })
                         ->when(!$this->deleteds, function ($query) {
-                            $query->whereHas('users', fn ($query) => $query->where('role', 'Sales Rep'));
+                            $query->whereHas('users', fn($query) => $query->where('role', 'Sales Rep'));
                         });
                 },
                 "{$relationName}.dailyNumbers" => function ($query) {
@@ -268,7 +237,7 @@ class NumberTrackerDetail extends Component
     {
         return $department
             ->{$relationName}
-            ->filter(fn (Office $office) => $office->dailyNumbers->isNotEmpty())
+            ->filter(fn(Office $office) => $office->dailyNumbers->isNotEmpty())
             ->map
             ->dailyNumbers
             ->flatten()
@@ -278,7 +247,7 @@ class NumberTrackerDetail extends Component
     private function buildDepartment(Department $department, int $total = 0)
     {
         return (new Department([
-            'name'  => $department->name,
+            'name' => $department->name,
         ]))->forceFill([
             'id'         => $department->id,
             'deleted_at' => $department->deleted_at,

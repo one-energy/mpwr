@@ -24,6 +24,11 @@ class OfficeBuilder
         ], $attributes));
     }
 
+    public static function make($attributes = [])
+    {
+        return new OfficeBuilder($attributes);
+    }
+
     public function save()
     {
         if (!$this->office->office_manager_id) {
