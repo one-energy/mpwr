@@ -122,7 +122,7 @@ class Customer extends Model
 
     public function scopeInstalled($query)
     {
-        return $query->where('opened_by_id', '=', user()->id)
+        return $query->where('sales_rep_id', '=', user()->id)
             ->where('panel_sold', '=', true)
             ->where('is_active', '=', true);
     }
@@ -177,6 +177,12 @@ class Customer extends Model
         return $this->belongsTo(User::class, 'department_manager_id');
     }
 
+
+    public function getSetterCommissionAttribute()
+    {
+        return $this->setter_fee * ($this->system_size * self::K_WATTS);
+    }
+
     public function stockPoint()
     {
         return $this->hasOne(CustomersStockPoint::class);
@@ -210,7 +216,6 @@ class Customer extends Model
         }
 
         return 0;
-
     }
 
     public function getFullNameAttribute()

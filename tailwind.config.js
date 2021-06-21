@@ -9,6 +9,10 @@ module.exports = {
             maxWidth: {
                 '8xl': '110rem',
             },
+            screens: {
+                'headerLimit': '1163px',
+                // => @media (min-width: 640px) { ... }
+            },
             colors: {
                 'gray-base': '#F1F1F1'
             }

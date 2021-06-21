@@ -222,7 +222,7 @@ class Edit extends Component
 
     public function calculateNetRepCommission()
     {
-        return $this->grossRepComission - $this->customer->adders;
+        return (float)$this->grossRepComission - (float)$this->customer->adders;
     }
 
     public function getSalesRepFee()
@@ -275,5 +275,10 @@ class Edit extends Component
             'first_name' => 'Setter',
             'last_name'  => 'Deleted',
         ]))->forceFill(['deleted_at' => today()]);
+    }
+
+    public function isSetterOfCustomer()
+    {
+        return user()->id == $this->customer->setter_id;
     }
 }

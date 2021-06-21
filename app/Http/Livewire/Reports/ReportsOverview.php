@@ -35,9 +35,9 @@ class ReportsOverview extends Component
 
     public function mount()
     {
-        $this->sortBy = "date_of_sale";
-        $this->sortDirection = "desc";
-        $this->departmentId = Department::first()->id;
+        $this->sortBy        = 'date_of_sale';
+        $this->sortDirection = 'desc';
+        $this->departmentId  = Department::first()->id;
         if (user()->hasAnyRole(['Admin', 'Owner'])) {
             $this->personalCustomers = false;
         }
@@ -89,11 +89,25 @@ class ReportsOverview extends Component
                 ->when($this->cancelledStatus(), function ($query) {
                     $query->whereIsActive(false);
                 })
-                ->with(['financer', 'userSetter', 'userSalesRep', 'financingType'])
+                ->with($this->getRelations())
                 ->search($this->search)
                 ->orderByRaw($this->sortBy . ' ' . $this->sortDirection)
                 ->paginate($this->perPage),
         ]);
+    }
+
+    private function getRelations()
+    {
+        return [
+            'financer',
+            'userSetter',
+            'userSalesRep',
+            'financingType',
+            'recruiterOfSalesRep',
+            'officeManager',
+            'regionManager',
+            'departmentManager',
+        ];
     }
 
     public function getUserCustomers()
