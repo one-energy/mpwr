@@ -1,4 +1,4 @@
-@props(['header', 'body', 'pagination'])
+@props(['header', 'body', 'pagination', 'overflowX' => false])
 
 @php
     $pagination = $pagination ?? null;
@@ -10,8 +10,7 @@
 
 <div {{ $attributes->merge(['class' => $class]) }}>
     <div class="">
-        <div
-            class="">
+        <div class="@if($overflowX) overflow-x-auto @endif">
             <table class="min-w-full">
                 <thead>
                 {{ $header }}
