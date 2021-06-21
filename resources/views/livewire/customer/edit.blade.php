@@ -319,7 +319,8 @@
             </div>
         </div>
     </div>
-    <x-search-select/>
+    <x-search-select :query="$queryuser"/>
+        teste
     @if (session('message'))
         <x-alert class="mb-4">
             {{ session('message') }}

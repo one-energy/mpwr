@@ -10,6 +10,7 @@ use App\Models\Rates;
 use App\Models\StockPointsCalculationBases;
 use App\Models\Term;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -22,6 +23,8 @@ class Edit extends Component
     public Customer $customer;
 
     public ?User $setter;
+
+    public Builder $queryuser;
 
     public int $departmentId;
 
@@ -65,6 +68,7 @@ class Edit extends Component
     public function mount(Customer $customer)
     {
         $this->setter = $this->getSetter($customer);
+        $this->queryuser = User::whereDepartmentId(user()->department_id);
 
         if (user()->notHaveRoles(['Admin', 'Owner'])) {
             $this->departmentId = user()->department_id;
