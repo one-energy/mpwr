@@ -18,11 +18,16 @@ class UpdateCustomerTest extends TestCase
     /** @test */
     public function it_should_show_the_edit_form()
     {
-        $john       = User::factory()->create(['role' => 'Department Manager']);
-        $department = Department::factory()->create();
-        $customer   = Customer::factory()->create();
+        $john = User::factory()->create(['role' => 'Admin']);
+        $mary = User::factory()->create(['role' => 'Department Manager']);
 
-        $john->update(['department_id' => $department->id]);
+        $department = Department::factory()->create(['department_manager_id' => $mary->id]);
+        $customer   = Customer::factory()->create([
+            'sales_rep_id' => User::factory()->create([
+                'role'          => 'Sales Rep',
+                'department_id' => $department->id
+            ])->id
+        ]);
 
         $this->actingAs($john);
 
@@ -33,11 +38,13 @@ class UpdateCustomerTest extends TestCase
     /** @test */
     public function it_should_update_a_customer()
     {
-        $this->markTestSkipped('must be revisited.');
 
         $john       = User::factory()->create(['role' => 'Department Manager']);
         $department = Department::factory()->create();
-        $customer   = Customer::factory()->create(['adders' => 30.5]);
+        $customer   = Customer::factory()->create([
+            'sales_rep_id' => $john->id,
+            'adders'       => 30.5
+        ]);
 
         $john->update(['department_id' => $department->id]);
 

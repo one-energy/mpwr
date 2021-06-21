@@ -37,12 +37,12 @@
                                                     @php ($nextIncentive = $incentives->get(++$index) ?? $incentives->last())
                                                     @php ($lastIncentive = $incentives->last())
                                                     <x-table.td>{{ $incentive->name }}</x-table.td>
-                                                    <x-table.td>{{ number_format(($myInstalls / $incentive->installs_needed) * 100, 2) }}
-                                                        %
+                                                    <x-table.td>
+                                                        {{ number_format(($myInstalls / $incentive->installs_needed) * 100, 2) }}%
                                                     </x-table.td>
                                                     <x-table.td>{{ $incentive->installs_needed }}</x-table.td>
-                                                    <x-table.td>{{ number_format(($myKws / $incentive->kw_needed) * 100, 2) }}
-                                                        %
+                                                    <x-table.td>
+                                                        {{ number_format(($myKws / $incentive->kw_needed) * 100, 2) }}%
                                                     </x-table.td>
                                                     <x-table.td>
                                                         <div

@@ -20,6 +20,8 @@ class CustomerFactory extends Factory
         $systemSize = 20;
         $adders     = 20;
 
+        
+
         return [
             'first_name'    => $this->faker->firstName,
             'last_name'     => $this->faker->lastName,

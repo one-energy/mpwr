@@ -15,13 +15,11 @@ class IncentivesController extends Controller
             $incentives = Incentive::query()->whereDepartmentId(user()->department_id)->orderBy('number_installs')->get();
         }
 
-        $myInstalls = Customer::query()
-            ->installed()
-            ->count();
+        $customers = Customer::query()->installed()->get();
 
-        $systemSizeSum = Customer::query()
-            ->installed()
-            ->sum('system_size');
+        $myInstalls = $customers->count();
+
+        $systemSizeSum = $customers->sum('system_size');
 
         $myKws = 0;
 
