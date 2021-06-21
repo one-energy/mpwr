@@ -34,6 +34,8 @@ class OfficesSeeder extends Seeder
             'region_id'         => $region->id
         ]);
 
+        $user->update(['office_id' => $office->id]);
+
         $this->createUsers($office, $region);
     }
 
