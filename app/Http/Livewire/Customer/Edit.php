@@ -119,9 +119,9 @@ class Edit extends Component
         $this->customer->misc_override_two           = $salesRep->misc_override_two;
         $this->customer->payee_two                   = $salesRep->payee_two;
         $this->customer->note_two                    = $salesRep->note_two;
-        $this->customer->financing_id                = $this->customer->financing_id != '' ? $this->customer->financing_id : null;
-        $this->customer->financer_id                 = $this->customer->financer_id != '' ? $this->customer->financer_id : null;
-        $this->customer->term_id                     = $this->customer->term_id != '' ? $this->customer->term_id : null;
+        $this->customer->financing_id                = $this->customer->financing_id !== '' ? $this->customer->financing_id : null;
+        $this->customer->financer_id                 = $this->customer->financer_id !== '' ? $this->customer->financer_id : null;
+        $this->customer->term_id                     = $this->customer->term_id !== '' ? $this->customer->term_id : null;
 
         DB::transaction(function () {
             $this->customer->save();
@@ -142,7 +142,7 @@ class Edit extends Component
             ->withTitle(__('Home Owner updated!'))
             ->send();
 
-        return redirect(route('customers.show', $this->customer->id));
+        return redirect()->route('home');
     }
 
     public function delete()
@@ -249,7 +249,7 @@ class Edit extends Component
         $user = User::whereId($userId)->first();
 
         $rate = Rates::whereRole($user->role);
-        $rate->when($user->role == 'Sales Rep', function ($query) use ($user) {
+        $rate->when($user->role === 'Sales Rep', function ($query) use ($user) {
             $query->where('time', '<=', $user->installs)->orderBy('time', 'desc');
         });
 
@@ -275,5 +275,10 @@ class Edit extends Component
             'first_name' => 'Setter',
             'last_name'  => 'Deleted',
         ]))->forceFill(['deleted_at' => today()]);
+    }
+
+    public function isSetterOfCustomer()
+    {
+        return user()->id == $this->customer->setter_id;
     }
 }

@@ -4,22 +4,19 @@ namespace Tests\Feature\Profile;
 
 use Illuminate\Support\ViewErrorBag;
 use Tests\Builders\UserBuilder;
-use Tests\Feature\FeatureTest;
+use Tests\TestCase;
 
-class ChangePasswordTest extends FeatureTest
+class ChangePasswordTest extends TestCase
 {
     /** @test */
-    public function it_should_work()
+    public function it_should_change_password()
     {
-        $this->withoutExceptionHandling();
-        $user = (new UserBuilder())
+        $user = UserBuilder::build()
             ->withPassword('12345678')
             ->save()
             ->get();
 
-        $this->actingAs($user);
-
-        $this
+        $this->actingAs($user)
             ->get(route('profile.show'))
             ->assertSuccessful();
 
@@ -36,7 +33,7 @@ class ChangePasswordTest extends FeatureTest
     /** @test */
     public function it_should_fail_password_do_not_match()
     {
-        $user = (new UserBuilder())
+        $user = UserBuilder::build()
             ->withPassword('12345678')
             ->save()
             ->get();
@@ -62,7 +59,7 @@ class ChangePasswordTest extends FeatureTest
     /** @test */
     public function it_should_fail_current_and_new_passwords_are_the_same()
     {
-        $user = (new UserBuilder())
+        $user = UserBuilder::build()
             ->withPassword('123456789')
             ->save()
             ->get();
@@ -82,6 +79,6 @@ class ChangePasswordTest extends FeatureTest
         $errors   = session()->get('errors');
         $messages = $errors->getBag('default')->getMessages();
 
-        $this->assertEquals("The new password and current password must be different.", $messages['new_password'][0]);
+        $this->assertEquals('The new password and current password must be different.', $messages['new_password'][0]);
     }
 }

@@ -9,7 +9,7 @@ use Tests\Unit\UnitTest;
 class ChangePasswordTest extends UnitTest
 {
     /** @test */
-    public function it_should_work()
+    public function it_should_change_password()
     {
         Hash::shouldReceive('make')
             ->once()
