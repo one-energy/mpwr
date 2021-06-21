@@ -6,7 +6,6 @@ use App\Models\Department;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
-use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
@@ -29,21 +28,20 @@ class UpdateOfficeTest extends TestCase
     /** @test */
     public function it_should_show_the_edit_form_for_top_level_roles()
     {
-        $departmentManager = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
-        $officeManager     = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
+        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
+        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
 
-        /** @var Department $department */
-        $department = Department::factory()->create();
-        $department->managers()->attach($departmentManager->id);
-        $departmentManager->update(['department_id' => $department->id]);
-
-        /** @var Region $region */
-        $region = Region::factory()->create(['department_id' => $department->id]);
-        $region->managers()->attach($this->user->id);
-
-        /** @var Office $office */
-        $office = Office::factory()->create(['region_id' => $region->id]);
-        $office->managers()->attach($officeManager->id);
+        $region        = Region::factory()->create([
+            'region_manager_id' => $this->user->id,
+            'department_id'     => $department->id,
+        ]);
+        $officeManager = User::factory()->create(['role' => 'Office Manager']);
+        $office        = Office::factory()->create([
+            'region_id'         => $region->id,
+            'office_manager_id' => $officeManager->id,
+        ]);
 
         $this->actingAs($departmentManager)
             ->get(route('castle.offices.edit', ['office' => $office]))
@@ -54,46 +52,36 @@ class UpdateOfficeTest extends TestCase
     /** @test */
     public function it_should_block_the_edit_form_for_non_top_level_roles()
     {
-        $officeManager = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
+        $this->actingAs(User::factory()->create(['role' => 'Setter']));
 
-        /** @var Region $region */
-        $region = Region::factory()->create();
-        $region->managers()->attach($this->user->id);
+        $region        = Region::factory()->create(['region_manager_id' => $this->user->id]);
+        $officeManager = User::factory()->create(['role' => 'Office Manager']);
+        $office        = Office::factory()->create([
+            'region_id'         => $region->id,
+            'office_manager_id' => $officeManager->id,
+        ]);
 
-        /** @var Office $office */
-        $office = Office::factory()->create(['region_id' => $region->id]);
-        $office->managers()->attach($officeManager->id);
-
-        $this
-            ->actingAs(User::factory()->create(['role' => Role::SETTER]))
-            ->get(route('castle.offices.edit', ['office' => $office]))
+        $this->get(route('castle.offices.edit', ['office' => $office]))
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
     /** @test */
     public function it_should_update_an_office()
     {
-        $departmentManager = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
-        $officeManager     = User::factory()->create(['role' => 'Office Manager']);
+        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
+        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
 
-        /** @var Department $department */
-        $department = Department::factory()->create();
-        $department->managers()->attach($departmentManager->id);
-        $departmentManager->update(['department_id' => $department->id]);
-
-        /** @var Region $region */
-        $region = Region::factory()->create();
-        $region->managers()->attach($this->user->id);
-
-        /** @var Office $office */
-        $office = Office::factory()->create([
-            'name'      => 'Office',
-            'region_id' => $region->id,
+        $region        = Region::factory()->create(['region_manager_id' => $this->user->id]);
+        $officeManager = User::factory()->create(['role' => 'Office Manager']);
+        $office        = Office::factory()->create([
+            'name'              => 'Office',
+            'region_id'         => $region->id,
+            'office_manager_id' => $officeManager->id,
         ]);
-        $office->managers()->attach($officeManager->id);
-
-        $data         = $office->toArray();
-        $updateOffice = array_merge($data, ['name' => 'Office Edited']);
+        $data          = $office->toArray();
+        $updateOffice  = array_merge($data, ['name' => 'Office Edited']);
 
         $this->actingAs($departmentManager)
             ->put(route('castle.offices.update', $office->id), $updateOffice)

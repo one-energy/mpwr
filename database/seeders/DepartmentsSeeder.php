@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Department;
 use App\Models\User;
-use App\Enum\Role;
 use Illuminate\Database\Seeder;
 
 class DepartmentsSeeder extends Seeder
@@ -12,15 +11,16 @@ class DepartmentsSeeder extends Seeder
     public function run()
     {
         /** @var User $manager */
-        $manager = User::where('role', Role::DEPARTMENT_MANAGER)->first();
+        $manager = User::where('role', 'Department Manager')->first();
 
-        /** @var Department $department */
-        $department = Department::factory()->create(['name' => 'California Renewable Energy']);
+        $department = Department::factory()->create([
+            'name'                  => 'California Renewable Energy',
+            'department_manager_id' => $manager->id
+        ]);
         $department->trainingPageSections()->create(['title' => 'Training Page']);
-        $department->managers()->attach($manager);
 
         User::query()
-            ->whereNotIn('role', [Role::ADMIN, Role::OWNER])
+            ->whereNotIn('role', ['Admin', 'Owner'])
             ->update(['department_id' => $department->id]);
 
         Department::factory()

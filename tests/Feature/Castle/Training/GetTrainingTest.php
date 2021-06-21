@@ -3,9 +3,9 @@
 namespace Tests\Feature\Castle\Training;
 
 use App\Models\Department;
+use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
 use App\Models\User;
-use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Builders\TrainingSectionBuilder;
 use Tests\TestCase;
@@ -26,8 +26,10 @@ class GetTrainingTest extends TestCase
     /** @test */
     public function it_should_show_section_index()
     {
-        [$departmentManager, $department] = $this->createVP();
-
+        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
+        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
         $section = TrainingPageSection::factory()->create(['department_id' => $department->id]);
 
         $this
@@ -39,18 +41,18 @@ class GetTrainingTest extends TestCase
     /** @test */
     public function it_should_show_sections()
     {
-        $master = User::factory()->create(['role' => Role::ADMIN]);
-
-        /** @var Department $department */
-        $department = Department::factory()->create();
-        $department->managers()->attach($master);
-
-        $section      = (new TrainingSectionBuilder)->save()->get();
-        $sectionOne   = TrainingPageSection::factory()->create([
+        $master = User::factory()->create([
+            'role' => 'Admin',
+        ]);
+        $department = Department::factory()->create([
+            'department_manager_id' => $master->id,
+        ]);
+        $section    = (new TrainingSectionBuilder)->save()->get();
+        $sectionOne = TrainingPageSection::factory()->create([
             'parent_id'     => $section->id,
             'department_id' => $department->id,
         ]);
-        $sectionTwo   = TrainingPageSection::factory()->create([
+        $sectionTwo = TrainingPageSection::factory()->create([
             'parent_id'     => $section->id,
             'department_id' => $department->id,
         ]);
@@ -58,7 +60,7 @@ class GetTrainingTest extends TestCase
             'parent_id'     => $section->id,
             'department_id' => $department->id,
         ]);
-        $sectionFour  = TrainingPageSection::factory()->create([
+        $sectionFour = TrainingPageSection::factory()->create([
             'parent_id'     => $section->id,
             'department_id' => $department->id,
         ]);
@@ -81,25 +83,30 @@ class GetTrainingTest extends TestCase
     /** @test */
     public function it_shouldnt_show_if_user_doesnt_belongs_to_departments()
     {
-        /** @var Department $departmentOne */
         $departmentOne = Department::factory()->create();
-        /** @var Department $departmentTwo */
         $departmentTwo = Department::factory()->create();
 
-        $departmentManagerOne = User::factory()->create(['department_id' => $departmentOne->id]);
-        $departmentManagerTwo = User::factory()->create(['department_id' => $departmentTwo->id]);
+        $departmentManagerOne = User::factory()->create([
+            'department_id' => $departmentOne->id,
+        ]);
+        $departmentManagerTwo = User::factory()->create([
+            'department_id' => $departmentTwo->id,
+        ]);
 
-        $departmentOne->managers()->attach($departmentManagerOne->id);
-        $departmentTwo->managers()->attach($departmentManagerTwo->id);
+        $departmentOne->department_manager_id = $departmentManagerOne->id;
+        $departmentTwo->department_manager_id = $departmentManagerTwo->id;
+
+        $departmentOne->save();
+        $departmentTwo->save();
 
         $salesRepOne = User::factory()->create([
             'department_id' => $departmentOne->id,
-            'role'          => Role::SALES_REP,
+            'role'          => 'Sales Rep',
         ]);
 
         $salesRepTwo = User::factory()->create([
             'department_id' => $departmentTwo->id,
-            'role'          => Role::SALES_REP,
+            'role'          => 'Sales Rep',
         ]);
 
         TrainingPageSection::factory()->create([

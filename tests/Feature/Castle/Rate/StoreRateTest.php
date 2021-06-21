@@ -5,7 +5,6 @@ namespace Tests\Feature\Castle\Rate;
 use App\Models\Department;
 use App\Models\Rates;
 use App\Models\User;
-use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
@@ -17,13 +16,16 @@ class StoreRateTest extends TestCase
     /** @test */
     public function it_should_block_the_create_form_for_non_top_level_roles_in_rates()
     {
-        $setter = User::factory()->create(['role' => Role::SETTER]);
-        $ann    = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+        $setter = User::factory()->create([
+            'role' => 'Setter',
+        ]);
 
-        /** @var Department $department */
-        $department = Department::factory()->create();
-        $department->managers()->attach($ann->id);
-        $setter->update(['department_id' => $department->id]);
+        $department = Department::factory()->create([
+            'department_manager_id' => $setter->id,
+        ]);
+
+        $setter->department_id = $department->id;
+        $setter->save();
 
         $this->actingAs($setter)
             ->get(route('castle.rates.create'))
@@ -33,7 +35,10 @@ class StoreRateTest extends TestCase
     /** @test */
     public function it_should_show_the_create_form_for_top_level_roles_in_rates()
     {
-        [$departmentManager] = $this->createVP();
+        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
+        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
 
         $this
             ->actingAs($departmentManager)
@@ -45,7 +50,10 @@ class StoreRateTest extends TestCase
     /** @test */
     public function it_should_store_a_new_rate()
     {
-        [$departmentManager, $department] = $this->createVP();
+        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
+        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
 
         $data = [
             'name'          => 'rate',
@@ -65,7 +73,10 @@ class StoreRateTest extends TestCase
     /** @test */
     public function it_shouldnt_store_a_repeated_rate()
     {
-        [$departmentManager, $department] = $this->createVP();
+        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
+        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
 
         $data = [
             'name'          => 'rate',
@@ -86,7 +97,10 @@ class StoreRateTest extends TestCase
     /** @test */
     public function it_should_require_all_fields_to_store_a_new_rate()
     {
-        [$departmentManager] = $this->createVP();
+        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
+        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
 
         $data = [
             'name'          => '',

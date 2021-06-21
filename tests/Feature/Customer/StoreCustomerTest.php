@@ -6,7 +6,6 @@ use App\Http\Livewire\Customer\Create;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\User;
-use App\Enum\Role;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -19,7 +18,7 @@ class StoreCustomerTest extends TestCase
     /** @test */
     public function it_should_block_the_create_form_for_non_top_level_roles()
     {
-        $this->actingAs(User::factory()->create(['role' => Role::SETTER]))
+        $this->actingAs(User::factory()->create(['role' => 'Setter']))
             ->get(route('customers.create'))
             ->assertForbidden();
     }
@@ -27,7 +26,10 @@ class StoreCustomerTest extends TestCase
     /** @test */
     public function it_should_show_the_create_form_for_top_level_roles()
     {
-        [$departmentManager] = $this->createVP();
+        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
+        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
 
         $this->actingAs($departmentManager)
             ->get(route('customers.create'))
@@ -38,10 +40,10 @@ class StoreCustomerTest extends TestCase
     /** @test */
     public function it_should_store_a_new_customer()
     {
-        $john     = User::factory()->create(['role' => Role::ADMIN]);
+        $john     = User::factory()->create(['role' => 'Admin']);
         $user     = User::factory()->create();
-        $userOne  = User::factory()->create(['role' => Role::SETTER]);
-        $userTwo  = User::factory()->create(['role' => Role::SALES_REP]);
+        $userOne  = User::factory()->create(['role' => 'Setter']);
+        $userTwo  = User::factory()->create(['role' => 'Sales Rep']);
         $customer = Customer::factory()->make([
             'first_name'          => 'First Name',
             'last_name'           => 'Last Name',
@@ -77,7 +79,7 @@ class StoreCustomerTest extends TestCase
     /** @test */
     public function it_should_require_some_fields_to_store_a_new_customer()
     {
-        $john     = User::factory()->create(['role' => Role::ADMIN]);
+        $john     = User::factory()->create(['role' => 'Admin']);
         $customer = Customer::factory()->make();
 
         Department::factory()->create();

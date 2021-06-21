@@ -6,10 +6,8 @@ use App\Models\Department;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
-use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
-use Illuminate\Support\Collection;
 use Tests\TestCase;
 
 class GetOfficeTest extends TestCase
@@ -28,27 +26,26 @@ class GetOfficeTest extends TestCase
     /** @test */
     public function it_should_list_all_offices()
     {
-        $departmentManager = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
-
-        /** @var Department $department */
-        $department = Department::factory()->create();
-        $department->managers()->attach($departmentManager->id);
-        $departmentManager->update(['department_id' => $department->id]);
+        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
+        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
 
         $regionManager = User::factory()->create([
             'department_id' => $department->id,
-            'role'          => Role::REGION_MANAGER,
+            'role'          => 'Region Manager',
         ]);
 
-        /** @var Region $region */
-        $region = Region::factory()->create(['department_id' => $department->id]);
-        $region->managers()->attach($regionManager->id);
+        $region        = Region::factory()->create([
+            'region_manager_id' => $regionManager->id,
+            'department_id'     => $department->id,
+        ]);
+        $officeManager = User::factory()->create(['role' => 'Office Manager']);
 
-        $officeManager = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
-
-        /** @var Collection|Office[] $offices */
-        $offices = Office::factory()->count(6)->create(['region_id' => $region->id]);
-        $offices->each(fn(Office $office) => $office->managers()->attach($officeManager->id));
+        $offices = Office::factory()->count(6)->create([
+            'region_id'         => $region->id,
+            'office_manager_id' => $officeManager->id,
+        ]);
 
         $response = $this
             ->actingAs($departmentManager)

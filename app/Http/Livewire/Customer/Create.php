@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire\Customer;
 
-use App\Enum\Role;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\Financer;
@@ -63,7 +62,7 @@ class Create extends Component
 
     public function mount()
     {
-        if (user()->notHaveRoles([Role::ADMIN, Role::OWNER])) {
+        if (user()->role != 'Admin' && user()->role != 'Owner') {
             $this->departmentId = user()->department_id;
         } else {
             $this->departmentId = Department::first()->id;
@@ -71,14 +70,11 @@ class Create extends Component
 
         $this->customer         = new Customer();
         $this->customer->adders = 0;
-
-        if (user()->hasAnyRole([Role::OFFICE_MANAGER, Role::SALES_REP, Role::SETTER]) && user()->office_id != null) {
+        if ((user()->role == 'Office Manager' || user()->role == 'Sales Rep' || user()->role == 'Setter') && user()->office_id != null) {
             $this->customer->sales_rep_id  = user()->id;
             $this->customer->sales_rep_fee = $this->getUserRate(user()->id);
-
-            $this->salesRep = user();
+            $this->salesRep                = user();
         }
-
         $this->setSelfGen();
     }
 
@@ -86,17 +82,12 @@ class Create extends Component
     {
         $this->customer->calcComission();
         $this->customer->calcMargin();
-
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
         $this->netRepComission   = $this->calculateNetRepCommission();
         $this->salesReps         = user()->getPermittedUsers($this->departmentId)->toArray();
-
-        $this->setters = User::query()
-            ->where('department_id', $this->departmentId)
-            ->where('id', '!=', user()->id)
-            ->orderBy('first_name')
-            ->get()
-            ->toArray();
+        $this->setters           = User::whereDepartmentId($this->departmentId)
+                                ->where('id', '!=', user()->id)
+                                ->orderBy('first_name')->get()->toArray();
 
         return view('livewire.customer.create', [
             'departments' => Department::all(),
@@ -145,9 +136,7 @@ class Create extends Component
         $this->customer->misc_override_two           = $salesRep->misc_override_two;
         $this->customer->payee_two                   = $salesRep->payee_two;
         $this->customer->note_two                    = $salesRep->note_two;
-        $this->customer->financing_id                = $this->customer->financing_id != '' ? $this->customer->financing_id : null;
-        $this->customer->financer_id                 = $this->customer->financer_id != '' ? $this->customer->financer_id : null;
-        $this->customer->term_id                     = $this->customer->term_id != '' ? $this->customer->term_id : null;
+
         $this->customer->save();
 
         alert()
@@ -182,12 +171,12 @@ class Create extends Component
 
     public function getSetterFee()
     {
-        return Rates::whereRole(Role::SETTER)->first();
+        return Rates::whereRole('Setter')->first();
     }
 
     public function getSalesRepFee()
     {
-        return Rates::whereRole(Role::SALES_REP)->orderBy('rate', 'desc')->first();
+        return Rates::whereRole('Sales Rep')->orderBy('rate', 'desc')->first();
     }
 
     public function getSalesRepRate($userId)
@@ -202,13 +191,11 @@ class Create extends Component
 
     public function getUserRate($userId)
     {
-        /** @var User $user */
         $user = User::whereId($userId)->first();
 
         if ($user) {
             $rate = Rates::whereRole($user->role);
-
-            $rate->when($user->hasRole(Role::SALES_REP), function ($query) use ($user) {
+            $rate->when($user->role == 'Sales Rep', function ($query) use ($user) {
                 $query->where('time', '<=', $user->installs)->orderBy('time', 'desc');
             });
 

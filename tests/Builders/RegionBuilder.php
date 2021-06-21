@@ -16,8 +16,6 @@ class RegionBuilder
     /** @var Region */
     public $region;
 
-    public ?User $manager = null;
-
     public function __construct($attributes = [])
     {
         $this->faker  = $this->makeFaker('en_US');
@@ -39,12 +37,11 @@ class RegionBuilder
 
     public function save()
     {
-        if ($this->manager === null) {
-            $this->manager               = User::factory()->create();
-            $this->region->department_id = Department::factory()->create()->id;
+        if (!$this->region->region_manager_id) {
+            $this->region->region_manager_id = User::factory()->create()->id;
+            $this->region->department_id     = Department::factory()->create()->id;
         }
         $this->region->save();
-        $this->region->managers()->attach($this->manager->id);
 
         return $this;
     }
@@ -56,7 +53,7 @@ class RegionBuilder
 
     public function withManager(User $user)
     {
-        $this->manager = $user;
+        $this->region->region_manager_id = $user->id;
 
         return $this;
     }

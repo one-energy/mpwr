@@ -2,12 +2,10 @@
 
 namespace Tests\Feature\Castle\Region;
 
+use App\Models\Department;
 use App\Models\Region;
 use App\Models\User;
-use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Response;
-use Illuminate\Support\Collection;
 use Tests\TestCase;
 
 class GetRegionTest extends TestCase
@@ -26,20 +24,24 @@ class GetRegionTest extends TestCase
     /** @test */
     public function it_should_list_all_regions()
     {
-        [$departmentManager, $department] = $this->createVP();
+        $departmentManager = User::factory()->create(['role' => 'Department Manager']);
+        $department        = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
 
-        $regionManager = User::factory()->create([
-            'role'          => Role::REGION_MANAGER,
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
+
+        $regionManager     = User::factory()->create([
+            'role'          => 'Region Manager',
             'department_id' => $department->id,
         ]);
+        $regions           = Region::factory()->count(6)->create([
+            'region_manager_id' => $regionManager->id,
+            'department_id'     => $department->id,
+        ]);
+        $this->actingAs($departmentManager);
+        $response = $this->get('castle/regions');
 
-        /** @var Collection|Region[] $regions */
-        $regions = Region::factory()->count(6)->create(['department_id' => $department->id]);
-        $regions->each(fn (Region $region) => $region->managers()->attach($regionManager->id));
-
-        $response = $this->actingAs($departmentManager)
-            ->get(route('castle.regions.index'))
-            ->assertStatus(Response::HTTP_OK)
+        $response->assertStatus(200)
             ->assertViewIs('castle.regions.index')
             ->assertViewHas('regions');
 
@@ -51,9 +53,9 @@ class GetRegionTest extends TestCase
     /** @test */
     public function it_should_block_access_to_regions()
     {
-        $officeManager = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
-        $setter        = User::factory()->create(['role' => Role::SETTER]);
-        $salesRep      = User::factory()->create(['role' => Role::SALES_REP]);
+        $officeManager = User::factory()->create(['role' => 'Office Manager']);
+        $setter        = User::factory()->create(['role' => 'Setter']);
+        $salesRep      = User::factory()->create(['role' => 'Sales Rep']);
 
         $this->actingAs($officeManager)
             ->get(route('castle.regions.index'))

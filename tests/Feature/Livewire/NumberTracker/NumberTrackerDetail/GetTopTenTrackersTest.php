@@ -6,7 +6,6 @@ use App\Http\Livewire\NumberTracker\NumberTrackerDetail;
 use App\Models\DailyNumber;
 use App\Models\Department;
 use App\Models\User;
-use App\Enum\Role;
 use Livewire\Livewire;
 use Tests\Feature\FeatureTest;
 
@@ -15,16 +14,16 @@ class GetTopTenTrackersTest extends FeatureTest
     /** @test */
     public function it_should_be_possible_order_by_doors()
     {
-        $john       = User::factory()->create(['role' => Role::ADMIN]);
+        $john       = User::factory()->create(['role' => 'Admin']);
         $department = Department::factory()->create();
 
         $setter01 = User::factory()->create([
             'department_id' => $department->id,
-            'role'          => Role::SETTER,
+            'role'          => 'Setter',
         ]);
         $setter02 = User::factory()->create([
             'department_id' => $department->id,
-            'role'          => Role::SETTER,
+            'role'          => 'Setter',
         ]);
 
         DailyNumber::factory()->create([
@@ -48,42 +47,42 @@ class GetTopTenTrackersTest extends FeatureTest
     }
 
     /** @test */
-    public function it_should_be_possible_order_by_sats()
+    public function it_should_be_possible_order_by_sg_sits()
     {
-        $john = User::factory()->create(['role' => Role::ADMIN]);
-        $mary = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+        $john = User::factory()->create(['role' => 'Admin']);
+        $mary = User::factory()->create(['role' => 'Department Manager']);
 
-        /** @var Department $department */
-        $department = Department::factory()->create();
-        $department->managers()->attach($mary->id);
+        $department = Department::factory()->create([
+            'department_manager_id' => $mary->id,
+        ]);
 
         $setter01 = User::factory()->create([
-            'role'          => Role::SALES_REP,
+            'role'          => 'Sales Rep',
             'department_id' => $department->id,
         ]);
         $setter02 = User::factory()->create([
-            'role'          => Role::SALES_REP,
+            'role'          => 'Sales Rep',
             'department_id' => $department->id,
         ]);
 
         DailyNumber::factory()->create([
-            'user_id' => $setter01->id,
-            'date'    => now()->toDateString(),
-            'sits'    => 2,
-            'sats'    => 2,
+            'user_id'  => $setter01->id,
+            'date'     => now()->toDateString(),
+            'sits'     => 2,
+            'set_sits' => 2,
         ]);
         DailyNumber::factory()->create([
-            'user_id' => $setter02->id,
-            'date'    => now()->toDateString(),
-            'sits'    => 1,
-            'sats'    => 1,
+            'user_id'  => $setter02->id,
+            'date'     => now()->toDateString(),
+            'sits'     => 1,
+            'set_sits' => 1,
         ]);
 
         $this->actingAs($john);
 
         Livewire::test(NumberTrackerDetail::class, ['selectedDepartment' => $department->id])
-            ->set('selectedPill', 'sats')
-            ->assertSet('selectedPill', 'sats')
+            ->set('selectedPill', 'sg sits')
+            ->assertSet('selectedPill', 'sg sits')
             ->assertCount('topTenTrackers', 2)
             ->assertSeeInOrder([$setter01->full_name, $setter02->full_name]);
     }

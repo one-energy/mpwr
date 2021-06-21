@@ -4,7 +4,6 @@ namespace Tests\Feature\NumberTracker\Spreadsheet;
 
 use App\Models\DailyNumber;
 use App\Models\User;
-use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,8 +14,8 @@ class UpdateOrCreateTest extends TestCase
     /** @test */
     public function it_should_prevent_a_sales_rep_or_setter_store_or_update_daily_numbers()
     {
-        $john = User::factory()->create(['role' => Role::SETTER]);
-        $mary = User::factory()->create(['role' => Role::SALES_REP]);
+        $john = User::factory()->create(['role' => 'Setter']);
+        $mary = User::factory()->create(['role' => 'Sales Rep']);
 
         $this
             ->actingAs($john)
@@ -32,12 +31,12 @@ class UpdateOrCreateTest extends TestCase
     /** @test */
     public function it_should_store_daily_numbers()
     {
-        $john = User::factory()->create(['role' => Role::ADMIN]);
+        $john = User::factory()->create(['role' => 'Admin']);
 
         /** @var User $dummy01 */
-        $dummy01 = User::factory()->create(['role' => Role::SETTER]);
+        $dummy01 = User::factory()->create(['role' => 'Setter']);
         /** @var User $dummy02 */
-        $dummy02 = User::factory()->create(['role' => Role::SETTER]);
+        $dummy02 = User::factory()->create(['role' => 'Setter']);
 
         $this->assertDatabaseCount('daily_numbers', 0);
         $this->assertCount(0, $dummy01->dailyNumbers);
@@ -85,14 +84,14 @@ class UpdateOrCreateTest extends TestCase
     /** @test */
     public function it_should_update_daily_numbers()
     {
-        $john = User::factory()->create(['role' => Role::ADMIN]);
+        $john = User::factory()->create(['role' => 'Admin']);
 
         /** @var User $dummy01 */
-        $dummy01   = User::factory()->create(['role' => Role::SETTER]);
+        $dummy01   = User::factory()->create(['role' => 'Setter']);
         $tracker01 = DailyNumber::factory()->create(['user_id' => $dummy01->id]);
 
         /** @var User $dummy02 */
-        $dummy02   = User::factory()->create(['role' => Role::SETTER]);
+        $dummy02   = User::factory()->create(['role' => 'Setter']);
         $tracker02 = DailyNumber::factory()->create(['user_id' => $dummy02->id]);
 
         $this->assertDatabaseCount('daily_numbers', 2);
@@ -166,14 +165,14 @@ class UpdateOrCreateTest extends TestCase
     /** @test */
     public function it_should_store_when_the_array_does_not_have_an_id_and_update_when_have_it()
     {
-        $john = User::factory()->create(['role' => Role::ADMIN]);
+        $john = User::factory()->create(['role' => 'Admin']);
 
         /** @var User $dummy01 */
-        $dummy01   = User::factory()->create(['role' => Role::SETTER]);
+        $dummy01   = User::factory()->create(['role' => 'Setter']);
         $tracker01 = DailyNumber::factory()->create(['user_id' => $dummy01->id]);
 
         /** @var User $dummy02 */
-        $dummy02 = User::factory()->create(['role' => Role::SETTER]);
+        $dummy02 = User::factory()->create(['role' => 'Setter']);
 
         $this->assertDatabaseCount('daily_numbers', 1);
         $this->assertCount(1, $dummy01->dailyNumbers);

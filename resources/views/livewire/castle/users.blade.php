@@ -54,7 +54,18 @@
                                                     <div class="flex items-center">
                                                         @if ($this->canSeeOffices($user))
                                                             <div class="hidden md:block">
-                                                                <x-popover left :ref="$loop->index">
+                                                                <div
+                                                                    class="bg-gray-200 rounded shadow-xl w-48 h-auto p-4"
+                                                                    style="position: absolute; left: -177px; top: 20px;"
+                                                                    x-transition:enter="transition ease-out duration-300"
+                                                                    x-transition:enter-start="opacity-0 transform scale-90"
+                                                                    x-transition:enter-end="opacity-100 transform scale-100"
+                                                                    x-transition:leave="transition ease-in duration-300"
+                                                                    x-transition:leave-start="opacity-100 transform scale-100"
+                                                                    x-transition:leave-end="opacity-0 transform scale-90"
+                                                                    x-show="open"
+                                                                    x-cloak
+                                                                >
                                                                     @if ($user->hasRole('Office Manager'))
                                                                         @foreach($user->managedOffices as $office)
                                                                             <p>{{ $office->name }}</p>
@@ -64,11 +75,10 @@
                                                                     @if ($user->hasAnyRole(['Region Manager', 'Department Manager']))
                                                                         <p>{{ $user->office?->name }}</p>
                                                                     @endif
-                                                                </x-popover>
+                                                                </div>
                                                                 <x-icon
-                                                                    x-data=""
-                                                                    @mouseenter="$dispatch('open-popover', {ref: '{{ $loop->index }}'})"
-                                                                    @mouseleave="$dispatch('close-popover', {ref: '{{ $loop->index }}'})"
+                                                                    @mouseenter="open = true"
+                                                                    @mouseleave="open = false"
                                                                     icon="user"
                                                                     class="w-3.5 h-auto mr-2.5"
                                                                 />

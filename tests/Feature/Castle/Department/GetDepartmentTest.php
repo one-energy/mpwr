@@ -4,7 +4,6 @@ namespace Tests\Feature\Castle\Department;
 
 use App\Models\Department;
 use App\Models\User;
-use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -24,17 +23,24 @@ class GetDepartmentTest extends TestCase
     /** @test */
     public function it_should_list_all_departments()
     {
-        $admin                = User::factory()->create(['role' => Role::ADMIN]);
-        $departmentManagerOne = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
-        $departmentManagerTwo = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+        $admin = User::factory()->create(['role' => 'Admin']);
 
-        /** @var Department $departmentOne */
-        $departmentOne = Department::factory()->create();
-        $departmentOne->managers()->attach($departmentManagerOne->id);
+        $departmentManagerOne = User::factory()->create(['role' => 'Department Manager']);
+        $departmentManagerTwo = User::factory()->create(['role' => 'Department Manager']);
 
-        /** @var Department $departmentTwo */
-        $departmentTwo = Department::factory()->create();
-        $departmentTwo->managers()->attach($departmentManagerTwo->id);
+        $departmentOne = Department::factory()->create([
+            'department_manager_id' => $departmentManagerOne->id,
+        ]);
+
+        $departmentTwo = Department::factory()->create([
+            'department_manager_id' => $departmentManagerTwo->id,
+        ]);
+
+        $departmentManagerOne->department_id = $departmentOne->id;
+        $departmentManagerOne->save();
+
+        $departmentManagerTwo->department_id = $departmentTwo->id;
+        $departmentManagerTwo->save();
 
         $this
             ->actingAs($admin)

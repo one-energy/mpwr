@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enum\Role;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -43,9 +42,10 @@ use Lab404\Impersonate\Models\Impersonate;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invitation[] $invitations
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Office[] $managedOffices
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Region[] $managedRegions
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Department[] $managedDepartments
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read \App\Models\Office|null $office
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Office[] $officesOnManagedRegions
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $usersOnManagedOffices
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User masters()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newQuery()
@@ -81,46 +81,14 @@ class User extends Authenticatable implements MustVerifyEmail
         'install',
     ];
 
-    protected $appends = [
-        'full_name',
-    ];
-
     const ROLES = [
-        [
-            'title'       => 'Owner',
-            'name'        => 'Owner',
-            'description' => 'System Owner',
-        ],
-        [
-            'title'       => 'Admin',
-            'name'        => 'Admin',
-            'description' => 'Allows access to the Admin functionality and Manage Users, Incentives and others (Admin Tab)',
-        ],
-        [
-            'title'       => 'VP',
-            'name'        => 'Department Manager',
-            'description' => 'Allows access to Manage Users, Incentives and others',
-        ],
-        [
-            'title'       => 'Regional Manager',
-            'name'        => 'Region Manager',
-            'description' => "Allows update all Region's Number Tracker",
-        ],
-        [
-            'title'       => 'Manager',
-            'name'        => 'Office Manager',
-            'description' => "Allows update a Region's Number Tracker",
-        ],
-        [
-            'title'       => 'Sales Rep',
-            'name'        => 'Sales Rep',
-            'description' => 'Allows read/add/edit/cancel Customer',
-        ],
-        [
-            'title'       => 'Setter',
-            'name'        => 'Setter',
-            'description' => 'Allows see the dashboard and only read Customer',
-        ],
+        ['title' => 'Owner', 'name' => 'Owner', 'description' => 'System Owner'],
+        ['title' => 'Admin', 'name' => 'Admin', 'description' => 'Allows access to the Admin functionality and Manage Users, Incentives and others (Admin Tab)'],
+        ['title' => 'VP', 'name' => 'Department Manager', 'description' => 'Allows access to Manage Users, Incentives and others'],
+        ['title' => 'Regional Manager', 'name' => 'Region Manager', 'description' => 'Allows update all Region\'s Number Tracker'],
+        ['title' => 'Manager', 'name' => 'Office Manager', 'description' => 'Allows update a Region\'s Number Tracker'],
+        ['title' => 'Sales Rep', 'name' => 'Sales Rep', 'description' => 'Allows read/add/edit/cancel Customer'],
+        ['title' => 'Setter', 'name' => 'Setter', 'description' => 'Allows see the dashboard and only read Customer'],
     ];
 
     const TOPLEVEL_ROLES = [
@@ -137,6 +105,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'master'            => 'boolean',
     ];
 
+    protected $appends = [
+        'full_name',
+    ];
+
     public function office()
     {
         return $this->belongsTo(Office::class, 'office_id');
@@ -144,13 +116,22 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function managedOffices()
     {
-        return $this->belongsToMany(Office::class, 'user_managed_offices')
-            ->withTimestamps();
+        return $this->hasMany(Office::class, 'office_manager_id');
     }
 
     public function managedRegions()
     {
-        return $this->belongsToMany(Region::class, 'user_managed_regions');
+        return $this->hasMany(Region::class, 'region_manager_id');
+    }
+
+    public function officesOnManagedRegions()
+    {
+        return $this->hasManyThrough(Office::class, Region::class, 'region_manager_id', 'region_id');
+    }
+
+    public function usersOnManagedOffices()
+    {
+        return $this->hasManyThrough(User::class, Office::class, 'office_manager_id', 'office_id');
     }
 
     public function department()
@@ -246,7 +227,6 @@ class User extends Authenticatable implements MustVerifyEmail
     public function level()
     {
         $eniumPoints = $this->eniumPoints();
-
         return UserEniumPointLevel::where('point', '>=', $eniumPoints)->first() ?? UserEniumPointLevel::find(UserEniumPointLevel::LAST_LEVEL);
     }
 
@@ -256,13 +236,7 @@ class User extends Authenticatable implements MustVerifyEmail
             $query->where('is_active', true)
                 ->where('panel_sold', true);
         })->inPeriod()
-            ->sum('points');
-    }
-
-    public function managedDepartments()
-    {
-        return $this->belongsToMany(Department::class, 'user_managed_departments')
-            ->withTimestamps();
+        ->sum('points');
     }
 
     public function changePassword($new)
@@ -311,14 +285,14 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function getPermittedUsers($departmentId = null)
     {
-        if ($this->hasAnyRole([Role::ADMIN, Role::OWNER])) {
+        if ($this->role == 'Admin' || $this->role == 'Owner') {
             return User::has('office')->whereDepartmentId($departmentId)->orderBy('first_name')->get();
         }
 
-        if ($this->hasRole(Role::DEPARTMENT_MANAGER)) {
+        if ($this->role == 'Department Manager') {
             return User::has('office')
                 ->whereDepartmentId($this->department_id)
-                ->where(function ($query) {
+                ->where(function($query) {
                     return $query->orWhere('users.id', $this->id)
                         ->orWhere('role', 'Region Manager')
                         ->orWhere('role', 'Office Manager')
@@ -327,17 +301,17 @@ class User extends Authenticatable implements MustVerifyEmail
                 })->orderBy('first_name')->get();
         }
 
-        if ($this->hasRole(Role::REGION_MANAGER)) {
-            $offices = Office::whereIn('region_id', $this->managedRegions->pluck('id'))->with('users')->get();
-            $users   = $offices->reduce(function ($users, Office $office) {
+        if ($this->role == 'Region Manager') {
+            $offices = $this->officesOnManagedRegions()->with('users')->get();
+            $users   = $offices->reduce(function($users, Office $office) {
                 return $users->mergeRecursive($office->users);
             }, $users = collect([]))->unique('id');
 
             return $users->sortBy('first_name');
         }
 
-        if ($this->hasRole(Role::OFFICE_MANAGER)) {
-            return User::whereIn('office_id', $this->managedOffices->pluck('id'))->get();
+        if ($this->role == 'Office Manager') {
+            return $this->usersOnManagedOffices()->get();
         }
 
         return collect([user()]);
@@ -345,95 +319,64 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public static function getRolesPerUserRole()
     {
-        if (user()->hasRole(Role::OWNER)) {
-            return User::ROLES;
+        if (user()->role == 'Admin') {
+            $roles = [
+                ['title' => 'Admin', 'name' => 'Admin', 'description' => 'Allows access to the Admin functionality and Manage Users, Incentives and others (Admin Tab)'],
+                ['title' => 'VP', 'name' => 'Department Manager', 'description' => 'Allows update all in departments and Region\'s Number Tracker'],
+                ['title' => 'Regional Manager', 'name' => 'Region Manager', 'description' => 'Allows update all Region\'s Number Tracker'],
+                ['title' => 'Manager', 'name' => 'Office Manager', 'description' => 'Allows update a Region\'s Number Tracker'],
+                ['title' => 'Sales Rep', 'name' => 'Sales Rep', 'description' => 'Allows read/add/edit/cancel Customer'],
+                ['title' => 'Setter', 'name' => 'Setter', 'description' => 'Allows see the dashboard and only read Customer'],
+            ];
+        }
+        if (user()->role == 'Department Manager') {
+            $roles = [
+                ['title' => 'Regional Manager', 'name' => 'Region Manager', 'description' => 'Allows update all Region\'s Number Tracker'],
+                ['title' => 'Manager', 'name' => 'Office Manager', 'description' => 'Allows update a Region\'s Number Tracker'],
+                ['title' => 'Sales Rep', 'name' => 'Sales Rep', 'description' => 'Allows read/add/edit/cancel Customer'],
+                ['title' => 'Setter', 'name' => 'Setter', 'description' => 'Allows see the dashboard and only read Customer'],
+            ];
+        }
+        if (user()->role == 'Region Manager') {
+            $roles = [
+                ['title' => 'Manager', 'name' => 'Office Manager', 'description' => 'Allows update a Region\'s Number Tracker'],
+                ['title' => 'Sales Rep', 'name' => 'Sales Rep', 'description' => 'Allows read/add/edit/cancel Customer'],
+                ['title' => 'Setter', 'name' => 'Setter', 'description' => 'Allows see the dashboard and only read Customer'],
+            ];
+        }
+        if (user()->role == 'Office Manager') {
+            $roles = [
+                ['title' => 'Sales Rep', 'name' => 'Sales Rep', 'description' => 'Allows read/add/edit/cancel Customer'],
+                ['title' => 'Setter', 'name' => 'Setter', 'description' => 'Allows see the dashboard and only read Customer'],
+            ];
         }
 
-        $roles = [
-            [
-                'title'       => 'Sales Rep',
-                'name'        => 'Sales Rep',
-                'description' => 'Allows read/add/edit/cancel Customer',
-            ],
-            [
-                'title'       => 'Setter',
-                'name'        => 'Setter',
-                'description' => 'Allows see the dashboard and only read Customer',
-            ],
-        ];
-
-        if (user()->hasRole(Role::ADMIN)) {
-            $roles = array_merge($roles, [
-                [
-                    'title'       => 'Manager',
-                    'name'        => 'Office Manager',
-                    'description' => "Allows update a Region's Number Tracker",
-                ],
-                [
-                    'title'       => 'Regional Manager',
-                    'name'        => 'Region Manager',
-                    'description' => "Allows update all Region's Number Tracker",
-                ],
-                [
-                    'title'       => 'VP',
-                    'name'        => 'Department Manager',
-                    'description' => "Allows update all in departments and Region's Number Tracker",
-                ],
-                [
-                    'title'       => 'Admin',
-                    'name'        => 'Admin',
-                    'description' => 'Allows access to the Admin functionality and Manage Users, Incentives and others (Admin Tab)',
-                ],
-            ]);
+        if (user()->role == 'Owner') {
+            $roles = User::ROLES;
         }
 
-        if (user()->hasRole(Role::DEPARTMENT_MANAGER)) {
-            $roles = array_merge($roles, [
-                [
-                    'title'       => 'Manager',
-                    'name'        => 'Office Manager',
-                    'description' => "Allows update a Region's Number Tracker",
-                ],
-                [
-                    'title'       => 'Regional Manager',
-                    'name'        => 'Region Manager',
-                    'description' => "Allows update all Region's Number Tracker",
-                ],
-            ]);
-        }
-
-        if (user()->hasRole(Role::REGION_MANAGER)) {
-            $roles = array_merge($roles, [
-                [
-                    'title'       => 'Manager',
-                    'name'        => 'Office Manager',
-                    'description' => "Allows update a Region's Number Tracker",
-                ],
-            ]);
-        }
-
-        return array_reverse($roles);
+        return $roles;
     }
 
     public static function userManageOffices(User $user)
     {
-        return $user->managedOffices()->count() > 0
-            ? $user->managedOffices
-            : false;
+        $offices = Office::whereOfficeManagerId($user->id)->get();
+
+        return count($offices) > 0 ? $offices : false;
     }
 
     public static function userManageRegion(User $user)
     {
-        return $user->managedRegions()->count() > 0
-            ? $user->managedRegions
-            : false;
+        $regions = Region::whereRegionManagerId($user->id)->get();
+
+        return count($regions) > 0 ? $regions : false;
     }
 
     public static function userManageDepartment(User $user)
     {
-        return $user->managedDepartments()->count() > 0
-            ? $user->managedDepartments
-            : false;
+        $departments = Department::whereDepartmentManagerId($user->id)->get();
+
+        return count($departments) > 0 ? $departments : false;
     }
 
     public static function userCanChangeRole(User $user): array
@@ -442,7 +385,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'status'  => true,
             'message' => '',
         ];
-        $previous = 'This user is the Manager for the';
+        $previous = 'This user is the manager for the';
 
         if ($offices = User::userManageOffices($user)) {
             $response['status']  = false;
@@ -470,7 +413,9 @@ class User extends Authenticatable implements MustVerifyEmail
 
     protected static function getChangeRoleMessage(string $previous, Collection $content): string
     {
-        return sprintf('%s %s', $previous, $content->implode('name', ', '));
+        $message = $previous . ' ' . $content->implode('name', ', ');
+
+        return $message . '. Please disassociate the user from what was mentioned before continuing.';
     }
 
     public function getPhoneNumberAttribute($value)
@@ -538,11 +483,11 @@ class User extends Authenticatable implements MustVerifyEmail
                                   $stockPointsOfSalesRepRecruited->sum(fn($customer) => $customer->stockPoint->stock_recruiter) +
                                   $stockPointsOfDepartment->sum(fn($customer) => $customer->stockPoint->stock_department) +
                                   $stockPointsOfRegionManager->sum(fn($customer) => $customer->stockPoint->stock_regional) +
-                                  $stockPointsOfOfficeManager->sum(fn($customer) => $customer->stockPoint->stock_manager)
+                                  $stockPointsOfOfficeManager->sum(fn($customer) => $customer->stockPoint->stock_manager) 
         ];
     }
 
-    public function getStockPointsOf ($query)
+    public function getStockPointsOf ($query) 
     {
         return $query->whereHas('stockPoint', function ($query) {
             $query->whereYear('created_at', Carbon::now());
@@ -551,18 +496,18 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function hasAnyRole(array $roles): bool
     {
-        return collect($roles)->some(fn($role) => $role === $this->role);
+        return collect($roles)->some(fn ($role) => $role === $this->role);
     }
 
     public function notHaveRoles(array $roles): bool
     {
-        return collect($roles)->every(fn($role) => $role !== $this->role);
+        return collect($roles)->every(fn ($role) => $role !== $this->role);
     }
 
     public static function getRoleByNames()
     {
         return collect(self::ROLES)
-            ->map(fn($role) => $role['name'])
+            ->map(fn ($role) => $role['name'])
             ->toArray();
     }
 }
