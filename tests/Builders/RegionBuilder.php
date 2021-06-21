@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\Builders;
 
 use App\Enum\Role;
