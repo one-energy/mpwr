@@ -2,12 +2,12 @@
 
 namespace Tests\Feature\Livewire\NumberTracker\Spreadsheet;
 
+use App\Enum\Role;
 use App\Http\Livewire\NumberTracker\Spreadsheet;
 use App\Models\DailyNumber;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
-use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -39,11 +39,11 @@ class GetUsersTest extends TestCase
 
         User::factory()->times(10)->create([
             'role'      => Role::SETTER,
-            'office_id' => $office01->id
+            'office_id' => $office01->id,
         ]);
         User::factory()->times(10)->create([
             'role'      => Role::SETTER,
-            'office_id' => $office02->id
+            'office_id' => $office02->id,
         ]);
 
         $this->actingAs($john);
@@ -62,8 +62,9 @@ class GetUsersTest extends TestCase
 
     private function getUsersGroupedByDailyNumbers(Office $office): Collection
     {
-        return User::where('office_id', $office->id)
+        return User::query()
             ->with('dailyNumbers')
+            ->where('office_id', $office->id)
             ->get()
             ->map(function (User $user) {
                 $user->dailyNumbers = $user->dailyNumbers->groupBy(function (DailyNumber $dailyNumber) {

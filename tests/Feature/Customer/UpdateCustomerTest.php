@@ -2,11 +2,11 @@
 
 namespace Tests\Feature\Customer;
 
+use App\Enum\Role;
 use App\Http\Livewire\Customer\Edit;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\User;
-use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Livewire\Livewire;
@@ -34,11 +34,12 @@ class UpdateCustomerTest extends TestCase
     /** @test */
     public function it_should_update_a_customer()
     {
-        $this->markTestSkipped('must be revisited.');
-
         $john       = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
         $department = Department::factory()->create();
-        $customer   = Customer::factory()->create(['adders' => 30.5]);
+        $customer   = Customer::factory()->create([
+            'sales_rep_id' => $john->id,
+            'adders'       => 30.5,
+        ]);
 
         $john->update(['department_id' => $department->id]);
 

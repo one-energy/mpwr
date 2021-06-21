@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\NumberTracker;
 
+use App\Enum\Role;
 use App\Models\DailyNumber;
 use App\Models\User;
-use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -242,8 +242,6 @@ class StoreNumberTrackerTest extends TestCase
     /** @test */
     public function it_should_prevent_that_sets_quantity_be_greater_than_doors_quantity()
     {
-        $this->markTestSkipped('must be revisited.');
-
         $mary = User::factory()->create(['role' => Role::SETTER]);
 
         $data = [
@@ -266,8 +264,6 @@ class StoreNumberTrackerTest extends TestCase
     /** @test */
     public function it_should_prevent_that_closes_quantity_be_greater_than_sets_quantity()
     {
-        $this->markTestSkipped('must be revisited.');
-
         $mary = User::factory()->create(['role' => Role::SETTER]);
 
         $data = [

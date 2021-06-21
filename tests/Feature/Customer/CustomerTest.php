@@ -22,12 +22,21 @@ class CustomerTest extends TestCase
     use RefreshDatabase;
 
     public User $user;
+    public User $regionMng;
+    public User $officeMng;
+    public Financing $financing;
+    public financer $financer;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->user = User::factory()->create(['role' => Role::ADMIN]);
+        $this->financing = Financing::factory()->create();
+        $this->financer  = Financer::factory()->create();
+        $this->regionMng = User::factory()->create(['role' => Role::REGION_MANAGER]);
+        $this->officeMng = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
+
         Department::factory()->count(6)->create();
 
         MultiplierOfYear::factory()->create(['year' => now()->year]);
@@ -113,20 +122,6 @@ class CustomerTest extends TestCase
     }
 
     /** @test */
-    public function it_should_calculate_comission()
-    {
-        $customer                = new Customer();
-        $customer->system_size   = 4.5;
-        $customer->adders        = 300;
-        $customer->epc           = 4.7;
-        $customer->setter_fee    = 0.2;
-        $customer->sales_rep_fee = 3.1;
-        $customer->calcComission();
-
-        $this->assertEquals($customer->sales_rep_comission, 13950.00);
-    }
-
-    /** @test */
     public function it_should_show_sales_rep_and_setter_fees()
     {
         $saleRepRate = Rates::factory()->create([
@@ -146,19 +141,13 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_save_user_overrides_on_customer()
     {
-        $this->markTestSkipped('must be revisited.');
-
-        $financing = Financing::factory()->create();
-        $financer  = Financer::factory()->create();
         $user      = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
-        $regionMng = User::factory()->create(['role' => Role::REGION_MANAGER]);
-        $officeMng = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
         $userOne   = User::factory()->create(['role' => Role::SETTER]);
         $userTwo   = User::factory()->create([
             'recruiter_id'                => $userOne->id,
             'referral_override'           => 10,
-            'office_manager_id'           => $officeMng->id,
-            'region_manager_id'           => $regionMng->id,
+            'office_manager_id'           => $this->officeMng->id,
+            'region_manager_id'           => $this->regionMng->id,
             'department_manager_id'       => $user->id,
             'office_manager_override'     => 10,
             'region_manager_override'     => 20,
@@ -177,8 +166,8 @@ class CustomerTest extends TestCase
             ->set('customer.adders', 10)
             ->set('customer.epc', 10)
             ->set('customer.date_of_sale', Carbon::now())
-            ->set('customer.financing_id', $financing->id)
-            ->set('customer.financer_id', $financer->id)
+            ->set('customer.financing_id', $this->financing->id)
+            ->set('customer.financer_id', $this->financer->id)
             ->set('customer.bill', 'Bill')
             ->set('customer.system_size', 4)
             ->set('customer.setter_id', $userOne->id)
@@ -192,8 +181,8 @@ class CustomerTest extends TestCase
         $this->assertDatabaseHas('customers', [
             'sales_rep_recruiter_id'      => $userOne->id,
             'referral_override'           => 10,
-            'office_manager_id'           => $officeMng->id,
-            'region_manager_id'           => $regionMng->id,
+            'office_manager_id'           => $this->officeMng->id,
+            'region_manager_id'           => $this->regionMng->id,
             'department_manager_id'       => $user->id,
             'office_manager_override'     => 10,
             'region_manager_override'     => 20,
@@ -204,19 +193,5 @@ class CustomerTest extends TestCase
             'payee_two'                   => 'payee two',
             'note_two'                    => 'note two',
         ]);
-    }
-
-    /** @test */
-    public function it_should_calculate_margin()
-    {
-        $customer = Customer::factory([
-            'epc'           => 6.5,
-            'setter_fee'    => 2.3,
-            'sales_rep_fee' => 2.6,
-        ])->make();
-
-        $customer->calcMargin();
-
-        $this->assertEquals($customer->margin, 1.6);
     }
 }
