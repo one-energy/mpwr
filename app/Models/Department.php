@@ -31,6 +31,11 @@ class Department extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $fillable = [
+        'department_manager_id',
+        'name',
+    ];
+
     public function departmentAdmin()
     {
         return $this->belongsTo(User::class, 'department_manager_id');
@@ -49,6 +54,11 @@ class Department extends Model
     public function offices()
     {
         return $this->hasManyThrough(Office::class, Region::class);
+    }
+
+    public function officesTrashedParents()
+    {
+        return $this->hasManyThrough(Office::class, Region::class)->withTrashedParents();
     }
 
     public function trainingPageSections()

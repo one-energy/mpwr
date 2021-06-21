@@ -128,8 +128,14 @@
 
                 <x-number-tracker.leaderboard-card
                     :trackers="$topTenTrackers"
-                    :pills="$this->pills"
+                    :pills="$this->leaderboardPills"
                 />
+
+                <x-number-tracker.team-leaderboard-card
+                    :teams="$topTenTeams"
+                    :pills="$this->teamLeaderboardPills"
+                />
+
                 <div class="mt-6">
                     <x-button :href="route('number-tracking.create')" color="green" class="inline-flex w-full">
                         Update Numbers
