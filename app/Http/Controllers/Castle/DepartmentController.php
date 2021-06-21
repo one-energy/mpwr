@@ -5,9 +5,6 @@ namespace App\Http\Controllers\Castle;
 use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\User;
-use App\Enum\Role;
-use App\Rules\UserHasRole;
-use Illuminate\Support\Facades\DB;
 
 class DepartmentController extends Controller
 {
@@ -32,42 +29,27 @@ class DepartmentController extends Controller
 
     public function store()
     {
-        request()->validate([
-            'name'                     => 'required|string|min:3|max:255',
-            'department_manager_ids'   => 'nullable|array',
-            'department_manager_ids.*' => ['nullable', 'exists:users,id', new UserHasRole(Role::DEPARTMENT_MANAGER)],
+        $validated = request()->validate([
+            'name'                  => 'required|string|min:3|max:255',
+            'department_manager_id' => 'required',
         ], [
             'department_id.required'         => 'The department field is required.',
             'department_manager_id.required' => 'The department manager field is required.',
         ]);
 
-        DB::transaction(function () {
-            /** @var Department $department */
-            $department = Department::create(['name' => request()->name]);
+        $department                        = new Department();
+        $department->name                  = $validated['name'];
+        $department->department_manager_id = $validated['department_manager_id'];
 
-            $managerIds = collect(request()->department_manager_ids)->filter();
+        $department->save();
 
-            if ($managerIds->isNotEmpty()) {
-                $managers = User::query()
-                    ->whereIn('id', $managerIds->toArray())
-                    ->with('managedDepartments')
-                    ->get();
+        $department->trainingPageSections()->create([
+            'title' => 'Training Page',
+        ]);
 
-                $managers->each(function (User $user) {
-                    $user->managedDepartments()->detach(
-                        $user->managedDepartments->pluck('id')->toArray()
-                    );
-                });
-
-                $department->managers()->attach($managerIds->toArray());
-
-                User::query()
-                    ->whereIn('id', $managerIds->toArray())
-                    ->update(['department_id' => $department->id]);
-            }
-
-            $department->trainingPageSections()->create(['title' => 'Training Page']);
-        });
+        $departmentAdmin                = $department->departmentAdmin;
+        $departmentAdmin->department_id = $department->id;
+        $departmentAdmin->save();
 
         alert()
             ->withTitle(__('Department Created!'))
@@ -78,16 +60,28 @@ class DepartmentController extends Controller
 
     public function edit(Department $department)
     {
+        $users = User::query()->where('role', 'Department Manager')->get();
+
         return view('castle.departments.edit', [
-            'department' => $department->load('managers'),
+            'department' => $department,
+            'users'      => $users,
         ]);
     }
 
     public function update(Department $department)
     {
-        request()->validate(['name' => 'required|string|min:3|max:255']);
+        $validated = request()->validate([
+            'name'                  => 'required|string|min:3|max:255',
+            'department_manager_id' => 'required',
+        ], [
+            'department_id.required'         => 'The department field is required.',
+            'department_manager_id.required' => 'The department manager field is required.',
+        ]);
 
-        $department->update(['name' => request()->name]);
+        $department->name                  = $validated['name'];
+        $department->department_manager_id = $validated['department_manager_id'];
+
+        $department->save();
 
         alert()
             ->withTitle(__('Department Updated!'))

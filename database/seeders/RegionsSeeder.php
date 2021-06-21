@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Department;
 use App\Models\Region;
 use App\Models\User;
-use App\Enum\Role;
 use Illuminate\Database\Seeder;
 
 class RegionsSeeder extends Seeder
@@ -15,11 +14,12 @@ class RegionsSeeder extends Seeder
         $department = Department::first();
 
         User::query()
-            ->where('role', Role::REGION_MANAGER)
+            ->where('role', 'Region Manager')
             ->each(function (User $user) use ($department) {
-                /** @var Region $region */
-                $region = Region::factory()->create(['department_id' => $department->id]);
-                $region->managers()->attach($user);
+                Region::factory()->create([
+                    'department_id'     => $department->id,
+                    'region_manager_id' => $user->id,
+                ]);
             });
     }
 }

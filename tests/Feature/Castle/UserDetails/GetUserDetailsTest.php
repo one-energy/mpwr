@@ -3,12 +3,11 @@
 namespace Tests\Feature\Castle\UserDetails;
 
 use App\Models\Department;
-use App\Models\Office;
-use App\Models\Region;
 use App\Models\User;
-use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
+use Tests\Builders\OfficeBuilder;
+use Tests\Builders\RegionBuilder;
 use Tests\Builders\UserBuilder;
 use Tests\TestCase;
 
@@ -20,7 +19,7 @@ class GetUserDetailsTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = User::factory()->create(['role' => Role::ADMIN]);
+        $this->user = User::factory()->create(['role' => 'Admin']);
 
         $this->actingAs($this->user);
     }
@@ -28,7 +27,16 @@ class GetUserDetailsTest extends TestCase
     /** @test */
     public function only_master_users_can_see_user_details()
     {
-        [$departmentManager, $department] = $this->createVP();
+        $departmentManager = User::factory()->create([
+            'role' => 'Department Manager',
+        ]);
+
+        $department = Department::factory()->create([
+            'department_manager_id' => $departmentManager->id,
+        ]);
+
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
 
         $setter = User::factory()->create([
             'role'          => 'Setter',
@@ -52,11 +60,11 @@ class GetUserDetailsTest extends TestCase
         ]);
 
         $master = User::factory()->create([
-            'role' => Role::ADMIN,
+            'role' => 'Admin',
         ]);
 
         $nonMaster = User::factory()->create([
-            'role'          => Role::DEPARTMENT_MANAGER,
+            'role'          => 'Department Manager',
             'department_id' => $department->id,
         ]);
 
@@ -78,21 +86,13 @@ class GetUserDetailsTest extends TestCase
     /** @test */
     public function it_should_show_the_office_a_user_is_on()
     {
-        $this->withoutExceptionHandling();
+        $master = (new UserBuilder(['role' => 'Admin']))->asMaster()->save()->get();
 
-        $master = User::factory()->create(['role' => Role::ADMIN]);
+        $region = (new RegionBuilder)->withManager($master)->save()->get();
 
-        /** @var Region $region */
-        $region = Region::factory()->create();
-        $region->managers()->attach($master->id);
+        $office1 = (new OfficeBuilder)->region($region)->withManager($master)->save()->get();
 
-        /** @var Office $office */
-        $office = Office::factory()->create(['region_id' => $region->id]);
-        $office->managers()->attach($master->id);
-
-        $master->update(['office_id' => $office->id]);
-
-        $user1 = (new UserBuilder(['role' => Role::SETTER]))->withOffice($office)->save()->get();
+        $user1 = (new UserBuilder)->withOffice($office1)->save()->get();
 
         $this->actingAs($master)
             ->get(route('castle.users.show', $user1->id))
@@ -103,7 +103,7 @@ class GetUserDetailsTest extends TestCase
     /** @test */
     public function it_should_reset_users_password()
     {
-        $master      = User::factory()->create(['role' => Role::ADMIN]);
+        $master      = User::factory()->create(['role' => 'admin']);
         $user        = User::factory()->create(['password' => '123456789']);
         $data        = $user->toArray();
         $newPassword = array_merge($data, [
@@ -119,7 +119,7 @@ class GetUserDetailsTest extends TestCase
     /** @test */
     public function it_shouldnt_show_index_page()
     {
-        $setterManager = User::factory()->create(['role' => Role::SETTER]);
+        $setterManager = User::factory()->create(['role' => 'Setter']);
 
         $this->actingAs($setterManager)
             ->get(route('castle.users.index'))

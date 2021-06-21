@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Customer;
 
-use App\Enum\Role;
 use App\Http\Livewire\Customer\Edit;
 use App\Models\Customer;
 use App\Models\Department;
@@ -19,11 +18,16 @@ class UpdateCustomerTest extends TestCase
     /** @test */
     public function it_should_show_the_edit_form()
     {
-        $john       = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
-        $department = Department::factory()->create();
-        $customer   = Customer::factory()->create();
+        $john = User::factory()->create(['role' => 'Admin']);
+        $mary = User::factory()->create(['role' => 'Department Manager']);
 
-        $john->update(['department_id' => $department->id]);
+        $department = Department::factory()->create(['department_manager_id' => $mary->id]);
+        $customer   = Customer::factory()->create([
+            'sales_rep_id' => User::factory()->create([
+                'role'          => 'Sales Rep',
+                'department_id' => $department->id
+            ])->id
+        ]);
 
         $this->actingAs($john);
 
@@ -34,11 +38,12 @@ class UpdateCustomerTest extends TestCase
     /** @test */
     public function it_should_update_a_customer()
     {
-        $john       = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+
+        $john       = User::factory()->create(['role' => 'Department Manager']);
         $department = Department::factory()->create();
         $customer   = Customer::factory()->create([
             'sales_rep_id' => $john->id,
-            'adders'       => 30.5,
+            'adders'       => 30.5
         ]);
 
         $john->update(['department_id' => $department->id]);
@@ -59,7 +64,7 @@ class UpdateCustomerTest extends TestCase
     public function it_should_block_updating_a_form_for_non_top_level_roles()
     {
         $this->actingAs(User::factory()->create([
-            'role'          => Role::SETTER,
+            'role'          => 'Setter',
             'department_id' => Department::factory()->create(),
         ]));
 
@@ -73,7 +78,7 @@ class UpdateCustomerTest extends TestCase
     /** @test */
     public function it_should_inactivate_a_customer()
     {
-        $john     = User::factory()->create(['role' => Role::ADMIN]);
+        $john     = User::factory()->create(['role' => 'Admin']);
         $customer = Customer::factory()->create([
             'is_active'    => true,
             'sales_rep_id' => $john->id,
@@ -93,7 +98,7 @@ class UpdateCustomerTest extends TestCase
     /** @test */
     public function it_should_activate_a_customer()
     {
-        $john     = User::factory()->create(['role' => Role::ADMIN]);
+        $john     = User::factory()->create(['role' => 'Admin']);
         $customer = Customer::factory()->create([
             'is_active'    => false,
             'sales_rep_id' => $john->id,

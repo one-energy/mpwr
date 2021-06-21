@@ -5,7 +5,6 @@ namespace Tests\Feature\Castle\Rate;
 use App\Models\Department;
 use App\Models\Rates;
 use App\Models\User;
-use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
@@ -17,20 +16,18 @@ class GetRateTest extends TestCase
     /** @test */
     public function it_should_list_all_rates()
     {
-        $departmentManager = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
-
-        /** @var Department $department */
-        $department = Department::factory()->create();
-        $department->managers()->attach($departmentManager->id);
-        $departmentManager->update(['department_id' => $department->id]);
+        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
+        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
+        $departmentManager->department_id = $department->id;
+        $departmentManager->save();
 
         $rates = Rates::factory()->count(6)->create([
             'department_id' => $department->id,
-            'role'          => Role::SALES_REP,
+            'role'          => 'Sales Rep',
         ]);
 
         $response = $this->actingAs($departmentManager)
-            ->get(route('castle.rates.index'))
+            ->get('castle/rates')
             ->assertStatus(Response::HTTP_OK)
             ->assertViewIs('castle.rate.index');
 

@@ -9,7 +9,6 @@ use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
 use App\Notifications\UserInvitation;
-use App\Enum\Role;
 use App\Rules\Castle\MasterEmailUnique;
 use App\Rules\Castle\MasterEmailYourSelf;
 use Illuminate\Support\Str;
@@ -41,18 +40,11 @@ class UsersController extends Controller
         $data = request()->validate([
             'first_name'    => ['required', 'string', 'max:255'],
             'last_name'     => ['required', 'string', 'max:255'],
-            'role'          => ['nullable', 'string', 'max:255', 'in:' . implode(',', User::getRoleByNames())],
-            'office_id'     => ['nullable', 'exists:offices,id'],
+            'role'          => ['nullable', 'string', 'max:255'],
+            'office_id'     => ['nullable'],
             'pay'           => ['nullable'],
-            'department_id' => ['nullable', 'exists:departments,id'],
-            'email'         => [
-                'required',
-                'email:rfc,filter',
-                'unique:invitations',
-                new MasterEmailUnique,
-                new MasterEmailYourSelf,
-                'unique:users,email',
-            ],
+            'department_id' => ['nullable'],
+            'email'         => ['required', 'email', 'unique:invitations', new MasterEmailUnique, new MasterEmailYourSelf, 'unique:users,email'],
         ], [
             'email.unique' => __('There is a pending invitation for this email.'),
         ]);
@@ -75,6 +67,7 @@ class UsersController extends Controller
         } else {
             $invitation->master = false;
         }
+
         $invitation->user_id = optional($user)->id;
         $invitation->save();
 
@@ -159,18 +152,21 @@ class UsersController extends Controller
 
     private function createUser(array $data, Invitation $invitation): User
     {
-        return User::create([
-            'first_name'    => $data['first_name'],
-            'last_name'     => $data['last_name'],
-            'email'         => $data['email'],
-            'password'      => bcrypt(Str::random(8)),
-            'master'        => $invitation->master,
-            'role'          => $data['role'],
-            'office_id'     => $data['office_id'],
-            'department_id' => $data['department_id'],
-            'pay'           => $data['pay'],
-            'photo_url'     => asset('storage/profiles/profile.png'),
-        ]);
+        $user                    = new User();
+        $user->first_name        = $data['first_name'];
+        $user->last_name         = $data['last_name'];
+        $user->email             = $data['email'];
+        $user->password          = bcrypt(Str::random(8));
+        $user->email_verified_at = null;
+        $user->master            = $invitation->master;
+        $user->role              = $data['role'];
+        $user->office_id         = $data['office_id'];
+        $user->department_id     = $data['department_id'];
+        $user->pay               = $data['pay'];
+        $user->photo_url         = asset('storage/profiles/profile.png');
+        $user->save();
+
+        return $user;
     }
 
     public function requestResetPassword(User $user)
@@ -226,9 +222,8 @@ class UsersController extends Controller
 
     public function getRegionsManager($departmentId)
     {
-        return User::query()
-            ->whereRole(Role::REGION_MANAGER)
-            ->whereDepartmentId($departmentId)
+        return User::whereDepartmentId($departmentId)
+            ->whereRole('Region Manager')
             ->orderBy('first_name', 'ASC')
             ->orderBy('last_name', 'ASC')
             ->get();
@@ -236,9 +231,10 @@ class UsersController extends Controller
 
     public function getOfficesManager(Region $region)
     {
-        return User::query()
-            ->whereRole(Role::OFFICE_MANAGER)
-            ->whereDepartmentId($region?->department_id)
+        $usersQuery = User::query()->select('users.*');
+
+        return $usersQuery->whereRole('Office Manager')
+            ->whereDepartmentId($region->department_id)
             ->orderBy('first_name', 'ASC')
             ->orderBy('last_name', 'ASC')
             ->get();

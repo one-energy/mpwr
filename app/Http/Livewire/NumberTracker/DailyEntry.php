@@ -164,7 +164,6 @@ class DailyEntry extends Component
     public function getOfficeQuery()
     {
         $query = Office::query()
-            ->with('region')
             ->select('offices.*')
             ->join('regions', 'region_id', '=', 'regions.id');
 

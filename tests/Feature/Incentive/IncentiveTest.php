@@ -6,7 +6,6 @@ use App\Models\Customer;
 use App\Models\Department;
 use App\Models\Incentive;
 use App\Models\User;
-use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -27,7 +26,7 @@ class IncentiveTest extends TestCase
         ]);
 
         $this->user = User::factory()->create([
-            'role'          => Role::OFFICE_MANAGER,
+            'role'          => 'Office Manager',
             'installs'      => 10,
             'kw_achived'    => 20,
             'department_id' => $department->id,
