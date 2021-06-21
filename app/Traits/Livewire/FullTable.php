@@ -52,6 +52,8 @@ trait FullTable
         $this->sortBy        = $by;
         $this->sortDirection = $direction;
         $this->page          = 1;
+
+        $this->emit('sorted', $this->sortBy, $this->sortDirection, $this->page);
     }
 
     abstract protected function sortBy();

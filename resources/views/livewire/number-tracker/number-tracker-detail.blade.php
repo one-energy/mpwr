@@ -139,7 +139,7 @@
 
             <div class="px-4 py-5 sm:p-6 md:w-2/3 xl:w-3/4">
                 <div class="justify-center w-full">
-                    <livewire:components.number-tracker-detail-accordion-table :period="$period" :selectedDate="$dateSelected" wire:key="now()"/>
+                    <livewire:number-tracker.number-tracker-detail-accordion-table :period="$period" :selectedDate="$dateSelected" wire:key="now()"/>
                 </div>
             </div>
         </div>

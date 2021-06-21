@@ -32,6 +32,7 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\DailyNumber newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\DailyNumber query()
  * @method static \Illuminate\Database\Eloquent\Builder inPeriod(string $period, \Illuminate\Support\Carbon $date)
+ * @method static \Illuminate\Database\Eloquent\Builder inLastPeriod(string $period, \Illuminate\Support\Carbon $date)
  * @mixin \Eloquent
  */
 class DailyNumber extends Model
