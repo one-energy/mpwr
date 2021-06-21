@@ -77,8 +77,10 @@ class NumbersRatios extends Component
     public function getSitRatiosProperty()
     {
         if (isset($this->numbers)) {
-            return $this->sats > 0
-                ? number_format($this->numbers->sum('sets') / $this->numbers->sum('sats'), 2)
+            $satsSum = $this->numbers->sum('sats');
+
+            return $satsSum > 0
+                ? number_format($this->numbers->sum('sets') / $satsSum, 2)
                 : '-';
         }
     }
