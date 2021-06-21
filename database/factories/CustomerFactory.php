@@ -20,8 +20,6 @@ class CustomerFactory extends Factory
         $systemSize = 20;
         $adders     = 20;
 
-        
-
         return [
             'first_name'    => $this->faker->firstName,
             'last_name'     => $this->faker->lastName,
@@ -30,7 +28,7 @@ class CustomerFactory extends Factory
             'pay'           => $pay,
             'financing'     => $this->faker->word,
             'date_of_sale'  => Carbon::now(),
-            'financing_id'  => Financing::factory()->create()->id,
+            'financing_id'  => Financing::factory(),
             'adders'        => $adders,
             'epc'           => $epc + 100,
             'margin'        => $epc - $setterFee,

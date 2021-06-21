@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             RegionsSeeder::class,
             OfficesSeeder::class,
             DailyNumbersSeeder::class,
+            CustomersSeeder::class,
             MultiplierOfYearSeeder::class,
             StockPointsCalculationBasesSeeder::class
         ]);

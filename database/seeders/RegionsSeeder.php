@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enum\Role;
 use App\Models\Department;
 use App\Models\Region;
 use App\Models\User;
@@ -11,15 +12,26 @@ class RegionsSeeder extends Seeder
 {
     public function run()
     {
-        $department = Department::first();
+        Department::all()->each(fn(Department $department) => $this->createRegionManagers($department));
+    }
 
-        User::query()
-            ->where('role', 'Region Manager')
-            ->each(function (User $user) use ($department) {
-                Region::factory()->create([
-                    'department_id'     => $department->id,
-                    'region_manager_id' => $user->id,
-                ]);
-            });
+    private function createRegionManagers(Department $department)
+    {
+        User::factory()
+            ->times(3)
+            ->create([
+                'role'          => Role::REGION_MANAGER,
+                'department_id' => $department->id
+            ])
+            ->each(fn(User $user) => $this->createRegion($department, $user));
+    }
+
+    private function createRegion(Department $department, User $user)
+    {
+        Region::factory()
+            ->create([
+                'department_id'     => $department->id,
+                'region_manager_id' => $user->id,
+            ]);
     }
 }
