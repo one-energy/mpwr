@@ -2,45 +2,49 @@
     @if ($files->isNotEmpty())
         <h3 class="text-xl text-gray-700 font-medium mb-3.5">Files</h3>
 
-        <x-table>
-            <x-slot name="header">
-                <x-table.th-tr>
-                    <x-table.th-searchable by="original_name" :sortedBy="$sortBy" :direction="$sortDirection">
-                        @lang('Name')
-                    </x-table.th-searchable>
-                    <x-table.th-searchable by="size" :sortedBy="$sortBy" :direction="$sortDirection">
-                        @lang('size')
-                    </x-table.th-searchable>
-                    <x-table.th-searchable by="created_at" :sortedBy="$sortBy" :direction="$sortDirection">
-                        @lang('uploaded_at')
-                    </x-table.th-searchable>
-                    @if ($showDeleteButton)
-                        <x-table.th>
-                            &nbsp;
-                        </x-table.th>
-                    @endif
-                </x-table.th-tr>
-            </x-slot>
-            <x-slot name="body">
-                @foreach ($files as $file)
-                    <x-table.tr :loop="$loop">
-                        <x-table.td class="flex align-middle cursor-pointer" wire:click="downloadSectionFile({{$file}})">
-                            <x-icon class="h-5 w-auto mr-5" icon="download-file"/>
-                            {{ $file->original_name }}
-                        </x-table.td>
-                        <x-table.td>{{ $file->abbreviatedSize }}</x-table.td>
-                        <x-table.td>{{ $file->created_at->format('m/d/Y') }} at {{$file->created_at->format('h:ia')}}</x-table.td>
-                    @if ($showDeleteButton)
-                            <x-table.td wire:click="onDestroy({{$file}})">
-                                <button class="hover:bg-red-200 focus:outline-none p-2 rounded-full cursor-pointer">
-                                    <x-svg.trash class="w-5 h-5  text-red-600 fill-current" />
-                                </button>
-                            </x-table.td>
+        <div class="overflow-x-auto">
+            <x-table>
+                <x-slot name="header">
+                    <x-table.th-tr>
+                        <x-table.th-searchable by="original_name" :sortedBy="$sortBy" :direction="$sortDirection">
+                            @lang('Name')
+                        </x-table.th-searchable>
+                        <x-table.th-searchable by="size" :sortedBy="$sortBy" :direction="$sortDirection">
+                            @lang('size')
+                        </x-table.th-searchable>
+                        <x-table.th-searchable by="created_at" :sortedBy="$sortBy" :direction="$sortDirection">
+                            @lang('uploaded_at')
+                        </x-table.th-searchable>
+                        @if ($showDeleteButton)
+                            <x-table.th>
+                                &nbsp;
+                            </x-table.th>
                         @endif
-                    </x-table.tr>
-                @endforeach
-            </x-slot>
-        </x-table>
+                    </x-table.th-tr>
+                </x-slot>
+                <x-slot name="body">
+                    @foreach ($files as $file)
+                        <x-table.tr :loop="$loop">
+                            <x-table.td class="cursor-pointer" wire:click="downloadSectionFile({{$file}})">
+                                <div class="flex align-middle">
+                                    <x-icon class="h-5 w-auto mr-5" icon="download-file"/>
+                                    {{ $file->original_name }}
+                                </div>
+                            </x-table.td>
+                            <x-table.td>{{ $file->abbreviatedSize }}</x-table.td>
+                            <x-table.td>{{ $file->created_at->format('m/d/Y') }} at {{$file->created_at->format('h:ia')}}</x-table.td>
+                            @if ($showDeleteButton)
+                                <x-table.td wire:click="onDestroy({{$file}})">
+                                    <button class="hover:bg-red-200 focus:outline-none p-2 rounded-full cursor-pointer">
+                                        <x-svg.trash class="w-5 h-5  text-red-600 fill-current" />
+                                    </button>
+                                </x-table.td>
+                            @endif
+                        </x-table.tr>
+                    @endforeach
+                </x-slot>
+            </x-table>
+        </div>
     @endif
 
         <div x-data="{ open : @entangle('showDeleteModal').defer }"

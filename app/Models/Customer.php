@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,6 +13,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property int|null $financing_id
  * @property int|null $financer_id
+ * @property int|null $department_manager_id
+ * @property int|null $region_manager_id
+ * @property int|null $office_manager_id
  * @property int|null $term_id
  * @property string $first_name
  * @property string $last_name
@@ -31,6 +33,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $opened_by_id
  * @property float $margin
  * @property \datetime $date_of_sale
+ * @property \Illuminate\Support\Carbon|null $paid_date
  * @property int $sales_rep_comission
  * @property int|null $enium_points
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -60,12 +63,38 @@ class Customer extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = ['first_name', 'last_name', 'bill', 'financing_id', 'financer_id', 'term_id', 'opened_by_id', 'system_size', 'adders', 'epc', 'setter_id', 'setter_fee', 'sales_rep_id', 'sales_rep_fee', 'sales_rep_comission', 'commission', 'created_at', 'updated_at', 'is_active'];
+    protected $fillable = [
+        'first_name',
+        'last_name',
+        'bill',
+        'financing_id',
+        'financer_id',
+        'term_id',
+        'opened_by_id',
+        'system_size',
+        'adders',
+        'epc',
+        'setter_id',
+        'setter_fee',
+        'sales_rep_id',
+        'sales_rep_fee',
+        'sales_rep_comission',
+        'commission',
+        'created_at',
+        'updated_at',
+        'is_active',
+        'panel_sold',
+        'paid_date'
+    ];
 
     protected $casts = [
         'panel_sold'   => 'boolean',
         'is_active'    => 'boolean',
         'date_of_sale' => 'datetime:Y-m-d',
+    ];
+
+    protected $dates = [
+        'paid_date'
     ];
 
     const RANGE_DATES = [
@@ -103,7 +132,7 @@ class Customer extends Model
 
     public function scopeInstalled($query)
     {
-        return $query->where('opened_by_id', '=', user()->id)
+        return $query->where('sales_rep_id', '=', user()->id)
             ->where('panel_sold', '=', true)
             ->where('is_active', '=', true);
     }
@@ -158,11 +187,17 @@ class Customer extends Model
         return $this->belongsTo(User::class, 'department_manager_id');
     }
 
+
+    public function getSetterCommissionAttribute()
+    {
+        return $this->setter_fee * ($this->system_size * self::K_WATTS);
+    }
+
     public function stockPoint()
     {
         return $this->hasOne(CustomersStockPoint::class);
     }
-    
+
     public function userEniumPoint()
     {
         return $this->hasOne(UserCustomersEniumPoints::class);
@@ -191,7 +226,11 @@ class Customer extends Model
         }
 
         return 0;
+    }
 
+    public function getFullNameAttribute()
+    {
+        return sprintf('%s %s', $this->first_name, $this->last_name);
     }
 
     public function calcComission()
@@ -216,46 +255,56 @@ class Customer extends Model
     {
         $query->when($search, function (Builder $query) use ($search) {
             $query->where(function ($query) use ($search) {
-                $query->orWhereRaw("CONCAT(customers.first_name, ' ', customers.last_name) LIKE ?", ['%' . $search . '%'])
-                ->orWhereHas('userSetter', function ($query) use ($search) {
-                    $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
-                })
-                ->orWhereHas('userSalesRep', function ($query) use ($search) {
-                    $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
-                })
-                ->when(user()->role != 'Setter', function ($query) use ($search) {
-                    $query->orWhereHas('financingType', function ($query) use ($search) {
-                        $query->where('name', 'LIKE', '%' . $search . '%');
+                $query->orWhereRaw("CONCAT(customers.first_name, ' ', customers.last_name) LIKE ?",
+                    ['%' . $search . '%'])
+                    ->orWhereHas('userSetter', function ($query) use ($search) {
+                        $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
                     })
-                    ->orWhereHas('financer', function ($query) use ($search) {
-                        $query->where('name', 'LIKE', '%' . $search . '%');
+                    ->orWhereHas('userSalesRep', function ($query) use ($search) {
+                        $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
                     })
-                    ->when(user()->role != 'Sales Rep', function ($query) use ($search) {
-                        $query->orWhereHas('recruiterOfSalesRep', function ($query) use ($search) {
-                            $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
+                    ->when(user()->role != 'Setter', function ($query) use ($search) {
+                        $query->orWhereHas('financingType', function ($query) use ($search) {
+                            $query->where('name', 'LIKE', '%' . $search . '%');
                         })
-                        ->orWhereHas('officeManager', function ($query) use ($search) {
-                            $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
-                        })
-                        ->when(user()->role != 'Office Manager', function ($query) use ($search) {
-                            $query->orWhereHas('regionManager', function ($query) use ($search) {
-                                $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
+                            ->orWhereHas('financer', function ($query) use ($search) {
+                                $query->where('name', 'LIKE', '%' . $search . '%');
                             })
-                            ->when(user()->role != 'Region Manager', function ($query) use ($search) {
-                                $query->orWhereHas('departmentManager', function ($query) use ($search) {
-                                    $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ['%' . $search . '%']);
+                            ->when(user()->role != 'Sales Rep', function ($query) use ($search) {
+                                $query->orWhereHas('recruiterOfSalesRep', function ($query) use ($search) {
+                                    $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?",
+                                        ['%' . $search . '%']);
                                 })
-                                ->when(user()->role != 'Department Manager', function ($query) use ($search) {
-                                    $query->orWhere('customers.payee_one', 'LIKE', '%' . $search . '%')
-                                        ->orWhere('customers.payee_two', 'LIKE', '%' . $search . '%');
-                                });
+                                    ->orWhereHas('officeManager', function ($query) use ($search) {
+                                        $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?",
+                                            ['%' . $search . '%']);
+                                    })
+                                    ->when(user()->role != 'Office Manager', function ($query) use ($search) {
+                                        $query->orWhereHas('regionManager', function ($query) use ($search) {
+                                            $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?",
+                                                ['%' . $search . '%']);
+                                        })
+                                            ->when(user()->role != 'Region Manager', function ($query) use ($search) {
+                                                $query->orWhereHas('departmentManager',
+                                                    function ($query) use ($search) {
+                                                        $query->whereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?",
+                                                            ['%' . $search . '%']);
+                                                    })
+                                                    ->when(user()->role != 'Department Manager',
+                                                        function ($query) use ($search) {
+                                                            $query->orWhere('customers.payee_one', 'LIKE',
+                                                                '%' . $search . '%')
+                                                                ->orWhere('customers.payee_two', 'LIKE',
+                                                                    '%' . $search . '%');
+                                                        });
+                                            });
+                                    });
                             });
-                        });
                     });
-                });
             });
         });
     }
+
     public function scopeJoinInEachRelation(Builder $query)
     {
         return $query->select('customers.*')

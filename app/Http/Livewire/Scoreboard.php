@@ -125,7 +125,7 @@ class Scoreboard extends Component
     public function getTopTenUsersBy(string $field): Collection
     {
         return User::query()
-            ->with('office')
+            ->with('office.region')
             ->select('id', 'first_name', 'last_name', 'department_id', 'office_id')
             ->withCount([
                 "dailyNumbers as {$field}_total" => function ($query) use ($field) {

@@ -4,7 +4,6 @@
 namespace Tests\Builders;
 
 use App\Models\Office;
-use App\Models\Region;
 use App\Models\User;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Collection;
@@ -30,6 +29,11 @@ class UserBuilder
             'email_verified_at' => now(),
         ], $attributes));
         $this->items = collect([]);
+    }
+
+    public static function build($attributes = [])
+    {
+        return new UserBuilder($attributes);
     }
 
     public function save()

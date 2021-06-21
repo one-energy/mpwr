@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\Builders;
 
 use App\Models\Department;
@@ -18,15 +17,21 @@ class RegionBuilder
 
     public function __construct($attributes = [])
     {
-        $this->faker = $this->makeFaker('en_US');
-        $this->region  = (new Region)->forceFill(array_merge([
+        $this->faker  = $this->makeFaker('en_US');
+        $this->region = (new Region)->forceFill(array_merge([
             'name' => Str::title($this->faker->word),
         ], $attributes));
+    }
+
+    public static function build($attributes = [])
+    {
+        return new RegionBuilder($attributes);
     }
 
     public function withDepartment($department)
     {
         $this->region->department_id = $department->id;
+
         return $this;
     }
 
@@ -34,7 +39,7 @@ class RegionBuilder
     {
         if (!$this->region->region_manager_id) {
             $this->region->region_manager_id = User::factory()->create()->id;
-            $this->region->department_id = Department::factory()->create()->id;
+            $this->region->department_id     = Department::factory()->create()->id;
         }
         $this->region->save();
 

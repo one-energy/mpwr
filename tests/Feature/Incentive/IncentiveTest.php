@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Incentive;
 
+use App\Models\Customer;
 use App\Models\Department;
 use App\Models\Incentive;
 use App\Models\User;
@@ -31,6 +32,12 @@ class IncentiveTest extends TestCase
             'department_id' => $department->id,
         ]);
 
+        Customer::factory()->create([
+            'sales_rep_id' => $this->user->id,
+            'panel_sold'   => true,
+            'is_active'    => true
+        ]);
+
         $this->actingAs($this->user);
     }
 
@@ -48,7 +55,7 @@ class IncentiveTest extends TestCase
         $this->get(route('incentives.index'))
             ->assertOk()
             ->assertSee('incentive test')
-            ->assertSee('10.00%')
+            ->assertSee('1.00%')
             ->assertSee('20.00%');
     }
 }

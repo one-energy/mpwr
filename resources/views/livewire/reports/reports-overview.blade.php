@@ -188,6 +188,11 @@
                     <x-table :pagination="$customers->links()">
                         <x-slot name="header">
                             <x-table.th-tr>
+                                @if (user()->hasRole('Admin'))
+                                <x-table.th class="whitespace-no-wrap">
+                                    @lang('Paid')
+                                </x-table.th>
+                                @endif
                                 <x-table.th-searchable class="whitespace-no-wrap" by="CONCAT(customers.first_name, customers.last_name)" :sortedBy="$sortBy" :direction="$sortDirection">
                                     @lang('Home Owner')
                                 </x-table.th-searchable>
@@ -297,7 +302,17 @@
                         </x-slot>
                         <x-slot name="body">
                             @foreach($customers as $customer)
-                                <x-table.tr >
+                                <x-table.tr>
+                                    @if (user()->hasRole('Admin'))
+                                        <x-table.td>
+                                            <input
+                                                type="checkbox"
+                                                {{ $customer->panel_sold ? 'checked' : '' }}
+                                                wire:key="customer-{{ $customer->id }}"
+                                                wire:click="paid({{ $customer->id }})"
+                                            >
+                                        </x-table.td>
+                                    @endif
                                     <x-table.td>{{$customer->first_name}} {{$customer->last_name}}</x-table.td>
                                     <x-table.td>{{$customer->date_of_sale->format('M-d')}}</x-table.td>
                                     <x-table.td>{{$customer->userSetter?->first_name ?? '-'}} {{$customer->userSetter?->last_name}}</x-table.td>
@@ -312,7 +327,7 @@
                                     <x-table.td>{{ $this->formatNumber($this->getSetterCommission($customer)) }}</x-table.td>
                                     @if(user()->role != "Setter")
                                         <x-table.td>{{ $this->formatNumber($this->getSalesRepCommission($customer)) }}</x-table.td>
-                                        <x-table.td>{{$customer->financingtype?->name ?? '-'}}</x-table.td>
+                                        <x-table.td>{{$customer->financingType?->name ?? '-'}}</x-table.td>
                                         <x-table.td>{{$customer->financer?->name ?? '-'}}</x-table.td>
                                         @if(user()->role != "Sales Rep")
                                             <x-table.td>{{$customer->recruiterOfSalesRep?->first_name ?? '-'}} {{$customer->recruiterOfSalesRep?->last_name}}</x-table.td>
