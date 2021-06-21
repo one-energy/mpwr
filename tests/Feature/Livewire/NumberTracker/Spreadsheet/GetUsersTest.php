@@ -30,11 +30,11 @@ class GetUsersTest extends TestCase
 
         User::factory()->times(10)->create([
             'role'      => 'Setter',
-            'office_id' => $office01->id
+            'office_id' => $office01->id,
         ]);
         User::factory()->times(10)->create([
             'role'      => 'Setter',
-            'office_id' => $office02->id
+            'office_id' => $office02->id,
         ]);
 
         $this->actingAs($john);
@@ -55,7 +55,8 @@ class GetUsersTest extends TestCase
     {
         return User::query()
             ->with('dailyNumbers')
-            ->where('office_id', $office->id)->get()
+            ->where('office_id', $office->id)
+            ->get()
             ->map(function (User $user) {
                 $user->dailyNumbers = $user->dailyNumbers->groupBy(function (DailyNumber $dailyNumber) {
                     return (new Carbon($dailyNumber->date))->format('F dS');

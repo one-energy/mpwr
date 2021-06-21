@@ -9,9 +9,7 @@ use App\Models\Financing;
 use App\Models\Rates;
 use App\Models\Term;
 use App\Models\User;
-use App\Models\UserCustomersEniumPoints;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Create extends Component
@@ -112,11 +110,10 @@ class Create extends Component
 
     public function store()
     {
+        $this->customer->financing_id = $this->customer->financing_id != '' ? $this->customer->financing_id : null;
+        $this->customer->financer_id  = $this->customer->financer_id != '' ? $this->customer->financer_id : null;
+        $this->customer->term_id      = $this->customer->term_id != '' ? $this->customer->term_id : null;
 
-        $this->customer->financing_id = $this->customer->financing_id != "" ? $this->customer->financing_id : null;
-        $this->customer->financer_id = $this->customer->financer_id != "" ? $this->customer->financer_id : null;
-        $this->customer->term_id = $this->customer->term_id != "" ? $this->customer->term_id : null;
-        
         $this->validate();
 
         $salesRep = User::find($this->customer->sales_rep_id);
@@ -169,7 +166,7 @@ class Create extends Component
 
     public function calculateNetRepCommission()
     {
-        return (float) $this->grossRepComission - (float) $this->customer->adders;
+        return (float)$this->grossRepComission - (float)$this->customer->adders;
     }
 
     public function getSetterFee()
@@ -214,10 +211,10 @@ class Create extends Component
 
     public function calculateGrossRepComission(Customer $customer)
     {
-        if ( $customer->margin >= 0 && $customer->system_size >= 0 ) {  
-            return round((float) $customer->margin * (float) $customer->system_size * Customer::K_WATTS, 2);
+        if ( $customer->margin >= 0 && $customer->system_size >= 0 ) {
+            return round((float)$customer->margin * (float)$customer->system_size * Customer::K_WATTS, 2);
         }
-        
+
         return 0;
     }
 }

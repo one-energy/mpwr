@@ -241,8 +241,6 @@ class StoreNumberTrackerTest extends TestCase
     /** @test */
     public function it_should_prevent_that_sets_quantity_be_greater_than_doors_quantity()
     {
-        $this->markTestSkipped('must be revisited.');
-
         $mary = User::factory()->create(['role' => 'Setter']);
 
         $data = [
@@ -265,8 +263,6 @@ class StoreNumberTrackerTest extends TestCase
     /** @test */
     public function it_should_prevent_that_closes_quantity_be_greater_than_sets_quantity()
     {
-        $this->markTestSkipped('must be revisited.');
-
         $mary = User::factory()->create(['role' => 'Setter']);
 
         $data = [
