@@ -1,5 +1,5 @@
 @props([
-    'searchSelect' => '', 
+    'searchName' => '', //this is a string name of variable to search items
     'selected', 
     'placeholder', 
     'searchable' => true, 
@@ -29,19 +29,24 @@
     <div class="mt-1 relative">
         <button {{ $attributes->merge(['class' => $class]) }}
             x-on:click="togglePopover" type="button">
-            {{$label}}
+            {{$selected}}
         </button>
         <span class="absolute inset-y-0 right-0 flex items-center pr-2 cursor-pointer">
             <x-icon name="selector" class="text-gray-400" />
         </span>
 
-        <div class="absolute z-50 border-t mt-1 w-full rounded-lg bg-white soft-shadow"
+        <div class="absolute z-50 border m-1 w-full rounded-lg bg-white soft-shadow"
             x-show="popover"
             x-on:click.away="closePopover"
             x-on:keydown.escape="closePopover">
             @if($searchable)
                 <div class="p-2">
-                    <x-search :search="$searchSelect" :perPage="false"/>
+                    <div class="items-baseline w-full space-y-4 sm:space-x-4 sm:flex sm:space-y-0">
+                        <div class="relative rounded-md shadow-sm ">
+                            <input wire:model.debounce.250ms="{{$searchName}}" placeholder="Search"/>
+                        </div>
+                    </div>
+                    {{-- <x-search :search="$searchSelect" :perPage="false"/> --}}
                     {{-- <x-input-search
                         x-ref="search"
                         filled

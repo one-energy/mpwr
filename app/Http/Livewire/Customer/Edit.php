@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -44,7 +45,10 @@ class Edit extends Component
     public array $salesReps;
 
     public array $setters;
-    public Collection $settersTwo;
+
+    public Collection $allDepartmentSetters;
+
+    public Collection $filteredSetters;
 
     protected $rules = [
         'customer.first_name'          => ['required', 'string', 'max:255'],
@@ -78,20 +82,26 @@ class Edit extends Component
         } else {
             $this->departmentId = $customer->userSalesRep->department_id;
         }
+
+        $this->allDepartmentSetters = User::whereDepartmentId($this->departmentId)
+            ->where('id', '!=', user()->id)
+            ->orderBy('first_name')->get();
+
+        $this->filteredSetters = clone $this->allDepartmentSetters;
     }
 
     public function render()
     {
-        $this->settersTwo = User::query()->search($this->searchSetters)->get();
-        // dd($this->searchSetters);
+        $this->searchSetters();
+        
         $this->customer->calcComission();
         $this->customer->calcMargin();
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
         $this->netRepComission   = $this->calculateNetRepCommission();
         $this->salesReps         = user()->getPermittedUsers($this->departmentId)->toArray();
-        $this->setters           = User::whereDepartmentId($this->departmentId)
-            ->where('id', '!=', user()->id)
-            ->orderBy('first_name')->get()->toArray();
+        // $this->setters           = User::whereDepartmentId($this->departmentId)
+        //     ->where('id', '!=', user()->id)
+        //     ->orderBy('first_name')->get()->toArray();
 
         return view('livewire.customer.edit', [
             'departments' => Department::all(),
@@ -102,6 +112,14 @@ class Edit extends Component
             'financers'   => Financer::all(),
             'terms'       => Term::all(),
         ]);
+    }
+
+    private function searchSetters()
+    {
+        $this->filteredSetters = $this->searchSetters ? 
+            $this->allDepartmentSetters->filter(function ($setter) {
+                return Str::contains($setter->first_name, $this->searchSetters);
+            }) : $this->allDepartmentSetters;
     }
 
     public function update()

@@ -9,7 +9,13 @@
         <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
             <form wire:submit.prevent="update">
                 <div class="grid grid-cols-2 gap-4 sm:col-gap-4 md:grid-cols-6 px-8">
-                    <x-search-select searchSelect="{{$searchSetters}}" name="customer.setter_id" label="Setter" placeholder="Select a setter"/>
+                    <div class="col-span-2 md:col-span-3">
+                        <x-search-select class="flex flex-col" searchName="searchSetters" name="customer.setter_id" label="Setter" placeholder="Select a setter">
+                            @foreach ($filteredSetters as $setter)
+                                {{$setter->full_name}}
+                            @endforeach
+                        </x-search-select>
+                    </div>
                     @if(user()->role == 'Admin' || user()->role == 'Owner')
                         <div class="col-span-2 md:col-span-6"  wire:key="departmentId">
                             <x-select wire:model="departmentId" label="Department" name="departmentId">
@@ -107,7 +113,7 @@
                         <x-input-currency label="Total Cost" name="total_cost" maxSize="100000" value="{{$customer->totalSoldPrice}}" readonly/>
                     </div>
 
-                    <div class="col-span-2 md:col-span-3">
+                    {{-- <div class="col-span-2 md:col-span-3">
                         <x-select-searchable
                             wire:model="customer.setter_id"
                             option-value="id"
@@ -118,7 +124,7 @@
                             :showAlert="$setter->deleted_at != null"
                             noneOption
                             placeholder="{{$customer->setter_id ? $setter->first_name . ' ' . $setter->last_name  : 'Self Gen'}}"/>
-                    </div>
+                    </div> --}}
 
                     <div class="col-span-2 md:col-span-3">
                         <x-input-currency wire:model="customer.setter_fee" label="Setter Comission Rate"
