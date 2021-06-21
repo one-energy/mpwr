@@ -9,6 +9,7 @@
         <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
             <form wire:submit.prevent="update">
                 <div class="grid grid-cols-2 gap-4 sm:col-gap-4 md:grid-cols-6 px-8">
+                    <x-search-select searchSelect="{{$searchSetters}}" name="customer.setter_id" label="Setter" placeholder="Select a setter"/>
                     @if(user()->role == 'Admin' || user()->role == 'Owner')
                         <div class="col-span-2 md:col-span-6"  wire:key="departmentId">
                             <x-select wire:model="departmentId" label="Department" name="departmentId">
@@ -319,8 +320,6 @@
             </div>
         </div>
     </div>
-    <x-search-select :query="$queryuser"/>
-        teste
     @if (session('message'))
         <x-alert class="mb-4">
             {{ session('message') }}

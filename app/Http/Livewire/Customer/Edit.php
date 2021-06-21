@@ -13,6 +13,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -24,9 +25,9 @@ class Edit extends Component
 
     public ?User $setter;
 
-    public Builder $queryuser;
-
     public int $departmentId;
+
+    public string $search = '';
 
     public bool $installed;
 
@@ -38,9 +39,12 @@ class Edit extends Component
 
     public int $stockPoints = 250;
 
+    public string $searchSetters = '';
+
     public array $salesReps;
 
     public array $setters;
+    public Collection $settersTwo;
 
     protected $rules = [
         'customer.first_name'          => ['required', 'string', 'max:255'],
@@ -68,7 +72,6 @@ class Edit extends Component
     public function mount(Customer $customer)
     {
         $this->setter = $this->getSetter($customer);
-        $this->queryuser = User::whereDepartmentId(user()->department_id);
 
         if (user()->notHaveRoles(['Admin', 'Owner'])) {
             $this->departmentId = user()->department_id;
@@ -79,6 +82,8 @@ class Edit extends Component
 
     public function render()
     {
+        $this->settersTwo = User::query()->search($this->searchSetters)->get();
+        // dd($this->searchSetters);
         $this->customer->calcComission();
         $this->customer->calcMargin();
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
