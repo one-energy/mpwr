@@ -69,7 +69,7 @@ class NumbersRatios extends Component
     {
         if (isset($this->numbers)) {
             return $this->sets > 0
-                ? number_format($this->numbers->sum('hours_worked') / $this->numbers->sum('sets'), 2)
+                ? number_format($this->numbers->sum('hours_knocked') / $this->numbers->sum('sets'), 2)
                 : '-';
         }
     }
