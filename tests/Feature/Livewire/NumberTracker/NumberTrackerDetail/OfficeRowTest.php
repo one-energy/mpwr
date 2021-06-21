@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Livewire\NumberTracker\NumberTrackerDetail;
 
+use App\Enum\Role;
 use App\Http\Livewire\NumberTracker\OfficeRow;
 use App\Models\DailyNumber;
 use App\Models\Office;
@@ -23,13 +24,15 @@ class OfficeRowTest extends TestCase
     {
         parent::setUp();
 
-        $this->officeManager = User::factory()->create(['role' => 'Office Manager']);
-        $this->regionManager = User::factory()->create(['role' => 'Region Manager']);
+        $this->officeManager = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
+        $this->regionManager = User::factory()->create(['role' => Role::REGION_MANAGER]);
     }
 
     /** @test */
     public function it_should_be_possible_collapse_office_row()
     {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+
         $region = Region::factory()->create([
             'region_manager_id' => $this->regionManager,
         ]);
@@ -38,7 +41,9 @@ class OfficeRowTest extends TestCase
             'region_id'         => $region->id,
         ]);
 
-        Livewire::test(OfficeRow::class, ['office' => $office])
+        $this->actingAs($john);
+
+        Livewire::test(OfficeRow::class, $this->buildProps($office))
             ->assertSet('itsOpen', false)
             ->call('collapseOffice')
             ->assertSet('itsOpen', true);
@@ -47,6 +52,8 @@ class OfficeRowTest extends TestCase
     /** @test */
     public function it_should_emit_up_when_call_select_office_method()
     {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+
         $region = Region::factory()->create([
             'region_manager_id' => $this->regionManager,
         ]);
@@ -55,7 +62,9 @@ class OfficeRowTest extends TestCase
             'region_id'         => $region->id,
         ]);
 
-        Livewire::test(OfficeRow::class, ['office' => $office])
+        $this->actingAs($john);
+
+        Livewire::test(OfficeRow::class, $this->buildProps($office))
             ->call('selectOffice')
             ->assertEmitted('toggleOffice');
     }
@@ -63,13 +72,17 @@ class OfficeRowTest extends TestCase
     /** @test */
     public function it_should_mark_as_selected_when_region_selected_is_called()
     {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+
         $region = Region::factory()->create(['region_manager_id' => $this->regionManager]);
         $office = Office::factory()->create([
             'office_manager_id' => $this->officeManager,
             'region_id'         => $region->id,
         ]);
 
-        Livewire::test(OfficeRow::class, ['office' => $office])
+        $this->actingAs($john);
+
+        Livewire::test(OfficeRow::class, $this->buildProps($office))
             ->assertSet('selected', false)
             ->call('regionSelected', $region->id, true)
             ->assertSet('selected', true);
@@ -78,6 +91,8 @@ class OfficeRowTest extends TestCase
     /** @test */
     public function it_should_sum_daily_numbers_by_field()
     {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+
         $region = Region::factory()->create(['region_manager_id' => $this->regionManager]);
         $office = Office::factory()->create([
             'office_manager_id' => $this->officeManager,
@@ -92,6 +107,7 @@ class OfficeRowTest extends TestCase
             'hours_worked' => 0,
             'office_id'    => $office->id,
             'user_id'      => $dummy01->id,
+            'date'         => today(),
         ]);
 
         DailyNumber::factory()->create([
@@ -99,9 +115,12 @@ class OfficeRowTest extends TestCase
             'hours_worked' => 0,
             'office_id'    => $office->id,
             'user_id'      => $dummy02->id,
+            'date'         => today(),
         ]);
 
-        $component = Livewire::test(OfficeRow::class, ['office' => $office->load('dailyNumbers')]);
+        $this->actingAs($john);
+
+        $component = Livewire::test(OfficeRow::class, $this->buildProps($office));
 
         $result = $component->call('sumBy', 'doors');
 
@@ -110,5 +129,16 @@ class OfficeRowTest extends TestCase
         $result = $component->call('sumBy', 'hours_worked');
 
         $this->assertEquals(html_entity_decode('&#8212;'), $result->payload['effects']['returns']['sumBy']);
+    }
+
+    private function buildProps(mixed $office): array
+    {
+        return [
+            'officeId'      => $office->id,
+            'withTrashed'   => false,
+            'period'        => 'd',
+            'selectedDate'  => today(),
+            'selectedUsers' => collect()
+        ];
     }
 }
