@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Castle;
 
 use App\Models\User;
+use App\Enum\Role;
 use App\Traits\Livewire\FullTable;
 use Livewire\Component;
 
@@ -24,7 +25,7 @@ class Users extends Component
         $this->roles = User::ROLES;
 
         return view('livewire.castle.users', [
-            'users' => $this->getUsers()
+            'users' => $this->getUsers(),
         ]);
     }
 
@@ -97,19 +98,22 @@ class Users extends Component
     private function getUsers()
     {
         return User::query()
-            ->when(user()->hasRole('Office Manager'), function ($query) {
-                $query->whereHas('office', fn($query) => $query->where('office_manager_id', user()->id));
+            ->when(user()->hasRole(Role::OFFICE_MANAGER), function ($query) {
+                $query->whereHas('office', function ($query) {
+                    $query->whereIn('offices.id', user()->managedOffices->pluck('id'));
+                });
             })
-            ->when(user()->hasRole('Region Manager'), function ($query) {
-                $query->whereHas('office.region', fn($query) => $query->where('region_manager_id', user()->id));
+            ->when(user()->hasRole(Role::REGION_MANAGER), function ($query) {
+                $query->whereHas('office.region', function ($query) {
+                    $query->whereIn('regions.id', user()->managedRegions->pluck('id'));
+                });
             })
-            ->when(user()->hasRole('Department Manager'), function ($query) {
-                $query->where('department_id', user()->department_id)
-                    ->where('role', '!=', 'Admin')
-                    ->where('role', '!=', 'Owner');
+            ->when(user()->hasRole(Role::DEPARTMENT_MANAGER), function ($query) {
+                $query->whereIn('department_id', user()->managedDepartments->pluck('id'))
+                    ->whereNotIn('role', [Role::ADMIN, Role::OWNER]);
             })
-            ->when(user()->hasRole('Admin'), function ($query) {
-                $query->where('role', '!=', 'Owner');
+            ->when(user()->hasRole(Role::ADMIN), function ($query) {
+                $query->where('role', '!=', Role::OWNER);
             })
             ->with(['office', 'department', 'managedOffices'])
             ->search($this->search)

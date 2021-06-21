@@ -8,6 +8,7 @@ use App\Models\Department;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
+use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Livewire\Livewire;
@@ -29,38 +30,31 @@ class DestroyDepartmentTest extends TestCase
     /** @test */
     public function it_should_soft_delete_a_department()
     {
-        $mary       = User::factory()->create(['role' => 'Department Manager']);
-        $department = Department::factory()->create([
-            'department_manager_id' => $mary->id,
-        ]);
+        $mary       = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+        $department = Department::factory()->create();
+        $department->managers()->attach($mary->id);
 
         $this->actingAs($this->admin);
+
+        $this->assertDatabaseCount('user_managed_departments', 1);
 
         Livewire::test(Departments::class)
             ->call('setDeletingDepartment', $department)
             ->call('destroy');
 
         $this->assertSoftDeleted($department);
+        $this->assertDatabaseCount('user_managed_departments', 0);
     }
 
     /** @test */
     public function it_should_soft_delete_regions_when_delete_a_department()
     {
-        $john = User::factory()->create(['role' => 'Region Manager']);
-        $mary = User::factory()->create(['role' => 'Department Manager']);
-
-        $department = Department::factory()->create([
-            'department_manager_id' => $mary->id,
-        ]);
-
-        $dummyRegion = Region::factory()->create(['region_manager_id' => $john->id]);
+        $department  = Department::factory()->create();
+        $dummyRegion = Region::factory()->create();
 
         [$firstRegion, $secondRegion] = Region::factory()
             ->times(2)
-            ->create([
-                'department_id'     => $department->id,
-                'region_manager_id' => User::factory()->create(['role' => 'Region Manager'])->id
-            ]);
+            ->create(['department_id' => $department->id]);
 
         $this->actingAs($this->admin);
 
@@ -80,37 +74,16 @@ class DestroyDepartmentTest extends TestCase
     /** @test */
     public function it_should_soft_delete_offices_and_regions_when_delete_a_department()
     {
-        $john = User::factory()->create(['role' => 'Region Manager']);
-        $mary = User::factory()->create(['role' => 'Department Manager']);
-        $ann  = User::factory()->create(['role' => 'Office Manager']);
-
-        $department = Department::factory()->create([
-            'department_manager_id' => $mary->id,
-        ]);
-
-        $dummyRegion = Region::factory()->create([
-            'region_manager_id' => User::factory()->create(['role' => 'Region Manager'])->id
-        ]);
-        $dummyOffice = Office::factory()->create([
-            'region_id'         => $dummyRegion->id,
-            'office_manager_id' => User::factory()->create(['role' => 'Office Manager'])
-        ]);
+        $department  = Department::factory()->create();
+        $dummyRegion = Region::factory()->create();
+        $dummyOffice = Office::factory()->create();
 
         [$firstRegion, $secondRegion] = Region::factory()
             ->times(2)
-            ->create([
-                'department_id'     => $department->id,
-                'region_manager_id' => $john->id
-            ]);
+            ->create(['department_id' => $department->id]);
 
-        $officeFromFirstRegion  = Office::factory()->create([
-            'region_id'         => $firstRegion->id,
-            'office_manager_id' => $ann->id
-        ]);
-        $officeFromSecondRegion = Office::factory()->create([
-            'region_id'         => $secondRegion->id,
-            'office_manager_id' => $ann->id
-        ]);
+        $officeFromFirstRegion  = Office::factory()->create(['region_id' => $firstRegion->id]);
+        $officeFromSecondRegion = Office::factory()->create(['region_id' => $secondRegion->id]);
 
         $this->actingAs($this->admin);
 
@@ -133,30 +106,14 @@ class DestroyDepartmentTest extends TestCase
     /** @test */
     public function it_should_soft_delete_daily_numbers_when_delete_a_department()
     {
-        $john = User::factory()->create(['role' => 'Admin']);
-        $mary = User::factory()->create(['role' => 'Department Manager']);
-        $ann  = User::factory()->create(['role' => 'Region Manager']);
-        $zack = User::factory()->create(['role' => 'Office Manager']);
-
-        $department = Department::factory()->create([
-            'department_manager_id' => $mary->id,
-        ]);
+        $department = Department::factory()->create();
 
         [$firstRegion, $secondRegion] = Region::factory()
             ->times(2)
-            ->create([
-                'department_id'     => $department->id,
-                'region_manager_id' => $ann->id
-            ]);
+            ->create(['department_id' => $department->id]);
 
-        $officeFromFirstRegion  = Office::factory()->create([
-            'region_id'         => $firstRegion->id,
-            'office_manager_id' => $zack->id
-        ]);
-        $officeFromSecondRegion = Office::factory()->create([
-            'region_id'         => $secondRegion->id,
-            'office_manager_id' => $zack->id
-        ]);
+        $officeFromFirstRegion  = Office::factory()->create(['region_id' => $firstRegion->id]);
+        $officeFromSecondRegion = Office::factory()->create(['region_id' => $secondRegion->id]);
 
         $zack = $this->makeUserFromOffice($officeFromFirstRegion);
         $jack = $this->makeUserFromOffice($officeFromSecondRegion);
@@ -164,7 +121,7 @@ class DestroyDepartmentTest extends TestCase
         $zackDailyNumbers = $this->makeDailyNumberForUser($zack);
         $jackDailyNumbers = $this->makeDailyNumberForUser($jack);
 
-        $this->actingAs($john);
+        $this->actingAs($this->admin);
 
         Livewire::test(Departments::class)
             ->set('deletingName', $department->name)
@@ -185,18 +142,14 @@ class DestroyDepartmentTest extends TestCase
     /** @test */
     public function it_should_soft_delete_all_users_from_the_department_that_is_being_deleted()
     {
-        $john       = User::factory()->create(['role' => 'Admin']);
-        $mary       = User::factory()->create(['role' => 'Department Manager']);
-        $department = Department::factory()->create([
-            'department_manager_id' => $mary->id,
-        ]);
+        $department = Department::factory()->create();
 
         /** @var Collection */
         $dummyUsers = User::factory()
             ->times(5)
             ->create(['department_id' => $department->id]);
 
-        $this->actingAs($john);
+        $this->actingAs($this->admin);
 
         Livewire::test(Departments::class)
             ->set('deletingName', $department->name)
@@ -206,6 +159,33 @@ class DestroyDepartmentTest extends TestCase
         $this->assertSoftDeleted($department);
 
         $dummyUsers->each(fn(User $user) => $this->assertSoftDeleted($user));
+    }
+
+    /** @test */
+    public function it_should_detach_managers_on_destroy()
+    {
+        $mary = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+        $ann  = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach([$mary->id, $ann->id]);
+
+        $mary->update(['department_id' => $department->id]);
+        $ann->update(['department_id' => $department->id]);
+
+        $this->assertSame($department->id, $mary->department_id);
+        $this->assertSame($department->id, $ann->department_id);
+        $this->assertDatabaseCount('user_managed_departments', 2);
+
+        Livewire::test(Departments::class)
+            ->call('setDeletingDepartment', $department)
+            ->set('deletingName', $department->name)
+            ->call('destroy')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseCount('user_managed_departments', 0);
+        $this->assertSoftDeleted($department);
     }
 
     private function makeDailyNumberForUser(User $user, int $times = 2)
@@ -218,7 +198,7 @@ class DestroyDepartmentTest extends TestCase
     public function makeUserFromOffice(Office $office)
     {
         return User::factory()->create([
-            'role'      => 'Setter',
+            'role'      => Role::SETTER,
             'office_id' => $office->id,
         ]);
     }

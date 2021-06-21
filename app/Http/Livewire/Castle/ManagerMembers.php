@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Castle;
 
 use App\Models\User;
+use App\Enum\Role;
 use App\Traits\Livewire\FullTable;
 use Livewire\Component;
 
@@ -24,9 +25,9 @@ class ManagerMembers extends Component
 
     public function render()
     {
-        $usersQuery = User::query();
+        $usersQuery = User::query()->with('office');
 
-        if (user()->role == 'Admin' || user()->role == 'Owner') {
+        if (user()->hasAnyRole([Role::ADMIN, Role::OWNER])) {
             $users = $usersQuery;
         } else {
             $users = $usersQuery->whereDepartmentId(user()->department_id);

@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
  * @property int|null $department_id
  * @property-read \App\Models\Department|null $department
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Office[] $offices
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $managers
  * @property-read \App\Models\User $regionManager
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\TrainingPageSection[] $trainingPageSections
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Region newModelQuery()
@@ -33,7 +34,6 @@ class Region extends Model
 
     protected $fillable = [
         'name',
-        'region_manager_id',
         'department_id',
     ];
 
@@ -55,6 +55,12 @@ class Region extends Model
     public function trainingPageSections()
     {
         return $this->hasMany(TrainingPageSection::class);
+    }
+
+    public function managers()
+    {
+        return $this->belongsToMany(User::class, 'user_managed_regions')
+            ->withTimestamps();
     }
 
     public function scopeSearch(Builder $query, $search)

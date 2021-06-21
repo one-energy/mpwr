@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\NumberTracker;
 
+use App\Enum\Role;
 use App\Models\DailyNumber;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -17,13 +18,13 @@ class StoreNumberTrackerTest extends TestCase
     {
         parent::setUp();
 
-        $this->admin = User::factory()->create(['role' => 'Admin']);
+        $this->admin = User::factory()->create(['role' => Role::ADMIN]);
     }
 
     /** @test */
     public function it_should_store_daily_numbers()
     {
-        $mary = User::factory()->create(['role' => 'Setter']);
+        $mary = User::factory()->create(['role' => Role::SETTER]);
 
         $data = [
             'officeSelected' => 1,
@@ -47,7 +48,7 @@ class StoreNumberTrackerTest extends TestCase
     /** @test */
     public function it_should_update_if_daily_numbers_already_exists_on_provided_date()
     {
-        $mary = User::factory()->create(['role' => 'Setter']);
+        $mary = User::factory()->create(['role' => Role::SETTER]);
 
         $date = now();
 
@@ -90,7 +91,7 @@ class StoreNumberTrackerTest extends TestCase
     /** @test */
     public function it_should_require_officeSelected()
     {
-        $mary = User::factory()->create(['role' => 'Setter']);
+        $mary = User::factory()->create(['role' => Role::SETTER]);
 
         $data = [
             'date'    => now(),
@@ -108,7 +109,7 @@ class StoreNumberTrackerTest extends TestCase
     /** @test */
     public function it_should_prevent_negative_doors_quantity()
     {
-        $mary = User::factory()->create(['role' => 'Setter']);
+        $mary = User::factory()->create(['role' => Role::SETTER]);
 
         $data = [
             'officeSelected' => 1,
@@ -127,7 +128,7 @@ class StoreNumberTrackerTest extends TestCase
     /** @test */
     public function it_should_prevent_negative_hours_worked_quantity()
     {
-        $mary = User::factory()->create(['role' => 'Setter']);
+        $mary = User::factory()->create(['role' => Role::SETTER]);
 
         $data = [
             'officeSelected' => 1,
@@ -146,7 +147,7 @@ class StoreNumberTrackerTest extends TestCase
     /** @test */
     public function it_should_prevent_negative_sets_quantity()
     {
-        $mary = User::factory()->create(['role' => 'Setter']);
+        $mary = User::factory()->create(['role' => Role::SETTER]);
 
         $data = [
             'officeSelected' => 1,
@@ -165,7 +166,7 @@ class StoreNumberTrackerTest extends TestCase
     /** @test */
     public function it_should_prevent_negative_sats_quantity()
     {
-        $mary = User::factory()->create(['role' => 'Setter']);
+        $mary = User::factory()->create(['role' => Role::SETTER]);
 
         $data = [
             'officeSelected' => 1,
@@ -184,7 +185,7 @@ class StoreNumberTrackerTest extends TestCase
     /** @test */
     public function it_should_prevent_negative_set_closes_quantity()
     {
-        $mary = User::factory()->create(['role' => 'Setter']);
+        $mary = User::factory()->create(['role' => Role::SETTER]);
 
         $data = [
             'officeSelected' => 1,
@@ -203,7 +204,7 @@ class StoreNumberTrackerTest extends TestCase
     /** @test */
     public function it_should_prevent_negative_closes_quantity()
     {
-        $mary = User::factory()->create(['role' => 'Setter']);
+        $mary = User::factory()->create(['role' => Role::SETTER]);
 
         $data = [
             'officeSelected' => 1,
@@ -222,7 +223,7 @@ class StoreNumberTrackerTest extends TestCase
     /** @test */
     public function it_should_prevent_hours_worked_quantity_above_24()
     {
-        $mary = User::factory()->create(['role' => 'Setter']);
+        $mary = User::factory()->create(['role' => Role::SETTER]);
 
         $data = [
             'officeSelected' => 1,
@@ -241,7 +242,7 @@ class StoreNumberTrackerTest extends TestCase
     /** @test */
     public function it_should_prevent_that_sets_quantity_be_greater_than_doors_quantity()
     {
-        $mary = User::factory()->create(['role' => 'Setter']);
+        $mary = User::factory()->create(['role' => Role::SETTER]);
 
         $data = [
             'officeSelected' => 1,
@@ -263,7 +264,7 @@ class StoreNumberTrackerTest extends TestCase
     /** @test */
     public function it_should_prevent_that_closes_quantity_be_greater_than_sets_quantity()
     {
-        $mary = User::factory()->create(['role' => 'Setter']);
+        $mary = User::factory()->create(['role' => Role::SETTER]);
 
         $data = [
             'officeSelected' => 1,

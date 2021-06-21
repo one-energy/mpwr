@@ -5,9 +5,10 @@ namespace App\Http\Livewire\Castle;
 use App\Models\DailyNumber;
 use App\Models\Office;
 use App\Models\Region;
-use App\Models\User;
+use App\Enum\Role;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -33,22 +34,22 @@ class Offices extends Component
     public function render()
     {
         $offices = Office::query()
-            ->when(user()->hasRole('Region Manager'), function (Builder $query) {
+            ->when(user()->hasRole(Role::REGION_MANAGER), function (Builder $query) {
                 $query->whereHas('region', function (Builder $query) {
-                    $query->where('region_manager_id', '=', user()->id);
+                    $query->whereIn('id', user()->managedRegions->pluck('id'));
                 });
             })
-            ->when(user()->hasRole('Department Manager'), function (Builder $query) {
+            ->when(user()->hasRole(Role::DEPARTMENT_MANAGER), function (Builder $query) {
                 $regionIds = Region::query()
                     ->where('department_id', '=', user()->department_id)
                     ->pluck('id');
 
                 $query->whereIn('region_id', $regionIds);
             })
-            ->when(user()->hasRole('Office Manager'), function (Builder $query) {
-                $query->where('office_manager_id', '=', user()->id);
+            ->when(user()->hasRole(Role::OFFICE_MANAGER), function (Builder $query) {
+                $query->whereIn('id', user()->managedOffices->pluck('id'));
             })
-            ->with(['region.department', 'officeManager'])
+            ->with(['managers', 'region.department'])
             ->search($this->search)
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate($this->perPage);
@@ -86,6 +87,12 @@ class Offices extends Component
                 fn(Builder $query) => $query->whereIn('id', [$office->id])
             )->delete();
 
+            $office->managers()->detach(
+                $office->managers->pluck('id')->toArray()
+            );
+
+            $office->managers()->update(['users.office_id' => null]);
+
             $office->users()->delete();
             $office->delete();
         });
@@ -97,5 +104,21 @@ class Offices extends Component
             ->withTitle(__('Office has been deleted!'))
             ->livewire($this)
             ->send();
+    }
+
+    public function openManagersListModal(Office $office)
+    {
+        $this->dispatchBrowserEvent('on-show-managers', [
+            'managers' => $office->managers->take(4),
+            'quantity' => $office->managers()->count(),
+        ]);
+    }
+
+    public function getManagersName(Collection $managers)
+    {
+        return $managers
+            ->take(3)
+            ->pluck('full_name')
+            ->join(', ');
     }
 }

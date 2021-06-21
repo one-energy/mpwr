@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Castle\Rate;
 
-use App\Models\Department;
 use App\Models\Rates;
 use App\Models\User;
+use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
@@ -16,35 +16,29 @@ class UpdateRateTest extends TestCase
     /** @test */
     public function it_should_show_the_edit_form_for_top_level_roles()
     {
-        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
-        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
+        [$departmentManager, $department] = $this->createVP();
 
         $rate = Rates::factory()->create([
             'department_id' => $department->id,
-            'role'          => 'Sales Rep',
+            'role'          => Role::SALES_REP,
         ]);
 
         $this->actingAs($departmentManager)
             ->get(route('castle.rates.edit', ['rate' => $rate->id]))
-            ->assertStatus(200)
+            ->assertStatus(Response::HTTP_OK)
             ->assertViewIs('castle.rate.edit');
     }
 
     /** @test */
     public function it_should_block_the_edit_form_for_non_top_level_roles()
     {
-        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
-        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
+        [$departmentManager, $department] = $this->createVP();
 
-        $this->actingAs(User::factory()->create(['role' => 'Setter']));
+        $this->actingAs(User::factory()->create(['role' => Role::SETTER]));
 
         $rate = Rates::factory()->create([
             'department_id' => $department->id,
-            'role'          => 'Sales Rep',
+            'role'          => Role::SALES_REP,
         ]);
 
         $this->get(route('castle.rates.edit', ['rate' => $rate->id]))
@@ -54,10 +48,7 @@ class UpdateRateTest extends TestCase
     /** @test */
     public function it_should_update_an_rate()
     {
-        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
-        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
+        [$departmentManager, $department] = $this->createVP();
 
         $rate       = Rates::factory()->create([
             'department_id' => $department->id,

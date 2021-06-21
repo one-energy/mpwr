@@ -36,6 +36,11 @@ class Office extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $fillable = [
+        'name',
+        'region_id'
+    ];
+
     public function officeManager()
     {
         return $this->belongsTo(User::class, 'office_manager_id');
@@ -59,6 +64,12 @@ class Office extends Model
     public function departments()
     {
         return $this->hasManyThrough(Department::class, Region::class);
+    }
+
+    public function managers()
+    {
+        return $this->belongsToMany(User::class, 'user_managed_offices')
+            ->withTimestamps();
     }
 
     public function scopeSearch(Builder $query, $search)

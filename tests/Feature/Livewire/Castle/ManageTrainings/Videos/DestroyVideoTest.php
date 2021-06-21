@@ -7,6 +7,7 @@ use App\Models\Department;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
 use App\Models\User;
+use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Livewire\Livewire;
@@ -19,7 +20,7 @@ class DestroyVideoTest extends TestCase
     /** @test */
     public function it_should_be_possible_delete_a_video()
     {
-        $john = User::factory()->create(['role' => 'Admin']);
+        $john = User::factory()->create(['role' => Role::ADMIN]);
 
         $section = TrainingPageSection::factory()->create();
 
@@ -53,8 +54,8 @@ class DestroyVideoTest extends TestCase
     /** @test */
     public function it_should_requires_admin_or_depatment_manager_role_to_delete_a_video()
     {
-        $john = User::factory()->create(['role' => 'Setter']);
-        $mary = User::factory()->create(['role' => 'Office Manager']);
+        $john = User::factory()->create(['role' => Role::SETTER]);
+        $mary = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
 
         $section = TrainingPageSection::factory()->create();
 
@@ -87,14 +88,15 @@ class DestroyVideoTest extends TestCase
     }
 
     /** @test */
-    public function it_should_prevent_delete_the_video_if_the_user_is_not_an_admin_or_the_department_manager_that_created_the_section()
+    public function it_should_prevent_delete_the_video_if_the_user_is_not_an_admin_or_the_department_manager_that_created_the_section(
+    )
     {
-        $john = User::factory()->create(['role' => 'Department Manager']);
-        $mary = User::factory()->create(['role' => 'Department Manager']);
+        $john = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+        $mary = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
 
-        $department = Department::factory()->create([
-            'department_manager_id' => $mary->id,
-        ]);
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($mary->id);
 
         $mary->update(['department_id' => $department->id]);
 

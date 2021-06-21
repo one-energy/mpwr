@@ -1,11 +1,12 @@
 <?php
 
-namespace Tests\Feature\Livewire\Castle;
+namespace Tests\Feature\Livewire\Castle\User;
 
 use App\Http\Livewire\Castle\Users;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
+use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Livewire\Testing\TestableLivewire;
@@ -18,17 +19,17 @@ class UsersTest extends TestCase
     /** @test */
     public function it_should_list_only_office_managers_if_the_authenticated_user_has_office_manager_role()
     {
-        $john = User::factory()->create(['role' => 'Office Manager']);
-        $ann  = User::factory()->create(['role' => 'Region Manager']);
+        $john = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
+        $ann  = User::factory()->create(['role' => Role::REGION_MANAGER]);
 
-        $region = Region::factory()->create([
-            'region_manager_id' => $ann->id
-        ]);
+        /** @var Region $region */
+        $region = Region::factory()->create();
+        $region->managers()->attach($ann->id);
 
-        $office = Office::factory()->create([
-            'region_id'         => $region->id,
-            'office_manager_id' => $john->id
-        ]);
+        /** @var Office $office */
+        $office = Office::factory()->create(['region_id' => $region->id]);
+        $office->managers()->attach($john->id);
+
 
         $mary = User::factory()->create([
             'first_name' => 'Mary',
@@ -53,20 +54,19 @@ class UsersTest extends TestCase
     /** @test */
     public function it_should_show_office_name_if_the_user_belongs_to_an_office()
     {
-        $john = User::factory()->create(['role' => 'Office Manager']);
-        $ann  = User::factory()->create(['role' => 'Region Manager']);
+        $john = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
+        $ann  = User::factory()->create(['role' => Role::REGION_MANAGER]);
 
-        $region = Region::factory()->create([
-            'region_manager_id' => $ann->id
-        ]);
+        /** @var Region $region */
+        $region = Region::factory()->create();
+        $region->managers()->attach($ann->id);
 
-        $office = Office::factory()->create([
-            'region_id'         => $region->id,
-            'office_manager_id' => $john->id
-        ]);
+        /** @var Office $office */
+        $office = Office::factory()->create(['region_id' => $region->id]);
+        $office->managers()->attach($john->id);
 
         $mary = User::factory()->create([
-            'role'      => 'Office Manager',
+            'role'      => Role::OFFICE_MANAGER,
             'office_id' => $office->id,
         ]);
 
@@ -95,19 +95,18 @@ class UsersTest extends TestCase
     /** @test */
     public function only_users_that_have_manager_or_regional_manager_or_department_manager_role_can_see_offices_list()
     {
-        $mary = User::factory()->create(['role' => 'Admin']);
-        $john = User::factory()->create(['role' => 'Office Manager']);
-        $zack = User::factory()->create(['role' => 'Setter']);
-        $ann  = User::factory()->create(['role' => 'Region Manager']);
+        $mary = User::factory()->create(['role' => Role::ADMIN]);
+        $john = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
+        $zack = User::factory()->create(['role' => Role::SETTER]);
+        $ann  = User::factory()->create(['role' => Role::REGION_MANAGER]);
 
-        $region = Region::factory()->create([
-            'region_manager_id' => $ann->id
-        ]);
+        /** @var Region $region */
+        $region = Region::factory()->create();
+        $region->managers()->attach($ann->id);
 
-        Office::factory()->create([
-            'region_id'         => $region->id,
-            'office_manager_id' => $john->id
-        ]);
+        /** @var Office $office */
+        $office = Office::factory()->create(['region_id' => $region->id]);
+        $office->managers()->attach($john->id);
 
         $this->actingAs($mary);
 

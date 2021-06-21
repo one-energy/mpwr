@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
+use App\Enum\Role;
+use App\Rules\UserHasRole;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class OfficeController extends Controller
 {
@@ -29,47 +32,58 @@ class OfficeController extends Controller
 
     public function create()
     {
-        $regionsQuery = Region::query()->select('regions.*');
-        $usersQuery   = User::query()->whereRole('Office Manager');
+        $regions = Region::query()
+            ->when(user()->hasRole(Role::DEPARTMENT_MANAGER), function (Builder $query) {
+                $query->whereIn('department_id', user()->managedDepartments->pluck('id'));
+            })
+            ->when(user()->hasRole(Role::REGION_MANAGER), function (Builder $query) {
+                $query->whereIn('id', user()->managedRegions->pluck('id'));
+            })
+            ->get();
 
-        if (user()->role == 'Admin' || user()->role == 'Owner') {
-            $users   = $usersQuery->get();
-            $regions = $regionsQuery->get();
-        }
 
-        if (user()->role == 'Department Manager') {
-            $regions = $regionsQuery
-                ->join('departments', function ($join) {
-                    $join->on('regions.department_id', '=', 'departments.id')
-                        ->where('departments.department_manager_id', '=', user()->id);
-                })->get();
-            $users   = $usersQuery->whereDepartmentId(user()->department_id)->get();
-        }
-        if (user()->role == 'Region Manager') {
-            $regions = $regionsQuery->whereRegionManagerId(user()->id)->get();
-            $users   = $usersQuery->whereDepartmentId(user()->department_id)->get();
-        }
+        $users = User::query()
+            ->where('role', Role::OFFICE_MANAGER)
+            ->when(user()->hasRole(Role::DEPARTMENT_MANAGER), function ($query) {
+                $query->whereIn('department_id', user()->managedDepartments->pluck('id'));
+            })
+            ->when(user()->hasRole(Role::REGION_MANAGER), function ($query) {
+                $query->whereIn('department_id', user()->department_id);
+            });
 
-        return view('castle.offices.create', compact('regions', 'users'));
+        return view('castle.offices.create', [
+            'regions' => $regions,
+            'users'   => $users,
+        ]);
     }
 
     public function store()
     {
-        $validated = request()->validate([
-            'name'              => 'required|string|min:3|max:255',
-            'region_id'         => 'required',
-            'office_manager_id' => 'required',
+        request()->validate([
+            'name'                 => 'required|string|min:3|max:255',
+            'region_id'            => 'required|exists:regions,id',
+            'office_manager_ids'   => 'nullable|array',
+            'office_manager_ids.*' => ['nullable', 'exists:users,id', new UserHasRole(Role::OFFICE_MANAGER)],
         ], [
             'region_id.required'         => 'The region field is required.',
             'office_manager_id.required' => 'The office manager field is required.',
         ]);
 
-        $office                    = new Office();
-        $office->name              = $validated['name'];
-        $office->region_id         = $validated['region_id'];
-        $office->office_manager_id = $validated['office_manager_id'];
+        $office = DB::transaction(function () {
+            /** @var Office $office */
+            $office = Office::create([
+                'name'      => request()->name,
+                'region_id' => request()->region_id,
+            ]);
 
-        $office->save();
+            $managerIds = collect(request()->office_manager_ids)->filter();
+
+            if ($managerIds->isNotEmpty()) {
+                $office->managers()->attach($managerIds->toArray());
+            }
+
+            return $office;
+        });
 
         alert()
             ->withTitle(__('Office created!'))
@@ -81,24 +95,25 @@ class OfficeController extends Controller
     public function edit(Office $office)
     {
         $regions = Region::query()
-            ->when(user()->role == 'Department Manager', function (Builder $query) {
-                $query->where('department_id', '=', user()->department_id);
+            ->with('department')
+            ->when(user()->hasRole(Role::DEPARTMENT_MANAGER), function (Builder $query) {
+                $query->where('department_id', user()->department_id);
             })
-            ->when(user()->role == 'Region Manager', function (Builder $query) {
-                $query->where('region_manager_id', '=', user()->id);
+            ->when(user()->hasRole(Role::REGION_MANAGER), function (Builder $query) {
+                $query->where('region_manager_id', user()->id);
             })
-            ->when(user()->role == 'Office Manager', function (Builder $query) use ($office) {
-                $query->where('id', '=', $office->region_id);
+            ->when(user()->hasRole(Role::OFFICE_MANAGER), function (Builder $query) use ($office) {
+                $query->where('id', $office->region_id);
             })
             ->get();
 
         $users = User::query()
-            ->where('department_id', '=', $office->region->department->id)
+            ->where('department_id', $office->region->department->id)
             ->orderBy('first_name')
             ->get();
 
         return view('castle.offices.edit', [
-            'office'  => $office,
+            'office'  => $office->load(['managers', 'region']),
             'regions' => $regions,
             'users'   => $users,
         ]);
@@ -106,20 +121,9 @@ class OfficeController extends Controller
 
     public function update(Office $office)
     {
-        $validated = request()->validate([
-            'name'              => 'required|string|min:3|max:255',
-            'region_id'         => 'required',
-            'office_manager_id' => 'required',
-        ], [
-            'region_id.required'         => 'The region field is required.',
-            'office_manager_id.required' => 'The office manager field is required.',
-        ]);
+        request()->validate(['name' => 'required|string|min:3|max:255']);
 
-        $office->name              = $validated['name'];
-        $office->region_id         = $validated['region_id'];
-        $office->office_manager_id = $validated['office_manager_id'];
-
-        $office->save();
+        $office->update(['name' => request()->name]);
 
         alert()
             ->withTitle(__('Office updated!'))

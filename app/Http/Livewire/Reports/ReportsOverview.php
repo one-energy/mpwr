@@ -38,9 +38,11 @@ class ReportsOverview extends Component
         $this->sortBy        = 'date_of_sale';
         $this->sortDirection = 'desc';
         $this->departmentId  = Department::first()->id;
+
         if (user()->hasAnyRole(['Admin', 'Owner'])) {
             $this->personalCustomers = false;
         }
+
         $this->startDate = Carbon::create($this->startDate)->firstOfYear()->startOfDay()->toString();
         $this->finalDate = Carbon::create($this->finalDate)->endOfDay()->toString();
     }

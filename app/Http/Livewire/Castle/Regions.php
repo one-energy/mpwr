@@ -3,14 +3,15 @@
 namespace App\Http\Livewire\Castle;
 
 use App\Models\DailyNumber;
-use App\Models\Department;
 use App\Models\Region;
 use App\Models\SectionFile;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
 use App\Models\User;
+use App\Enum\Role;
 use App\Traits\Livewire\FullTable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -36,17 +37,13 @@ class Regions extends Component
     public function render()
     {
         $regions = Region::query()
-            ->when(user()->hasRole('Department Manager'), function (Builder $query) {
-                $departmentIds = Department::query()
-                    ->where('department_manager_id', '=', user()->id)
-                    ->pluck('id');
-
-                $query->whereIn('department_id', $departmentIds);
+            ->when(user()->hasRole(Role::DEPARTMENT_MANAGER), function (Builder $query) {
+                $query->whereIn('department_id', user()->managedDepartments->pluck('id'));
             })
-            ->when(user()->hasRole('Region Manager'), function (Builder $query) {
-                $query->where('region_manager_id', '=', user()->id);
+            ->when(user()->hasRole(Role::REGION_MANAGER), function (Builder $query) {
+                $query->whereIn('id', user()->managedRegions->pluck('id'));
             })
-            ->with(['department', 'regionManager'])
+            ->with(['department', 'managers'])
             ->search($this->search)
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate($this->perPage);
@@ -87,13 +84,20 @@ class Regions extends Component
                 })
                 ->first();
 
+            $trainingPageSectionsIds = $region->trainingPageSections()
+                ->select('id')
+                ->pluck('id')
+                ->toArray();
+
             TrainingPageContent::query()
-                ->whereIn('training_page_section_id', $region->trainingPageSections()->select('id')->pluck('id')->toArray())
+                ->whereIn('training_page_section_id', $trainingPageSectionsIds)
                 ->update(['training_page_section_id' => $parentSection?->id]);
 
             SectionFile::query()
-                ->whereIn('training_page_section_id', $region->trainingPageSections()->select('id')->pluck('id')->toArray())
+                ->whereIn('training_page_section_id', $trainingPageSectionsIds)
                 ->update(['training_page_section_id' => $parentSection?->id]);
+
+            $region->managers()->detach($region->managers->pluck('id')->toArray());
 
             $region
                 ->trainingPageSections()
@@ -120,5 +124,21 @@ class Regions extends Component
             ->withTitle(__('Region has been deleted!'))
             ->livewire($this)
             ->send();
+    }
+
+    public function openManagersListModal(Region $region)
+    {
+        $this->dispatchBrowserEvent('on-show-managers', [
+            'managers' => $region->managers->take(4),
+            'quantity' => $region->managers()->count(),
+        ]);
+    }
+
+    public function getManagersName(Collection $managers)
+    {
+        return $managers
+            ->take(3)
+            ->pluck('full_name')
+            ->join(', ');
     }
 }

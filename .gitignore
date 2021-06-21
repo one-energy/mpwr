@@ -25,3 +25,6 @@ yarn-error.log
 .php_cs.cache
 public/vendor
 .idea
+
+# Code Coverage
+output

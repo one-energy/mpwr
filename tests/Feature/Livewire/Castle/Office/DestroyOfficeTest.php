@@ -8,6 +8,7 @@ use App\Models\Department;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
+use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Livewire\Livewire;
@@ -20,19 +21,10 @@ class DestroyOfficeTest extends TestCase
     /** @test */
     public function it_should_soft_delete_a_office()
     {
-        $john = User::factory()->create(['role' => 'Admin']);
-        $mary = User::factory()->create(['role' => 'Region Manager']);
-        $ann  = User::factory()->create(['role' => 'Office Manager']);
+        $john = User::factory()->create(['role' => Role::ADMIN]);
 
-        $region = Region::factory()->create([
-            'department_id'     => Department::factory()->create(),
-            'region_manager_id' => $mary->id
-        ]);
-
-        $office = Office::factory()->create([
-            'region_id'         => $region->id,
-            'office_manager_id' => $ann->id
-        ]);
+        $region = Region::factory()->create(['department_id' => Department::factory()->create()]);
+        $office = Office::factory()->create(['region_id' => $region->id]);
 
         $this->actingAs($john);
 
@@ -47,29 +39,20 @@ class DestroyOfficeTest extends TestCase
     /** @test */
     public function it_should_soft_delete_daily_numbers_when_delete_an_office()
     {
-        $john = User::factory()->create(['role' => 'Admin']);
-        $mary = User::factory()->create(['role' => 'Region Manager']);
-        $ann  = User::factory()->create(['role' => 'Office Manager']);
+        $john   = User::factory()->create(['role' => Role::ADMIN]);
+        $region = Region::factory()->create(['department_id' => Department::factory()->create()]);
+        $office = Office::factory()->create(['region_id' => $region->id]);
 
-        $region = Region::factory()->create([
-            'department_id'     => Department::factory()->create(),
-            'region_manager_id' => $mary->id
-        ]);
-
-        $office = Office::factory()->create([
-            'region_id'         => $region->id,
-            'office_manager_id' => $ann->id
-        ]);
-
-        $mary         = User::factory()->create([
-            'role'      => 'Setter',
+        $mary = User::factory()->create([
+            'role'      => Role::SETTER,
             'office_id' => $office->id,
         ]);
+
         $dailyNumbers = DailyNumber::factory()
             ->times(2)
             ->create(['user_id' => $mary->id]);
 
-        $dummyUser    = User::factory()->create(['role' => 'Setter']);
+        $dummyUser    = User::factory()->create(['role' => Role::SETTER]);
         $dummyNumbers = DailyNumber::factory()
             ->times(2)
             ->create(['user_id' => $dummyUser->id]);
@@ -90,19 +73,10 @@ class DestroyOfficeTest extends TestCase
     /** @test */
     public function it_should_soft_delete_all_users_from_the_office_that_is_being_deleted()
     {
-        $john = User::factory()->create(['role' => 'Admin']);
-        $mary = User::factory()->create(['role' => 'Region Manager']);
-        $ann  = User::factory()->create(['role' => 'Office Manager']);
+        $john   = User::factory()->create(['role' => Role::ADMIN]);
+        $region = Region::factory()->create(['department_id' => Department::factory()->create()]);
 
-        $region = Region::factory()->create([
-            'department_id'     => Department::factory()->create(),
-            'region_manager_id' => $mary->id
-        ]);
-
-        $office = Office::factory()->create([
-            'region_id'         => $region->id,
-            'office_manager_id' => $ann->id
-        ]);
+        $office = Office::factory()->create(['region_id' => $region->id]);
 
         /** @var Collection */
         $dummyUsers = User::factory()
@@ -119,5 +93,37 @@ class DestroyOfficeTest extends TestCase
         $this->assertSoftDeleted($office);
 
         $dummyUsers->each(fn(User $user) => $this->assertSoftDeleted($user));
+    }
+
+    /** @test */
+    public function it_should_detach_managers_on_destroy()
+    {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+        $mary = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
+        $ann  = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
+
+        /** @var Office $office */
+        $office = Office::factory()->create();
+        $office->managers()->attach([$mary->id, $ann->id]);
+
+        $mary->update(['office_id' => $office->id]);
+        $ann->update(['office_id' => $office->id]);
+
+        $this->assertSame($office->id, $mary->office_id);
+        $this->assertSame($office->id, $ann->office_id);
+        $this->assertDatabaseCount('user_managed_offices', 2);
+
+        $this->actingAs($john);
+
+        Livewire::test(Offices::class)
+            ->call('setDeletingOffice', $office)
+            ->set('deletingName', $office->name)
+            ->call('destroy')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseCount('user_managed_offices', 0);
+        $this->assertSoftDeleted($office->getTable(), [
+            'id' => $office->id,
+        ]);
     }
 }
