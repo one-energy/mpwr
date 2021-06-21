@@ -106,7 +106,7 @@ class ReportsOverview extends Component
         ]);
     }
 
-    public function paid(Customer $customer)
+    public function togglePaid(Customer $customer)
     {
         abort_if(user()->notHaveRoles(['Admin']), Response::HTTP_FORBIDDEN);
 
