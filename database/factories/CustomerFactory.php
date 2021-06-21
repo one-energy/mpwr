@@ -37,9 +37,9 @@ class CustomerFactory extends Factory
             'sales_rep_fee' => 0,
             'panel_sold'    => $this->faker->boolean(),
             'is_active'     => $this->faker->boolean(),
-            'setter_id'     => User::factory()->create()->id,
-            'sales_rep_id'  => User::factory()->create()->id,
-            'opened_by_id'  => User::factory()->create()->id,
+            'setter_id'     => User::factory(),
+            'sales_rep_id'  => User::factory(),
+            'opened_by_id'  => User::factory(),
             'enium_points'  => 0,
         ];
     }
