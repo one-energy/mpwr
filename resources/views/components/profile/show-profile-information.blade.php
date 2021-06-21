@@ -57,11 +57,11 @@
         </div>
         <div class="flex justify-between grid grid-cols-4 row-gap-1 col-gap-4 border-gray-200 border-2 m-1 p-2 rounded-lg">
             <div class="col-span-4 text-xs text-gray-900">
-                HWPS RATIO
+                HKPS RATIO
             </div>
             <div class="col-span-4 text-xl font-bold text-gray-900">
                 @if(user()->dailyNumbers->sum('sets') > 0)
-                    {{number_format(user()->dailyNumbers->sum('hours') / user()->dailyNumbers->sum('sets'), 2)}}
+                    {{number_format(user()->dailyNumbers->sum('hours_knocked') / user()->dailyNumbers->sum('sets'), 2)}}
                 @else
                     -
                 @endif
@@ -72,8 +72,8 @@
                 SIT RATIO
             </div>
             <div class="col-span-4 text-xl font-bold text-gray-900">
-                @if(user()->dailyNumbers->sum('sats') > 0 && user()->dailyNumbers->sum('set_sits') > 0)
-                    {{ number_format(user()->dailyNumbers->sum('sats') / user()->dailyNumbers->sum('set_sits'), 2) }}%
+                @if(user()->dailyNumbers->sum('sats') > 0)
+                    {{ number_format(user()->dailyNumbers->sum('sets') / user()->dailyNumbers->sum('sats'), 2) }}%
                 @else
                     -
                 @endif
@@ -84,8 +84,8 @@
                 CLOSE RATIO
             </div>
             <div class="col-span-4 text-xl font-bold text-gray-900">
-                @if(user()->dailyNumbers->sum('closes') > 0 && user()->dailyNumbers->sum('closer_sits') > 0)
-                    {{ number_format(user()->dailyNumbers->sum('closes') / user()->dailyNumbers->sum('closer_sits'), 2) }}%
+                @if(user()->dailyNumbers->sum('closes') > 0)
+                    {{ number_format(user()->dailyNumbers->sum('closer_sits') / user()->dailyNumbers->sum('closes'), 2) }}%
                 @else
                     -
                 @endif

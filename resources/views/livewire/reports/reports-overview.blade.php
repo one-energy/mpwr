@@ -205,6 +205,11 @@
                 <x-table overflow-x :pagination="$customers->links()">
                     <x-slot name="header">
                         <x-table.th-tr>
+                            @if (user()->hasRole('Admin'))
+                                <x-table.th class="whitespace-no-wrap">
+                                    @lang('Paid')
+                                </x-table.th>
+                            @endif
                             <x-table.th-searchable class="whitespace-no-wrap" by="CONCAT(customers.first_name, customers.last_name)" :sortedBy="$sortBy" :direction="$sortDirection">
                                 @lang('Home Owner')
                             </x-table.th-searchable>
@@ -315,6 +320,16 @@
                     <x-slot name="body">
                         @foreach($customers as $customer)
                             <x-table.tr >
+                                @if (user()->hasRole('Admin'))
+                                    <x-table.td>
+                                        <input
+                                            type="checkbox"
+                                            {{ $customer->panel_sold ? 'checked' : '' }}
+                                            wire:key="customer-{{ $customer->id }}"
+                                            wire:click="togglePaid({{ $customer->id }})"
+                                        >
+                                    </x-table.td>
+                                @endif
                                 <x-table.td class="{{ $this->statusColorFor($customer) }}">
                                     {{$customer->full_name}}
                                 </x-table.td>
