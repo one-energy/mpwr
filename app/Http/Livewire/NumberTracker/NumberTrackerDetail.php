@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\NumberTracker;
 
+use App\Enum\Role;
 use App\Models\DailyNumber;
 use App\Models\Department;
 use App\Traits\Livewire\FullTable;
@@ -37,8 +38,6 @@ class NumberTrackerDetail extends Component
     public int $selectedDepartment;
 
     protected $listeners = [
-        'sumTotalNumbers',
-        'loadingSumNumberTracker',
         'updateNumbers',
         'onSelectedDepartment' => 'changeSelectedDepartment',
     ];
@@ -87,7 +86,7 @@ class NumberTrackerDetail extends Component
 
     public function updateNumbers($payload)
     {
-        $this->selectedUsersIds = $payload["users"];
+        $this->selectedUsersIds   = $payload["users"];
         $this->selectedOfficesIds = $payload["offices"];
     }
 
@@ -98,21 +97,21 @@ class NumberTrackerDetail extends Component
         }
 
         return DailyNumber::query()
-        ->withTrashed()
-        ->with('user', function($query) {
-            $query->withTrashed();
-        })
-        ->whereIn('user_id', $this->selectedUsersIds)
-        ->whereIn('office_id', $this->selectedOfficesIds)
-        ->inPeriod($this->period, new Carbon($this->date))
-        ->orderBy('total', 'desc')
-        ->groupBy('user_id')
-        ->select(
-            DB::raw($this->getTotalRawQuery($this->getSluggedPill())),
-            'user_id'
-        )
-        ->limit(10)
-        ->get();
+            ->withTrashed()
+            ->with('user', function ($query) {
+                $query->withTrashed();
+            })
+            ->whereIn('user_id', $this->selectedUsersIds)
+            ->whereIn('office_id', $this->selectedOfficesIds)
+            ->inPeriod($this->period, new Carbon($this->date))
+            ->orderBy('total', 'desc')
+            ->groupBy('user_id')
+            ->select(
+                DB::raw($this->getTotalRawQuery($this->getSluggedPill())),
+                'user_id'
+            )
+            ->limit(10)
+            ->get();
     }
 
     private function getSluggedPill()
@@ -129,7 +128,7 @@ class NumberTrackerDetail extends Component
 
     private function getDepartmentId()
     {
-        return user()->hasAnyRole(['Admin', 'Owner'])
+        return user()->hasAnyRole([Role::ADMIN, Role::OWNER])
             ? Department::oldest('name')->first()->id
             : (user()->department_id ?? 0);
     }
