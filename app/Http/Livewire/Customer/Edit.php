@@ -276,4 +276,9 @@ class Edit extends Component
             'last_name'  => 'Deleted',
         ]))->forceFill(['deleted_at' => today()]);
     }
+
+    public function isSetterOfCustomer()
+    {
+        return user()->id == $this->customer->setter_id;
+    }
 }

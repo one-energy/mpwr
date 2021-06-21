@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\Builders;
 
 use App\Models\Department;
@@ -32,6 +31,7 @@ class RegionBuilder
     public function withDepartment($department)
     {
         $this->region->department_id = $department->id;
+
         return $this;
     }
 

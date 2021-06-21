@@ -52,7 +52,7 @@
                     {{ $title }}
                 </h3>
                 <div class="mt-2">
-                    <p class="text-sm leading-5 text-gray-500">
+                    <p id="modalDescription" class="text-sm leading-5 text-gray-500">
                         @if ($raw)
                             {!! $description !!}
                         @else

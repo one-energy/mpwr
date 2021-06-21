@@ -216,47 +216,6 @@
                             </div>
                         </div>
                         <div style="min-width: fit-content; flex: 0 0 auto" class="w-56 p-3 border-2 border-gray-200 rounded-lg">
-                            <div class="text-xs font-semibold text-gray-900 uppercase">Sits</div>
-                            <div class="grid grid-cols-4 gap-1">
-                                <div class="text-sm self-center col-span-1">Set</div>
-                                <div class="text-md font-bold text-gray-900 col-span-2">{{$users->sum('dailyNumbers.0.set_sits')}}</div>
-                                <div class="flex text-xs place-self-end col-span-1 items-center">
-                                    @if($users->sum('dailyNumbers.0.set_sits') - $usersLastDayEntries->sum('dailyNumbers.0.set_sits') >= 0)
-                                        <x-svg.arrow-up class="text-green-base"/>
-                                    @else
-                                        <x-svg.arrow-down class="text-red-600"/>
-                                    @endif
-                                    <span class="
-                                            @if($users->sum('dailyNumbers.0.set_sits') - $usersLastDayEntries->sum('dailyNumbers.0.set_sits') >= 0)
-                                                text-green-base
-                                            @else
-                                                text-red-600
-                                            @endif">
-                                        {{$users->sum('dailyNumbers.0.set_sits') - $usersLastDayEntries->sum('dailyNumbers.0.set_sits')}}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-4 gap-1">
-                                <div class="text-sm self-center col-span-1">SG</div>
-                                <div class="text-md font-bold text-gray-900 col-span-2">{{$users->sum('dailyNumbers.0.sits')}}</div>
-                                <div class="flex text-xs place-self-end col-span-1 items-center">
-                                    @if($users->sum('dailyNumbers.0.sits') - $usersLastDayEntries->sum('dailyNumbers.0.sits') >= 0)
-                                        <x-svg.arrow-up class="text-green-base"/>
-                                    @else
-                                        <x-svg.arrow-down class="text-red-600"/>
-                                    @endif
-                                    <span class="
-                                            @if($users->sum('dailyNumbers.0.sits') - $usersLastDayEntries->sum('dailyNumbers.0.sits') >= 0)
-                                                text-green-base
-                                            @else
-                                                text-red-600
-                                            @endif">
-                                        {{$users->sum('dailyNumbers.0.sits') - $usersLastDayEntries->sum('dailyNumbers.0.sits')}}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="min-width: fit-content; flex: 0 0 auto" class="w-56 p-3 border-2 border-gray-200 rounded-lg">
                                 <div class="text-xs font-semibold text-gray-900 uppercase">Closes</div>
                                 <div class="grid grid-cols-4 gap-1">
                                     <div class="text-sm self-center col-span-1">Set</div>

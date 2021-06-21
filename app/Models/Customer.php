@@ -15,6 +15,9 @@ use InvalidArgumentException;
  * @property int $id
  * @property int|null $financing_id
  * @property int|null $financer_id
+ * @property int|null $department_manager_id
+ * @property int|null $region_manager_id
+ * @property int|null $office_manager_id
  * @property int|null $term_id
  * @property string $first_name
  * @property string $last_name
@@ -32,6 +35,7 @@ use InvalidArgumentException;
  * @property int $opened_by_id
  * @property float $margin
  * @property \datetime $date_of_sale
+ * @property \Illuminate\Support\Carbon|null $paid_date
  * @property int $sales_rep_comission
  * @property int|null $enium_points
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -82,12 +86,18 @@ class Customer extends Model
         'created_at',
         'updated_at',
         'is_active',
+        'panel_sold',
+        'paid_date',
     ];
 
     protected $casts = [
         'panel_sold'   => 'boolean',
         'is_active'    => 'boolean',
         'date_of_sale' => 'datetime:Y-m-d',
+    ];
+
+    protected $dates = [
+        'paid_date',
     ];
 
     const RANGE_DATES = [
@@ -205,6 +215,11 @@ class Customer extends Model
     public function departmentManager()
     {
         return $this->belongsTo(User::class, 'department_manager_id');
+    }
+
+    public function getSetterCommissionAttribute()
+    {
+        return $this->setter_fee * ($this->system_size * self::K_WATTS);
     }
 
     public function stockPoint()
