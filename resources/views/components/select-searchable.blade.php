@@ -148,7 +148,7 @@ x-init="() => {
             <x-icon name="selector" class="text-gray-400" />
         </span>
 
-        <div class="absolute z-50 border-t mt-1 w-full rounded-lg bg-white soft-shadow"
+        <div class="absolute z-50 border-t mt-1 w-full rounded-lg bg-white soft-shadow" x-cloak
             x-show="popover"
             x-on:click.away="closePopover"
             x-on:keydown.escape="closePopover">
