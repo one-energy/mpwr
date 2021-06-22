@@ -26,8 +26,6 @@ class StoreDepartmentTest extends TestCase
     /** @test */
     public function it_should_store_a_department()
     {
-        $this->withoutExceptionHandling();
-
         $john = User::factory()->create(['role' => Role::ADMIN]);
 
         $data = $this->makeData();

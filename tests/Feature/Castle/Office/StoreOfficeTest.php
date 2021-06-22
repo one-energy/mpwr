@@ -17,7 +17,7 @@ class StoreOfficeTest extends TestCase
 {
     use RefreshDatabase;
 
-    private User $user;
+    private $user;
 
     protected function setUp(): void
     {
@@ -31,8 +31,6 @@ class StoreOfficeTest extends TestCase
     /** @test */
     public function it_should_store_office()
     {
-        $this->withoutExceptionHandling();
-
         $john = User::factory()->create(['role' => Role::ADMIN]);
 
         $data = $this->makeData();
@@ -63,8 +61,6 @@ class StoreOfficeTest extends TestCase
     /** @test */
     public function it_should_attach_new_regions_if_user_already_managed_regions()
     {
-        $this->withoutExceptionHandling();
-
         $john = User::factory()->create(['role' => Role::ADMIN]);
 
         /** @var User $mary */

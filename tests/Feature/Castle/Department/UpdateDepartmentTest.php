@@ -4,6 +4,7 @@ namespace Tests\Feature\Castle\Department;
 
 use App\Models\Department;
 use App\Models\User;
+use App\Enum\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
@@ -15,8 +16,8 @@ class UpdateDepartmentTest extends TestCase
     /** @test */
     public function it_should_edit_an_department()
     {
-        $admin      = User::factory()->create(['role' => 'Admin']);
-        $department = Department::factory()->create(['department_manager_id' => $admin->id]);
+        $admin      = User::factory()->create(['role' => Role::ADMIN]);
+        $department = Department::factory()->create();
 
         $data             = $department->toArray();
         $updateDepartment = array_merge($data, ['name' => 'Department Edited']);

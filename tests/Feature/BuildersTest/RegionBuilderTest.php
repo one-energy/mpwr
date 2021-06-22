@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\BuildersTest;
 
+use App\Enum\Role;
 use App\Models\Department;
 use App\Models\Office;
 use App\Models\User;
@@ -17,12 +18,14 @@ class RegionBuilderTest extends TestCase
     /** @test */
     public function it_should_create_a_region()
     {
-        $departmentManager = User::factory()->create(['role' => 'Department Manager']);
-        $department        = Department::factory()->create([
-            'name'                  => 'New Department',
-            'department_manager_id' => $departmentManager->id,
-        ]);
-        $region            = RegionBuilder::build()->withDepartment($department)->save()->get();
+        $departmentManager = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+
+        /** @var Department $department */
+        $department = Department::factory()->create();
+
+        $department->managers()->attach($departmentManager->id);
+
+        $region = RegionBuilder::build()->withDepartment($department)->save()->get();
 
         $this->assertDatabaseHas('regions', [
             'id'   => $region->id,
@@ -37,29 +40,31 @@ class RegionBuilderTest extends TestCase
         $region = RegionBuilder::build()->withManager($user)->save()->get();
 
         $this->assertDatabaseHas('regions', [
-            'id'                => $region->id,
-            'name'              => $region->name,
-            'region_manager_id' => $user->id,
+            'id'   => $region->id,
+            'name' => $region->name,
         ]);
 
+        $this->assertDatabaseHas('user_managed_regions', [
+            'region_id' => $region->id,
+            'user_id'   => $user->id,
+        ]);
     }
 
     /** @test */
     public function it_should_be_able_to_add_more_offices_to_the_region()
     {
         $user              = UserBuilder::build()->save()->get();
-        $departmentManager = User::factory()->create(['role' => 'Department Manager']);
-        $department        = Department::factory()->create([
-            'name'                  => 'New Department',
-            'department_manager_id' => $departmentManager->id,
-        ]);
+        $departmentManager = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+
+        /** @var Department $department */
+        $department = Department::factory()->create();
+
+        $departmentManager->update(['department_id' => $department->id]);
+        $department->managers()->attach($departmentManager->id);
 
         $region = RegionBuilder::build()->withDepartment($department)->save()->get();
 
-        Office::factory()->count(3)->create([
-            'region_id'         => $region->id,
-            'office_manager_id' => $user->id,
-        ]);
+        Office::factory()->count(3)->create(['region_id' => $region->id]);
 
         $this->assertCount(3, $region->offices);
     }

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Castle\ManageTraining;
 
+use App\Enum\Role;
 use App\Models\Department;
 use App\Models\Region;
 use App\Models\TrainingPageSection;
@@ -17,7 +18,7 @@ class StoreTrainingSectionTest extends TestCase
     /** @test */
     public function it_should_store_a_training_page_section()
     {
-        $john    = User::factory()->create(['role' => 'Admin']);
+        $john    = User::factory()->create(['role' => Role::ADMIN]);
         $section = TrainingPageSection::factory()->create();
 
         $title = Str::random(30);
@@ -40,13 +41,16 @@ class StoreTrainingSectionTest extends TestCase
     /** @test */
     public function it_should_allow_a_region_manager_create_section_inside_the_region_folder()
     {
-        $john = User::factory()->create(['role' => 'Region Manager']);
+        $john = User::factory()->create(['role' => Role::REGION_MANAGER]);
+        $ann  = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
 
-        $department = Department::factory()->create([
-            'department_manager_id' => User::factory()->create(['role' => 'Department Manager'])->id,
-        ]);
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($ann->id);
 
-        $region = Region::factory()->create(['region_manager_id' => $john->id]);
+        /** @var Region $region */
+        $region = Region::factory()->create();
+        $region->managers()->attach($ann->id);
 
         $rootSection   = TrainingPageSection::factory()->create([
             'department_id' => $department->id,
@@ -84,7 +88,7 @@ class StoreTrainingSectionTest extends TestCase
     /** @test */
     public function it_should_prevent_a_region_manager_create_a_section_in_department_folders()
     {
-        $john    = User::factory()->create(['role' => 'Region Manager']);
+        $john    = User::factory()->create(['role' => Role::REGION_MANAGER]);
         $section = TrainingPageSection::factory()->create();
 
         $title = Str::random(30);
