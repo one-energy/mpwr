@@ -59,7 +59,7 @@ class OfficeController extends Controller
 
     public function store()
     {
-        $validated = request()->validate([
+        request()->validate([
             'name'                 => 'required|string|min:3|max:255',
             'region_id'            => 'required|exists:regions,id',
             'office_manager_ids'   => 'nullable|array',
@@ -121,20 +121,9 @@ class OfficeController extends Controller
 
     public function update(Office $office)
     {
-        $validated = request()->validate([
-            'name'              => 'required|string|min:3|max:255',
-            'region_id'         => 'required',
-            'office_manager_id' => 'required',
-        ], [
-            'region_id.required'         => 'The region field is required.',
-            'office_manager_id.required' => 'The office manager field is required.',
-        ]);
+        request()->validate(['name' => 'required|string|min:3|max:255']);
 
-        $office->name              = $validated['name'];
-        $office->region_id         = $validated['region_id'];
-        $office->office_manager_id = $validated['office_manager_id'];
-
-        $office->save();
+        $office->update(['name' => request()->name]);
 
         alert()
             ->withTitle(__('Office updated!'))
