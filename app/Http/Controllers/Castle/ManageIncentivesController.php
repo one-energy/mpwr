@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Castle;
 
+use App\Enum\Role;
 use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\Incentive;
@@ -15,7 +16,7 @@ class ManageIncentivesController extends Controller
             'department' => fn(BelongsTo $query) => $query->withTrashed(),
         ]);
 
-        $incentives = user()->hasAnyRole(['Admin', 'Owner'])
+        $incentives = user()->hasAnyRole([Role::ADMIN, Role::OWNER])
             ? $query->get()
             : $query->whereDepartmentId(user()->department_id)->orderBy('number_installs')->get();
 
