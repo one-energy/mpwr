@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Castle\Region;
 
-use App\Models\Department;
+use App\Enum\Role;
 use App\Models\Region;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -16,18 +16,16 @@ class UpdateRegionTest extends TestCase
     /** @test */
     public function it_should_edit_an_region()
     {
-        $departmentManager = User::factory()->create(['role' => 'Department Manager']);
-        $department        = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
+        [$departmentManager, $department] = $this->createVP();
 
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
+        $regionManager = User::factory()->create(['role' => Role::REGION_MANAGER]);
 
-        $regionManager = User::factory()->create(['role' => 'Region Manager']);
-        $region        = Region::factory()->create([
-            'name'              => 'New Region',
-            'region_manager_id' => $regionManager->id,
-            'department_id'     => $department->id,
+        /** @var Region $region */
+        $region = Region::factory()->create([
+            'name'          => 'New Region',
+            'department_id' => $department->id,
         ]);
+        $region->managers()->attach($regionManager->id);
 
         $data         = $region->toArray();
         $updateRegion = array_merge($data, ['name' => 'Region Edited']);

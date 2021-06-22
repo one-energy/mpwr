@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Castle\Rate;
 
+use App\Enum\Role;
 use App\Models\Department;
 use App\Models\Rates;
 use App\Models\User;
@@ -16,16 +17,13 @@ class StoreRateTest extends TestCase
     /** @test */
     public function it_should_block_the_create_form_for_non_top_level_roles_in_rates()
     {
-        $setter = User::factory()->create([
-            'role' => 'Setter',
-        ]);
+        $setter = User::factory()->create(['role' => Role::SETTER]);
+        $ann    = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
 
-        $department = Department::factory()->create([
-            'department_manager_id' => $setter->id,
-        ]);
-
-        $setter->department_id = $department->id;
-        $setter->save();
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($ann->id);
+        $setter->update(['department_id' => $department->id]);
 
         $this->actingAs($setter)
             ->get(route('castle.rates.create'))
@@ -35,10 +33,7 @@ class StoreRateTest extends TestCase
     /** @test */
     public function it_should_show_the_create_form_for_top_level_roles_in_rates()
     {
-        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
-        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
+        [$departmentManager] = $this->createVP();
 
         $this
             ->actingAs($departmentManager)
@@ -50,17 +45,14 @@ class StoreRateTest extends TestCase
     /** @test */
     public function it_should_store_a_new_rate()
     {
-        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
-        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
+        [$departmentManager, $department] = $this->createVP();
 
         $data = [
             'name'          => 'rate',
             'time'          => 25,
             'rate'          => 2.5,
             'department_id' => $department->id,
-            'role'          => 'Sales Rep',
+            'role'          => Role::SALES_REP,
         ];
 
         $this->actingAs($departmentManager);
@@ -73,17 +65,14 @@ class StoreRateTest extends TestCase
     /** @test */
     public function it_shouldnt_store_a_repeated_rate()
     {
-        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
-        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
+        [$departmentManager, $department] = $this->createVP();
 
         $data = [
             'name'          => 'rate',
             'time'          => 25,
             'rate'          => 2.5,
             'department_id' => $department->id,
-            'role'          => 'Sales Rep',
+            'role'          => Role::SALES_REP,
         ];
 
         Rates::factory()->create($data);
@@ -97,17 +86,14 @@ class StoreRateTest extends TestCase
     /** @test */
     public function it_should_require_all_fields_to_store_a_new_rate()
     {
-        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
-        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
+        [$departmentManager] = $this->createVP();
 
         $data = [
             'name'          => '',
             'time'          => '',
             'rate'          => '',
             'department_id' => '',
-            'role'          => 'Sales Rep',
+            'role'          => Role::SALES_REP,
         ];
 
         $this->actingAs($departmentManager)

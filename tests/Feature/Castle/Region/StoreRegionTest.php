@@ -17,36 +17,6 @@ class StoreRegionTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function it_should_store_a_region()
-    {
-        $john = User::factory()->create(['role' => Role::ADMIN]);
-
-        $data = $this->makeData();
-
-        $this->assertDatabaseCount('regions', 0);
-        $this->assertDatabaseCount('user_managed_regions', 0);
-
-        $this
-            ->actingAs($john)
-            ->post(route('castle.regions.store', $data))
-            ->assertSessionHasNoErrors();
-
-        $this->assertDatabaseCount('regions', 1);
-        $this->assertDatabaseCount('user_managed_regions', 2);
-
-        /** @var Region $createdRegion */
-        $createdRegion = Region::where('name', $data['name'])->first();
-
-        $this->assertDatabaseHas('regions', [
-            'name'          => $createdRegion->name,
-            'department_id' => $createdRegion->department_id,
-        ]);
-
-        $this->assertSame($data['region_manager_ids'][0], $createdRegion->managers[0]->id);
-        $this->assertSame($data['region_manager_ids'][1], $createdRegion->managers[1]->id);
-    }
-
-    /** @test */
     public function it_should_create_a_training_page_section_with_the_parent_id_of_the_root_section()
     {
         $regionManager = User::factory()->create(['role' => Role::REGION_MANAGER]);
@@ -84,6 +54,36 @@ class StoreRegionTest extends TestCase
 
         $this->assertEquals($rootSection->id, $region->trainingPageSections->first()->parent_id);
         $this->assertEquals($childSection->parent_id, $region->trainingPageSections->first()->parent_id);
+    }
+
+    /** @test */
+    public function it_should_store_a_region()
+    {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+
+        $data = $this->makeData();
+
+        $this->assertDatabaseCount('regions', 0);
+        $this->assertDatabaseCount('user_managed_regions', 0);
+
+        $this
+            ->actingAs($john)
+            ->post(route('castle.regions.store', $data))
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseCount('regions', 1);
+        $this->assertDatabaseCount('user_managed_regions', 2);
+
+        /** @var Region $createdRegion */
+        $createdRegion = Region::where('name', $data['name'])->first();
+
+        $this->assertDatabaseHas('regions', [
+            'name'          => $createdRegion->name,
+            'department_id' => $createdRegion->department_id,
+        ]);
+
+        $this->assertSame($data['region_manager_ids'][0], $createdRegion->managers[0]->id);
+        $this->assertSame($data['region_manager_ids'][1], $createdRegion->managers[1]->id);
     }
 
     /** @test */

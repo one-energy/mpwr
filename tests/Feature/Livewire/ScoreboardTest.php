@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Livewire;
 
+use App\Enum\Role;
 use App\Http\Livewire\Scoreboard;
 use App\Models\DailyNumber;
 use App\Models\Department;
@@ -17,8 +18,9 @@ class ScoreboardTest extends TestCase
     /** @test */
     public function it_should_not_show_users_from_another_department_in_scoring()
     {
-        $john                                        = User::factory()->create(['role' => 'Admin']);
-        [$setter01, $setter02, $setter03, $setter04] = User::factory()->times(4)->create(['role' => 'Setter']);
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+
+        [$setter01, $setter02, $setter03, $setter04] = User::factory()->times(4)->create(['role' => Role::SETTER]);
 
         $department01 = Department::factory()->create();
         $department02 = Department::factory()->create();
@@ -64,8 +66,9 @@ class ScoreboardTest extends TestCase
     /** @test */
     public function it_should_show_top_ten_doors_on_day_period()
     {
-        $john                  = User::factory()->create(['role' => 'Admin']);
-        [$setter01, $setter02] = User::factory()->times(2)->create(['role' => 'Setter']);
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+
+        [$setter01, $setter02] = User::factory()->times(2)->create(['role' => Role::SETTER]);
 
         $department = Department::factory()->create();
 

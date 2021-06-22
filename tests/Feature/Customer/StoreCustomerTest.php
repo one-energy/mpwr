@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Customer;
 
+use App\Enum\Role;
 use App\Http\Livewire\Customer\Create;
 use App\Models\Customer;
 use App\Models\Department;
@@ -18,7 +19,7 @@ class StoreCustomerTest extends TestCase
     /** @test */
     public function it_should_block_the_create_form_for_non_top_level_roles()
     {
-        $this->actingAs(User::factory()->create(['role' => 'Setter']))
+        $this->actingAs(User::factory()->create(['role' => Role::SETTER]))
             ->get(route('customers.create'))
             ->assertForbidden();
     }
@@ -26,10 +27,7 @@ class StoreCustomerTest extends TestCase
     /** @test */
     public function it_should_show_the_create_form_for_top_level_roles()
     {
-        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
-        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
+        [$departmentManager] = $this->createVP();
 
         $this->actingAs($departmentManager)
             ->get(route('customers.create'))
@@ -40,10 +38,10 @@ class StoreCustomerTest extends TestCase
     /** @test */
     public function it_should_store_a_new_customer()
     {
-        $john     = User::factory()->create(['role' => 'Admin']);
+        $john     = User::factory()->create(['role' => Role::ADMIN]);
         $user     = User::factory()->create();
-        $userOne  = User::factory()->create(['role' => 'Setter']);
-        $userTwo  = User::factory()->create(['role' => 'Sales Rep']);
+        $userOne  = User::factory()->create(['role' => Role::SETTER]);
+        $userTwo  = User::factory()->create(['role' => Role::SALES_REP]);
         $customer = Customer::factory()->make([
             'first_name'          => 'First Name',
             'last_name'           => 'Last Name',
@@ -79,7 +77,7 @@ class StoreCustomerTest extends TestCase
     /** @test */
     public function it_should_require_some_fields_to_store_a_new_customer()
     {
-        $john     = User::factory()->create(['role' => 'Admin']);
+        $john     = User::factory()->create(['role' => Role::ADMIN]);
         $customer = Customer::factory()->make();
 
         Department::factory()->create();

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\NumberTracker;
 
+use App\Enum\Role;
 use App\Http\Livewire\NumberTracker\DailyEntry;
 use App\Models\DailyNumber;
 use App\Models\Department;
@@ -33,32 +34,29 @@ class DailyEntryTest extends TestCase
 
     private DailyNumber $officeManagerEntry;
 
-    private DailyNumber $johnManagerEntry;
+    private DailyNumber $johnEntry;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->dptManager    = User::factory()->create(['role' => 'Department Manager']);
-        $this->regionManager = User::factory()->create(['role' => 'Region Manager']);
-        $this->officeManager = User::factory()->create(['role' => 'Office Manager']);
+        $this->dptManager    = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+        $this->regionManager = User::factory()->create(['role' => Role::REGION_MANAGER]);
+        $this->officeManager = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
 
-        $this->department = Department::factory()->create([
-            'department_manager_id' => $this->dptManager->id,
-        ]);
+        $this->department = Department::factory()->create();
+        $this->department->managers()->attach($this->dptManager->id);
 
-        $this->region     = Region::factory()->create([
-            'department_id'     => $this->department->id,
-            'region_manager_id' => $this->regionManager->id,
-        ]);
+        $this->region = Region::factory()->create(['department_id' => $this->department->id]);
+        $this->region->managers()->attach($this->regionManager->id);
 
-        $this->office     = Office::factory()->create([
-            'region_id'         => $this->region->id,
-            'office_manager_id' => $this->officeManager->id,
-        ]);
+        $this->office = Office::factory()->create(['region_id' => $this->region->id]);
+        $this->office->managers()->attach($this->officeManager->id);
 
-        $this->john       = User::factory()->create([
-            'role'          => 'Sales Rep',
+        $this->john = User::factory()->create([
+            'first_name'    => 'John',
+            'last_name'     => 'Doe',
+            'role'          => Role::SALES_REP,
             'department_id' => $this->department->id,
             'office_id'     => $this->office->id,
         ]);
@@ -84,6 +82,7 @@ class DailyEntryTest extends TestCase
             'date'      => Carbon::now(),
             'doors'     => 15,
         ]);
+
         $this->johnEntry = DailyNumber::factory()->create([
             'user_id'   => $this->john->id,
             'office_id' => $this->office->id,
@@ -97,7 +96,7 @@ class DailyEntryTest extends TestCase
     {
         Livewire::test(DailyEntry::class)
             ->set('officeSelected', $this->office->id)
-            ->assertSee($this->john->first_name)
+            ->assertSee($this->john->full_name)
             ->assertSee(15);
     }
 
@@ -105,17 +104,16 @@ class DailyEntryTest extends TestCase
     public function it_should_show_sum_of_daily_entry()
     {
         Livewire::test(DailyEntry::class)
-             ->set('officeSelected', $this->office->id)
-             ->set('dateSelected', Carbon::now())
-             ->assertSee($this->officeManager->first_name)
-             ->assertSee($this->john->first_name)
-             ->assertSee($this->johnEntry->doors + $this->officeManagerEntry->doors);
+            ->set('officeSelected', $this->office->id)
+            ->set('dateSelected', Carbon::now())
+            ->assertSee($this->officeManager->first_name)
+            ->assertSee($this->john->first_name)
+            ->assertSee($this->johnEntry->doors + $this->officeManagerEntry->doors);
     }
 
     /** @test */
     public function it_should_show_deleted_user_that_has_a_daily_entry()
     {
-
         $user = User::factory()->create([
             'role'          => 'Sales Rep',
             'department_id' => $this->department->id,

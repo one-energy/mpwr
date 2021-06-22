@@ -33,13 +33,7 @@ class OfficeRowTest extends TestCase
     {
         $john = User::factory()->create(['role' => Role::ADMIN]);
 
-        $region = Region::factory()->create([
-            'region_manager_id' => $this->regionManager,
-        ]);
-        $office = Office::factory()->create([
-            'office_manager_id' => $this->officeManager,
-            'region_id'         => $region->id,
-        ]);
+        [$office] = $this->createOffice();
 
         $this->actingAs($john);
 
@@ -54,13 +48,7 @@ class OfficeRowTest extends TestCase
     {
         $john = User::factory()->create(['role' => Role::ADMIN]);
 
-        $region = Region::factory()->create([
-            'region_manager_id' => $this->regionManager,
-        ]);
-        $office = Office::factory()->create([
-            'office_manager_id' => $this->officeManager,
-            'region_id'         => $region->id,
-        ]);
+        [$office] = $this->createOffice();
 
         $this->actingAs($john);
 
@@ -74,11 +62,7 @@ class OfficeRowTest extends TestCase
     {
         $john = User::factory()->create(['role' => Role::ADMIN]);
 
-        $region = Region::factory()->create(['region_manager_id' => $this->regionManager]);
-        $office = Office::factory()->create([
-            'office_manager_id' => $this->officeManager,
-            'region_id'         => $region->id,
-        ]);
+        [$office, $region] = $this->createOffice();
 
         $this->actingAs($john);
 
@@ -91,16 +75,11 @@ class OfficeRowTest extends TestCase
     /** @test */
     public function it_should_sum_daily_numbers_by_field()
     {
-        $john = User::factory()->create(['role' => Role::ADMIN]);
+        $john     = User::factory()->create(['role' => Role::ADMIN]);
+        [$office] = $this->createOffice();
 
-        $region = Region::factory()->create(['region_manager_id' => $this->regionManager]);
-        $office = Office::factory()->create([
-            'office_manager_id' => $this->officeManager,
-            'region_id'         => $region->id,
-        ]);
-
-        $dummy01 = User::factory()->create(['role' => 'Sales Rep', 'office_id' => $office->id]);
-        $dummy02 = User::factory()->create(['role' => 'Sales Rep', 'office_id' => $office->id]);
+        $dummy01 = User::factory()->create(['role' => Role::SALES_REP, 'office_id' => $office->id]);
+        $dummy02 = User::factory()->create(['role' => Role::SALES_REP, 'office_id' => $office->id]);
 
         DailyNumber::factory()->create([
             'doors'        => 10,
@@ -138,7 +117,20 @@ class OfficeRowTest extends TestCase
             'withTrashed'   => false,
             'period'        => 'd',
             'selectedDate'  => today(),
-            'selectedUsers' => collect()
+            'selectedUsers' => collect(),
         ];
+    }
+
+    private function createOffice(): array
+    {
+        /** @var Region $region */
+        $region = Region::factory()->create();
+        $region->managers()->attach($this->regionManager->id);
+
+        /** @var Office $office */
+        $office = Office::factory()->create(['region_id' => $region->id]);
+        $office->managers()->attach($this->officeManager->id);
+
+        return [$office, $region];
     }
 }
