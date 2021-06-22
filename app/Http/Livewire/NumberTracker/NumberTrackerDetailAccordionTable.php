@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\NumberTracker;
 
+use App\Enum\Role;
 use App\Models\Department;
 use App\Models\Region;
 use App\Traits\Livewire\FullTable;
@@ -68,6 +69,27 @@ class NumberTrackerDetailAccordionTable extends Component
             ->when($this->deleteds, function ($query) {
                 $query->withTrashed();
             })
+            ->when(user()->hasRole(Role::REGION_MANAGER), function ($query) {
+                $query->whereRegionManagerId(user()->id);
+            })
+            ->when(user()->hasRole(Role::OFFICE_MANAGER), function ($query) {
+                $query
+                ->when($this->deleteds, function ($query) {
+                    $query->whereIn(user()->managedOffices()->withTrashed()->pluck('region_id'));
+                })
+                ->when(!$this->deleteds, function ($query) {
+                    $query->whereIn(user()->managedOffices->pluck('region_id'));
+                });
+            })
+            ->when(user()->hasAnyRole([Role::SALES_REP, Role::SETTER]), function ($query) {
+                $query
+                ->when($this->deleteds, function($query) {
+                    $query->whereId(user()->office()->withTrashed()->get()->region_id);
+                })
+                ->when(!$this->deleteds, function($query) {
+                    $query->whereId(user()->office->region_id);
+                });
+            })
             ->where('department_id', $this->selectedDepartment)
             ->with([
                 'offices' => function ($query) {
@@ -81,6 +103,12 @@ class NumberTrackerDetailAccordionTable extends Component
                                     ->whereNotNull('deleted_at');
                             })
                             ->orWhereNull('deleted_at');
+                    })
+                    ->when(user()->hasRole(Role::OFFICE_MANAGER), function ($query) {
+                        $query->whereOfficeManagerId(user()->id);
+                    })
+                    ->when(user()->hasAnyRole([Role::SALES_REP, Role::SETTER]), function ($query) {
+                        $query->find(user()->office->id);
                     })
                         ->with([
                             'dailyNumbers' => function ($query) {
