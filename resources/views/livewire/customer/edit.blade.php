@@ -10,9 +10,10 @@
             <form wire:submit.prevent="update">
                 <div class="grid grid-cols-2 gap-4 sm:col-gap-4 md:grid-cols-6 px-8">
                     <div class="col-span-2 md:col-span-3">
-                        <x-search-select class="flex flex-col" searchName="searchSetters" name="customer.setter_id" label="Setter" placeholder="Select a setter">
+                        <x-search-select class="flex flex-col" searchName="searchSetters" wire
+                            name="customer.sales_rep_id" label="Setter" placeholder="Select a setter" wire:key="selected-{{$customer->setter_id}}">
                             @foreach ($filteredSetters as $setter)
-                                {{$setter->full_name}}
+                                <x-option-search-select :value="$setter->id" :label="$setter->full_name"/>    
                             @endforeach
                         </x-search-select>
                     </div>

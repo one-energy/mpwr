@@ -1,6 +1,6 @@
 @props([
     'searchName' => '', //this is a string name of variable to search items
-    'selected', 
+    'wire' => false, 
     'placeholder', 
     'searchable' => true, 
     'label', 
@@ -12,7 +12,9 @@
 
     $name     = $name ?? '';
     $label    = $label ?? '';
-    $selected = $selected ?? $placeholder;
+    $placeholder = $placeholder ?? 'Select an item';
+
+    $wire = $wire && is_bool($wire) ? $name : $wire;
 
     $hasError = $errors->has($name);
     $hasError
@@ -29,7 +31,7 @@
     <div class="mt-1 relative">
         <button {{ $attributes->merge(['class' => $class]) }}
             x-on:click="togglePopover" type="button">
-            {{$selected}}
+            {{$placeholder}}
         </button>
         <span class="absolute inset-y-0 right-0 flex items-center pr-2 cursor-pointer">
             <x-icon name="selector" class="text-gray-400" />
@@ -49,18 +51,9 @@
                             </div>
                         </div>
                     </div>
-                    {{-- <x-search :search="$searchSelect" :perPage="false"/> --}}
-                    {{-- <x-input-search
-                        x-ref="search"
-                        filled
-                        x-model.debounce.750ms="search"
-                        search="search"
-                        x-on:keydown.arrow-down.prevent="$event.shiftKey || nextFocusable().focus()"
-                        placeholder="Search here"
-                    /> --}}
                 </div>
             @endif
-            <div class="max-h-60 overflow-auto soft-scrollbar text-base leading-6 focus:outline-none sm:text-sm sm:leading-5">
+            <div class="flex flex-col max-h-60 overflow-auto soft-scrollbar text-base leading-6 focus:outline-none sm:text-sm sm:leading-5">
                 {{$slot}}
             </div>
         </div>
@@ -75,17 +68,26 @@
 @push('scripts')
     <script>
         function initSearchSelect() {
-            console.log('teste')
             return {
+                selectValue: @entangle($wire),
                 popover: false,
                 togglePopover() { this.popover = !this.popover },
+                isOptionSelected(value, label) {
+                    isSame = value == this.selectValue
+                    if (isSame) {
+                        this.placeholder = label
+                    }
+                    return isSame;
+                },
                 closePopover() {
                     this.popover = false
-                    this.$refs.select.dispatchEvent(new Event('popup-close'))
                 },
-                select(option) {
-                    this.model       = option.value
-                    this.placeholder = option.label
+                select(value, label) {
+                    console.log('select1', this.selectValue);
+                    this.selectValue = value
+                    this.placeholder = label
+
+                    console.log('select2', this.selectValue);
                     this.closePopover()
                 },
                 focusables() { return [...$el.querySelectorAll('li, input')] },
