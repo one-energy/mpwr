@@ -35,15 +35,18 @@
             <x-icon name="selector" class="text-gray-400" />
         </span>
 
-        <div class="absolute z-50 border m-1 w-full rounded-lg bg-white soft-shadow"
+        <div class="absolute z-50 border mt-1 w-full rounded-lg bg-white soft-shadow"
             x-show="popover"
             x-on:click.away="closePopover"
             x-on:keydown.escape="closePopover">
             @if($searchable)
                 <div class="p-2">
                     <div class="items-baseline w-full space-y-4 sm:space-x-4 sm:flex sm:space-y-0">
-                        <div class="relative rounded-md shadow-sm ">
-                            <input wire:model.debounce.250ms="{{$searchName}}" placeholder="Search"/>
+                        <div class="relative w-full rounded-md  ">
+                            <input class="form-input block w-full border-gray-600 focus:border-gray-600 shadow-none pr-10 sm:text-sm sm:leading-5" wire:model.debounce.250ms="{{$searchName}}" placeholder="Search"/>
+                            <div class="absolute right-1 top-0 h-full flex items-center">
+                                <x-svg.search wire:loading.remove class="h-5 w-5 text-gray-500" />
+                            </div>
                         </div>
                     </div>
                     {{-- <x-search :search="$searchSelect" :perPage="false"/> --}}
