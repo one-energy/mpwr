@@ -60,10 +60,10 @@ class GetTopTenTrackersTest extends TestCase
         Livewire::test(NumberTrackerDetail::class, [
             'selectedDepartment' => $department->id,
             'selectedUsersIds'   => [$setter01->id, $setter02->id],
-            'selectedOfficesIds' => [$office->id]
+            'selectedOfficesIds' => [$office->id],
         ])
-            ->set('selectedPill', 'doors')
-            ->assertSet('selectedPill', 'doors')
+            ->set('selectedLeaderboardPill', 'doors')
+            ->assertSet('selectedLeaderboardPill', 'doors')
             ->assertCount('topTenTrackers', 2)
             ->assertSeeInOrder([$setter02->full_name, $setter01->full_name])
             ->assertHasNoErrors();
@@ -87,10 +87,10 @@ class GetTopTenTrackersTest extends TestCase
         Livewire::test(NumberTrackerDetail::class, [
             'selectedDepartment' => $department->id,
             'selectedUsersIds'   => [$setter01->id, $setter02->id],
-            'selectedOfficesIds' => [$office->id]
+            'selectedOfficesIds' => [$office->id],
         ])
-            ->set('selectedPill', 'sets')
-            ->assertSet('selectedPill', 'sets')
+            ->set('selectedLeaderboardPill', 'sets')
+            ->assertSet('selectedLeaderboardPill', 'sets')
             ->assertCount('topTenTrackers', 2)
             ->assertSeeInOrder([$setter01->full_name, $setter02->full_name])
             ->assertHasNoErrors();

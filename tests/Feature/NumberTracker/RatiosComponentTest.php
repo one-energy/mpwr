@@ -122,7 +122,7 @@ class RatiosComponentTest extends TestCase
     {
         Livewire::test(NumbersRatios::class)
             ->assertSee('D.P.S')
-            ->assertSee('HW.P. SET')
+            ->assertSee('HK.P. SET')
             ->assertSee('Sit Ratio')
             ->assertSee('Close Ratio');
     }
@@ -155,7 +155,7 @@ class RatiosComponentTest extends TestCase
                 'offices' => $officeArray,
                 'users'   => $userArray,
             ])
-            ->assertSeeInOrder(['D.P.S', round($doors / $sets, 2), 'HW.P. SET']);
+            ->assertSeeInOrder(['D.P.S', round($doors / $sets, 2), 'HK.P. SET']);
     }
 
     /** @test */
@@ -163,7 +163,7 @@ class RatiosComponentTest extends TestCase
     {
         [$officeArray, $userArray] = $this->getUserAndOfficeIds();
 
-        $hoursWorked = $this->sumBy('hours_worked');
+        $hoursWorked = $this->sumBy('hours_knocked');
         $sets        = $this->sumBy('sets');
 
         Livewire::test(NumbersRatios::class)
@@ -171,7 +171,7 @@ class RatiosComponentTest extends TestCase
                 'offices' => $officeArray,
                 'users'   => $userArray,
             ])
-            ->assertSeeInOrder(['HW.P. SET', round($hoursWorked / $sets, 2), 'Sit Ratio']);
+            ->assertSeeInOrder(['HK.P. SET', round($hoursWorked / $sets, 2), 'Sit Ratio']);
     }
 
     /** @test */
@@ -179,8 +179,7 @@ class RatiosComponentTest extends TestCase
     {
         [$officeArray, $userArray] = $this->getUserAndOfficeIds();
 
-        $sits    = $this->sumBy('sits');
-        $setSits = $this->sumBy('set_sits');
+        $sats    = $this->sumBy('sats');
         $sets    = $this->sumBy('sets');
 
         Livewire::test(NumbersRatios::class)
@@ -188,7 +187,7 @@ class RatiosComponentTest extends TestCase
                 'offices' => $officeArray,
                 'users'   => $userArray,
             ])
-            ->assertSeeInOrder(['Sit Ratio', round(($sits + $setSits) / $sets, 2), 'Close Ratio']);
+            ->assertSeeInOrder(['Sit Ratio', round($sets / $sats, 2), 'Close Ratio']);
     }
 
     /** @test */

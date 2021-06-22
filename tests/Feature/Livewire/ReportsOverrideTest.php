@@ -218,7 +218,7 @@ class ReportsOverrideTest extends TestCase
         $customer = $this->makeCustomer([
             'panel_sold' => false,
             'is_active'  => true,
-            'paid_date'  => null
+            'paid_date'  => null,
         ]);
 
         $this->assertNull($customer->paid_date);
@@ -226,7 +226,7 @@ class ReportsOverrideTest extends TestCase
         Livewire::test(ReportsOverview::class)
             ->assertSee('Paid')
             ->assertSee($customer->first_name)
-            ->call('paid', $customer->id)
+            ->call('togglePaid', $customer->id)
             ->assertHasNoErrors();
 
         $customer->refresh();
@@ -235,7 +235,7 @@ class ReportsOverrideTest extends TestCase
         $this->assertNotNull($customer->paid_date);
         $this->assertDatabaseHas($customer->getTable(), [
             'id'         => $customer->id,
-            'panel_sold' => true
+            'panel_sold' => true,
         ]);
     }
 
@@ -247,7 +247,7 @@ class ReportsOverrideTest extends TestCase
         $customer = $this->makeCustomer([
             'panel_sold' => true,
             'is_active'  => true,
-            'paid_date'  => now()
+            'paid_date'  => now(),
         ]);
 
         $this->assertNotNull($customer->paid_date);
@@ -255,7 +255,7 @@ class ReportsOverrideTest extends TestCase
         Livewire::test(ReportsOverview::class, ['selectedStatus' => 'installed'])
             ->assertSee('Paid')
             ->assertSee($customer->first_name)
-            ->call('paid', $customer->id)
+            ->call('togglePaid', $customer->id)
             ->assertHasNoErrors();
 
         $customer->refresh();
@@ -264,7 +264,7 @@ class ReportsOverrideTest extends TestCase
         $this->assertNull($customer->paid_date);
         $this->assertDatabaseHas($customer->getTable(), [
             'id'         => $customer->id,
-            'panel_sold' => false
+            'panel_sold' => false,
         ]);
     }
 
@@ -277,7 +277,7 @@ class ReportsOverrideTest extends TestCase
             'panel_sold'   => false,
             'is_active'    => true,
             'paid_date'    => null,
-            'opened_by_id' => $this->regionManager->id
+            'opened_by_id' => $this->regionManager->id,
         ]);
 
         $this->assertFalse($customer->panel_sold);
@@ -286,7 +286,7 @@ class ReportsOverrideTest extends TestCase
         Livewire::test(ReportsOverview::class)
             ->assertDontSee('Paid')
             ->assertSee($customer->first_name)
-            ->call('paid', $customer->id)
+            ->call('togglePaid', $customer->id)
             ->assertForbidden();
 
         $customer->refresh();
