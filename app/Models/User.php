@@ -85,13 +85,41 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     const ROLES = [
-        ['title' => 'Owner', 'name' => 'Owner', 'description' => 'System Owner'],
-        ['title' => 'Admin', 'name' => 'Admin', 'description' => 'Allows access to the Admin functionality and Manage Users, Incentives and others (Admin Tab)'],
-        ['title' => 'VP', 'name' => 'Department Manager', 'description' => 'Allows access to Manage Users, Incentives and others'],
-        ['title' => 'Regional Manager', 'name' => 'Region Manager', 'description' => 'Allows update all Region\'s Number Tracker'],
-        ['title' => 'Manager', 'name' => 'Office Manager', 'description' => 'Allows update a Region\'s Number Tracker'],
-        ['title' => 'Sales Rep', 'name' => 'Sales Rep', 'description' => 'Allows read/add/edit/cancel Customer'],
-        ['title' => 'Setter', 'name' => 'Setter', 'description' => 'Allows see the dashboard and only read Customer'],
+        [
+            'title'       => 'Owner',
+            'name'        => 'Owner',
+            'description' => 'System Owner',
+        ],
+        [
+            'title'       => 'Admin',
+            'name'        => 'Admin',
+            'description' => 'Allows access to the Admin functionality and Manage Users, Incentives and others (Admin Tab)',
+        ],
+        [
+            'title'       => 'VP',
+            'name'        => 'Department Manager',
+            'description' => 'Allows access to Manage Users, Incentives and others',
+        ],
+        [
+            'title'       => 'Regional Manager',
+            'name'        => 'Region Manager',
+            'description' => "Allows update all Region's Number Tracker",
+        ],
+        [
+            'title'       => 'Manager',
+            'name'        => 'Office Manager',
+            'description' => "Allows update a Region's Number Tracker",
+        ],
+        [
+            'title'       => 'Sales Rep',
+            'name'        => 'Sales Rep',
+            'description' => 'Allows read/add/edit/cancel Customer',
+        ],
+        [
+            'title'       => 'Setter',
+            'name'        => 'Setter',
+            'description' => 'Allows see the dashboard and only read Customer',
+        ],
     ];
 
     const TOPLEVEL_ROLES = [
@@ -119,12 +147,17 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function managedOffices()
     {
-        return $this->hasMany(Office::class, 'office_manager_id');
+        return $this->belongsToMany(Office::class, 'user_managed_offices')->withTimestamps();
     }
 
     public function managedRegions()
     {
-        return $this->hasMany(Region::class, 'region_manager_id');
+        return $this->belongsToMany(Region::class, 'user_managed_regions')->withTimestamps();
+    }
+
+    public function managedDepartments()
+    {
+        return $this->belongsToMany(Department::class, 'user_managed_departments')->withTimestamps();
     }
 
     public function officesOnManagedRegions()
@@ -485,14 +518,14 @@ class User extends Authenticatable implements MustVerifyEmail
         $stockPointsOfRegionManager     = $this->getStockPointsOf($this->customersManagedRegion());
         $stockPointsOfOfficeManager     = $this->getStockPointsOf($this->customersManagedOffice());
 
-        return (object) [
-            'multiplierOfYear' => MultiplierOfYear::where('year', Carbon::now()->year)->first()->multiplier,
-            'personal'         => $stockPointsOfSalesRep->sum(fn($customer) => $customer->stockPoint->stock_personal_sale),
-            'team'             => $stockPointsOfSetter->sum(fn($customer) => $customer->stockPoint->stock_setting) +
+        return (object)[
+            'multiplierOfYear'                                                       => MultiplierOfYear::where('year', Carbon::now()->year)->first()->multiplier,
+            'personal'                                                               => $stockPointsOfSalesRep->sum(fn($customer)                                                       => $customer->stockPoint->stock_personal_sale),
+            'team'                                                                   => $stockPointsOfSetter->sum(fn($customer)                                                       => $customer->stockPoint->stock_setting) +
                                   $stockPointsOfSalesRepRecruited->sum(fn($customer) => $customer->stockPoint->stock_recruiter) +
-                                  $stockPointsOfDepartment->sum(fn($customer) => $customer->stockPoint->stock_department) +
-                                  $stockPointsOfRegionManager->sum(fn($customer) => $customer->stockPoint->stock_regional) +
-                                  $stockPointsOfOfficeManager->sum(fn($customer) => $customer->stockPoint->stock_manager)
+                                  $stockPointsOfDepartment->sum(fn($customer)        => $customer->stockPoint->stock_department) +
+                                  $stockPointsOfRegionManager->sum(fn($customer)     => $customer->stockPoint->stock_regional) +
+                                  $stockPointsOfOfficeManager->sum(fn($customer)     => $customer->stockPoint->stock_manager),
         ];
     }
 
