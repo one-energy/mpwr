@@ -42,6 +42,7 @@ use Lab404\Impersonate\Models\Impersonate;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invitation[] $invitations
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Office[] $managedOffices
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Region[] $managedRegions
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Department[] $managedDepartments
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read \App\Models\Office|null $office
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Office[] $officesOnManagedRegions
