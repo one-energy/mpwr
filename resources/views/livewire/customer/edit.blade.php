@@ -99,8 +99,14 @@
 
                     <div class="col-span-2 md:col-span-3 @if($customer->setter_id == user()->id) hidden @endif" wire:key="soldPrice">
                         <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc"
-                                          observation="Sold Price"/>
+                                          observation="Sold Price" atEnd="kW"/>
                     </div>
+
+                    @if(!user()->hasRole("Setter"))
+                        <div class="col-span-2 md:col-span-3" wire:ke>
+                            <x-input-currency label="Total Cost" name="total_cost" maxSize="100000" value="{{$customer->totalSoldPrice}}" readonly/>
+                        </div>
+                    @endif
 
                     <div class="col-span-2 md:col-span-3">
                         <x-input-currency label="Total Cost" name="total_cost" maxSize="100000" value="{{$customer->totalSoldPrice}}" readonly/>
@@ -121,7 +127,7 @@
                     </div>
 
                     <div class="col-span-2 md:col-span-3">
-                        <x-input-currency wire:model="customer.setter_fee" label="Setter Comission Rate" :disabled="$this->isSetterOfCustomer()"
+                        <x-input-currency wire:model="customer.setter_fee" label="Setter Comission Rate" atEnd="kW"
                                           name="customer.setter_fee" :disabled="$this->isSetterOfCustomer() || $isSelfGen"/>
                     </div>
 
@@ -138,7 +144,7 @@
                     </div>
 
                     <div class="col-span-2 md:col-span-3 @if($customer->setter_id == user()->id) hidden @endif" wire:key="salesRepFee">
-                        <x-input-currency wire:model="customer.sales_rep_fee" label="Sales Rep Pay Rate"
+                        <x-input-currency wire:model="customer.sales_rep_fee" label="Sales Rep Pay Rate" atEnd="kW"
                                           name="customer.sales_rep_fee" :disabled="user()->notHaveRoles(['Region Manager'])"/>
                     </div>
 

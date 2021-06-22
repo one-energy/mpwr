@@ -1,8 +1,8 @@
 <x-app.auth :title="__('Dashboard')">
     <div>
         <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
-            <div class="md:flex">
-                <div class="px-4 py-5 overflow-y-auto sm:px-6 sm:w-full md:w-2/3 xl:w-4/5">
+            <div class="flex">
+                <div class="px-4 py-5 overflow-y-auto w-full sm:px-6 md:w-2/3 xl:w-4/5">
 
                     <livewire:area-chart/>
 
@@ -49,8 +49,17 @@
                                 </div>
                             </form>
                         </div>
+                        <x-modal x-cloak :title="__('Closer Commission')" :raw="true" description="''" :showIcon="false">
+                            <div class="flex flex-col justify-end">
+                                <button
+                                    x-on:click="open = false"
+                                    class="rounded-md w-full px-4 py-2 text-base font-medium leading-6 border-2 text-gray-500 border-gray-500 hover:text-gray-600 hover:border-gray-600 focus:border-gray-500 focus:shadow-outline-gray active:bg-gray-50">
+                                    Close
+                                </button>
+                            </div>
+                        </x-modal>
                     </div>
-                    <div class="mt-6">
+                    <div class="mt-6" >
                         <div class="flex items-center justify-end py-2">
                             <div class="flex items-center px-3"><span class="rounded-full h-2 w-2 bg-green-base"></span><span class="text-xs ml-1">Installed and Paid</span></div>
                             <div class="flex items-center px-3"><span class="rounded-full h-2 w-2 bg-gray-700"></span><span class="text-xs ml-1">Signed and pending</span></div>
@@ -58,19 +67,22 @@
                         </div>
                         @forelse ($customers as $customer)
                             <a href="{{route('customers.show', $customer->id)}}">
-                                <div
-                                    class="flex grid justify-between grid-cols-4 row-gap-1 col-gap-4 p-2 m-1 border-2 border-gray-200 rounded-lg md:grid-cols-9 hover:bg-gray-50">
-                                    <div class="col-span-6 md:col-span-7">
-                                        {{ $customer->first_name }} {{ $customer->last_name }}
+                                <div class="flex flex-col sm:flex-row justify-between border rounded-md border-gray-400 mb-2 p-2" >
+                                    <div class="sm:w-2/3 md:w-3/4">
+                                        <div class="whitespace-no-wrap">{{ $customer->first_name }} {{ $customer->last_name }}</div>
+                                        <div class="whitespace-no-wrap">{{ number_format($customer->epc) }}kW - <i> {{ $customer->date_of_sale->format('D M j Y')}} </i></div>
                                     </div>
-                                    <div class="col-span-1 row-span-2 md:col-span-2">
-                                        <div
-                                            class="@if($customer->is_active && $customer->panel_sold) bg-green-base @elseif($customer->is_active == false) bg-red-500 @else bg-gray-700 @endif text-white @if($customer->setter_id == user()->id) rounded-full @else rounded-md @endif py-1 px-1 text-center">
-                                            $ {{ number_format($customer->sales_rep_comission, 2) }}
-                                        </div>
-                                    </div>
-                                    <div class="col-span-7 text-xs text-gray-600">
-                                        {{ number_format($customer->epc) }}kW - <i> {{ $customer->date_of_sale->format('D M j Y')}} </i>
+                                    <div class="sm:w-1/3 md:w-1/4">
+                                        @if($customer->setter_id == user()->id)
+                                            <div class="hidden md:block @if($customer->is_active && $customer->panel_sold) bg-green-base @elseif($customer->is_active == false) bg-red-500 @else bg-gray-700 @endif text-white @if($customer->setter_id == user()->id) rounded-full @else rounded-md @endif py-1 px-1 text-center">
+                                                $ {{ number_format($customer->setterCommission, 2) }} 
+                                            </div>
+                                        @else
+                                            <div
+                                                class="@if($customer->is_active && $customer->panel_sold) bg-green-base @elseif($customer->is_active == false) bg-red-500 @else bg-gray-700 @endif text-white @if($customer->setter_id == user()->id) rounded-full @else rounded-md @endif py-1 px-1 text-center">
+                                                $ {{ number_format($customer->sales_rep_comission, 2) }} 
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </a>

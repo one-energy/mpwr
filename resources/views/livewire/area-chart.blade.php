@@ -45,11 +45,10 @@
                 <a :class="openTab === 'all' ? active : inactive" class="bg-white inline-block py-2 px-4 font-semibold cursor-pointer" wire:click.prevent="setPeriod('all')">All</a>
             </li>
             <li>
-                <x-svg.spinner 
-                    color="#9fa6b2" 
-                    class="relative hidden top-2 w-6" 
-                    wire:loading.class.remove="hidden">
-                </x-svg.spinner>
+                <x-svg.spinner
+                    color="#9fa6b2"
+                    class="relative hidden top-2 w-6"
+                    wire:loading.class.remove="hidden" />
             </li>
         </ul>
     </div>
@@ -59,39 +58,34 @@
 <script type="text/javascript">
 
     document.addEventListener("livewire:load", function(event) {
-        window.livewire.hook('afterDomUpdate', () => {
+        window.livewire.hook('element.updated', () => {
             drawAreaChart();
         });
     });
 
-    google.charts.load('current', {'packages':['corechart']});
-    google.charts.setOnLoadCallback(drawAreaChart);
+    google.charts.load('current', { packages: ['corechart'] }).then(() => drawAreaChart());
 
     function drawAreaChart()
     {
-        var period = @this.get('incomeDate');
-        var income = @this.get('income');
+        const payload = @this.get('data');
 
-        var data = new google.visualization.DataTable();
-        
+        const data = new google.visualization.DataTable();
+
         data.addColumn('string', 'Period');
         data.addColumn('number', 'Income');
 
-        for (var i=0; i < income.length; i++) {
-            data.addRow([period[i], parseFloat(income[i])]);
-            console.log([period[i], income[i]]);
-        }
+        Array.from({ length: payload.length }, (_, index) => {
+            data.addRow([payload[index]['date'], parseFloat(payload[index]['commission'])])
+        });
 
-        var options = {
+        const chart = new google.visualization.AreaChart(document.getElementById('area_chart'));
+
+        chart.draw(data, {
             legend: 'none',
             colors: ['#46A049'],
-            lineWidth: 1,
-            vAxis: { gridlines: { count: 0 }, textPosition: 'none', baselineColor: '#FFFFFF' },
-            hAxis: { gridlines: { count: 0 }, textPosition: 'none' },
-            chartArea:{left:0, top:0, width:"99%", height:"100%"}
-        };
-
-        var chart = new google.visualization.AreaChart(document.getElementById('area_chart'));
-        chart.draw(data, options);
+            lineWidth: 2,
+            vAxis: { gridlines: { count: 0 }, textPosition: 'out', baselineColor: '#FFF' },
+            hAxis: { gridlines: { count: 0 }, textPosition: 'out' },
+        });
     }
 </script>

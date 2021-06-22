@@ -47,7 +47,6 @@
                 value: option[this.optionValue]
             }
         })
-
     },
     getFilteredOptions() {
         if (!this.searchable) return this.options
@@ -55,10 +54,12 @@
             return option.label.toLowerCase().includes(this.search.toLowerCase())
         })
     },
-    togglePopover() { this.popover = !this.popover },
+    togglePopover() { 
+        this.popover = !this.popover
+    },
     closePopover() {
         this.popover = false
-        this.$refs.select.dispatchEvent(new Event('popup-close'))
+        this.$refs.list.dispatchEvent(new Event('popup-close'))
     },
     select(option) {
         if (this.multiselect) {
@@ -147,7 +148,7 @@ x-init="() => {
             <x-icon name="selector" class="text-gray-400" />
         </span>
 
-        <div class="absolute z-50 border-t mt-1 w-full rounded-lg bg-white soft-shadow"
+        <div class="absolute z-50 border-t mt-1 w-full rounded-lg bg-white soft-shadow" x-cloak
             x-show="popover"
             x-on:click.away="closePopover"
             x-on:keydown.escape="closePopover">
@@ -163,6 +164,7 @@ x-init="() => {
             </div>
             <ul class="max-h-60 overflow-auto soft-scrollbar text-base leading-6 focus:outline-none sm:text-sm sm:leading-5"
                 x-ref="list"
+                ref="list"
                 tabindex="-1"
                 x-on:keydown.tab.prevent="$event.shiftKey || nextFocusable().focus()"
                 x-on:keydown.arrow-down.prevent="$event.shiftKey || nextFocusable().focus()"

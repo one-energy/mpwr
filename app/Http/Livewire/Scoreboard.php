@@ -74,16 +74,16 @@ class Scoreboard extends Component
 
         if ($dailyNumbers->sum('sets') > 0) {
             $this->dpsRatio = ($dailyNumbers->sum('doors') / $dailyNumbers->sum('sets'));
-            $this->hpsRatio = ($dailyNumbers->sum('hours') / $dailyNumbers->sum('sets'));
-            $this->sitRatio = ($dailyNumbers->sum('sits') / $dailyNumbers->sum('sets'));
+            $this->hpsRatio = ($dailyNumbers->sum('hours_knocked') / $dailyNumbers->sum('sets'));
+            $this->sitRatio = ($dailyNumbers->sum('sets') / $dailyNumbers->sum('sats'));
         } else {
             $this->dpsRatio = 0;
             $this->hpsRatio = 0;
             $this->sitRatio = 0;
         }
 
-        if ($dailyNumbers->sum('sits') > 0) {
-            $this->closeRatio = ($dailyNumbers->sum('set_closes') / $dailyNumbers->sum('sits'));
+        if ($dailyNumbers->sum('close') > 0) {
+            $this->closeRatio = ($dailyNumbers->sum('closer_sits') / $dailyNumbers->sum('close'));
         } else {
             $this->closeRatio = 0;
         }

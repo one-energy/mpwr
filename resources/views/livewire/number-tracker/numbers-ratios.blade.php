@@ -8,9 +8,9 @@
                 </div>
             </div>
             <div class="col-span-1 p-3 rounded-md bg-green-light space-y-3">
-                <div class="text-base font-semibold uppercase text-green-base">HW.P. SET</div>
+                <div class="text-base font-semibold uppercase text-green-base">HK.P. SET</div>
                 <div class="text-xl font-bold text-green-base">
-                    {{$this->hps}}
+                    {{$this->hkps}}
                 </div>
             </div>
             <div class="col-span-1 p-3 rounded-md bg-green-light space-y-3">
