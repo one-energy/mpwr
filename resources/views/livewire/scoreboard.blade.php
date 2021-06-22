@@ -524,11 +524,11 @@
                                     <div class="flex border-gray-200 border-2 m-1 h-56 rounded-lg">
                                         <div class="w-2/3" id="chartdiv"></div>
                                         <div class="w-1/3 block pt-4 space-y-1">
-                                            <div id="hoursWorked">0 hours worked</div>
-                                            <div id="doors">0 doors</div>
-                                            <div id="sits">0 sits</div>
-                                            <div id="sets">0 sets</div>
-                                            <div id="set_closes">0 set closes</div>
+                                            <div class="text-sm" id="hoursWorked">0 hours worked</div>
+                                            <div class="text-sm" id="doors">0 doors</div>
+                                            <div class="text-sm" id="sits">0 sits</div>
+                                            <div class="text-sm" id="sets">0 sets</div>
+                                            <div class="text-sm" id="set_closes">0 set closes</div>
                                         </div>
                                     </div>
                                 </div>

@@ -34,7 +34,7 @@ class DailyNumbersSeeder extends Seeder
         DailyNumber::factory()->create([
             'user_id'   => $user->id,
             'office_id' => $user->office_id,
-            'date'      => $day->format('Y-m-d')
+            'date'      => $day->format('Y-m-d'),
         ]);
     }
 }
