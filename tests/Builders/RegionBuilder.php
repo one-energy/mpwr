@@ -13,8 +13,11 @@ class RegionBuilder
 {
     use WithFaker;
 
-    /** @var Region */
+    public bool $withManager = false;
+
     public Region $region;
+
+    private User $user;
 
     public function __construct($attributes = [])
     {
@@ -24,26 +27,32 @@ class RegionBuilder
         ], $attributes));
     }
 
-    public static function build($attributes = [])
+    public static function build($attributes = []): self
     {
         return new RegionBuilder($attributes);
     }
 
-    public function withDepartment(Department $department)
+    public function withDepartment($department): self
     {
         $this->region->department_id = $department->id;
 
         return $this;
     }
 
-    public function save()
+    public function save(): self
     {
-        if (!$this->region->region_manager_id) {
-            $this->region->region_manager_id = User::factory()->create(['role' => Role::REGION_MANAGER])->id;
-            $this->region->department_id     = Department::factory()->create()->id;
-        }
-
         $this->region->save();
+
+        if (!$this->withManager) {
+            $manager    = User::factory()->create(['role' => Role::REGION_MANAGER]);
+            $department = Department::factory()->create();
+
+            $manager->update(['department_id' => $department->id]);
+            $this->region->update(['department_id' => $department->id]);
+            $this->region->managers()->attach($manager->id);
+        } else {
+            $this->region->managers()->attach($this->user->id);
+        }
 
         return $this;
     }
@@ -53,9 +62,10 @@ class RegionBuilder
         return $this->region;
     }
 
-    public function withManager(User $user)
+    public function withManager(User $user): self
     {
-        $this->region->region_manager_id = $user->id;
+        $this->user        = $user;
+        $this->withManager = true;
 
         return $this;
     }
