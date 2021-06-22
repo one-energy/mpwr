@@ -180,9 +180,9 @@ class TotalOverviewTest extends TestCase
         $mary = User::factory()->create(['role' => 'Office Manager']);
         $ann  = User::factory()->create(['role' => 'Region Manager']);
 
-        $region = RegionBuilder::make()->withManager($ann)->save()->get();
+        $region = RegionBuilder::build()->withManager($ann)->save()->get();
 
-        $office = OfficeBuilder::make()
+        $office = OfficeBuilder::build()
             ->withManager($mary)
             ->region($region)
             ->save()

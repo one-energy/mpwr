@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\NumberTracker;
 
+use App\Enum\Role;
 use App\Models\DailyNumber;
 use App\Models\Department;
 use App\Models\Office;
@@ -43,10 +44,7 @@ class NumberTrackerDetail extends Component
     public int $selectedDepartment;
 
     protected $listeners = [
-        'sumTotalNumbers',
-        'loadingSumNumberTracker',
         'toggleDelete',
-        'updateLeaderBoard'    => 'getUnselectedCollections',
         'updateNumbers',
         'onSelectedDepartment' => 'changeSelectedDepartment',
     ];
@@ -157,7 +155,7 @@ class NumberTrackerDetail extends Component
 
     private function getDepartmentId()
     {
-        return user()->hasAnyRole(['Admin', 'Owner'])
+        return user()->hasAnyRole([Role::ADMIN, Role::OWNER])
             ? Department::oldest('name')->first()->id
             : (user()->department_id ?? 0);
     }

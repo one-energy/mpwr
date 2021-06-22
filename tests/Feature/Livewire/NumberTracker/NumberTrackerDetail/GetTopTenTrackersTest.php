@@ -2,88 +2,157 @@
 
 namespace Tests\Feature\Livewire\NumberTracker\NumberTrackerDetail;
 
+use App\Enum\Role;
 use App\Http\Livewire\NumberTracker\NumberTrackerDetail;
 use App\Models\DailyNumber;
 use App\Models\Department;
+use App\Models\Office;
+use App\Models\Region;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
-use Tests\Feature\FeatureTest;
+use Tests\Builders\OfficeBuilder;
+use Tests\Builders\RegionBuilder;
+use Tests\TestCase;
 
-class GetTopTenTrackersTest extends FeatureTest
+class GetTopTenTrackersTest extends TestCase
 {
-    /** @test */
-    public function it_should_be_possible_order_by_doors()
+    use RefreshDatabase;
+
+    /** @var User */
+    private User $admin;
+
+    /** @var User */
+    private User $departmentManager;
+
+    /** @var User */
+    private User $regionManager;
+
+    /** @var User */
+    private User $officeManager;
+
+    protected function setUp(): void
     {
-        $john       = User::factory()->create(['role' => 'Admin']);
-        $department = Department::factory()->create();
+        parent::setUp();
 
-        $setter01 = User::factory()->create([
-            'department_id' => $department->id,
-            'role'          => 'Setter',
-        ]);
-        $setter02 = User::factory()->create([
-            'department_id' => $department->id,
-            'role'          => 'Setter',
-        ]);
+        /** @var User admin */
+        $this->admin = User::factory()->create(['role' => Role::ADMIN]);
 
-        DailyNumber::factory()->create([
-            'user_id' => $setter01->id,
-            'date'    => now()->toDateString(),
-            'doors'   => 1,
-        ]);
-        DailyNumber::factory()->create([
-            'user_id' => $setter02->id,
-            'date'    => now()->toDateString(),
-            'doors'   => 2,
-        ]);
-
-        $this->actingAs($john);
-
-        Livewire::test(NumberTrackerDetail::class)
-            ->set('selectedPill', 'doors')
-            ->assertSet('selectedPill', 'doors')
-            ->assertCount('topTenTrackers', 2)
-            ->assertSeeInOrder([$setter02->full_name, $setter01->full_name]);
+        $this->createManagers();
+        $this->createDepartment();
     }
 
     /** @test */
-    public function it_should_be_possible_order_by_sg_sits()
+    public function it_should_be_possible_get_top_users_by_doors_in_desc_order()
     {
-        $john = User::factory()->create(['role' => 'Admin']);
-        $mary = User::factory()->create(['role' => 'Department Manager']);
+        $department = $this->createDepartment();
+        $region     = $this->createRegion($department);
+        $office     = $this->createOffice($region);
 
-        $department = Department::factory()->create([
-            'department_manager_id' => $mary->id,
-        ]);
+        $setter01 = $this->createSetter($department, $office);
+        $setter02 = $this->createSetter($department, $office);
 
-        $setter01 = User::factory()->create([
-            'role'          => 'Sales Rep',
-            'department_id' => $department->id,
-        ]);
-        $setter02 = User::factory()->create([
-            'role'          => 'Sales Rep',
-            'department_id' => $department->id,
-        ]);
+        $this->createDailyNumber($setter01, $office, ['date' => today(), 'doors' => 1]);
+        $this->createDailyNumber($setter02, $office, ['date' => today(), 'doors' => 2]);
 
-        DailyNumber::factory()->create([
-            'user_id'  => $setter01->id,
-            'date'     => now()->toDateString(),
-            'sits'     => 2,
-            'set_sits' => 2,
-        ]);
-        DailyNumber::factory()->create([
-            'user_id'  => $setter02->id,
-            'date'     => now()->toDateString(),
-            'sits'     => 1,
-            'set_sits' => 1,
-        ]);
+        $this->actingAs($this->admin);
 
-        $this->actingAs($john);
-
-        Livewire::test(NumberTrackerDetail::class, ['selectedDepartment' => $department->id])
-            ->set('selectedPill', 'sg sits')
-            ->assertSet('selectedPill', 'sg sits')
+        Livewire::test(NumberTrackerDetail::class, [
+            'selectedDepartment' => $department->id,
+            'selectedUsersIds'   => [$setter01->id, $setter02->id],
+            'selectedOfficesIds' => [$office->id],
+        ])
+            ->set('selectedLeaderboardPill', 'doors')
+            ->assertSet('selectedLeaderboardPill', 'doors')
             ->assertCount('topTenTrackers', 2)
-            ->assertSeeInOrder([$setter01->full_name, $setter02->full_name]);
+            ->assertSeeInOrder([$setter02->full_name, $setter01->full_name])
+            ->assertHasNoErrors();
+    }
+
+    /** @test */
+    public function it_should_be_possible_order_by_sets()
+    {
+        $department = $this->createDepartment();
+        $region     = $this->createRegion($department);
+        $office     = $this->createOffice($region);
+
+        $setter01 = $this->createSetter($department, $office);
+        $setter02 = $this->createSetter($department, $office);
+
+        $this->createDailyNumber($setter01, $office, ['date' => today(), 'sets' => 2]);
+        $this->createDailyNumber($setter02, $office, ['date' => today(), 'sets' => 1]);
+
+        $this->actingAs($this->admin);
+
+        Livewire::test(NumberTrackerDetail::class, [
+            'selectedDepartment' => $department->id,
+            'selectedUsersIds'   => [$setter01->id, $setter02->id],
+            'selectedOfficesIds' => [$office->id],
+        ])
+            ->set('selectedLeaderboardPill', 'sets')
+            ->assertSet('selectedLeaderboardPill', 'sets')
+            ->assertCount('topTenTrackers', 2)
+            ->assertSeeInOrder([$setter01->full_name, $setter02->full_name])
+            ->assertHasNoErrors();
+    }
+
+    private function createManagers(): void
+    {
+        /** @var User departmentManager */
+        $this->departmentManager = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+
+        /** @var User regionManager */
+        $this->regionManager = User::factory()->create(['role' => Role::REGION_MANAGER]);
+
+        /** @var User officeManager */
+        $this->officeManager = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
+    }
+
+    private function createDepartment(?User $manager = null): Department
+    {
+        $manager = $manager ?? $this->departmentManager;
+
+        return Department::factory()->create(['department_manager_id' => $manager->id]);
+    }
+
+    private function createRegion(Department $department, ?User $manager = null): Region
+    {
+        $manager = $manager ?? $this->regionManager;
+
+        return RegionBuilder::build()
+            ->withManager($manager)
+            ->withDepartment($department)
+            ->save()
+            ->get();
+    }
+
+    private function createOffice(Region $region, ?User $manager = null): Office
+    {
+        $manager = $manager ?? $this->officeManager;
+
+        return OfficeBuilder::build()
+            ->withManager($manager)
+            ->region($region)
+            ->save()
+            ->get();
+    }
+
+    private function createSetter(Department $department, Office $office): User
+    {
+        return User::factory()->create([
+            'department_id' => $department->id,
+            'office_id'     => $office->id,
+            'role'          => Role::SETTER,
+        ]);
+    }
+
+    private function createDailyNumber(User $setter, Office $office, array $attributes = []): DailyNumber
+    {
+        $defaultAttr = [
+            'user_id'   => $setter->id,
+            'office_id' => $office->id,
+        ];
+
+        return DailyNumber::factory()->create(array_merge($defaultAttr, $attributes));
     }
 }

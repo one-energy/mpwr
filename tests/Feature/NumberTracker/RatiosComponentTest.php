@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\NumberTracker;
 
+use App\Enum\Role;
 use App\Http\Livewire\NumberTracker\NumbersRatios;
 use App\Models\DailyNumber;
 use App\Models\Department;
@@ -45,9 +46,9 @@ class RatiosComponentTest extends TestCase
     {
         parent::setUp();
 
-        $this->dptManager    = User::factory()->create(['role' => 'Department Manager']);
-        $this->regionManager = User::factory()->create(['role' => 'Region Manager']);
-        $this->officeManager = User::factory()->create(['role' => 'Office Manager']);
+        $this->dptManager    = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+        $this->regionManager = User::factory()->create(['role' => Role::REGION_MANAGER]);
+        $this->officeManager = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
 
         $this->department = Department::factory()->create([
             'department_manager_id' => $this->dptManager->id,
@@ -69,7 +70,7 @@ class RatiosComponentTest extends TestCase
         ]);
 
         $this->john = User::factory()->create([
-            'role'          => 'Sales Rep',
+            'role'          => Role::SALES_REP,
             'department_id' => $this->department->id,
             'office_id'     => $this->office->id,
         ]);
@@ -121,7 +122,7 @@ class RatiosComponentTest extends TestCase
     {
         Livewire::test(NumbersRatios::class)
             ->assertSee('D.P.S')
-            ->assertSee('H.P. Set')
+            ->assertSee('HK.P. SET')
             ->assertSee('Sit Ratio')
             ->assertSee('Close Ratio');
     }
@@ -144,72 +145,65 @@ class RatiosComponentTest extends TestCase
     /** @test */
     public function it_should_sum_dps()
     {
-        $officeArray = [$this->office->id, $this->officeTwo->id];
-        $userArray   = [$this->dptManager->id, $this->regionManager->id, $this->officeManager->id, $this->john->id];
+        [$officeArray, $userArray] = $this->getUserAndOfficeIds();
 
-        $sumDoors = $this->dptManagerEntry->doors + $this->regionManagerEntry->doors + $this->officeManagerEntry->doors + $this->johnEntry->doors;
-        $sumSets  = $this->dptManagerEntry->sets + $this->regionManagerEntry->sets + $this->officeManagerEntry->sets + $this->johnEntry->sets;
+        $doors = $this->sumBy('doors');
+        $sets  = $this->sumBy('sets');
 
         Livewire::test(NumbersRatios::class)
             ->emit('updateNumbers', [
                 'offices' => $officeArray,
                 'users'   => $userArray,
             ])
-            ->assertSeeInOrder(['D.P.S', round($sumDoors / $sumSets, 2), 'H.P. Set']);
+            ->assertSeeInOrder(['D.P.S', round($doors / $sets, 2), 'HK.P. SET']);
     }
 
     /** @test */
     public function it_should_sum_hps()
     {
-        $officeArray = [$this->office->id, $this->officeTwo->id];
-        $userArray   = [$this->dptManager->id, $this->regionManager->id, $this->officeManager->id, $this->john->id];
+        [$officeArray, $userArray] = $this->getUserAndOfficeIds();
 
-        $sumHours = $this->dptManagerEntry->hours_worked + $this->regionManagerEntry->hours_worked + $this->officeManagerEntry->hours_worked + $this->johnEntry->hours_worked;
-        $sumSets  = $this->dptManagerEntry->sets + $this->regionManagerEntry->sets + $this->officeManagerEntry->sets + $this->johnEntry->sets;
+        $hoursWorked = $this->sumBy('hours_knocked');
+        $sets        = $this->sumBy('sets');
 
         Livewire::test(NumbersRatios::class)
             ->emit('updateNumbers', [
                 'offices' => $officeArray,
                 'users'   => $userArray,
             ])
-            ->assertSeeInOrder(['H.P. Set', round($sumHours / $sumSets, 2), 'Sit Ratio']);
+            ->assertSeeInOrder(['HK.P. SET', round($hoursWorked / $sets, 2), 'Sit Ratio']);
     }
 
     /** @test */
     public function it_should_sum_sit_ratios()
     {
-        $officeArray = [$this->office->id, $this->officeTwo->id];
-        $userArray   = [$this->dptManager->id, $this->regionManager->id, $this->officeManager->id, $this->john->id];
+        [$officeArray, $userArray] = $this->getUserAndOfficeIds();
 
-        $sumSits    = $this->dptManagerEntry->sits + $this->regionManagerEntry->sits + $this->officeManagerEntry->sits + $this->johnEntry->sits;
-        $sumSetSits = $this->dptManagerEntry->set_sits + $this->regionManagerEntry->set_sits + $this->officeManagerEntry->set_sits + $this->johnEntry->set_sits;
-        $sumSets    = $this->dptManagerEntry->sets + $this->regionManagerEntry->sets + $this->officeManagerEntry->sets + $this->johnEntry->sets;
+        $sats    = $this->sumBy('sats');
+        $sets    = $this->sumBy('sets');
 
         Livewire::test(NumbersRatios::class)
             ->emit('updateNumbers', [
                 'offices' => $officeArray,
                 'users'   => $userArray,
             ])
-            ->assertSeeInOrder(['Sit Ratio', round(($sumSits + $sumSetSits) / $sumSets, 2), 'Close Ratio']);
+            ->assertSeeInOrder(['Sit Ratio', round($sets / $sats, 2), 'Close Ratio']);
     }
 
     /** @test */
     public function it_should_sum_close_ratios()
     {
-        $officeArray = [$this->office->id, $this->officeTwo->id];
-        $userArray   = [$this->dptManager->id, $this->regionManager->id, $this->officeManager->id, $this->john->id];
+        [$officeArray, $userArray] = $this->getUserAndOfficeIds();
 
-        $sumSits      = $this->dptManagerEntry->sits + $this->regionManagerEntry->sits + $this->officeManagerEntry->sits + $this->johnEntry->sits;
-        $sumSetSits   = $this->dptManagerEntry->set_sits + $this->regionManagerEntry->set_sits + $this->officeManagerEntry->set_sits + $this->johnEntry->set_sits;
-        $sumCloses    = $this->dptManagerEntry->closes + $this->regionManagerEntry->closes + $this->officeManagerEntry->closes + $this->johnEntry->closes;
-        $sumSetCloses = $this->dptManagerEntry->set_closes + $this->regionManagerEntry->set_closes + $this->officeManagerEntry->set_closes + $this->johnEntry->set_closes;
+        $closerSits = $this->sumBy('closer_sits');
+        $closes     = $this->sumBy('closes');
 
         Livewire::test(NumbersRatios::class)
             ->emit('updateNumbers', [
                 'offices' => $officeArray,
                 'users'   => $userArray,
             ])
-            ->assertSeeInOrder(['Close Ratio', round((($sumCloses + $sumSetCloses) / $sumSits + $sumSetSits), 2)]);
+            ->assertSeeInOrder(['Close Ratio', round(($closerSits / $closes), 2)]);
     }
 
     /** @test */
@@ -219,18 +213,17 @@ class RatiosComponentTest extends TestCase
         $this->john->delete();
         $this->johnEntry->delete();
 
-        $officeArray = [$this->office->id, $this->officeTwo->id];
-        $userArray   = [$this->dptManager->id, $this->regionManager->id, $this->officeManager->id, $this->john->id];
+        [$officeArray, $userArray] = $this->getUserAndOfficeIds();
 
-        $sumDoors = $this->dptManagerEntry->doors + $this->regionManagerEntry->doors + $this->officeManagerEntry->doors + $this->johnEntry->doors;
-        $sumSets  = $this->dptManagerEntry->sets + $this->regionManagerEntry->sets + $this->officeManagerEntry->sets + $this->johnEntry->sets;
+        $doors = $this->sumBy('doors');
+        $sets  = $this->sumBy('sets');
 
         Livewire::test(NumbersRatios::class)
             ->emit('updateNumbers', [
                 'offices' => $officeArray,
                 'users'   => $userArray,
             ])
-            ->assertSee(round($sumDoors / $sumSets, 2));
+            ->assertSee(round($doors / $sets, 2));
     }
 
     /** @test */
@@ -248,5 +241,21 @@ class RatiosComponentTest extends TestCase
                 'users'   => $userArray,
             ])
             ->assertSee(round($sumDoors / $sumSets, 2));
+    }
+
+    private function sumBy(string $field): mixed
+    {
+        return $this->dptManagerEntry->{$field} +
+            $this->regionManagerEntry->{$field} +
+            $this->officeManagerEntry->{$field} +
+            $this->johnEntry->{$field};
+    }
+
+    private function getUserAndOfficeIds(): array
+    {
+        $officeArray = [$this->office->id, $this->officeTwo->id];
+        $userArray   = [$this->dptManager->id, $this->regionManager->id, $this->officeManager->id, $this->john->id];
+
+        return [$officeArray, $userArray];
     }
 }
