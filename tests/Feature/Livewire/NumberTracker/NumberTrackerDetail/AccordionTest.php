@@ -7,21 +7,16 @@ use App\Http\Livewire\NumberTracker\RegionRow;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
-class RegionRowTest extends TestCase
+class AccordionTest extends TestCase
 {
-    use RefreshDatabase;
-
-    public User $regionManager;
-    
     public User $officeManager;
 
-    public User $salesRep;
-
-    public User $setter;
+    public User $regionManager;
 
     public function setUp(): void
     {
