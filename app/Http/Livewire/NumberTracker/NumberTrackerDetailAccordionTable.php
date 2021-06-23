@@ -97,8 +97,7 @@ class NumberTrackerDetailAccordionTable extends Component
                         $query->withTrashed()
                             ->where(function ($query) {
                                 $query->whereHas('dailyNumbers', function ($query) {
-                                    $query->inPeriod($this->period,
-                                        new Carbon($this->selectedDate))->withTrashed();
+                                    $query->inPeriod($this->period, new Carbon($this->selectedDate))->withTrashed();
                                 })
                                     ->whereNotNull('deleted_at');
                             })

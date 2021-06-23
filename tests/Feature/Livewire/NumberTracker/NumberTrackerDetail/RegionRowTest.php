@@ -16,7 +16,7 @@ class RegionRowTest extends TestCase
     use RefreshDatabase;
 
     public User $regionManager;
-    
+
     public User $officeManager;
 
     public User $salesRep;
@@ -29,8 +29,8 @@ class RegionRowTest extends TestCase
 
         $this->officeManager = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
         $this->regionManager = User::factory()->create(['role' => Role::REGION_MANAGER]);
-        $this->salesRep = User::factory()->create(['role' => Role::SALES_REP]);
-        $this->setter = User::factory()->create(['role' => Role::SETTER]);
+        $this->salesRep      = User::factory()->create(['role' => Role::SALES_REP]);
+        $this->setter        = User::factory()->create(['role' => Role::SETTER]);
     }
 
     /** @test */
@@ -74,14 +74,14 @@ class RegionRowTest extends TestCase
             'region_manager_id' => $this->regionManager,
         ]);
 
-        $officeManaged    = Office::factory()->create([
+        $officeManaged = Office::factory()->create([
             'office_manager_id' => $this->officeManager,
             'region_id'         => $region
         ]);
 
         $officeNotManaged = Office::factory()->create([
             'office_manager_id' => User::factory()->create(['role' => Role::OFFICE_MANAGER]),
-            'region_id' => $region
+            'region_id'         => $region
         ]);
 
         $this->actingAs($this->officeManager);
@@ -100,14 +100,14 @@ class RegionRowTest extends TestCase
             'region_manager_id' => $this->regionManager,
         ]);
 
-        $officeOfUser    = Office::factory()->create([
+        $officeOfUser = Office::factory()->create([
             'office_manager_id' => $this->officeManager,
             'region_id'         => $region
         ]);
 
         $otherOffice = Office::factory()->create([
             'office_manager_id' => User::factory()->create(['role' => Role::OFFICE_MANAGER]),
-            'region_id' => $region
+            'region_id'         => $region
         ]);
 
         $this->setter->office_id = $officeOfUser->id;

@@ -4,13 +4,11 @@ namespace Tests\Feature\Livewire\NumberTracker\NumberTrackerDetail;
 
 use App\Enum\Role;
 use App\Http\Livewire\NumberTracker\NumberTrackerDetailAccordionTable;
-use App\Http\Livewire\NumberTracker\RegionRow;
 use App\Models\Department;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -21,7 +19,7 @@ class AccordionTest extends TestCase
     public Department $department;
 
     public User $regionManager;
-    
+
     public User $officeManager;
 
     public User $salesRep;
@@ -35,19 +33,19 @@ class AccordionTest extends TestCase
         $this->department = Department::factory()->create();
 
         $this->regionManager = User::factory()->create([
-            'role' => Role::REGION_MANAGER,
+            'role'          => Role::REGION_MANAGER,
             'department_id' => $this->department
         ]);
         $this->officeManager = User::factory()->create([
-            'role' => Role::OFFICE_MANAGER,
+            'role'          => Role::OFFICE_MANAGER,
             'department_id' => $this->department
         ]);
-        $this->salesRep = User::factory()->create([
-            'role' => Role::SALES_REP,
+        $this->salesRep      = User::factory()->create([
+            'role'          => Role::SALES_REP,
             'department_id' => $this->department
         ]);
-        $this->setter = User::factory()->create([
-            'role' => Role::SETTER,
+        $this->setter        = User::factory()->create([
+            'role'          => Role::SETTER,
             'department_id' => $this->department
         ]);
     }
@@ -65,7 +63,7 @@ class AccordionTest extends TestCase
         ]);
 
         $this->actingAs($this->regionManager);
-        
+
         Livewire::test(NumberTrackerDetailAccordionTable::class, $this->buildProps())
             ->assertSee($regionManaged->name)
             ->assertDontSee($regioneNotManaged->name);
@@ -89,7 +87,7 @@ class AccordionTest extends TestCase
         ]);
 
         $this->actingAs($this->officeManager);
-        
+
         Livewire::test(NumberTrackerDetailAccordionTable::class, $this->buildProps())
             ->assertSee($regionOfOffice->name)
             ->assertDontSee($regionAny->name);
@@ -119,13 +117,13 @@ class AccordionTest extends TestCase
         $this->salesRep->save();
 
         $this->actingAs($this->setter);
-        
+
         Livewire::test(NumberTrackerDetailAccordionTable::class, $this->buildProps())
             ->assertSee($regionOfOffice->name)
             ->assertDontSee($regionAny->name);
 
         $this->actingAs($this->salesRep);
-        
+
         Livewire::test(NumberTrackerDetailAccordionTable::class, $this->buildProps())
             ->assertSee($regionOfOffice->name)
             ->assertDontSee($regionAny->name);
@@ -134,9 +132,9 @@ class AccordionTest extends TestCase
     private function buildProps(): array
     {
         return [
-            'deleteds'      => false,
-            'period'        => 'd',
-            'selectedDate'  => today()
+            'deleteds'     => false,
+            'period'       => 'd',
+            'selectedDate' => today()
         ];
     }
 }

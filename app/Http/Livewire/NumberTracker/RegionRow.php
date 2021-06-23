@@ -288,20 +288,20 @@ class RegionRow extends Component
                         })
                         ->orWhereNull('deleted_at');
                 })
-                ->when(user()->hasRole(Role::OFFICE_MANAGER), function ($query) {
-                    $query->whereOfficeManagerId(user()->id);
-                })
-                ->when(user()->hasAnyRole([Role::SALES_REP, Role::SETTER]), function ($query) {
-                    $query->find(user()->office_id);
-                })
-                ->with([
-                    'dailyNumbers' => function ($query) {
-                        $query
-                            ->when($this->withTrashed, fn($query) => $query->withTrashed())
-                            ->when(!$this->withTrashed, fn($query) => $query->has('user'))
-                            ->inPeriod($this->period, new Carbon($this->selectedDate));
-                    },
-                ]);
+                    ->when(user()->hasRole(Role::OFFICE_MANAGER), function ($query) {
+                        $query->whereOfficeManagerId(user()->id);
+                    })
+                    ->when(user()->hasAnyRole([Role::SALES_REP, Role::SETTER]), function ($query) {
+                        $query->find(user()->office_id);
+                    })
+                    ->with([
+                        'dailyNumbers' => function ($query) {
+                            $query
+                                ->when($this->withTrashed, fn($query) => $query->withTrashed())
+                                ->when(!$this->withTrashed, fn($query) => $query->has('user'))
+                                ->inPeriod($this->period, new Carbon($this->selectedDate));
+                        },
+                    ]);
             },
         ];
     }
