@@ -108,16 +108,16 @@ class NumberTrackerDetailAccordionTable extends Component
                         $query->whereOfficeManagerId(user()->id);
                     })
                     ->when(user()->hasAnyRole([Role::SALES_REP, Role::SETTER]), function ($query) {
-                        $query->find(user()->office->id);
+                        $query->find(user()->office_id);
                     })
-                        ->with([
-                            'dailyNumbers' => function ($query) {
-                                $query
-                                    ->when($this->deleteds, fn($query) => $query->withTrashed())
-                                    ->when(!$this->deleteds, fn($query) => $query->has('user'))
-                                    ->inPeriod($this->period, new Carbon($this->selectedDate));
-                            },
-                        ]);
+                    ->with([
+                        'dailyNumbers' => function ($query) {
+                            $query
+                                ->when($this->deleteds, fn($query) => $query->withTrashed())
+                                ->when(!$this->deleteds, fn($query) => $query->has('user'))
+                                ->inPeriod($this->period, new Carbon($this->selectedDate));
+                        },
+                    ]);
                 },
             ])
             ->get();
