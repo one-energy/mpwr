@@ -65,7 +65,7 @@
                             label="Office Managers"
                             name="office_manager_ids[]"
                             :options="$managers"
-                            wire:key="{{ $managers->count() }}"
+                            wire:key="{{ $this->wireKey }}"
                         />
                     </div>
                 </div>

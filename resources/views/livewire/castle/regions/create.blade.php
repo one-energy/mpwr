@@ -63,7 +63,7 @@
                             label="Regional Managers"
                             name="region_manager_ids[]"
                             :options="$managers"
-                            wire:key="{{ $managers->count() }}"
+                            wire:key="{{ $this->wireKey }}"
                         />
                     </div>
                 </div>
