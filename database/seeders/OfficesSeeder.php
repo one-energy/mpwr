@@ -21,7 +21,7 @@ class OfficesSeeder extends Seeder
             ->times(3)
             ->create([
                 'role'          => Role::OFFICE_MANAGER,
-                'department_id' => $region->department_id
+                'department_id' => $region->department_id,
             ])
             ->each(fn(User $user) => $this->createOffice($region, $user));
     }
@@ -29,11 +29,8 @@ class OfficesSeeder extends Seeder
     private function createOffice(Region $region, User $user)
     {
         /** @var Office $office */
-        $office = Office::factory()->create([
-            'office_manager_id' => $user->id,
-            'region_id'         => $region->id
-        ]);
-
+        $office = Office::factory()->create(['region_id' => $region->id]);
+        $office->managers()->attach($user->id);
         $user->update(['office_id' => $office->id]);
 
         $this->createUsers($office, $region);
@@ -44,12 +41,12 @@ class OfficesSeeder extends Seeder
         User::factory()->times(2)->create([
             'role'          => Role::SETTER,
             'office_id'     => $office->id,
-            'department_id' => $region->department_id
+            'department_id' => $region->department_id,
         ]);
         User::factory()->times(2)->create([
             'role'          => Role::SALES_REP,
             'office_id'     => $office->id,
-            'department_id' => $region->department_id
+            'department_id' => $region->department_id,
         ]);
     }
 }

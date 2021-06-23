@@ -20,8 +20,9 @@ class DepartmentsSeeder extends Seeder
     private function createDepartment(User $user)
     {
         /** @var Department $department */
-        $department = Department::factory()->create(['department_manager_id' => $user->id]);
+        $department = Department::factory()->create();
 
+        $department->managers()->attach($user->id);
         $department->trainingPageSections()->create(['title' => 'Training Page']);
         $user->update(['department_id' => $department->id]);
     }
