@@ -3,7 +3,9 @@
 namespace Tests\Feature\Livewire\NumberTracker\NumberTrackerDetail;
 
 use App\Enum\Role;
+use App\Http\Livewire\NumberTracker\NumberTrackerDetailAccordionTable;
 use App\Http\Livewire\NumberTracker\RegionRow;
+use App\Models\Department;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
@@ -14,126 +16,127 @@ use Tests\TestCase;
 
 class AccordionTest extends TestCase
 {
-    public User $officeManager;
+    use DatabaseTransactions;
+
+    public Department $department;
 
     public User $regionManager;
+    
+    public User $officeManager;
+
+    public User $salesRep;
+
+    public User $setter;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->officeManager = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
-        $this->regionManager = User::factory()->create(['role' => Role::REGION_MANAGER]);
-        $this->salesRep = User::factory()->create(['role' => Role::SALES_REP]);
-        $this->setter = User::factory()->create(['role' => Role::SETTER]);
+        $this->department = Department::factory()->create();
+
+        $this->regionManager = User::factory()->create([
+            'role' => Role::REGION_MANAGER,
+            'department_id' => $this->department
+        ]);
+        $this->officeManager = User::factory()->create([
+            'role' => Role::OFFICE_MANAGER,
+            'department_id' => $this->department
+        ]);
+        $this->salesRep = User::factory()->create([
+            'role' => Role::SALES_REP,
+            'department_id' => $this->department
+        ]);
+        $this->setter = User::factory()->create([
+            'role' => Role::SETTER,
+            'department_id' => $this->department
+        ]);
     }
 
     /** @test */
-    public function it_should_be_possible_collapse_region_row()
+    public function it_should_just_show_regions_managed_by_user()
     {
-        $john = User::factory()->create(['role' => Role::ADMIN]);
-
-        $region = Region::factory()->create([
+        $regionManaged = Region::factory()->create([
             'region_manager_id' => $this->regionManager,
+            'department_id'     => $this->department
         ]);
 
-        $this->actingAs($john);
+        $regioneNotManaged = Region::factory()->create([
+            'region_manager_id' => User::factory()->create(['role' => Role::REGION_MANAGER]),
+        ]);
 
-        Livewire::test(RegionRow::class, $this->buildProps($region))
-            ->assertSet('itsOpen', false)
-            ->call('collapseRegion')
-            ->assertSet('itsOpen', true);
+        $this->actingAs($this->regionManager);
+        
+        Livewire::test(NumberTrackerDetailAccordionTable::class, $this->buildProps())
+            ->assertSee($regionManaged->name)
+            ->assertDontSee($regioneNotManaged->name);
     }
 
     /** @test */
-    public function it_should_emit_up_when_call_select_region_method()
+    public function it_should_just_show_region_of_office_managed_by_user()
     {
-        $john = User::factory()->create(['role' => Role::ADMIN]);
-
-        $region = Region::factory()->create([
+        $regionOfOffice = Region::factory()->create([
             'region_manager_id' => $this->regionManager,
+            'department_id'     => $this->department
         ]);
 
-        $this->actingAs($john);
-
-        Livewire::test(RegionRow::class, $this->buildProps($region))
-            ->call('selectRegion')
-            ->assertEmitted('regionSelected');
-    }
-
-    /** @test */
-    public function it_should_show_only_offices_managed_by_office_manager()
-    {
-
-        $region = Region::factory()->create([
-            'region_manager_id' => $this->regionManager,
+        $regionAny = Region::factory()->create([
+            'region_manager_id' => User::factory()->create(['role' => Role::REGION_MANAGER]),
         ]);
 
-        $officeManaged    = Office::factory()->create([
+        Office::factory()->create([
             'office_manager_id' => $this->officeManager,
-            'region_id'         => $region
-        ]);
-
-        $officeNotManaged = Office::factory()->create([
-            'office_manager_id' => User::factory()->create(['role' => Role::OFFICE_MANAGER]),
-            'region_id' => $region
+            'region_id'         => $regionOfOffice
         ]);
 
         $this->actingAs($this->officeManager);
-
-        Livewire::test(RegionRow::class, $this->buildProps($region))
-            ->call('collapseRegion')
-            ->assertSet('offices.0.name', $officeManaged->name)
-            ->assertNotSet('offices.1.name', $officeNotManaged->name);
+        
+        Livewire::test(NumberTrackerDetailAccordionTable::class, $this->buildProps())
+            ->assertSee($regionOfOffice->name)
+            ->assertDontSee($regionAny->name);
     }
 
     /** @test */
-    public function it_should_show_only_offices_of_setters_or_sales_rep()
+    public function it_should_just_show_region_of_office_of_setter_or_sales_rep()
     {
-
-        $region = Region::factory()->create([
+        $regionOfOffice = Region::factory()->create([
             'region_manager_id' => $this->regionManager,
+            'department_id'     => $this->department
         ]);
 
-        $officeOfUser    = Office::factory()->create([
+        $regionAny = Region::factory()->create([
+            'region_manager_id' => User::factory()->create(['role' => Role::REGION_MANAGER]),
+        ]);
+
+        $office = Office::factory()->create([
             'office_manager_id' => $this->officeManager,
-            'region_id'         => $region
+            'region_id'         => $regionOfOffice
         ]);
 
-        $otherOffice = Office::factory()->create([
-            'office_manager_id' => User::factory()->create(['role' => Role::OFFICE_MANAGER]),
-            'region_id' => $region
-        ]);
-
-        $this->setter->office_id = $officeOfUser->id;
+        $this->setter->office_id = $office->id;
         $this->setter->save();
 
-        $this->salesRep->office_id = $officeOfUser->id;
+        $this->salesRep->office_id = $office->id;
         $this->salesRep->save();
 
         $this->actingAs($this->setter);
-
-        Livewire::test(RegionRow::class, $this->buildProps($region))
-            ->call('collapseRegion')
-            ->assertSet('offices.0.name', $officeOfUser->name)
-            ->assertNotSet('offices.1.name', $otherOffice->name);
+        
+        Livewire::test(NumberTrackerDetailAccordionTable::class, $this->buildProps())
+            ->assertSee($regionOfOffice->name)
+            ->assertDontSee($regionAny->name);
 
         $this->actingAs($this->salesRep);
-
-        Livewire::test(RegionRow::class, $this->buildProps($region))
-            ->call('collapseRegion')
-            ->assertSet('offices.0.name', $officeOfUser->name)
-            ->assertNotSet('offices.1.name', $otherOffice->name);
+        
+        Livewire::test(NumberTrackerDetailAccordionTable::class, $this->buildProps())
+            ->assertSee($regionOfOffice->name)
+            ->assertDontSee($regionAny->name);
     }
 
-    private function buildProps(mixed $region): array
+    private function buildProps(): array
     {
         return [
-            'regionId'      => $region->id,
-            'withTrashed'   => false,
+            'deleteds'      => false,
             'period'        => 'd',
-            'selectedDate'  => today(),
-            'selectedUsers' => collect()
+            'selectedDate'  => today()
         ];
     }
 }
