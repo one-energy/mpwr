@@ -73,6 +73,8 @@ class TrainingController extends Controller
 
     public function deleteSection(TrainingPageSection $section)
     {
+        $this->authorize('delete', $section);
+
         DestroySection::execute($section);
 
         return redirect(route('castle.manage-trainings.index', [
