@@ -74,7 +74,7 @@ class Spreadsheet extends Component
     {
         return collect($this->periods)
             ->chunk(2)
-            ->map(fn (Collection $chunk) => $this->getDaysFrom($chunk));
+            ->map(fn(Collection $chunk) => $this->getDaysFrom($chunk));
     }
 
     public function getWeeklyMonthLabelsProperty()
@@ -83,7 +83,7 @@ class Spreadsheet extends Component
             ->map(function (array $periods) {
                 return collect($periods)
                     ->map(
-                        fn (DateTimeImmutable $date) => $this->isSunday($date) ? null : $date->format($this->dateFormat)
+                        fn(DateTimeImmutable $date) => $this->isSunday($date) ? null : $date->format($this->dateFormat)
                     )
                     ->filter();
             });
@@ -95,7 +95,7 @@ class Spreadsheet extends Component
             ->map(function (array $periods) {
                 return collect($periods)
                     ->map(
-                        fn (DateTimeImmutable $date) => $this->isSunday($date) ? null : $date->format('D dS')
+                        fn(DateTimeImmutable $date) => $this->isSunday($date) ? null : $date->format('D dS')
                     )
                     ->filter();
             });
@@ -179,10 +179,10 @@ class Spreadsheet extends Component
     public function getOfficesProperty()
     {
         return match (user()->role) {
-            'Admin', 'Owner' => Office::oldest('name')->get(),
+            'Admin', 'Owner'     => Office::oldest('name')->get(),
             'Department Manager' => $this->getOfficesFromDepartment(),
-            'Region Manager'     => Office::oldest('name')->whereIn('region_id', user()->managedRegions->pluck('id'))->get(),
-            'Office Manager'     => Office::oldest('name')->whereIn('id', user()->managedOffices->pluck('id'))->get(),
+            'Region Manager'     => $this->getOfficesFromRegion(),
+            'Office Manager'     => $this->getManagedOffices(),
             default              => collect()
         };
     }
@@ -201,6 +201,22 @@ class Spreadsheet extends Component
         }
 
         return collect();
+    }
+
+    private function getOfficesFromRegion()
+    {
+        return Office::query()
+            ->oldest('name')
+            ->whereIn('region_id', user()->managedRegions->pluck('id'))
+            ->get();
+    }
+
+    private function getManagedOffices()
+    {
+        return Office::query()
+            ->oldest('name')
+            ->whereIn('id', user()->managedOffices->pluck('id'))
+            ->get();
     }
 
     public function sumOf(string $field, $user, array $weekDays)
@@ -296,6 +312,6 @@ class Spreadsheet extends Component
     {
         return $weeklyPeriods
             ->flatten()
-            ->map(fn (DateTimeImmutable $date) => $date->format('Y-m-d'));
+            ->map(fn(DateTimeImmutable $date) => $date->format('Y-m-d'));
     }
 }
