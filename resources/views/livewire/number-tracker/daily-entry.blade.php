@@ -235,13 +235,13 @@
                                         <x-svg.arrow-down class="text-red-600"/>
                                     @endif
                                     <span class="
-                                                @if($users->sum('dailyNumbers.0.set_closes') - $usersLastDayEntries->sum('dailyNumbers.0.set_closes') >= 0)
+                                    @if($users->sum('dailyNumbers.0.set_closes') - $usersLastDayEntries->sum('dailyNumbers.0.set_closes') >= 0)
                                         text-green-base
-@else
+                                    @else
                                         text-red-600
-@endif">
-                                            {{$users->sum('dailyNumbers.0.set_closes') - $usersLastDayEntries->sum('dailyNumbers.0.set_closes')}}
-                                        </span>
+                                    @endif">
+                                        {{$users->sum('dailyNumbers.0.set_closes') - $usersLastDayEntries->sum('dailyNumbers.0.set_closes')}}
+                                    </span>
                                 </div>
                             </div>
                             <div class="grid grid-cols-4 gap-1">
@@ -254,13 +254,13 @@
                                         <x-svg.arrow-down class="text-red-600"/>
                                     @endif
                                     <span class="
-                                                @if($users->sum('dailyNumbers.0.closes') - $usersLastDayEntries->sum('dailyNumbers.0.closes') >= 0)
+                                    @if($users->sum('dailyNumbers.0.closes') - $usersLastDayEntries->sum('dailyNumbers.0.closes') >= 0)
                                         text-green-base
-@else
+                                    @else
                                         text-red-600
-@endif">
-                                            {{$users->sum('dailyNumbers.0.closes') - $usersLastDayEntries->sum('dailyNumbers.0.closes')}}
-                                        </span>
+                                    @endif">
+                                        {{$users->sum('dailyNumbers.0.closes') - $usersLastDayEntries->sum('dailyNumbers.0.closes')}}
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -276,35 +276,35 @@
                     <div class="w-full mt-3">
                         @if($users->count())
                             <div class="flex flex-col">
-                                <div class="inline-block min-w-full overflow-x-auto align-middle">
+                                <div class="inline-block min-w-full overflow-x-auto align-middle" style="height: 90vh">
                                     <x-table wire:loading.remove>
                                         <x-slot name="header">
                                             <x-table.th-tr>
-                                                <x-table.th by="region_member" class="sticky left-0 bg-white">
+                                                <x-table.th class="sticky top-0 bg-white whitespace-no-wrap z-20" by="region_member">
                                                     @lang('Member')
                                                 </x-table.th>
-                                                <x-table.th by="hours_worked">
+                                                <x-table.th class="sticky top-0 bg-white whitespace-no-wrap z-10" by="hours_worked">
                                                     @lang('Hours Worked')
                                                 </x-table.th>
-                                                <x-table.th by="doors">
+                                                <x-table.th class="sticky top-0 bg-white whitespace-no-wrap z-10" by="doors">
                                                     @lang('Doors')
                                                 </x-table.th>
-                                                <x-table.th by="hours_knocked">
+                                                <x-table.th class="sticky top-0 bg-white whitespace-no-wrap z-10" by="hours_knocked">
                                                     @lang('Hours Knocked')
                                                 </x-table.th>
-                                                <x-table.th by="sets">
+                                                <x-table.th class="sticky top-0 bg-white whitespace-no-wrap z-10" by="sets">
                                                     @lang('Sets')
                                                 </x-table.th>
-                                                <x-table.th by="sets">
+                                                <x-table.th class="sticky top-0 bg-white whitespace-no-wrap z-10" by="sets">
                                                     @lang('Sats')
                                                 </x-table.th>
-                                                <x-table.th by="set_closes">
+                                                <x-table.th class="sticky top-0 bg-white whitespace-no-wrap z-10" by="set_closes">
                                                     @lang('Set Closes')
                                                 </x-table.th>
-                                                <x-table.th by="set_closes">
+                                                <x-table.th class="sticky top-0 bg-white whitespace-no-wrap z-10" by="set_closes">
                                                     @lang('Closer Sits')
                                                 </x-table.th>
-                                                <x-table.th by="closes">
+                                                <x-table.th class="sticky top-0 bg-white whitespace-no-wrap z-10" by="closes">
                                                     @lang('Closes')
                                                 </x-table.th>
                                             </x-table.th-tr>
@@ -491,5 +491,4 @@
             },
         }
     }
-
 </script>
