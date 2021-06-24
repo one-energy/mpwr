@@ -8,6 +8,7 @@ use App\Models\TrainingPageSection;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Queue\Jobs\DatabaseJob;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -73,6 +74,27 @@ class FileUploadTest extends TestCase
 
         Storage::disk('local')->assertExists('files/' . $this->department->id . '/' . $this->files->first()->hashName());
         Storage::disk('local')->assertExists('files/' . $this->department->id . '/' . $this->files->last()->hashName());
+    }
+
+    /** @test */
+    public function it_should_save_file_on_section()
+    {
+        $this->withoutExceptionHandling();
+        Storage::fake('local');
+
+        $this->files->push(UploadedFile::fake()->create('avatar.pdf'));
+
+        $this->post(route('uploadSectionFile', $this->section->id), [
+            'files' => $this->files,
+            'meta'  => [
+                'training_type' => 'training'
+            ]
+        ]);
+
+        $this->assertDatabaseHas('section_files', [
+            'original_name' =>'avatar',
+            'name'          => $this->files->first()->hashName(),
+        ]);
     }
     
     /** @test */
