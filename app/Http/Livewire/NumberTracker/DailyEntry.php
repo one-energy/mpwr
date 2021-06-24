@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\NumberTracker;
 
+use App\Enum\Role;
 use App\Models\DailyNumber;
 use App\Models\Office;
 use App\Models\User;
@@ -116,7 +117,7 @@ class DailyEntry extends Component
 
     public function setOffice($office)
     {
-        if ($office == null) {
+        if ($office === null) {
             $this->officeSelected = 0;
         } else {
             $this->officeSelected = $office->id ?? $office['id'];
@@ -168,19 +169,19 @@ class DailyEntry extends Component
             ->select('offices.*')
             ->join('regions', 'region_id', '=', 'regions.id');
 
-        if (user()->role === 'Admin' || user()->role === 'Owner') {
+        if (user()->hasAnyRole([Role::ADMIN, Role::OWNER])) {
             $query->orWhere('regions.department_id', '=', 0);
         }
 
-        if (user()->role === 'Department Manager') {
+        if (user()->hasRole(Role::DEPARTMENT_MANAGER)) {
             $query->orWhere('regions.department_id', '=', user()->department_id);
         }
 
-        if (user()->role === 'Region Manager') {
+        if (user()->hasRole(Role::REGION_MANAGER)) {
             $query->orWhere('regions.region_manager_id', '=', user()->id);
         }
 
-        if (user()->role === 'Office Manager') {
+        if (user()->hasRole(Role::OFFICE_MANAGER)) {
             $query->orWhere('offices.office_manager_id', '=', user()->id);
         }
 
