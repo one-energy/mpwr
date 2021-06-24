@@ -13,7 +13,6 @@ class OfficeBuilder
 {
     use WithFaker;
 
-    /** @var Office */
     public Office $office;
 
     public function __construct($attributes = [])
@@ -24,12 +23,12 @@ class OfficeBuilder
         ], $attributes));
     }
 
-    public static function build($attributes = [])
+    public static function build($attributes = []): self
     {
         return new OfficeBuilder($attributes);
     }
 
-    public function save()
+    public function save(): self
     {
         if (!$this->office->office_manager_id) {
             $this->office->office_manager_id = User::factory()->create(['role' => Role::OFFICE_MANAGER])->id;
@@ -45,26 +44,26 @@ class OfficeBuilder
         return $this->office;
     }
 
-    public function withManager(User $user)
+    public function withManager(User $user): self
     {
         $this->office->office_manager_id = $user->id;
 
         return $this;
     }
 
-    public function region(Region $region)
+    public function region(Region $region): self
     {
         $this->office->region_id = $region->id;
 
         return $this;
     }
 
-    public function addMembers(int $qty)
+    public function addMembers(int $qty): self
     {
         $users = User::factory()->count($qty)->create();
 
         foreach ($users as $user) {
-            $this->office->users()->attach($user, ['role' => array_search('Setter', User::ROLES)]);
+            $this->office->users()->attach($user, ['role' => Role::SETTER]);
         }
 
         return $this;
