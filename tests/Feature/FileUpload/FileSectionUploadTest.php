@@ -15,67 +15,84 @@ use Tests\TestCase;
 class FileUploadTest extends TestCase
 {
     use RefreshDatabase;
+    
     public User $user;
+
+    public Department $department;
+
+    public TrainingPageSection $section;
+
     public Collection $files;
 
     protected function setUp ():void
     {
         parent::setUp();
 
-        $this->userEniumPoints = collect([]);
+        $this->department = Department::factory()->create();
+        $this->user       = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+ 
+        $this->section = TrainingPageSection::factory()->create([
+            'department_id' => $this->department->id
+        ]);
 
-        $this->user = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
         $this->files = collect([]);
+
+        $this->actingAs($this->user);
     }
 
     /** @test */
     public function it_should_save_file()
     {
-        $this->actingAs($this->user);
 
         Storage::fake('local');
 
-        $department = Department::factory()->create();
-
-        $section = TrainingPageSection::factory()->create([
-            'department_id' => $department->id
-        ]);
-
         $this->files->push(UploadedFile::fake()->create('avatar.pdf'));
 
-        $this->post(route('uploadSectionFile', $section->id), [
+        $this->post(route('uploadSectionFile', $this->section->id), [
             'files' => $this->files,
         ]);
 
-        Storage::disk('local')->assertExists('files/' . $department->id . '/' . $this->files->first()->hashName());
+        Storage::disk('local')->assertExists('files/' . $this->department->id . '/' . $this->files->first()->hashName());
     }
 
      /** @test */
      public function it_should_save_multiple_files()
      {
-         $this->withoutExceptionHandling();
 
-         $this->actingAs($this->user);
- 
-         Storage::fake('local');
- 
-         $department = Department::factory()->create();
- 
-         $section = TrainingPageSection::factory()->create([
-             'department_id' => $department->id
-         ]);
- 
-         $this->files->push(UploadedFile::fake()->create('first.pdf'));
-         $this->files->push(UploadedFile::fake()->create('last.pdf'));
- 
-         $this->post(route('uploadSectionFile', $section->id), [
-             'files' => $this->files,
-             'meta'  => [
-                 'training_type' => 'training'
-             ]
-         ]);
- 
-         Storage::disk('local')->assertExists('files/' . $department->id . '/' . $this->files->first()->hashName());
-         Storage::disk('local')->assertExists('files/' . $department->id . '/' . $this->files->last()->hashName());
-     }
+        Storage::fake('local');
+
+        $this->files->push(UploadedFile::fake()->create('first.pdf'));
+        $this->files->push(UploadedFile::fake()->create('last.pdf'));
+
+        $this->post(route('uploadSectionFile', $this->section->id), [
+            'files' => $this->files,
+            'meta'  => [
+                'training_type' => 'training'
+            ]
+        ]);
+
+        Storage::disk('local')->assertExists('files/' . $this->department->id . '/' . $this->files->first()->hashName());
+        Storage::disk('local')->assertExists('files/' . $this->department->id . '/' . $this->files->last()->hashName());
+    }
+    
+    /** @test */
+    public function it_should_make_download_file()
+    {
+        Storage::fake('local');
+
+        $file = UploadedFile::fake()->create('first.pdf');
+
+        $this->post(route('uploadSectionFile', $this->section->id), [
+            'files' => [$file],
+            'meta'  => [
+                'training_type' => 'training'
+            ]
+        ]);
+
+        $response = $this->post(route('downloadSectionFile', $this->section->id), [
+            'path' => 'files/' . $this->department->id . '/' . $file->hashName(),
+        ]);
+
+        $response->assertSuccessful();
+    }
 }
