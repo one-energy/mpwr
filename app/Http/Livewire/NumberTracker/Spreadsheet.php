@@ -18,7 +18,7 @@ use Livewire\Component;
  * @property-read Collection|Office[] $offices
  * @property-read array $periods
  * @property-read Collection $weeklyPeriods
- * @property-read Collection $weeklyLabels
+ * @property-read Collection $weeklyMonthLabels
  * @property-read string $dateFormat
  * @property-read Collection|DailyNumber[] $users
  */
@@ -77,18 +77,26 @@ class Spreadsheet extends Component
             ->map(fn (Collection $chunk) => $this->getDaysFrom($chunk));
     }
 
-    public function getWeeklyLabelsProperty()
+    public function getWeeklyMonthLabelsProperty()
     {
         return collect($this->weeklyPeriods)
             ->map(function (array $periods) {
                 return collect($periods)
-                    ->map(function (DateTimeImmutable $date) {
-                        if ($this->isSunday($date)) {
-                            return null;
-                        }
+                    ->map(
+                        fn (DateTimeImmutable $date) => $this->isSunday($date) ? null : $date->format($this->dateFormat)
+                    )
+                    ->filter();
+            });
+    }
 
-                        return $date->format($this->dateFormat);
-                    })
+    public function getWeeklyDayLabelsProperty()
+    {
+        return collect($this->weeklyPeriods)
+            ->map(function (array $periods) {
+                return collect($periods)
+                    ->map(
+                        fn (DateTimeImmutable $date) => $this->isSunday($date) ? null : $date->format('D dS')
+                    )
                     ->filter();
             });
     }
@@ -121,7 +129,7 @@ class Spreadsheet extends Component
             ->get()
             ->map(function (User $user) {
                 $user->dailyNumbers = $user->dailyNumbers->groupBy(function (DailyNumber $dailyNumber) {
-                    return (new Carbon($dailyNumber->date))->format('F dS');
+                    return (new Carbon($dailyNumber->date))->format($this->dateFormat);
                 });
 
                 return $user;
@@ -133,7 +141,7 @@ class Spreadsheet extends Component
         $totals = [];
 
         foreach ($this->periodsLabel as $key => $period) {
-            foreach ($this->weeklyLabels[$key] as $label) {
+            foreach ($this->weeklyMonthLabels[$key] as $label) {
                 if ($this->users->isEmpty()) {
                     $totals[$label] = $this->getMappedDailyNumbers(collect(), $label);
 
