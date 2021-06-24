@@ -238,51 +238,6 @@ class StoreNumberTrackerTest extends TestCase
             ->assertSessionHasErrors(sprintf('numbers.%s.hours_worked', $mary->id));
     }
 
-    /** @test */
-    public function it_should_prevent_that_sets_quantity_be_greater_than_doors_quantity()
-    {
-        $mary = User::factory()->create(['role' => 'Setter']);
-
-        $data = [
-            'officeSelected' => 1,
-            'date'           => now(),
-            'numbers'        => [
-                $mary->id => $this->makeNumberTrackingArray([
-                    'doors' => 1,
-                    'sets'  => 2,
-                ]),
-            ],
-        ];
-
-        $this
-            ->actingAs($this->admin)
-            ->post(route('number-tracking.store'), $data)
-            ->assertSessionHasErrors(sprintf('numbers.%s.doors', $mary->id));
-    }
-
-    /** @test */
-    public function it_should_prevent_that_closes_quantity_be_greater_than_sets_quantity()
-    {
-        $mary = User::factory()->create(['role' => 'Setter']);
-
-        $data = [
-            'officeSelected' => 1,
-            'date'           => now(),
-            'numbers'        => [
-                $mary->id => $this->makeNumberTrackingArray([
-                    'doors'  => 1,
-                    'sets'   => 1,
-                    'closes' => 2,
-                ]),
-            ],
-        ];
-
-        $this
-            ->actingAs($this->admin)
-            ->post(route('number-tracking.store'), $data)
-            ->assertSessionHasErrors(sprintf('numbers.%s.sets', $mary->id));
-    }
-
     private function makeNumberTrackingArray(array $attributes = [])
     {
         return array_merge([
