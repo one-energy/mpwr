@@ -11,7 +11,7 @@ class FileController extends Controller
     public function uploadSectionFile(TrainingPageSection $section)
     {
         $request = request()->all();
-
+        
         return collect($request['files'])->map(function ($file) use ($section) {
             $path = $file->store("files/{$section->department_id}", 'local');
             $section->files()->create([
@@ -22,6 +22,7 @@ class FileController extends Controller
                 'path'          => $path,
                 'training_type' => request()->meta['training_type'],
             ]);
+            
 
             return $file->getClientOriginalName();
         });
