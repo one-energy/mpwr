@@ -81,7 +81,7 @@ class Scoreboard extends Component
             $satsSum = $dailyNumbers->sum('sats');
 
             $this->dpsRatio = $dailyNumbers->sum('doors') / $dailyNumbers->sum('sets');
-            $this->hpsRatio = $dailyNumbers->sum('hours_knocked') / $dailyNumbers->sum('sets');
+            $this->hpsRatio = (float)$dailyNumbers->sum('hours_knocked') / $dailyNumbers->sum('sets');
             $this->sitRatio = $satsSum > 0 ? ($dailyNumbers->sum('sets') / $satsSum) : 0;
         }
 
