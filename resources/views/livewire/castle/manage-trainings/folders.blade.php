@@ -7,14 +7,14 @@
             ])}}">
                 <div x-data="{editing: false}" wire:key="section-field-{{ $section->id }}" class="border-cool-gray-300 @if (!$section->department_folder) bg-gray-50 hover:bg-gray-100 @else hover:bg-gray-50 @endif  border-2 p-3 cursor-pointer flex items-center">
                         <div class="text-center flex flex-1 items-center space-x-3.5 text-base" x-on:cancel-edit-input.window="editing = false">
-                            @if ($showActions && $section->department_folder && user()->hasAnyRole(['Admin', 'Owner', 'Department Manager']))
+                            @if ($this->canSeeActions($section))
                                 <button class="hover:bg-red-200 focus:outline-none p-2 rounded-full" wire:click.prevent="onDestroy({{ $section->id }})">
                                     <x-svg.trash class="w-5 h-5  text-red-600 fill-current" />
                                 </button>
                                 <button class="hover:bg-gray-100 p-3 rounded-full focus:outline-none" wire:click.prevent="setEditingSection({{$section}})">
-                                        <x-svg.pencil class="w-4 h-4 fill-current text-gray-800" />
+                                    <x-svg.pencil class="w-4 h-4 fill-current text-gray-800" />
                                 </button>
-                            @endif                        
+                            @endif
                             @if ($editingSection == null || $editingSection?->id != $section->id)
                                 <p>{{ $section->title }}</p>
                             @endif
