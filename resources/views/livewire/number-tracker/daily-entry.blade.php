@@ -280,7 +280,7 @@
                                     <x-table wire:loading.remove>
                                         <x-slot name="header">
                                             <x-table.th-tr>
-                                                <x-table.th class="sticky top-0 bg-white whitespace-no-wrap z-20" by="region_member">
+                                                <x-table.th class="sticky top-0 left-0 bg-white whitespace-no-wrap z-20" by="region_member">
                                                     @lang('Member')
                                                 </x-table.th>
                                                 <x-table.th class="sticky top-0 bg-white whitespace-no-wrap z-10" by="hours_worked">
