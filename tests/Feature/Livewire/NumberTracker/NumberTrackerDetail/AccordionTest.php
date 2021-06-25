@@ -51,7 +51,7 @@ class AccordionTest extends TestCase
     }
 
     /** @test */
-    public function it_should_just_show_regions_managed_by_user()
+    public function it_should_just_show_all_regions_of_department()
     {
         $regionManaged = Region::factory()->create([
             'region_manager_id' => $this->regionManager,
@@ -60,13 +60,14 @@ class AccordionTest extends TestCase
 
         $regioneNotManaged = Region::factory()->create([
             'region_manager_id' => User::factory()->create(['role' => Role::REGION_MANAGER]),
+            'department_id'     => $this->department
         ]);
 
         $this->actingAs($this->regionManager);
 
         Livewire::test(NumberTrackerDetailAccordionTable::class, $this->buildProps())
             ->assertSee($regionManaged->name)
-            ->assertDontSee($regioneNotManaged->name);
+            ->assertSee($regioneNotManaged->name);
     }
 
     /** @test */
