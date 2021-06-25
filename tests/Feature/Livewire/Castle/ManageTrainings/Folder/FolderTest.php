@@ -18,9 +18,8 @@ class FolderTest extends TestCase
     /** @test */
     public function it_should_be_possible_see_the_name_of_the_provided_sections()
     {
-        $john             = User::factory()->create(['role' => Role::ADMIN]);
-        $rootSection      = TrainingPageSection::factory()->create();
-        $childrenSections = TrainingPageSection::factory()->times(2)->create(['parent_id' => $rootSection->id]);
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+        [$rootSection, $childrenSections] = $this->createRootAndChildrenSections();
 
         $this->actingAs($john);
 
@@ -55,9 +54,8 @@ class FolderTest extends TestCase
     /** @test */
     public function it_should_set_editing_section_variable_when_call_set_editing_section()
     {
-        $john             = User::factory()->create(['role' => Role::ADMIN]);
-        $rootSection      = TrainingPageSection::factory()->create();
-        $childrenSections = TrainingPageSection::factory()->times(2)->create(['parent_id' => $rootSection->id]);
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+        [$rootSection, $childrenSections] = $this->createRootAndChildrenSections();
 
         $this->actingAs($john);
 
@@ -74,9 +72,8 @@ class FolderTest extends TestCase
     /** @test */
     public function it_should_set_editing_section_variable_to_null_when_call_close_editing_section()
     {
-        $john             = User::factory()->create(['role' => Role::ADMIN]);
-        $rootSection      = TrainingPageSection::factory()->create();
-        $childrenSections = TrainingPageSection::factory()->times(2)->create(['parent_id' => $rootSection->id]);
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+        [$rootSection, $childrenSections] = $this->createRootAndChildrenSections();
 
         $this->actingAs($john);
 
@@ -93,9 +90,8 @@ class FolderTest extends TestCase
     /** @test */
     public function it_should_be_possible_edit_a_section_name()
     {
-        $john             = User::factory()->create(['role' => Role::ADMIN]);
-        $rootSection      = TrainingPageSection::factory()->create();
-        $childrenSections = TrainingPageSection::factory()->times(2)->create(['parent_id' => $rootSection->id]);
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+        [$rootSection, $childrenSections] = $this->createRootAndChildrenSections();
 
         $this->actingAs($john);
 
@@ -117,9 +113,8 @@ class FolderTest extends TestCase
     /** @test */
     public function it_should_abort_if_the_authenticated_user_did_not_have_permission_to_do_it()
     {
-        $john             = User::factory()->create(['role' => Role::REGION_MANAGER]);
-        $rootSection      = TrainingPageSection::factory()->create();
-        $childrenSections = TrainingPageSection::factory()->times(2)->create(['parent_id' => $rootSection->id]);
+        $john = User::factory()->create(['role' => Role::REGION_MANAGER]);
+        [$rootSection, $childrenSections] = $this->createRootAndChildrenSections();
 
         $this->actingAs($john);
 
@@ -134,9 +129,8 @@ class FolderTest extends TestCase
     /** @test */
     public function it_should_dispatch_an_event_browser_when_call_on_destroy_method()
     {
-        $john             = User::factory()->create(['role' => Role::ADMIN]);
-        $rootSection      = TrainingPageSection::factory()->create();
-        $childrenSections = TrainingPageSection::factory()->times(2)->create(['parent_id' => $rootSection->id]);
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+        [$rootSection, $childrenSections] = $this->createRootAndChildrenSections();
 
         $this->actingAs($john);
 
@@ -157,5 +151,13 @@ class FolderTest extends TestCase
     private function trashIcon()
     {
         return '<path d="M9 19c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm4 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm4 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5-17v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.315c0 .901.73 2 1.631 2h5.712zm-3 4v16h-14v-16h-2v18h18v-18h-2z" />';
+    }
+
+    private function createRootAndChildrenSections(): array
+    {
+        $rootSection      = TrainingPageSection::factory()->create();
+        $childrenSections = TrainingPageSection::factory()->times(2)->create(['parent_id' => $rootSection->id]);
+
+        return [$rootSection, $childrenSections];
     }
 }
