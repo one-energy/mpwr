@@ -38,7 +38,7 @@ class PhotoUploadTest extends TestCase
             ])
             ->assertSuccessful()
             ->assertOk()
-            ->assertJson(fn(AssertableJson $json) => $json->where('url', '/storage/profiles/avatar_1.png'));
+            ->assertJson(fn(AssertableJson $json) => $json->where('url', "/storage/profiles/avatar_{$john->id}.png"));
 
         Storage::disk('public')->assertExists("profiles/avatar_{$john->id}.png");
     }
