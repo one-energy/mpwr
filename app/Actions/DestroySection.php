@@ -16,8 +16,6 @@ class DestroySection
             $this->moveChildrenToParent($section);
 
             $section->delete();
-
-            $this->removeDirectory($section);
         });
     }
 
@@ -34,10 +32,5 @@ class DestroySection
         SectionFile::query()
             ->where('training_page_section_id', $section->id)
             ->update(['training_page_section_id' => $section->parent_id]);
-    }
-
-    private function removeDirectory(TrainingPageSection $section)
-    {
-        Storage::disk('local')->deleteDirectory(sprintf('files/%s', $section->id));
     }
 }
