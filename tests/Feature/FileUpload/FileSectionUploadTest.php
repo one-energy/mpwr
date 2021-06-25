@@ -8,12 +8,11 @@ use App\Models\TrainingPageSection;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Queue\Jobs\DatabaseJob;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
-class FileUploadTest extends TestCase
+class FileSectionUploadTest extends TestCase
 {
     use RefreshDatabase;
     
@@ -51,6 +50,9 @@ class FileUploadTest extends TestCase
 
         $this->post(route('uploadSectionFile', $this->section->id), [
             'files' => $this->files,
+            'meta'  => [
+                'training_type' => 'training'
+            ]
         ]);
 
         Storage::disk('local')->assertExists('files/' . $this->department->id . '/' . $this->files->first()->hashName());
