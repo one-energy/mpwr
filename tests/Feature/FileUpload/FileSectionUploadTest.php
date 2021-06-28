@@ -3,9 +3,11 @@
 namespace Tests\Feature\FileUpload;
 
 use App\Enum\Role;
+use App\Http\Livewire\Castle\ManageTrainings\Trainings;
 use App\Models\Department;
 use App\Models\TrainingPageSection;
 use App\Models\User;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
@@ -14,7 +16,7 @@ use Tests\TestCase;
 
 class FileSectionUploadTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
     
     public User $user;
 
@@ -43,7 +45,6 @@ class FileSectionUploadTest extends TestCase
     /** @test */
     public function it_should_save_file()
     {
-
         Storage::fake('local');
 
         $this->files->push(UploadedFile::fake()->create('avatar.pdf'));
@@ -61,7 +62,6 @@ class FileSectionUploadTest extends TestCase
      /** @test */
      public function it_should_save_multiple_files()
      {
-
         Storage::fake('local');
 
         $this->files->push(UploadedFile::fake()->create('first.pdf'));
@@ -81,7 +81,6 @@ class FileSectionUploadTest extends TestCase
     /** @test */
     public function it_should_save_file_on_section()
     {
-        $this->withoutExceptionHandling();
         Storage::fake('local');
 
         $this->files->push(UploadedFile::fake()->create('avatar.pdf'));
@@ -118,5 +117,28 @@ class FileSectionUploadTest extends TestCase
         ]);
 
         $response->assertSuccessful();
+    }
+
+
+    /** @test */
+    public function it_should_throw_error_when_not_send_files_tag()
+    {
+        $response = $this->post(route('uploadSectionFile', $this->section->id), [
+            'meta'  => [
+                'training_type' => 'training'
+            ]
+        ]);
+        $response->assertStatus(400);
+    }
+    
+    /** @test */
+    public function it_should_throw_error_when_not_send_training_type_tag()
+    {
+        $this->files->push(UploadedFile::fake()->create('avatar.pdf'));
+        
+        $response = $this->post(route('uploadSectionFile', $this->section->id), [
+            'files' => $this->files,
+        ]);
+        $response->assertStatus(400);
     }
 }
