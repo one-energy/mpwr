@@ -15,6 +15,22 @@ class GetUserTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
+    public function it_should_return_all_users()
+    {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+        $mary = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+        $ann  = User::factory()->create(['role' => Role::REGION_MANAGER]);
+
+        $response = $this->actingAs($john)
+            ->post(route('getUsers'))
+            ->decodeResponseJson();
+
+        $this->assertContains($john->full_name, $response->json()[0]);
+        $this->assertContains($mary->full_name, $response->json()[1]);
+        $this->assertContains($ann->full_name, $response->json()[2]);
+    }
+
+    /** @test */
     public function it_should_be_possible_see_users()
     {
         $john = User::factory()->create(['role' => Role::ADMIN]);
