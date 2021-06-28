@@ -1,6 +1,6 @@
 <div>
     <section class="md:flex md:flex-wrap">
-        <div class="sticky z-20 self-start left-0 top-0 w-72 md:w-96 sans-serif flex-none bg-white">
+        <div class="sticky z-30 self-start left-0 top-0 w-72 md:w-96 sans-serif flex-none bg-white">
             <ul class="flex mt-3 border-b">
                 <li class="mr-4 -mb-px">
                     <span class="
@@ -160,11 +160,11 @@
                                     <x-table>
                                         <x-slot name="header">
                                             <x-table.th-tr>
-                                                <x-table.th>
+                                                <x-table.th class="sticky left-0 z-20 bg-white">
                                                     @lang('Rank')
                                                 </x-table.th>
-                                                <x-table.th class="sticky left-0 z-10 bg-white">
-                                                    @lang('Representative')
+                                                <x-table.th class="sticky left-20 z-10 bg-white">
+                                                @lang('Representative')
                                                 </x-table.th>
                                                 <x-table.th>
                                                     @lang('Doors')
@@ -185,13 +185,13 @@
                                                     wire:click="setUser({{ $user->id }})"
                                                     class="cursor-pointer"
                                                 >
-                                                    <x-table.td>
+                                                    <x-table.td class="sticky left-0 bg-white">
                                                         <span
                                                             class="px-2 inline-flex rounded-full bg-green-base text-white">
                                                             {{ $loop->index + 1 }}
                                                         </span>
                                                     </x-table.td>
-                                                    <x-table.td class="sticky left-0 bg-white">
+                                                    <x-table.td class="sticky left-20 bg-white">
                                                         {{ $user->full_name }}
                                                     </x-table.td>
                                                     <x-table.td>{{ $user->doors_total }}</x-table.td>
@@ -225,10 +225,10 @@
                                     <x-table>
                                         <x-slot name="header">
                                             <x-table.th-tr>
-                                                <x-table.th>
+                                                <x-table.th class="sticky left-0 z-20 bg-white">
                                                     @lang('Rank')
                                                 </x-table.th>
-                                                <x-table.th class="sticky left-0 z-10 bg-white">
+                                                <x-table.th class="sticky left-20 z-10 bg-white">
                                                     @lang('Representative')
                                                 </x-table.th>
                                                 <x-table.th>
@@ -249,13 +249,13 @@
                                                     wire:click="setUser({{ $user->id }})"
                                                     class="cursor-pointer"
                                                 >
-                                                    <x-table.td>
+                                                    <x-table.td class="sticky left-0 bg-white">
                                                         <span
                                                             class="px-2 inline-flex rounded-full bg-green-base text-white">
                                                             {{ $loop->index + 1 }}
                                                         </span>
                                                     </x-table.td>
-                                                    <x-table.td class="sticky left-0 bg-white">
+                                                    <x-table.td class="sticky left-20 bg-white">
                                                         {{ $user->full_name }}
                                                     </x-table.td>
                                                     <x-table.td>
@@ -296,10 +296,11 @@
                                         <x-table>
                                             <x-slot name="header">
                                                 <x-table.th-tr>
-                                                    <x-table.th>
+                                                    <x-table.th class="sticky left-0 z-20 bg-white">
                                                         @lang('Rank')
                                                     </x-table.th>
-                                                    <x-table.th class="sticky left-0 z-10 bg-white">@lang('Representative')
+                                                    <x-table.th class="sticky left-20 z-10 bg-white">
+                                                        @lang('Representative')
                                                     </x-table.th>
                                                     <x-table.th>
                                                         @lang('Sets')
@@ -319,13 +320,13 @@
                                                         wire:click="setUser({{ $user->id }})"
                                                         class="cursor-pointer"
                                                     >
-                                                        <x-table.td>
+                                                        <x-table.td class="sticky left-0 bg-white">
                                                             <span
                                                                 class="px-2 inline-flex rounded-full bg-green-base text-white">
                                                                 {{ $loop->index + 1 }}
                                                             </span>
                                                         </x-table.td>
-                                                        <x-table.td class="sticky left-0 bg-white">
+                                                        <x-table.td class="sticky left-20 bg-white">
                                                             {{ $user->full_name }}
                                                         </x-table.td>
                                                         <x-table.td>
@@ -366,10 +367,11 @@
                                     <x-table>
                                         <x-slot name="header">
                                             <x-table.th-tr>
-                                                <x-table.th>
+                                                <x-table.th class="sticky left-0 z-20 bg-white">
                                                     @lang('Rank')
                                                 </x-table.th>
-                                                <x-table.th class="sticky left-0 z-10 bg-white">@lang('Representative')
+                                                <x-table.th class="sticky left-20 z-10 bg-white">
+                                                    @lang('Representative')
                                                 </x-table.th>
                                                 <x-table.th>
                                                     @lang('Set Closes')
@@ -390,13 +392,13 @@
                                                     wire:click="setUser({{ $user->id }})"
                                                     class="cursor-pointer"
                                                 >
-                                                    <x-table.td>
+                                                    <x-table.td class="sticky left-0 bg-white">
                                                         <span
                                                             class="px-2 inline-flex rounded-full bg-green-base text-white">
                                                             {{ $loop->index + 1 }}
                                                         </span>
                                                     </x-table.td>
-                                                    <x-table.td class="sticky left-0 bg-white">
+                                                    <x-table.td class="sticky left-20 bg-white">
                                                         {{ $user->full_name }}
                                                     </x-table.td>
                                                     <x-table.td>
@@ -436,10 +438,10 @@
                                     <x-table>
                                         <x-slot name="header">
                                             <x-table.th-tr>
-                                                <x-table.th>
+                                                <x-table.th class="sticky left-0 z-20 bg-white">
                                                     @lang('Rank')
                                                 </x-table.th>
-                                                <x-table.th class="sticky left-0 z-10 bg-white">
+                                                <x-table.th class="sticky left-20 z-10 bg-white">
                                                     @lang('Representative')
                                                 </x-table.th>
                                                 <x-table.th>
@@ -460,13 +462,13 @@
                                                     wire:click="setUser({{ $user->id }})"
                                                     class="cursor-pointer"
                                                 >
-                                                    <x-table.td>
+                                                    <x-table.td class="sticky left-0 bg-white">
                                                         <span
                                                             class="px-2 inline-flex rounded-full bg-green-base text-white">
                                                             {{ $loop->index + 1 }}
                                                         </span>
                                                     </x-table.td>
-                                                    <x-table.td class="sticky left-0 bg-white">
+                                                    <x-table.td class="sticky left-20 bg-white">
                                                         {{ $user->full_name }}
                                                     </x-table.td>
                                                     <x-table.td>
