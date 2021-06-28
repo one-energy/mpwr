@@ -10,7 +10,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             PhotosSeeder::class,
-            UsersTableSeeder::class,
+            UsersSeeder::class,
             FinancersSeeder::class,
             FinancingsSeeder::class,
             TermsSeeder::class,
@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             RegionsSeeder::class,
             OfficesSeeder::class,
             DailyNumbersSeeder::class,
+            CustomersSeeder::class,
             MultiplierOfYearSeeder::class,
             StockPointsCalculationBasesSeeder::class
         ]);
