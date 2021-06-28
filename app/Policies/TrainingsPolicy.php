@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enum\Role;
 use App\Models\TrainingPageSection;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -24,5 +25,13 @@ class TrainingsPolicy
         }
 
         return $user->department_id == $departmentId;
+    }
+
+    public function uploadSectionFile() {
+        if (user()->notHaveRoles([Role::ADMIN, Role::OWNER, Role::DEPARTMENT_MANAGER])) {
+            return false;
+        }
+
+        return true;
     }
 }

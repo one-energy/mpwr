@@ -12,6 +12,8 @@ class FileController extends Controller
 {
     public function uploadSectionFile(TrainingPageSection $section)
     {
+        $this->authorize('uploadSectionFile', TrainingPageSection::class);
+        
         $request = request()->all();
 
         try {

@@ -141,4 +141,16 @@ class FileSectionUploadTest extends TestCase
         ]);
         $response->assertStatus(400);
     }
+
+    /** @test */
+    public function it_should_throw_unauthorized_if_not_logged()
+    {
+        $this->actingAs(User::factory()->create(['role' => Role::SETTER]));
+
+        $response = $this->post(route('uploadSectionFile', $this->section->id), [
+            'files' => $this->files,
+        ]);
+
+        $response->assertForbidden();
+    }
 }
