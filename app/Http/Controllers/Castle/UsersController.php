@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Castle;
 
+use App\Enum\Role;
 use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\Invitation;
@@ -13,7 +14,6 @@ use App\Rules\Castle\MasterEmailUnique;
 use App\Rules\Castle\MasterEmailYourSelf;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use Ramsey\Uuid\Uuid;
 
 class UsersController extends Controller
 {
@@ -40,35 +40,40 @@ class UsersController extends Controller
         $data = request()->validate([
             'first_name'    => ['required', 'string', 'max:255'],
             'last_name'     => ['required', 'string', 'max:255'],
-            'role'          => ['nullable', 'string', 'max:255'],
+            'role'          => ['nullable', 'string', 'max:255', 'in:' . implode(',', User::TOPLEVEL_ROLES)],
             'office_id'     => ['nullable'],
             'pay'           => ['nullable'],
             'department_id' => ['nullable'],
-            'email'         => ['required', 'email', 'unique:invitations', new MasterEmailUnique, new MasterEmailYourSelf, 'unique:users,email'],
+            'email'         => [
+                'required',
+                'email',
+                'unique:invitations',
+                new MasterEmailUnique,
+                new MasterEmailYourSelf,
+                'unique:users,email'
+            ],
         ], [
             'email.unique' => __('There is a pending invitation for this email.'),
         ]);
 
         $user = User::query()->where('email', '=', $data['email'])->first();
 
-        $invitation        = new Invitation();
-        $invitation->email = $data['email'];
-        $invitation->token = Uuid::uuid4();
+        $invitation = new Invitation([
+            'email'   => $data['email'],
+            'token'   => (string)Str::uuid(),
+            'master'  => false,
+            'user_id' => optional($user)->id
+        ]);
 
-        if ($data['office_id'] == 'None') {
-            $data['office_id'] = null;
-        }
-        if ($data['department_id'] == 'None') {
-            $data['department_id'] = null;
-        }
-        if ($data['role'] == 'Admin' || $data['role'] == 'Owner') {
+        $data['office_id']     = $data['office_id'] === 'None' ? null : $data['office_id'];
+        $data['department_id'] = $data['department_id'] === 'None' ? null : $data['department_id'];
+
+
+        if (in_array($data['role'], [Role::ADMIN, Role::OWNER], true)) {
             $invitation->master    = true;
             $data['department_id'] = null;
-        } else {
-            $invitation->master = false;
         }
 
-        $invitation->user_id = optional($user)->id;
         $invitation->save();
 
         $this->createUser($data, $invitation);
@@ -152,21 +157,10 @@ class UsersController extends Controller
 
     private function createUser(array $data, Invitation $invitation): User
     {
-        $user                    = new User();
-        $user->first_name        = $data['first_name'];
-        $user->last_name         = $data['last_name'];
-        $user->email             = $data['email'];
-        $user->password          = bcrypt(Str::random(8));
-        $user->email_verified_at = null;
-        $user->master            = $invitation->master;
-        $user->role              = $data['role'];
-        $user->office_id         = $data['office_id'];
-        $user->department_id     = $data['department_id'];
-        $user->pay               = $data['pay'];
-        $user->photo_url         = asset('storage/profiles/profile.png');
-        $user->save();
-
-        return $user;
+        return User::create(array_merge($data, [
+            'master'    => $invitation->master,
+            'photo_url' => asset('storage/profiles/profile.png')
+        ]));
     }
 
     public function requestResetPassword(User $user)
