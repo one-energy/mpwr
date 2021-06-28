@@ -42,12 +42,12 @@ class OfficesSeeder extends Seeder
 
     private function createUsers(Office $office, Region $region)
     {
-        User::factory()->times(2)->create([
+        User::factory()->times(8)->create([
             'role'          => Role::SETTER,
             'office_id'     => $office->id,
             'department_id' => $region->department_id
         ]);
-        User::factory()->times(2)->create([
+        User::factory()->times(8)->create([
             'role'          => Role::SALES_REP,
             'office_id'     => $office->id,
             'department_id' => $region->department_id
