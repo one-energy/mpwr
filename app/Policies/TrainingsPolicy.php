@@ -13,11 +13,11 @@ class TrainingsPolicy
 
     public function viewList(User $user, ?int $departmentId, TrainingPageSection $section = null)
     {
-        if ($user->hasAnyRole(['Admin', 'Owner'])) {
+        if ($user->hasAnyRole([Role::ADMIN, Role::OWNER])) {
             return true;
         }
 
-        if ($user->hasRole('Region Manager') && $section !== null) {
+        if ($section !== null && $user->hasRole(Role::REGION_MANAGER)) {
             return TrainingPageSection::query()
                 ->sectionsUserManaged($user)
                 ->where('id', $section->id)
@@ -33,5 +33,29 @@ class TrainingsPolicy
         }
 
         return true;
+    }
+  
+    public function delete(User $user, TrainingPageSection $section)
+    {
+        if ($section->parent_id === null) {
+            return false;
+        }
+
+        if ($user->hasRole(Role::ADMIN)) {
+            return true;
+        }
+
+        if ($section !== null && $user->hasRole(Role::REGION_MANAGER)) {
+            if ($section->isDepartmentSection()) {
+                return false;
+            }
+
+            return TrainingPageSection::query()
+                ->sectionsUserManaged($user)
+                ->where('id', $section->id)
+                ->exists();
+        }
+
+        return $section->department_id === $user->department_id;
     }
 }

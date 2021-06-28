@@ -2,7 +2,9 @@
 
 namespace App\Http\Livewire\Castle\ManageTrainings;
 
+use App\Enum\Role;
 use App\Models\TrainingPageSection;
+use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
@@ -28,8 +30,17 @@ class Folders extends Component
         return view('livewire.castle.manage-trainings.folders');
     }
 
+    public function canSeeActions(TrainingPageSection $section)
+    {
+        return $this->showActions &&
+            $section->isDepartmentSection() &&
+            user()->hasAnyRole([Role::ADMIN, Role::OWNER, Role::DEPARTMENT_MANAGER]);
+    }
+
     public function onDestroy(TrainingPageSection $section)
     {
+        abort_if(!$this->canSeeActions($section), Response::HTTP_FORBIDDEN);
+
         $this->sectionDestroyRoute = route('castle.manage-trainings.deleteSection', $section->id);
         $this->dispatchBrowserEvent('on-destroy-section', ['section' => $section]);
     }
