@@ -7,7 +7,6 @@ use App\Models\Department;
 use App\Models\Region;
 use App\Models\TrainingPageSection;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
@@ -16,7 +15,7 @@ use Tests\TestCase;
 
 class FileSectionUploadTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
     
     public User $user;
 
