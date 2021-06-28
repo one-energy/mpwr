@@ -128,8 +128,14 @@
 
                 <x-number-tracker.leaderboard-card
                     :trackers="$topTenTrackers"
-                    :pills="$this->pills"
+                    :pills="$this->leaderboardPills"
                 />
+
+                <x-number-tracker.team-leaderboard-card
+                    :teams="$topTenTeams"
+                    :pills="$this->teamLeaderboardPills"
+                />
+
                 <div class="mt-6">
                     <x-button :href="route('number-tracking.create')" color="green" class="inline-flex w-full">
                         Update Numbers
@@ -139,7 +145,7 @@
 
             <div class="px-4 py-5 sm:p-6 md:w-2/3 xl:w-3/4">
                 <div class="justify-center w-full">
-                    <livewire:components.number-tracker-detail-accordion-table :period="$period" :selectedDate="$dateSelected" wire:key="now()"/>
+                    <livewire:number-tracker.number-tracker-detail-accordion-table :period="$period" :selectedDate="$dateSelected" wire:key="now()"/>
                 </div>
             </div>
         </div>

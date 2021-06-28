@@ -28,16 +28,18 @@ class ManageOffice extends Component
 
     public function render()
     {
-        $this->offices = Office::query()
-            ->with('region')
-            ->when(user()->notHaveRoles(['Admin', 'Owner']), function($query) {
-                $query->where('regions.department_id', '=', user()->department_id);
+        $offices = Office::query()
+            ->when(user()->notHaveRoles(['Admin', 'Owner']), function ($query) {
+                $query->whereHas('region', fn ($query) => $query->where('department_id', user()->department_id));
             })
-            ->search($this->search)                
+            ->with('region')
+            ->search($this->search)
             ->orderBy('offices.name')
             ->get();
 
-        return view('livewire.castle.manage-office');
+        return view('livewire.castle.manage-office', [
+            'offices' => $offices
+        ]);
     }
 
     public function addOfficeToRegion($office)

@@ -42,6 +42,7 @@ class UpdateOrCreateNumberTracking
             if ($dailyNumber !== null) {
                 $dailyNumber->delete();
             }
+
         });
     }
 

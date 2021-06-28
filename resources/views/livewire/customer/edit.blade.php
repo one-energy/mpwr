@@ -23,22 +23,22 @@
                     @endif
 
                     <div class="col-span-2 md:col-span-3">
-                        <x-input wire label="Customer First Name"
+                        <x-input wire label="Customer First Name" :disabled="$this->isSetterOfCustomer()"
                                  name="customer.first_name"/>
                     </div>
 
                     <div class="col-span-2 md:col-span-3">
-                        <x-input wire label="Customer Last Name" name="customer.last_name"/>
+                        <x-input wire label="Customer Last Name" name="customer.last_name" :disabled="$this->isSetterOfCustomer()"/>
                     </div>
 
                     <div class="col-span-2 md:col-span-3">
-                        <x-input-calendar wire label="Date of Sale"
-                                          name="customer.date_of_sale" :value="$customer->date_of_sale"/>
+                        <x-input-calendar wire label="Date of Sale" name="customer.date_of_sale"
+                                        :disabled="$this->isSetterOfCustomer()"/>
                     </div>
 
                     <div class="col-span-1 @if($customer->setter_id == user()->id) md:col-span-3 @else md:col-span-2 @endif">
                         <x-input-add-on wire:model="customer.system_size" label="System Size" name="system_size"
-                                        addOn="kW" name="customer.system_size"/>
+                                        addOn="kW" name="customer.system_size" :disabled="$this->isSetterOfCustomer()"/>
                     </div>
 
                     <div class="col-span-1 @if($customer->setter_id == user()->id) hidden @endif" wire:key="bill">
@@ -99,8 +99,14 @@
 
                     <div class="col-span-2 md:col-span-3 @if($customer->setter_id == user()->id) hidden @endif" wire:key="soldPrice">
                         <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc"
-                                          observation="Sold Price"/>
+                                          observation="Sold Price" atEnd="kW"/>
                     </div>
+
+                    @if(!user()->hasRole("Setter"))
+                        <div class="col-span-2 md:col-span-3" wire:ke>
+                            <x-input-currency label="Total Cost" name="total_cost" maxSize="100000" value="{{$customer->totalSoldPrice}}" readonly/>
+                        </div>
+                    @endif
 
                     <div class="col-span-2 md:col-span-3">
                         <x-input-currency label="Total Cost" name="total_cost" maxSize="100000" value="{{$customer->totalSoldPrice}}" readonly/>
@@ -114,13 +120,15 @@
                             options="setters"
                             name="customer.setter_id"
                             label="Setter"
-                            noneOption
+                            :showAlert="$setter->deleted_at != null"
+                            noneOption 
+                            :disabled="$this->isSetterOfCustomer()"
                             placeholder="{{$customer->setter_id ? $setter->first_name . ' ' . $setter->last_name  : 'Self Gen'}}"/>
                     </div>
 
                     <div class="col-span-2 md:col-span-3">
-                        <x-input-currency wire:model="customer.setter_fee" label="Setter Comission Rate"
-                                          name="customer.setter_fee" disabled="{{$isSelfGen}}"/>
+                        <x-input-currency wire:model="customer.setter_fee" label="Setter Comission Rate" atEnd="kW"
+                                          name="customer.setter_fee" :disabled="$this->isSetterOfCustomer() || $isSelfGen"/>
                     </div>
 
                     <div class="col-span-2 md:col-span-3">
@@ -131,12 +139,13 @@
                             options="salesReps"
                             name="customer.sales_rep_id"
                             label="Sales Rep"
-                            placeholder="{{$customer->userSalesRep->first_name}} {{$customer->userSalesRep->last_name}}" />
+                            :disabled="$this->isSetterOfCustomer()"
+                            placeholder="{{$customer->userSalesRep->first_name}} {{$customer->userSalesRep->last_name}}"/>
                     </div>
 
                     <div class="col-span-2 md:col-span-3 @if($customer->setter_id == user()->id) hidden @endif" wire:key="salesRepFee">
-                        <x-input-currency wire:model="customer.sales_rep_fee" label="Sales Rep Pay Rate"
-                                          name="customer.sales_rep_fee" readonly/>
+                        <x-input-currency wire:model="customer.sales_rep_fee" label="Sales Rep Pay Rate" atEnd="kW"
+                                          name="customer.sales_rep_fee" :disabled="user()->notHaveRoles(['Region Manager'])"/>
                     </div>
 
                     <div class="col-span-2 md:col-span-1 @if($customer->setter_id == user()->id) hidden @endif"wire:key="margin">

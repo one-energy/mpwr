@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enum\Role;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
@@ -11,29 +12,45 @@ class OfficesSeeder extends Seeder
 {
     public function run()
     {
-        User::query()
-            ->where('role', 'Office Manager')
-            ->each(function (User $user) {
-                /** @var Region $region */
-                $region = Region::whereHas('regionManager', function ($query) {
-                    $query->whereNull('office_id');
-                })->first();
+        Region::all()->each(fn(Region $region) => $this->createOfficeManagers($region));
+    }
 
-                /** @var Office $office */
-                $office = Office::factory()->create([
-                    'office_manager_id' => $user->id,
-                    'region_id'         => $region->id
-                ]);
+    private function createOfficeManagers(Region $region)
+    {
+        User::factory()
+            ->times(3)
+            ->create([
+                'role'          => Role::OFFICE_MANAGER,
+                'department_id' => $region->department_id
+            ])
+            ->each(fn(User $user) => $this->createOffice($region, $user));
+    }
 
-                User::query()
-                    ->whereIn('id', [$region->regionManager->id, $user->id])
-                    ->update(['office_id' => $office->id]);
+    private function createOffice(Region $region, User $user)
+    {
+        /** @var Office $office */
+        $office = Office::factory()->create([
+            'office_manager_id' => $user->id,
+            'region_id'         => $region->id
+        ]);
 
-                User::query()
-                    ->whereIn('role', ['Setter', 'Sales Rep'])
-                    ->whereNull('office_id')
-                    ->limit(20)
-                    ->update(['office_id' => $office->id]);
-            });
+        $region->regionManager()->update(['office_id' => $office->id]);
+        $user->update(['office_id' => $office->id]);
+
+        $this->createUsers($office, $region);
+    }
+
+    private function createUsers(Office $office, Region $region)
+    {
+        User::factory()->times(2)->create([
+            'role'          => Role::SETTER,
+            'office_id'     => $office->id,
+            'department_id' => $region->department_id
+        ]);
+        User::factory()->times(2)->create([
+            'role'          => Role::SALES_REP,
+            'office_id'     => $office->id,
+            'department_id' => $region->department_id
+        ]);
     }
 }

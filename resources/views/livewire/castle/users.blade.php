@@ -44,7 +44,7 @@
                                 <x-slot name="body">
                                     @foreach($users as $user)
                                         @if($this->canEditUser($user))
-                                        <x-table.tr :loop="$loop" wire:click="userInfo({{ $user->id }})" class="cursor-pointer">
+                                        <x-table.tr wire:key="user-{{ $user->id }}" :loop="$loop" wire:click="userInfo({{ $user->id }})" class="cursor-pointer">
                                             @if(user()->hasRole('Admin'))
                                                     <x-table.td>{{ $user->department->name ?? 'Without Department' }}</x-table.td>
                                                 @endif
@@ -99,7 +99,7 @@
                                                 <x-table.td>{{ $user->pay }}</x-table.td>
                                             </x-table.tr>
                                         @else
-                                            <x-table.tr :loop="$loop" class="cursor-pointer">
+                                            <x-table.tr wire:key="user-{{ $user->id }}" :loop="$loop" class="cursor-pointer">
                                                 @if(user()->hasRole('Admin'))
                                                     <x-table.td>{{ $user->department->name ?? 'Without Department' }}</x-table.td>
                                                 @endif

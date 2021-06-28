@@ -88,7 +88,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
-                    <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc" observation="Sold Price" maxSize="100000" atEnd="Per Watts"/>
+                    <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc" observation="Sold Price" maxSize="100000" atEnd="kW"/>
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
@@ -110,7 +110,7 @@
 
 
                 <div class="col-span-2 md:col-span-3">
-                    <x-input-currency wire:model="customer.setter_fee" label="Setter Comission Rate" name="customer.setter_fee" disabled="{{!$customer->setter_id}}"/>
+                    <x-input-currency wire:model="customer.setter_fee" label="Setter Comission Rate" name="customer.setter_fee" disabled="{{!$customer->setter_id}}" atEnd="kW"/>
                 </div>
 
                 <div class="col-span-2 md:col-span-3" wire:ignore>
@@ -126,7 +126,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
-                    <x-input-currency wire:model="customer.sales_rep_fee" label="Sales Rep Pay Rate" name="customer.sales_rep_fee" readonly/>
+                    <x-input-currency wire:model="customer.sales_rep_fee" label="Sales Rep Pay Rate" name="customer.sales_rep_fee"  atEnd="kW" :disabled="user()->notHaveRoles(['Region Manager'])"/>
                 </div>
 
                 <div class="col-span-2 md:col-span-1">

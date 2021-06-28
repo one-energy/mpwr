@@ -1,6 +1,6 @@
 @props(['trackers','pills'])
 
-<section class="p-4 border-2 border-gray-200 rounded-md">
+<section class="p-4 border-2 border-gray-200 rounded-md mb-5">
     <div class="flex text-center mb-5">
         <h3 class="text-lg text-gray-900 font-medium mr-3">Leaderboard</h3>
         <x-svg.spinner wire:loading
@@ -12,7 +12,7 @@
     <section
         x-data="{
             pills: {{ json_encode($pills) }},
-            selectedPill: @entangle('selectedPill'),
+            selectedPill: @entangle('selectedLeaderboardPill'),
             isTheSelectedPill(pill) {
                 return this.selectedPill === pill;
             },
@@ -28,7 +28,7 @@
             }
         }"
         id="items"
-        class="flex flex-no-wrap items-center space-x-2 overflow-x-hidden overflow-y-hidden whitespace-no-wrap mb-7"
+        class="flex flex-no-wrap items-center space-x-2 overflow-x-auto pb-2 whitespace-no-wrap mb-7"
     >
         <template x-for="pill in pills" :key="pill">
             <div
@@ -60,57 +60,3 @@
         @endforelse
     </section>
 </section>
-
-@push('scripts')
-    <script>
-        // https://codepen.io/thenutz/pen/VwYeYEE
-
-        const slider = document.querySelector('#items');
-        let startX;
-        let scrollLeft;
-        let isDown = false;
-
-        slider.addEventListener('mouseleave', () => isDown = false);
-        slider.addEventListener('mouseup', () => isDown = false);
-        slider.addEventListener('touchend', () => isDown = false);
-        slider.addEventListener('touchcancel', () => isDown = false);
-
-        slider.addEventListener('mousedown', (event) => {
-            startX = event.pageX - slider.offsetLeft;
-            scrollLeft = slider.scrollLeft;
-            isDown = true;
-        });
-
-        slider.addEventListener('touchstart', (event) => {
-            startX = event.touches[0].pageX - slider.offsetLeft;
-            scrollLeft = slider.scrollLeft;
-            isDown = true;
-        });
-
-        slider.addEventListener('mousemove', (event) => {
-            if (!isDown) return;
-
-            event.preventDefault();
-
-            const position = walk(event.pageX, slider.offsetLeft);
-
-            slider.scrollLeft = scrollLeft - position;
-        });
-
-        slider.addEventListener('touchmove', (event) => {
-            if (!isDown) return;
-
-            event.preventDefault();
-
-            const position = walk(event.touches[0].pageX, slider.offsetLeft);
-
-            slider.scrollLeft = scrollLeft - position;
-        });
-
-        function walk(pageX, sliderOffset) {
-            const x = pageX - sliderOffset;
-
-            return (x - startX) * 2;
-        }
-    </script>
-@endpush

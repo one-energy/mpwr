@@ -6,13 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property string|null training_type
+ * @property string|null $training_type
+ * @property \App\Models\TrainingPageSection|null $training_page_section_id
  */
 class SectionFile extends Model
 {
-    const G_SIZE = 1000000000;
-    const M_SIZE = 1000000;
-    const K_SIZE = 1000;
+    public const G_SIZE = 1000000000;
+    public const M_SIZE = 1000000;
+    public const K_SIZE = 1000;
 
     use HasFactory;
 
@@ -23,6 +24,7 @@ class SectionFile extends Model
         'size',
         'path',
         'training_type',
+        'training_page_section_id'
     ];
 
     protected $casts = [

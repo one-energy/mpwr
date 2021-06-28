@@ -56,6 +56,11 @@ class NumberTrackerDetailAccordionTable extends Component
         return view('livewire.components.number-tracker-detail-accordion-table');
     }
 
+    public function updatedDeleteds()
+    {
+        $this->emitUp('toggleDelete', $this->deleteds);
+    }
+
     public function updatedSelectedDepartment()
     {
         $this->initRegionsData();

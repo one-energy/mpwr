@@ -4,6 +4,7 @@ namespace Tests\Feature\Livewire\Castle;
 
 use App\Http\Livewire\Castle\Users;
 use App\Models\Office;
+use App\Models\Region;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -18,19 +19,27 @@ class UsersTest extends TestCase
     public function it_should_list_only_office_managers_if_the_authenticated_user_has_office_manager_role()
     {
         $john = User::factory()->create(['role' => 'Office Manager']);
+        $ann  = User::factory()->create(['role' => 'Region Manager']);
 
-        Office::factory()->create(['office_manager_id' => $john->id]);
+        $region = Region::factory()->create([
+            'region_manager_id' => $ann->id
+        ]);
+
+        $office = Office::factory()->create([
+            'region_id'         => $region->id,
+            'office_manager_id' => $john->id
+        ]);
 
         $mary = User::factory()->create([
             'first_name' => 'Mary',
             'role'       => 'Office Manager',
-            'office_id'  => $john->id,
+            'office_id'  => $office->id,
         ]);
 
         $zack = User::factory()->create([
             'first_name' => 'Zack',
             'role'       => 'Office Manager',
-            'office_id'  => $john->id,
+            'office_id'  => $office->id,
         ]);
 
         $this->actingAs($john);
@@ -45,12 +54,20 @@ class UsersTest extends TestCase
     public function it_should_show_office_name_if_the_user_belongs_to_an_office()
     {
         $john = User::factory()->create(['role' => 'Office Manager']);
+        $ann  = User::factory()->create(['role' => 'Region Manager']);
 
-        $office = Office::factory()->create(['office_manager_id' => $john->id]);
+        $region = Region::factory()->create([
+            'region_manager_id' => $ann->id
+        ]);
+
+        $office = Office::factory()->create([
+            'region_id'         => $region->id,
+            'office_manager_id' => $john->id
+        ]);
 
         $mary = User::factory()->create([
             'role'      => 'Office Manager',
-            'office_id' => $john->id,
+            'office_id' => $office->id,
         ]);
 
         $this->actingAs($john);
@@ -81,8 +98,16 @@ class UsersTest extends TestCase
         $mary = User::factory()->create(['role' => 'Admin']);
         $john = User::factory()->create(['role' => 'Office Manager']);
         $zack = User::factory()->create(['role' => 'Setter']);
+        $ann  = User::factory()->create(['role' => 'Region Manager']);
 
-        Office::factory()->create(['office_manager_id' => $john->id]);
+        $region = Region::factory()->create([
+            'region_manager_id' => $ann->id
+        ]);
+
+        Office::factory()->create([
+            'region_id'         => $region->id,
+            'office_manager_id' => $john->id
+        ]);
 
         $this->actingAs($mary);
 

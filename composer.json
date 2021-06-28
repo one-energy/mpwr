@@ -83,6 +83,17 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
+        ],
+        "test": [
+            "vendor/bin/phpunit -d memory_limit=-1"
+        ],
+        "test:coverage": [
+            "@putenv XDEBUG_MODE=coverage",
+            "vendor/bin/phpunit -d memory_limit=-1 --coverage-clover=\"output/code-coverage/clover.xml\""
+        ],
+        "test:coverage-html": [
+            "@putenv XDEBUG_MODE=coverage",
+            "vendor/bin/phpunit -d memory_limit=-1 --coverage-html=\"output/code-coverage\""
         ]
     }
 }

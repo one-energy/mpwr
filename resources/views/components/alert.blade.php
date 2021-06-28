@@ -30,9 +30,7 @@
                     </div>
                     <div class="ml-3 w-0 flex-1 pt-0.5">
                         <p class="text-sm font-medium leading-5 text-gray-900" x-text="title"/>
-                        <template x-if="description">
-                            <p class="mt-1 text-sm leading-5 text-gray-500" x-text="description"/>
-                        </template>
+                        <p x-show="description" class="mt-1 text-sm leading-5 text-gray-500" x-text="description"/>
                     </div>
                     <div class="flex flex-shrink-0 ml-4">
                         <button
@@ -51,7 +49,7 @@
             return {
                 open: false,
                 title: '{{ $title }}',
-                description: '{{ $description ?? '' }}',
+                description: '{{ $description ?? null }}',
                 color: '{{ $color }}',
                 shouldInit: '{{ $title ? true : false}}',
                 show() {
@@ -63,6 +61,7 @@
                     }, 300);
                 },
                 showEvent(detail) {
+                    console.log(detail);
                     this.title = detail.title;
                     this.description = detail.description;
                     this.color = detail.color;

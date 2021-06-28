@@ -72,20 +72,21 @@ class Scoreboard extends Component
             'office_name' => $this->user->office->name,
         ];
 
+        $this->dpsRatio   = 0;
+        $this->hpsRatio   = 0;
+        $this->sitRatio   = 0;
+        $this->closeRatio = 0;
+
         if ($dailyNumbers->sum('sets') > 0) {
-            $this->dpsRatio = ($dailyNumbers->sum('doors') / $dailyNumbers->sum('sets'));
-            $this->hpsRatio = ($dailyNumbers->sum('hours') / $dailyNumbers->sum('sets'));
-            $this->sitRatio = ($dailyNumbers->sum('sits') / $dailyNumbers->sum('sets'));
-        } else {
-            $this->dpsRatio = 0;
-            $this->hpsRatio = 0;
-            $this->sitRatio = 0;
+            $satsSum = $dailyNumbers->sum('sats');
+
+            $this->dpsRatio = $dailyNumbers->sum('doors') / $dailyNumbers->sum('sets');
+            $this->hpsRatio = (float)$dailyNumbers->sum('hours_knocked') / $dailyNumbers->sum('sets');
+            $this->sitRatio = $satsSum > 0 ? ($dailyNumbers->sum('sets') / $satsSum) : 0;
         }
 
-        if ($dailyNumbers->sum('sits') > 0) {
-            $this->closeRatio = ($dailyNumbers->sum('set_closes') / $dailyNumbers->sum('sits'));
-        } else {
-            $this->closeRatio = 0;
+        if ($dailyNumbers->sum('close') > 0) {
+            $this->closeRatio = $dailyNumbers->sum('closer_sits') / $dailyNumbers->sum('close');
         }
 
         $this->dispatchBrowserEvent('setUserNumbers', [
@@ -125,7 +126,7 @@ class Scoreboard extends Component
     public function getTopTenUsersBy(string $field): Collection
     {
         return User::query()
-            ->with('office')
+            ->with('office.region')
             ->select('id', 'first_name', 'last_name', 'department_id', 'office_id')
             ->withCount([
                 "dailyNumbers as {$field}_total" => function ($query) use ($field) {

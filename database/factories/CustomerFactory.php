@@ -28,7 +28,8 @@ class CustomerFactory extends Factory
             'pay'           => $pay,
             'financing'     => $this->faker->word,
             'date_of_sale'  => Carbon::now(),
-            'financing_id'  => Financing::factory()->create()->id,
+            'financing_id'  => Financing::factory(),
+            'paid_date'     => Carbon::now(),
             'adders'        => $adders,
             'epc'           => $epc + 100,
             'margin'        => $epc - $setterFee,
@@ -37,9 +38,9 @@ class CustomerFactory extends Factory
             'sales_rep_fee' => 0,
             'panel_sold'    => $this->faker->boolean(),
             'is_active'     => $this->faker->boolean(),
-            'setter_id'     => User::factory()->create()->id,
-            'sales_rep_id'  => User::factory()->create()->id,
-            'opened_by_id'  => User::factory()->create()->id,
+            'setter_id'     => User::factory(),
+            'sales_rep_id'  => User::factory(),
+            'opened_by_id'  => User::factory(),
             'enium_points'  => 0,
         ];
     }

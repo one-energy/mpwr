@@ -3,10 +3,11 @@
 namespace App\Facades\Actions;
 
 use App\Actions\DestroySection as Action;
+use App\Models\TrainingPageSection;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static void execute(App\Models\TrainingPageSection $section)
+ * @method static void execute(TrainingPageSection $section)
  */
 class DestroySection extends Facade
 {
