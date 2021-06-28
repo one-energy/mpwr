@@ -24,7 +24,9 @@ class UsersController extends Controller
 
     public function show(User $user)
     {
-        return view('castle.users.show', compact('user'));
+        return view('castle.users.show', [
+            'user' => $user,
+        ]);
     }
 
     public function create()
@@ -50,7 +52,7 @@ class UsersController extends Controller
                 'unique:invitations',
                 new MasterEmailUnique,
                 new MasterEmailYourSelf,
-                'unique:users,email'
+                'unique:users,email',
             ],
         ], [
             'email.unique' => __('There is a pending invitation for this email.'),
@@ -62,12 +64,11 @@ class UsersController extends Controller
             'email'   => $data['email'],
             'token'   => (string)Str::uuid(),
             'master'  => false,
-            'user_id' => optional($user)->id
+            'user_id' => optional($user)->id,
         ]);
 
         $data['office_id']     = $data['office_id'] === 'None' ? null : $data['office_id'];
         $data['department_id'] = $data['department_id'] === 'None' ? null : $data['department_id'];
-
 
         if (in_array($data['role'], [Role::ADMIN, Role::OWNER], true)) {
             $invitation->master    = true;
@@ -161,13 +162,15 @@ class UsersController extends Controller
     {
         return User::create(array_merge($data, [
             'master'    => $invitation->master,
-            'photo_url' => asset('storage/profiles/profile.png')
+            'photo_url' => asset('storage/profiles/profile.png'),
         ]));
     }
 
     public function requestResetPassword(User $user)
     {
-        return view('castle.users.reset-password', compact('user'));
+        return view('castle.users.reset-password', [
+            'user' => $user,
+        ]);
     }
 
     public function resetPassword($id)
@@ -218,8 +221,9 @@ class UsersController extends Controller
 
     public function getRegionsManager($departmentId)
     {
-        return User::whereDepartmentId($departmentId)
-            ->whereRole('Region Manager')
+        return User::query()
+            ->where('department_id', $departmentId)
+            ->where('role', Role::REGION_MANAGER)
             ->orderBy('first_name', 'ASC')
             ->orderBy('last_name', 'ASC')
             ->get();
