@@ -12,7 +12,7 @@ class FileController extends Controller
 {
     public function uploadSectionFile(TrainingPageSection $section)
     {
-        $this->authorize('uploadSectionFile', TrainingPageSection::class);
+        $this->authorize('uploadSectionFile', [TrainingPageSection::class, $section]);
         
         $request = request()->all();
 

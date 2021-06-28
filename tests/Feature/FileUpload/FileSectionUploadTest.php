@@ -4,8 +4,10 @@ namespace Tests\Feature\FileUpload;
 
 use App\Enum\Role;
 use App\Models\Department;
+use App\Models\Region;
 use App\Models\TrainingPageSection;
 use App\Models\User;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
@@ -14,7 +16,7 @@ use Tests\TestCase;
 
 class FileSectionUploadTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
     
     public User $user;
 
@@ -147,6 +149,9 @@ class FileSectionUploadTest extends TestCase
 
         $response = $this->post(route('uploadSectionFile', $this->section->id), [
             'files' => $this->files,
+            'meta'  => [
+                'training_type' => 'training'
+            ]
         ]);
 
         $response->assertForbidden();
@@ -159,6 +164,9 @@ class FileSectionUploadTest extends TestCase
 
         $response = $this->post(route('uploadSectionFile', $this->section->id), [
             'files' => $this->files,
+            'meta'  => [
+                'training_type' => 'training'
+            ]
         ]);
 
         $response->assertForbidden();
@@ -171,6 +179,70 @@ class FileSectionUploadTest extends TestCase
 
         $response = $this->post(route('uploadSectionFile', $this->section->id), [
             'files' => $this->files,
+            'meta'  => [
+                'training_type' => 'training'
+            ]
+        ]);
+
+        $response->assertForbidden();
+    }
+
+    /** @test */
+    public function it_should_permit_region_manager_upload_a_file_on_self_region()
+    {
+        $regionManager = User::factory()->create(['role' => Role::REGION_MANAGER]);
+
+        $region        = Region::factory()->create([
+            'department_id'     => $this->department->id,
+            'region_manager_id' => $regionManager->id
+        ]);
+
+        $this->regionSection = TrainingPageSection::factory()->create([
+            'department_id'     => $this->department->id,
+            'region_id'         => $region->id,
+            'department_folder' => false,
+        ]);
+
+        $this->actingAs($regionManager);
+
+        $this->files->push(UploadedFile::fake()->create('avatar.pdf'));
+
+        $response = $this->post(route('uploadSectionFile', $this->regionSection->id), [
+            'files' => $this->files,
+            'meta'  => [
+                'training_type' => 'training'
+            ]
+        ]);
+
+        $response->assertOk();
+    }
+
+    /** @test */
+    public function it_shouldnt_permit_region_manager_upload_a_file()
+    {
+        $regionManagerOfSection = User::factory()->create(['role' => Role::REGION_MANAGER]);
+        $regionManager = User::factory()->create(['role' => Role::REGION_MANAGER]);
+
+        $region        = Region::factory()->create([
+            'department_id'     => $this->department->id,
+            'region_manager_id' => $regionManagerOfSection->id
+        ]);
+
+        $this->regionSection = TrainingPageSection::factory()->create([
+            'department_id'     => $this->department->id,
+            'region_id'         => $region->id,
+            'department_folder' => false,
+        ]);
+
+        $this->actingAs($regionManager);
+
+        $this->files->push(UploadedFile::fake()->create('avatar.pdf'));
+
+        $response = $this->post(route('uploadSectionFile', $this->regionSection->id), [
+            'files' => $this->files,
+            'meta'  => [
+                'training_type' => 'training'
+            ]
         ]);
 
         $response->assertForbidden();

@@ -27,9 +27,20 @@ class TrainingsPolicy
         return $user->department_id == $departmentId;
     }
 
-    public function uploadSectionFile() {
-        if (user()->notHaveRoles([Role::ADMIN, Role::OWNER, Role::DEPARTMENT_MANAGER])) {
+    public function uploadSectionFile(User $user, TrainingPageSection $section) {
+        if (user()->notHaveRoles([Role::ADMIN, Role::OWNER, Role::DEPARTMENT_MANAGER, Role::REGION_MANAGER])) {
             return false;
+        }
+
+        if ($section !== null && $user->hasRole(Role::REGION_MANAGER)) {
+            if ($section->isDepartmentSection()) {
+                return false;
+            }
+
+            return TrainingPageSection::query()
+                ->sectionsUserManaged($user)
+                ->where('id', $section->id)
+                ->exists();
         }
 
         return true;
