@@ -3,10 +3,12 @@
 namespace Tests\Feature\Castle\User;
 
 use App\Enum\Role;
+use App\Models\Department;
 use App\Models\Invitation;
 use App\Models\User;
 use App\Notifications\UserInvitation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -25,6 +27,25 @@ class StoreUserTest extends TestCase
             'role'  => Role::ADMIN,
             'email' => 'devsquad@mail.com'
         ]);
+    }
+
+    /** @test */
+    public function it_should_see_roles_and_department_in_register_view()
+    {
+        /** @var Collection $departments */
+        $departments = Department::factory()->times(2)->create();
+
+        $this->actingAs($this->admin)
+            ->get(route('castle.users.create'))
+            ->assertViewIs('castle.users.register')
+            ->assertSee(Role::ADMIN)
+            ->assertSee(Role::DEPARTMENT_MANAGER)
+            ->assertSee(Role::REGION_MANAGER)
+            ->assertSee(Role::OFFICE_MANAGER)
+            ->assertSee(Role::SALES_REP)
+            ->assertSee(Role::SETTER)
+            ->assertSee($departments->first()->name)
+            ->assertSee($departments->last()->name);
     }
 
     /** @test */
