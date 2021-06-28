@@ -3,11 +3,9 @@
 namespace Tests\Feature\FileUpload;
 
 use App\Enum\Role;
-use App\Http\Livewire\Castle\ManageTrainings\Trainings;
 use App\Models\Department;
 use App\Models\TrainingPageSection;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
@@ -16,7 +14,7 @@ use Tests\TestCase;
 
 class FileSectionUploadTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
     
     public User $user;
 
@@ -143,9 +141,33 @@ class FileSectionUploadTest extends TestCase
     }
 
     /** @test */
-    public function it_should_throw_unauthorized_if_not_logged()
+    public function it_shouldnt_allow_user_setter_to_upload_file()
     {
         $this->actingAs(User::factory()->create(['role' => Role::SETTER]));
+
+        $response = $this->post(route('uploadSectionFile', $this->section->id), [
+            'files' => $this->files,
+        ]);
+
+        $response->assertForbidden();
+    }
+
+    /** @test */
+    public function it_shouldnt_allow_user_sales_rep_to_upload_file()
+    {
+        $this->actingAs(User::factory()->create(['role' => Role::SALES_REP]));
+
+        $response = $this->post(route('uploadSectionFile', $this->section->id), [
+            'files' => $this->files,
+        ]);
+
+        $response->assertForbidden();
+    }
+
+    /** @test */
+    public function it_shouldnt_allow_user_office_manager_to_upload_file()
+    {
+        $this->actingAs(User::factory()->create(['role' => Role::OFFICE_MANAGER]));
 
         $response = $this->post(route('uploadSectionFile', $this->section->id), [
             'files' => $this->files,
