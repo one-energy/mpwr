@@ -1,5 +1,5 @@
 <div>
-    <section class="flex flex-wrap">
+    <section class="md:flex md:flex-wrap">
         <div class="sticky self-start left-0 top-0 w-72 md:w-96 sans-serif flex-none bg-white">
             <ul class="flex mt-3 border-b">
                 <li class="mr-4 -mb-px">
@@ -129,7 +129,7 @@
         </div>
 
         <div
-            class="flex-grow"
+            class="md:flex-grow"
             x-data="{
             openModal: false,
             openDoorsTab: 'daily',
