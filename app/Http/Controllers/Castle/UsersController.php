@@ -99,7 +99,7 @@ class UsersController extends Controller
 
     public function destroy($id)
     {
-        if ($id == auth()->user()->id) {
+        if ((int)$id === user()->id) {
             alert()
                 ->withTitle(__('You cannot delete yourself!'))
                 ->send();
@@ -107,10 +107,12 @@ class UsersController extends Controller
             return back();
         }
 
+        /** @var User|null $user */
         $user      = User::find($id);
         $canDelete = User::userCanChangeRole($user);
+
         if ($canDelete['status']) {
-            User::destroy($id);
+            $user->delete();
         } else {
             alert()
                 ->withTitle(__('You cannot delete this user!'))
