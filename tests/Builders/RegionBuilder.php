@@ -13,7 +13,6 @@ class RegionBuilder
 {
     use WithFaker;
 
-    /** @var Region */
     public Region $region;
 
     public function __construct($attributes = [])
