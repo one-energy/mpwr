@@ -3,17 +3,12 @@
 namespace App\Http\Livewire;
 
 use App\Models\Customer;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
 class AreaChart extends Component
 {
     public $period = 'w';
-
-    public $income;
-
-    public $incomeDate;
 
     public $totalIncome;
 
@@ -21,14 +16,16 @@ class AreaChart extends Component
 
     public $comparativeIncomePercentage;
 
-    public $customers;
-
     public $chartTitle = 'Projected Income';
 
     public $panelSold = false;
 
+    public array $data;
+
     public function mount()
     {
+        $this->data = [];
+
         $this->setPeriod($this->period);
     }
 
@@ -40,82 +37,44 @@ class AreaChart extends Component
     public function setPeriod($period)
     {
         $this->period = $period;
-        
-        $userId = Auth::user()->id;
 
-        if ($this->panelSold == true) {
-            $currentQuery = Customer::query()->where([
-                ['sales_rep_id', $userId],
-                ['is_active', true],
-                ['panel_sold', true],
-            ]);
+        $condition = [
+            ['sales_rep_id', user()->id],
+            ['is_active', true],
+        ];
 
-            $pastQuery = Customer::query()->where([
-                ['sales_rep_id', $userId],
-                ['is_active', true],
-                ['panel_sold', true],
-            ]);
-        } else {
-            $currentQuery = Customer::query()->where([
-                ['sales_rep_id', $userId],
-                ['is_active', true],
-            ]);
-
-            $pastQuery = Customer::query()->where([
-                ['sales_rep_id', $userId],
-                ['is_active', true],
-            ]);
+        if ($this->panelSold) {
+            $condition[] = ['panel_sold', true];
         }
 
-        if ($period === 'w') {
-            $pastQuery    = $pastQuery->whereBetween('date_of_sale', [Carbon::now()->subWeek()->startOfWeek(), Carbon::now()->subWeek()->endOfWeek()]);
-            $currentQuery = $currentQuery->whereBetween('date_of_sale', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
-        } elseif ($period === 'm') {
-            $pastQuery    = $pastQuery->whereMonth('date_of_sale', '=', Carbon::now()->subMonth()->month);
-            $currentQuery = $currentQuery->whereMonth('date_of_sale', '=', Carbon::now()->month);
-        } elseif ($period === 's') {
-            $currentYear = Carbon::now()->year;
-            $pastYear    = Carbon::now()->year - 1;
+        $currentQuery = Customer::query()->where($condition);
+        $pastQuery    = clone $currentQuery;
 
-            $pastQuery    = $pastQuery->whereBetween('date_of_sale', [$pastYear . '-06-01', $pastYear . '-08-31']);
-            $currentQuery = $currentQuery->whereBetween('date_of_sale', [$currentYear . '-06-01', $currentYear . '-08-31']);
-        } elseif ($period === 'y') {
-            $currentYear = Carbon::now()->year;
-            $pastYear    = Carbon::now()->year - 1;
+        if (in_array($this->period, $this->availablePeriods(), true)) {
+            [$currentDate, $pastDate] = $this->getMatchedDate($this->period);
 
-            $pastQuery    = $pastQuery->whereYear('date_of_sale', '=', $pastYear);
-            $currentQuery = $currentQuery->whereYear('date_of_sale', '=', $currentYear);
+            $currentQuery->dateOfSaleInPeriod($this->period, $currentDate);
+            $pastQuery->dateOfSaleInPeriod($this->period, $pastDate);
         }
 
-        $this->customers  = $currentQuery->get();
-        $this->income     = $currentQuery->pluck('sales_rep_comission')->toArray();
-        $this->incomeDate = $currentQuery->pluck('date_of_sale')->toArray();
+        $this->data = $this->getMappedCustomers($currentQuery);
 
         $this->sumIncome($pastQuery, $currentQuery);
     }
 
     public function sumIncome($pastCustomers, $currentCustomers)
     {
+        $condition = [
+            ['is_active', true]
+        ];
+
         if ($this->panelSold) {
-            $pastTotalIncome = $pastCustomers->where([
-                ['is_active', true],
-                ['panel_sold', true],
-            ])->sum('sales_rep_comission');
-    
-            $currentTotalIncome = $currentCustomers->where([
-                ['is_active', true],
-                ['panel_sold', true],
-            ])->sum('sales_rep_comission');
-        } else {
-            $pastTotalIncome = $pastCustomers->where([
-                ['is_active', true],
-            ])->sum('sales_rep_comission');
-    
-            $currentTotalIncome = $currentCustomers->where([
-                ['is_active', true],
-            ])->sum('sales_rep_comission');
+            $condition[] = ['panel_sold', true];
         }
-        
+
+        $pastTotalIncome    = $pastCustomers->where($condition)->sum('sales_rep_comission');
+        $currentTotalIncome = $currentCustomers->where($condition)->sum('sales_rep_comission');
+
         $this->totalIncome = $currentTotalIncome;
 
         $this->compareIncome($pastTotalIncome, $currentTotalIncome);
@@ -132,7 +91,7 @@ class AreaChart extends Component
 
     public function toggle()
     {
-        if ($this->chartTitle == 'Projected Income') {
+        if ($this->chartTitle === 'Projected Income') {
             $this->chartTitle = 'Actual Income';
             $this->panelSold  = true;
         } else {
@@ -141,5 +100,34 @@ class AreaChart extends Component
         }
 
         $this->setPeriod($this->period);
+    }
+
+    private function availablePeriods()
+    {
+        return ['w', 'm', 's', 'y'];
+    }
+
+    public function getMappedCustomers(Builder $currentQuery): array
+    {
+        return $currentQuery
+            ->oldest('date_of_sale')
+            ->get()
+            ->map(function (Customer $customer) {
+                return [
+                    'commission' => $customer->sales_rep_comission,
+                    'date'       => $customer->date_of_sale->format('m-d-Y')
+                ];
+            })
+            ->values()
+            ->toArray();
+    }
+
+    private function getMatchedDate(string $period): array
+    {
+        return match ($period) {
+            'w' => [today(), today()->subWeek()],
+            'm' => [today(), today()->subMonth()],
+            's', 'y' => [today(), today()->subYear()]
+        };
     }
 }

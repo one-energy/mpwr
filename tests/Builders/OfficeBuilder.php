@@ -1,8 +1,8 @@
 <?php
 
-
 namespace Tests\Builders;
 
+use App\Enum\Role;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
@@ -14,17 +14,17 @@ class OfficeBuilder
     use WithFaker;
 
     /** @var Office */
-    public $office;
+    public Office $office;
 
     public function __construct($attributes = [])
     {
-        $this->faker = $this->makeFaker('en_US');
-        $this->office  = (new Office)->forceFill(array_merge([
+        $this->faker  = $this->makeFaker('en_US');
+        $this->office = (new Office)->forceFill(array_merge([
             'name' => Str::title($this->faker->word),
         ], $attributes));
     }
 
-    public static function make($attributes = [])
+    public static function build($attributes = [])
     {
         return new OfficeBuilder($attributes);
     }
@@ -32,15 +32,15 @@ class OfficeBuilder
     public function save()
     {
         if (!$this->office->office_manager_id) {
-            $this->office->office_manager_id = User::factory()->create()->id;
+            $this->office->office_manager_id = User::factory()->create(['role' => Role::OFFICE_MANAGER])->id;
         }
-        $this->office->save();
 
+        $this->office->save();
 
         return $this;
     }
 
-    public function get()
+    public function get(): Office
     {
         return $this->office;
     }

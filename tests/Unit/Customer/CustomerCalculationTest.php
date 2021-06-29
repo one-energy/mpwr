@@ -3,12 +3,12 @@
 namespace Tests\Unit\Customer;
 
 use App\Models\Customer;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\TestCase;
 
 class CustomerCalculationTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     /** @test */
     public function it_should_calculate_comission()
@@ -31,7 +31,7 @@ class CustomerCalculationTest extends TestCase
         $customer->epc           = 6.5;
         $customer->setter_fee    = 2.3;
         $customer->sales_rep_fee = 2.6;
-        
+
         $customer->calcMargin();
 
         $this->assertEquals($customer->margin, 1.6);
