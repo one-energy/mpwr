@@ -16,7 +16,7 @@ use Tests\TestCase;
 class FileSectionUploadTest extends TestCase
 {
     use RefreshDatabase;
-    
+
     public User $user;
 
     public Department $department;
@@ -25,13 +25,13 @@ class FileSectionUploadTest extends TestCase
 
     public Collection $files;
 
-    protected function setUp ():void
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->department = Department::factory()->create();
         $this->user       = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
- 
+
         $this->section = TrainingPageSection::factory()->create([
             'department_id' => $this->department->id
         ]);
@@ -58,9 +58,9 @@ class FileSectionUploadTest extends TestCase
         Storage::disk('local')->assertExists('files/' . $this->department->id . '/' . $this->files->first()->hashName());
     }
 
-     /** @test */
-     public function it_should_save_multiple_files()
-     {
+    /** @test */
+    public function it_should_save_multiple_files()
+    {
         Storage::fake('local');
 
         $this->files->push(UploadedFile::fake()->create('first.pdf'));
@@ -92,11 +92,11 @@ class FileSectionUploadTest extends TestCase
         ]);
 
         $this->assertDatabaseHas('section_files', [
-            'original_name' =>'avatar',
+            'original_name' => 'avatar',
             'name'          => $this->files->first()->hashName(),
         ]);
     }
-    
+
     /** @test */
     public function it_should_make_download_file()
     {
@@ -123,18 +123,18 @@ class FileSectionUploadTest extends TestCase
     public function it_should_throw_error_when_not_send_files_tag()
     {
         $response = $this->post(route('uploadSectionFile', $this->section->id), [
-            'meta'  => [
+            'meta' => [
                 'training_type' => 'training'
             ]
         ]);
         $response->assertStatus(400);
     }
-    
+
     /** @test */
     public function it_should_throw_error_when_not_send_training_type_tag()
     {
         $this->files->push(UploadedFile::fake()->create('avatar.pdf'));
-        
+
         $response = $this->post(route('uploadSectionFile', $this->section->id), [
             'files' => $this->files,
         ]);
@@ -191,7 +191,7 @@ class FileSectionUploadTest extends TestCase
     {
         $regionManager = User::factory()->create(['role' => Role::REGION_MANAGER]);
 
-        $region        = Region::factory()->create([
+        $region = Region::factory()->create([
             'department_id'     => $this->department->id,
             'region_manager_id' => $regionManager->id
         ]);
@@ -220,9 +220,9 @@ class FileSectionUploadTest extends TestCase
     public function it_shouldnt_permit_region_manager_upload_a_file()
     {
         $regionManagerOfSection = User::factory()->create(['role' => Role::REGION_MANAGER]);
-        $regionManager = User::factory()->create(['role' => Role::REGION_MANAGER]);
+        $regionManager          = User::factory()->create(['role' => Role::REGION_MANAGER]);
 
-        $region        = Region::factory()->create([
+        $region = Region::factory()->create([
             'department_id'     => $this->department->id,
             'region_manager_id' => $regionManagerOfSection->id
         ]);
@@ -245,5 +245,29 @@ class FileSectionUploadTest extends TestCase
         ]);
 
         $response->assertForbidden();
+    }
+
+    /** @test */
+    public function it_should_allow_upload_a_file_with_power_point_mime_type()
+    {
+        Storage::fake('local');
+
+        $this->files->push(UploadedFile::fake()->create('avatar.pptx', 100, 'application/vnd.ms-powerpoint'));
+
+        $this->postJson(route('uploadSectionFile', $this->section->id), [
+            'files' => $this->files->toArray(),
+            'meta'  => ['training_type' => 'training']
+        ])
+            ->assertSuccessful()
+            ->assertOk();
+
+        Storage::disk('local')->assertExists($this->getFilePath($this->files->last()->hashName()));
+    }
+
+    private function getFilePath(string $hashName, ?Department $department = null): string
+    {
+        $department = $department ?? $this->department;
+
+        return sprintf('files/%s/%s', $department->id, $hashName);
     }
 }
