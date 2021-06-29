@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\TrainingPageSection;
+use Illuminate\Http\Response;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Throwable;
 
 class FileController extends Controller
@@ -13,11 +14,16 @@ class FileController extends Controller
     public function uploadSectionFile(TrainingPageSection $section)
     {
         $this->authorize('uploadSectionFile', [TrainingPageSection::class, $section]);
-        
-        $request = request()->all();
+
+
+        $files = request()->validate([
+            'files'   => 'required|array',
+            'files.*' => 'mimes:jpg,png,bmp,odp,otp,pptx,ppt,pps,pot',
+            'training_type' => 'required|'
+        ]);
 
         try {
-            return collect($request['files'])->map(function ($file) use ($section) {
+            return collect($files)->map(function (UploadedFile $file) use ($section) {
                 $path = $file->store("files/{$section->department_id}", 'local');
                 $section->files()->create([
                     'name'          => $file->hashName(),
@@ -27,15 +33,13 @@ class FileController extends Controller
                     'path'          => $path,
                     'training_type' => request()->meta['training_type'],
                 ]);
-                
-    
+
+
                 return $file->getClientOriginalName();
             });
-        } catch (Throwable $e) {    
-            abort(400, $e->getMessage());
+        } catch (Throwable $e) {
+            return response()->json(['data' => ['message' => $e->getMessage()]], Response::HTTP_BAD_REQUEST);
         }
-
-       
     }
 
     public function downloadSectionFile()
