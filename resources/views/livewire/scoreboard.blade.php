@@ -291,66 +291,64 @@
 
                         <div class="mt-6 flex flex-col">
                             <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-                                <div class="align-middle inline-block min-w-full overflow-hidden">
-                                    @if ($this->topTenSets->count())
-                                        <x-table>
-                                            <x-slot name="header">
-                                                <x-table.th-tr>
-                                                    <x-table.th class="sticky left-0 z-20 bg-white">
-                                                        @lang('Rank')
-                                                    </x-table.th>
-                                                    <x-table.th class="sticky left-20 z-10 bg-white">
-                                                        @lang('Representative')
-                                                    </x-table.th>
-                                                    <x-table.th>
-                                                        @lang('Sets')
-                                                    </x-table.th>
-                                                    <x-table.th>
-                                                        @lang('Region')
-                                                    </x-table.th>
-                                                    <x-table.th>
-                                                        @lang('Office')
-                                                    </x-table.th>
-                                                </x-table.th-tr>
-                                            </x-slot>
-                                            <x-slot name="body">
-                                                @foreach ($this->topTenSets as $user)
-                                                    <x-table.tr
-                                                        :loop="$loop" x-on:click="openModal = true"
-                                                        wire:click="setUser({{ $user->id }})"
-                                                        class="cursor-pointer"
-                                                    >
-                                                        <x-table.td class="sticky left-0 bg-white">
+                                @if ($this->topTenSets->count())
+                                    <x-table>
+                                        <x-slot name="header">
+                                            <x-table.th-tr>
+                                                <x-table.th class="sticky left-0 z-20 bg-white">
+                                                    @lang('Rank')
+                                                </x-table.th>
+                                                <x-table.th class="sticky left-20 z-10 bg-white">
+                                                    @lang('Representative')
+                                                </x-table.th>
+                                                <x-table.th>
+                                                    @lang('Sets')
+                                                </x-table.th>
+                                                <x-table.th>
+                                                    @lang('Region')
+                                                </x-table.th>
+                                                <x-table.th>
+                                                    @lang('Office')
+                                                </x-table.th>
+                                            </x-table.th-tr>
+                                        </x-slot>
+                                        <x-slot name="body">
+                                            @foreach ($this->topTenSets as $user)
+                                                <x-table.tr
+                                                    :loop="$loop" x-on:click="openModal = true"
+                                                    wire:click="setUser({{ $user->id }})"
+                                                    class="cursor-pointer"
+                                                >
+                                                    <x-table.td class="sticky left-0 bg-white">
                                                             <span
                                                                 class="px-2 inline-flex rounded-full bg-green-base text-white">
                                                                 {{ $loop->index + 1 }}
                                                             </span>
-                                                        </x-table.td>
-                                                        <x-table.td class="sticky left-20 bg-white">
-                                                            {{ $user->full_name }}
-                                                        </x-table.td>
-                                                        <x-table.td>
-                                                            {{ $user->sets_total }}
-                                                        </x-table.td>
-                                                        <x-table.td>
-                                                            {{ $user->office ? $user->office->region->name : html_entity_decode('&#8212;') }}
-                                                        </x-table.td>
-                                                        <x-table.td>
-                                                            {{ $user->office->name ?? 'Without Office' }}
-                                                        </x-table.td>
-                                                    </x-table.tr>
-                                                @endforeach
-                                            </x-slot>
-                                        </x-table>
-                                    @else
-                                        <div class="flex justify-center align-middle">
-                                            <div class="text-sm text-center text-gray-700">
-                                                <x-svg.draw.empty></x-svg.draw.empty>
-                                                There are no top 10 sets for this period.
-                                            </div>
+                                                    </x-table.td>
+                                                    <x-table.td class="sticky left-20 bg-white">
+                                                        {{ $user->full_name }}
+                                                    </x-table.td>
+                                                    <x-table.td>
+                                                        {{ $user->sets_total }}
+                                                    </x-table.td>
+                                                    <x-table.td>
+                                                        {{ $user->office ? $user->office->region->name : html_entity_decode('&#8212;') }}
+                                                    </x-table.td>
+                                                    <x-table.td>
+                                                        {{ $user->office->name ?? 'Without Office' }}
+                                                    </x-table.td>
+                                                </x-table.tr>
+                                            @endforeach
+                                        </x-slot>
+                                    </x-table>
+                                @else
+                                    <div class="flex justify-center align-middle">
+                                        <div class="text-sm text-center text-gray-700">
+                                            <x-svg.draw.empty></x-svg.draw.empty>
+                                            There are no top 10 sets for this period.
                                         </div>
-                                    @endif
-                                </div>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
