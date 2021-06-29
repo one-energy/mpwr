@@ -1,8 +1,5 @@
 <div>
-    <div
-        class="grid parent-scope cursor-pointer"
-        style="grid-template-columns: repeat(4, minmax(80px, 80px)) repeat(8, minmax(153px, 153px))"
-    >
+    <div class="tracker-grid-container parent-scope cursor-pointer">
         <x-table-accordion.td class="scope-child col-span-4">
             <div class="flex ml-28">
                 <div class="flex" x-data wire:loading.remove>
