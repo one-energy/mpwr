@@ -75,12 +75,12 @@ input[type=number] {
 }
 
 #container {
-    height: 280px; 
+    height: 280px;
     width: 300px;
 }
 
 .highcharts-figure, .highcharts-data-table table {
-    min-width: 360px; 
+    min-width: 360px;
     max-width: 600px;
     margin: 1em auto;
 }
@@ -116,6 +116,11 @@ input[type=number] {
 .right-dropdown {
     text-align-last: right;
 }
-.right-option { 
-    direction: rtl; 
+.right-option {
+    direction: rtl;
+}
+
+.tracker-grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(80px, 80px)) repeat(8, minmax(161px, 161px));
 }

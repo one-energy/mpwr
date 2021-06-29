@@ -1,5 +1,5 @@
 <div class="cursor-pointer group">
-    <div class="grid" wire:click.stop="collapseOffice" style="grid-template-columns: repeat(4, minmax(80px, 80px)) repeat(8, minmax(153px, 153px))">
+    <div class="tracker-grid-container" wire:click.stop="collapseOffice">
         <x-table-accordion.child-td-arrow class="group-hover:bg-gray-100 {{ $itsOpen ? 'bg-gray-100' : '' }}  col-span-4" :open="$itsOpen">
             <div class="flex" wire:loading.remove>
                 <input
@@ -76,7 +76,7 @@
     @endif
 
     @if ($office->dailyNumbers->isNotEmpty() && $itsOpen)
-        <div class="grid parent-scope" x-data wire:key="officeTotal-{{$office->id}}" style="grid-template-columns: repeat(4, minmax(80px, 80px)) repeat(8, minmax(153px, 153px))">
+        <div class="grid parent-scope" x-data wire:key="officeTotal-{{$office->id}}" style="grid-template-columns: repeat(4, minmax(80px, 80px)) repeat(8, minmax(161px, 161px))">
             <x-table-accordion.td class="scope-child col-span-4" style="padding-left: 5.8rem;">
                 <div class="flex">
                     <div class="flex items-center">

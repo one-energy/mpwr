@@ -37,7 +37,7 @@
                 <div class="inline-block min-w-full align-middle">
                     @if(count($this->regions))
                         <div class="overflow-auto" style="height: 70vh">
-                            <div class="grid sticky top-0" style="grid-template-columns: repeat(4, minmax(80px, 80px)) repeat(8, minmax(153px, 153px))">
+                            <div class="tracker-grid-container sticky top-0">
                                 <x-table-accordion.th-searchable class="sticky top-0 bg-white col-span-4 pl-10" by="deparmtent" :sortedBy="$sortBy" :direction="$sortDirection"></x-table-accordion.th-searchable>
                                 <x-table-accordion.th-searchable class="sticky top-0 bg-white" by="hours_worked" :sortedBy="$sortBy" :direction="$sortDirection">
                                     @lang('Hours Worked')
