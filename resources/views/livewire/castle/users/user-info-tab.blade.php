@@ -40,7 +40,7 @@
                 </div>
             </div>
             <div class="flex justify-end">
-                <x-button wire:click="changeTab('userEdit')" class="place-self-end">Edit</x-button>
+                <x-button wire:click="changeTab('userEdit')" class="place-self-end bg-red-500">Edit</x-button>
             </div>
         </div>
         <div class="@if($openedTab != 'orgInfo') hidden @endif">
@@ -117,7 +117,7 @@
                 @endif
             </div>
             <div class="flex justify-end mt-4">
-                <x-button wire:click="changeTab('userEdit')" class="place-self-end">Edit</x-button>
+                <x-button wire:click="changeTab('userEdit')" class="place-self-end bg-red-500">Edit</x-button>
             </div>
         </div>
         <div class="@if($openedTab != 'payInfo') hidden @endif">
@@ -190,7 +190,7 @@
                 </div>
             </div>
             <div class="flex justify-end">
-                <x-button wire:click="changeTab('payEdit')" class="place-self-end">Edit</x-button>
+                <x-button wire:click="changeTab('payEdit')" class="place-self-end bg-red-500">Edit</x-button>
             </div>
         </div>
         <div class="@if($openedTab != 'userEdit') hidden @endif">
