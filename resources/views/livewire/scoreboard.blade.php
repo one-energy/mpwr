@@ -1,6 +1,6 @@
 <div>
     <section class="flex flex-wrap justify-center">
-        <div class="justify-center lg:sticky self-start left-0 top-0 w-full max-w-sm lg:w-1/3 sans-serif flex-none bg-white">
+        <div class="lg:sticky self-start left-0 top-0 w-full max-w-sm lg:w-1/3 sans-serif flex-none bg-white">
             <ul class="flex mt-3 border-b">
                 <li class="mr-4 -mb-px">
                     <span class="
