@@ -1,4 +1,4 @@
-@props(['type', 'color' => "gray", 'href'])
+@props(['type', 'color' => "green", 'href'])
 
 @php
     $href = $href ?? null;
