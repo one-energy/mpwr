@@ -1,10 +1,10 @@
-@props(['type', 'color' => "green", 'href'])
+@props(['type', 'color' => "gray", 'href'])
 
 @php
     $href = $href ?? null;
     $class = " border border-green-base text-white bg-green-base hover:bg-green-dark hover:border-green-dark focus:border-green-500 focus:shadow-outline-green active:bg-green-50";
-    if($color != "green")  {
-        $class = "border border-transparent bg-{$color}-600 hover:bg-{$color}-500 focus:outline-none focus:border-{$color}-700 focus:shadow-outline-{$color} active:bg-{$color}-700";
+    if($color == "gray")  {
+        $class = "border border-transparent bg-gray-600 hover:bg-gray-500 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray active:bg-gray-700";
     }
     
 @endphp
