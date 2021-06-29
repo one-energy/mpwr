@@ -471,6 +471,11 @@ class User extends Authenticatable implements MustVerifyEmail
         });
     }
 
+    public function isVerified(): bool
+    {
+        return $this->email_verified_at !== null;
+    }
+
     public function hasRole(string $role): bool
     {
         return $this->role === $role;
