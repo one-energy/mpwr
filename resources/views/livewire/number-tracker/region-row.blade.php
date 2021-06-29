@@ -1,7 +1,6 @@
 <div>
     <div
-        class="grid cursor-pointer group"
-        style="grid-template-columns: repeat(4, minmax(80px, 80px)) repeat(8, minmax(153px, 153px))"
+        class="tracker-grid-container cursor-pointer group"
         wire:click="collapseRegion()"
     >
         <x-table-accordion.default-td-arrow class="group-hover:bg-gray-100 col-span-4 {{ $itsOpen ? 'bg-gray-200' : '' }}" :open="$region['itsOpen']">
