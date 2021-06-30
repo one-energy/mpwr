@@ -9,11 +9,11 @@ use App\Models\CustomersStockPoint;
 use App\Models\Department;
 use App\Models\MultiplierOfYear;
 use App\Models\StockPointsCalculationBases;
+use App\Models\Term;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Collection;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -37,7 +37,18 @@ class EditCustomerTest extends TestCase
     {
         parent::setUp();
 
-        $this->stockPointsCalculations = StockPointsCalculationBases::factory()->count(8)->create();
+        $this->stockPointsCalculations = StockPointsCalculationBases::factory()->count(8)
+            ->state(new Sequence(
+                ['id' => StockPointsCalculationBases::RECRUIT_ID],
+                ['id' => StockPointsCalculationBases::SETTING_ID],
+                ['id' => StockPointsCalculationBases::DEPARTMENT_ID],
+                ['id' => StockPointsCalculationBases::DIVISIONAL_ID],
+                ['id' => StockPointsCalculationBases::OFFICE_MANAGER_ID],
+                ['id' => StockPointsCalculationBases::PERSONAL_SALES_ID],
+                ['id' => StockPointsCalculationBases::POD_LEADER_TEAM_ID],
+                ['id' => StockPointsCalculationBases::REGIONAL_MANAGER_ID],
+            ))    
+            ->create();
 
         $this->department = Department::factory()->create();
 
@@ -74,16 +85,14 @@ class EditCustomerTest extends TestCase
         
         $this->customers = Customer::factory()
             ->count(2)
-            ->state(new Sequence([
-                'sales_rep_id' => $this->salesRep->id,
-                'sales_rep_id' => $this->officeManager->id,
-            ]))
             ->create([
+                'term_id'      => Term::factory()->create(),
+                'sales_rep_id' => $this->salesRep->id,
                 'is_active'    => true,
                 'panel_sold'   => true
             ]);
         
-        $this->actingAs($this->departmentManager);
+        $this->actingAs($this->salesRep);
     }
     
     /** @test */
@@ -93,9 +102,10 @@ class EditCustomerTest extends TestCase
             ->set('customer.panel_sold', true)
             ->call('update');
         
+        
         $this->assertDatabaseHas('customers_stock_points', [
             'customer_id'         => $this->customers->first()->id,
-            'stock_personal_sale' => $this->stockPointsCalculations[StockPointsCalculationBases::PERSONAL_SALES_ID]->stock_base_point
+            'stock_personal_sale' => StockPointsCalculationBases::find(StockPointsCalculationBases::PERSONAL_SALES_ID)->stock_base_point
         ]);
     }
 }
