@@ -5,7 +5,6 @@ namespace Tests\Feature\Castle\UserDetails;
 use App\Enum\Role;
 use App\Models\Department;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\Builders\OfficeBuilder;
@@ -15,7 +14,7 @@ use Tests\TestCase;
 
 class GetUserDetailsTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
@@ -153,5 +152,21 @@ class GetUserDetailsTest extends TestCase
         $this->actingAs($departmentManager)
             ->get(route('castle.users.show', $user))
             ->assertDontSee('Resend invitation email');
+    }
+
+    /** @test */
+    public function it_should_show_success_alert_when_resend_invitation_email()
+    {
+        $admin = User::factory()->create([
+            'role' => Role::ADMIN
+        ]);
+
+        $user = User::factory()->create([
+            "email_verified_at" => null
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('verification.resendInvitationEmail', $user))
+            ->assertSee('Success');
     }
 }
