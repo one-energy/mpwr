@@ -38,7 +38,7 @@
                                     </x-button>
                                 </div>
                             @endCanImpersonate
-                            @if(!$user->isVerified())
+                            @if(!$user->isVerified() && user()->hasAnyRole(['Admin', 'Owner']))
                                 <div class="flex">
                                     <x-form id="resend-verification-form" :route="route('verification.resendInvitationEmail', $user->id)">
                                         <x-button type="submit" 
