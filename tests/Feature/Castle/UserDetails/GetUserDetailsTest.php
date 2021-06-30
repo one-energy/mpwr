@@ -2,8 +2,10 @@
 
 namespace Tests\Feature\Castle\UserDetails;
 
+use App\Enum\Role;
 use App\Models\Department;
 use App\Models\User;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\Builders\OfficeBuilder;
@@ -13,7 +15,7 @@ use Tests\TestCase;
 
 class GetUserDetailsTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     protected function setUp(): void
     {
@@ -124,5 +126,32 @@ class GetUserDetailsTest extends TestCase
         $this->actingAs($setterManager)
             ->get(route('castle.users.index'))
             ->assertForbidden();
+    }
+
+    /** @test */
+    public function it_should_show_resend_invitation_email_button()
+    {
+        $user = User::factory()->create([
+            "email_verified_at" => null
+        ]);
+
+        $this->get(route('castle.users.show', $user))
+            ->assertSee('Resend invitation email');
+    }
+
+    /** @test */
+    public function it_shouldt_show_resend_invitation_email_for_non_admin_users()
+    {
+        $departmentManager = User::factory()->create([
+            'role' => Role::DEPARTMENT_MANAGER
+        ]);
+
+        $user = User::factory()->create([
+            "email_verified_at" => null
+        ]);
+
+        $this->actingAs($departmentManager)
+            ->get(route('castle.users.show', $user))
+            ->assertDontSee('Resend invitation email');
     }
 }
