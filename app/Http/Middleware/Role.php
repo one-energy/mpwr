@@ -15,10 +15,10 @@ class Role
             throw new InvalidArgumentException('You need to inform at least one role!');
         }
 
-        $roles = array_filter(explode('|', $role), fn ($role) => $role);
+        $roles = array_filter(explode('|', $role), fn ($role) => trim($role));
 
         if (count($roles) < 1) {
-            throw new InvalidArgumentException('You need to inform at least one role!');
+            throw new InvalidArgumentException('You need to inform at least one valid role!');
         }
 
         abort_if(!user()->hasAnyRole($roles), Response::HTTP_NOT_FOUND);
