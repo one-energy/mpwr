@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Invitation;
 use App\Models\User;
+use App\Notifications\UserInvitation;
 use Illuminate\Foundation\Auth\VerifiesEmails;
 
 class VerificationController extends Controller
@@ -21,6 +23,15 @@ class VerificationController extends Controller
 
     public function resendInvitationEmail(User $user)
     {
-        $user->notify();
+        
+        $invitation = Invitation::whereEmail($user->email)->first();
+        
+        $invitation->notify(new UserInvitation);
+        alert()
+            ->withTitle(__("Success"))
+            ->withDescription(__("The invitation was sent to {$user->email}"))
+            ->send();  
+            
+        return back();
     }
 }
