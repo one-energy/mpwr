@@ -118,7 +118,16 @@
                         window.Livewire.emit('filesUploaded');
                         this.files = [];
                     } catch (error) {
-                        window.$app.alert({ title:'There is a problem with your upload' })
+                        let message = 'There is a problem with your upload';
+
+                        if (error.response.status === 422) {
+                            const { errors } = error.response.data;
+
+                            message = Object.keys(errors).length > 1
+                                ? 'There is an extension that is not supported'
+                                : `This extension isn't supported`;
+                        }
+                        window.$app.alert({ title: message, color: 'red' })
                     } finally {
                         this.loading = false;
                     }
