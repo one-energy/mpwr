@@ -396,24 +396,24 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
         $previous = 'This user is the manager for the';
 
-        if ($offices = User::userManageOffices($user)) {
+        if ($offices = self::userManageOffices($user)) {
             $response['status']  = false;
             $previous            .= ' Offices:';
-            $previous            = User::getChangeRoleMessage($previous, $offices);
+            $previous            = self::getChangeRoleMessage($previous, $offices);
             $response['message'] = $previous;
         }
 
-        if ($regions = User::userManageRegion($user)) {
+        if ($regions = self::userManageRegion($user)) {
             $response['status']  = false;
             $previous            .= ' Regions:';
-            $previous            = User::getChangeRoleMessage($previous, $regions);
+            $previous            = self::getChangeRoleMessage($previous, $regions);
             $response['message'] = $previous;
         }
 
-        if ($departments = User::userManageDepartment($user)) {
+        if ($departments = self::userManageDepartment($user)) {
             $response['status']  = false;
             $previous            .= ' Departments:';
-            $previous            = User::getChangeRoleMessage($previous, $departments);
+            $previous            = self::getChangeRoleMessage($previous, $departments);
             $response['message'] = $previous;
         }
 
