@@ -61,7 +61,6 @@
                     }, 300);
                 },
                 showEvent(detail) {
-                    console.log(detail);
                     this.title = detail.title;
                     this.description = detail.description;
                     this.color = detail.color;
