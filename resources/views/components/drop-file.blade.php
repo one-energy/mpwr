@@ -37,8 +37,18 @@
                 </template>
             </div>
         </template>
-        <div class="mt-8 w-full text-center">
-            <x-button class="w-1/4 bg-green-base" x-on:click="saveFiles">Save</x-button>
+        <div
+            class="mt-8 w-full text-center flex justify-center"
+            :class="{'pointer-events-none': loading, 'cursor-not-allowed': loading}"
+        >
+            <x-button class="bg-green-base" x-on:click="saveFiles">
+                <div class="flex items-center" :class="{'flex-row-reverse': loading}">
+                    <template x-if="loading">
+                        <x-icon icon="spinner" class="w-5 h-5 mr-3" />
+                    </template>
+                    Save
+                </div>
+            </x-button>
         </div>
     </div>
 </div>
@@ -54,6 +64,7 @@
             return {
                 files: [],
                 uploadedFiles: [],
+                loading: false,
                 token: document.head.querySelector('meta[name=csrf-token]').content,
                 filesize(fileSize) {
                     if(fileSize <= K_SIZE){
@@ -82,8 +93,11 @@
                      : false;
                 },
                 async saveFiles() {
+                    this.loading = true;
+
                     if(this.files.length === 0) {
                         window.$app.alert({ title: 'Nothing to upload', color: 'green' });
+                        this.loading = false;
                         return;
                     }
 
@@ -105,6 +119,8 @@
                         this.files = [];
                     } catch (error) {
                         window.$app.alert({ title:'There is a problem with your upload' })
+                    } finally {
+                        this.loading = false;
                     }
                 }
             }
