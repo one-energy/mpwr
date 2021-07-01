@@ -11,7 +11,7 @@ use Livewire\Component;
 class ManageOffice extends Component
 {
     use FullTable;
-    
+
     public Collection $offices;
 
     public $region;
@@ -24,6 +24,7 @@ class ManageOffice extends Component
     public function mount($region)
     {
         $this->region = $region;
+        $this->offices = collect();
     }
 
     public function render()
