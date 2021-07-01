@@ -46,6 +46,10 @@ class RegionBuilder
 
         $this->region->save();
 
+        $this->region->regionManager()->update([
+           'department_id' => $this->region->department_id
+        ]);
+
         return $this;
     }
 
