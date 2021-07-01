@@ -5,6 +5,7 @@ namespace Tests\Feature\Livewire;
 use App\Enum\Role;
 use App\Http\Livewire\Castle\Users\UserInfoTab;
 use App\Models\Department;
+use App\Models\Rates;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
@@ -15,6 +16,131 @@ use Tests\TestCase;
 class UserInfoTabTest extends TestCase
 {
     use RefreshDatabase;
+
+    /** @test */
+    public function it_should_update_user()
+    {
+        $john   = User::factory()->create(['role' => Role::ADMIN]);
+        $office = OfficeBuilder::build()->withManager()->region()->save()->get();
+        $mary   = $office->officeManager;
+
+        $this->actingAs($john);
+
+        Livewire::test(UserInfoTab::class, ['user' => $mary])
+            ->set('user.first_name', 'Mary')
+            ->set('user.last_name', 'Ann')
+            ->set('user.office_id', '')
+            ->set('user.phone_number', '(11) 1111-1111')
+            ->call('update')
+            ->assertSessionHas('alert')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('users', [
+            'id'           => $mary->id,
+            'first_name'   => 'Mary',
+            'last_name'    => 'Ann',
+            'office_id'    => null,
+            'phone_number' => '1111111111',
+        ]);
+    }
+
+    /** @test */
+    public function it_should_update_override()
+    {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+        $ann  = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+        $poll = User::factory()->create(['role' => Role::REGION_MANAGER]);
+        $zack = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
+
+        $office = OfficeBuilder::build()->withManager()->region()->save()->get();
+        $mary   = $office->officeManager;
+
+        $this->actingAs($john);
+
+        Livewire::test(UserInfoTab::class, ['user' => $mary])
+            ->set('userOverride.recruiter_id', $john->id)
+            ->set('userOverride.region_manager_id', $poll->id)
+            ->set('userOverride.department_manager_id', $ann->id)
+            ->call('saveOverride')
+            ->assertDispatchedBrowserEvent('show-alert')
+            ->assertSet('openedTab', 'payInfo')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('users', [
+            'id'                    => $mary->id,
+            'recruiter_id'          => $john->id,
+            'region_manager_id'     => $poll->id,
+            'department_manager_id' => $ann->id,
+        ]);
+    }
+
+    /** @test */
+    public function it_should_be_possible_to_change_tab()
+    {
+        $john   = User::factory()->create(['role' => Role::ADMIN]);
+        $office = OfficeBuilder::build()->withManager()->region()->save()->get();
+        $mary   = $office->officeManager;
+
+        $this->actingAs($john);
+
+        Livewire::test(UserInfoTab::class, ['user' => $mary])
+            ->assertSet('openedTab', 'userInfo')
+            ->call('changeTab', 'orgInfo')
+            ->assertSet('openedTab', 'orgInfo');
+    }
+
+    /** @test */
+    public function it_should_be_possible_selected_department()
+    {
+        $john   = User::factory()->create(['role' => Role::ADMIN]);
+        $office = OfficeBuilder::build()->withManager()->region()->save()->get();
+        $mary   = $office->officeManager;
+
+        $newDepartment = Department::factory()->create([
+            'department_manager_id' => $john->id
+        ]);
+
+        $this->actingAs($john);
+
+        Livewire::test(UserInfoTab::class, ['user' => $mary])
+            ->assertSet('selectedDepartmentId', $mary->department_id)
+            ->call('changeDepartment', $newDepartment->id)
+            ->assertSet('selectedDepartmentId', $newDepartment->id);
+    }
+
+    /** @test */
+    public function it_should_dispatch_an_event_when_cannot_change_role()
+    {
+        $john   = User::factory()->create(['role' => Role::ADMIN]);
+        $office = OfficeBuilder::build()->withManager()->region()->save()->get();
+        $mary   = $office->officeManager;
+
+        $this->actingAs($john);
+
+        Livewire::test(UserInfoTab::class, ['user' => $mary])
+            ->call('changeRole', Role::ADMIN)
+            ->assertEmitted('app:modal')
+            ->assertHasNoErrors();
+    }
+
+    /** @test */
+    public function it_should_change_user_pay_when_change_role()
+    {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+        $mary = User::factory()->create(['role' => Role::SETTER]);
+
+        Rates::factory()->create([
+            'role' => Role::ADMIN,
+            'rate' => 20
+        ]);
+
+        $this->actingAs($john);
+
+        Livewire::test(UserInfoTab::class, ['user' => $mary])
+            ->call('changeRole', Role::ADMIN)
+            ->assertSet('user.pay', 20)
+            ->assertHasNoErrors();
+    }
 
     /** @test */
     public function it_should_require_user_first_name()
