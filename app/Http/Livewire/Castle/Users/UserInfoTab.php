@@ -7,12 +7,14 @@ use App\Models\Rates;
 use App\Models\User;
 use App\Rules\Castle\DepartmentHasOffice;
 use App\Traits\Livewire\Actions;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
 class UserInfoTab extends Component
 {
     use Actions;
+    use AuthorizesRequests;
 
     public User $user;
 
@@ -42,6 +44,8 @@ class UserInfoTab extends Component
 
     public function mount(User $user)
     {
+        $this->authorize('show', [User::class, $user]);
+
         $this->userOverride           = clone $user;
         $this->selectedDepartmentId   = $user->department_id;
         $this->departmentUsers        = collect();
@@ -103,7 +107,7 @@ class UserInfoTab extends Component
     {
         $this->validate();
         $this->user->phone_number = preg_replace('/\D/', '', $this->user->phone_number);
-        $this->user->office_id = $this->user->office_id == "" ? null : $this->user->office_id;
+        $this->user->office_id    = $this->user->office_id == '' ? null : $this->user->office_id;
 
         $this->user->save();
 
@@ -118,10 +122,10 @@ class UserInfoTab extends Component
     {
         $this->validate();
 
-        $this->userOverride->recruiter_id          = $this->userOverride->recruiter_id != "" ? $this->userOverride->recruiter_id : null;
-        $this->userOverride->office_manager_id     = $this->userOverride->office_manager_id != "" ? $this->userOverride->office_manager_id : null;
-        $this->userOverride->region_manager_id     = $this->userOverride->region_manager_id != "" ? $this->userOverride->region_manager_id : null;
-        $this->userOverride->department_manager_id = $this->userOverride->department_manager_id != "" ? $this->userOverride->department_manager_id : null;
+        $this->userOverride->recruiter_id          = $this->userOverride->recruiter_id != '' ? $this->userOverride->recruiter_id : null;
+        $this->userOverride->office_manager_id     = $this->userOverride->office_manager_id != '' ? $this->userOverride->office_manager_id : null;
+        $this->userOverride->region_manager_id     = $this->userOverride->region_manager_id != '' ? $this->userOverride->region_manager_id : null;
+        $this->userOverride->department_manager_id = $this->userOverride->department_manager_id != '' ? $this->userOverride->department_manager_id : null;
 
         $this->userOverride->save();
         $this->user = clone $this->userOverride;

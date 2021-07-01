@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Livewire;
 
+use App\Enum\Role;
 use App\Http\Livewire\Castle\Users\UserInfoTab;
 use App\Models\Department;
 use App\Models\Office;
@@ -176,5 +177,122 @@ class UserInfoTabTest extends TestCase
             ->set('userOverride.office_manager_id', $zack->id)
             ->call('update')
             ->assertHasErrors(['userOverride.office_manager_id' => 'in']);
+    }
+
+    /** @test */
+    public function it_should_allow_admin_see_all_users()
+    {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+
+        $this->actingAs($john);
+
+        Livewire::test(UserInfoTab::class, [
+            'user' => User::factory()->create(['role' => Role::DEPARTMENT_MANAGER])
+        ])->assertOk();
+
+        Livewire::test(UserInfoTab::class, [
+            'user' => User::factory()->create(['role' => Role::REGION_MANAGER])
+        ])->assertOk();
+
+        Livewire::test(UserInfoTab::class, [
+            'user' => User::factory()->create(['role' => Role::OFFICE_MANAGER])
+        ])->assertOk();
+
+        Livewire::test(UserInfoTab::class, [
+            'user' => User::factory()->create(['role' => Role::SALES_REP])
+        ])->assertOk();
+
+        Livewire::test(UserInfoTab::class, [
+            'user' => User::factory()->create(['role' => Role::SETTER])
+        ])->assertOk();
+    }
+
+    /** @test */
+    public function it_should_forbidden_department_manager_see_a_user_that_he_is_not_managing()
+    {
+        [$manager] = $this->createDepartmentManager();
+        $dummy = User::factory()->create(['role' => Role::SETTER]);
+
+        $this->actingAs($manager);
+
+        Livewire::test(UserInfoTab::class, ['user' => $dummy])->assertForbidden();
+    }
+
+    /** @test */
+    public function it_should_forbidden_region_manager_see_a_user_that_he_is_not_managing()
+    {
+        [$departmentManager, $department] = $this->createDepartmentManager();
+        [$regionManager, $region] = $this->createRegionManager($department);
+        [$officeManager, $office] = $this->createOfficeManager($region);
+
+        [$departmentManager2, $department2] = $this->createDepartmentManager();
+        [$regionManager2, $region2] = $this->createRegionManager($department2);
+        [$officeManager2, $office2] = $this->createOfficeManager($region2);
+
+        $dummy01 = User::factory()->create(['role' => Role::SETTER, 'office_id' => $office2->id]);
+        $dummy02 = User::factory()->create(['role' => Role::SETTER, 'office_id' => $office->id]);
+
+        $this->actingAs($regionManager);
+
+        Livewire::test(UserInfoTab::class, ['user' => $dummy01])->assertForbidden();
+        Livewire::test(UserInfoTab::class, ['user' => $dummy02])->assertOk();
+    }
+
+    /** @test */
+    public function it_should_forbidden_office_manager_see_a_user_that_he_is_not_managing()
+    {
+        [$departmentManager, $department] = $this->createDepartmentManager();
+        [$regionManager, $region] = $this->createRegionManager($department);
+        [$officeManager, $office] = $this->createOfficeManager($region);
+
+        [$departmentManager2, $department2] = $this->createDepartmentManager();
+        [$regionManager2, $region2] = $this->createRegionManager($department2);
+        [$officeManager2, $office2] = $this->createOfficeManager($region2);
+
+        $dummy01 = User::factory()->create(['role' => Role::SETTER, 'office_id' => $office2->id]);
+        $dummy02 = User::factory()->create(['role' => Role::SETTER, 'office_id' => $office->id]);
+
+        $this->actingAs($officeManager);
+
+        Livewire::test(UserInfoTab::class, ['user' => $dummy01])->assertForbidden();
+        Livewire::test(UserInfoTab::class, ['user' => $dummy02])->assertOk();
+    }
+
+    private function createDepartmentManager()
+    {
+        $user       = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+        $department = Department::factory()->create(['department_manager_id' => $user->id]);
+
+        $user->update(['department_id' => $department->id]);
+
+        return [$user, $department];
+    }
+
+    private function createRegionManager(Department $department)
+    {
+        $user   = User::factory()->create([
+            'role'          => Role::REGION_MANAGER,
+            'department_id' => $department->id,
+        ]);
+        $region = Region::factory()->create([
+            'department_id'     => $department->id,
+            'region_manager_id' => $user->id,
+        ]);
+
+        return [$user, $region];
+    }
+
+    private function createOfficeManager(Region $region)
+    {
+        $user   = User::factory()->create([
+            'role'          => Role::OFFICE_MANAGER,
+            'department_id' => $region->department_id,
+        ]);
+        $office = Office::factory()->create([
+            'office_manager_id' => $user->id,
+            'region_id'         => $region->id
+        ]);
+
+        return [$user, $office];
     }
 }
