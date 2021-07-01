@@ -33,8 +33,6 @@ class StoreRegionTest extends TestCase
     /** @test */
     public function it_should_render_create_view()
     {
-        User::factory()->times(3)->create(['role' => Role::REGION_MANAGER]);
-
         $this->actingAs($this->admin)
             ->get(route('castle.regions.create'))
             ->assertViewIs('castle.regions.create')
