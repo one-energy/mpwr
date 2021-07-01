@@ -142,9 +142,9 @@ class EditCustomerTest extends TestCase
     public function it_should_show_financer_required_error_when_financing_is_purchase()
     {
         Livewire::test(Edit::class,['customer' => $this->customer])
-        ->set('customer.financer_id', null)
-        ->call('update')
-        ->assertHasErrors(['customer.financer_id']);
+            ->set('customer.financer_id', null)
+            ->call('update')
+            ->assertHasErrors(['customer.financer_id']);
     }
 
     /** @test */
@@ -159,8 +159,8 @@ class EditCustomerTest extends TestCase
         ]);
 
         Livewire::test(Edit::class,['customer' => $this->customer])
-        ->assertSet('customer.sales_rep_fee', $this->salesRep->pay)
-        ->set('customer.sales_rep_id', $jhon->id)
-        ->assertSet('customer.sales_rep_fee', $jhon->pay);
+            ->assertSet('customer.sales_rep_fee', $this->salesRep->pay)
+            ->set('customer.sales_rep_id', $jhon->id)
+            ->assertSet('customer.sales_rep_fee', $jhon->pay);
     }
 }
