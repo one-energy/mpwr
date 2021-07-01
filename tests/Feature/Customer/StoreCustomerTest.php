@@ -10,14 +10,13 @@ use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
 class StoreCustomerTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     /** @test */
     public function it_should_block_the_create_form_for_non_top_level_roles()
