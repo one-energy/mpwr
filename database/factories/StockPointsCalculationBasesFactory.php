@@ -13,7 +13,7 @@ class StockPointsCalculationBasesFactory extends Factory
     {
         return [
             'name'             => $this->faker->title(),
-            'stock_base_point' => $this->faker->randomNumber()
+            'stock_base_point' => $this->faker->randomDigit()
         ];
     }
 }
