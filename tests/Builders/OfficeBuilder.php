@@ -41,6 +41,10 @@ class OfficeBuilder
             'department_id' => $this->office->region->department_id
         ]);
 
+        $this->office->region->regionManager()->update([
+            'office_id' => $this->office->id
+        ]);
+
         return $this;
     }
 
