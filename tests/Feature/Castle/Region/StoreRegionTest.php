@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Castle\Region;
 
+use App\Enum\Role;
 use App\Models\Department;
 use App\Models\Region;
 use App\Models\TrainingPageSection;
@@ -15,13 +16,30 @@ class StoreRegionTest extends TestCase
 {
     use RefreshDatabase;
 
+    private User $user;
+
+    private User $admin;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->user = User::factory()->create(['master' => true]);
+        $this->user  = User::factory()->create(['master' => true]);
+        $this->admin = User::factory()->create(['role' => Role::ADMIN]);
 
         $this->actingAs($this->user);
+    }
+
+    /** @test */
+    public function it_should_render_create_view()
+    {
+        User::factory()->times(3)->create(['role' => Role::REGION_MANAGER]);
+
+        $this->actingAs($this->admin)
+            ->get(route('castle.regions.create'))
+            ->assertViewIs('castle.regions.create')
+            ->assertSuccessful()
+            ->assertOk();
     }
 
     /** @test */
@@ -78,7 +96,7 @@ class StoreRegionTest extends TestCase
     {
         ['regionManager' => $regionManager, 'department' => $department] = $this->makeSetup();
 
-        $rootSection = TrainingPageSection::factory()->create([
+        $rootSection  = TrainingPageSection::factory()->create([
             'department_id' => $department->id,
         ]);
         $childSection = TrainingPageSection::factory()->create([
