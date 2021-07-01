@@ -85,8 +85,8 @@ class Scoreboard extends Component
             $this->sitRatio = $satsSum > 0 ? ($dailyNumbers->sum('sets') / $satsSum) : 0;
         }
 
-        if ($dailyNumbers->sum('close') > 0) {
-            $this->closeRatio = $dailyNumbers->sum('closer_sits') / $dailyNumbers->sum('close');
+        if ($dailyNumbers->sum('closes') > 0) {
+            $this->closeRatio = $dailyNumbers->sum('closer_sits') / $dailyNumbers->sum('closes');
         }
 
         $this->dispatchBrowserEvent('setUserNumbers', [
@@ -133,7 +133,7 @@ class Scoreboard extends Component
                     $query->select(DB::raw("SUM({$field}) as {$field}_total"))
                         ->groupBy('user_id')
                         ->inPeriod($this->period, $this->date);
-                }
+                },
             ])
             ->where('department_id', user()->department_id)
             ->latest("{$field}_total")
