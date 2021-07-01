@@ -22,7 +22,7 @@ use Tests\TestCase;
 
 class EditCustomerTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     public User $departmentManager;
     public User $regionManager;
@@ -86,14 +86,15 @@ class EditCustomerTest extends TestCase
         
         $this->customer = Customer::factory()
             ->create([
-                'term_id'      => Term::factory()->create()->id,
-                'financer_id'  => Financer::factory()->create()->id,
-                'financing_id' => Financing::factory()->create(['id' => 1])->id,
-                'enium_points' => 10,
-                'setter_id'    => $this->setter->id,
-                'sales_rep_id' => $this->salesRep->id,
-                'is_active'    => true,
-                'panel_sold'   => true
+                'term_id'       => Term::factory()->create()->id,
+                'financer_id'   => Financer::factory()->create()->id,
+                'financing_id'  => Financing::factory()->create(['id' => 1])->id,
+                'enium_points'  => 10,
+                'setter_id'     => $this->setter->id,
+                'sales_rep_id'  => $this->salesRep->id,
+                'sales_rep_fee' => $this->salesRep->pay,
+                'is_active'     => true,
+                'panel_sold'    => true
             ]);
         
         $this->actingAs($this->salesRep);
@@ -144,5 +145,22 @@ class EditCustomerTest extends TestCase
         ->set('customer.financer_id', null)
         ->call('update')
         ->assertHasErrors(['customer.financer_id']);
+    }
+
+    /** @test */
+    public function it_should_update_sales_rep_rate_when_change_sales_rep()
+    {
+        $jhon = User::factory()->create([
+            'role'                  => Role::SALES_REP,
+            'department_id'         => $this->department->id,
+            'department_manager_id' => $this->departmentManager->id,
+            'region_manager_id'     => $this->regionManager->id,
+            'office_manager_id'     => $this->officeManager->id,
+        ]);
+
+        Livewire::test(Edit::class,['customer' => $this->customer])
+        ->assertSet('customer.sales_rep_fee', $this->salesRep->pay)
+        ->set('customer.sales_rep_id', $jhon->id)
+        ->assertSet('customer.sales_rep_fee', $jhon->pay);
     }
 }
