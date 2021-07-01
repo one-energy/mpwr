@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Customer;
 
+use App\Enum\Role;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\Financer;
@@ -70,7 +71,7 @@ class Create extends Component
 
         $this->customer         = new Customer();
         $this->customer->adders = 0;
-        if ((user()->role == 'Office Manager' || user()->role == 'Sales Rep' || user()->role == 'Setter') && user()->office_id != null) {
+        if (user()->hasAnyRole([Role::OFFICE_MANAGER, Role::SALES_REP, Role::SETTER]) && user()->office_id != null) {
             $this->customer->sales_rep_id  = user()->id;
             $this->customer->sales_rep_fee = $this->getUserRate(user()->id);
             $this->salesRep                = user();
@@ -170,11 +171,6 @@ class Create extends Component
     public function getSetterFee()
     {
         return Rates::whereRole('Setter')->first();
-    }
-
-    public function getSalesRepFee()
-    {
-        return Rates::whereRole('Sales Rep')->orderBy('rate', 'desc')->first();
     }
 
     public function getSalesRepRate($userId)
