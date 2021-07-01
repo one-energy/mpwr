@@ -7,12 +7,12 @@ use App\Http\Livewire\Customer\Edit;
 use App\Models\Customer;
 use App\Models\CustomersStockPoint;
 use App\Models\Department;
+use App\Models\Financer;
 use App\Models\MultiplierOfYear;
 use App\Models\StockPointsCalculationBases;
 use App\Models\Term;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Sequence;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Livewire\Livewire;
@@ -20,7 +20,7 @@ use Tests\TestCase;
 
 class EditCustomerTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     public User $departmentManager;
     public User $regionManager;
@@ -86,7 +86,8 @@ class EditCustomerTest extends TestCase
         $this->customers = Customer::factory()
             ->count(2)
             ->create([
-                'term_id'      => Term::factory()->create(),
+                'term_id'      => Term::factory()->create()->id,
+                'financer_id'  => Financer::factory()->create()->id,
                 'sales_rep_id' => $this->salesRep->id,
                 'is_active'    => true,
                 'panel_sold'   => true
@@ -96,16 +97,20 @@ class EditCustomerTest extends TestCase
     }
     
     /** @test */
-    public function it_should_create_personal_stock_points_when_set_as_install_customer()
+    public function it_should_create_stock_points_when_set_as_install_customer()
     {
         Livewire::test(Edit::class,['customer' => $this->customers->first()])
             ->set('customer.panel_sold', true)
             ->call('update');
-        
-        
+            
         $this->assertDatabaseHas('customers_stock_points', [
             'customer_id'         => $this->customers->first()->id,
-            'stock_personal_sale' => StockPointsCalculationBases::find(StockPointsCalculationBases::PERSONAL_SALES_ID)->stock_base_point
+            'stock_personal_sale' => (int) StockPointsCalculationBases::find(StockPointsCalculationBases::PERSONAL_SALES_ID)->stock_base_point,
+            'stock_setting'       => (int) StockPointsCalculationBases::find(StockPointsCalculationBases::SETTING_ID)->stock_base_point,
+            'stock_manager'       => (int) StockPointsCalculationBases::find(StockPointsCalculationBases::OFFICE_MANAGER_ID)->stock_base_point,
+            'stock_recruiter'     => (int) StockPointsCalculationBases::find(StockPointsCalculationBases::RECRUIT_ID)->stock_base_point,
+            'stock_regional'      => (int) StockPointsCalculationBases::find(StockPointsCalculationBases::REGIONAL_MANAGER_ID)->stock_base_point,
+            'stock_department'    => (int) StockPointsCalculationBases::find(StockPointsCalculationBases::DEPARTMENT_ID)->stock_base_point,
         ]);
     }
 }
