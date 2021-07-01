@@ -121,8 +121,6 @@ class GetRegionTest extends TestCase
     /** @test */
     public function it_should_return_region_by_region_id_when_auth_user_has_office_manager_role()
     {
-        $this->withoutExceptionHandling();
-
         $department = Department::factory()->create(['department_manager_id' => $this->departmentManager->id]);
         /** @var Collection $regions */
         $regions = Region::factory()->times(2)->create([
