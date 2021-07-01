@@ -158,4 +158,29 @@ class StoreCustomerTest extends TestCase
             'customer' => $customer,
         ])->assertSet('customer.sales_rep_id', $setter->id);
     }
+
+    /** @test */
+    public function it_should_set_self_gen()
+    {
+        $department = Department::factory()->create();
+
+        $setter        = User::factory()->create([
+            'role'          => Role::SETTER,
+            'department_id' => $department->id,
+        ]);
+
+        $customer = Customer::factory()->make();
+
+        Department::factory()->create();
+
+        $this->actingAs($setter);
+
+        Livewire::test(Create::class, [
+            'bills'    => Customer::BILLS,
+            'customer' => $customer,
+        ])
+        ->set('customer.setter_fee', 10)
+        ->set('customer.setter_id', null)
+        ->assertSet('customer.setter_fee', 0);
+    }
 }
