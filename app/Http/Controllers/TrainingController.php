@@ -41,22 +41,19 @@ class TrainingController extends Controller
             $section,
         ]);
 
-        if (user()->hasRole('Department Manager') && user()->department_id === null) {
+        if (user()->department_id === null && user()->notHaveRoles([Role::ADMIN])) {
+            $isDepartmentManager = user()->hasRole(Role::DEPARTMENT_MANAGER);
+
+            $title = $isDepartmentManager
+                ? 'You need to be part of a department to access!'
+                : 'You need to be linked to a department!';
+
             alert()
-                ->withTitle(__('You need to be part of a department to access!'))
+                ->withTitle(__($title))
                 ->withColor('red')
                 ->send();
 
             return redirect()->route('castle.dashboard');
-        }
-
-        if (user()->hasRole('Region Manager') && user()->department_id === null) {
-            alert()
-                ->withTitle(__('You need to be linked to a department!'))
-                ->withColor('red')
-                ->send();
-
-            return back();
         }
 
         return view('castle.manage-trainings.index', [
