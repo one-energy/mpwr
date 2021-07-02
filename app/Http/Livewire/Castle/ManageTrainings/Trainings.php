@@ -53,6 +53,7 @@ class Trainings extends Component
 
     public function mount()
     {
+        $this->department    = new Department();
         $this->video         = new TrainingPageContent();
         $this->actualSection = new TrainingPageSection();
         $this->contents      = collect();
@@ -161,8 +162,7 @@ class Trainings extends Component
                 $query->where(function ($query) {
                     $query
                         ->orWhere('training_page_sections.title', 'like', "%{$this->search}%")
-                        ->orWhereHas('contents', fn ($query) =>
-                            $query->where('description', 'like', "%{$this->search}%")
+                        ->orWhereHas('contents', fn ($query) => $query->where('description', 'like', "%{$this->search}%")
                         );
                 });
             })
@@ -171,10 +171,6 @@ class Trainings extends Component
 
     public function changeTab(string $tabName)
     {
-        if ($this->selectedTab === $tabName) {
-            return;
-        }
-
         $this->selectedTab = $tabName;
     }
 
