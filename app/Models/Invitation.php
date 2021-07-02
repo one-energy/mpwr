@@ -27,6 +27,13 @@ class Invitation extends Model
     use HasFactory;
     use Notifiable;
 
+    protected $fillable = [
+        'email',
+        'token',
+        'master',
+        'user_id'
+    ];
+
     public function getRouteKeyName()
     {
         return 'token';

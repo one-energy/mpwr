@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Customer;
 
+use App\Enum\Role;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\Financer;
@@ -86,7 +87,6 @@ class Edit extends Component
 
         return view('livewire.customer.edit', [
             'departments' => Department::all(),
-            'setterFee'   => $this->getSetterFee(),
             'users'       => User::whereDepartmentId($this->departmentId)->orderBy('first_name')->get(),
             'bills'       => Customer::BILLS,
             'financings'  => Financing::all(),
@@ -207,11 +207,6 @@ class Edit extends Component
         }
     }
 
-    public function getSetterFee()
-    {
-        return Rates::whereRole('Setter')->first();
-    }
-
     public function calculateCommission($customer)
     {
         return (
@@ -235,21 +230,12 @@ class Edit extends Component
         $this->customer->sales_rep_fee = $this->getUserRate($userId);
     }
 
-    public function getSetterRate($userId)
+    public function getUserRate(int $userId)
     {
-        if ($userId) {
-            $this->customer->setter_fee = $this->customer->setter_fee ?? $this->getUserRate($userId);
-        } else {
-            $this->customer->setter_fee = 0;
-        }
-    }
-
-    public function getUserRate($userId)
-    {
-        $user = User::whereId($userId)->first();
-
+        $user = User::find($userId);
         $rate = Rates::whereRole($user->role);
-        $rate->when($user->role === 'Sales Rep', function ($query) use ($user) {
+        
+        $rate->when($user->hasRole(Role::SALES_REP), function ($query) use ($user) {
             $query->where('time', '<=', $user->installs)->orderBy('time', 'desc');
         });
 

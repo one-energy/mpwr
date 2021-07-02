@@ -70,7 +70,7 @@ class AreaChartTest extends TestCase
         Customer::factory()->create([
             'is_active'           => true,
             'sales_rep_id'        => $john->id,
-            'date_of_sale'        => today()->addDay(),
+            'date_of_sale'        => today()->startOfMonth()->addDay(),
             'sales_rep_comission' => 3_000,
             'panel_sold'          => true
         ]);
@@ -78,7 +78,7 @@ class AreaChartTest extends TestCase
         Customer::factory()->create([
             'is_active'           => true,
             'sales_rep_id'        => $john->id,
-            'date_of_sale'        => today(),
+            'date_of_sale'        => today()->startOfMonth(),
             'sales_rep_comission' => 2_000,
             'panel_sold'          => true
         ]);
@@ -96,11 +96,11 @@ class AreaChartTest extends TestCase
         Livewire::test(AreaChart::class, ['period' => 'm', 'panelSold' => true])
             ->assertSet('data', [
                 [
-                    'date'       => today()->format('m-d-Y'),
+                    'date'       => today()->startOfMonth()->format('m-d-Y'),
                     'commission' => 2_000
                 ],
                 [
-                    'date'       => today()->addDay()->format('m-d-Y'),
+                    'date'       => today()->startOfMonth()->addDay()->format('m-d-Y'),
                     'commission' => 3_000
                 ],
             ])
