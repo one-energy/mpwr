@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enum\Role;
 use App\Facades\Actions\DestroySection;
 use App\Models\Department;
 use App\Models\TrainingPageContent;
@@ -9,9 +10,7 @@ use App\Models\TrainingPageSection;
 
 class TrainingController extends Controller
 {
-    public $trainings = [];
-
-    public function index(Department $department, TrainingPageSection $section = null, $search = null)
+    public function index(Department $department, TrainingPageSection $section = null)
     {
         $this->authorize('viewList', [
             TrainingPageSection::class,
@@ -19,7 +18,7 @@ class TrainingController extends Controller
             $section,
         ]);
 
-        if (user()->hasRole('Department Manager') && user()->department_id === null) {
+        if (user()->department_id === null && user()->hasRole(Role::DEPARTMENT_MANAGER)) {
             alert()
                 ->withTitle(__('You need to be part of a department to access!'))
                 ->withColor('red')
@@ -34,11 +33,6 @@ class TrainingController extends Controller
         ]);
     }
 
-    public function searchTrainings()
-    {
-        $this->trainings = TrainingPageSection::get();
-    }
-
     public function manageTrainings(Department $department, TrainingPageSection $section = null)
     {
         $this->authorize('viewList', [
@@ -47,22 +41,19 @@ class TrainingController extends Controller
             $section,
         ]);
 
-        if (user()->hasRole('Department Manager') && user()->department_id === null) {
+        if (user()->department_id === null && user()->notHaveRoles([Role::ADMIN])) {
+            $isDepartmentManager = user()->hasRole(Role::DEPARTMENT_MANAGER);
+
+            $title = $isDepartmentManager
+                ? 'You need to be part of a department to access!'
+                : 'You need to be linked to a department!';
+
             alert()
-                ->withTitle(__('You need to be part of a department to access!'))
+                ->withTitle(__($title))
                 ->withColor('red')
                 ->send();
 
             return redirect()->route('castle.dashboard');
-        }
-
-        if (user()->hasRole('Region Manager') && user()->department_id === null) {
-            alert()
-                ->withTitle(__('You need to be linked to a department!'))
-                ->withColor('red')
-                ->send();
-
-            return back();
         }
 
         return view('castle.manage-trainings.index', [
@@ -114,66 +105,15 @@ class TrainingController extends Controller
         ]));
     }
 
-    public function updateSection(TrainingPageSection $section)
-    {
-        $validated = request()->validate([
-            'title' => 'required|string|max:255',
-        ]);
-
-        $trainingPageContent        = TrainingPageSection::query()->whereId($section->id)->first();
-        $trainingPageContent->title = $validated['title'];
-        $trainingPageContent->update();
-
-        alert()
-            ->withTitle(__('Section saved!'))
-            ->send();
-
-        return redirect(route('castle.manage-trainings.index', [
-            'department' => $section->department_id,
-            'section'    => $section->parent_id,
-        ]));
-    }
-
-    public function storeContent(TrainingPageSection $section)
-    {
-        $validated = request()->validate([
-            'content_title' => 'required|string|max:255',
-            'video_url'     => 'required|string|max:255',
-            'description'   => 'required|string',
-        ]);
-
-        $trainingPageContent                           = new TrainingPageContent();
-        $trainingPageContent->title                    = $validated['content_title'];
-        $trainingPageContent->description              = $validated['description'];
-        $trainingPageContent->video_url                = $validated['video_url'];
-        $trainingPageContent->training_page_section_id = $section->id;
-
-        $trainingPageContent->save();
-
-        alert()
-            ->withTitle(__('Content created!'))
-            ->send();
-
-        return redirect(route('castle.manage-trainings.index', [
-            'department' => $section->department_id,
-            'section'    => $section->id,
-        ]));
-    }
-
     public function updateContent(TrainingPageContent $content)
     {
         $validated = request()->validate([
-            'content_title' => 'required|string|max:255',
-            'video_url'     => 'required|string|max:255',
-            'description'   => 'required|string',
+            'title'       => 'required|string|max:255',
+            'video_url'   => 'required|string|max:255',
+            'description' => 'required|string',
         ]);
 
-        $trainingPageContent              = TrainingPageContent::query()->whereId($content->id)->first();
-        $trainingPageContent->title       = $validated['content_title'];
-        $trainingPageContent->video_url   = $validated['video_url'];
-        $trainingPageContent->description = $validated['description'];
-
-        $trainingPageContent->update();
+        $content->update($validated);
 
         alert()
             ->withTitle(__('Content saved!'))

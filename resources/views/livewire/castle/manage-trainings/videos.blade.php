@@ -56,7 +56,7 @@
                     <h3 class="mb-3.5 font-medium">Video Editing</h3>
                     <x-form id="videoForm" :route="$updateRoute">
                         <div class="flex flex-col space-y-5 my-4">
-                            <x-input label="Title" name="content_title" value="{{ $selectedContent->title }}" />
+                            <x-input label="Title" name="title" value="{{ $selectedContent->title }}" />
                             <x-input label="Video Url" name="video_url" value="{{ $selectedContent->video_url }}"/>
                             <x-text-area label="Description" name="description" value="{{ $selectedContent->description }}"></x-text-area>
                         </div>
