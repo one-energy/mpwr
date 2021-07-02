@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Castle\ManageTrainings;
 
+use App\Enum\Role;
 use App\Models\Department;
 use App\Models\SectionFile;
 use App\Models\TrainingPageContent;
@@ -70,7 +71,7 @@ class Trainings extends Component
 
     public function render()
     {
-        if (!$this->department->id && (user()->role == 'Owner' || user()->role == 'Admin')) {
+        if (!$this->department->id && user()->hasAnyRole([Role::ADMIN, Role::OWNER])) {
             $this->department = Department::first();
         }
 
@@ -104,11 +105,11 @@ class Trainings extends Component
 
     public function getCanSeeActionsProperty()
     {
-        if (user()->hasAnyRole(['Admin', 'Owner', 'Department Manager'])) {
+        if (user()->hasAnyRole([Role::ADMIN, Role::OWNER, Role::DEPARTMENT_MANAGER])) {
             return true;
         }
 
-        if (user()->hasRole('Region Manager') && $this->actualSection->isDepartmentSection()) {
+        if ($this->actualSection->isDepartmentSection() && user()->hasRole(Role::REGION_MANAGER)) {
             return false;
         }
 
@@ -160,7 +161,9 @@ class Trainings extends Component
                 $query->where(function ($query) {
                     $query
                         ->orWhere('training_page_sections.title', 'like', "%{$this->search}%")
-                        ->orWhere('training_page_contents.description', 'like', "%{$this->search}%");
+                        ->orWhereHas('contents', fn ($query) =>
+                            $query->where('description', 'like', "%{$this->search}%")
+                        );
                 });
             })
             ->get();
