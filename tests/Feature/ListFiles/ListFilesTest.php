@@ -47,10 +47,8 @@ class ListFilesTest extends TestCase
         $this->files->push(UploadedFile::fake()->create('avatar.pdf'));
 
         $this->post(route('uploadSectionFile', $this->section->id), [
-            'files' => $this->files,
-            'meta'  => [
-                'training_type' => 'training',
-            ],
+            'files' => $this->files->toArray(),
+            'meta'  => ['training_type' => 'training'],
         ]);
     }
 
