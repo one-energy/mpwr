@@ -95,7 +95,7 @@
                                     <x-form id="formContent"
                                         :route="route('castle.manage-trainings.storeContent', $actualSection->id)">
                                         <div class="grid grid-cols-2 mt-8 gap-2 mb-4">
-                                            <x-input class="col-span-1" label="Title" name="content_title" />
+                                            <x-input class="col-span-1" label="Title" name="title" />
                                             <x-input class="col-span-1" label="Video Url" name="video_url" />
                                             <x-text-area class="col-span-2" label="Description" name="description" hidden>
                                             </x-text-area>

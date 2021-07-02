@@ -137,13 +137,13 @@ class TrainingController extends Controller
     public function storeContent(TrainingPageSection $section)
     {
         $validated = request()->validate([
-            'content_title' => 'required|string|max:255',
+            'title'         => 'required|string|max:255',
             'video_url'     => 'required|string|max:255',
             'description'   => 'required|string',
         ]);
 
         $trainingPageContent                           = new TrainingPageContent();
-        $trainingPageContent->title                    = $validated['content_title'];
+        $trainingPageContent->title                    = $validated['title'];
         $trainingPageContent->description              = $validated['description'];
         $trainingPageContent->video_url                = $validated['video_url'];
         $trainingPageContent->training_page_section_id = $section->id;
@@ -163,17 +163,12 @@ class TrainingController extends Controller
     public function updateContent(TrainingPageContent $content)
     {
         $validated = request()->validate([
-            'content_title' => 'required|string|max:255',
-            'video_url'     => 'required|string|max:255',
-            'description'   => 'required|string',
+            'title'       => 'required|string|max:255',
+            'video_url'   => 'required|string|max:255',
+            'description' => 'required|string',
         ]);
 
-        $trainingPageContent              = TrainingPageContent::query()->whereId($content->id)->first();
-        $trainingPageContent->title       = $validated['content_title'];
-        $trainingPageContent->video_url   = $validated['video_url'];
-        $trainingPageContent->description = $validated['description'];
-
-        $trainingPageContent->update();
+        $content->update($validated);
 
         alert()
             ->withTitle(__('Content saved!'))
