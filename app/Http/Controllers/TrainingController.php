@@ -134,32 +134,6 @@ class TrainingController extends Controller
         ]));
     }
 
-    public function storeContent(TrainingPageSection $section)
-    {
-        $validated = request()->validate([
-            'title'         => 'required|string|max:255',
-            'video_url'     => 'required|string|max:255',
-            'description'   => 'required|string',
-        ]);
-
-        $trainingPageContent                           = new TrainingPageContent();
-        $trainingPageContent->title                    = $validated['title'];
-        $trainingPageContent->description              = $validated['description'];
-        $trainingPageContent->video_url                = $validated['video_url'];
-        $trainingPageContent->training_page_section_id = $section->id;
-
-        $trainingPageContent->save();
-
-        alert()
-            ->withTitle(__('Content created!'))
-            ->send();
-
-        return redirect(route('castle.manage-trainings.index', [
-            'department' => $section->department_id,
-            'section'    => $section->id,
-        ]));
-    }
-
     public function updateContent(TrainingPageContent $content)
     {
         $validated = request()->validate([
