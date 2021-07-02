@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enum\Role;
 use App\Facades\Actions\DestroySection;
 use App\Models\Department;
 use App\Models\TrainingPageContent;
@@ -9,7 +10,7 @@ use App\Models\TrainingPageSection;
 
 class TrainingController extends Controller
 {
-    public function index(Department $department, TrainingPageSection $section = null, $search = null)
+    public function index(Department $department, TrainingPageSection $section = null)
     {
         $this->authorize('viewList', [
             TrainingPageSection::class,
@@ -17,7 +18,7 @@ class TrainingController extends Controller
             $section,
         ]);
 
-        if (user()->hasRole('Department Manager') && user()->department_id === null) {
+        if (user()->department_id === null && user()->hasRole(Role::DEPARTMENT_MANAGER)) {
             alert()
                 ->withTitle(__('You need to be part of a department to access!'))
                 ->withColor('red')
