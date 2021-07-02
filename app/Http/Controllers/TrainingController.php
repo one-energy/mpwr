@@ -108,26 +108,6 @@ class TrainingController extends Controller
         ]));
     }
 
-    public function updateSection(TrainingPageSection $section)
-    {
-        $validated = request()->validate([
-            'title' => 'required|string|max:255',
-        ]);
-
-        $trainingPageContent        = TrainingPageSection::query()->whereId($section->id)->first();
-        $trainingPageContent->title = $validated['title'];
-        $trainingPageContent->update();
-
-        alert()
-            ->withTitle(__('Section saved!'))
-            ->send();
-
-        return redirect(route('castle.manage-trainings.index', [
-            'department' => $section->department_id,
-            'section'    => $section->parent_id,
-        ]));
-    }
-
     public function updateContent(TrainingPageContent $content)
     {
         $validated = request()->validate([

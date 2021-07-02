@@ -109,7 +109,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::prefix('manage-trainings')->middleware('role:Admin|Owner|Department Manager|Region Manager')->name('manage-trainings.')->group(function () {
             Route::get('/list/{department?}/{section?}', [TrainingController::class, 'manageTrainings'])->name('index');
             Route::post('/{section?}/create-section', [TrainingController::class, 'storeSection'])->name('storeSection');
-            Route::put('/{section?}/update-section', [TrainingController::class, 'updateSection'])->name('updateSection');
             Route::post('/{section?}/create-content', [TrainingController::class, 'storeContent'])->name('storeContent');
             Route::post('/{content}/update-content', [TrainingController::class, 'updateContent'])->name('updateContent');
             Route::post('/changeDepartment', [TrainingController::class, 'changeDepartment'])->name('changeDepartment');
