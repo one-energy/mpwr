@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Enum\Role;
 use App\Models\Department;
 use App\Models\SectionFile;
 use App\Models\TrainingPageContent;
@@ -46,7 +47,7 @@ class ShowTrainings extends Component
 
     public function render()
     {
-        if (!$this->department->id && (user()->role == 'Owner' || user()->role == 'Admin')) {
+        if (!$this->department->id && user()->hasAnyRole([Role::ADMIN, Role::OWNER])) {
             $this->department = Department::first();
         }
 
@@ -107,16 +108,7 @@ class ShowTrainings extends Component
             ->when(user()->hasRole('Region Manager'), function (Builder $query) {
                 $query->sectionsUserManaged();
             })
-            ->when($this->search === '', function ($query) use ($section) {
-                $query->where('training_page_sections.parent_id', $section->id ?? 1);
-            })
-            ->when($this->search !== '', function ($query) {
-                $query->where(function ($query) {
-                    $query
-                        ->orWhere('training_page_sections.title', 'like', "%{$this->search}%")
-                        ->orWhere('training_page_contents.description', 'like', "%{$this->search}%");
-                });
-            })
+            ->where('training_page_sections.parent_id', $section->id ?? 1)
             ->get();
     }
 
