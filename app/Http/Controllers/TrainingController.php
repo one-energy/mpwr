@@ -9,8 +9,6 @@ use App\Models\TrainingPageSection;
 
 class TrainingController extends Controller
 {
-    public $trainings = [];
-
     public function index(Department $department, TrainingPageSection $section = null, $search = null)
     {
         $this->authorize('viewList', [
@@ -32,11 +30,6 @@ class TrainingController extends Controller
             'department' => $department,
             'section'    => $section,
         ]);
-    }
-
-    public function searchTrainings()
-    {
-        $this->trainings = TrainingPageSection::get();
     }
 
     public function manageTrainings(Department $department, TrainingPageSection $section = null)
