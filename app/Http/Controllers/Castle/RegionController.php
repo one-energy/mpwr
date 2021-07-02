@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Castle;
 
+use App\Enum\Role;
 use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\Region;
@@ -16,13 +17,13 @@ class RegionController extends Controller
     {
         return Region::query()
             ->with('department')
-            ->when(user()->hasRole('Department Manager'), function (Builder $query) use ($department) {
+            ->when(user()->hasRole(Role::DEPARTMENT_MANAGER), function (Builder $query) use ($department) {
                 $query->whereDepartmentId($department->id);
             })
-            ->when(user()->hasRole('Region Manager'), function (Builder $query) {
+            ->when(user()->hasRole(Role::REGION_MANAGER), function (Builder $query) {
                 $query->whereRegionManagerId(user()->id);
             })
-            ->when(user()->hasRole('Office Manager'), function (Builder $query) {
+            ->when(user()->hasRole(Role::OFFICE_MANAGER), function (Builder $query) {
                 $query->whereId(user()->office->region->id);
             })
             ->get();
@@ -37,16 +38,8 @@ class RegionController extends Controller
 
     public function create()
     {
-        $users = User::query()
-            ->where('role', '=', 'Region Manager')
-            ->when(user()->role == 'Department Manager', function (Builder $query) {
-                $query->where('department_id', '=', user()->department_id);
-            })
-            ->get();
-
         return view('castle.regions.create', [
             'departments' => Department::all(),
-            'users'       => $users,
         ]);
     }
 

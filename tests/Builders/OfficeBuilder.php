@@ -36,6 +36,15 @@ class OfficeBuilder
 
         $this->office->save();
 
+        $this->office->officeManager()->update([
+            'office_id'     => $this->office->id,
+            'department_id' => $this->office->region->department_id
+        ]);
+
+        $this->office->region->regionManager()->update([
+            'office_id' => $this->office->id
+        ]);
+
         return $this;
     }
 
@@ -44,15 +53,19 @@ class OfficeBuilder
         return $this->office;
     }
 
-    public function withManager(User $user): self
+    public function withManager(?User $user = null): self
     {
+        $user = $user ?? User::factory()->create(['role' => Role::OFFICE_MANAGER]);
+
         $this->office->office_manager_id = $user->id;
 
         return $this;
     }
 
-    public function region(Region $region): self
+    public function region(?Region $region = null): self
     {
+        $region = $region ?? $this->createRegionManager();
+
         $this->office->region_id = $region->id;
 
         return $this;
@@ -67,5 +80,14 @@ class OfficeBuilder
         }
 
         return $this;
+    }
+
+    private function createRegionManager(): Region
+    {
+        return RegionBuilder::build()
+            ->withManager()
+            ->withDepartment()
+            ->save()
+            ->get();
     }
 }
