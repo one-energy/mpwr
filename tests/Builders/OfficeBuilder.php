@@ -38,11 +38,11 @@ class OfficeBuilder
 
         $this->office->officeManager()->update([
             'office_id'     => $this->office->id,
-            'department_id' => $this->office->region->department_id
+            'department_id' => $this->office->region->department_id,
         ]);
 
         $this->office->region->regionManager()->update([
-            'office_id' => $this->office->id
+            'office_id' => $this->office->id,
         ]);
 
         return $this;
@@ -64,7 +64,7 @@ class OfficeBuilder
 
     public function region(?Region $region = null): self
     {
-        $region = $region ?? $this->createRegionManager();
+        $region = $region ?? $this->createRegion();
 
         $this->office->region_id = $region->id;
 
@@ -82,7 +82,7 @@ class OfficeBuilder
         return $this;
     }
 
-    private function createRegionManager(): Region
+    private function createRegion(): Region
     {
         return RegionBuilder::build()
             ->withManager()
