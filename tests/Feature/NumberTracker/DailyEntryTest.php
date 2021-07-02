@@ -17,7 +17,7 @@ use Tests\TestCase;
 
 class DailyEntryTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private User $dptManager;
 
@@ -144,11 +144,28 @@ class DailyEntryTest extends TestCase
     {
         $period = [];
 
-        if (Carbon::now()->day == 1) {
-            $period = CarbonPeriod::create(Carbon::now()->firstOfMonth(), Carbon::now())->toArray();
+        if (Carbon::now()->day != 1) {
+            $carbonPeriod = CarbonPeriod::create(Carbon::now()->firstOfMonth(), Carbon::yesterday());
+
+            foreach ($carbonPeriod as $date) {
+                array_push($period, $date->toDateString());
+            }
         }
 
-        dd($period);
+
+        Livewire::test(DailyEntry::class)
+            ->set('officeSelected', $this->office->id)
+            ->set('dateSelected', Carbon::now())
+            ->assertSet('missingDates', $period);
+        
+        DailyNumber::factory()->create([
+            'user_id'   => $this->john->id,
+            'office_id' => $this->office->id,
+            'date'      => Carbon::yesterday(),
+            'doors'     => 15,
+        ]);
+
+        array_pop($period);
 
         Livewire::test(DailyEntry::class)
             ->set('officeSelected', $this->office->id)
