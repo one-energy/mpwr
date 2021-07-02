@@ -1,6 +1,6 @@
 <div>
-    <section class="flex flex-wrap">
-        <div class="sticky self-start left-0 top-0 w-72 md:w-96 sans-serif flex-none bg-white">
+    <section class="md:flex md:flex-wrap">
+        <div class="sticky z-30 self-start left-0 top-0 w-72 md:w-96 sans-serif flex-none bg-white">
             <ul class="flex mt-3 border-b">
                 <li class="mr-4 -mb-px">
                     <span class="
@@ -129,7 +129,7 @@
         </div>
 
         <div
-            class="flex-grow"
+            class="md:flex-grow"
             x-data="{
             openModal: false,
             openDoorsTab: 'daily',
@@ -156,50 +156,59 @@
 
                         <div class="mt-6 flex flex-col">
                             <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-                                <div class="align-middle inline-block min-w-full overflow-hidden">
-                                    @if ($this->topTenDoors->isNotEmpty())
-                                        <x-table>
-                                            <x-slot name="header">
-                                                <x-table.th-tr>
-                                                    <x-table.th>@lang('Rank')</x-table.th>
-                                                    <x-table.th>@lang('Representative')</x-table.th>
-                                                    <x-table.th>@lang('Doors')</x-table.th>
-                                                    <x-table.th>@lang('Region')</x-table.th>
-                                                    <x-table.th>@lang('Office')</x-table.th>
-                                                </x-table.th-tr>
-                                            </x-slot>
-                                            <x-slot name="body">
-                                                @foreach ($this->topTenDoors as $user)
-                                                    <x-table.tr
-                                                        :loop="$loop"
-                                                        x-on:click="openModal = true"
-                                                        wire:click="setUser({{ $user->id }})" class="cursor-pointer"
-                                                    >
-                                                        <x-table.td>
-                                                            <span
-                                                                class="px-2 inline-flex rounded-full bg-green-base text-white">
-                                                                {{ $loop->index + 1 }}
-                                                            </span>
-                                                        </x-table.td>
-                                                        <x-table.td>
-                                                            {{ $user->full_name }}
-                                                        </x-table.td>
-                                                        <x-table.td>{{ $user->doors_total }}</x-table.td>
-                                                        <x-table.td>{{ $user->office ? $user->office->region->name : html_entity_decode('&#8212;') }}</x-table.td>
-                                                        <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
-                                                    </x-table.tr>
-                                                @endforeach
-                                            </x-slot>
-                                        </x-table>
-                                    @else
-                                        <div class="flex justify-center align-middle">
-                                            <div class="text-sm text-center text-gray-700">
-                                                <x-svg.draw.empty/>
-                                                There are no top 10 doors for this period
-                                            </div>
+                                @if ($this->topTenDoors->isNotEmpty())
+                                    <x-table>
+                                        <x-slot name="header">
+                                            <x-table.th-tr>
+                                                <x-table.th class="sticky left-0 z-20 bg-white">
+                                                    @lang('Rank')
+                                                </x-table.th>
+                                                <x-table.th class="sticky left-20 z-10 bg-white">
+                                                @lang('Representative')
+                                                </x-table.th>
+                                                <x-table.th>
+                                                    @lang('Doors')
+                                                </x-table.th>
+                                                <x-table.th>
+                                                    @lang('Region')
+                                                </x-table.th>
+                                                <x-table.th>
+                                                    @lang('Office')
+                                                </x-table.th>
+                                            </x-table.th-tr>
+                                        </x-slot>
+                                        <x-slot name="body">
+                                            @foreach ($this->topTenDoors as $user)
+                                                <x-table.tr
+                                                    :loop="$loop"
+                                                    x-on:click="openModal = true"
+                                                    wire:click="setUser({{ $user->id }})"
+                                                    class="cursor-pointer"
+                                                >
+                                                    <x-table.td class="sticky left-0 bg-white">
+                                                        <span
+                                                            class="px-2 inline-flex rounded-full bg-green-base text-white">
+                                                            {{ $loop->index + 1 }}
+                                                        </span>
+                                                    </x-table.td>
+                                                    <x-table.td class="sticky left-20 bg-white">
+                                                        {{ $user->full_name }}
+                                                    </x-table.td>
+                                                    <x-table.td>{{ $user->doors_total }}</x-table.td>
+                                                    <x-table.td>{{ $user->office ? $user->office->region->name : html_entity_decode('&#8212;') }}</x-table.td>
+                                                    <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
+                                                </x-table.tr>
+                                            @endforeach
+                                        </x-slot>
+                                    </x-table>
+                                @else
+                                    <div class="flex justify-center align-middle">
+                                        <div class="text-sm text-center text-gray-700">
+                                            <x-svg.draw.empty/>
+                                            There are no top 10 doors for this period
                                         </div>
-                                    @endif
-                                </div>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -212,48 +221,64 @@
 
                         <div class="mt-6 flex flex-col">
                             <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-                                <div class="align-middle inline-block min-w-full overflow-hidden">
-                                    @if ($this->topTenHours->count())
-                                        <x-table>
-                                            <x-slot name="header">
-                                                <x-table.th-tr>
-                                                    <x-table.th>@lang('Rank')</x-table.th>
-                                                    <x-table.th>@lang('Representative')</x-table.th>
-                                                    <x-table.th>@lang('Hours')</x-table.th>
-                                                    <x-table.th>@lang('Region')</x-table.th>
-                                                    <x-table.th>@lang('Office')</x-table.th>
-                                                </x-table.th-tr>
-                                            </x-slot>
-                                            <x-slot name="body">
-                                                @foreach ($this->topTenHours as $user)
-                                                    <x-table.tr
-                                                        :loop="$loop" x-on:click="openModal = true"
-                                                        wire:click="setUser({{ $user->id }})"
-                                                        class="cursor-pointer"
-                                                    >
-                                                        <x-table.td>
-                                                                <span
-                                                                    class="px-2 inline-flex rounded-full bg-green-base text-white">
-                                                                    {{ $loop->index + 1 }}
-                                                                </span>
-                                                        </x-table.td>
-                                                        <x-table.td>{{ $user->full_name }}</x-table.td>
-                                                        <x-table.td>{{ $user->hours_worked_total }}</x-table.td>
-                                                        <x-table.td>{{ $user->office ? $user->office->region->name : html_entity_decode('&#8212;') }}</x-table.td>
-                                                        <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
-                                                    </x-table.tr>
-                                                @endforeach
-                                            </x-slot>
-                                        </x-table>
-                                    @else
-                                        <div class="flex justify-center align-middle">
-                                            <div class="text-sm text-center text-gray-700">
-                                                <x-svg.draw.empty></x-svg.draw.empty>
-                                                There are no top 10 hours worked for this period.
-                                            </div>
+                                @if ($this->topTenHours->count())
+                                    <x-table>
+                                        <x-slot name="header">
+                                            <x-table.th-tr>
+                                                <x-table.th class="sticky left-0 z-20 bg-white">
+                                                    @lang('Rank')
+                                                </x-table.th>
+                                                <x-table.th class="sticky left-20 z-10 bg-white">
+                                                    @lang('Representative')
+                                                </x-table.th>
+                                                <x-table.th>
+                                                    @lang('Hours')
+                                                </x-table.th>
+                                                <x-table.th>
+                                                    @lang('Region')
+                                                </x-table.th>
+                                                <x-table.th>
+                                                    @lang('Office')
+                                                </x-table.th>
+                                            </x-table.th-tr>
+                                        </x-slot>
+                                        <x-slot name="body">
+                                            @foreach ($this->topTenHours as $user)
+                                                <x-table.tr
+                                                    :loop="$loop" x-on:click="openModal = true"
+                                                    wire:click="setUser({{ $user->id }})"
+                                                    class="cursor-pointer"
+                                                >
+                                                    <x-table.td class="sticky left-0 bg-white">
+                                                        <span
+                                                            class="px-2 inline-flex rounded-full bg-green-base text-white">
+                                                            {{ $loop->index + 1 }}
+                                                        </span>
+                                                    </x-table.td>
+                                                    <x-table.td class="sticky left-20 bg-white">
+                                                        {{ $user->full_name }}
+                                                    </x-table.td>
+                                                    <x-table.td>
+                                                        {{ $user->hours_worked_total }}
+                                                    </x-table.td>
+                                                    <x-table.td>
+                                                        {{ $user->office ? $user->office->region->name : html_entity_decode('&#8212;') }}
+                                                    </x-table.td>
+                                                    <x-table.td>
+                                                        {{ $user->office->name ?? 'Without Office' }}
+                                                    </x-table.td>
+                                                </x-table.tr>
+                                            @endforeach
+                                        </x-slot>
+                                    </x-table>
+                                @else
+                                    <div class="flex justify-center align-middle">
+                                        <div class="text-sm text-center text-gray-700">
+                                            <x-svg.draw.empty></x-svg.draw.empty>
+                                            There are no top 10 hours worked for this period.
                                         </div>
-                                    @endif
-                                </div>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -266,48 +291,64 @@
 
                         <div class="mt-6 flex flex-col">
                             <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-                                <div class="align-middle inline-block min-w-full overflow-hidden">
-                                    @if ($this->topTenSets->count())
-                                        <x-table>
-                                            <x-slot name="header">
-                                                <x-table.th-tr>
-                                                    <x-table.th>@lang('Rank')</x-table.th>
-                                                    <x-table.th>@lang('Representative')</x-table.th>
-                                                    <x-table.th>@lang('Sets')</x-table.th>
-                                                    <x-table.th>@lang('Region')</x-table.th>
-                                                    <x-table.th>@lang('Office')</x-table.th>
-                                                </x-table.th-tr>
-                                            </x-slot>
-                                            <x-slot name="body">
-                                                @foreach ($this->topTenSets as $user)
-                                                    <x-table.tr
-                                                        :loop="$loop" x-on:click="openModal = true"
-                                                        wire:click="setUser({{ $user->id }})"
-                                                        class="cursor-pointer"
-                                                    >
-                                                        <x-table.td>
+                                @if ($this->topTenSets->count())
+                                    <x-table>
+                                        <x-slot name="header">
+                                            <x-table.th-tr>
+                                                <x-table.th class="sticky left-0 z-20 bg-white">
+                                                    @lang('Rank')
+                                                </x-table.th>
+                                                <x-table.th class="sticky left-20 z-10 bg-white">
+                                                    @lang('Representative')
+                                                </x-table.th>
+                                                <x-table.th>
+                                                    @lang('Sets')
+                                                </x-table.th>
+                                                <x-table.th>
+                                                    @lang('Region')
+                                                </x-table.th>
+                                                <x-table.th>
+                                                    @lang('Office')
+                                                </x-table.th>
+                                            </x-table.th-tr>
+                                        </x-slot>
+                                        <x-slot name="body">
+                                            @foreach ($this->topTenSets as $user)
+                                                <x-table.tr
+                                                    :loop="$loop" x-on:click="openModal = true"
+                                                    wire:click="setUser({{ $user->id }})"
+                                                    class="cursor-pointer"
+                                                >
+                                                    <x-table.td class="sticky left-0 bg-white">
                                                             <span
                                                                 class="px-2 inline-flex rounded-full bg-green-base text-white">
                                                                 {{ $loop->index + 1 }}
                                                             </span>
-                                                        </x-table.td>
-                                                        <x-table.td>{{ $user->full_name }}</x-table.td>
-                                                        <x-table.td>{{ $user->sets_total }}</x-table.td>
-                                                        <x-table.td>{{ $user->office ? $user->office->region->name : html_entity_decode('&#8212;') }}</x-table.td>
-                                                        <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
-                                                    </x-table.tr>
-                                                @endforeach
-                                            </x-slot>
-                                        </x-table>
-                                    @else
-                                        <div class="flex justify-center align-middle">
-                                            <div class="text-sm text-center text-gray-700">
-                                                <x-svg.draw.empty></x-svg.draw.empty>
-                                                There are no top 10 sets for this period.
-                                            </div>
+                                                    </x-table.td>
+                                                    <x-table.td class="sticky left-20 bg-white">
+                                                        {{ $user->full_name }}
+                                                    </x-table.td>
+                                                    <x-table.td>
+                                                        {{ $user->sets_total }}
+                                                    </x-table.td>
+                                                    <x-table.td>
+                                                        {{ $user->office ? $user->office->region->name : html_entity_decode('&#8212;') }}
+                                                    </x-table.td>
+                                                    <x-table.td>
+                                                        {{ $user->office->name ?? 'Without Office' }}
+                                                    </x-table.td>
+                                                </x-table.tr>
+                                            @endforeach
+                                        </x-slot>
+                                    </x-table>
+                                @else
+                                    <div class="flex justify-center align-middle">
+                                        <div class="text-sm text-center text-gray-700">
+                                            <x-svg.draw.empty></x-svg.draw.empty>
+                                            There are no top 10 sets for this period.
                                         </div>
-                                    @endif
-                                </div>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -320,49 +361,65 @@
 
                         <div class="mt-6 flex flex-col">
                             <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-                                <div class="align-middle inline-block min-w-full overflow-hidden">
-                                    @if ($this->topTenSetCloses->count())
-                                        <x-table>
-                                            <x-slot name="header">
-                                                <x-table.th-tr>
-                                                    <x-table.th>@lang('Rank')</x-table.th>
-                                                    <x-table.th>@lang('Representative')</x-table.th>
-                                                    <x-table.th>@lang('Set Closes')</x-table.th>
-                                                    <x-table.th>@lang('Region')</x-table.th>
-                                                    <x-table.th>@lang('Office')</x-table.th>
-                                                </x-table.th-tr>
-                                            </x-slot>
-                                            <x-slot name="body">
-                                                @foreach ($this->topTenSetCloses as $user)
-                                                    <x-table.tr
-                                                        :loop="$loop"
-                                                        x-on:click="openModal = true"
-                                                        wire:click="setUser({{ $user->id }})"
-                                                        class="cursor-pointer"
-                                                    >
-                                                        <x-table.td>
-                                                            <span
-                                                                class="px-2 inline-flex rounded-full bg-green-base text-white">
-                                                                {{ $loop->index + 1 }}
-                                                            </span>
-                                                        </x-table.td>
-                                                        <x-table.td>{{ $user->full_name }}</x-table.td>
-                                                        <x-table.td>{{ $user->set_closes_total }}</x-table.td>
-                                                        <x-table.td>{{ $user->office ? $user->office->region->name : html_entity_decode('&#8212;') }}</x-table.td>
-                                                        <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
-                                                    </x-table.tr>
-                                                @endforeach
-                                            </x-slot>
-                                        </x-table>
-                                    @else
-                                        <div class="flex justify-center align-middle">
-                                            <div class="text-sm text-center text-gray-700">
-                                                <x-svg.draw.empty></x-svg.draw.empty>
-                                                There are no top 10 set closes for this period
-                                            </div>
+                                @if ($this->topTenSetCloses->count())
+                                    <x-table>
+                                        <x-slot name="header">
+                                            <x-table.th-tr>
+                                                <x-table.th class="sticky left-0 z-20 bg-white">
+                                                    @lang('Rank')
+                                                </x-table.th>
+                                                <x-table.th class="sticky left-20 z-10 bg-white">
+                                                    @lang('Representative')
+                                                </x-table.th>
+                                                <x-table.th>
+                                                    @lang('Set Closes')
+                                                </x-table.th>
+                                                <x-table.th>
+                                                    @lang('Region')
+                                                </x-table.th>
+                                                <x-table.th>
+                                                    @lang('Office')
+                                                </x-table.th>
+                                            </x-table.th-tr>
+                                        </x-slot>
+                                        <x-slot name="body">
+                                            @foreach ($this->topTenSetCloses as $user)
+                                                <x-table.tr
+                                                    :loop="$loop"
+                                                    x-on:click="openModal = true"
+                                                    wire:click="setUser({{ $user->id }})"
+                                                    class="cursor-pointer"
+                                                >
+                                                    <x-table.td class="sticky left-0 bg-white">
+                                                        <span
+                                                            class="px-2 inline-flex rounded-full bg-green-base text-white">
+                                                            {{ $loop->index + 1 }}
+                                                        </span>
+                                                    </x-table.td>
+                                                    <x-table.td class="sticky left-20 bg-white">
+                                                        {{ $user->full_name }}
+                                                    </x-table.td>
+                                                    <x-table.td>
+                                                        {{ $user->set_closes_total }}
+                                                    </x-table.td>
+                                                    <x-table.td>
+                                                        {{ $user->office ? $user->office->region->name : html_entity_decode('&#8212;') }}
+                                                    </x-table.td>
+                                                    <x-table.td>
+                                                        {{ $user->office->name ?? 'Without Office' }}
+                                                    </x-table.td>
+                                                </x-table.tr>
+                                            @endforeach
+                                        </x-slot>
+                                    </x-table>
+                                @else
+                                    <div class="flex justify-center align-middle">
+                                        <div class="text-sm text-center text-gray-700">
+                                            <x-svg.draw.empty></x-svg.draw.empty>
+                                            There are no top 10 set closes for this period
                                         </div>
-                                    @endif
-                                </div>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -375,48 +432,64 @@
 
                         <div class="mt-6 flex flex-col">
                             <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-                                <div class="align-middle inline-block min-w-full overflow-hidden">
-                                    @if ($this->topTenCloses->count())
-                                        <x-table>
-                                            <x-slot name="header">
-                                                <x-table.th-tr>
-                                                    <x-table.th >@lang('Rank')</x-table.th>
-                                                    <x-table.th >@lang('Representative')</x-table.th>
-                                                    <x-table.th >@lang('Closes')</x-table.th>
-                                                    <x-table.th >@lang('Region')</x-table.th>
-                                                    <x-table.th >@lang('Office')</x-table.th>
-                                                </x-table.th-tr>
-                                            </x-slot>
-                                            <x-slot name="body">
-                                                @foreach ($this->topTenCloses as $user)
-                                                    <x-table.tr
-                                                        :loop="$loop" x-on:click="openModal = true"
-                                                        wire:click="setUser({{ $user->id }})"
-                                                        class="cursor-pointer"
-                                                    >
-                                                        <x-table.td>
-                                                            <span
-                                                                class="px-2 inline-flex rounded-full bg-green-base text-white">
-                                                                {{ $loop->index + 1 }}
-                                                            </span>
-                                                        </x-table.td>
-                                                        <x-table.td>{{ $user->full_name }}</x-table.td>
-                                                        <x-table.td>{{ $user->closes_total }}</x-table.td>
-                                                        <x-table.td>{{ $user->office ?  $user->office->name : html_entity_decode('&#8212;') }}</x-table.td>
-                                                        <x-table.td>{{ $user->office->name ?? 'Without Office' }}</x-table.td>
-                                                    </x-table.tr>
-                                                @endforeach
-                                            </x-slot>
-                                        </x-table>
-                                    @else
-                                        <div class="flex justify-center align-middle">
-                                            <div class="text-sm text-center text-gray-700">
-                                                <x-svg.draw.empty/>
-                                                There are no top 10 closes for this period
-                                            </div>
+                                @if ($this->topTenCloses->count())
+                                    <x-table>
+                                        <x-slot name="header">
+                                            <x-table.th-tr>
+                                                <x-table.th class="sticky left-0 z-20 bg-white">
+                                                    @lang('Rank')
+                                                </x-table.th>
+                                                <x-table.th class="sticky left-20 z-10 bg-white">
+                                                    @lang('Representative')
+                                                </x-table.th>
+                                                <x-table.th>
+                                                    @lang('Closes')
+                                                </x-table.th>
+                                                <x-table.th>
+                                                    @lang('Region')
+                                                </x-table.th>
+                                                <x-table.th>
+                                                    @lang('Office')
+                                                </x-table.th>
+                                            </x-table.th-tr>
+                                        </x-slot>
+                                        <x-slot name="body">
+                                            @foreach ($this->topTenCloses as $user)
+                                                <x-table.tr
+                                                    :loop="$loop" x-on:click="openModal = true"
+                                                    wire:click="setUser({{ $user->id }})"
+                                                    class="cursor-pointer"
+                                                >
+                                                    <x-table.td class="sticky left-0 bg-white">
+                                                        <span
+                                                            class="px-2 inline-flex rounded-full bg-green-base text-white">
+                                                            {{ $loop->index + 1 }}
+                                                        </span>
+                                                    </x-table.td>
+                                                    <x-table.td class="sticky left-20 bg-white">
+                                                        {{ $user->full_name }}
+                                                    </x-table.td>
+                                                    <x-table.td>
+                                                        {{ $user->closes_total }}
+                                                    </x-table.td>
+                                                    <x-table.td>
+                                                        {{ $user->office ?  $user->office->name : html_entity_decode('&#8212;') }}
+                                                    </x-table.td>
+                                                    <x-table.td>
+                                                        {{ $user->office->name ?? 'Without Office' }}
+                                                    </x-table.td>
+                                                </x-table.tr>
+                                            @endforeach
+                                        </x-slot>
+                                    </x-table>
+                                @else
+                                    <div class="flex justify-center align-middle">
+                                        <div class="text-sm text-center text-gray-700">
+                                            <x-svg.draw.empty/>
+                                            There are no top 10 closes for this period
                                         </div>
-                                    @endif
-                                </div>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
