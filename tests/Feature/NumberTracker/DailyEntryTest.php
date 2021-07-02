@@ -203,4 +203,24 @@ class DailyEntryTest extends TestCase
             ->set('dateSelected', Carbon::now())
             ->assertSet("missingOffices.0.id", $someOffice->id);
     }
+
+    /** @test */
+    public function it_should_set_date()
+    {   
+        Livewire::test(DailyEntry::class)
+            ->assertSet('dateSelected', Carbon::now()->toDateString())
+            ->set('date', Carbon::yesterday())
+            ->call('setDate')
+            ->assertSet('dateSelected', Carbon::yesterday()->toDateString());
+    }
+
+    /** @test */
+    public function it_should_create_a_daily_number()
+    {   
+        Livewire::test(DailyEntry::class)
+            ->assertSet('dateSelected', Carbon::now()->toDateString())
+            ->set('date', Carbon::yesterday())
+            ->call('setDate')
+            ->assertSet('dateSelected', Carbon::yesterday()->toDateString());
+    }
 }
