@@ -75,12 +75,12 @@
                                     <div class="sm:w-1/3 md:w-1/4">
                                         @if($customer->setter_id == user()->id)
                                             <div class="hidden md:block @if($customer->is_active && $customer->panel_sold) bg-green-base @elseif($customer->is_active == false) bg-red-500 @else bg-gray-700 @endif text-white @if($customer->setter_id == user()->id) rounded-full @else rounded-md @endif py-1 px-1 text-center">
-                                                $ {{ number_format($customer->netRepCOmmission, 2) }} 
+                                                $ {{ number_format($customer->netRepCommission, 2) }} 
                                             </div>
                                         @else
                                             <div
                                                 class="@if($customer->is_active && $customer->panel_sold) bg-green-base @elseif($customer->is_active == false) bg-red-500 @else bg-gray-700 @endif text-white @if($customer->setter_id == user()->id) rounded-full @else rounded-md @endif py-1 px-1 text-center">
-                                                $ {{ number_format($customer->netRepCOmmission, 2) }} 
+                                                $ {{ number_format($customer->netRepCommission, 2) }} 
                                             </div>
                                         @endif
                                     </div>
