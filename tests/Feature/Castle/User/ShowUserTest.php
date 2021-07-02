@@ -3,6 +3,7 @@
 namespace Tests\Feature\Castle\User;
 
 use App\Enum\Role;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Builders\OfficeBuilder;
 use Tests\Builders\RegionBuilder;
@@ -25,5 +26,49 @@ class ShowUserTest extends TestCase
             ->get(route('castle.users.show', $user1->id))
             ->assertViewIs('castle.users.show')
             ->assertSee($user1->first_name);
+    }
+
+
+    /** @test */
+    public function it_should_show_resend_invitation_email_button()
+    {
+        $user = User::factory()->create([
+            "email_verified_at" => null
+        ]);
+
+        $this->get(route('castle.users.show', $user))
+            ->assertSee('Resend invitation email');
+    }
+
+    /** @test */
+    public function it_shouldt_show_resend_invitation_email_for_non_admin_users()
+    {
+        $departmentManager = User::factory()->create([
+            'role' => Role::DEPARTMENT_MANAGER
+        ]);
+
+        $user = User::factory()->create([
+            "email_verified_at" => null
+        ]);
+
+        $this->actingAs($departmentManager)
+            ->get(route('castle.users.show', $user))
+            ->assertDontSee('Resend invitation email');
+    }
+
+    /** @test */
+    public function it_should_show_success_alert_when_resend_invitation_email()
+    {
+        $admin = User::factory()->create([
+            'role' => Role::ADMIN
+        ]);
+
+        $user = User::factory()->create([
+            "email_verified_at" => null
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('verification.resendInvitationEmail', $user))
+            ->assertSee('Success');
     }
 }
