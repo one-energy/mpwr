@@ -184,25 +184,23 @@ class DailyEntryTest extends TestCase
         array_push($missingOffices, $someOffice);
         
         $livewire = Livewire::test(DailyEntry::class)
-        ->set('officeSelected', $this->office->id)
-        ->set('dateSelected', Carbon::now());
+            ->set('officeSelected', $this->office->id)
+            ->set('dateSelected', Carbon::now());
         
         foreach ($missingOffices as $index => $office) {
             $livewire->assertSet("missingOffices.{$index}.id", $office->id);
         }
-        
-        // DailyNumber::factory()->create([
-        //     'user_id'   => $this->john->id,
-        //     'office_id' => $this->office->id,
-        //     'date'      => Carbon::yesterday(),
-        //     'doors'     => 15,
-        // ]);
 
-        // array_pop($period);
+        DailyNumber::factory()->create([
+            'user_id'   => $this->john->id,
+            'office_id' => $this->office->id,
+            'date'      => Carbon::yesterday(),
+            'doors'     => 15,
+        ]);
 
-        // Livewire::test(DailyEntry::class)
-        //     ->set('officeSelected', $this->office->id)
-        //     ->set('dateSelected', Carbon::now())
-        //     ->assertSet('missingDates', $period);
+        Livewire::test(DailyEntry::class)
+            ->set('officeSelected', $this->office->id)
+            ->set('dateSelected', Carbon::now())
+            ->assertSet("missingOffices.0.id", $someOffice->id);
     }
 }
