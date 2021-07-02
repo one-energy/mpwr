@@ -128,20 +128,6 @@ class DailyEntry extends Component
         empty($office);
     }
 
-    /**
-     * @deprecated
-     */
-    public function save($value, $userId, $inputType)
-    {
-        $filteredNumbers = [
-            $inputType => $value,
-        ];
-        DailyNumber::updateOrCreate([
-            'user_id' => $userId,
-            'date'    => $this->dateSelected,
-        ], $filteredNumbers);
-    }
-
     public function sortBy()
     {
         return 'first_name';
