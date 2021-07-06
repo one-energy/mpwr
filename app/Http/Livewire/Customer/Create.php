@@ -10,7 +10,9 @@ use App\Models\Financing;
 use App\Models\Rates;
 use App\Models\Term;
 use App\Models\User;
+use App\Notifications\SalesRepWithoutManagerId;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Create extends Component
@@ -73,11 +75,13 @@ class Create extends Component
 
         $this->customer         = new Customer();
         $this->customer->adders = 0;
+
         if (user()->hasAnyRole([Role::OFFICE_MANAGER, Role::SALES_REP, Role::SETTER]) && user()->office_id != null) {
             $this->customer->sales_rep_id  = user()->id;
             $this->customer->sales_rep_fee = $this->getUserRate(user()->id);
             $this->salesRep                = user();
         }
+
         $this->setSelfGen();
     }
 
@@ -138,7 +142,13 @@ class Create extends Component
         $this->customer->payee_two                   = $salesRep->payee_two;
         $this->customer->note_two                    = $salesRep->note_two;
 
-        $this->customer->save();
+        DB::transaction(function () use ($salesRep) {
+            $this->customer->save();
+
+            if ($this->hasSomeManagerIdNull($salesRep)) {
+                $this->notifyAdmin($salesRep);
+            }
+        });
 
         alert()
             ->withTitle(__('Home Owner created!'))
@@ -222,5 +232,18 @@ class Create extends Component
             ->orderBy('first_name')
             ->get()
             ->toArray();
+    }
+
+    private function hasSomeManagerIdNull($salesRep)
+    {
+        return collect(['office_manager_id', 'region_manager_id', 'department_manager_id'])
+            ->some(fn(string $key) => $salesRep->{$key} === null);
+    }
+
+    private function notifyAdmin($salesRep)
+    {
+        /** @var User $user */
+        $user = User::query()->where('role', Role::ADMIN)->first();
+        $user->notify(new SalesRepWithoutManagerId($salesRep));
     }
 }
