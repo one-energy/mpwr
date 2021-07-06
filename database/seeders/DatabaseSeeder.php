@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             DailyNumbersSeeder::class,
             CustomersSeeder::class,
             MultiplierOfYearSeeder::class,
+            UserEniumPointLevelSeeder::class,
             StockPointsCalculationBasesSeeder::class
         ]);
     }
