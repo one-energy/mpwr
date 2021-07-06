@@ -90,9 +90,7 @@ class Create extends Component
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
         $this->netRepComission   = $this->calculateNetRepCommission();
         $this->salesReps         = user()->getPermittedUsers($this->departmentId)->toArray();
-        $this->setters           = User::whereDepartmentId($this->departmentId)
-                                ->where('id', '!=', user()->id)
-                                ->orderBy('first_name')->get()->toArray();
+        $this->setters           = $this->getSetters();
 
         return view('livewire.customer.create', [
             'departments' => Department::all(),
@@ -115,9 +113,9 @@ class Create extends Component
 
     public function store()
     {
-        $this->customer->financing_id = $this->customer->financing_id != '' ? $this->customer->financing_id : null;
-        $this->customer->financer_id  = $this->customer->financer_id != '' ? $this->customer->financer_id : null;
-        $this->customer->term_id      = $this->customer->term_id != '' ? $this->customer->term_id : null;
+        $this->customer->financing_id = $this->customer->financing_id !== '' ? $this->customer->financing_id : null;
+        $this->customer->financer_id  = $this->customer->financer_id !== '' ? $this->customer->financer_id : null;
+        $this->customer->term_id      = $this->customer->term_id !== '' ? $this->customer->term_id : null;
 
         $this->validate();
 
@@ -209,10 +207,20 @@ class Create extends Component
 
     public function calculateGrossRepComission(Customer $customer)
     {
-        if ( $customer->margin >= 0 && $customer->system_size >= 0 ) {
+        if ($customer->margin >= 0 && $customer->system_size >= 0) {
             return round((float)$customer->margin * (float)$customer->system_size * Customer::K_WATTS, 2);
         }
 
         return 0;
+    }
+
+    private function getSetters()
+    {
+        return User::query()
+            ->where('department_id', $this->departmentId)
+            ->where('id', '!=', user()->id)
+            ->orderBy('first_name')
+            ->get()
+            ->toArray();
     }
 }
