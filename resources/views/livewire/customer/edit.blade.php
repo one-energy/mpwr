@@ -109,10 +109,6 @@
                     @endif
 
                     <div class="col-span-2 md:col-span-3">
-                        <x-input-currency label="Total Cost" name="total_cost" maxSize="100000" value="{{$customer->totalSoldPrice}}" readonly/>
-                    </div>
-
-                    <div class="col-span-2 md:col-span-3">
                         <x-select-searchable
                             wire:model="customer.setter_id"
                             option-value="id"
