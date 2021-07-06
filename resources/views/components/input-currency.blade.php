@@ -2,6 +2,8 @@
 
 @php
     $class = 'form-input block w-full pl-7 pr-12 sm:text-sm sm:leading-5';
+    $wireModel = $attributes->wire('model');
+    $model     = $wireModel->value();
     if( $errors->has($name) ) {
         $class .= 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-300 focus:shadow-outline-red';
     }
@@ -11,7 +13,36 @@
     $wire = $wire && is_bool($wire) ? $name : $wire;
 @endphp
 
-<div {{ $attributes }} x-data="registerCurrencyValidate()">
+<div {{ $attributes }} x-data="{
+        model: @entangle($wireModel),
+        inputValue: null,
+        startValue() {
+            const value = $wire.get('{{ $model }}')
+            console.log(value);
+            if (value) {
+                this.inputValue = addZeros(value, {{$maxValue}})
+            }
+        },
+        validateSize($event, $maxSize) {
+            if($event.target.value > $maxSize){
+                $event.target.value = this.oldValue
+            } else {
+                this.oldValue = $event.target.value
+            }
+            this.updateModel(this.oldValue);
+        },
+        addZeros(input) {
+            console.log(input)
+            const dec = input.value.split('.')[1]
+            const len = dec && dec.length > 2 ? dec.length : 2
+            this.inputValue = Number(input.num).toFixed(len);
+            console.log(this.inputValue);
+        },
+        updateModel(value) {
+            this.model = value;
+        }
+    }"
+    x-init="startValue()">
     <div class="flex">
         <label for="{{ $name }}" class="block text-sm font-medium leading-5 text-gray-700">{{ $label }}</label>
         @if($tooltip)
@@ -61,11 +92,17 @@
     @enderror
 </div>
 
-@push('scripts')
+{{-- @push('scripts')
     <script>
         function registerCurrencyValidate() {
             var oldValue = 0;
             return {
+                inputName: {{$name}},
+                startValue() {
+                    
+                    console.log(this.inputName)
+                    // this.addZeros(input)
+                },
                 validateSize($event, $maxSize) {
                     if($event.target.value > $maxSize){
                         $event.target.value = this.oldValue
@@ -73,7 +110,13 @@
                         this.oldValue = $event.target.value
                     }
                 },
+                addZeros(input) {
+                    console.log(input)
+                    const dec = input.value.split('.')[1]
+                    const len = dec && dec.length > 2 ? dec.length : 2
+                    return Number(input.num).toFixed(len)
+                }
             }
         }
     </script>
-@endpush
+@endpush --}}
