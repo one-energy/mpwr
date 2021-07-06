@@ -104,12 +104,12 @@
 
                     @if(!user()->hasRole("Setter"))
                         <div class="col-span-2 md:col-span-3" wire:ke>
-                            <x-input-currency label="Total Cost" name="total_cost" maxSize="100000" value="{{$customer->totalSoldPrice}}" readonly/>
+                            <x-input-currency label="Total System Cost" name="total_cost" maxSize="100000" value="{{$customer->totalSoldPrice}}" readonly/>
                         </div>
                     @endif
 
                     <div class="col-span-2 md:col-span-3">
-                        <x-input-currency label="Total Cost" name="total_cost" maxSize="100000" value="{{$customer->totalSoldPrice}}" readonly/>
+                        <x-input-currency label="Total System Cost" name="total_cost" maxSize="100000" value="{{$customer->totalSoldPrice}}" readonly/>
                     </div>
 
                     <div class="col-span-2 md:col-span-3">
