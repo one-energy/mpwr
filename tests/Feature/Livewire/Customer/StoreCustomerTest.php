@@ -6,9 +6,11 @@ use App\Enum\Role;
 use App\Http\Livewire\Customer\Create;
 use App\Models\Customer;
 use App\Models\Department;
+use App\Models\Financing;
 use App\Models\User;
-use Carbon\Carbon;
+use App\Notifications\SalesRepWithoutManagerId;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
 use Tests\Builders\OfficeBuilder;
 use Tests\TestCase;
@@ -20,28 +22,16 @@ class StoreCustomerTest extends TestCase
     /** @test */
     public function it_should_store_a_new_customer()
     {
+        Notification::fake();
+
         $john     = User::factory()->create(['role' => Role::ADMIN]);
-        $user     = User::factory()->create();
-        $userOne  = User::factory()->create(['role' => Role::SETTER]);
-        $userTwo  = User::factory()->create(['role' => Role::SALES_REP]);
+        $setter   = User::factory()->create(['role' => Role::SETTER]);
+        $salesRep = User::factory()->create(['role' => Role::SALES_REP]);
+        /** @var Customer $customer */
         $customer = Customer::factory()->make([
-            'first_name'          => 'First Name',
-            'last_name'           => 'Last Name',
-            'bill'                => 'Bill',
-            'financing_id'        => 1,
-            'opened_by_id'        => $user->id,
-            'system_size'         => 0,
-            'adders'              => '',
-            'epc'                 => '',
-            'setter_id'           => $userOne->id,
-            'setter_fee'          => 20,
-            'sales_rep_id'        => $userTwo->id,
-            'sales_rep_fee'       => 20,
-            'sales_rep_comission' => 0,
-            'commission'          => '',
-            'created_at'          => Carbon::now()->timestamp,
-            'updated_at'          => Carbon::now()->timestamp,
-            'is_active'           => true,
+            'setter_id'    => $setter->id,
+            'sales_rep_id' => $salesRep->id,
+            'opened_by_id' => $john->id,
         ]);
 
         Department::factory()->create();
@@ -52,8 +42,66 @@ class StoreCustomerTest extends TestCase
             'bills'    => Customer::BILLS,
             'customer' => $customer,
         ])
-            ->call('store')
-            ->assertSee($customer->first_name);
+            ->set('customer.first_name', 'John')
+            ->set('customer.last_name', 'Doe')
+            ->set('customer.system_size', 1)
+            ->set('customer.bill', 1)
+            ->set('customer.adders', 1)
+            ->set('customer.date_of_sale', today())
+            ->set('customer.epc', 1)
+            ->set('customer.financing_id', Financing::factory()->create()->id)
+            ->set('customer.setter_id', $setter->id)
+            ->set('customer.sales_rep_id', $salesRep->id)
+            ->set('customer.sales_rep_fee', 1)
+            ->call('store');
+
+        $this->assertDatabaseCount('customers', 1);
+        $this->assertDatabaseHas('customers', [
+            'opened_by_id' => $john->id,
+            'setter_id'    => $setter->id,
+            'sales_rep_id' => $salesRep->id,
+        ]);
+    }
+
+    /** @test */
+    public function it_should_notify_admin_if_sales_rep_has_some_manager_id_null()
+    {
+        Notification::fake();
+
+        $john     = User::factory()->create(['role' => Role::ADMIN]);
+        $setter   = User::factory()->create(['role' => Role::SETTER]);
+        $salesRep = User::factory()->create(['role' => Role::SALES_REP]);
+        /** @var Customer $customer */
+        $customer = Customer::factory()->make([
+            'setter_id'    => $setter->id,
+            'sales_rep_id' => $salesRep->id,
+            'opened_by_id' => $john->id,
+        ]);
+
+        Department::factory()->create();
+
+        $this->actingAs($john);
+
+        Notification::assertNothingSent();
+
+        Livewire::test(Create::class, [
+            'bills'    => Customer::BILLS,
+            'customer' => $customer,
+        ])
+            ->set('customer.first_name', 'John')
+            ->set('customer.last_name', 'Doe')
+            ->set('customer.system_size', 1)
+            ->set('customer.bill', 1)
+            ->set('customer.adders', 1)
+            ->set('customer.date_of_sale', today())
+            ->set('customer.epc', 1)
+            ->set('customer.financing_id', Financing::factory()->create()->id)
+            ->set('customer.setter_id', $setter->id)
+            ->set('customer.sales_rep_id', $salesRep->id)
+            ->set('customer.sales_rep_fee', 1)
+            ->call('store');
+
+        Notification::assertSentTo($john, SalesRepWithoutManagerId::class);
     }
 
     /** @test */
