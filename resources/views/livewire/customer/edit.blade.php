@@ -144,8 +144,8 @@
                                           name="customer.sales_rep_fee" :disabled="user()->notHaveRoles(['Region Manager'])"/>
                     </div>
 
-                    <div class="col-span-2 md:col-span-1 @if($customer->setter_id == user()->id) hidden @endif"wire:key="margin">
-                        <x-input-currency wire:model="customer.margin" label="Margin" name="customer.margin"
+                    <div class="col-span-2 md:col-span-1 @if($customer->setter_id == user()->id) hidden @endif" wire:key="margin">
+                        <x-input-currency label="Margin" name="customer.margin" wire
                                           readonly/>
                     </div>
 

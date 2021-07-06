@@ -2,47 +2,42 @@
 
 @php
     $class = 'form-input block w-full pl-7 pr-12 sm:text-sm sm:leading-5';
-    $wireModel = $attributes->wire('model');
-    $model     = $wireModel->value();
     if( $errors->has($name) ) {
         $class .= 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-300 focus:shadow-outline-red';
     }
     $tooltip        = $tooltip ?? null;
     $observation    = $observation ?? null;
     $disabledToUser = $disabledToUser ?? null;
-    $wire = $wire && is_bool($wire) ? $name : $wire;
+    $wireModel = $attributes->wire('model');
+    $model = $wireModel->value();
+    $wire = $wire && is_bool($wire) ? $name : $attributes->wire('model')->value();
+
 @endphp
 
 <div {{ $attributes }} x-data="{
-        model: @entangle($wireModel),
+        model: @entangle($wire),
         inputValue: null,
-        startValue() {
-            const value = $wire.get('{{ $model }}')
-            console.log(value);
-            if (value) {
-                this.inputValue = addZeros(value, {{$maxValue}})
-            }
-        },
+        oldValue: 0,
         validateSize($event, $maxSize) {
             if($event.target.value > $maxSize){
                 $event.target.value = this.oldValue
             } else {
                 this.oldValue = $event.target.value
             }
-            this.updateModel(this.oldValue);
         },
-        addZeros(input) {
-            console.log(input)
-            const dec = input.value.split('.')[1]
-            const len = dec && dec.length > 2 ? dec.length : 2
-            this.inputValue = Number(input.num).toFixed(len);
-            console.log(this.inputValue);
+        startInput() {
+            console.log(this.model)
+            if (this.model) {
+                const dec  = this.model.toString().split('.')[1]
+                const len  = dec && dec.length > 2 ? dec.length : 2
+                console.log(this.model)
+                this.inputValue = Number(this.model).toFixed(len);
+            }
         },
-        updateModel(value) {
-            this.model = value;
+        updateInput() {
+            this.model = this.inputValue
         }
-    }"
-    x-init="startValue()">
+    }" x-init="startInput()">
     <div class="flex">
         <label for="{{ $name }}" class="block text-sm font-medium leading-5 text-gray-700">{{ $label }}</label>
         @if($tooltip)
@@ -68,8 +63,7 @@
                min="0"
                step="0.01"
                x-on:input="validateSize($event, {{$maxSize}})"
-               value="{{ old($name, $value ?? null) }}"
-               @if ($wire) wire:model="{{ $wire }}" @endif
+               x-model="inputValue"
                @if(($disabledToUser && user()->role == $disabledToUser) || $disabled) disabled @endif/>
 
         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -97,12 +91,8 @@
         function registerCurrencyValidate() {
             var oldValue = 0;
             return {
-                inputName: {{$name}},
-                startValue() {
-                    
-                    console.log(this.inputName)
-                    // this.addZeros(input)
-                },
+                model: @entangle($wire),
+                value: {{$model}},
                 validateSize($event, $maxSize) {
                     if($event.target.value > $maxSize){
                         $event.target.value = this.oldValue
@@ -110,12 +100,12 @@
                         this.oldValue = $event.target.value
                     }
                 },
-                addZeros(input) {
-                    console.log(input)
-                    const dec = input.value.split('.')[1]
-                    const len = dec && dec.length > 2 ? dec.length : 2
-                    return Number(input.num).toFixed(len)
-                }
+                startInput() {
+                    const dec  = this.model.toString().split('.')[1]
+                    const len  = dec && dec.length > 2 ? dec.length : 2
+                    console.log(this.model, this.value)
+                    this.model = Number(this.model).toFixed(len);
+                },
             }
         }
     </script>
