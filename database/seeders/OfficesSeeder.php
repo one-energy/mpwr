@@ -12,7 +12,7 @@ class OfficesSeeder extends Seeder
 {
     public function run()
     {
-        Region::all()->each(fn(Region $region) => $this->createOfficeManagers($region));
+        Region::with('department')->get()->each(fn(Region $region) => $this->createOfficeManagers($region));
     }
 
     private function createOfficeManagers(Region $region)
@@ -21,7 +21,7 @@ class OfficesSeeder extends Seeder
             ->times(3)
             ->create([
                 'role'          => Role::OFFICE_MANAGER,
-                'department_id' => $region->department_id
+                'department_id' => $region->department_id,
             ])
             ->each(fn(User $user) => $this->createOffice($region, $user));
     }
@@ -31,26 +31,38 @@ class OfficesSeeder extends Seeder
         /** @var Office $office */
         $office = Office::factory()->create([
             'office_manager_id' => $user->id,
-            'region_id'         => $region->id
+            'region_id'         => $region->id,
         ]);
 
-        $region->regionManager()->update(['office_id' => $office->id]);
-        $user->update(['office_id' => $office->id]);
+        User::query()
+            ->whereIn('id', [$user->id, $region->region_manager_id])
+            ->update([
+                'office_id'             => $office->id,
+                'office_manager_id'     => $user->id,
+                'region_manager_id'     => $region->region_manager_id,
+                'department_manager_id' => $region->department->department_manager_id,
+            ]);
 
         $this->createUsers($office, $region);
     }
 
     private function createUsers(Office $office, Region $region)
     {
-        User::factory()->times(8)->create([
-            'role'          => Role::SETTER,
-            'office_id'     => $office->id,
-            'department_id' => $region->department_id
+        User::factory()->times(2)->create([
+            'role'                  => Role::SETTER,
+            'office_id'             => $office->id,
+            'department_id'         => $region->department_id,
+            'department_manager_id' => $region->department->department_manager_id,
+            'office_manager_id'     => $office->office_manager_id,
+            'region_manager_id'     => $region->region_manager_id,
         ]);
-        User::factory()->times(8)->create([
-            'role'          => Role::SALES_REP,
-            'office_id'     => $office->id,
-            'department_id' => $region->department_id
+        User::factory()->times(2)->create([
+            'role'                  => Role::SALES_REP,
+            'office_id'             => $office->id,
+            'department_id'         => $region->department_id,
+            'department_manager_id' => $region->department->department_manager_id,
+            'office_manager_id'     => $office->office_manager_id,
+            'region_manager_id'     => $region->region_manager_id,
         ]);
     }
 }
