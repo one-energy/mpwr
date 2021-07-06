@@ -85,28 +85,3 @@
         </p>
     @enderror
 </div>
-
-{{-- @push('scripts')
-    <script>
-        function registerCurrencyValidate() {
-            var oldValue = 0;
-            return {
-                model: @entangle($wire),
-                value: {{$model}},
-                validateSize($event, $maxSize) {
-                    if($event.target.value > $maxSize){
-                        $event.target.value = this.oldValue
-                    } else {
-                        this.oldValue = $event.target.value
-                    }
-                },
-                startInput() {
-                    const dec  = this.model.toString().split('.')[1]
-                    const len  = dec && dec.length > 2 ? dec.length : 2
-                    console.log(this.model, this.value)
-                    this.model = Number(this.model).toFixed(len);
-                },
-            }
-        }
-    </script>
-@endpush --}}
