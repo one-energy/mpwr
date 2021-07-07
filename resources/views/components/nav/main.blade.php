@@ -147,12 +147,13 @@
                                 </div>
                             </div>
                         </div>
-                         <!--
                         <button
                             class="p-1 border-2 border-transparent text-gray-400 rounded-full hover:text-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"
-                            aria-label="Notifications">
+                            aria-label="Notifications"
+                            id="notificationBtn"
+                        >
                             <x-svg.notification/>
-                        </button> -->
+                        </button>
 
                         <div @click.away="open = false" class="ml-3 relative" x-data="{ open: false }">
                             <div>
@@ -425,3 +426,11 @@
         <x-form id="form-sign-out" :route="route('logout')" class="hidden"></x-form>
     </nav>
 </div>
+
+@push('scripts')
+    <script>
+        document
+            .querySelector('#notificationBtn')
+            .addEventListener('click', () => window.Livewire.emit('toggleSidebar'));
+    </script>
+@endpush
