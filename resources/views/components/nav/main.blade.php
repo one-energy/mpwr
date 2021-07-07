@@ -442,6 +442,8 @@
     <script>
         document
             .querySelector('#notificationBtn')
-            .addEventListener('click', () => window.Livewire.emit('toggleSidebar'));
+            .addEventListener('click', () => {
+                window.dispatchEvent(new CustomEvent('sidebar-toggled', {detail: true}));
+            });
     </script>
 @endpush
