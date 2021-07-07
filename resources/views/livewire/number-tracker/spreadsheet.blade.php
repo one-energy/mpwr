@@ -91,7 +91,7 @@
                                 <x-table.th class="whitespace-no-wrap border-r-2">
                                     @lang('Office Members')
                                 </x-table.th>
-                                @foreach($this->weeklyLabels[$key] as $label)
+                                @foreach($this->weeklyDayLabels[$key] as $label)
                                     <th class="py-3 uppercase text-left text-xs leading-4 font-medium text-gray-900 tracking-wider border-l-2 border-r-2">
                                         <p class="font-bold text-center">@lang($label)</p>
                                         <section class="grid grid-cols-8">
@@ -134,7 +134,7 @@
                                     </x-table.td>
 
                                     {{-- Weekly Columns --}}
-                                    @foreach($this->weeklyLabels[$key] as $weeklyKey => $label)
+                                    @foreach($this->weeklyMonthLabels[$key] as $weeklyKey => $label)
                                         @if (isset($user->dailyNumbers[$label]))
                                             <td class="border-t-2 border-l-2 border-r-2 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 md:border-b border-gray-200">
                                                 <section style="min-width: 400px" class="grid grid-cols-8 relative">
@@ -425,7 +425,7 @@
                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 border-2 border-gray-800">
                                     <span class="font-bold">Total</span>
                                 </td>
-                                @foreach($this->weeklyLabels[$key] as $label)
+                                @foreach($this->weeklyMonthLabels[$key] as $label)
                                     <td class="py-4 whitespace-no-wrap text-sm leading-5 text-gray-800 border-2 border-gray-800">
                                         <section class="relative text-center" style="display: grid; grid-template-columns: repeat(8, 1fr)">
                                             <div class="relative" name="pipe">

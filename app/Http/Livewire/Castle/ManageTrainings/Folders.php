@@ -10,7 +10,6 @@ use Livewire\Component;
 
 class Folders extends Component
 {
-    /**  @var Collection[TrainingPageSection] */
     public Collection $sections;
 
     public TrainingPageSection $currentSection;

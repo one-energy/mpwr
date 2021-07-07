@@ -31,14 +31,14 @@ class UserBuilder
         $this->items = collect([]);
     }
 
-    public static function build($attributes = [])
+    public static function build($attributes = []): self
     {
         return new UserBuilder($attributes);
     }
 
     public function save()
     {
-        if ($this->amount == 1) {
+        if ($this->amount === 1) {
             $this->user->save();
         }
 
@@ -60,7 +60,7 @@ class UserBuilder
     /**
      * @return User|Collection
      */
-    public function get()
+    public function get(): User|Collection
     {
         if ($this->items->count() > 0) {
             return $this->items;
@@ -69,14 +69,14 @@ class UserBuilder
         return $this->user;
     }
 
-    public function withEmail(string $email)
+    public function withEmail(string $email): self
     {
         $this->user->email = $email;
 
         return $this;
     }
 
-    public function withPassword(string $password = null)
+    public function withPassword(string $password = null): self
     {
         if (!$password) {
             $password = 'secret';
@@ -87,7 +87,7 @@ class UserBuilder
         return $this;
     }
 
-    public function withTimezone(string $timezone = null)
+    public function withTimezone(string $timezone = null): self
     {
         if (!$timezone) {
             $timezone = $this->faker->timezone;
@@ -98,7 +98,7 @@ class UserBuilder
         return $this;
     }
 
-    public function emailVerified()
+    public function emailVerified(): self
     {
         $this->user->email_verified_at = now();
 

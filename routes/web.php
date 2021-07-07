@@ -39,6 +39,7 @@ Route::get('password/reset/{token}', [ResetPasswordController::class, 'showReset
 Route::get('email/verify', [VerificationController::class, 'show'])->name('verification.notice');
 Route::get('email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->name('verification.verify');
 Route::post('email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
+Route::post('email/resendInvitationEmail/{user}', [VerificationController::class, 'resendInvitationEmail'])->name('verification.resendInvitationEmail');
 Route::get('register/{token}', [InvitationController::class, 'invite'])->name('register.with-invitation');
 Route::post('register/{token}', [InvitationController::class, 'register']);
 //endregion
@@ -109,7 +110,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::prefix('manage-trainings')->middleware('role:Admin|Owner|Department Manager|Region Manager')->name('manage-trainings.')->group(function () {
             Route::get('/list/{department?}/{section?}', [TrainingController::class, 'manageTrainings'])->name('index');
             Route::post('/{section?}/create-section', [TrainingController::class, 'storeSection'])->name('storeSection');
-            Route::put('/{section?}/update-section', [TrainingController::class, 'updateSection'])->name('updateSection');
             Route::post('/{section?}/create-content', [TrainingController::class, 'storeContent'])->name('storeContent');
             Route::post('/{content}/update-content', [TrainingController::class, 'updateContent'])->name('updateContent');
             Route::post('/changeDepartment', [TrainingController::class, 'changeDepartment'])->name('changeDepartment');
@@ -132,7 +132,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/customers/{customer}/active', [CustomerController::class, 'active'])->name('customers.active');
     Route::delete('/customers/{customer}', [CustomerController::class, 'delete'])->name('customers.delete');
     Route::get('/leaderboard', ScoreboardController::class)->name('leaderboard');
-    Route::get('/trainings/{department?}/{section?}/{search?}', [TrainingController::class, 'index'])->name('trainings.index');
+    Route::get('/trainings/{department?}/{section?}', [TrainingController::class, 'index'])->name('trainings.index');
     Route::get('/incentives', IncentivesController::class)->name('incentives.index');
     Route::get('/reports', [ReportsController::class, 'index'])->name('reports.index');
 

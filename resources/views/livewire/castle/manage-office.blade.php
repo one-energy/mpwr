@@ -19,14 +19,14 @@
                     </div>
                 </div>
                 <div class="border-gray-200 border-2 m-1 p-2 rounded-lg h-80 overflow-y-auto cursor-pointer" id="offices_list">
-                    @foreach($offices as $office)
+                    @forelse($offices as $office)
                         @if($office->region_id !== $region->id)
                             <div class="hover:bg-gray-100 h-8 p-1 grid grid-cols-6" wire:click="addOfficeToRegion({{$office->id}})">
                                 <div class="text-right col-span-5 truncate">
                                     @if($office->region_id)
-                                        {{$office->region->name}} - {{$office->name}}
+                                    {{$office->name}} - {{$office->region->name}}
                                     @else
-                                        Without region - {{$office->name}}
+                                    {{$office->name}} - Without region
                                     @endif
                                 </div>
                                 <div class="float-right col-span-1">
@@ -34,7 +34,11 @@
                                 </div>
                             </div>
                         @endif
-                    @endforeach
+                    @empty
+                        <div class="flex flex-col justify-center h-8 p-1 hover:bg-gray-100">
+                            No offices found...
+                        </div>        
+                    @endforelse
                 </div>
             </div>
             <div class="col-span-1">
@@ -51,22 +55,24 @@
                     </div>
                 </div>
                 <div class="border-gray-200 border-2 m-1 p-2 rounded-lg h-80 overflow-y-auto cursor-pointer" id="members_list">
-                    @foreach($offices as $office)
-                        @if($office->region_id === $region->id)
-                            <div class="hover:bg-gray-100 h-8 p-1 grid grid-cols-6" wire:click="removeOfficeRegion({{$office->id}})">
-                                <div class="col-span-1">
-                                    <x-svg.chevron-left class="w-7 text-gray-500"/>
+                    @if($this->existsOfficesOnRegion())
+                        @foreach($offices as $office)
+                            @if($office->region_id === $region->id)
+                                <div class="hover:bg-gray-100 h-8 p-1 grid grid-cols-6" wire:click="removeOfficeRegion({{$office->id}})">
+                                    <div class="col-span-1">
+                                        <x-svg.chevron-left class="w-7 text-gray-500"/>
+                                    </div>
+                                    <div class="col-span-5 h-full truncate">
+                                        {{$office->name}}
+                                    </div>
                                 </div>
-                                <div class="col-span-5 h-full truncate">
-                                    @if($office->region_id)
-                                        {{$office->region->name}} - {{$office->name}}
-                                    @else
-                                        Without region - {{$office->name}}
-                                    @endif
-                                </div>
-                            </div>
-                        @endif
-                    @endforeach
+                            @endif
+                        @endforeach
+                    @else
+                        <div class="hover:bg-gray-100 h-8 p-1">
+                            No offices found on this region...
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

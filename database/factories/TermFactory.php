@@ -11,7 +11,8 @@ class TermFactory extends Factory
     public function definition()
     {
         return [
-            'value' => '25Y $15/mo. 3.99%'
+            'value'  => '25Y $15/mo. 3.99%',
+            'amount' => $this->faker->randomFloat(2),
         ];
     }
 }
