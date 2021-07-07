@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Castle;
 
+use App\Enum\Role;
 use App\Models\User;
 use App\Traits\Livewire\FullTable;
 use Livewire\Component;
@@ -13,6 +14,8 @@ class Users extends Component
     public $roles;
 
     public string $userOffices;
+
+    public bool $onlyPendingUsers = false;
 
     public function sortBy()
     {
@@ -97,20 +100,25 @@ class Users extends Component
     private function getUsers()
     {
         return User::query()
-            ->when(user()->hasRole('Office Manager'), function ($query) {
+            ->when(user()->hasRole(Role::OFFICE_MANAGER), function ($query) {
                 $query->whereHas('office', fn($query) => $query->where('office_manager_id', user()->id));
             })
-            ->when(user()->hasRole('Region Manager'), function ($query) {
+            ->when(user()->hasRole(Role::REGION_MANAGER), function ($query) {
                 $query->whereHas('office.region', fn($query) => $query->where('region_manager_id', user()->id));
             })
-            ->when(user()->hasRole('Department Manager'), function ($query) {
+            ->when(user()->hasRole(Role::DEPARTMENT_MANAGER), function ($query) {
                 $query->where('department_id', user()->department_id)
                     ->where('role', '!=', 'Admin')
                     ->where('role', '!=', 'Owner');
             })
-            ->when(user()->hasRole('Admin'), function ($query) {
-                $query->where('role', '!=', 'Owner');
+            ->when(user()->hasRole(Role::ADMIN), function ($query) {
+                $query->where('role', '!=', Role::OWNER);
             })
+            ->when($this->onlyPendingUsers, fn ($query) =>
+                $query->where('department_manager_id', null)
+                    ->orWhere('region_manager_id', null)
+                    ->orWhere('office_manager_id', null)
+            )
             ->with(['office', 'department', 'managedOffices'])
             ->search($this->search)
             ->orderBy($this->sortBy, $this->sortDirection)
