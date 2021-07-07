@@ -1,4 +1,6 @@
-<div x-cloak x-data="{
+<div x-cloak
+     @sidebar-toggled.window="opened = $event.detail"
+     x-data="{
     opened: @entangle('opened').defer,
     close() {
         this.opened = false;
@@ -10,22 +12,18 @@
         const sidebarWidth = this.opened ? '500px' : '0';
         const translateX = this.opened ? '0' : '500px';
         return `
+            box-shadow: 0 8px 10px -5px rgb(0 0 0 / 20%), 0 16px 24px 2px rgb(0 0 0 / 14%), 0 6px 30px 5px rgb(0 0 0 / 12%);
             width: ${sidebarWidth};
             transform: translateX(${translateX});
-            transition: width 350ms cubic-bezier(.71,.13,.8,.67),
-                        transform 350ms cubic-bezier(.71,.13,.8,.67);
+            transition-duration: .2s;
+            transition-timing-function: cubic-bezier(.4,0,.2,1);
+            transition-property: transform,visibility,width;
         `;
     }
 }">
-    <div
-        class="bg-black bg-opacity-25 fixed h-screen w-screen inset-0 z-20 cursor-pointer"
-        :class="{'hidden': !opened}"
-        @click="close"
-    >
-    </div>
 
     <aside
-        class="bg-white fixed shadow-2xl h-screen top-0 right-0 z-30"
+        class="bg-white fixed h-screen top-0 right-0 z-30"
         id="sidebar"
         :style="styles">
         <header class="flex items-center justify-between px-5 py-6">
