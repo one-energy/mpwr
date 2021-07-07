@@ -10,13 +10,13 @@ class SidebarNotifications extends Component
     public bool $opened = false;
 
     protected $listeners = [
-        'toggleSidebar'
+        'toggleSidebar',
     ];
 
     public function render()
     {
         return view('livewire.sidebar-notifications')->with([
-            'notifications' => user()->unreadNotifications()->get()
+            'notifications' => user()->unreadNotifications()->get(),
         ]);
     }
 
@@ -36,6 +36,12 @@ class SidebarNotifications extends Component
         $notification = user()->unreadNotifications()->where('id', $notification['id'])->firstOrFail();
 
         $notification->markAsRead();
+
+        $hasUnreadNotifications = user()->unreadNotifications()->count();
+
+        $this->dispatchBrowserEvent('has-unread-notifications', [
+            'payload' => $hasUnreadNotifications > 0 ? 'true' : 'false',
+        ]);
     }
 
     public function toggleSidebar()
