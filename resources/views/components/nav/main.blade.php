@@ -147,13 +147,24 @@
                                 </div>
                             </div>
                         </div>
-                        <button
-                            class="p-1 border-2 border-transparent text-gray-400 rounded-full hover:text-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"
-                            aria-label="Notifications"
-                            id="notificationBtn"
+
+                        <div
+                            x-data="{ hasUnreadNotifications: {{user()->unreadNotifications()->count() > 0 ? 'true' : 'false'}} }"
+                            @has-unread-notifications.window="hasUnreadNotifications = $event.detail.payload === 'true'"
                         >
-                            <x-svg.notification/>
-                        </button>
+                            <button
+                                class="p-1 border-2 border-transparent rounded-full hover:text-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"
+                                :class="{
+                                    'bell-animation': hasUnreadNotifications,
+                                    'text-green-base bell-animation': hasUnreadNotifications,
+                                    'text-gray-400': !hasUnreadNotifications,
+                                }"
+                                aria-label="Notifications"
+                                id="notificationBtn"
+                            >
+                                <x-svg.notification/>
+                            </button>
+                        </div>
 
                         <div @click.away="open = false" class="ml-3 relative" x-data="{ open: false }">
                             <div>
