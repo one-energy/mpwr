@@ -97,8 +97,8 @@
                         </x-select>
                     </div>
 
-                    <div class="col-span-2 md:col-span-3 @if($customer->setter_id == user()->id) hidden @endif" wire:key="soldPrice">
-                        <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc"
+                    <div class="col-span-2 md:col-span-3 @if($customer->setter_id == user()->id) hidden @endif" >
+                        <x-input-currency wire:model.debounce.500ms="customer.epc" label="EPC" name="customer.epc" wire:key="soldPrice"
                                           observation="Sold Price" atEnd="kW"/>
                     </div>
 
@@ -155,8 +155,7 @@
                     </div>
 
                     <div class="col-span-2 md:col-span-3 @if($customer->setter_id == user()->id) hidden @endif" wire:key="adders">
-                        <x-input wire:model="customer.adders" label="Adders Total" name="custormer.adders" step="0.01"
-                                 type="number"/>
+                        <x-input-currency wire:model="customer.adders" label="Adders Total" name="customer.adders" step="0.01" type="number"/>
                     </div>
 
                     <div class="col-span-2 md:col-span-3 @if($customer->setter_id == user()->id) hidden @endif" wire:key="netRepCommission">

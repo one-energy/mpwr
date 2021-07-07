@@ -5,9 +5,11 @@
     if( $errors->has($name) ) {
         $class .= 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-300 focus:shadow-outline-red';
     }
+    
     $tooltip        = $tooltip ?? null;
     $observation    = $observation ?? null;
     $disabledToUser = $disabledToUser ?? null;
+    $name = $name ?? 'currency-input';
     $wireModel = $attributes->wire('model');
     $model = $wireModel->value();
     $wire = $wire && is_bool($wire) ? $name : $attributes->wire('model')->value();
@@ -15,8 +17,7 @@
 @endphp
 
 <div {{ $attributes }} x-data="{
-        model: @entangle($wire),
-        inputValue: null,
+        inputName: {{json_encode($name)}},
         oldValue: 0,
         validateSize($event, $maxSize) {
             if($event.target.value > $maxSize){
@@ -26,16 +27,19 @@
             }
         },
         startInput() {
-            console.log(this.model)
-            if (this.model) {
-                const dec  = this.model.toString().split('.')[1]
-                const len  = dec && dec.length > 2 ? dec.length : 2
-                console.log(this.model)
-                this.inputValue = Number(this.model).toFixed(len);
+            el = document.getElementById(this.inputName);
+            console.log(el.value);
+            if (el.value) {
+                el.value = this.addZeros(el.value);
             }
         },
-        updateInput() {
-            this.model = this.inputValue
+        formatValue(event) {
+            event.target.value = this.addZeros(event.target.value)
+        },
+        addZeros(value) {
+            const dec  = value.toString().split('.')[1];
+            const len  = dec && dec.length > 2 ? dec.length : 2;
+            return Number(value).toFixed(len);
         }
     }" x-init="startInput()">
     <div class="flex">
@@ -62,8 +66,9 @@
                type="number"
                min="0"
                step="0.01"
+               x-on:blur="formatValue($event)"
                x-on:input="validateSize($event, {{$maxSize}})"
-               x-model="inputValue"
+               @if ($wire) wire:model="{{ $wire }}" @endif
                @if(($disabledToUser && user()->role == $disabledToUser) || $disabled) disabled @endif/>
 
         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
