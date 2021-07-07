@@ -67,7 +67,7 @@
                 @endforeach
             </ul>
             @else
-                <p>I will display &#128512;</p>
+                <p class="text-center">You read all notifications &#128512;</p>
             @endif
         </section>
     </aside>
