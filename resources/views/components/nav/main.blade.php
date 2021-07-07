@@ -19,7 +19,7 @@
                                         <x-svg.chevron-left class="w-6 -ml-2"/> @lang('Leave Admin')
                                     </x-nav.link>
 
-                                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
+                                    @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager']))
                                         <x-nav.link :href="route('castle.rates.index')" class="ml-4 hidden lg:block"
                                                     :active="is_active('castle.rates.index')">
                                             @lang('Manage Compensations')
@@ -35,14 +35,14 @@
                                         </x-nav.link>
                                     @endif
 
-                                    @if(user()->role == 'Admin' || user()->role == 'Owner' )
+                                    @if(user()->hasAnyRole(['Admin', 'Owner']))
                                         <x-nav.link :href="route('castle.departments.index')" class="ml-4"
                                                     :active="is_active('castle.departments.*')">
                                             @lang('Departments')
                                         </x-nav.link>
                                     @endif
 
-                                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
+                                    @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager']))
                                         <x-nav.link :href="route('castle.incentives.index')"
                                                     class="ml-4 hidden lg:block"
                                                     :active="is_active('castle.incentives.*')">
@@ -118,7 +118,7 @@
                                  class="absolute right-10 mt-2 rounded-md shadow-lg z-10">
                                 <div class="flex flex-col py-1 rounded-md bg-white shadow-xs">
                                     @if(is_active('castle.*'))
-                                        @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
+                                        @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager']))
                                             <a class="px-4 py-2 text-gray-600 font-medium transition ease-in-out duration-150" href="{{route('castle.rates.index')}}">
                                                 @lang('Manage Compensations')
                                             </a>
@@ -130,7 +130,7 @@
                                             </a>
                                         @endif
 
-                                        @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
+                                            @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager']))
                                             <a class="px-4 py-2 text-gray-600 font-medium transition ease-in-out duration-150" href="{{route('castle.incentives.index')}}">
                                                 @lang('Incentives')
                                             </a>
@@ -259,7 +259,7 @@
                         </svg>
                     </x-nav.link-mobile>
 
-                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
+                    @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager']))
                         <x-nav.link-mobile :href="route('castle.rates.index')" class="mt-1"
                                            :active="is_active('castle.rates.index')">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -269,7 +269,7 @@
                         </x-nav.link-mobile>
                     @endif
 
-                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
+                    @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager']))
                         <x-nav.link-mobile
                             :href="route('castle.manage-trainings.index', ['department' => user()->department_id])"
                             class="mt-1"
@@ -290,7 +290,7 @@
                         </x-nav.link-mobile>
                     @endif
 
-                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
+                    @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager']))
                         <x-nav.link-mobile :href="route('castle.incentives.index')" class="mt-1"
                                            :active="is_active('castle.incentives.*')">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -300,7 +300,7 @@
                         </x-nav.link-mobile>
                     @endif
 
-                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
+                    @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager']))
                         <x-nav.link-mobile :href="route('castle.departments.index')" class="mt-1"
                                            :active="is_active('castle.departments.*')">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
