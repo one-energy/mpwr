@@ -12,11 +12,14 @@ class SalesRepWithoutManagerId extends Notification
 {
     use Queueable;
 
-    private HtmlString $message;
+    private string $message;
+
+    private User $salesRep;
 
     public function __construct(User $salesRep)
     {
-        $this->message = $this->buildMessage($salesRep);
+        $this->salesRep = $salesRep;
+        $this->message  = $this->buildMessage($salesRep);
     }
 
     public function via($notifiable)
@@ -28,19 +31,23 @@ class SalesRepWithoutManagerId extends Notification
     {
         return (new MailMessage)
             ->subject('User without manager(s)')
-            ->line($this->message);
+            ->line(new HtmlString($this->message));
     }
 
     public function toDatabase()
     {
         return [
             'data' => [
-                'message' => $this->message
+                'message' => $this->message,
+                'meta'    => [
+                    'text' => 'See User',
+                    'link' => route('castle.users.show', $this->salesRep->id),
+                ]
             ]
         ];
     }
 
-    private function buildMessage(User $salesRep): HtmlString
+    private function buildMessage(User $salesRep): string
     {
         $sentence = sprintf(
             "The user %s with email %s don't have ",
@@ -62,8 +69,6 @@ class SalesRepWithoutManagerId extends Notification
             $words->push('a Department Manager');
         }
 
-        $phrase = $sentence . $words->join(', ', ', and ') . '.';
-
-        return new HtmlString($phrase);
+        return $sentence . $words->join(', ', ', and ') . '.';
     }
 }
