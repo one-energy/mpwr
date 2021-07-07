@@ -77,7 +77,11 @@ class SidebarNotificationTest extends TestCase
         $this->actingAs($this->john);
 
         $this->assertCount(1, $this->john->unreadNotifications()->get());
-        Livewire::test(SidebarNotifications::class)->call('read', $notification);
+
+        Livewire::test(SidebarNotifications::class)
+            ->call('read', $notification)
+            ->assertDispatchedBrowserEvent('has-unread-notifications');
+
         $this->assertCount(0, $this->john->unreadNotifications()->get());
     }
 
