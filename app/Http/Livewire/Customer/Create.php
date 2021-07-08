@@ -146,7 +146,7 @@ class Create extends Component
             $this->customer->save();
 
             if ($this->hasSomeManagerIdNull($salesRep)) {
-                $this->notifyAdmin($salesRep);
+                $this->notifyAdmins($salesRep);
             }
         });
 
@@ -240,10 +240,11 @@ class Create extends Component
             ->some(fn(string $key) => $salesRep->{$key} === null);
     }
 
-    private function notifyAdmin($salesRep)
+    private function notifyAdmins($salesRep)
     {
-        /** @var User $user */
-        $user = User::query()->where('role', Role::ADMIN)->first();
-        $user->notify(new SalesRepWithoutManagerId($salesRep));
+        User::query()
+            ->where('role', Role::ADMIN)
+            ->get()
+            ->each(fn(User $user) => $user->notify(new SalesRepWithoutManagerId($salesRep)));
     }
 }
