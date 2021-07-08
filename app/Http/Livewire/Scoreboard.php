@@ -72,20 +72,21 @@ class Scoreboard extends Component
             'office_name' => $this->user->office->name,
         ];
 
+        $this->dpsRatio   = 0;
+        $this->hpsRatio   = 0;
+        $this->sitRatio   = 0;
+        $this->closeRatio = 0;
+
         if ($dailyNumbers->sum('sets') > 0) {
-            $this->dpsRatio = ($dailyNumbers->sum('doors') / $dailyNumbers->sum('sets'));
-            $this->hpsRatio = ($dailyNumbers->sum('hours_knocked') / $dailyNumbers->sum('sets'));
-            $this->sitRatio = ($dailyNumbers->sum('sets') / $dailyNumbers->sum('sats'));
-        } else {
-            $this->dpsRatio = 0;
-            $this->hpsRatio = 0;
-            $this->sitRatio = 0;
+            $satsSum = $dailyNumbers->sum('sats');
+
+            $this->dpsRatio = $dailyNumbers->sum('doors') / $dailyNumbers->sum('sets');
+            $this->hpsRatio = (float)$dailyNumbers->sum('hours_knocked') / $dailyNumbers->sum('sets');
+            $this->sitRatio = $satsSum > 0 ? ($dailyNumbers->sum('sets') / $satsSum) : 0;
         }
 
-        if ($dailyNumbers->sum('close') > 0) {
-            $this->closeRatio = ($dailyNumbers->sum('closer_sits') / $dailyNumbers->sum('close'));
-        } else {
-            $this->closeRatio = 0;
+        if ($dailyNumbers->sum('closes') > 0) {
+            $this->closeRatio = $dailyNumbers->sum('closer_sits') / $dailyNumbers->sum('closes');
         }
 
         $this->dispatchBrowserEvent('setUserNumbers', [
@@ -132,7 +133,7 @@ class Scoreboard extends Component
                     $query->select(DB::raw("SUM({$field}) as {$field}_total"))
                         ->groupBy('user_id')
                         ->inPeriod($this->period, $this->date);
-                }
+                },
             ])
             ->where('department_id', user()->department_id)
             ->latest("{$field}_total")

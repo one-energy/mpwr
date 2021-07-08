@@ -1,4 +1,12 @@
 <div>
+    @push('styles')
+        <style>
+            .parent-scope:hover .child-scope {
+                background-color: #F9FAFB;
+            }
+        </style>
+    @endpush
+
     <x-form :route="route('number-tracking.store')">
         <div class="mx-auto max-w-8xl sm:px-6 lg:px-8" x-data>
             <div class="md:flex">
@@ -216,46 +224,46 @@
                             </div>
                         </div>
                         <div style="min-width: fit-content; flex: 0 0 auto" class="w-56 p-3 border-2 border-gray-200 rounded-lg">
-                                <div class="text-xs font-semibold text-gray-900 uppercase">Closes</div>
-                                <div class="grid grid-cols-4 gap-1">
-                                    <div class="text-sm self-center col-span-1">Set</div>
-                                    <div class="text-md font-bold text-gray-900 col-span-2">{{$users->sum('dailyNumbers.0.set_closes')}}</div>
-                                    <div class="flex text-xs place-self-end col-span-1 items-center">
-                                        @if($users->sum('dailyNumbers.0.set_closes') - $usersLastDayEntries->sum('dailyNumbers.0.set_closes') >= 0)
-                                            <x-svg.arrow-up class="text-green-base"/>
-                                        @else
-                                            <x-svg.arrow-down class="text-red-600"/>
-                                        @endif
-                                        <span class="
-                                                @if($users->sum('dailyNumbers.0.set_closes') - $usersLastDayEntries->sum('dailyNumbers.0.set_closes') >= 0)
-                                                    text-green-base
-                                                @else
-                                                    text-red-600
-                                                @endif">
-                                            {{$users->sum('dailyNumbers.0.set_closes') - $usersLastDayEntries->sum('dailyNumbers.0.set_closes')}}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="grid grid-cols-4 gap-1">
-                                    <div class="text-sm self-center col-span-1">SG</div>
-                                    <div class="text-md font-bold text-gray-900 col-span-2">{{$users->sum('dailyNumbers.0.closes')}}</div>
-                                    <div class="flex text-xs place-self-end col-span-1 items-center">
-                                        @if($users->sum('dailyNumbers.0.closes') - $usersLastDayEntries->sum('dailyNumbers.0.closes') >= 0)
-                                            <x-svg.arrow-up class="text-green-base"/>
-                                        @else
-                                            <x-svg.arrow-down class="text-red-600"/>
-                                        @endif
-                                        <span class="
-                                                @if($users->sum('dailyNumbers.0.closes') - $usersLastDayEntries->sum('dailyNumbers.0.closes') >= 0)
-                                                    text-green-base
-                                                @else
-                                                    text-red-600
-                                                @endif">
-                                            {{$users->sum('dailyNumbers.0.closes') - $usersLastDayEntries->sum('dailyNumbers.0.closes')}}
-                                        </span>
-                                    </div>
+                            <div class="text-xs font-semibold text-gray-900 uppercase">Closes</div>
+                            <div class="grid grid-cols-4 gap-1">
+                                <div class="text-sm self-center col-span-1">Set</div>
+                                <div class="text-md font-bold text-gray-900 col-span-2">{{$users->sum('dailyNumbers.0.set_closes')}}</div>
+                                <div class="flex text-xs place-self-end col-span-1 items-center">
+                                    @if($users->sum('dailyNumbers.0.set_closes') - $usersLastDayEntries->sum('dailyNumbers.0.set_closes') >= 0)
+                                        <x-svg.arrow-up class="text-green-base"/>
+                                    @else
+                                        <x-svg.arrow-down class="text-red-600"/>
+                                    @endif
+                                    <span class="
+                                    @if($users->sum('dailyNumbers.0.set_closes') - $usersLastDayEntries->sum('dailyNumbers.0.set_closes') >= 0)
+                                        text-green-base
+                                    @else
+                                        text-red-600
+                                    @endif">
+                                        {{$users->sum('dailyNumbers.0.set_closes') - $usersLastDayEntries->sum('dailyNumbers.0.set_closes')}}
+                                    </span>
                                 </div>
                             </div>
+                            <div class="grid grid-cols-4 gap-1">
+                                <div class="text-sm self-center col-span-1">SG</div>
+                                <div class="text-md font-bold text-gray-900 col-span-2">{{$users->sum('dailyNumbers.0.closes')}}</div>
+                                <div class="flex text-xs place-self-end col-span-1 items-center">
+                                    @if($users->sum('dailyNumbers.0.closes') - $usersLastDayEntries->sum('dailyNumbers.0.closes') >= 0)
+                                        <x-svg.arrow-up class="text-green-base"/>
+                                    @else
+                                        <x-svg.arrow-down class="text-red-600"/>
+                                    @endif
+                                    <span class="
+                                    @if($users->sum('dailyNumbers.0.closes') - $usersLastDayEntries->sum('dailyNumbers.0.closes') >= 0)
+                                        text-green-base
+                                    @else
+                                        text-red-600
+                                    @endif">
+                                        {{$users->sum('dailyNumbers.0.closes') - $usersLastDayEntries->sum('dailyNumbers.0.closes')}}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <x-svg.spinner
@@ -268,96 +276,114 @@
                     <div class="w-full mt-3">
                         @if($users->count())
                             <div class="flex flex-col">
-                                <div class="overflow-x-auto">
-                                    <div class="inline-block min-w-full overflow-hidden align-middle">
-                                        <x-table wire:loading.remove>
-                                            <x-slot name="header">
-                                                <x-table.th-tr>
-                                                    <x-table.th by="region_member">@lang('Member')</x-table.th>
-                                                    <x-table.th by="doors">@lang('Hours Worked')</x-table.th>
-                                                    <x-table.th by="doors">@lang('Doors')</x-table.th>
-                                                    <x-table.th by="doors">@lang('Hours Knocked')</x-table.th>
-                                                    <x-table.th by="sets">@lang('Sets')</x-table.th>
-                                                    <x-table.th by="sets">@lang('Sats')</x-table.th>
-                                                    <x-table.th by="set_closes">@lang('Set Closes')</x-table.th>
-                                                    <x-table.th by="set_closes">@lang('Closer Sits')</x-table.th>
-                                                    <x-table.th by="closes">@lang('Closes')</x-table.th>
-                                                </x-table.th-tr>
-                                            </x-slot>
-                                            <x-slot name="body">
-                                                @foreach($users as $user)
-                                                    <x-table.tr :loop="$loop" wire:key="user.id-{{$user->id}}">
-                                                        <x-table.td>{{ $user->full_name }}</x-table.td>
-                                                        <x-table.td class="flex justify-center">
-                                                            <input
-                                                                type="number"
-                                                                min="0"
-                                                                name="numbers[{{ $user->id }}][hours_worked]"
-                                                                readonly
-                                                                class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5 pointer-events-none"
-                                                                value="{{ $user->dailyNumbers->sum('hours_worked') }}"/>
-                                                        </x-table.td>
-                                                        <x-table.td>
-                                                            <input
-                                                                type="number"
-                                                                min="0"
-                                                                name="numbers[{{ $user->id }}][doors]"
-                                                                class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
-                                                                value="{{ $user->dailyNumbers->sum('doors') }}"/>
-                                                        </x-table.td>
-                                                        <x-table.td class="flex justify-center">
-                                                            <input
-                                                                type="number"
-                                                                min="0"
-                                                                name="numbers[{{ $user->id }}][hours_knocked]"
-                                                                class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
-                                                                value="{{ $user->dailyNumbers->sum('hours_knocked') }}"/>
-                                                        </x-table.td>
-                                                        <x-table.td>
-                                                            <input
-                                                                type="number"
-                                                                min="0"
-                                                                name="numbers[{{ $user->id }}][sets]"
-                                                                class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
-                                                                value="{{ $user->dailyNumbers->sum('sets') }}"/>
-                                                        </x-table.td>
-                                                        <x-table.td>
-                                                            <input
-                                                                type="number"
-                                                                min="0"
-                                                                name="numbers[{{ $user->id }}][sats]"
-                                                                class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
-                                                                value="{{ $user->dailyNumbers->sum('sats') }}"/>
-                                                        </x-table.td>
-                                                        <x-table.td>
-                                                            <input
-                                                                type="number"
-                                                                min="0"
-                                                                name="numbers[{{ $user->id }}][set_closes]"
-                                                                class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
-                                                                value="{{ $user->dailyNumbers->sum('set_closes') }}"/>
-                                                        </x-table.td>
-                                                        <x-table.td>
-                                                            <input
-                                                                type="number"
-                                                                min="0"
-                                                                name="numbers[{{ $user->id }}][closer_sits]"
-                                                                class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
-                                                                value="{{ $user->dailyNumbers->sum('closer_sits') }}"/>
-                                                        </x-table.td>
-                                                        <x-table.td>
-                                                            <input
-                                                                type="number"
-                                                                min="0"
-                                                                name="numbers[{{ $user->id }}][closes]"
-                                                                class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
-                                                                value="{{ $user->dailyNumbers->sum('closes') }}"/>
-                                                        </x-table.td>
-                                                    </x-table.tr>
-                                                @endforeach
-                                            </x-slot>
-                                        </x-table>
-                                    </div>
+                                <div class="inline-block min-w-full overflow-x-auto align-middle" style="height: 90vh">
+                                    <x-table wire:loading.remove>
+                                        <x-slot name="header">
+                                            <x-table.th-tr>
+                                                <x-table.th class="sticky top-0 left-0 bg-white whitespace-no-wrap z-20" by="region_member">
+                                                    @lang('Member')
+                                                </x-table.th>
+                                                <x-table.th class="sticky top-0 bg-white whitespace-no-wrap z-10" by="hours_worked">
+                                                    @lang('Hours Worked')
+                                                </x-table.th>
+                                                <x-table.th class="sticky top-0 bg-white whitespace-no-wrap z-10" by="doors">
+                                                    @lang('Doors')
+                                                </x-table.th>
+                                                <x-table.th class="sticky top-0 bg-white whitespace-no-wrap z-10" by="hours_knocked">
+                                                    @lang('Hours Knocked')
+                                                </x-table.th>
+                                                <x-table.th class="sticky top-0 bg-white whitespace-no-wrap z-10" by="sets">
+                                                    @lang('Sets')
+                                                </x-table.th>
+                                                <x-table.th class="sticky top-0 bg-white whitespace-no-wrap z-10" by="sets">
+                                                    @lang('Sats')
+                                                </x-table.th>
+                                                <x-table.th class="sticky top-0 bg-white whitespace-no-wrap z-10" by="set_closes">
+                                                    @lang('Set Closes')
+                                                </x-table.th>
+                                                <x-table.th class="sticky top-0 bg-white whitespace-no-wrap z-10" by="set_closes">
+                                                    @lang('Closer Sits')
+                                                </x-table.th>
+                                                <x-table.th class="sticky top-0 bg-white whitespace-no-wrap z-10" by="closes">
+                                                    @lang('Closes')
+                                                </x-table.th>
+                                            </x-table.th-tr>
+                                        </x-slot>
+                                        <x-slot name="body">
+                                            @foreach($users as $user)
+                                                <x-table.tr class="parent-scope" :loop="$loop" wire:key="user.id-{{$user->id}}">
+                                                    <x-table.td class="child-scope sticky left-0 bg-white">
+                                                        {{ $user->full_name }}
+                                                    </x-table.td>
+                                                    <x-table.td class="flex justify-center">
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            name="numbers[{{ $user->id }}][hours_worked]"
+                                                            readonly
+                                                            class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5 pointer-events-none"
+                                                            value="{{ $user->dailyNumbers->sum('hours_worked') }}"/>
+                                                    </x-table.td>
+                                                    <x-table.td>
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            name="numbers[{{ $user->id }}][doors]"
+                                                            class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
+                                                            value="{{ $user->dailyNumbers->sum('doors') }}"/>
+                                                    </x-table.td>
+                                                    <x-table.td class="flex justify-center">
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            name="numbers[{{ $user->id }}][hours_knocked]"
+                                                            class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
+                                                            value="{{ $user->dailyNumbers->sum('hours_knocked') }}"/>
+                                                    </x-table.td>
+                                                    <x-table.td>
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            name="numbers[{{ $user->id }}][sets]"
+                                                            class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
+                                                            value="{{ $user->dailyNumbers->sum('sets') }}"/>
+                                                    </x-table.td>
+                                                    <x-table.td>
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            name="numbers[{{ $user->id }}][sats]"
+                                                            class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
+                                                            value="{{ $user->dailyNumbers->sum('sats') }}"/>
+                                                    </x-table.td>
+                                                    <x-table.td>
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            name="numbers[{{ $user->id }}][set_closes]"
+                                                            class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
+                                                            value="{{ $user->dailyNumbers->sum('set_closes') }}"/>
+                                                    </x-table.td>
+                                                    <x-table.td>
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            name="numbers[{{ $user->id }}][closer_sits]"
+                                                            class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
+                                                            value="{{ $user->dailyNumbers->sum('closer_sits') }}"/>
+                                                    </x-table.td>
+                                                    <x-table.td>
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            name="numbers[{{ $user->id }}][closes]"
+                                                            class="block transition duration-150 ease-in-out form-input w-14 sm:text-sm sm:leading-5"
+                                                            value="{{ $user->dailyNumbers->sum('closes') }}"/>
+                                                    </x-table.td>
+                                                </x-table.tr>
+                                            @endforeach
+                                        </x-slot>
+                                    </x-table>
                                 </div>
                             </div>
                         @else
@@ -465,5 +491,4 @@
             },
         }
     }
-
 </script>

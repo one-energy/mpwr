@@ -91,9 +91,11 @@
                     <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc" observation="Sold Price" maxSize="100000" atEnd="kW"/>
                 </div>
 
-                <div class="col-span-2 md:col-span-3">
-                    <x-input-currency label="Total Cost" name="total_cost" maxSize="100000" value="{{$customer->totalSoldPrice}}" readonly/>
-                </div>
+                @if(!user()->hasRole("Setter"))
+                    <div class="col-span-2 md:col-span-3">
+                        <x-input-currency label="Total System Cost" name="total_cost" maxSize="100000" value="{{$customer->totalSoldPrice}}" readonly/>
+                    </div>
+                @endif
 
                 <div class="col-span-2 md:col-span-3" wire:ignore>
                     <x-select-searchable

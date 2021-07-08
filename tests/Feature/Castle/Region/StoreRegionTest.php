@@ -16,8 +16,32 @@ class StoreRegionTest extends TestCase
 {
     use RefreshDatabase;
 
+    private User $user;
+
+    private User $admin;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user  = User::factory()->create(['master' => true]);
+        $this->admin = User::factory()->create(['role' => Role::ADMIN]);
+
+        $this->actingAs($this->user);
+    }
+
     /** @test */
-    public function it_should_create_a_training_page_section_with_the_parent_id_of_the_root_section()
+    public function it_should_render_create_view()
+    {
+        $this->actingAs($this->admin)
+            ->get(route('castle.regions.create'))
+            ->assertViewIs('castle.regions.create')
+            ->assertSuccessful()
+            ->assertOk();
+    }
+
+    /** @test */
+    public function it_should_store_a_new_region()
     {
         $regionManager = User::factory()->create(['role' => Role::REGION_MANAGER]);
         /** @var User $departmentManager */
@@ -29,7 +53,6 @@ class StoreRegionTest extends TestCase
         $regionManager->update(['department_id' => $department->id]);
         $departmentManager->update(['department_id' => $department->id]);
         $departmentManager->managedDepartments()->attach($department->id);
-
 
         $rootSection  = TrainingPageSection::factory()->create(['department_id' => $department->id]);
         $childSection = TrainingPageSection::factory()->create([
@@ -61,7 +84,18 @@ class StoreRegionTest extends TestCase
     {
         $john = User::factory()->create(['role' => Role::ADMIN]);
 
+        /** @var Department $department */
+        $department = Department::factory()->create();
+
         $data = $this->makeData();
+
+        $rootSection  = TrainingPageSection::factory()->create([
+            'department_id' => $department->id,
+        ]);
+        $childSection = TrainingPageSection::factory()->create([
+            'parent_id'     => $rootSection->id,
+            'department_id' => $department->id,
+        ]);
 
         $this->assertDatabaseCount('regions', 0);
         $this->assertDatabaseCount('user_managed_regions', 0);

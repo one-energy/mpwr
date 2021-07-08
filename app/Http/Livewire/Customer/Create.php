@@ -178,11 +178,6 @@ class Create extends Component
         return Rates::whereRole(Role::SETTER)->first();
     }
 
-    public function getSalesRepFee()
-    {
-        return Rates::whereRole(Role::SALES_REP)->orderBy('rate', 'desc')->first();
-    }
-
     public function getSalesRepRate($userId)
     {
         $this->customer->sales_rep_fee = $this->getUserRate($userId);

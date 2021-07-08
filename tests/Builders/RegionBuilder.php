@@ -32,8 +32,10 @@ class RegionBuilder
         return new RegionBuilder($attributes);
     }
 
-    public function withDepartment($department): self
+    public function withDepartment(?Department $department = null): self
     {
+        $department = $department ?? $this->createDepartmentManager();
+
         $this->region->department_id = $department->id;
 
         return $this;
@@ -62,11 +64,22 @@ class RegionBuilder
         return $this->region;
     }
 
-    public function withManager(User $user): self
+    public function withManager(?User $user = null): self
     {
         $this->user        = $user;
         $this->withManager = true;
 
         return $this;
+    }
+
+    private function createDepartmentManager(): Department
+    {
+        $manager = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+        /** @var Department $department */
+        $department = Department::factory()->create(['department_manager_id' => $manager->id]);
+
+        $manager->update(['department_id' => $department->id]);
+
+        return $department;
     }
 }

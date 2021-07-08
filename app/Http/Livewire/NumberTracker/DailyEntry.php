@@ -42,11 +42,12 @@ class DailyEntry extends Component
     public function render()
     {
         $this->getMissingOffices();
+
         $this->users               = $this->getUsers($this->dateSelected);
         $this->usersLastDayEntries = $this->getUsers($this->lastDateSelected);
         $offices                   = $this->getOfficeQuery();
 
-        return view('livewire.number-tracker.daily-entry',[
+        return view('livewire.number-tracker.daily-entry', [
             'offices' => $offices->get(),
         ]);
     }
@@ -62,19 +63,15 @@ class DailyEntry extends Component
         return $usersQuery
             ->withTrashed()
             ->whereOfficeId($this->officeSelected)
-            ->with(['dailyNumbers' => function($query) use ($dateSelected) {
-                $query->whereDate('date', $dateSelected)
-                    ->where('office_id', $this->officeSelected);
-            }])
+            ->with([
+                'dailyNumbers' => function ($query) use ($dateSelected) {
+                    $query->whereDate('date', $dateSelected)
+                        ->where('office_id', $this->officeSelected);
+                },
+            ])
             ->orderBy('first_name')
             ->get()
-            ->filter(function (User $user) {
-                if ($user->deleted_at !== null && $user->dailyNumbers->isEmpty()) {
-                    return false;
-                }
-
-                return true;
-            });
+            ->filter(fn(User $user) => !($user->deleted_at != null && $user->dailyNumbers->isEmpty()));
     }
 
     public function getMissingDate($initialDate, $officeSelected)
@@ -82,9 +79,11 @@ class DailyEntry extends Component
         $missingDates = [];
         $initialDate  = date($initialDate);
         $today        = date('Y-m-d');
-        for ($actualDate = $initialDate; $actualDate != $today; $actualDate = date('Y-m-d', strtotime($actualDate . '+1 day'))) {
+
+        for ($actualDate = $initialDate; $actualDate != $today; $actualDate = date('Y-m-d',
+            strtotime($actualDate . '+1 day'))) {
             $isMissingDate = DailyNumber::whereDate('date', $actualDate)
-                ->leftJoin('users', function($join) {
+                ->leftJoin('users', function ($join) {
                     $join->on('users.id', '=', 'daily_numbers.user_id');
                 })
                 ->where('users.office_id', '=', $officeSelected)
@@ -100,6 +99,7 @@ class DailyEntry extends Component
     public function getMissingOffices()
     {
         $offices = $this->getOfficeQuery()->get();
+
         foreach ($offices as $office) {
             $missingDates = $this->getMissingDate('Y-m-01', $office->id);
 
@@ -117,30 +117,15 @@ class DailyEntry extends Component
 
     public function setOffice($office)
     {
-        if ($office == null) {
+        if ($office === null) {
             $this->officeSelected = 0;
         } else {
             $this->officeSelected = $office->id ?? $office['id'];
         }
-        $this->missingDates   = $this->getMissingDate('Y-m-01', $this->officeSelected);
-        empty($office);
-    }
 
-    /**
-     * @deprecated
-     */
-    public function save($value, $userId, $inputType)
-    {
-        $filteredNumbers = [
-            $inputType => $value,
-        ];
-        DailyNumber::updateOrCreate(
-            [
-                'user_id' => $userId,
-                'date'    => $this->dateSelected,
-            ],
-            $filteredNumbers
-        );
+        $this->missingDates = $this->getMissingDate('Y-m-01', $this->officeSelected);
+
+        empty($office);
     }
 
     public function sortBy()

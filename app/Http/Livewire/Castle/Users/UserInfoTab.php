@@ -10,6 +10,7 @@ use App\Models\Region;
 use App\Models\User;
 use App\Rules\Castle\DepartmentHasOffice;
 use App\Traits\Livewire\Actions;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -17,6 +18,7 @@ use Livewire\Component;
 class UserInfoTab extends Component
 {
     use Actions;
+    use AuthorizesRequests;
 
     public User $user;
 
@@ -56,6 +58,8 @@ class UserInfoTab extends Component
 
     public function mount(User $user)
     {
+        $this->authorize('show', [User::class, $user]);
+
         $this->userOverride           = clone $user;
         $this->selectedDepartmentId   = $user->department_id;
         $this->departmentUsers        = collect();

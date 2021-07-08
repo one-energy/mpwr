@@ -9,6 +9,7 @@ use App\Models\Department;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Tests\Builders\OfficeBuilder;
 use Tests\TestCase;
 
 class ScoreboardTest extends TestCase
@@ -94,5 +95,92 @@ class ScoreboardTest extends TestCase
             ->assertSet('period', 'd')
             ->assertSee($setter01->full_name)
             ->assertDontSee($setter02->full_name);
+    }
+
+    /** @test */
+    public function it_should_be_possible_set_date()
+    {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+
+        $this->actingAs($john);
+
+        $future = today()->addDay();
+
+        Livewire::test(Scoreboard::class, ['date' => today()])
+            ->call('setDate', $future->toDateString())
+            ->assertSet('date', $future)
+            ->assertHasNoErrors();
+    }
+
+    /** @test */
+    public function it_should_be_possible_set_period()
+    {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+
+        $this->actingAs($john);
+
+        Livewire::test(Scoreboard::class)
+            ->assertSet('period', 'd')
+            ->call('setPeriod', 'dd')
+            ->assertSet('period', 'd')
+            ->assertHasNoErrors();
+
+        Livewire::test(Scoreboard::class)
+            ->assertSet('period', 'd')
+            ->call('setPeriod', 'w')
+            ->assertSet('period', 'w')
+            ->assertHasNoErrors();
+    }
+
+    /** @test */
+    public function it_should_be_possible_set_user()
+    {
+        $john   = User::factory()->create(['role' => Role::ADMIN]);
+        $office = OfficeBuilder::build()->withManager()->region()->save()->get();
+
+        $ann = $office->officeManager;
+
+        $this->actingAs($john);
+
+        Livewire::test(Scoreboard::class)
+            ->call('setUser', $ann->id)
+            ->assertSet('user.full_name', $ann->full_name)
+            ->assertSet('userArray', [
+                'photo_url'   => $ann->photo_url,
+                'full_name'   => $ann->full_name,
+                'office_name' => $ann->office->name,
+            ])
+            ->assertDispatchedBrowserEvent('setUserNumbers')
+            ->assertHasNoErrors();
+    }
+
+    /** @test */
+    public function it_should_calculate_daily_numbers_when_set_user()
+    {
+        $john   = User::factory()->create(['role' => Role::ADMIN]);
+        $office = OfficeBuilder::build()->withManager()->region()->save()->get();
+
+        $ann = $office->officeManager;
+
+        DailyNumber::factory()->create([
+            'user_id'       => $ann->id,
+            'office_id'     => $ann->office_id,
+            'sets'          => 1,
+            'sats'          => 1,
+            'doors'         => 1,
+            'hours_knocked' => 1,
+            'closes'        => 1,
+            'closer_sits'   => 1,
+        ]);
+
+        $this->actingAs($john);
+
+        Livewire::test(Scoreboard::class)
+            ->call('setUser', $ann->id)
+            ->assertSet('dpsRatio', 1)
+            ->assertSet('hpsRatio', 1.0)
+            ->assertSet('sitRatio', 1)
+            ->assertSet('closeRatio', 1)
+            ->assertHasNoErrors();
     }
 }

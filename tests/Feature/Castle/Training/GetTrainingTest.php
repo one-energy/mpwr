@@ -14,17 +14,23 @@ class GetTrainingTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function setUp(): void
+    /** @test */
+    public function it_should_show_section_index()
     {
-        parent::setUp();
+        $departmentManager = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+        $department        = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
+        $section           = TrainingPageSection::factory()->create(['department_id' => $department->id]);
 
-        $this->user = User::factory()->create(['master' => true]);
+        $departmentManager->update(['department_id' => $department->id]);
 
-        $this->actingAs($this->user);
+        $this
+            ->actingAs($departmentManager)
+            ->get(route('castle.manage-trainings.index', $department->id, $section->id))
+            ->assertOk();
     }
 
     /** @test */
-    public function it_should_show_section_index()
+    public function it_should_redirect_department_manager_to_home_if_the_user_dont_have_department_id()
     {
         [$departmentManager, $department] = $this->createVP();
 
@@ -32,8 +38,9 @@ class GetTrainingTest extends TestCase
 
         $this
             ->actingAs($departmentManager)
-            ->get(route('castle.manage-trainings.index', $department->id, $section->id))
-            ->assertOk();
+            ->get(route('trainings.index'))
+            ->assertRedirect(route('home'))
+            ->assertSessionHas('alert');
     }
 
     /** @test */
@@ -64,7 +71,10 @@ class GetTrainingTest extends TestCase
         ]);
 
         $this->actingAs($master)
-            ->get(route('castle.manage-trainings.index', ['department' => $department->id, 'section' => $section->id]))
+            ->get(route('castle.manage-trainings.index', [
+                'department' => $department->id,
+                'section'    => $section->id,
+            ]))
             ->assertSee($sectionOne->title)
             ->assertSee($sectionTwo->title)
             ->assertSee($sectionThree->title)

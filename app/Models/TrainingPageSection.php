@@ -19,7 +19,8 @@ use Illuminate\Support\Facades\DB;
  * @property int|null $department_id
  * @property int|null $region_id
  * @property bool|null $department_folder
- * @property-read \App\Models\TrainingPageContent|null $contents
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\TrainingPageContent[] $contents
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\SectionFile[] $files
  * @property-read \App\Models\Department|null $department
  * @property-read \App\Models\TrainingPageSection|null $parent
  * @property-read \App\Models\Region|null $region
@@ -89,6 +90,9 @@ class TrainingPageSection extends Model
 
         return $query->where(function (Builder $query) use ($user) {
             $query
+                ->orWhereHas('region', function($query) use ($user){
+                    $query->whereRegionManagerId($user->id);
+                })
                 ->orWhereNull('region_id')
                 ->orWhereHas('region.offices', function (Builder $query) use ($user) {
                     $query->where('offices.id', $user->office_id);

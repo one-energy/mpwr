@@ -10,6 +10,7 @@ use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -133,5 +134,90 @@ class DailyEntryTest extends TestCase
             ->assertDontSee($user->first_name)
             ->set('dateSelected', Carbon::yesterday())
             ->assertSee($user->first_name);
+    }
+
+    /** @test */
+    public function it_should_get_dates_that_not_have_entries()
+    {
+        $period = [];
+
+        if (Carbon::now()->day !== 1) {
+            $carbonPeriod = CarbonPeriod::create(Carbon::now()->firstOfMonth(), Carbon::yesterday());
+
+            foreach ($carbonPeriod as $date) {
+                $period[] = $date->toDateString();
+            }
+        }
+
+        Livewire::test(DailyEntry::class)
+            ->set('officeSelected', $this->office->id)
+            ->set('dateSelected', Carbon::now())
+            ->assertSet('missingDates', $period);
+
+        DailyNumber::factory()->create([
+            'user_id'   => $this->john->id,
+            'office_id' => $this->office->id,
+            'date'      => Carbon::yesterday(),
+            'doors'     => 15,
+        ]);
+
+        array_pop($period);
+
+        Livewire::test(DailyEntry::class)
+            ->set('officeSelected', $this->office->id)
+            ->set('dateSelected', Carbon::now())
+            ->assertSet('missingDates', $period);
+    }
+
+    /** @test */
+    public function it_should_get_offices_that_not_have_entries()
+    {
+        $missingOffices = [$this->office];
+        $someOffice     = Office::factory()->create([
+            'region_id'         => $this->region->id,
+            'office_manager_id' => $this->officeManager->id,
+        ]);
+
+        $missingOffices[] = $someOffice;
+
+        $livewire = Livewire::test(DailyEntry::class)
+            ->set('officeSelected', $this->office->id)
+            ->set('dateSelected', Carbon::now());
+
+        foreach ($missingOffices as $index => $office) {
+            $livewire->assertSet("missingOffices.{$index}.id", $office->id);
+        }
+
+        DailyNumber::factory()->create([
+            'user_id'   => $this->john->id,
+            'office_id' => $this->office->id,
+            'date'      => Carbon::yesterday(),
+            'doors'     => 15,
+        ]);
+
+        Livewire::test(DailyEntry::class)
+            ->set('officeSelected', $this->office->id)
+            ->set('dateSelected', Carbon::now())
+            ->assertSet('missingOffices.0.id', $someOffice->id);
+    }
+
+    /** @test */
+    public function it_should_set_date()
+    {
+        Livewire::test(DailyEntry::class)
+            ->assertSet('dateSelected', Carbon::now()->toDateString())
+            ->set('date', Carbon::yesterday())
+            ->call('setDate')
+            ->assertSet('dateSelected', Carbon::yesterday()->toDateString());
+    }
+
+    /** @test */
+    public function it_should_create_a_daily_number()
+    {
+        Livewire::test(DailyEntry::class)
+            ->assertSet('dateSelected', Carbon::now()->toDateString())
+            ->set('date', Carbon::yesterday())
+            ->call('setDate')
+            ->assertSet('dateSelected', Carbon::yesterday()->toDateString());
     }
 }

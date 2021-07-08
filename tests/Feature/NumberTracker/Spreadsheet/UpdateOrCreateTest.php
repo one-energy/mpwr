@@ -58,7 +58,7 @@ class UpdateOrCreateTest extends TestCase
                                 'sats'          => 1,
                                 'set_closes'    => 1,
                                 'closer_sits'   => 1,
-                                'closes'        => 1
+                                'closes'        => 1,
                             ],
                             [
                                 'user_id'       => $dummy02->id,
@@ -70,11 +70,11 @@ class UpdateOrCreateTest extends TestCase
                                 'sats'          => 2,
                                 'set_closes'    => 2,
                                 'closer_sits'   => 2,
-                                'closes'        => 2
+                                'closes'        => 2,
                             ],
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ]);
 
         $this->assertDatabaseCount('daily_numbers', 2);
@@ -115,7 +115,7 @@ class UpdateOrCreateTest extends TestCase
                                 'sats'          => 1,
                                 'set_closes'    => 1,
                                 'closer_sits'   => 1,
-                                'closes'        => 1
+                                'closes'        => 1,
                             ],
                             [
                                 'id'            => $tracker02->id,
@@ -127,11 +127,11 @@ class UpdateOrCreateTest extends TestCase
                                 'sats'          => 2,
                                 'set_closes'    => 2,
                                 'closer_sits'   => 2,
-                                'closes'        => 2
+                                'closes'        => 2,
                             ],
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ]);
 
         $this->assertDatabaseCount('daily_numbers', 2);
@@ -147,7 +147,7 @@ class UpdateOrCreateTest extends TestCase
             'sats'          => 1,
             'set_closes'    => 1,
             'closer_sits'   => 1,
-            'closes'        => 1
+            'closes'        => 1,
         ]);
 
         $this->assertDatabaseHas('daily_numbers', [
@@ -159,7 +159,7 @@ class UpdateOrCreateTest extends TestCase
             'sats'          => 2,
             'set_closes'    => 2,
             'closer_sits'   => 2,
-            'closes'        => 2
+            'closes'        => 2,
         ]);
     }
 
@@ -195,7 +195,7 @@ class UpdateOrCreateTest extends TestCase
                                 'sats'          => 1,
                                 'set_closes'    => 1,
                                 'closer_sits'   => 1,
-                                'closes'        => 1
+                                'closes'        => 1,
                             ],
                             [
                                 'user_id'       => $dummy02->id,
@@ -207,11 +207,11 @@ class UpdateOrCreateTest extends TestCase
                                 'sats'          => 2,
                                 'set_closes'    => 2,
                                 'closer_sits'   => 2,
-                                'closes'        => 2
+                                'closes'        => 2,
                             ],
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ]);
 
         $this->assertDatabaseCount('daily_numbers', 2);
@@ -227,7 +227,7 @@ class UpdateOrCreateTest extends TestCase
             'sats'          => 1,
             'set_closes'    => 1,
             'closer_sits'   => 1,
-            'closes'        => 1
+            'closes'        => 1,
         ]);
 
         $this->assertDatabaseHas('daily_numbers', [
@@ -239,7 +239,7 @@ class UpdateOrCreateTest extends TestCase
             'sats'          => 2,
             'set_closes'    => 2,
             'closer_sits'   => 2,
-            'closes'        => 2
+            'closes'        => 2,
         ]);
     }
 }

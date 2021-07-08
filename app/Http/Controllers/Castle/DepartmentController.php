@@ -23,7 +23,7 @@ class DepartmentController extends Controller
 
     public function create()
     {
-        $users = User::query()->where('role', 'Department Manager')->get();
+        $users = User::query()->where('role', Role::DEPARTMENT_MANAGER)->with('department')->get();
 
         return view('castle.departments.create', [
             'users' => $users,

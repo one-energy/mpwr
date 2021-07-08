@@ -25,17 +25,32 @@
                         <div>{{ $user->created_at->format('F dS, Y') }}</div>
                     </div>
                     @if ($user->id !== user()->id && !user()->isImpersonated())
-                        @canImpersonate()
-                            <div class="flex">
-                                <a
-                                    class="bg-green-600 cursor-pointer inline text-white px-3 rounded py-1 flex items-center"
-                                    href="{{ route('impersonate', $user->id) }}"
-                                >
-                                    <x-svg.id-card class="w-5 h-5 text-white fill-current mr-3" />
-                                    Impersonate
-                                </a>
-                            </div>
-                        @endCanImpersonate
+                        <div class="flex space-x-2">
+                            @canImpersonate()
+                                <div class="flex">
+                                    <x-button
+                                        color="green"
+                                        class="cursor-pointer inline text-white px-3 rounded py-1 flex items-center"
+                                        href="{{ route('impersonate', $user->id) }}"
+                                    >
+                                        <x-svg.id-card class="w-5 h-5 text-white fill-current mr-3" />
+                                        Impersonate
+                                    </x-button>
+                                </div>
+                            @endCanImpersonate
+                            @if(!$user->isVerified() && user()->hasAnyRole(['Admin', 'Owner']))
+                                <div class="flex">
+                                    <x-form id="resend-verification-form" :route="route('verification.resendInvitationEmail', $user->id)">
+                                        <x-button type="submit" 
+                                            color="green"
+                                            class="border-2 border-green-600 cursor-pointer  px-3 rounded py-1 flex items-center">
+                                            <x-svg.at-sign class="w-5 h-5 text-white fill-current mr-3" />
+                                            Resend invitation email
+                                        </x-button>
+                                    </x-form>
+                                </div>
+                            @endif
+                        </div>
                     @endif
                 </div>
             </div>

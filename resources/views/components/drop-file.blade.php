@@ -5,7 +5,7 @@
         <textarea hidden x-ref="meta">@json($meta)</textarea>
         <div class="flex flex-col flex-grow mb-3 border-gray-300  border-2 border-dashed rounded-md">
             <div id="FileUpload" class="block w-full py-2 px-3 relative bg-white appearance-none cursor-pointer">
-                <input type="file" multiple accept="image/*,application/pdf" name="inputFiles"
+                <input type="file" multiple accept="image/*,application/pdf,.odp,.otp,.pptx,.ppt,.pps,.ppsx,.pot,.potx" name="inputFiles"
                        class="absolute inset-0 z-50 m-0 p-0 w-full h-full outline-none opacity-0"
                        x-on:change="addFile($event.target.files)"
                        x-on:dragover="$el.classList.add('active')" x-on:dragleave="$el.classList.remove('active')" x-on:drop="$el.classList.remove('active')"
@@ -37,8 +37,18 @@
                 </template>
             </div>
         </template>
-        <div class="mt-8 w-full text-center">
-            <x-button class="w-1/4 bg-green-base" x-on:click="saveFiles">Save</x-button>
+        <div
+            class="mt-8 w-full text-center flex justify-center"
+            :class="{'pointer-events-none': loading, 'cursor-not-allowed': loading}"
+        >
+            <x-button class="bg-green-base" x-on:click="saveFiles">
+                <div class="flex items-center" :class="{'flex-row-reverse': loading}">
+                    <template x-if="loading">
+                        <x-icon icon="spinner" class="w-5 h-5 mr-3" />
+                    </template>
+                    Save
+                </div>
+            </x-button>
         </div>
     </div>
 </div>
@@ -54,6 +64,7 @@
             return {
                 files: [],
                 uploadedFiles: [],
+                loading: false,
                 token: document.head.querySelector('meta[name=csrf-token]').content,
                 filesize(fileSize) {
                     if(fileSize <= K_SIZE){
@@ -82,8 +93,11 @@
                      : false;
                 },
                 async saveFiles() {
+                    this.loading = true;
+
                     if(this.files.length === 0) {
                         window.$app.alert({ title: 'Nothing to upload', color: 'green' });
+                        this.loading = false;
                         return;
                     }
 
@@ -104,7 +118,18 @@
                         window.Livewire.emit('filesUploaded');
                         this.files = [];
                     } catch (error) {
-                        window.$app.alert({ title:'There is a problem with your upload' })
+                        let message = 'There is a problem with your upload';
+
+                        if (error.response.status === 422) {
+                            const { errors } = error.response.data;
+
+                            message = Object.keys(errors).length > 1
+                                ? 'There is an extension that is not supported'
+                                : `This extension isn't supported`;
+                        }
+                        window.$app.alert({ title: message, color: 'red' })
+                    } finally {
+                        this.loading = false;
                     }
                 }
             }

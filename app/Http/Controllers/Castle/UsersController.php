@@ -14,7 +14,6 @@ use App\Rules\Castle\MasterEmailUnique;
 use App\Rules\Castle\MasterEmailYourSelf;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use Ramsey\Uuid\Uuid;
 
 class UsersController extends Controller
 {
@@ -25,7 +24,9 @@ class UsersController extends Controller
 
     public function show(User $user)
     {
-        return view('castle.users.show', compact('user'));
+        return view('castle.users.show', [
+            'user' => $user,
+        ]);
     }
 
     public function create()
@@ -59,24 +60,21 @@ class UsersController extends Controller
 
         $user = User::query()->where('email', '=', $data['email'])->first();
 
-        $invitation        = new Invitation();
-        $invitation->email = $data['email'];
-        $invitation->token = Uuid::uuid4();
+        $invitation = new Invitation([
+            'email'   => $data['email'],
+            'token'   => (string)Str::uuid(),
+            'master'  => false,
+            'user_id' => optional($user)->id,
+        ]);
 
-        if ($data['office_id'] === 'None') {
-            $data['office_id'] = null;
-        }
-        if ($data['department_id'] === 'None') {
-            $data['department_id'] = null;
-        }
+        $data['office_id']     = $data['office_id'] === 'None' ? null : $data['office_id'];
+        $data['department_id'] = $data['department_id'] === 'None' ? null : $data['department_id'];
+
         if (in_array($data['role'], [Role::ADMIN, Role::OWNER], true)) {
             $invitation->master    = true;
             $data['department_id'] = null;
-        } else {
-            $invitation->master = false;
         }
 
-        $invitation->user_id = optional($user)->id;
         $invitation->save();
 
         $this->createUser($data, $invitation);
@@ -102,7 +100,7 @@ class UsersController extends Controller
 
     public function destroy($id)
     {
-        if ($id === auth()->user()->id) {
+        if ((int)$id === user()->id) {
             alert()
                 ->withTitle(__('You cannot delete yourself!'))
                 ->send();
@@ -110,10 +108,12 @@ class UsersController extends Controller
             return back();
         }
 
+        /** @var User|null $user */
         $user      = User::find($id);
         $canDelete = User::userCanChangeRole($user);
+
         if ($canDelete['status']) {
-            User::destroy($id);
+            $user->delete();
         } else {
             alert()
                 ->withTitle(__('You cannot delete this user!'))
@@ -160,23 +160,18 @@ class UsersController extends Controller
 
     private function createUser(array $data, Invitation $invitation): User
     {
-        return User::create([
-            'first_name'    => $data['first_name'],
-            'last_name'     => $data['last_name'],
-            'email'         => $data['email'],
-            'password'      => bcrypt(Str::random(8)),
-            'master'        => $invitation->master,
-            'role'          => $data['role'],
-            'office_id'     => $data['office_id'],
-            'department_id' => $data['department_id'],
-            'pay'           => $data['pay'],
-            'photo_url'     => asset('storage/profiles/profile.png'),
-        ]);
+        return User::create(array_merge($data, [
+            'master'    => $invitation->master,
+            'password'  => bcrypt(Str::random(8)),
+            'photo_url' => asset('storage/profiles/profile.png'),
+        ]));
     }
 
     public function requestResetPassword(User $user)
     {
-        return view('castle.users.reset-password', compact('user'));
+        return view('castle.users.reset-password', [
+            'user' => $user,
+        ]);
     }
 
     public function resetPassword($id)

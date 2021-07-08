@@ -18,7 +18,7 @@ use Livewire\Component;
  * @property-read Collection|Office[] $offices
  * @property-read array $periods
  * @property-read Collection $weeklyPeriods
- * @property-read Collection $weeklyLabels
+ * @property-read Collection $weeklyMonthLabels
  * @property-read string $dateFormat
  * @property-read Collection|DailyNumber[] $users
  */
@@ -74,21 +74,29 @@ class Spreadsheet extends Component
     {
         return collect($this->periods)
             ->chunk(2)
-            ->map(fn (Collection $chunk) => $this->getDaysFrom($chunk));
+            ->map(fn(Collection $chunk) => $this->getDaysFrom($chunk));
     }
 
-    public function getWeeklyLabelsProperty()
+    public function getWeeklyMonthLabelsProperty()
     {
         return collect($this->weeklyPeriods)
             ->map(function (array $periods) {
                 return collect($periods)
-                    ->map(function (DateTimeImmutable $date) {
-                        if ($this->isSunday($date)) {
-                            return null;
-                        }
+                    ->map(
+                        fn(DateTimeImmutable $date) => $this->isSunday($date) ? null : $date->format($this->dateFormat)
+                    )
+                    ->filter();
+            });
+    }
 
-                        return $date->format($this->dateFormat);
-                    })
+    public function getWeeklyDayLabelsProperty()
+    {
+        return collect($this->weeklyPeriods)
+            ->map(function (array $periods) {
+                return collect($periods)
+                    ->map(
+                        fn(DateTimeImmutable $date) => $this->isSunday($date) ? null : $date->format('D dS')
+                    )
                     ->filter();
             });
     }
@@ -121,7 +129,7 @@ class Spreadsheet extends Component
             ->get()
             ->map(function (User $user) {
                 $user->dailyNumbers = $user->dailyNumbers->groupBy(function (DailyNumber $dailyNumber) {
-                    return (new Carbon($dailyNumber->date))->format('F dS');
+                    return (new Carbon($dailyNumber->date))->format($this->dateFormat);
                 });
 
                 return $user;
@@ -133,7 +141,7 @@ class Spreadsheet extends Component
         $totals = [];
 
         foreach ($this->periodsLabel as $key => $period) {
-            foreach ($this->weeklyLabels[$key] as $label) {
+            foreach ($this->weeklyMonthLabels[$key] as $label) {
                 if ($this->users->isEmpty()) {
                     $totals[$label] = $this->getMappedDailyNumbers(collect(), $label);
 
@@ -171,10 +179,10 @@ class Spreadsheet extends Component
     public function getOfficesProperty()
     {
         return match (user()->role) {
-            'Admin', 'Owner' => Office::oldest('name')->get(),
+            'Admin', 'Owner'     => Office::oldest('name')->get(),
             'Department Manager' => $this->getOfficesFromDepartment(),
-            'Region Manager'     => Office::oldest('name')->whereIn('region_id', user()->managedRegions->pluck('id'))->get(),
-            'Office Manager'     => Office::oldest('name')->whereIn('id', user()->managedOffices->pluck('id'))->get(),
+            'Region Manager'     => $this->getOfficesFromRegion(),
+            'Office Manager'     => $this->getManagedOffices(),
             default              => collect()
         };
     }
@@ -193,6 +201,22 @@ class Spreadsheet extends Component
         }
 
         return collect();
+    }
+
+    private function getOfficesFromRegion()
+    {
+        return Office::query()
+            ->oldest('name')
+            ->whereIn('region_id', user()->managedRegions->pluck('id'))
+            ->get();
+    }
+
+    private function getManagedOffices()
+    {
+        return Office::query()
+            ->oldest('name')
+            ->whereIn('id', user()->managedOffices->pluck('id'))
+            ->get();
     }
 
     public function sumOf(string $field, $user, array $weekDays)
@@ -288,6 +312,6 @@ class Spreadsheet extends Component
     {
         return $weeklyPeriods
             ->flatten()
-            ->map(fn (DateTimeImmutable $date) => $date->format('Y-m-d'));
+            ->map(fn(DateTimeImmutable $date) => $date->format('Y-m-d'));
     }
 }
