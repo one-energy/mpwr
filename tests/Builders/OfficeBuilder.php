@@ -13,9 +13,9 @@ class OfficeBuilder
 {
     use WithFaker;
 
-    public bool $withManager = false;
+    private bool $withManager = false;
 
-    public Office $office;
+    private Office $office;
 
     private User $user;
 
@@ -44,6 +44,9 @@ class OfficeBuilder
         } else {
             $this->office->managers()->attach($this->user->id);
         }
+
+        $this->office->managers()->update(['users.office_id' => $this->office->id]);
+        $this->office->managers()->update(['department_id' => $this->office->region->department_id]);
 
         return $this;
     }

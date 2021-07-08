@@ -13,9 +13,9 @@ class RegionBuilder
 {
     use WithFaker;
 
-    public bool $withManager = false;
+    private bool $withManager = false;
 
-    public Region $region;
+    private Region $region;
 
     private User $user;
 
@@ -66,6 +66,8 @@ class RegionBuilder
 
     public function withManager(?User $user = null): self
     {
+        $user = $user ?? User::factory()->create(['role' => Role::REGION_MANAGER]);
+
         $this->user        = $user;
         $this->withManager = true;
 
@@ -76,7 +78,8 @@ class RegionBuilder
     {
         $manager = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
         /** @var Department $department */
-        $department = Department::factory()->create(['department_manager_id' => $manager->id]);
+        $department = Department::factory()->create();
+        $department->managers()->attach($manager->id);
 
         $manager->update(['department_id' => $department->id]);
 
