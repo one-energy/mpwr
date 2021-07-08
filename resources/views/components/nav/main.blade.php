@@ -153,14 +153,13 @@
                             @has-unread-notifications.window="hasUnreadNotifications = $event.detail.payload === 'true'"
                         >
                             <button
-                                class="p-1 border-2 border-transparent rounded-full hover:text-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"
+                                class="notificationBtn p-1 border-2 border-transparent rounded-full hover:text-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"
                                 :class="{
                                     'bell-animation': hasUnreadNotifications,
                                     'text-green-base bell-animation': hasUnreadNotifications,
                                     'text-gray-400': !hasUnreadNotifications,
                                 }"
                                 aria-label="Notifications"
-                                id="notificationBtn"
                             >
                                 <x-svg.notification/>
                             </button>
@@ -429,6 +428,23 @@
                         </svg>
                     </x-nav.link-mobile>
 
+                    <div
+                        x-data="{ hasUnreadNotifications: {{user()->unreadNotifications()->count() > 0 ? 'true' : 'false'}} }"
+                        @has-unread-notifications.window="hasUnreadNotifications = $event.detail.payload === 'true'"
+                    >
+                        <button
+                            class="notificationBtn p-1 border-2 border-transparent rounded-full hover:text-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"
+                            :class="{
+                                    'bell-animation': hasUnreadNotifications,
+                                    'text-green-base bell-animation': hasUnreadNotifications,
+                                    'text-gray-400': !hasUnreadNotifications,
+                                }"
+                            aria-label="Notifications"
+                        >
+                            <x-svg.notification/>
+                        </button>
+                    </div>
+
                     @if(user()->userLevel() != 'Sales Rep' && user()->userLevel() != 'Setter')
                         <x-nav.castle-icon/>
                     @endif
@@ -441,16 +457,37 @@
 
 @push('scripts')
     <script>
+        const MOBILE_OR_TABLE_SIZE = 768;
+
+        function debounce(func, timeout = 300){
+            let timer;
+            return (...args) => {
+                clearTimeout(timer);
+                timer = setTimeout(() => { func.apply(this, args); }, timeout);
+            };
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            if (window.innerWidth < MOBILE_OR_TABLE_SIZE) {
+                window.dispatchEvent(new CustomEvent('sidebar-mobile', {detail: true}))
+            }
+        })
+
         document
-            .querySelector('#notificationBtn')
-            .addEventListener('click', () => {
-                window.dispatchEvent(new CustomEvent('sidebar-toggled', {detail: true}));
+            .querySelectorAll('.notificationBtn')
+            .forEach(el => {
+               el.addEventListener('click', () => {
+                    window.dispatchEvent(new CustomEvent('sidebar-toggled', {detail: true}));
+               });
             });
 
-        window.addEventListener('resize', (event) => {
-            if (event.target.innerWidth === 767) {
+        window.addEventListener('resize', debounce(function (event) {
+            if (event.target.innerWidth < MOBILE_OR_TABLE_SIZE) {
                 window.dispatchEvent(new CustomEvent('sidebar-toggled', {detail: false}));
+                window.dispatchEvent(new CustomEvent('sidebar-mobile', {detail: true}))
+            } else {
+                window.dispatchEvent(new CustomEvent('sidebar-mobile', {detail: false}))
             }
-        }, true)
+        }), true);
     </script>
 @endpush
