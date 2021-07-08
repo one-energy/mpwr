@@ -1,16 +1,20 @@
 <div x-cloak
      @sidebar-toggled.window="opened = $event.detail"
+     @sidebar-mobile.window="isMobile = $event.detail"
      x-data="{
     opened: @entangle('opened').defer,
+    isMobile: false,
     close() {
         this.opened = false;
     },
-    get width() {
-        return this.opened ? '0' : '500px';
+    get widthSidebar() {
+        const size = this.isMobile ? '100%' : '500px';
+
+        return this.opened ? size : 0;
     },
     get styles() {
-        const sidebarWidth = this.opened ? '500px' : '0';
-        const translateX = this.opened ? '0' : '500px';
+        const sidebarWidth = this.widthSidebar;
+        const translateX = this.opened ? '0%' : '100%';
         return `
             box-shadow: 0 8px 10px -5px rgb(0 0 0 / 20%), 0 16px 24px 2px rgb(0 0 0 / 14%), 0 6px 30px 5px rgb(0 0 0 / 12%);
             width: ${sidebarWidth};
@@ -23,7 +27,7 @@
 }">
 
     <aside
-        class="bg-white fixed h-screen top-0 right-0 z-30"
+        class="bg-white fixed h-screen top-0 right-0 z-50"
         id="sidebar"
         :style="styles">
         <header class="flex items-center justify-between px-5 py-6">
