@@ -28,11 +28,11 @@ class UserPolicy
         }
 
         if ($auth->hasRole(Role::REGION_MANAGER)) {
-            return $user?->office?->region?->region_manager_id === $auth->id;
+            return in_array($user?->office?->region?->id, $auth->managedRegions->pluck('id')->toArray(), true);
         }
 
         if ($auth->hasRole(Role::OFFICE_MANAGER)) {
-            return $user?->office?->office_manager_id === $auth->id;
+            return in_array($user?->office?->id, $auth->managedOffices->pluck('id')->toArray(), true);
         }
 
         return false;
