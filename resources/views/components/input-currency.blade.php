@@ -20,9 +20,10 @@
         inputName: {{json_encode($name)}},
         editingInput: null,
         oldValue: 0,
-        validateSize($event, $maxSize) {
+        validateInput($event, $maxSize) {
+            this.inputValue = this.inputValue.replace(/(?!\.)\D/g, '').replace(/(?<=\..*)\./g, '').replace(/(?<=\.\d\d).*/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
             if(parseFloat($event.target.value) > $maxSize){
-                console.log(parseFloat($event.target.value), $event.target.value);
+                
                 $event.target.value = this.oldValue;
             } else {
                 this.oldValue = $event.target.value;
@@ -32,10 +33,7 @@
             event.target.value = this.currencyFormat(event.target.value);
         },
         currencyFormat(value) {
-            formatter = new Intl.NumberFormat('en-US', {
-                minimumFractionDigits: 2
-            });
-            return formatter.format(value);
+            return value.toString().replace(/(?!\.)\D/g, '').replace(/(?<=\..*)\./g, '').replace(/(?<=\.\d\d).*/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         },
         startInput() {
             inputElement = document.getElementById(this.inputName)
@@ -49,8 +47,9 @@
         },
         async updateModel(event) {
             this.editingInput = this.inputName;
-            await this.validateSize(event, '{{$maxSize}}');
-            this.model = parseFloat(this.inputValue);
+            await this.validateInput(event, '{{$maxSize}}');
+            value = this.inputValue.replaceAll(',', '')
+            this.model = parseFloat(value);
         }
     }" x-init="() => {
         startInput();
