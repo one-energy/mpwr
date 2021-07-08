@@ -14,7 +14,7 @@
     $model = $wireModel->value();
 @endphp
 
-<div {{ $attributes->except('wire:model') }} x-data="{
+<div {{ $attributes->except('wire:model', 'value') }} x-data="{
         model: @entangle($model),
         inputValue: null,
         inputName: {{json_encode($name)}},
@@ -38,7 +38,8 @@
             return formatter.format(value);
         },
         startInput() {
-            this.inputValue = this.model;
+            inputElement = document.getElementById(this.inputName)
+            this.inputValue = this.model ?? inputElement.value;
             formatter = new Intl.NumberFormat('en-US', {
                 minimumFractionDigits: 2
             })
@@ -81,12 +82,13 @@
                 $
             </span>
         </div>
-        <input {{ $attributes->except(['class', 'wire:model'])->merge(['class' => $class]) }}
+        <input {{ $attributes->except(['class', 'wire:model', 'value', 'type'])->merge(['class' => $class]) }}
                name="{{ $name }}" id="{{ $name }}"
                type="text"
                x-on:blur="formatValue($event)"
                x-on:input="updateModel($event)"
                x-model="inputValue"
+               value="{{ old($name, $value ?? null) }}"
                @if(($disabledToUser && user()->role == $disabledToUser) || $disabled) disabled @endif/>
 
         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">

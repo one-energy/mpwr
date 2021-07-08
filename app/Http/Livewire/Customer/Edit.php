@@ -28,7 +28,9 @@ class Edit extends Component
 
     public bool $installed;
 
-    public float $grossRepComission;
+    public float $grossRepComission = 0;
+
+    public float $totalSystemPrice = 0;
 
     public string $netRepComission;
 
@@ -78,6 +80,8 @@ class Edit extends Component
     {
         $this->customer->calcComission();
         $this->customer->calcMargin();
+
+        $this->totalSystemPrice  = $this->customer->totalSoldPrice;
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
         $this->netRepComission   = $this->calculateNetRepCommission();
         $this->salesReps         = user()->getPermittedUsers($this->departmentId)->toArray();

@@ -104,7 +104,7 @@
 
                     @if(!user()->hasRole("Setter"))
                         <div class="col-span-2 md:col-span-3" wire:key="total-cost">
-                            <x-input-currency label="Total Cost" name="total_cost" maxSize="100000" value="{{$customer->totalSoldPrice}}" readonly/>
+                            <x-input-currency wire:model="totalSystemPrice" label="Total Cost" name="total_cost" maxSize="100000"  readonly/>
                         </div>
                     @endif
 
@@ -150,8 +150,7 @@
                     </div>
 
                     <div class="col-span-2 md:col-span-2 @if($customer->setter_id == user()->id) hidden @endif" wire:key="grossRepCommission">
-                        <x-input wire:model="grossRepComission" label="Gross Rep Comission" name="grossRepComission"
-                                 type="number" readonly/>
+                        <x-input-currency wire:model="grossRepComission" label="Gross Rep Comission" name="grossRepComission" readonly/>
                     </div>
 
                     <div class="col-span-2 md:col-span-3 @if($customer->setter_id == user()->id) hidden @endif" wire:key="adders">
