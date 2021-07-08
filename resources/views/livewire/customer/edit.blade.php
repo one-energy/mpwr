@@ -98,7 +98,7 @@
                     </div>
 
                     <div class="col-span-2 md:col-span-3 @if($customer->setter_id == user()->id) hidden @endif" wire:key="soldPrice">
-                        <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc"
+                        <x-input-currency wire:model="customer.epc" label="EPC/PPW" name="customer.epc"
                                           observation="Sold Price" atEnd="kW"/>
                     </div>
 
