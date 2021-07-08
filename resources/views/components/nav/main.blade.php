@@ -148,22 +148,24 @@
                             </div>
                         </div>
 
-                        <div
-                            x-data="{ hasUnreadNotifications: {{user()->unreadNotifications()->count() > 0 ? 'true' : 'false'}} }"
-                            @has-unread-notifications.window="hasUnreadNotifications = $event.detail.payload === 'true'"
-                        >
-                            <button
-                                class="notificationBtn p-1 border-2 border-transparent rounded-full hover:text-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"
-                                :class="{
-                                    'bell-animation': hasUnreadNotifications,
-                                    'text-green-base bell-animation': hasUnreadNotifications,
-                                    'text-gray-400': !hasUnreadNotifications,
-                                }"
-                                aria-label="Notifications"
+                        @if (user()->hasRole('Admin'))
+                            <div
+                                x-data="{ hasUnreadNotifications: {{user()->unreadNotifications()->count() > 0 ? 'true' : 'false'}} }"
+                                @has-unread-notifications.window="hasUnreadNotifications = $event.detail.payload === 'true'"
                             >
-                                <x-svg.notification/>
-                            </button>
-                        </div>
+                                <button
+                                    class="notificationBtn p-1 border-2 border-transparent rounded-full hover:text-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"
+                                    :class="{
+                                        'bell-animation': hasUnreadNotifications,
+                                        'text-green-base bell-animation': hasUnreadNotifications,
+                                        'text-gray-400': !hasUnreadNotifications,
+                                    }"
+                                    aria-label="Notifications"
+                                >
+                                    <x-svg.notification/>
+                                </button>
+                            </div>
+                        @endif
 
                         <div @click.away="open = false" class="ml-3 relative" x-data="{ open: false }">
                             <div>
@@ -428,22 +430,24 @@
                         </svg>
                     </x-nav.link-mobile>
 
-                    <div
-                        x-data="{ hasUnreadNotifications: {{user()->unreadNotifications()->count() > 0 ? 'true' : 'false'}} }"
-                        @has-unread-notifications.window="hasUnreadNotifications = $event.detail.payload === 'true'"
-                    >
-                        <button
-                            class="notificationBtn p-1 border-2 border-transparent rounded-full hover:text-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"
-                            :class="{
-                                    'bell-animation': hasUnreadNotifications,
-                                    'text-green-base bell-animation': hasUnreadNotifications,
-                                    'text-gray-400': !hasUnreadNotifications,
-                                }"
-                            aria-label="Notifications"
+                    @if (user()->hasRole('Admin'))
+                        <div
+                            x-data="{ hasUnreadNotifications: {{user()->unreadNotifications()->count() > 0 ? 'true' : 'false'}} }"
+                            @has-unread-notifications.window="hasUnreadNotifications = $event.detail.payload === 'true'"
                         >
-                            <x-svg.notification/>
-                        </button>
-                    </div>
+                            <button
+                                class="notificationBtn p-1 border-2 border-transparent rounded-full hover:text-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"
+                                :class="{
+                                        'bell-animation': hasUnreadNotifications,
+                                        'text-green-base bell-animation': hasUnreadNotifications,
+                                        'text-gray-400': !hasUnreadNotifications,
+                                    }"
+                                aria-label="Notifications"
+                            >
+                                <x-svg.notification/>
+                            </button>
+                        </div>
+                    @endif
 
                     @if(user()->userLevel() != 'Sales Rep' && user()->userLevel() != 'Setter')
                         <x-nav.castle-icon/>
@@ -455,39 +459,41 @@
     </nav>
 </div>
 
-@push('scripts')
-    <script>
-        const MOBILE_OR_TABLE_SIZE = 768;
+@if (user()->hasRole('Admin'))
+    @push('scripts')
+        <script>
+            const MOBILE_OR_TABLE_SIZE = 768;
 
-        function debounce(func, timeout = 300){
-            let timer;
-            return (...args) => {
-                clearTimeout(timer);
-                timer = setTimeout(() => { func.apply(this, args); }, timeout);
-            };
-        }
-
-        document.addEventListener('DOMContentLoaded', (event) => {
-            if (window.innerWidth < MOBILE_OR_TABLE_SIZE) {
-                window.dispatchEvent(new CustomEvent('sidebar-mobile', {detail: true}))
+            function debounce(func, timeout = 300){
+                let timer;
+                return (...args) => {
+                    clearTimeout(timer);
+                    timer = setTimeout(() => { func.apply(this, args); }, timeout);
+                };
             }
-        })
 
-        document
-            .querySelectorAll('.notificationBtn')
-            .forEach(el => {
-               el.addEventListener('click', () => {
-                    window.dispatchEvent(new CustomEvent('sidebar-toggled', {detail: true}));
-               });
-            });
+            document.addEventListener('DOMContentLoaded', (event) => {
+                if (window.innerWidth < MOBILE_OR_TABLE_SIZE) {
+                    window.dispatchEvent(new CustomEvent('sidebar-mobile', {detail: true}))
+                }
+            })
 
-        window.addEventListener('resize', debounce(function (event) {
-            if (event.target.innerWidth < MOBILE_OR_TABLE_SIZE) {
-                window.dispatchEvent(new CustomEvent('sidebar-toggled', {detail: false}));
-                window.dispatchEvent(new CustomEvent('sidebar-mobile', {detail: true}))
-            } else {
-                window.dispatchEvent(new CustomEvent('sidebar-mobile', {detail: false}))
-            }
-        }), true);
-    </script>
-@endpush
+            document
+                .querySelectorAll('.notificationBtn')
+                .forEach(el => {
+                   el.addEventListener('click', () => {
+                        window.dispatchEvent(new CustomEvent('sidebar-toggled', {detail: true}));
+                   });
+                });
+
+            window.addEventListener('resize', debounce(function (event) {
+                if (event.target.innerWidth < MOBILE_OR_TABLE_SIZE) {
+                    window.dispatchEvent(new CustomEvent('sidebar-toggled', {detail: false}));
+                    window.dispatchEvent(new CustomEvent('sidebar-mobile', {detail: true}))
+                } else {
+                    window.dispatchEvent(new CustomEvent('sidebar-mobile', {detail: false}))
+                }
+            }), true);
+        </script>
+    @endpush
+@endif
