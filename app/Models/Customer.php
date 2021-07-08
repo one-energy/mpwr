@@ -264,6 +264,20 @@ class Customer extends Model
         return sprintf('%s %s', $this->first_name, $this->last_name);
     }
 
+    public function getNetRepCommissionAttribute()
+    {
+        return (float)$this->grossRepCommission - (float)$this->adders;
+    }
+
+    public function getGrossRepCommissionAttribute()
+    {
+        if ($this->margin && $this->system_size) {
+            return round((float)$this->margin * (float)$this->system_size * Customer::K_WATTS, 2);
+        }
+
+        return 0;
+    }
+
     public function calcComission()
     {
         if ($this->epc >= 0 && $this->sales_rep_fee >= 0 && $this->setter_fee >= 0 && $this->system_size && $this->adders >= 0) {

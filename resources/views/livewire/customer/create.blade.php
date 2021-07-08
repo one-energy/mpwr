@@ -96,7 +96,7 @@
                         <x-input-currency wire:model="totalSystemPrice" label="Total System Cost" name="total_cost" maxSize="100000" readonly/>
                     </div>
                 @endif
-                
+
                 <div class="col-span-2 md:col-span-3" wire:ignore>
                     <x-select-searchable
                         x-on:popup-close="$wire.updatedCustomerSetterId"

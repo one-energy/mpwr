@@ -103,8 +103,9 @@
                     </div>
 
                     @if(!user()->hasRole("Setter"))
+
                         <div class="col-span-2 md:col-span-3" wire:key="total-cost">
-                            <x-input-currency wire:model="totalSystemPrice" label="Total Cost" name="total_cost" maxSize="100000"  readonly/>
+                            <x-input-currency wire:model="totalSystemPrice" label="Total System Cost" name="total_cost" maxSize="100000" readonly/>
                         </div>
                     @endif
 
@@ -117,7 +118,7 @@
                             name="customer.setter_id"
                             label="Setter"
                             :showAlert="$setter->deleted_at != null"
-                            noneOption 
+                            noneOption
                             :disabled="$this->isSetterOfCustomer()"
                             placeholder="{{$customer->setter_id ? $setter->first_name . ' ' . $setter->last_name  : 'Self Gen'}}"/>
                     </div>
@@ -163,13 +164,20 @@
                     </div>
 
                     <div class="col-span-2 @if($customer->setter_id == user()->id) hidden @endif" wire:key="sotckPoints">
-                        <x-input-currency wire:model="stockPoints" label="Stock Points" name="stockPoints" readonly/>
+                        <x-input
+                            wire:model="stockPoints"
+                            label="Stock Points"
+                            name="stockPoints"
+                            readonly/>
                     </div>
 
                     @if($customer->financer_id == 1)
                         <div class="col-span-2 md:col-span-1 @if($customer->setter_id == user()->id) hidden @endif" wire:key="eniumPoints">
-                            <x-input label="Noble Pay Points" value="{{$customer->salesEniumPoint}}"
-                                              name="customer.enium_points" readonly/>
+                            <x-input 
+                                label="Noble Pay Points" 
+                                value="{{$customer->salesEniumPoint}}"              
+                                name="customer.enium_points" 
+                                readonly/>
                         </div>
                     @endif
 
@@ -199,7 +207,7 @@
                         <div class="mt-3">
                         <span
                             class="block w-full font-bold transition duration-150 ease-in-out sm:text-sm sm:leading-5">
-                            ${{ number_format($customer->sales_rep_comission,2) }}
+                            ${{ number_format($netRepComission, 2) }}
                         </span>
                         </div>
                     </div>
