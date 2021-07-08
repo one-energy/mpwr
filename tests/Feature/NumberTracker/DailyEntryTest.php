@@ -173,10 +173,10 @@ class DailyEntryTest extends TestCase
     public function it_should_get_offices_that_not_have_entries()
     {
         $missingOffices = [$this->office];
-        $someOffice     = Office::factory()->create([
-            'region_id'         => $this->region->id,
-            'office_manager_id' => $this->officeManager->id,
-        ]);
+
+        /** @var Office $someOffice */
+        $someOffice = Office::factory()->create(['region_id' => $this->region->id]);
+        $someOffice->managers()->attach($this->officeManager->id);
 
         $missingOffices[] = $someOffice;
 
@@ -198,7 +198,7 @@ class DailyEntryTest extends TestCase
         Livewire::test(DailyEntry::class)
             ->set('officeSelected', $this->office->id)
             ->set('dateSelected', Carbon::now())
-            ->assertSet('missingOffices.0.id', $someOffice->id);
+            ->assertSet('missingOffices.0.id', $this->office->id);
     }
 
     /** @test */

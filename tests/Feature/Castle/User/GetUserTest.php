@@ -4,10 +4,10 @@ namespace Tests\Feature\Castle\User;
 
 use App\Enum\Role;
 use App\Models\Department;
-use App\Models\Region;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
+use Tests\Builders\RegionBuilder;
 use Tests\TestCase;
 
 class GetUserTest extends TestCase
@@ -80,18 +80,12 @@ class GetUserTest extends TestCase
     /** @test */
     public function it_should_return_office_managers_from_provided_region()
     {
-        $john = User::factory()->create(['role' => Role::ADMIN]);
+        $john      = User::factory()->create(['role' => Role::ADMIN]);
+        $region    = RegionBuilder::build()->withManager()->withDepartment()->save()->get();
+        $manager01 = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
+        $manager02 = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
 
-        /** @var Collection $managers */
-        $manager01  = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
-        $manager02  = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
-        $department = Department::factory()->create();
-        $region     = Region::factory()->create([
-            'region_manager_id' => User::factory()->create(['role' => Role::REGION_MANAGER])->id,
-            'department_id'     => $department->id
-        ]);
-
-        $manager01->update(['department_id' => $department->id]);
+        $manager01->update(['department_id' => $region->department_id]);
 
         $response = $this->actingAs($john)
             ->getJson(route('getOfficesManager', ['region' => $region->id]))

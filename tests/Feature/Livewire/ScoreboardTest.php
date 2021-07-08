@@ -138,7 +138,8 @@ class ScoreboardTest extends TestCase
         $john   = User::factory()->create(['role' => Role::ADMIN]);
         $office = OfficeBuilder::build()->withManager()->region()->save()->get();
 
-        $ann = $office->officeManager;
+        /** @var User $ann */
+        $ann = $office->managers()->first();
 
         $this->actingAs($john);
 
@@ -160,7 +161,8 @@ class ScoreboardTest extends TestCase
         $john   = User::factory()->create(['role' => Role::ADMIN]);
         $office = OfficeBuilder::build()->withManager()->region()->save()->get();
 
-        $ann = $office->officeManager;
+        /** @var User $ann */
+        $ann = $office->managers()->first();
 
         DailyNumber::factory()->create([
             'user_id'       => $ann->id,

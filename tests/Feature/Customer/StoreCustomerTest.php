@@ -101,29 +101,24 @@ class StoreCustomerTest extends TestCase
     /** @test */
     public function it_should_start_with_sales_rep_setted_with_logged_user()
     {
-        $officeManager = User::factory()->create([
-            'role' => Role::OFFICE_MANAGER,
-        ]);
+        $officeManager = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
 
         $department = Department::factory()->create();
         $office     = Office::factory()->create([
-            'region_id'         => Region::factory()->create([
-                'department_id'     => $department->id,
-                'region_manager_id' => User::factory()->create(['role' => Role::REGION_MANAGER])
-            ]),
-            'office_manager_id' => $officeManager->id
+            'region_id' => Region::factory()->create(['department_id' => $department->id]),
         ]);
-        
-        $officeManager->department_id = $department->id;
-        $officeManager->office_id     = $office->id;
-        $officeManager->save();
 
-        $salesRep      = User::factory()->create([
+        $officeManager->update([
+            'department_id' => $department->id,
+            'office_id'     => $office->id,
+        ]);
+
+        $salesRep = User::factory()->create([
             'role'          => Role::SALES_REP,
             'office_id'     => $office->id,
             'department_id' => $department->id,
         ]);
-        $setter        = User::factory()->create([
+        $setter   = User::factory()->create([
             'role'          => Role::SETTER,
             'office_id'     => $office->id,
             'department_id' => $department->id,
@@ -159,13 +154,8 @@ class StoreCustomerTest extends TestCase
     public function it_should_set_self_gen()
     {
         $department = Department::factory()->create();
-
-        $setter        = User::factory()->create([
-            'role'          => Role::SETTER,
-            'department_id' => $department->id,
-        ]);
-
-        $customer = Customer::factory()->make();
+        $setter     = User::factory()->create(['role' => Role::SETTER, 'department_id' => $department->id]);
+        $customer   = Customer::factory()->make();
 
         Department::factory()->create();
 
@@ -175,8 +165,8 @@ class StoreCustomerTest extends TestCase
             'bills'    => Customer::BILLS,
             'customer' => $customer,
         ])
-        ->set('customer.setter_fee', 10)
-        ->set('customer.setter_id', null)
-        ->assertSet('customer.setter_fee', 0);
+            ->set('customer.setter_fee', 10)
+            ->set('customer.setter_id', null)
+            ->assertSet('customer.setter_fee', 0);
     }
 }

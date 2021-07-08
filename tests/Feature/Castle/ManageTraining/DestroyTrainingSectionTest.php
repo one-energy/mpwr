@@ -4,8 +4,6 @@ namespace Tests\Feature\Castle\ManageTraining;
 
 use App\Enum\Role;
 use App\Models\Department;
-use App\Models\Office;
-use App\Models\Region;
 use App\Models\SectionFile;
 use App\Models\TrainingPageContent;
 use App\Models\TrainingPageSection;
@@ -13,6 +11,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
+use Tests\Builders\OfficeBuilder;
 use Tests\TestCase;
 
 class DestroyTrainingSectionTest extends TestCase
@@ -24,8 +23,12 @@ class DestroyTrainingSectionTest extends TestCase
     /** @test */
     public function it_should_soft_delete_a_training_section()
     {
-        $john         = User::factory()->create(['role' => Role::ADMIN]);
-        $department   = Department::factory()->create(['department_manager_id' => $john->id]);
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($john->id);
+
         $rootSection  = $this->createSection($department);
         $childSection = $this->createSection($department, ['parent_id' => $rootSection->id]);
 
@@ -43,8 +46,11 @@ class DestroyTrainingSectionTest extends TestCase
     /** @test */
     public function it_should_allow_a_region_manager_destroy_section_that_belongs_to_their_region()
     {
-        [$regionManager, $department, $rootSection] = $this->createTeam();
+        $office        = OfficeBuilder::build()->withManager()->region()->save()->get();
+        $department    = $office->region->department;
+        $regionManager = $office->region->managers->first();
 
+        $rootSection   = $this->createSection($department);
         $regionSection = $this->createSection($department, [
             'parent_id'         => $rootSection->id,
             'region_id'         => $regionManager->managedRegions()->first()->id,
@@ -72,9 +78,13 @@ class DestroyTrainingSectionTest extends TestCase
     /** @test */
     public function it_should_forbidden_destroy_root_section()
     {
-        $john        = User::factory()->create(['role' => Role::ADMIN]);
-        $ann         = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
-        $department  = Department::factory()->create(['department_manager_id' => $john->id]);
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+        $ann  = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($john);
+
         $rootSection = $this->createSection($department);
 
         $this->actingAs($ann)
@@ -88,9 +98,13 @@ class DestroyTrainingSectionTest extends TestCase
     /** @test */
     public function it_should_forbidden_a_department_manager_destroy_a_section_from_another_department()
     {
-        $john         = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
-        $ann          = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
-        $department   = Department::factory()->create(['department_manager_id' => $john->id]);
+        $john = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+        $ann  = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($john->id);
+
         $rootSection  = $this->createSection($department);
         $childSection = $this->createSection($department, ['parent_id' => $rootSection]);
 
@@ -105,8 +119,11 @@ class DestroyTrainingSectionTest extends TestCase
     /** @test */
     public function it_should_forbidden_a_region_manager_destroy_a_section_that_belongs_to_the_department()
     {
-        [$regionManager, $department, $rootSection] = $this->createTeam();
-        $childSection = $this->createSection($department, ['parent_id' => $rootSection->id]);
+        $office        = OfficeBuilder::build()->withManager()->region()->save()->get();
+        $department    = $office->region->department;
+        $regionManager = $office->region->managers->first();
+        $rootSection   = $this->createSection($department);
+        $childSection  = $this->createSection($department, ['parent_id' => $rootSection->id]);
 
         $this->actingAs($regionManager)
             ->delete(route($this->deleteRoute, ['section' => $childSection->id]))
@@ -119,8 +136,13 @@ class DestroyTrainingSectionTest extends TestCase
     /** @test */
     public function it_should_forbidden_a_region_manager_destroy_a_section_that_belongs_to_another_region()
     {
-        [$regionManager01, $department01, $rootSection01] = $this->createTeam();
-        [$regionManager02] = $this->createTeam();
+        $office          = OfficeBuilder::build()->withManager()->region()->save()->get();
+        $department01    = $office->region->department;
+        $regionManager01 = $office->region->managers->first();
+        $rootSection01   = $this->createSection($department01);
+
+        $office          = OfficeBuilder::build()->withManager()->region()->save()->get();
+        $regionManager02 = $office->region->managers->first();
 
         $childSection = $this->createSection($department01, [
             'parent_id'         => $rootSection01,
@@ -139,8 +161,12 @@ class DestroyTrainingSectionTest extends TestCase
     /** @test */
     public function it_should_move_children_sections_and_content_to_parent()
     {
-        $john         = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
-        $department   = Department::factory()->create(['department_manager_id' => $john->id]);
+        $john = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($john->id);
+
         $rootSection  = $this->createSection($department);
         $childSection = $this->createSection($department, ['parent_id' => $rootSection]);
 
@@ -189,28 +215,5 @@ class DestroyTrainingSectionTest extends TestCase
         $defaultAttrs = array_merge(['department_id' => $department->id], $attributes);
 
         return TrainingPageSection::factory()->create($defaultAttrs);
-    }
-
-    private function createTeam(): array
-    {
-        $departmentManager = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
-        $regionManager     = User::factory()->create(['role' => Role::REGION_MANAGER]);
-        $officeManager     = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
-
-        $department = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $region     = Region::factory()->create([
-            'department_id'     => $department->id,
-            'region_manager_id' => $regionManager->id,
-        ]);
-        $office     = Office::factory()->create([
-            'region_id'         => $region->id,
-            'office_manager_id' => $officeManager->id,
-        ]);
-
-        $regionManager->update(['office_id' => $office->id, 'department_id' => $department->id]);
-
-        $rootSection = $this->createSection($department);
-
-        return [$regionManager, $department, $rootSection];
     }
 }

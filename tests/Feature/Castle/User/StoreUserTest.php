@@ -169,69 +169,6 @@ class StoreUserTest extends TestCase
     }
 
     /** @test */
-    public function it_should_set_office_id_to_null_if_the_provided_value_is_none()
-    {
-        Notification::fake();
-
-        $dummy = $this->makeUser([
-            'role'          => Role::DEPARTMENT_MANAGER,
-            'department_id' => null,
-            'office_id'     => 'None',
-        ]);
-
-        $this->createUser($dummy);
-
-        $dummy->refresh();
-
-        $this->assertDatabaseHas('users', [
-            'email'     => $dummy->email,
-            'office_id' => null,
-        ]);
-    }
-
-    /** @test */
-    public function it_should_set_department_id_to_null_if_the_provided_value_is_none()
-    {
-        Notification::fake();
-
-        $dummy = $this->makeUser([
-            'role'          => Role::DEPARTMENT_MANAGER,
-            'department_id' => 'None',
-            'office_id'     => null,
-        ]);
-
-        $this->createUser($dummy);
-
-        $dummy->refresh();
-
-        $this->assertDatabaseHas('users', [
-            'email'         => $dummy->email,
-            'department_id' => null,
-        ]);
-    }
-
-    /** @test */
-    public function it_should_set_department_id_to_null_if_the_provided_role_is_admin_or_owner()
-    {
-        Notification::fake();
-
-        $dummy = $this->makeUser([
-            'role'          => Role::ADMIN,
-            'department_id' => 1,
-            'office_id'     => null,
-        ]);
-
-        $this->createUser($dummy);
-
-        $dummy->refresh();
-
-        $this->assertDatabaseHas('users', [
-            'email'         => $dummy->email,
-            'department_id' => null,
-        ]);
-    }
-
-    /** @test */
     public function it_should_require_first_name()
     {
         $this->createUser($this->makeUser(['first_name' => null]))

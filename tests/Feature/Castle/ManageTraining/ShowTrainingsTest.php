@@ -16,9 +16,13 @@ class ShowTrainingsTest extends TestCase
     /** @test */
     public function it_should_render_manage_trainings_index_view()
     {
-        $john       = User::factory()->create(['role' => Role::ADMIN]);
-        $department = Department::factory()->create(['department_manager_id' => $john->id]);
-        $section    = TrainingSectionBuilder::build()->withDepartment($department)->withRegion()->save()->get();
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($john->id);
+
+        $section = TrainingSectionBuilder::build()->withDepartment($department)->withRegion()->save()->get();
 
         $this->actingAs($john)
             ->get(route('castle.manage-trainings.index'))

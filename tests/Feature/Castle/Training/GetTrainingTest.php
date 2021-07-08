@@ -18,8 +18,12 @@ class GetTrainingTest extends TestCase
     public function it_should_show_section_index()
     {
         $departmentManager = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
-        $department        = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $section           = TrainingPageSection::factory()->create(['department_id' => $department->id]);
+
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($departmentManager->id);
+
+        $section = TrainingPageSection::factory()->create(['department_id' => $department->id]);
 
         $departmentManager->update(['department_id' => $department->id]);
 
@@ -34,7 +38,9 @@ class GetTrainingTest extends TestCase
     {
         [$departmentManager, $department] = $this->createVP();
 
-        $section = TrainingPageSection::factory()->create(['department_id' => $department->id]);
+        $departmentManager->update(['department_id' => null]);
+
+        TrainingPageSection::factory()->create(['department_id' => $department->id]);
 
         $this
             ->actingAs($departmentManager)

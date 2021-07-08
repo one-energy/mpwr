@@ -4,11 +4,11 @@ namespace Tests\Feature\Castle\User;
 
 use App\Enum\Role;
 use App\Models\Department;
-use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
+use Tests\Builders\OfficeBuilder;
 use Tests\TestCase;
 
 class DestroyUserTest extends TestCase
@@ -42,8 +42,11 @@ class DestroyUserTest extends TestCase
     public function it_should_prevent_delete_a_user_if_he_is_managing_some_department()
     {
         /** @var User $dummy */
-        $dummy      = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
-        $department = Department::factory()->create(['department_manager_id' => $dummy->id]);
+        $dummy = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($dummy->id);
 
         $dummy->update(['department_id' => $department->id]);
 
@@ -59,11 +62,10 @@ class DestroyUserTest extends TestCase
     public function it_should_prevent_delete_a_user_if_he_is_managing_some_region()
     {
         /** @var User $dummy */
-        $dummy  = User::factory()->create(['role' => Role::REGION_MANAGER]);
-        $region = Region::factory()->create([
-            'region_manager_id' => $dummy->id,
-            'department_id'     => Department::factory()->create()->id
-        ]);
+        $dummy = User::factory()->create(['role' => Role::REGION_MANAGER]);
+        /** @var Region $region */
+        $region = Region::factory()->create(['department_id' => Department::factory()->create()->id]);
+        $region->managers()->attach($dummy->id);
 
         $dummy->update(['department_id' => $region->department->id]);
 
@@ -80,13 +82,7 @@ class DestroyUserTest extends TestCase
     {
         /** @var User $dummy */
         $dummy  = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
-        $office = Office::factory()->create([
-            'office_manager_id' => $dummy->id,
-            'region_id'         => Region::factory([
-                'region_manager_id' => User::factory()->create(['role' => Role::REGION_MANAGER])->id,
-                'department_id'     => Department::factory()->create()->id
-            ]),
-        ]);
+        $office = OfficeBuilder::build()->withManager()->region()->save()->get();
 
         $dummy->update(['department_id' => $office->region->department->id]);
 

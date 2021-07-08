@@ -24,7 +24,9 @@ class UserInfoTabTest extends TestCase
     {
         $john   = User::factory()->create(['role' => Role::ADMIN]);
         $office = OfficeBuilder::build()->withManager()->region()->save()->get();
-        $mary   = $office->officeManager;
+
+        /** @var User $mary */
+        $mary = $office->managers()->first();
 
         $this->actingAs($john);
 
@@ -52,10 +54,11 @@ class UserInfoTabTest extends TestCase
         $john = User::factory()->create(['role' => Role::ADMIN]);
         $ann  = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
         $poll = User::factory()->create(['role' => Role::REGION_MANAGER]);
-        $zack = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
 
         $office = OfficeBuilder::build()->withManager()->region()->save()->get();
-        $mary   = $office->officeManager;
+
+        /** @var User $mary */
+        $mary = $office->managers()->first();
 
         $this->actingAs($john);
 
@@ -81,7 +84,9 @@ class UserInfoTabTest extends TestCase
     {
         $john   = User::factory()->create(['role' => Role::ADMIN]);
         $office = OfficeBuilder::build()->withManager()->region()->save()->get();
-        $mary   = $office->officeManager;
+
+        /** @var User $mary */
+        $mary = $office->managers()->first();
 
         $this->actingAs($john);
 
@@ -96,11 +101,13 @@ class UserInfoTabTest extends TestCase
     {
         $john   = User::factory()->create(['role' => Role::ADMIN]);
         $office = OfficeBuilder::build()->withManager()->region()->save()->get();
-        $mary   = $office->officeManager;
 
-        $newDepartment = Department::factory()->create([
-            'department_manager_id' => $john->id,
-        ]);
+        /** @var User $mary */
+        $mary = $office->managers()->first();
+
+        /** @var Department $newDepartment */
+        $newDepartment = Department::factory()->create();
+        $newDepartment->managers()->attach($john->id);
 
         $this->actingAs($john);
 
@@ -115,13 +122,16 @@ class UserInfoTabTest extends TestCase
     {
         $john   = User::factory()->create(['role' => Role::ADMIN]);
         $office = OfficeBuilder::build()->withManager()->region()->save()->get();
-        $mary   = $office->officeManager;
+
+        /** @var User $mary */
+        $mary = $office->managers()->first();
 
         $this->actingAs($john);
 
         Livewire::test(UserInfoTab::class, ['user' => $mary])
+            ->assertSet('showWarningRoleModal', false)
             ->call('changeRole', Role::ADMIN)
-            ->assertEmitted('app:modal')
+            ->assertSet('showWarningRoleModal', true)
             ->assertHasNoErrors();
     }
 
@@ -132,7 +142,7 @@ class UserInfoTabTest extends TestCase
         $mary = User::factory()->create(['role' => Role::SETTER]);
 
         Rates::factory()->create([
-            'role' => Role::ADMIN,
+            'role' => Role::SETTER,
             'rate' => 20,
         ]);
 
@@ -341,9 +351,12 @@ class UserInfoTabTest extends TestCase
     /** @test */
     public function it_should_forbidden_department_manager_see_a_user_that_he_is_not_managing()
     {
-        $john       = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
-        $department = Department::factory()->create(['department_manager_id' => $john->id]);
+        /** @var User $john */
+        $john = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
 
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($john->id);
         $john->update(['department_id' => $department->id]);
 
         $dummy = User::factory()->create(['role' => Role::SETTER]);
@@ -362,7 +375,7 @@ class UserInfoTabTest extends TestCase
         $dummy01 = User::factory()->create(['role' => Role::SETTER, 'office_id' => $office01->id]);
         $dummy02 = User::factory()->create(['role' => Role::SETTER, 'office_id' => $office02->id]);
 
-        $this->actingAs($office02->region->regionManager);
+        $this->actingAs($office02->region->managers()->first());
 
         Livewire::test(UserInfoTab::class, ['user' => $dummy01])->assertForbidden();
         Livewire::test(UserInfoTab::class, ['user' => $dummy02])->assertOk();
@@ -377,7 +390,7 @@ class UserInfoTabTest extends TestCase
         $dummy01 = User::factory()->create(['role' => Role::SETTER, 'office_id' => $office02->id]);
         $dummy02 = User::factory()->create(['role' => Role::SETTER, 'office_id' => $office01->id]);
 
-        $this->actingAs($office01->officeManager);
+        $this->actingAs($office01->managers()->first());
 
         Livewire::test(UserInfoTab::class, ['user' => $dummy01])->assertForbidden();
         Livewire::test(UserInfoTab::class, ['user' => $dummy02])->assertOk();
