@@ -289,7 +289,7 @@ class RegionRow extends Component
                         ->orWhereNull('deleted_at');
                 })
                     ->when(user()->hasRole(Role::OFFICE_MANAGER), function ($query) {
-                        $query->whereOfficeManagerId(user()->id);
+                        $query->whereIn('id', user()->managedOffices->pluck('id'));
                     })
                     ->when(user()->hasAnyRole([Role::SALES_REP, Role::SETTER]), function ($query) {
                         $query->find(user()->office_id);

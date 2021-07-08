@@ -34,6 +34,7 @@ class DailyEntry extends Component
     public function mount()
     {
         $this->getMissingOffices();
+
         $this->dateSelected     = date('Y-m-d', time());
         $this->lastDateSelected = date('Y-m-d', strtotime($this->dateSelected . '-1 day'));
         $this->setOffice($this->getOfficeQuery()->first());
@@ -177,11 +178,14 @@ class DailyEntry extends Component
         }
 
         if (user()->hasRole(Role::REGION_MANAGER)) {
-            $query->orWhere('regions.region_manager_id', '=', user()->id);
+            $query->orWhereHas(
+                'region',
+                fn ($query) => $query->whereIn('id', user()->managedRegions->pluck('id'))
+            );
         }
 
         if (user()->hasRole(Role::OFFICE_MANAGER)) {
-            $query->orWhere('offices.office_manager_id', '=', user()->id);
+            $query->whereIn('id', user()->managedOffices->pluck('id'));
         }
 
         $query->orWhere('offices.id', '=', user()->office_id);

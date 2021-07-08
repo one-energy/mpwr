@@ -22,7 +22,7 @@ class RegionController extends Controller
                 $query->whereDepartmentId($department->id);
             })
             ->when(user()->hasRole(Role::REGION_MANAGER), function (Builder $query) {
-                $query->whereRegionManagerId(user()->id);
+                $query->whereIn('id', user()->managedRegions->pluck('id'));
             })
             ->when(user()->hasRole(Role::OFFICE_MANAGER), function (Builder $query) {
                 $query->whereId(user()->office->region->id);

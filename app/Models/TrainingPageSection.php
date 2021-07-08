@@ -91,7 +91,7 @@ class TrainingPageSection extends Model
         return $query->where(function (Builder $query) use ($user) {
             $query
                 ->orWhereHas('region', function($query) use ($user){
-                    $query->whereRegionManagerId($user->id);
+                    $query->whereIn('id', $user->managedRegions->pluck('id'));
                 })
                 ->orWhereNull('region_id')
                 ->orWhereHas('region.offices', function (Builder $query) use ($user) {
