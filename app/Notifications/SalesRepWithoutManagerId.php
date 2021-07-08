@@ -4,11 +4,12 @@ namespace App\Notifications;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\HtmlString;
 
-class SalesRepWithoutManagerId extends Notification
+class SalesRepWithoutManagerId extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -31,7 +32,8 @@ class SalesRepWithoutManagerId extends Notification
     {
         return (new MailMessage)
             ->subject('User without manager(s)')
-            ->line(new HtmlString($this->message));
+            ->line(new HtmlString($this->message))
+            ->action('See User', $this->path());
     }
 
     public function toDatabase()
@@ -41,7 +43,7 @@ class SalesRepWithoutManagerId extends Notification
                 'message' => $this->message,
                 'meta'    => [
                     'text' => 'See User',
-                    'link' => route('castle.users.show', $this->salesRep->id),
+                    'link' => $this->path(),
                 ]
             ]
         ];
@@ -70,5 +72,10 @@ class SalesRepWithoutManagerId extends Notification
         }
 
         return $sentence . $words->join(', ', ', and ') . '.';
+    }
+
+    private function path(): string
+    {
+        return route('castle.users.show', $this->salesRep->id);
     }
 }
