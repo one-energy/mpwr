@@ -88,7 +88,7 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-3">
-                    <x-input-currency wire:model="customer.epc" label="EPC" name="customer.epc" observation="Sold Price" maxSize="100000" atEnd="kW"/>
+                    <x-input-currency wire:model="customer.epc" label="EPC/PPW" name="customer.epc" observation="Sold Price" maxSize="100000" atEnd="kW"/>
                 </div>
 
                 @if(!user()->hasRole("Setter"))
