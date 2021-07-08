@@ -30,7 +30,7 @@ class Edit extends Component
 
     public float $grossRepComission;
 
-    public float $netRepComission;
+    public string $netRepComission;
 
     public bool $isSelfGen;
 

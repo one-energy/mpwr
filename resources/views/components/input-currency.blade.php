@@ -12,37 +12,57 @@
     $name = $name ?? 'currency-input';
     $wireModel = $attributes->wire('model');
     $model = $wireModel->value();
-    $wire = $wire && is_bool($wire) ? $name : $attributes->wire('model')->value();
-
 @endphp
 
-<div {{ $attributes }} x-data="{
+<div {{ $attributes->except('wire:model') }} x-data="{
+        model: @entangle($model),
+        inputValue: null,
         inputName: {{json_encode($name)}},
+        editingInput: null,
         oldValue: 0,
         validateSize($event, $maxSize) {
-            if($event.target.value > $maxSize){
-                $event.target.value = this.oldValue
+            if(parseFloat($event.target.value) > $maxSize){
+                console.log(parseFloat($event.target.value), $event.target.value);
+                $event.target.value = this.oldValue;
             } else {
-                this.oldValue = $event.target.value
-            }
-        },
-        startInput() {
-            el = document.getElementById(this.inputName);
-            console.log(el.value);
-            if (el.value) {
-                el.value = this.addZeros(el.value);
+                this.oldValue = $event.target.value;
             }
         },
         formatValue(event) {
-            event.target.value = this.addZeros(event.target.value)
+            event.target.value = this.currencyFormat(event.target.value);
         },
-        addZeros(value) {
-            const dec  = value.toString().split('.')[1];
-            const len  = dec && dec.length > 2 ? dec.length : 2;
-            return Number(value).toFixed(len);
+        currencyFormat(value) {
+            formatter = new Intl.NumberFormat('en-US', {
+                minimumFractionDigits: 2
+            });
+            return formatter.format(value);
+        },
+        startInput() {
+            this.inputValue = this.model;
+            formatter = new Intl.NumberFormat('en-US', {
+                minimumFractionDigits: 2
+            })
+            if (this.inputValue) {
+                this.inputValue = formatter.format(this.inputValue);
+            }
+        },
+        async updateModel(event) {
+            this.editingInput = this.inputName;
+            await this.validateSize(event, '{{$maxSize}}');
+            this.model = parseFloat(this.inputValue);
         }
-    }" x-init="startInput()">
-    <div class="flex">
+    }" x-init="() => {
+        startInput();
+        $watch('model', (newValue) => {
+            formatter = new Intl.NumberFormat('en-US', {
+                minimumFractionDigits: 2
+            });
+            if (newValue && (!editingInput || editingInput != inputName)) {
+                inputValue = currencyFormat(newValue);
+            }
+        })
+    }">
+    <div class="flex" key="{{$name}}">
         <label for="{{ $name }}" class="block text-sm font-medium leading-5 text-gray-700">{{ $label }}</label>
         @if($tooltip)
             <x-svg.question-mark class="h-4 w-4 text-gray-600 cursor-pointer ml-1" x-on:mouseenter="tooltipShow = true" x-on:mouseleave="tooltipShow = false" x-on:click="tooltipShow = true"></x-svg.question-mark>
@@ -61,14 +81,12 @@
                 $
             </span>
         </div>
-        <input {{ $attributes->except('class')->merge(['class' => $class]) }}
+        <input {{ $attributes->except(['class', 'wire:model'])->merge(['class' => $class]) }}
                name="{{ $name }}" id="{{ $name }}"
-               type="number"
-               min="0"
-               step="0.01"
+               type="text"
                x-on:blur="formatValue($event)"
-               x-on:input="validateSize($event, {{$maxSize}})"
-               @if ($wire) wire:model="{{ $wire }}" @endif
+               x-on:input="updateModel($event)"
+               x-model="inputValue"
                @if(($disabledToUser && user()->role == $disabledToUser) || $disabled) disabled @endif/>
 
         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
