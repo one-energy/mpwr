@@ -19,9 +19,11 @@ class Create extends Component
 
     public int $departmentId;
 
-    public float $grossRepComission;
+    public float $grossRepComission = 0;
 
-    public float $netRepComission;
+    public float $totalSystemPrice = 0;
+
+    public float $netRepComission = 0;
 
     public int $stockPoints = 250;
 
@@ -83,6 +85,8 @@ class Create extends Component
     {
         $this->customer->calcComission();
         $this->customer->calcMargin();
+
+        $this->totalSystemPrice  = $this->customer->totalSoldPrice;
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
         $this->netRepComission   = $this->calculateNetRepCommission();
         $this->salesReps         = user()->getPermittedUsers($this->departmentId)->toArray();

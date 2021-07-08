@@ -5,14 +5,64 @@
     if( $errors->has($name) ) {
         $class .= 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-300 focus:shadow-outline-red';
     }
+    
     $tooltip        = $tooltip ?? null;
     $observation    = $observation ?? null;
     $disabledToUser = $disabledToUser ?? null;
-    $wire = $wire && is_bool($wire) ? $name : $wire;
+    $name = $name ?? 'currency-input';
+    $wireModel = $attributes->wire('model');
+    $model = $wireModel->value();
 @endphp
 
-<div {{ $attributes }} x-data="registerCurrencyValidate()">
-    <div class="flex">
+<div {{ $attributes->except('wire:model', 'value') }} x-data="{
+        model: @entangle($model),
+        inputValue: null,
+        inputName: {{json_encode($name)}},
+        editingInput: null,
+        oldValue: 0,
+        validateInput($event, $maxSize) {
+            this.inputValue = this.inputValue.replace(/(?!\.)\D/g, '').replace(/(?<=\..*)\./g, '').replace(/(?<=\.\d\d).*/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            if(parseFloat($event.target.value) > $maxSize){
+                
+                $event.target.value = this.oldValue;
+            } else {
+                this.oldValue = $event.target.value;
+            }
+        },
+        formatValue(event) {
+            event.target.value = this.currencyFormat(event.target.value);
+        },
+        currencyFormat(value) {
+            return value.toString().replace(/(?!\.)\D/g, '').replace(/(?<=\..*)\./g, '').replace(/(?<=\.\d\d).*/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        },
+        startInput() {
+            inputElement = document.getElementById(this.inputName)
+            this.inputValue = this.model ?? inputElement.value;
+            formatter = new Intl.NumberFormat('en-US', {
+                minimumFractionDigits: 2
+            })
+            if (this.inputValue) {
+                this.inputValue = formatter.format(this.inputValue);
+            }
+        },
+        async updateModel(event) {
+            this.editingInput = this.inputName;
+            await this.validateInput(event, '{{$maxSize}}');
+            value = this.inputValue.replaceAll(',', '')
+            this.model = parseFloat(value);
+        }
+    }" x-init="() => {
+        startInput();
+        $watch('model', (newValue) => {
+            formatter = new Intl.NumberFormat('en-US', {
+                minimumFractionDigits: 2
+            });
+            if (newValue && (!editingInput || editingInput != inputName)) {
+                inputValue = currencyFormat(newValue);
+            }
+        })
+    }">
+    <div class="flex" key="{{$name}}">
         <label for="{{ $name }}" class="block text-sm font-medium leading-5 text-gray-700">{{ $label }}</label>
         @if($tooltip)
             <x-svg.question-mark class="h-4 w-4 text-gray-600 cursor-pointer ml-1" x-on:mouseenter="tooltipShow = true" x-on:mouseleave="tooltipShow = false" x-on:click="tooltipShow = true"></x-svg.question-mark>
@@ -31,14 +81,13 @@
                 $
             </span>
         </div>
-        <input {{ $attributes->except('class')->merge(['class' => $class]) }}
+        <input {{ $attributes->except(['class', 'wire:model', 'value', 'type'])->merge(['class' => $class]) }}
                name="{{ $name }}" id="{{ $name }}"
-               type="number"
-               min="0"
-               step="0.01"
-               x-on:input="validateSize($event, {{$maxSize}})"
+               type="text"
+               x-on:blur="formatValue($event)"
+               x-on:input="updateModel($event)"
+               x-model="inputValue"
                value="{{ old($name, $value ?? null) }}"
-               @if ($wire) wire:model="{{ $wire }}" @endif
                @if(($disabledToUser && user()->role == $disabledToUser) || $disabled) disabled @endif/>
 
         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -60,20 +109,3 @@
         </p>
     @enderror
 </div>
-
-@push('scripts')
-    <script>
-        function registerCurrencyValidate() {
-            var oldValue = 0;
-            return {
-                validateSize($event, $maxSize) {
-                    if($event.target.value > $maxSize){
-                        $event.target.value = this.oldValue
-                    } else {
-                        this.oldValue = $event.target.value
-                    }
-                },
-            }
-        }
-    </script>
-@endpush
