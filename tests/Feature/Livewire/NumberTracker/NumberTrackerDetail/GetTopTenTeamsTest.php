@@ -49,6 +49,26 @@ class GetTopTenTeamsTest extends TestCase
         ->assertSee('Team Leaderboard')
         ->assertSeeInOrder([$departmentOne->name, $departmentOne->users->count(), $departmentTwo->name, $departmentTwo->users->count()]);
     }
+
+    /** @test */
+    public function it_should_show_order_teams_by_account_deleteds()
+    {
+        $this->actingAs($this->admin);
+
+        $departmentOne = Department::factory()->create(['department_manager_id' => $this->departmentManager->id]);
+        $departmentTwo = Department::factory()->create(['department_manager_id' => $this->departmentManager->id]);
+
+        User::factory()->count(3)->create(['department_id' => $departmentOne->id]);
+        User::factory()->count(2)->create(['department_id' => $departmentTwo->id]);
+
+        Livewire::test(NumberTrackerDetail::class, [
+            'selectedDepartment'          => $departmentOne->id,
+            'selectedTeamLeaderboardPill' => 'accounts'
+        ])
+        ->assertSee('Team Leaderboard')
+        ->assertSeeInOrder([$departmentOne->name, $departmentOne->users->count(), $departmentTwo->name, $departmentTwo->users->count()])
+        ->emit('toggleDelete', true);
+    }
    
     /** @test */
     public function it_should_show_order_teams_by_c_p_r()
