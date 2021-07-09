@@ -15,7 +15,7 @@
 @endphp
 
 <div {{ $attributes->except('wire:model', 'value') }} x-data="{
-        model:  @if ($attributes->has('wire:model')) @entangle($model) @else '' @endif,
+        model:  @if ($model) @entangle($model) @else '' @endif,
         inputValue: null,
         inputName: {{json_encode($name)}},
         editingInput: null,
