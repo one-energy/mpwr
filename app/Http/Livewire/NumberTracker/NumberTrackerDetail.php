@@ -140,7 +140,7 @@ class NumberTrackerDetail extends Component
             return $this->getTopTenTeamsByCpr();
         }
 
-        return $this->getToTenTeamsByAccount();
+        return $this->getTopTenTeamsByAccount();
     }
 
     private function getSluggedPill(string $value)
@@ -160,7 +160,7 @@ class NumberTrackerDetail extends Component
             : (user()->department_id ?? 0);
     }
 
-    private function getToTenTeamsByAccount(): Collection
+    private function getTopTenTeamsByAccount(): Collection
     {
         return Department::query()
             ->when($this->deleteds, function ($query) {
