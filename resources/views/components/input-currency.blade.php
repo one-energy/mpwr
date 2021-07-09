@@ -5,7 +5,7 @@
     if( $errors->has($name) ) {
         $class .= 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-300 focus:shadow-outline-red';
     }
-    
+
     $tooltip        = $tooltip ?? null;
     $observation    = $observation ?? null;
     $disabledToUser = $disabledToUser ?? null;
@@ -15,7 +15,7 @@
 @endphp
 
 <div {{ $attributes->except('wire:model', 'value') }} x-data="{
-        model: @entangle($model),
+        model:  @if ($attributes->has('wire:model')) @entangle($model) @else '' @endif,
         inputValue: null,
         inputName: {{json_encode($name)}},
         editingInput: null,
@@ -23,7 +23,7 @@
         validateInput($event, $maxSize) {
             this.inputValue = this.inputValue.replace(/(?!\.)\D/g, '').replace(/(?<=\..*)\./g, '').replace(/(?<=\.\d\d).*/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
             if(parseFloat($event.target.value) > $maxSize){
-                
+
                 $event.target.value = this.oldValue;
             } else {
                 this.oldValue = $event.target.value;
