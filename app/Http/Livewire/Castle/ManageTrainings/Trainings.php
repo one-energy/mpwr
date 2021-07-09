@@ -51,9 +51,9 @@ class Trainings extends Component
         return 'title';
     }
 
-    public function mount()
+    public function mount(Department $department)
     {
-        $this->department    = new Department();
+        $this->department    = $department;
         $this->video         = new TrainingPageContent();
         $this->actualSection = new TrainingPageSection();
         $this->contents      = collect();
@@ -72,7 +72,7 @@ class Trainings extends Component
 
     public function render()
     {
-        if (!$this->department->id && user()->hasAnyRole([Role::ADMIN, Role::OWNER])) {
+        if ($this->department->id === null && user()->hasAnyRole([Role::ADMIN, Role::OWNER])) {
             $this->department = Department::first();
         }
 
@@ -124,7 +124,8 @@ class Trainings extends Component
         do {
             if ($trainingPageSection->parent_id) {
                 $trainingPageSection = TrainingPageSection::query()->whereId($trainingPageSection->parent_id)->first();
-                array_push($path, $trainingPageSection);
+
+                $path[] = $trainingPageSection;
             }
         } while ($trainingPageSection->parent_id);
 
@@ -162,7 +163,9 @@ class Trainings extends Component
                 $query->where(function ($query) {
                     $query
                         ->orWhere('training_page_sections.title', 'like', "%{$this->search}%")
-                        ->orWhereHas('contents', fn ($query) => $query->where('description', 'like', "%{$this->search}%")
+                        ->orWhereHas(
+                            'contents',
+                             fn($query) => $query->where('description', 'like', "%{$this->search}%")
                         );
                 });
             })
