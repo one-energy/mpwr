@@ -173,10 +173,10 @@
 
                     @if($customer->financer_id == 1)
                         <div class="col-span-2 md:col-span-1 @if($customer->setter_id == user()->id) hidden @endif" wire:key="eniumPoints">
-                            <x-input 
-                                label="Noble Pay Points" 
-                                value="{{$customer->salesEniumPoint}}"              
-                                name="customer.enium_points" 
+                            <x-input
+                                label="Noble Pay Points"
+                                value="{{$customer->salesEniumPoint}}"
+                                name="customer.enium_points"
                                 readonly/>
                         </div>
                     @endif
@@ -185,7 +185,7 @@
                         <x-checkbox label="Installed and Paid" wire:model="customer.panel_sold"
                                     name="customer.panel_sold"
                                     :checked="old('customer.panel_sold', $customer->panel_sold)"
-                                    :disabledToUser="'Setter'"/>
+                                    :disabled="user()->notHaveRoles(['Setter']) && $this->isSalesRepOrUserOpenedBy"/>
                     </div>
 
                     <div class="sm:col-span-1">
@@ -214,7 +214,7 @@
                 </div>
 
                 <div class="mt-6 px-8 border-gray-200" x-data="{openModal: false, loading: false}">
-                    @if(user()->role != 'Setter')
+                    @if(user()->notHaveRoles(['Setter']) && $this->isSalesRepOrUserOpenedBy)
                         <div class="flex justify-start">
                             <span class="inline-flex rounded-md shadow-sm">
                                 <button type="submit"
@@ -328,7 +328,7 @@
                 </div>
             </form>
         </div>
-        
+
     </div>
     @if (session('message'))
         <x-alert class="mb-4">
