@@ -41,6 +41,8 @@ class Trainings extends Component
 
     public Collection $groupedFiles;
 
+    protected $queryString = ['selectedTab'];
+
     protected $listeners = [
         'contentAdded'  => '$refresh',
         'filesUploaded' => 'getFreshFiles',
@@ -143,7 +145,11 @@ class Trainings extends Component
             return;
         }
 
-        return redirect(route('castle.manage-trainings.index', ['department' => $department->id]));
+        return redirect()
+            ->route('castle.manage-trainings.index', [
+                'department'  => $department->id,
+                'selectedTab' => $this->selectedTab,
+            ]);
     }
 
     public function getParentSections($section)
@@ -161,8 +167,9 @@ class Trainings extends Component
                 $query->where(function ($query) {
                     $query
                         ->orWhere('training_page_sections.title', 'like', "%{$this->search}%")
-                        ->orWhereHas('contents', fn ($query) =>
-                            $query->where('description', 'like', "%{$this->search}%")
+                        ->orWhereHas(
+                            'contents',
+                             fn($query) => $query->where('description', 'like', "%{$this->search}%")
                         );
                 });
             })
@@ -171,10 +178,6 @@ class Trainings extends Component
 
     public function changeTab(string $tabName)
     {
-        if ($this->selectedTab === $tabName) {
-            return;
-        }
-
         $this->selectedTab = $tabName;
     }
 
