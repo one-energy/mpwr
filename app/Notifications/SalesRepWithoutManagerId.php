@@ -31,7 +31,7 @@ class SalesRepWithoutManagerId extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('User without manager(s)')
+            ->subject('User without Override Manager(s)')
             ->line(new HtmlString($this->message))
             ->action('See User', $this->path());
     }
@@ -52,7 +52,7 @@ class SalesRepWithoutManagerId extends Notification implements ShouldQueue
     private function buildMessage(User $salesRep): string
     {
         $sentence = sprintf(
-            "The user %s with email %s don't have ",
+            "The user %s with email %s don't have the following Override Manager(s): ",
             "<strong>{$salesRep->full_name}</strong>",
             "<strong>{$salesRep->email}</strong>"
         );
@@ -60,15 +60,15 @@ class SalesRepWithoutManagerId extends Notification implements ShouldQueue
         $words = collect();
 
         if ($salesRep->office_manager_id === null) {
-            $words->push('an Office Manager');
+            $words->push('Office Manager');
         }
 
         if ($salesRep->region_manager_id === null) {
-            $words->push('a Region Manager');
+            $words->push('Region Manager');
         }
 
         if ($salesRep->department_manager_id === null) {
-            $words->push('a Department Manager');
+            $words->push('Department Manager');
         }
 
         return $sentence . $words->join(', ', ', and ') . '.';

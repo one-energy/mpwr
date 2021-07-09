@@ -16,7 +16,7 @@
 
             <div>
                 <input type="checkbox" wire:model="onlyPendingUsers">
-                <span>Users without managers</span>
+                <span>Users without Override Manager(s)</span>
             </div>
 
             <div class="mt-6">
