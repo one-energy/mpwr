@@ -200,7 +200,7 @@ class DailyEntryTest extends TestCase
         Livewire::test(DailyEntry::class)
             ->set('officeSelected', $this->office->id)
             ->set('dateSelected', Carbon::now())
-            ->assertSet('missingOffices.0.id', $someOffice->id);
+            ->assertSet('missingOffices.0.id', $this->office->id);
     }
 
     /** @test */

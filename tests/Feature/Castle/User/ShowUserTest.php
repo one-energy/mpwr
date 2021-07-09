@@ -28,28 +28,23 @@ class ShowUserTest extends TestCase
             ->assertSee($user1->first_name);
     }
 
-
     /** @test */
     public function it_should_show_resend_invitation_email_button()
     {
-        $user = User::factory()->create([
-            "email_verified_at" => null
-        ]);
+        $user   = User::factory()->create(['email_verified_at' => null]);
+        $master = UserBuilder::build(['role' => Role::ADMIN])->asMaster()->save()->get();
 
-        $this->get(route('castle.users.show', $user))
+        $this
+            ->actingAs($master)
+            ->get(route('castle.users.show', $user))
             ->assertSee('Resend invitation email');
     }
 
     /** @test */
     public function it_shouldt_show_resend_invitation_email_for_non_admin_users()
     {
-        $departmentManager = User::factory()->create([
-            'role' => Role::DEPARTMENT_MANAGER
-        ]);
-
-        $user = User::factory()->create([
-            "email_verified_at" => null
-        ]);
+        $departmentManager = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+        $user              = User::factory()->create(['email_verified_at' => null]);
 
         $this->actingAs($departmentManager)
             ->get(route('castle.users.show', $user))
@@ -59,13 +54,8 @@ class ShowUserTest extends TestCase
     /** @test */
     public function it_should_show_success_alert_when_resend_invitation_email()
     {
-        $admin = User::factory()->create([
-            'role' => Role::ADMIN
-        ]);
-
-        $user = User::factory()->create([
-            "email_verified_at" => null
-        ]);
+        $admin = User::factory()->create(['role' => Role::ADMIN]);
+        $user  = User::factory()->create(['email_verified_at' => null]);
 
         $this->actingAs($admin)
             ->post(route('verification.resendInvitationEmail', $user))
