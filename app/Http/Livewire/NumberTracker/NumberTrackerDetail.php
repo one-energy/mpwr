@@ -222,13 +222,11 @@ class NumberTrackerDetail extends Component
                 if ($department->{$relationName}->isEmpty()) {
                     return $this->buildDepartment($department);
                 }
-
                 $total = 0;
 
                 if ($department->sales_rep_total > 0) {
                     $total = $this->getSumOfClosesTotal($department, $relationName) / $department->sales_rep_total;
                 }
-
                 return $this->buildDepartment($department, $total);
             })
             ->sortByDesc('total');
@@ -245,14 +243,14 @@ class NumberTrackerDetail extends Component
             ->sum('closes_total');
     }
 
-    private function buildDepartment(Department $department, int $total = 0)
+    private function buildDepartment(Department $department, $total = 0)
     {
         return (new Department([
             'name' => $department->name,
         ]))->forceFill([
             'id'         => $department->id,
             'deleted_at' => $department->deleted_at,
-            'total'      => $total,
+            'total'      => number_format($total, 2),
         ]);
     }
 }
