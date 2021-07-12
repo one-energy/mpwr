@@ -2,6 +2,8 @@
 
 namespace App\Enum;
 
+use ReflectionClass;
+
 final class Role
 {
     public const ADMIN = 'Admin';
@@ -17,4 +19,11 @@ final class Role
     public const SALES_REP = 'Sales Rep';
 
     public const SETTER = 'Setter';
+
+    public static function getValues(): array
+    {
+        $class = new ReflectionClass(new self());
+
+        return array_values($class->getConstants());
+    }
 }
