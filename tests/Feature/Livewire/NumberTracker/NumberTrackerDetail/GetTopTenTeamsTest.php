@@ -58,16 +58,16 @@ class GetTopTenTeamsTest extends TestCase
         $departmentOne = Department::factory()->create(['department_manager_id' => $this->departmentManager->id]);
         $departmentTwo = Department::factory()->create(['department_manager_id' => $this->departmentManager->id]);
 
-        User::factory()->count(3)->create(['department_id' => $departmentOne->id]);
-        User::factory()->count(2)->create(['department_id' => $departmentTwo->id]);
+        User::factory()->count(2)->create(['department_id' => $departmentOne->id]);
+        User::factory()->count(3)->create(['department_id' => $departmentTwo->id]);
 
         Livewire::test(NumberTrackerDetail::class, [
             'selectedDepartment'          => $departmentOne->id,
             'selectedTeamLeaderboardPill' => 'accounts'
         ])
-        ->assertSee('Team Leaderboard')
-        ->assertSeeInOrder([$departmentOne->name, $departmentOne->users->count(), $departmentTwo->name, $departmentTwo->users->count()])
-        ->emit('toggleDelete', true);
+        ->assertSeeInOrder(['Team Leaderboard', $departmentOne->name, $departmentOne->users->count()])
+        ->emit('toggleDelete', true)
+        ->assertSeeInOrder([$departmentTwo->name, $departmentTwo->users->count(), $departmentOne->name, $departmentOne->users->count()]);
     }
    
     /** @test */
