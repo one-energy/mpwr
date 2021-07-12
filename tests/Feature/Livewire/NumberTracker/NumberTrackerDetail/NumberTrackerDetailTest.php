@@ -4,7 +4,9 @@ namespace Tests\Feature\Livewire\NumberTracker\NumberTrackerDetail;
 
 use App\Enum\Role;
 use App\Http\Livewire\NumberTracker\NumberTrackerDetail;
+use App\Models\DailyNumber;
 use App\Models\Department;
+use App\Models\Office;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;

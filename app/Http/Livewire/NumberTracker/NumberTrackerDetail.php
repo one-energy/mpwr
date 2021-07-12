@@ -173,6 +173,9 @@ class NumberTrackerDetail extends Component
             ->get();
     }
 
+    /** 
+     * c.p.r = closes per sales reps
+     */
     private function getTopTenTeamsByCpr(): Collection
     {
         $relationName = $this->deleteds ? 'officesTrashedParents' : 'offices';
@@ -204,13 +207,13 @@ class NumberTrackerDetail extends Component
                 $query->withTrashed()
                     ->withCount([
                         'users as sales_rep_total' => function ($query) {
-                            $query->withTrashed()->where('role', 'Sales Rep');
+                            $query->withTrashed()->where('role', Role::SALES_REP);
                         },
                     ]);
             })
             ->when(!$this->deleteds, function ($query) {
                 $query->withCount([
-                    'users as sales_rep_total' => fn($query) => $query->where('role', 'Sales Rep'),
+                    'users as sales_rep_total' => fn($query) => $query->where('role', Role::SALES_REP),
                 ]);
             })
             ->limit(10)
