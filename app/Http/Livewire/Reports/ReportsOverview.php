@@ -458,7 +458,7 @@ class ReportsOverview extends Component
         }
 
         if ($this->paid($customer)) {
-            return 'text-blue-500';
+            return 'text-green-base';
         }
     }
 
