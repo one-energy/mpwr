@@ -32,6 +32,8 @@ class ShowTrainings extends Component
 
     public Collection $groupedFiles;
 
+    protected $queryString = ['selectedTab'];
+
     public function mount()
     {
         $this->video         = new TrainingPageContent();

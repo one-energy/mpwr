@@ -1,9 +1,10 @@
 <div>
     <div class="grid grid-cols-1 gap-y-3 sm:gap-x-3 lg:gap-x-5 md:grid-cols-2 xl:grid-cols-3">
         @foreach ($sections as $key => $section)
-            <a href="{{ route($showActions ? 'castle.manage-trainings.index' : 'trainings.index',[
-                'department' => $section->department_id,
-                'section'    => $section->id,
+            <a href="{{ route($showActions ? 'castle.manage-trainings.index' : 'trainings.index', [
+                'department'  => $section->department_id,
+                'section'     => $section->id,
+                'selectedTab' => $selectedTab
             ])}}">
                 <div x-data="{editing: false}" wire:key="section-field-{{ $section->id }}" class="border-cool-gray-300 @if (!$section->department_folder) bg-gray-50 hover:bg-gray-100 @else hover:bg-gray-50 @endif  border-2 p-3 cursor-pointer flex items-center">
                         <div class="text-center flex flex-1 items-center space-x-3.5 text-base" x-on:cancel-edit-input.window="editing = false">

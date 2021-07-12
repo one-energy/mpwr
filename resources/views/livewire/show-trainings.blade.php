@@ -45,17 +45,20 @@
 
                 <div>
                     <livewire:castle.manage-trainings.folders
-                        key="folders-list-{{ $sections->count() }}"
+                        key="folders-list-{{ $sections->count() }}-{{ $selectedTab }}"
+                        wire:key="folders-list-{{ $sections->count() }}-{{ $selectedTab }}"
                         :currentSection="$actualSection"
                         :sections="$sections"
                         :showActions="false"
+                        :selectedTab="$selectedTab"
                     />
                 </div>
 
                 <div class="@if ($this->filesTabSelected) hidden @endif">
                     <div class="mt-10">
                         <livewire:castle.manage-trainings.videos
-                            key="videos-list-{{ $contents->count() }}"
+                            key="videos-list-{{ $contents->count() }}-{{ $selectedTab }}"
+                            wire:key="videos-list-{{ $contents->count() }}-{{ $selectedTab }}"
                             :currentSection="$actualSection"
                             :contents="$contents"
                             :showActions="false"
@@ -64,7 +67,8 @@
 
                     <div class="mt-10">
                         <livewire:list-files
-                            key="training-list-{{ $groupedFiles['training']->count() }}"
+                            key="training-list-{{ $groupedFiles['training']->count() }}-{{ $selectedTab }}"
+                            wire:key="training-list-{{ $groupedFiles['training']->count() }}-{{ $selectedTab }}"
                             :files="$groupedFiles['training']"
                             :showDeleteButton="false"
                         />
@@ -75,7 +79,8 @@
                 <div class="@if ($this->trainingTabSelected) hidden @endif">
                     <div class="mt-10">
                         <livewire:list-files
-                            key="files-list-{{ $groupedFiles['files']->count() }}"
+                            key="files-list-{{ $groupedFiles['files']->count() }}-{{ $selectedTab }}"
+                            wire:key="files-list-{{ $groupedFiles['files']->count() }}-{{ $selectedTab }}"
                             :files="$groupedFiles['files']"
                             :showDeleteButton="false"
                         />

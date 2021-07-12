@@ -18,6 +18,8 @@ class Folders extends Component
 
     public bool $showActions = true;
 
+    public string $selectedTab = 'files';
+
     public $editingSection;
 
     protected $rules = [
