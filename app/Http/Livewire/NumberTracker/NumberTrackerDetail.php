@@ -140,7 +140,7 @@ class NumberTrackerDetail extends Component
             return $this->getTopTenTeamsByCpr();
         }
 
-        return $this->getToTenTeamsByAccount();
+        return $this->getTopTenTeamsByAccount();
     }
 
     private function getSluggedPill(string $value)
@@ -160,7 +160,7 @@ class NumberTrackerDetail extends Component
             : (user()->department_id ?? 0);
     }
 
-    private function getToTenTeamsByAccount(): Collection
+    private function getTopTenTeamsByAccount(): Collection
     {
         return Department::query()
             ->when($this->deleteds, function ($query) {
@@ -173,6 +173,9 @@ class NumberTrackerDetail extends Component
             ->get();
     }
 
+    /** 
+     * c.p.r = closes per sales reps
+     */
     private function getTopTenTeamsByCpr(): Collection
     {
         $relationName = $this->deleteds ? 'officesTrashedParents' : 'offices';
@@ -204,13 +207,13 @@ class NumberTrackerDetail extends Component
                 $query->withTrashed()
                     ->withCount([
                         'users as sales_rep_total' => function ($query) {
-                            $query->withTrashed()->where('role', 'Sales Rep');
+                            $query->withTrashed()->where('role', Role::SALES_REP);
                         },
                     ]);
             })
             ->when(!$this->deleteds, function ($query) {
                 $query->withCount([
-                    'users as sales_rep_total' => fn($query) => $query->where('role', 'Sales Rep'),
+                    'users as sales_rep_total' => fn($query) => $query->where('role', Role::SALES_REP),
                 ]);
             })
             ->limit(10)
@@ -219,13 +222,11 @@ class NumberTrackerDetail extends Component
                 if ($department->{$relationName}->isEmpty()) {
                     return $this->buildDepartment($department);
                 }
-
                 $total = 0;
 
                 if ($department->sales_rep_total > 0) {
                     $total = $this->getSumOfClosesTotal($department, $relationName) / $department->sales_rep_total;
                 }
-
                 return $this->buildDepartment($department, $total);
             })
             ->sortByDesc('total');
@@ -242,14 +243,14 @@ class NumberTrackerDetail extends Component
             ->sum('closes_total');
     }
 
-    private function buildDepartment(Department $department, int $total = 0)
+    private function buildDepartment(Department $department, $total = 0)
     {
         return (new Department([
             'name' => $department->name,
         ]))->forceFill([
             'id'         => $department->id,
             'deleted_at' => $department->deleted_at,
-            'total'      => $total,
+            'total'      => number_format($total, 2),
         ]);
     }
 }
