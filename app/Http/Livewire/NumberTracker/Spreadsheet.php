@@ -6,6 +6,7 @@ use App\Models\DailyNumber;
 use App\Models\Department;
 use App\Models\Office;
 use App\Models\User;
+use Carbon\CarbonPeriod;
 use DateInterval;
 use DatePeriod;
 use DateTimeImmutable;
@@ -26,11 +27,15 @@ class Spreadsheet extends Component
 {
     public int $selectedOffice;
 
+    public $selectedMonth;
+
     public Collection $dailyNumbers;
 
     public function mount()
     {
+        $this->months;
         $this->selectedOffice = $this->offices->isNotEmpty() ? $this->offices->first()->id : 0;
+        $this->selectedMonth  = today();
         $this->dailyNumbers   = $this->users->pluck('dailyNumbers')->flatten();
     }
 
@@ -46,7 +51,7 @@ class Spreadsheet extends Component
 
     public function getPeriodsProperty()
     {
-        $weeks = [];
+        $weeks = [];    
 
         $currentWeek    = DateTimeImmutable::createFromMutable(today());
         $firstDayOfWeek = $currentWeek->modify(today()->startOfWeek());
@@ -68,6 +73,13 @@ class Spreadsheet extends Component
             ->toArray();
 
         return array_merge($weeks, $subWeeks);
+    }
+
+    public function getMonthsProperty()
+    {
+        $period = CarbonPeriod::create(Carbon::now()->startOfYear(), today());
+        $period->map(fn ($date) => dump($date));
+        return Carbon::now()->monthsUntil(today());
     }
 
     public function getWeeklyPeriodsProperty()
