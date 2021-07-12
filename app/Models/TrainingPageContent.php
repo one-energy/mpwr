@@ -41,6 +41,10 @@ class TrainingPageContent extends Model
 
         $description = json_decode($this->description);
 
+        if ($description === null) {
+            return $this->description;
+        }
+
         return strip_tags($description->ops[0]->insert);
     }
 }

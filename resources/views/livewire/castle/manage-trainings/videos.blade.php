@@ -13,7 +13,7 @@
                             <div class="flex-1">
                                 <h5 class="text-gray-800 font-medium mb-1 mt-3 lg:mt-0">{{ $content->title }}</h5>
                                 <p class="text-sm">
-                                    {{ Str::limit($content->description, 100) }}
+                                    {{ Str::limit($content->decodedDescription, 100) }}
                                 </p>
                             </div>
                             @if ($showActions)
