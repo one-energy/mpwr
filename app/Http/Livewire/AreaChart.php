@@ -38,17 +38,15 @@ class AreaChart extends Component
     {
         $this->period = $period;
 
-        $condition = [
-            ['sales_rep_id', user()->id],
-            ['is_active', true],
-        ];
+        $currentQuery = Customer::query()
+            ->where('is_active', true)
+            ->where(fn($query) =>
+                $query->orWhere('sales_rep_id', user()->id)
+                    ->orWhere('setter_id', user()->id)
+            )
+            ->when($this->panelSold, fn($query) => $query->where('panel_sold', true));
 
-        if ($this->panelSold) {
-            $condition[] = ['panel_sold', true];
-        }
-
-        $currentQuery = Customer::query()->where($condition);
-        $pastQuery    = clone $currentQuery;
+        $pastQuery = clone $currentQuery;
 
         if (in_array($this->period, $this->availablePeriods(), true)) {
             [$currentDate, $pastDate] = $this->getMatchedDate($this->period);
@@ -65,15 +63,24 @@ class AreaChart extends Component
     public function sumIncome($pastCustomers, $currentCustomers)
     {
         $condition = [
-            ['is_active', true]
+            ['is_active', true],
         ];
 
         if ($this->panelSold) {
             $condition[] = ['panel_sold', true];
         }
 
-        $pastTotalIncome    = $pastCustomers->where($condition)->sum('sales_rep_comission');
-        $currentTotalIncome = $currentCustomers->where($condition)->sum('sales_rep_comission');
+        $pastTotalIncome = $pastCustomers
+            ->where($condition)
+            ->get()
+            ->map(fn(Customer $customer) => $this->calculateCommission($customer))
+            ->sum();
+
+        $currentTotalIncome = $currentCustomers
+            ->where($condition)
+            ->get()
+            ->map(fn(Customer $customer) => $this->calculateCommission($customer))
+            ->sum();
 
         $this->totalIncome = $currentTotalIncome;
 
@@ -114,8 +121,8 @@ class AreaChart extends Component
             ->get()
             ->map(function (Customer $customer) {
                 return [
-                    'commission' => $customer->sales_rep_comission,
-                    'date'       => $customer->date_of_sale->format('m-d-Y')
+                    'commission' => $this->calculateCommission($customer),
+                    'date'       => $customer->date_of_sale->format('m-d-Y'),
                 ];
             })
             ->values()
@@ -129,5 +136,19 @@ class AreaChart extends Component
             'm' => [today(), today()->subMonth()],
             's', 'y' => [today(), today()->subYear()]
         };
+    }
+
+    private function calculateCommission(Customer $customer): int | float
+    {
+        $userId = user()->id;
+
+        if (
+            ($customer->setter_id === $userId && $customer->sales_rep_id === $userId) ||
+            $customer->sales_rep_id === $userId
+        ) {
+            return $customer->sales_rep_comission;
+        }
+
+        return $customer->setter_fee * ($customer->system_size * Customer::K_WATTS);
     }
 }
