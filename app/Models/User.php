@@ -94,15 +94,6 @@ class User extends Authenticatable implements MustVerifyEmail
         ['title' => 'Setter', 'name' => 'Setter', 'description' => 'Allows see the dashboard and only read Customer'],
     ];
 
-    const TOPLEVEL_ROLES = [
-        'Owner',
-        'Admin',
-        'Department Manager',
-        'Region Manager',
-        'Office Manager',
-        'Sales Rep',
-    ];
-
     protected $casts = [
         'email_verified_at' => 'datetime',
         'master'            => 'boolean',
@@ -490,14 +481,14 @@ class User extends Authenticatable implements MustVerifyEmail
         $stockPointsOfRegionManager     = $this->getStockPointsOf($this->customersManagedRegion());
         $stockPointsOfOfficeManager     = $this->getStockPointsOf($this->customersManagedOffice());
 
-        return (object) [
-            'multiplierOfYear' => MultiplierOfYear::where('year', Carbon::now()->year)->first()->multiplier,
-            'personal'         => $stockPointsOfSalesRep->sum(fn($customer) => $customer->stockPoint->stock_personal_sale),
-            'team'             => $stockPointsOfSetter->sum(fn($customer) => $customer->stockPoint->stock_setting) +
+        return (object)[
+            'multiplierOfYear'                                                       => MultiplierOfYear::where('year', Carbon::now()->year)->first()->multiplier,
+            'personal'                                                               => $stockPointsOfSalesRep->sum(fn($customer)                                                       => $customer->stockPoint->stock_personal_sale),
+            'team'                                                                   => $stockPointsOfSetter->sum(fn($customer)                                                       => $customer->stockPoint->stock_setting) +
                                   $stockPointsOfSalesRepRecruited->sum(fn($customer) => $customer->stockPoint->stock_recruiter) +
-                                  $stockPointsOfDepartment->sum(fn($customer) => $customer->stockPoint->stock_department) +
-                                  $stockPointsOfRegionManager->sum(fn($customer) => $customer->stockPoint->stock_regional) +
-                                  $stockPointsOfOfficeManager->sum(fn($customer) => $customer->stockPoint->stock_manager)
+                                  $stockPointsOfDepartment->sum(fn($customer)        => $customer->stockPoint->stock_department) +
+                                  $stockPointsOfRegionManager->sum(fn($customer)     => $customer->stockPoint->stock_regional) +
+                                  $stockPointsOfOfficeManager->sum(fn($customer)     => $customer->stockPoint->stock_manager),
         ];
     }
 
