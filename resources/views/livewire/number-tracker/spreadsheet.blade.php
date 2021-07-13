@@ -81,17 +81,15 @@
             @endif
         </div>
     </section>
-
-    <x-form :route="route('number-tracking.spreadsheet.updateOrCreate')">
-        <section class="flex justify-end mt-3 mb-2">
-            @if ($this->users->isNotEmpty())
-                <button class="py-2 px-4 focus:outline-none rounded shadow-md text-white bg-green-base" type="submit">
-                    Save
-                </button>
-            @endif
-        </section>
-
-        @foreach($this->periodsLabel as $key => $label)
+    @foreach($this->periodsLabel as $key => $label)
+        <x-form :route="route('number-tracking.spreadsheet.updateOrCreate')" name="form-{{$key}}">
+            <section class="flex justify-end mt-3 mb-2">
+                @if ($this->users->isNotEmpty())
+                    <button class="py-2 px-4 focus:outline-none rounded shadow-md text-white bg-green-base" type="submit" id="submit-{{$key}}" for="form-{{$key}}">
+                        Save
+                    </button>
+                @endif
+            </section>
             <section class="mb-10">
                 <h3 class="font-bold text-center mb-3">{{ $label }}</h3>
                 <div class="overflow-x-auto">
@@ -142,7 +140,7 @@
                                     <x-table.td class="border-2">
                                         {{ $user->full_name }}
                                     </x-table.td>
-
+                                    
                                     {{-- Weekly Columns --}}
                                     @foreach($this->weeklyMonthLabels[$key] as $weeklyKey => $label)
                                         @if (isset($user->dailyNumbers[$label]))
@@ -209,7 +207,7 @@
                                                         </span>
                                                     </div>
                                                     <div class="relative" name="pipe">
-                                                         <span class="block text-center">
+                                                            <span class="block text-center">
                                                             <input
                                                                 type="text"
                                                                 class="text-center w-10 inline"
@@ -329,7 +327,7 @@
                                                         </span>
                                                     </div>
                                                     <div class="relative" name="pipe">
-                                                      <span class="block text-center">
+                                                        <span class="block text-center">
                                                             <input
                                                                 type="text" class="text-center w-9 inline"
                                                                 value=""
@@ -604,6 +602,6 @@
                     </x-table>
                 </div>
             </section>
-        @endforeach
-    </x-form>
+        </x-form>
+    @endforeach
 </div>

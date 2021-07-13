@@ -27,15 +27,17 @@ class Spreadsheet extends Component
 {
     public int $selectedOffice;
 
-    public $selectedMonth = 0;
+    public int $selectedMonth = 0;
+
+    public int $numberOfWeeks = 0;
 
     public Collection $dailyNumbers;
 
     public function mount()
     {
-        $this->months;
         $this->selectedOffice = $this->offices->isNotEmpty() ? $this->offices->first()->id : 0;
         $this->selectedMonth  = $this->actualMonth;
+        $this->numberOfWeeks  = $this->referenceDay()->weekNumberInMonth;
         $this->dailyNumbers   = $this->users->pluck('dailyNumbers')->flatten();
     }
 
@@ -51,8 +53,7 @@ class Spreadsheet extends Component
 
     public function getPeriodsProperty()
     {
-        $numberOfWeeks = $this->referenceDay()->weekNumberInMonth;
-
+        $this->numberOfWeeks  = $this->referenceDay()->weekNumberInMonth;
         $weeks = [];    
 
         $currentWeek    = DateTimeImmutable::createFromMutable($this->referenceDay());
@@ -62,26 +63,19 @@ class Spreadsheet extends Component
         $weeks[] = $firstDayOfWeek;
         $weeks[] = $lastDayOfWeek;
 
-        $subWeeks = collect()->times($numberOfWeeks-1)->map(function ($number) {
-            $today       = DateTimeImmutable::createFromMutable($this->referenceDay());
-            $currentWeek = $this->referenceDay()->subWeeks($number);
+        $subWeeks = collect()->times($this->numberOfWeeks - 1)->map(function ($number) {
+            $referenceDay = DateTimeImmutable::createFromMutable($this->referenceDay());
+            $currentWeek  = $this->referenceDay()->subWeeks($number);
 
             return [
-                $today->modify($currentWeek->startOfWeek()),
-                $today->modify($currentWeek->endOfWeek()->subDay()),
+                $referenceDay->modify($currentWeek->startOfWeek()),
+                $referenceDay->modify($currentWeek->endOfWeek()->subDay()),
             ];
         })
             ->flatten()
             ->toArray();
 
         return array_merge($weeks, $subWeeks);
-    }
-
-    public function getMonthsProperty()
-    {
-        $period = CarbonPeriod::create(Carbon::now()->startOfYear(), today());
-        
-        return Carbon::now()->monthsUntil(today());
     }
 
     public function getActualMonthProperty()
@@ -139,8 +133,8 @@ class Spreadsheet extends Component
                     $query
                         ->where('office_id', $this->selectedOffice)
                         ->whereBetween('date', [
-                            today()->subWeeks(3)->startOfWeek()->format('Y-m-d'),
-                            today()->endOfMonth()->format('Y-m-d'),
+                            $this->referenceDay()->subWeeks($this->numberOfWeeks - 1)->startOfWeek()->format('Y-m-d'),
+                            $this->referenceDay()->endOfMonth()->format('Y-m-d'),
                         ])
                         ->orderBy('date', 'asc');
                 },
@@ -248,7 +242,7 @@ class Spreadsheet extends Component
         return Carbon::create(
             year:  Carbon::now()->year, 
             month: $this->isCurrentMonth($this->selectedMonth) ? today()->month : $this->selectedMonth, 
-            day:   $this->isCurrentMonth($this->selectedMonth) ? today()->day : Carbon::create(month:$this->selectedMonth)->lastOfMonth()->day
+            day:   $this->isCurrentMonth($this->selectedMonth) ? today()->day : Carbon::create(year: Carbon::now()->year, month:$this->selectedMonth)->lastOfMonth()->day
         );
     }
     public function isCurrentMonth(int $selectedMonth)
