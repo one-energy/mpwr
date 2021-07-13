@@ -63,7 +63,7 @@
 
         <div class="flex space-x-3">
             <div class="flex my-6 md:justify-end md:mb-8 md:mt-5">
-                <x-select wire:model="selectedMonth" class="w-full md:w-auto" name="months" label="Months" x-cloak>
+                <x-select wire:model="selectedMonth" class="w-full md:w-auto" name="months" label="Months">
                     @for($index = 1; $index <= $this->actualMonth; $index++)
                         <option value="{{$this->monthByIndex($index)->month}}">{{ $this->monthByIndex($index)->monthName }}</option>
                     @endfor
@@ -109,8 +109,8 @@
                                                 <div
                                                     class="cursor-default relative text-center"
                                                     x-data=""
-                                                    @mouseenter="$dispatch('open-popover', {ref: '{{ $label . $loop->index }}'})"
-                                                    @mouseleave="$dispatch('close-popover', {ref: '{{ $label . $loop->index }}'})"
+                                                    x-on:mouseenter="$dispatch('open-popover', {ref: '{{ $label . $loop->index }}'})"
+                                                    x-on:mouseleave="$dispatch('close-popover', {ref: '{{ $label . $loop->index }}'})"
                                                 >
                                                     {{ $indicator['label'] }}
                                                     <x-popover position="bottom" ref="{{ $label . $loop->index }}">

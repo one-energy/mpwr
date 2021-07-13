@@ -51,26 +51,20 @@ class Spreadsheet extends Component
 
     public function getPeriodsProperty()
     {
-        $referenceDay = Carbon::create(
-            year:  Carbon::now()->year, 
-            month: $this->isCurrentMonth($this->selectedMonth) ? today()->month : $this->selectedMonth, 
-            day:   $this->isCurrentMonth($this->selectedMonth) ? today()->day : Carbon::create(month:$this->selectedMonth)->lastOfMonth()->day
-        );
-    
-        $numberOfWeeks = $referenceDay->weekOfMonth;
-        
+        $numberOfWeeks = $this->referenceDay()->weekOfMonth;
+
         $weeks = [];    
 
-        $currentWeek    = DateTimeImmutable::createFromMutable($referenceDay);
-        $firstDayOfWeek = $currentWeek->modify($referenceDay->startOfWeek());
-        $lastDayOfWeek  = $currentWeek->modify($referenceDay->endOfWeek()->subDay());
+        $currentWeek    = DateTimeImmutable::createFromMutable($this->referenceDay());
+        $firstDayOfWeek = $currentWeek->modify($this->referenceDay()->startOfWeek());
+        $lastDayOfWeek  = $currentWeek->modify($this->referenceDay()->endOfWeek()->subDay());
 
         $weeks[] = $firstDayOfWeek;
         $weeks[] = $lastDayOfWeek;
 
-        $subWeeks = collect()->times($numberOfWeeks)->map(function ($number) use ($referenceDay) {
-            $today       = DateTimeImmutable::createFromMutable($referenceDay);
-            $currentWeek = $referenceDay->subWeeks($number);
+        $subWeeks = collect()->times($numberOfWeeks - 1)->map(function ($number) {
+            $today       = DateTimeImmutable::createFromMutable($this->referenceDay());
+            $currentWeek = $this->referenceDay()->subWeeks($number);
 
             return [
                 $today->modify($currentWeek->startOfWeek()),
@@ -250,6 +244,14 @@ class Spreadsheet extends Component
         return Carbon::create(month: $index);
     }
 
+    public function referenceDay()
+    {
+        return Carbon::create(
+            year:  Carbon::now()->year, 
+            month: $this->isCurrentMonth($this->selectedMonth) ? today()->month : $this->selectedMonth, 
+            day:   $this->isCurrentMonth($this->selectedMonth) ? today()->day : Carbon::create(month:$this->selectedMonth)->lastOfMonth()->day
+        );
+    }
     public function isCurrentMonth(int $selectedMonth)
     {
         return $selectedMonth == today()->month;
