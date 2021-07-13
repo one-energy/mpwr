@@ -61,15 +61,25 @@
             </a>
         </div>
 
-        @if ($this->offices->isNotEmpty())
+        <div class="flex space-x-3">
             <div class="flex my-6 md:justify-end md:mb-8 md:mt-5">
-                <x-select wire:model="selectedOffice" class="w-full md:w-auto" name="offices" label="Offices">
-                    @foreach($this->offices as $office)
-                        <option value="{{ $office->id }}">{{ $office->name }}</option>
-                    @endforeach
+                <x-select wire:model="selectedMonth" class="w-full md:w-auto" name="months" label="Months" x-cloak>
+                    @for($index = 1; $index <= $this->actualMonth; $index++)
+                        <option value="{{$this->monthByIndex($index)->month}}">{{ $this->monthByIndex($index)->monthName }}</option>
+                    @endfor
                 </x-select>
             </div>
-        @endif
+    
+            @if ($this->offices->isNotEmpty())
+                <div class="flex my-6 md:justify-end md:mb-8 md:mt-5">
+                    <x-select wire:model="selectedOffice" class="w-full md:w-auto" name="offices" label="Offices">
+                        @foreach($this->offices as $office)
+                            <option value="{{ $office->id }}">{{ $office->name }}</option>
+                        @endforeach
+                    </x-select>
+                </div>
+            @endif
+        </div>
     </section>
 
     <x-form :route="route('number-tracking.spreadsheet.updateOrCreate')">
