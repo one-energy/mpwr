@@ -51,7 +51,9 @@ class Spreadsheet extends Component
 
     public function getPeriodsProperty()
     {
-        $numberOfWeeks = $this->referenceDay()->weekOfMonth;
+        $numberOfWeeks = $this->referenceDay()->weekNumberInMonth;
+
+        dd( $this->referenceDay()->weekNumberInMonth, $this->referenceDay());
 
         $weeks = [];    
 
@@ -62,7 +64,7 @@ class Spreadsheet extends Component
         $weeks[] = $firstDayOfWeek;
         $weeks[] = $lastDayOfWeek;
 
-        $subWeeks = collect()->times($numberOfWeeks - 1)->map(function ($number) {
+        $subWeeks = collect()->times($numberOfWeeks-1)->map(function ($number) {
             $today       = DateTimeImmutable::createFromMutable($this->referenceDay());
             $currentWeek = $this->referenceDay()->subWeeks($number);
 
@@ -79,7 +81,6 @@ class Spreadsheet extends Component
 
     public function getMonthsProperty()
     {
-        // dd(Carbon::now()->month);
         $period = CarbonPeriod::create(Carbon::now()->startOfYear(), today());
         
         return Carbon::now()->monthsUntil(today());
