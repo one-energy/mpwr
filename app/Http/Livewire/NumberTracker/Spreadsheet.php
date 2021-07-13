@@ -53,8 +53,6 @@ class Spreadsheet extends Component
     {
         $numberOfWeeks = $this->referenceDay()->weekNumberInMonth;
 
-        dd( $this->referenceDay()->weekNumberInMonth, $this->referenceDay());
-
         $weeks = [];    
 
         $currentWeek    = DateTimeImmutable::createFromMutable($this->referenceDay());
