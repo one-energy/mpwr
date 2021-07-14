@@ -19,7 +19,7 @@
                                         <x-svg.chevron-left class="w-6 -ml-2"/> @lang('Leave Admin')
                                     </x-nav.link>
 
-                                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
+                                    @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager']))
                                         <x-nav.link :href="route('castle.rates.index')" class="ml-4 hidden lg:block"
                                                     :active="is_active('castle.rates.index')">
                                             @lang('Manage Compensations')
@@ -35,14 +35,14 @@
                                         </x-nav.link>
                                     @endif
 
-                                    @if(user()->role == 'Admin' || user()->role == 'Owner' )
+                                    @if(user()->hasAnyRole(['Admin', 'Owner']))
                                         <x-nav.link :href="route('castle.departments.index')" class="ml-4"
                                                     :active="is_active('castle.departments.*')">
                                             @lang('Departments')
                                         </x-nav.link>
                                     @endif
 
-                                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
+                                    @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager']))
                                         <x-nav.link :href="route('castle.incentives.index')"
                                                     class="ml-4 hidden lg:block"
                                                     :active="is_active('castle.incentives.*')">
@@ -118,7 +118,7 @@
                                  class="absolute right-10 mt-2 rounded-md shadow-lg z-10">
                                 <div class="flex flex-col py-1 rounded-md bg-white shadow-xs">
                                     @if(is_active('castle.*'))
-                                        @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
+                                        @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager']))
                                             <a class="px-4 py-2 text-gray-600 font-medium transition ease-in-out duration-150" href="{{route('castle.rates.index')}}">
                                                 @lang('Manage Compensations')
                                             </a>
@@ -130,7 +130,7 @@
                                             </a>
                                         @endif
 
-                                        @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
+                                            @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager']))
                                             <a class="px-4 py-2 text-gray-600 font-medium transition ease-in-out duration-150" href="{{route('castle.incentives.index')}}">
                                                 @lang('Incentives')
                                             </a>
@@ -147,12 +147,25 @@
                                 </div>
                             </div>
                         </div>
-                         <!--
-                        <button
-                            class="p-1 border-2 border-transparent text-gray-400 rounded-full hover:text-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"
-                            aria-label="Notifications">
-                            <x-svg.notification/>
-                        </button> -->
+
+                        @if (user()->hasRole('Admin'))
+                            <div
+                                x-data="{ hasUnreadNotifications: {{user()->unreadNotifications()->count() > 0 ? 'true' : 'false'}} }"
+                                @has-unread-notifications.window="hasUnreadNotifications = $event.detail.payload === 'true'"
+                            >
+                                <button
+                                    class="notificationBtn p-1 border-2 border-transparent rounded-full hover:text-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"
+                                    :class="{
+                                        'bell-animation': hasUnreadNotifications,
+                                        'text-green-base bell-animation': hasUnreadNotifications,
+                                        'text-gray-400': !hasUnreadNotifications,
+                                    }"
+                                    aria-label="Notifications"
+                                >
+                                    <x-svg.notification/>
+                                </button>
+                            </div>
+                        @endif
 
                         <div @click.away="open = false" class="ml-3 relative" x-data="{ open: false }">
                             <div>
@@ -248,8 +261,11 @@
                         <span class="text-xs">@lang('Leave Admin')</span>
                     </x-nav.link-mobile>
 
-                    <x-nav.link-mobile :href="route('castle.dashboard')" class="mt-1"
-                                       :active="is_active('castle.dashboard')">
+                    <x-nav.link-mobile
+                        :href="route('castle.dashboard')"
+                        class="mt-1"
+                        :active="is_active('castle.dashboard')"
+                    >
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                             <symbol id="dashboard" viewBox="0 0 24 24">
                                 <path
@@ -259,9 +275,12 @@
                         </svg>
                     </x-nav.link-mobile>
 
-                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
-                        <x-nav.link-mobile :href="route('castle.rates.index')" class="mt-1"
-                                           :active="is_active('castle.rates.index')">
+                    @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager']))
+                        <x-nav.link-mobile
+                            :href="route('castle.rates.index')"
+                            class="mt-1"
+                            :active="is_active('castle.rates.index')"
+                        >
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                 <path
                                     d="M18 11c2.757 0 5 2.243 5 5s-2.243 5-5 5-5-2.243-5-5 2.243-5 5-5zm0-1c-3.313 0-6 2.687-6 6s2.687 6 6 6 6-2.687 6-6-2.687-6-6-6zm.5 8.474v.526h-.5v-.499c-.518-.009-1.053-.132-1.5-.363l.228-.822c.478.186 1.114.383 1.612.27.574-.13.692-.721.057-1.005-.465-.217-1.889-.402-1.889-1.622 0-.681.52-1.292 1.492-1.425v-.534h.5v.509c.362.01.768.073 1.221.21l-.181.824c-.384-.135-.808-.257-1.222-.232-.744.043-.81.688-.29.958.856.402 1.972.7 1.972 1.773.001.858-.672 1.315-1.5 1.432zm-7.911-5.474h-2.589v-2h3.765c-.484.602-.881 1.274-1.176 2zm-.589 3h-2v-2h2.264c-.166.641-.264 1.309-.264 2zm2.727-6h-4.727v-2h7v.589c-.839.341-1.604.822-2.273 1.411zm2.273-6h-7v-2h7v2zm0 3h-7v-2h7v2zm-4.411 12h-2.589v-2h2.069c.088.698.264 1.369.52 2zm-10.589-11h7v2h-7v-2zm0 3h7v2h-7v-2zm12.727 11h-4.727v-2h3.082c.438.753.994 1.428 1.645 2zm-12.727-5h7v2h-7v-2zm0 3h7v2h-7v-2zm0-6h7v2h-7v-2z"/>
@@ -269,11 +288,12 @@
                         </x-nav.link-mobile>
                     @endif
 
-                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
+                    @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager']))
                         <x-nav.link-mobile
                             :href="route('castle.manage-trainings.index', ['department' => user()->department_id])"
                             class="mt-1"
-                            :active="is_active('castle.manage-trainings.index')">
+                            :active="is_active('castle.manage-trainings.index')"
+                        >
                             <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
                                  width="24" height="24" viewBox="0 0 24.000000 24.000000"
                                  preserveAspectRatio="xMidYMid meet">
@@ -290,9 +310,8 @@
                         </x-nav.link-mobile>
                     @endif
 
-                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
-                        <x-nav.link-mobile :href="route('castle.incentives.index')" class="mt-1"
-                                           :active="is_active('castle.incentives.*')">
+                    @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager']))
+                        <x-nav.link-mobile :href="route('castle.incentives.index')" class="mt-1" :active="is_active('castle.incentives.*')">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                 <path
                                     d="M12 5.173l2.335 4.817 5.305.732-3.861 3.71.942 5.27-4.721-2.524-4.721 2.525.942-5.27-3.861-3.71 5.305-.733 2.335-4.817zm0-4.586l-3.668 7.568-8.332 1.151 6.064 5.828-1.48 8.279 7.416-3.967 7.416 3.966-1.48-8.279 6.064-5.827-8.332-1.15-3.668-7.569z"/>
@@ -300,9 +319,8 @@
                         </x-nav.link-mobile>
                     @endif
 
-                    @if(user()->role == "Admin" || user()->role == "Owner" || user()->role == "Department Manager")
-                        <x-nav.link-mobile :href="route('castle.departments.index')" class="mt-1"
-                                           :active="is_active('castle.departments.*')">
+                    @if(user()->hasAnyRole(['Admin', 'Owner', 'Department Manager']))
+                        <x-nav.link-mobile :href="route('castle.departments.index')" class="mt-1" :active="is_active('castle.departments.*')">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                 <path
                                     d="M18 10.031v-6.423l-6.036-3.608-5.964 3.569v6.499l-6 3.224v7.216l6.136 3.492 5.864-3.393 5.864 3.393 6.136-3.492v-7.177l-6-3.3zm-1.143.036l-4.321 2.384v-4.956l4.321-2.539v5.111zm-4.895-8.71l4.272 2.596-4.268 2.509-4.176-2.554 4.172-2.551zm-10.172 12.274l4.778-2.53 4.237 2.417-4.668 2.667-4.347-2.554zm4.917 3.587l4.722-2.697v5.056l-4.722 2.757v-5.116zm6.512-3.746l4.247-2.39 4.769 2.594-4.367 2.509-4.649-2.713zm9.638 6.323l-4.421 2.539v-5.116l4.421-2.538v5.115z"/>
@@ -310,9 +328,8 @@
                         </x-nav.link-mobile>
                     @endif
 
-                    @if(user()->role != 'Office Manager')
-                        <x-nav.link-mobile :href="route('castle.regions.index')" class="mt-1"
-                                           :active="is_active('castle.regions.*')">
+                    @if(user()->notHaveRoles(['Office Manager']))
+                        <x-nav.link-mobile :href="route('castle.regions.index')" class="mt-1" :active="is_active('castle.regions.*')">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                 <symbol id="region" viewBox="0 0 24 24">
                                     <path
@@ -323,8 +340,7 @@
                         </x-nav.link-mobile>
                     @endif
 
-                    <x-nav.link-mobile :href="route('castle.offices.index')" class="mt-1"
-                                       :active="is_active('castle.offices.*')">
+                    <x-nav.link-mobile :href="route('castle.offices.index')" class="mt-1" :active="is_active('castle.offices.*')">
                         <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                             <symbol id="office" viewBox="0 0 24 24">
                                 <path
@@ -333,8 +349,8 @@
                             <use xlink:href="#office" width="24" height="24"/>
                         </svg>
                     </x-nav.link-mobile>
-                    <x-nav.link-mobile :href="route('castle.users.index')" class="mt-1"
-                                       :active="is_active('castle.users.*')">
+
+                    <x-nav.link-mobile :href="route('castle.users.index')" class="mt-1" :active="is_active('castle.users.*')">
                         <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                             <symbol id="group" viewBox="0 0 24 24">
                                 <path
@@ -344,8 +360,7 @@
                         </svg>
                     </x-nav.link-mobile>
                 @else
-                    <x-nav.link-mobile :href="route('home')" class="mt-1"
-                                       :active="is_active('home')">
+                    <x-nav.link-mobile :href="route('home')" class="mt-1" :active="is_active('home')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                             <symbol id="dashboard" viewBox="0 0 24 24">
                                 <path
@@ -354,16 +369,19 @@
                             <use xlink:href="#dashboard" width="24" height="24"/>
                         </svg>
                     </x-nav.link-mobile>
-                    <x-nav.link-mobile :href="route('leaderboard')" class="mt-1"
-                                       :active="is_active('leaderboard')">
+
+                    <x-nav.link-mobile :href="route('leaderboard')" class="mt-1" :active="is_active('leaderboard')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                             <path
                                 d="M5.627 19.027l2.265 3.359c-.643.448-1.219.991-1.708 1.614l-.48-2.506h-2.704c.745-.949 1.631-1.782 2.627-2.467zm12.746 0l-2.265 3.359c.643.448 1.219.991 1.708 1.614l.48-2.506h2.704c-.745-.949-1.631-1.782-2.627-2.467zm-6.373-2.388c-2.198 0-4.256.595-6.023 1.632l2.271 3.368c1.118-.607 2.396-.948 3.752-.948s2.634.34 3.752.948l2.271-3.368c-1.767-1.037-3.825-1.632-6.023-1.632zm-2.341 3.275l-.537-.287-.536.287.107-.599-.438-.421.602-.083.265-.547.266.547.603.083-.438.421.106.599zm3.149-.115l-.818-.438-.82.438.164-.915-.671-.643.921-.127.406-.835.405.835.92.127-.671.643.164.915zm2.583.115l-.536-.287-.536.287.106-.599-.438-.421.603-.083.266-.547.265.547.603.083-.438.421.105.599zm2.618-10.258c-.286.638-.585 1.231-.882 1.783 4.065-1.348 6.501-5.334 6.873-9.439h-4.077c-.036.482-.08.955-.139 1.405h2.688c-.426 2.001-1.548 4.729-4.463 6.251zm-6.009 5.983c.577 0 1.152.039 1.721.115 1.221-3.468 5.279-6.995 5.279-15.754h-14c0 8.758 4.065 12.285 5.29 15.752.564-.075 1.136-.113 1.71-.113zm4.921-13.639c-.368 4.506-1.953 7.23-3.372 9.669-.577.993-1.136 1.953-1.543 2.95-.408-.998-.969-1.959-1.548-2.953-1.422-2.437-3.011-5.161-3.379-9.666h9.842zm-10.048 9.438c-.297-.552-.596-1.145-.882-1.783-2.915-1.521-4.037-4.25-4.464-6.251h2.688c-.058-.449-.102-.922-.138-1.404h-4.077c.372 4.105 2.808 8.091 6.873 9.438zm3.27-8.438h-1.383c.374 3.118 1.857 7.023 3.24 8.547-1.125-2.563-1.849-5.599-1.857-8.547z"/>
                         </svg>
                     </x-nav.link-mobile>
-                    <x-nav.link-mobile :href="route('trainings.index', ['department' => user()->department_id])"
-                                       class="mt-1"
-                                       :active="is_active('trainings.*')">
+
+                    <x-nav.link-mobile
+                        :href="route('trainings.index', ['department' => user()->department_id])"
+                        class="mt-1"
+                        :active="is_active('trainings.*')"
+                    >
                         <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
                              width="24" height="24" viewBox="0 0 24.000000 24.000000"
                              preserveAspectRatio="xMidYMid meet">
@@ -379,23 +397,20 @@
                         </svg>
                     </x-nav.link-mobile>
 
-                    <x-nav.link-mobile :href="route('incentives.index')" class="mt-1"
-                                       :active="is_active('incentives.*')">
+                    <x-nav.link-mobile :href="route('incentives.index')" class="mt-1" :active="is_active('incentives.*')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                             <path
                                 d="M12 5.173l2.335 4.817 5.305.732-3.861 3.71.942 5.27-4.721-2.524-4.721 2.525.942-5.27-3.861-3.71 5.305-.733 2.335-4.817zm0-4.586l-3.668 7.568-8.332 1.151 6.064 5.828-1.48 8.279 7.416-3.967 7.416 3.966-1.48-8.279 6.064-5.827-8.332-1.15-3.668-7.569z"/>
                         </svg>
                     </x-nav.link-mobile>
 
-                    <x-nav.link-mobile :href="route('reports.index')" class="mt-1"
-                                       :active="is_active('reports.*')">
-                                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                            <path d="M5 20v2h-2v-2h2zm2-2h-6v6h6v-6zm6-1v5h-2v-5h2zm2-2h-6v9h6v-9zm6-2v9h-2v-9h2zm2-2h-6v13h6v-13zm0-11l-6 1.221 1.716 1.708-6.85 6.733-3.001-3.002-7.841 7.797 1.41 1.418 6.427-6.39 2.991 2.993 8.28-8.137 1.667 1.66 1.201-6.001z"/>
-                                        </svg>
+                    <x-nav.link-mobile :href="route('reports.index')" class="mt-1" :active="is_active('reports.*')">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path d="M5 20v2h-2v-2h2zm2-2h-6v6h6v-6zm6-1v5h-2v-5h2zm2-2h-6v9h6v-9zm6-2v9h-2v-9h2zm2-2h-6v13h6v-13zm0-11l-6 1.221 1.716 1.708-6.85 6.733-3.001-3.002-7.841 7.797 1.41 1.418 6.427-6.39 2.991 2.993 8.28-8.137 1.667 1.66 1.201-6.001z"/>
+                        </svg>
                     </x-nav.link-mobile>
 
-                    <x-nav.link-mobile :href="route('number-tracking.index')" class="mt-1"
-                                       :active="is_active('number-tracking.*')">
+                    <x-nav.link-mobile :href="route('number-tracking.index')" class="mt-1" :active="is_active('number-tracking.*')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                             <symbol id="tracking" viewBox="0 0 24 24">
                                 <path
@@ -405,8 +420,7 @@
                         </svg>
                     </x-nav.link-mobile>
 
-                    <x-nav.link-mobile :href="route('profile.index')" class="mt-1"
-                                       :active="is_active('profile.*')">
+                    <x-nav.link-mobile :href="route('profile.index')" class="mt-1" :active="is_active('profile.*')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                             <symbol id="user" viewBox="0 0 24 24">
                                 <path
@@ -415,6 +429,25 @@
                             <use xlink:href="#user" width="24" height="24"/>
                         </svg>
                     </x-nav.link-mobile>
+
+                    @if (user()->hasRole('Admin'))
+                        <div
+                            x-data="{ hasUnreadNotifications: {{user()->unreadNotifications()->count() > 0 ? 'true' : 'false'}} }"
+                            @has-unread-notifications.window="hasUnreadNotifications = $event.detail.payload === 'true'"
+                        >
+                            <button
+                                class="notificationBtn p-1 border-2 border-transparent rounded-full hover:text-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"
+                                :class="{
+                                        'bell-animation': hasUnreadNotifications,
+                                        'text-green-base bell-animation': hasUnreadNotifications,
+                                        'text-gray-400': !hasUnreadNotifications,
+                                    }"
+                                aria-label="Notifications"
+                            >
+                                <x-svg.notification/>
+                            </button>
+                        </div>
+                    @endif
 
                     @if(user()->userLevel() != 'Sales Rep' && user()->userLevel() != 'Setter')
                         <x-nav.castle-icon/>
@@ -425,3 +458,42 @@
         <x-form id="form-sign-out" :route="route('logout')" class="hidden"></x-form>
     </nav>
 </div>
+
+@if (user()->hasRole('Admin'))
+    @push('scripts')
+        <script>
+            const MOBILE_OR_TABLE_SIZE = 768;
+
+            function debounce(func, timeout = 300){
+                let timer;
+                return (...args) => {
+                    clearTimeout(timer);
+                    timer = setTimeout(() => { func.apply(this, args); }, timeout);
+                };
+            }
+
+            document.addEventListener('DOMContentLoaded', (event) => {
+                if (window.innerWidth < MOBILE_OR_TABLE_SIZE) {
+                    window.dispatchEvent(new CustomEvent('sidebar-mobile', {detail: true}))
+                }
+            })
+
+            document
+                .querySelectorAll('.notificationBtn')
+                .forEach(el => {
+                   el.addEventListener('click', () => {
+                        window.dispatchEvent(new CustomEvent('sidebar-toggled', {detail: true}));
+                   });
+                });
+
+            window.addEventListener('resize', debounce(function (event) {
+                if (event.target.innerWidth < MOBILE_OR_TABLE_SIZE) {
+                    window.dispatchEvent(new CustomEvent('sidebar-toggled', {detail: false}));
+                    window.dispatchEvent(new CustomEvent('sidebar-mobile', {detail: true}))
+                } else {
+                    window.dispatchEvent(new CustomEvent('sidebar-mobile', {detail: false}))
+                }
+            }), true);
+        </script>
+    @endpush
+@endif
