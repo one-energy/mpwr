@@ -34,6 +34,9 @@ use Lab404\Impersonate\Models\Impersonate;
  * @property int $kw_achived
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property int|null $office_manager_id
+ * @property int|null $region_manager_id
+ * @property int|null $department_manager_id
  * @property int|null $office_id
  * @property int|null $department_id
  * @property int $installs
@@ -122,15 +125,6 @@ class User extends Authenticatable implements MustVerifyEmail
             'name'        => 'Setter',
             'description' => 'Allows see the dashboard and only read Customer',
         ],
-    ];
-
-    const TOPLEVEL_ROLES = [
-        'Owner',
-        'Admin',
-        'Department Manager',
-        'Region Manager',
-        'Office Manager',
-        'Sales Rep',
     ];
 
     protected $casts = [

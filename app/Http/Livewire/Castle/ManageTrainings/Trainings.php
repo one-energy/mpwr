@@ -41,6 +41,8 @@ class Trainings extends Component
 
     public Collection $groupedFiles;
 
+    protected $queryString = ['selectedTab'];
+
     protected $listeners = [
         'contentAdded'  => '$refresh',
         'filesUploaded' => 'getFreshFiles',
@@ -51,8 +53,9 @@ class Trainings extends Component
         return 'title';
     }
 
-    public function mount()
+    public function mount(Department $department)
     {
+        $this->department    = $department;
         $this->video         = new TrainingPageContent();
         $this->actualSection = new TrainingPageSection();
         $this->contents      = collect();
@@ -71,7 +74,7 @@ class Trainings extends Component
 
     public function render()
     {
-        if (!$this->department->id && user()->hasAnyRole([Role::ADMIN, Role::OWNER])) {
+        if ($this->department->id === null && user()->hasAnyRole([Role::ADMIN, Role::OWNER])) {
             $this->department = Department::first();
         }
 
@@ -123,7 +126,8 @@ class Trainings extends Component
         do {
             if ($trainingPageSection->parent_id) {
                 $trainingPageSection = TrainingPageSection::query()->whereId($trainingPageSection->parent_id)->first();
-                array_push($path, $trainingPageSection);
+
+                $path[] = $trainingPageSection;
             }
         } while ($trainingPageSection->parent_id);
 
@@ -143,7 +147,11 @@ class Trainings extends Component
             return;
         }
 
-        return redirect(route('castle.manage-trainings.index', ['department' => $department->id]));
+        return redirect()
+            ->route('castle.manage-trainings.index', [
+                'department'  => $department->id,
+                'selectedTab' => $this->selectedTab,
+            ]);
     }
 
     public function getParentSections($section)
@@ -161,8 +169,9 @@ class Trainings extends Component
                 $query->where(function ($query) {
                     $query
                         ->orWhere('training_page_sections.title', 'like', "%{$this->search}%")
-                        ->orWhereHas('contents', fn ($query) =>
-                            $query->where('description', 'like', "%{$this->search}%")
+                        ->orWhereHas(
+                            'contents',
+                             fn($query) => $query->where('description', 'like', "%{$this->search}%")
                         );
                 });
             })
@@ -171,10 +180,6 @@ class Trainings extends Component
 
     public function changeTab(string $tabName)
     {
-        if ($this->selectedTab === $tabName) {
-            return;
-        }
-
         $this->selectedTab = $tabName;
     }
 

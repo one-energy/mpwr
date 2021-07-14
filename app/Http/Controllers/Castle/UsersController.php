@@ -42,8 +42,8 @@ class UsersController extends Controller
         $data = request()->validate([
             'first_name'    => ['required', 'string', 'max:255'],
             'last_name'     => ['required', 'string', 'max:255'],
-            'role'          => ['nullable', 'string', 'max:255', 'in:' . implode(',', User::getRoleByNames())],
-            'office_id'     => ['nullable', 'exists:offices,id'],
+            'role'          => ['nullable', 'string', 'max:255', 'in:' . implode(',', Role::getValues())],
+            'office_id'     => ['nullable'],
             'pay'           => ['nullable'],
             'department_id' => ['nullable', 'exists:departments,id'],
             'email'         => [

@@ -3,7 +3,6 @@
 namespace Tests\Feature\Customer;
 
 use App\Enum\Role;
-use App\Http\Livewire\Customer\Create;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\Office;

@@ -15,6 +15,8 @@ class Users extends Component
 
     public string $userOffices;
 
+    public bool $onlyPendingUsers = false;
+
     public function sortBy()
     {
         return 'first_name';
@@ -115,6 +117,11 @@ class Users extends Component
             ->when(user()->hasRole(Role::ADMIN), function ($query) {
                 $query->where('role', '!=', Role::OWNER);
             })
+            ->when($this->onlyPendingUsers, fn ($query) =>
+                $query->where('department_manager_id', null)
+                    ->orWhere('region_manager_id', null)
+                    ->orWhere('office_manager_id', null)
+            )
             ->with(['office', 'department', 'managedOffices'])
             ->search($this->search)
             ->orderBy($this->sortBy, $this->sortDirection)

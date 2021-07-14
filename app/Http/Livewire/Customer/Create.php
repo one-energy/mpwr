@@ -10,7 +10,9 @@ use App\Models\Financing;
 use App\Models\Rates;
 use App\Models\Term;
 use App\Models\User;
+use App\Notifications\SalesRepWithoutManagerId;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Create extends Component
@@ -19,9 +21,11 @@ class Create extends Component
 
     public int $departmentId;
 
-    public float $grossRepComission;
+    public float $grossRepComission = 0;
 
-    public float $netRepComission;
+    public float $totalSystemPrice = 0;
+
+    public float $netRepComission = 0;
 
     public int $stockPoints = 250;
 
@@ -71,11 +75,13 @@ class Create extends Component
 
         $this->customer         = new Customer();
         $this->customer->adders = 0;
+
         if (user()->hasAnyRole([Role::OFFICE_MANAGER, Role::SALES_REP, Role::SETTER]) && user()->office_id != null) {
             $this->customer->sales_rep_id  = user()->id;
             $this->customer->sales_rep_fee = $this->getUserRate(user()->id);
             $this->salesRep                = user();
         }
+
         $this->setSelfGen();
     }
 
@@ -84,16 +90,11 @@ class Create extends Component
         $this->customer->calcComission();
         $this->customer->calcMargin();
 
+        $this->totalSystemPrice  = $this->customer->totalSoldPrice;
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
         $this->netRepComission   = $this->calculateNetRepCommission();
         $this->salesReps         = user()->getPermittedUsers($this->departmentId)->toArray();
-
-        $this->setters = User::query()
-            ->where('department_id', $this->departmentId)
-            ->where('id', '!=', user()->id)
-            ->orderBy('first_name')
-            ->get()
-            ->toArray();
+        $this->setters           = $this->getSetters();
 
         return view('livewire.customer.create', [
             'departments' => Department::all(),
@@ -141,7 +142,13 @@ class Create extends Component
         $this->customer->payee_two                   = $salesRep->payee_two;
         $this->customer->note_two                    = $salesRep->note_two;
 
-        $this->customer->save();
+        DB::transaction(function () use ($salesRep) {
+            $this->customer->save();
+
+            if ($this->hasSomeManagerIdNull($salesRep)) {
+                $this->notifyAdmins($salesRep);
+            }
+        });
 
         alert()
             ->withTitle(__('Home Owner created!'))
@@ -216,5 +223,29 @@ class Create extends Component
         }
 
         return 0;
+    }
+
+    private function getSetters()
+    {
+        return User::query()
+            ->where('department_id', $this->departmentId)
+            ->where('id', '!=', user()->id)
+            ->orderBy('first_name')
+            ->get()
+            ->toArray();
+    }
+
+    private function hasSomeManagerIdNull($salesRep)
+    {
+        return collect(['office_manager_id', 'region_manager_id', 'department_manager_id'])
+            ->some(fn(string $key) => $salesRep->{$key} === null);
+    }
+
+    private function notifyAdmins($salesRep)
+    {
+        User::query()
+            ->where('role', Role::ADMIN)
+            ->get()
+            ->each(fn(User $user) => $user->notify(new SalesRepWithoutManagerId($salesRep)));
     }
 }

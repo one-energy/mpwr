@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enum\Role;
 use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -12,7 +13,9 @@ class CustomerPolicy
 
     public function create(User $user)
     {
-        return in_array($user->role, User::TOPLEVEL_ROLES, true);
+        $roles = collect(Role::getValues())->except(Role::SETTER)->toArray();
+
+        return in_array($user->role, $roles, true);
     }
 
     public function show(User $user, Customer $customer)

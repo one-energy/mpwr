@@ -28,9 +28,11 @@ class Edit extends Component
 
     public bool $installed;
 
-    public float $grossRepComission;
+    public float $grossRepComission = 0;
 
-    public float $netRepComission;
+    public float $totalSystemPrice = 0;
+
+    public string $netRepComission;
 
     public bool $isSelfGen;
 
@@ -78,6 +80,8 @@ class Edit extends Component
     {
         $this->customer->calcComission();
         $this->customer->calcMargin();
+
+        $this->totalSystemPrice  = $this->customer->totalSoldPrice;
         $this->grossRepComission = $this->calculateGrossRepComission($this->customer);
         $this->netRepComission   = $this->calculateNetRepCommission();
         $this->salesReps         = user()->getPermittedUsers($this->departmentId)->toArray();
@@ -234,7 +238,7 @@ class Edit extends Component
     {
         $user = User::find($userId);
         $rate = Rates::whereRole($user->role);
-        
+
         $rate->when($user->hasRole(Role::SALES_REP), function ($query) use ($user) {
             $query->where('time', '<=', $user->installs)->orderBy('time', 'desc');
         });
@@ -266,5 +270,10 @@ class Edit extends Component
     public function isSetterOfCustomer()
     {
         return user()->id == $this->customer->setter_id;
+    }
+
+    public function getIsSalesRepOrUserOpenedByProperty()
+    {
+        return user()->is($this->customer->userSalesRep) || user()->is($this->customer->userOpenedBy);
     }
 }

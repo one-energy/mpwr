@@ -28,7 +28,6 @@ class ShowUserTest extends TestCase
             ->assertSee($user1->first_name);
     }
 
-
     /** @test */
     public function it_should_show_resend_invitation_email_button()
     {
@@ -56,13 +55,8 @@ class ShowUserTest extends TestCase
     /** @test */
     public function it_should_show_success_alert_when_resend_invitation_email()
     {
-        $admin = User::factory()->create([
-            'role' => Role::ADMIN
-        ]);
-
-        $user = User::factory()->create([
-            "email_verified_at" => null
-        ]);
+        $admin = User::factory()->create(['role' => Role::ADMIN]);
+        $user  = User::factory()->create(['email_verified_at' => null]);
 
         $this->actingAs($admin)
             ->post(route('verification.resendInvitationEmail', $user))

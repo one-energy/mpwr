@@ -187,7 +187,7 @@
             @if ($this->seeAllStatusSelected)
                 <section class="mb-3 flex flex-row items-center w-full space-x-3 text-sm">
                     <div>
-                        <span class="w-3 h-3 inline-block  bg-blue-500"></span>
+                        <span class="w-3 h-3 inline-block  bg-green-base"></span>
                         <span>Installed & Paid</span>
                     </div>
                     <div>
@@ -323,6 +323,7 @@
                                 @if (user()->hasRole('Admin'))
                                     <x-table.td>
                                         <input
+                                            class="form-checkbox text-green-base transition duration-150 ease-in-out"
                                             type="checkbox"
                                             {{ $customer->panel_sold ? 'checked' : '' }}
                                             wire:key="customer-{{ $customer->id }}"
