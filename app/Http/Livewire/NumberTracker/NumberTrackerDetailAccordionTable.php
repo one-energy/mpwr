@@ -81,7 +81,7 @@ class NumberTrackerDetailAccordionTable extends Component
             ->when(user()->hasAnyRole([Role::SALES_REP, Role::SETTER]), function ($query) {
                 $query
                 ->when($this->deleteds, function($query) {
-                    $query->whereId(user()->office()->withTrashed()->first()->region_id);
+                    $query->whereId(user()->office()->withTrashed()->first()?->region_id);
                 })
                 ->when(!$this->deleteds, function($query) {
                     $query->whereId(user()?->office?->region_id);
