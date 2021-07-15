@@ -248,8 +248,9 @@ class UserInfoTab extends Component
     {
         if ($this->selectedRole === Role::DEPARTMENT_MANAGER) {
             return Department::query()
-                ->where('id', $this->user->department_id)
-                ->get();
+                ->when(user()->notHaveRoles([Role::ADMIN, Role::OWNER]), function ($query) {
+                    $query->where('id', $this->user->department_id);
+                })->get();
         }
 
         if ($this->selectedRole === Role::OFFICE_MANAGER) {
