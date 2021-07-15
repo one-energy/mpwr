@@ -74,8 +74,8 @@
                                                                 </x-popover>
                                                                 <x-icon
                                                                     x-data=""
-                                                                    @mouseenter="$dispatch('open-popover', {ref: '{{ $loop->index }}'})"
-                                                                    @mouseleave="$dispatch('close-popover', {ref: '{{ $loop->index }}'})"
+                                                                    x-on:mouseenter="$dispatch('open-popover', {ref: '{{ $loop->index }}'})"
+                                                                    x-on:mouseleave="$dispatch('close-popover', {ref: '{{ $loop->index }}'})"
                                                                     icon="user"
                                                                     class="w-3.5 h-auto mr-2.5"
                                                                 />
