@@ -31,7 +31,8 @@
                         .then(res=> res.json())
                         .then(departmentsData => {
                             departments = departmentsData
-                            selectedDepartment = '{{user()->department_id ?? 1}}'
+                            loggedUserDepartment ='{{user()->department_id}}'
+                            selectedDepartment =  loggedUserDepartment ?? departmentsData[0].id
                         })
                  }">
                 <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">

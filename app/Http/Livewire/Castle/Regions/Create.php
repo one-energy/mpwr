@@ -10,6 +10,8 @@ class Create extends Component
 {
     public Collection | array $managers;
 
+    private string $uuid = '';
+
     public function mount()
     {
         $this->uuid     = (string)Str::uuid();
