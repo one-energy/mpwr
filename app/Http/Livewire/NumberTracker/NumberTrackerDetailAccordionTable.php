@@ -84,7 +84,7 @@ class NumberTrackerDetailAccordionTable extends Component
                     $query->whereId(user()->office()->withTrashed()->first()->region_id);
                 })
                 ->when(!$this->deleteds, function($query) {
-                    $query->whereId(user()?->office->region_id);
+                    $query->whereId(user()?->office?->region_id);
                 });
             })
             ->where('department_id', $this->selectedDepartment)
