@@ -152,7 +152,11 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1 @if($customer->financer_id != 1) hidden @endif " wire:key="eniumPoints">
-                    <x-input wire:model="customer.enium_points" label="Noble Pay Points" name="customer.enium_points" readonly/>
+                    <x-input
+                        label="Noble Pay Points"
+                        value="{{$customer->salesEniumPoint}}"
+                        name="customer.enium_points"
+                        readonly/>
                 </div>
             </div>
 
