@@ -111,7 +111,7 @@
 
                                 <div class="mt-6">
                                  
-                                        <x-button type="submit" color="green" class="inline-flex w-full" x-on:click="sending = true" x-bind:disabled="sending" x-bind:class="{'disabled:opacity-50' : sending}">
+                                        <x-button type="submit" color="green" class="inline-flex w-full" x-on:click="sending = true" x-bind:disabled="sending" x-bind:class="{'cursor-default' : sending}">
                                             Save Changes
                                         </x-button>
                                   
