@@ -144,7 +144,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('role:Admin|Owner|Department Manager|Region Manager|Office Manager')
         ->name('number-tracking.spreadsheet');
     Route::post('/number-tracking/spreadsheet', [NumberTrackingController::class, 'updateOrCreateDailyNumbers'])
-        ->middleware('role:Admin|Owner|Department Manager|Region Manager')
+        ->middleware('role:Admin|Owner|Department Manager|Region Manager|Office Manager')
         ->name('number-tracking.spreadsheet.updateOrCreate');
 
     Route::get('/get-offices-managers/{region?}', [UsersController::class, 'getOfficesManager'])->name('getOfficesManager');
