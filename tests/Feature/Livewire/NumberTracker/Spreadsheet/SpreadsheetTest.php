@@ -59,4 +59,22 @@ class SpreadsheetTest extends TestCase
             ->assertSeeInOrder($months);
     }
 
+    /** @test */
+    public function it_should_change_the_weeks_when_change_month()
+    {
+        $john = UserBuilder::build(['role' => Role::ADMIN])->save()->get();
+        
+        $months = [];
+
+        $this->actingAs($john);
+
+        for ($index = 1; $index <= Carbon::now()->month; $index++) {
+            $months[$index] = Carbon::create(month: $index)->monthName;    
+        }
+        
+        Livewire::test(Spreadsheet::class)
+            ->assertSee(Carbon::now()->monthName)
+            ->set('selectedMonth', Carbon::create(year: Carbon::now()->year, month: 1)->month)
+            ->assertSee('January');
+    }
 }
