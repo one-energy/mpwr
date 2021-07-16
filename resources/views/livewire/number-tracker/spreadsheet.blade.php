@@ -1,4 +1,4 @@
-<div>
+<div x-data="{sending: false}">
     @push('styles')
         <style>
             @media only screen and (min-width: 1280px) {
@@ -75,9 +75,9 @@
     <x-form :route="route('number-tracking.spreadsheet.updateOrCreate')">
         <section class="flex justify-end mt-3 mb-2">
             @if ($this->users->isNotEmpty())
-                <button class="py-2 px-4 focus:outline-none rounded shadow-md text-white bg-green-base" type="submit">
+                <x-button type="submit" color="green" class="inline-flex w-full" x-on:click="sending = true" x-bind:disabled="sending" x-bind:class="{'cursor-default' : sending}">
                     Save
-                </button>
+                </x-button>
             @endif
         </section>
 

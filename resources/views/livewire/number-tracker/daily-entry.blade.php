@@ -8,7 +8,7 @@
     @endpush
 
     <x-form :route="route('number-tracking.store')">
-        <div class="mx-auto max-w-8xl sm:px-6 lg:px-8" x-data>
+        <div class="mx-auto max-w-8xl sm:px-6 lg:px-8" x-data="{sending:false}">
             <div class="md:flex">
                 <div class="py-5 md:w-1/3 xl:w-1/4">
                     <div class="flex-row">
@@ -110,9 +110,11 @@
                                 <input name="officeSelected" id="officeSelected" value="{{ $officeSelected }}" class="hidden"/>
 
                                 <div class="mt-6">
-                                    <x-button type="submit" color="green" class="inline-flex w-full">
-                                        Save Changes
-                                    </x-button>
+                                 
+                                        <x-button type="submit" color="green" class="inline-flex w-full" x-on:click="sending = true" x-bind:disabled="sending" x-bind:class="{'cursor-default' : sending}">
+                                            Save Changes
+                                        </x-button>
+                                  
                                 </div>
                             </div>
                         </div>
