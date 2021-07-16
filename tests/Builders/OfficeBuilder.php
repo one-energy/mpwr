@@ -13,7 +13,11 @@ class OfficeBuilder
 {
     use WithFaker;
 
-    public Office $office;
+    private bool $withManager = false;
+
+    private Office $office;
+
+    private User $user;
 
     public function __construct($attributes = [])
     {
@@ -30,20 +34,19 @@ class OfficeBuilder
 
     public function save(): self
     {
-        if (!$this->office->office_manager_id) {
-            $this->office->office_manager_id = User::factory()->create(['role' => Role::OFFICE_MANAGER])->id;
-        }
-
         $this->office->save();
 
-        $this->office->officeManager()->update([
-            'office_id'     => $this->office->id,
-            'department_id' => $this->office->region->department_id,
-        ]);
+        if (!$this->withManager) {
+            $manager = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
 
-        $this->office->region->regionManager()->update([
-            'office_id' => $this->office->id,
-        ]);
+            $manager->update(['department_id' => $this->office->region->department_id]);
+            $this->office->managers()->attach($manager->id);
+        } else {
+            $this->office->managers()->attach($this->user->id);
+        }
+
+        $this->office->managers()->update(['users.office_id' => $this->office->id]);
+        $this->office->managers()->update(['department_id' => $this->office->region->department_id]);
 
         return $this;
     }
@@ -57,7 +60,8 @@ class OfficeBuilder
     {
         $user = $user ?? User::factory()->create(['role' => Role::OFFICE_MANAGER]);
 
-        $this->office->office_manager_id = $user->id;
+        $this->withManager = true;
+        $this->user        = $user;
 
         return $this;
     }

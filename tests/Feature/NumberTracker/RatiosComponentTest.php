@@ -10,7 +10,6 @@ use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Carbon;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -50,24 +49,17 @@ class RatiosComponentTest extends TestCase
         $this->regionManager = User::factory()->create(['role' => Role::REGION_MANAGER]);
         $this->officeManager = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
 
-        $this->department = Department::factory()->create([
-            'department_manager_id' => $this->dptManager->id,
-        ]);
+        $this->department = Department::factory()->create();
+        $this->department->managers()->attach($this->dptManager->id);
 
-        $this->region = Region::factory()->create([
-            'department_id'     => $this->department->id,
-            'region_manager_id' => $this->regionManager->id,
-        ]);
+        $this->region = Region::factory()->create(['department_id' => $this->department->id]);
+        $this->region->managers()->attach($this->regionManager->id);
 
-        $this->office = Office::factory()->create([
-            'region_id'         => $this->region->id,
-            'office_manager_id' => $this->officeManager->id,
-        ]);
+        $this->office = Office::factory()->create(['region_id' => $this->region->id]);
+        $this->office->managers()->attach($this->officeManager->id);
 
-        $this->officeTwo = Office::factory()->create([
-            'region_id'         => $this->region->id,
-            'office_manager_id' => $this->officeManager->id,
-        ]);
+        $this->officeTwo = Office::factory()->create(['region_id' => $this->region->id]);
+        $this->officeTwo->managers()->attach($this->officeManager->id);
 
         $this->john = User::factory()->create([
             'role'          => Role::SALES_REP,
@@ -95,25 +87,25 @@ class RatiosComponentTest extends TestCase
         $this->officeManagerEntry = DailyNumber::factory()->create([
             'user_id'   => $this->officeManager->id,
             'office_id' => $this->office->id,
-            'date'      => Carbon::now(),
+            'date'      => now(),
         ]);
 
         $this->dptManagerEntry = DailyNumber::factory()->create([
             'user_id'   => $this->dptManager->id,
             'office_id' => $this->office->id,
-            'date'      => Carbon::now(),
+            'date'      => now(),
         ]);
 
         $this->regionManagerEntry = DailyNumber::factory()->create([
             'user_id'   => $this->regionManager->id,
             'office_id' => $this->office->id,
-            'date'      => Carbon::now(),
+            'date'      => now(),
         ]);
 
         $this->johnEntry = DailyNumber::factory()->create([
             'user_id'   => $this->john->id,
             'office_id' => $this->officeTwo->id,
-            'date'      => Carbon::now(),
+            'date'      => now(),
         ]);
     }
 

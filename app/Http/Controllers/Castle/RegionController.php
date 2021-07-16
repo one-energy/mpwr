@@ -8,6 +8,7 @@ use App\Models\Department;
 use App\Models\Region;
 use App\Models\TrainingPageSection;
 use App\Models\User;
+use App\Rules\UserHasRole;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
@@ -21,7 +22,7 @@ class RegionController extends Controller
                 $query->whereDepartmentId($department->id);
             })
             ->when(user()->hasRole(Role::REGION_MANAGER), function (Builder $query) {
-                $query->whereRegionManagerId(user()->id);
+                $query->whereIn('id', user()->managedRegions->pluck('id'));
             })
             ->when(user()->hasRole(Role::OFFICE_MANAGER), function (Builder $query) {
                 $query->whereId(user()->office->region->id);
@@ -45,19 +46,23 @@ class RegionController extends Controller
 
     public function store()
     {
-        $validated = request()->validate([
-            'name'              => 'required|string|min:3|max:255',
-            'region_manager_id' => 'required|exists:users,id',
-            'department_id'     => 'required|exists:departments,id',
+        request()->validate([
+            'name'                 => 'required|string|min:3|max:255',
+            'department_id'        => 'required|exists:departments,id',
+            'region_manager_ids'   => 'nullable|array',
+            'region_manager_ids.*' => ['nullable', new UserHasRole(Role::REGION_MANAGER)],
         ], [
             'region_id.required'         => 'The region field is required.',
             'region_manager_id.required' => 'The region manager field is required.',
             'department_id.required'     => 'The department field is required.',
         ]);
 
-        DB::transaction(function () use ($validated) {
+        DB::transaction(function () {
             /** @var Region */
-            $region = Region::create($validated);
+            $region = Region::create([
+                'name'          => request()->name,
+                'department_id' => request()->department_id,
+            ]);
 
             $parentSection = TrainingPageSection::query()
                 ->where(function (Builder $query) use ($region) {
@@ -72,6 +77,12 @@ class RegionController extends Controller
                 'department_id'     => $region->department_id,
                 'department_folder' => false,
             ]);
+
+            $managerIds = collect(request()->region_manager_ids)->filter();
+
+            if ($managerIds->isNotEmpty()) {
+                $region->managers()->attach($managerIds->toArray());
+            }
         });
 
         alert()
@@ -84,26 +95,17 @@ class RegionController extends Controller
     public function edit(Region $region)
     {
         return view('castle.regions.edit', [
-            'region'      => $region,
-            'users'       => User::query()->where('role', 'Region Manager')->get(),
+            'region'      => $region->load('managers'),
+            'users'       => User::query()->where('role', Role::REGION_MANAGER)->get(),
             'departments' => Department::all(),
         ]);
     }
 
     public function update(Region $region)
     {
-        $validated = request()->validate([
-            'name'              => 'required|string|min:3|max:255',
-            'region_manager_id' => 'required',
-        ], [
-            'region_id.required'         => 'The region field is required.',
-            'region_manager_id.required' => 'The region manager field is required.',
-        ]);
+        request()->validate(['name' => 'required|string|min:3|max:255']);
 
-        $region->name              = $validated['name'];
-        $region->region_manager_id = $validated['region_manager_id'];
-
-        $region->save();
+        $region->update(['name' => request()->name]);
 
         alert()
             ->withTitle(__('Region updated!'))

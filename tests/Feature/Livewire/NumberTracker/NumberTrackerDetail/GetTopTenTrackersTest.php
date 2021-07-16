@@ -70,7 +70,7 @@ class GetTopTenTrackersTest extends TestCase
     }
 
     /** @test */
-    public function it_should_be_possible_order_by_sets()
+    public function it_should_be_possible_order_by_sets ()
     {
         $department = $this->createDepartment();
         $region     = $this->createRegion($department);
@@ -112,7 +112,11 @@ class GetTopTenTrackersTest extends TestCase
     {
         $manager = $manager ?? $this->departmentManager;
 
-        return Department::factory()->create(['department_manager_id' => $manager->id]);
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($manager->id);
+
+        return $department;
     }
 
     private function createRegion(Department $department, ?User $manager = null): Region

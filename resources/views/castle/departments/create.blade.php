@@ -9,24 +9,17 @@
             <x-form :route="route('castle.departments.store')">
                 <div class="px-8">
                     <div class="mt-6 grid grid-cols-2 row-gap-6 col-gap-4 sm:grid-cols-6">
-                        <div class="md:col-span-3 col-span-2">
+                        <div class="md:col-span-3 col-span-2 mt-2">
                             <x-input label="Department Name" name="name"/>
                         </div>
                         <div class="md:col-span-3 col-span-2">
-                            <x-select label="Department Manager" name="department_manager_id">
-                                @if (old('department_manager_id') == '')
-                                    <option value="" selected>None</option>
-                                @endif
-                                @foreach($users as $department_manager)
-                                    <option value="{{ $department_manager->id }}" {{ old('department_manager_id') == $department_manager->id ? 'selected' : '' }}>
-                                        @if($department_manager->department_id)
-                                            {{$department_manager->department->name}} - {{ $department_manager->first_name }} {{ $department_manager->last_name }}
-                                        @else
-                                            Without Department - {{ $department_manager->first_name }} {{ $department_manager->last_name }}
-                                        @endif
-                                    </option>
-                                @endforeach
-                            </x-select>
+                            <x-multiselect
+                                trackBy="id"
+                                labeledBy="full_name"
+                                label="Department Managers"
+                                name="department_manager_ids[]"
+                                :options="$users"
+                            />
                         </div>
                     </div>
                 </div>

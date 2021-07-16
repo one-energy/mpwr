@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\DailyNumber[] $dailyNumbers
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $managers
  * @property-read \App\Models\User $officeManager
  * @property-read \App\Models\Region $region
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
@@ -36,9 +37,14 @@ class Office extends Model
     use HasFactory;
     use SoftDeletes;
 
-    public function officeManager()
+    protected $fillable = [
+        'name',
+        'region_id'
+    ];
+
+    public function managers()
     {
-        return $this->belongsTo(User::class, 'office_manager_id');
+        return $this->belongsToMany(User::class, 'user_managed_offices')->withTimestamps();
     }
 
     public function region()

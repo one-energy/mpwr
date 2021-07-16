@@ -64,27 +64,8 @@
                                 </div>
                                 <div class="mt-2 sm:flex sm:justify-between">
                                     <div class="sm:flex">
-                                        <div class="mr-6 flex items-center text-sm text-gray-500">
-                                            <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-green-base" fill="currentColor"
-                                                    viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd"
-                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                                        clip-rule="evenodd"/>
-                                            </svg>
-                                            <span>
-                                                Active
-                                            </span>
-                                        </div>
                                         <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
-                                            <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
-                                                    fill="currentColor"
-                                                    viewBox="0 0 20 20">
-                                                <path
-                                                    d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
-                                            </svg>
-                                            <span>
-                                                Subscription Plan
-                                            </span>
+                                            {{ $this->teamLabel($team) }}
                                         </div>
                                     </div>
                                     <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
@@ -95,13 +76,54 @@
                                                     clip-rule="evenodd"/>
                                         </svg>
                                         <span>
-                                            Joined: {{ $team->created_at->format('F dS, Y') }}
+                                            Updated: {{ $team->created_at->format('F dS, Y') }}
                                         </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     @endforeach
+                    @if ($this->user->office !== null)
+                        <div class="border-b border-gray-200 last:border-none hover:bg-gray-50">
+                            <div class="px-4 py-4 sm:px-6">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex flex-row items-center">
+                                        <div class="font-medium text-green-base">
+                                            {{ $this->user->office->name }}
+                                        </div>
+                                    </div>
+                                    <div class="ml-2 space-x-2 flex-shrink-0 flex">
+                                        <span
+                                            class="px-2 inline-flex text-xs font-semibold rounded-full bg-green-base  text-white">
+                                            Reports to
+                                        </span>
+                                        <span
+                                            class="px-2 inline-flex text-xs font-semibold rounded-full {{ $user->role === 'owner' ? 'bg-green-base text-green-base' : 'bg-gray-200 text-gray-600' }}">
+                                            {{ Str::ucfirst($user->role) }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="mt-2 sm:flex sm:justify-between">
+                                    <div class="sm:flex">
+                                        <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                                            Office
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                                        <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" fill="currentColor"
+                                             viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                  d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                                                  clip-rule="evenodd"/>
+                                        </svg>
+                                        <span>
+                                            Updated: {{ $this->user->updated_at->format('F dS, Y') }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 @else
                     <div class="border-b border-gray-200 last:border-none hover:bg-gray-50">
                         <div class="px-4 py-4 sm:px-6">
@@ -117,7 +139,7 @@
                 @endif
             </div>
             <div class="flex justify-end mt-4">
-                <x-button wire:click="changeTab('userEdit')" class="place-self-end">Edit</x-button>
+                <x-button wire:click="changeTab('orgInfoEdit')" class="place-self-end">Edit</x-button>
             </div>
         </div>
         <div class="@if($openedTab != 'payInfo') hidden @endif">
@@ -213,15 +235,7 @@
                             <x-input-phone label="Phone Number" name="user.phone_number" wire:model="user.phone_number" disabled="{{user()->id == $user->id}}"/>
                         </div>
 
-                        <div class="md:col-span-3 col-span-2">
-                            <x-select wire:change="changeRole($event.target.value)" wire:model="user.role" label="Role" name="user.role" disabled="{{user()->id == $user->id}}">
-                                    @foreach ($roles as $role)
-                                        <option value="{{$role['name']}}" > {{$role['title']}}</option>
-                                    @endforeach
-                            </x-select>
-                        </div>
-
-                        @if(user()->role != "Admin" && user()->role != "Owner")
+                        @if(user()->notHaveRoles(['Admin', 'Owner']))
                             <div class="md:col-span-3 col-span-2 hidden">
                                 <x-select wire:model="user.department_id" label="Department" name="user.department_id" disabled="{{user()->id == $user->id}}">
                                     @foreach($departments as $department)
@@ -241,7 +255,7 @@
 
                         <div class="md:col-span-3 col-span-2">
                             <x-select wire:model="user.office_id" label="Office" name="user.office_id" disabled="{{user()->id == $user->id}}">
-                                @if($user->role != "Office Manager" && $user->role != "Sales Rep" && $user->role != "Setter")
+                                @if($user->notHaveRoles(['Office Manager', 'Sales Rep', 'Setter']))
                                     <option value="">
                                         None
                                     </option>
@@ -288,6 +302,67 @@
                                 </button>
                             </span>
                         @endif
+                    </div>
+                </div>
+            </x-form>
+        </div>
+        <div class="@if($openedTab != 'orgInfoEdit') hidden @endif">
+            <x-form>
+                <div class="flex flex-col">
+                    <div class="flex flex-col flex-wrap space-x-0 space-y-4 mb-4 sm:flex-row sm:space-x-4 sm:space-y-0 sm:mb-4">
+                        <x-select wire:change="changeRole" class="sm:flex-1" wire:model="selectedRole" label="Role" name="selectedRole">
+                            @foreach ($roles as $role)
+                                <option value="{{ $role['name'] }}"> {{ $role['title'] }}</option>
+                            @endforeach
+                        </x-select>
+
+                        <x-select class="sm:flex-1" label="Reports To" name="reportsTo" wire:model="reportsTo">
+                            @foreach ($offices as $office)
+                                <option value="{{ $office->id }}">{{ $office->name }}</option>
+                            @endforeach
+                        </x-select>
+                    </div>
+
+                    <div class="w-full">
+                        <div class="@if($selectedRole === 'Sales Rep' || $selectedRole === 'Setter') hidden @endif">
+                            <x-multiselect
+                                class="sm:flex-1"
+                                trackBy="id"
+                                labeledBy="name"
+                                label="Manager Of"
+                                name="selectedManagers"
+                                :options="$this->managers"
+                                wire:model="selectedManagers"
+                                wire:key="{{ $this->managers->count() }}-{{ $selectedRole }}"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-2 flex justify-between">
+                    <div>
+                        <span class="ml-3 inline-flex rounded-md shadow-sm">
+                            <a href="{{route('castle.users.request-reset-password', $user->id)}}" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-500 hover:bg-gray-800 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
+                                Reset Password
+                            </a>
+                        </span>
+                    </div>
+                    <div>
+                        <span class="ml-3 inline-flex rounded-md shadow-sm">
+                            <a
+                                href="{{route('castle.users.show', $user->id)}}"
+                                class="py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-gray-800 hover:bg-gray-300 focus:outline-none focus:border-gray-300 focus:shadow-outline-gray transition duration-150 ease-in-out">
+                                Cancel
+                            </a>
+                        </span>
+                        <span class="inline-flex rounded-md shadow-sm">
+                            <button
+                                wire:click.prevent="updateOrgAssigment"
+                                type="submit"
+                                class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-base hover:bg-green-700 focus:outline-none focus:border-green-700 focus:shadow-outline-gray transition duration-150 ease-in-out">
+                                Update User
+                            </button>
+                        </span>
                     </div>
                 </div>
             </x-form>
@@ -422,4 +497,36 @@
             </button>
         </div>
     </x-modal>
+
+    <x-app-modal wire:model.defer="showWarningRoleModal">
+        <x-slot name="header">
+            <div class="flex items-center space-x-3 mt-1">
+                <x-svg.alert-triangle class="w-6 h-6 text-yellow-300" />
+
+                <h3 class="text-lg font-medium leading-6 text-gray-900" id="modal-headline">
+                    Change Role
+                </h3>
+            </div>
+        </x-slot>
+        <x-slot name="body">
+            <p class="text-base leading-5 text-gray-900 mb-2">Are you sure you want to change the role?</p>
+            <p class="text-base leading-5 text-gray-900">
+                {{ $warningRoleMessage }}
+            </p>
+        </x-slot>
+        <x-slot name="footer">
+            <div class="flex justify-end space-x-2">
+                <button
+                    wire:click="returnToDefaultRole"
+                    class="px-4 py-2 text-base font-medium leading-6 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded shadow-sm hover:text-gray-500 focus:outline-none focus:border-green-300 focus:shadow-outline-green sm:text-sm sm:leading-5">
+                    Cancel
+                </button>
+                <button
+                    wire:click="changeUserPay"
+                    class="px-4 py-2 font-medium leading-6 text-white transition duration-150 ease-in-out bg-green-base rounded shadow-sm focus:outline-none focus:border-green-300 focus:shadow-outline-green sm:text-sm sm:leading-5">
+                    Continue
+                </button>
+            </div>
+        </x-slot>
+    </x-app-modal>
 </div>

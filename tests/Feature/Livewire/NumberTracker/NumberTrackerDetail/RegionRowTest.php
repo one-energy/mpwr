@@ -38,9 +38,9 @@ class RegionRowTest extends TestCase
     {
         $john = User::factory()->create(['role' => Role::ADMIN]);
 
-        $region = Region::factory()->create([
-            'region_manager_id' => $this->regionManager,
-        ]);
+        /** @var Region $region */
+        $region = Region::factory()->create();
+        $region->managers()->attach($this->regionManager->id);
 
         $this->actingAs($john);
 
@@ -55,9 +55,9 @@ class RegionRowTest extends TestCase
     {
         $john = User::factory()->create(['role' => Role::ADMIN]);
 
-        $region = Region::factory()->create([
-            'region_manager_id' => $this->regionManager,
-        ]);
+        /** @var Region $region */
+        $region = Region::factory()->create();
+        $region->managers()->attach($this->regionManager->id);
 
         $this->actingAs($john);
 
@@ -69,20 +69,17 @@ class RegionRowTest extends TestCase
     /** @test */
     public function it_should_show_only_offices_managed_by_office_manager()
     {
+        /** @var Region $region */
+        $region = Region::factory()->create();
+        $region->managers()->attach($this->regionManager->id);
 
-        $region = Region::factory()->create([
-            'region_manager_id' => $this->regionManager,
-        ]);
+        /** @var Office $officeManaged */
+        $officeManaged = Office::factory()->create(['region_id' => $region]);
+        $officeManaged->managers()->attach($this->officeManager->id);
 
-        $officeManaged = Office::factory()->create([
-            'office_manager_id' => $this->officeManager,
-            'region_id'         => $region
-        ]);
-
-        $officeNotManaged = Office::factory()->create([
-            'office_manager_id' => User::factory()->create(['role' => Role::OFFICE_MANAGER]),
-            'region_id'         => $region
-        ]);
+        /** @var Office $officeNotManaged */
+        $officeNotManaged = Office::factory()->create(['region_id' => $region]);
+        $officeNotManaged->managers()->attach(User::factory()->create(['role' => Role::OFFICE_MANAGER]));
 
         $this->actingAs($this->officeManager);
 
@@ -95,40 +92,34 @@ class RegionRowTest extends TestCase
     /** @test */
     public function it_should_show_only_offices_of_setters_or_sales_rep()
     {
+        /** @var Region $region */
+        $region = Region::factory()->create();
+        $region->managers()->attach($this->regionManager->id);
 
-        $region = Region::factory()->create([
-            'region_manager_id' => $this->regionManager,
-        ]);
+        /** @var Office $officeManaged */
+        $officeManaged = Office::factory()->create(['region_id' => $region]);
+        $officeManaged->managers()->attach($this->officeManager->id);
 
-        $officeOfUser = Office::factory()->create([
-            'office_manager_id' => $this->officeManager,
-            'region_id'         => $region
-        ]);
+        /** @var Office $officeNotManaged */
+        $officeNotManaged = Office::factory()->create(['region_id' => $region]);
+        $officeNotManaged->managers()->attach(User::factory()->create(['role' => Role::OFFICE_MANAGER]));
 
-        $otherOffice = Office::factory()->create([
-            'office_manager_id' => User::factory()->create(['role' => Role::OFFICE_MANAGER]),
-            'region_id'         => $region
-        ]);
-
-        $this->setter->office_id = $officeOfUser->id;
-        $this->setter->save();
-
-        $this->salesRep->office_id = $officeOfUser->id;
-        $this->salesRep->save();
+        $this->setter->update(['office_id' => $officeManaged->id]);
+        $this->salesRep->update(['office_id' => $officeManaged->id]);
 
         $this->actingAs($this->setter);
 
         Livewire::test(RegionRow::class, $this->buildProps($region))
             ->call('collapseRegion')
-            ->assertSet('offices.0.name', $officeOfUser->name)
-            ->assertNotSet('offices.1.name', $otherOffice->name);
+            ->assertSet('offices.0.name', $officeManaged->name)
+            ->assertNotSet('offices.1.name', $officeNotManaged->name);
 
         $this->actingAs($this->salesRep);
 
         Livewire::test(RegionRow::class, $this->buildProps($region))
             ->call('collapseRegion')
-            ->assertSet('offices.0.name', $officeOfUser->name)
-            ->assertNotSet('offices.1.name', $otherOffice->name);
+            ->assertSet('offices.0.name', $officeManaged->name)
+            ->assertNotSet('offices.1.name', $officeNotManaged->name);
     }
 
     private function buildProps(mixed $region): array

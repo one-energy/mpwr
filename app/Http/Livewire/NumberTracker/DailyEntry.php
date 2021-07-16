@@ -34,6 +34,7 @@ class DailyEntry extends Component
     public function mount()
     {
         $this->getMissingOffices();
+
         $this->dateSelected     = date('Y-m-d', time());
         $this->lastDateSelected = date('Y-m-d', strtotime($this->dateSelected . '-1 day'));
         $this->setOffice($this->getOfficeQuery()->first());
@@ -56,7 +57,7 @@ class DailyEntry extends Component
     {
         $usersQuery = User::query();
 
-        if (user()->hasAnyRole(['Setter', 'Sales Rep']) || !$this->isManager()) {
+        if (user()->hasAnyRole([Role::SETTER, Role::SALES_REP]) || !$this->isManager()) {
             $usersQuery->where('users.id', '=', user()->id);
         }
 
@@ -67,7 +68,7 @@ class DailyEntry extends Component
                 'dailyNumbers' => function ($query) use ($dateSelected) {
                     $query->whereDate('date', $dateSelected)
                         ->where('office_id', $this->officeSelected);
-                }
+                },
             ])
             ->orderBy('first_name')
             ->get()
@@ -135,14 +136,27 @@ class DailyEntry extends Component
 
     public function isManager()
     {
-        if (user()->id == Office::find($this->officeSelected)?->office_manager_id) {
-            return true;
+        /** @var Office|null $office */
+        $office = Office::find($this->officeSelected);
+
+        if ($office === null) {
+            return false;
         }
-        if (user()->id == Office::find($this->officeSelected)?->region->region_manager_id) {
-            return true;
+
+        if (user()->hasRole(Role::OFFICE_MANAGER)) {
+            return $office->managers()->where('user_id', user()->id)->exists();
         }
-        if (user()->id == Office::find($this->officeSelected)?->region->department->department_manager_id) {
-            return true;
+
+        if (user()->hasRole(Role::REGION_MANAGER)) {
+            return user()->managedRegions()
+                ->where('regions.id', $office->region_id)
+                ->exists();
+        }
+
+        if (user()->hasRole(Role::DEPARTMENT_MANAGER)) {
+            return user()->managedDepartments()
+                ->where('departments.id', $office->region->department_id)
+                ->exists();
         }
 
         return false;
@@ -164,11 +178,14 @@ class DailyEntry extends Component
         }
 
         if (user()->hasRole(Role::REGION_MANAGER)) {
-            $query->orWhere('regions.region_manager_id', '=', user()->id);
+            $query->orWhereHas(
+                'region',
+                fn ($query) => $query->whereIn('id', user()->managedRegions->pluck('id'))
+            );
         }
 
         if (user()->hasRole(Role::OFFICE_MANAGER)) {
-            $query->orWhere('offices.office_manager_id', '=', user()->id);
+            $query->whereIn('id', user()->managedOffices->pluck('id'));
         }
 
         $query->orWhere('offices.id', '=', user()->office_id);

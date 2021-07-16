@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Castle\Department;
 
+use App\Enum\Role;
 use App\Models\Department;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -23,24 +24,17 @@ class GetDepartmentTest extends TestCase
     /** @test */
     public function it_should_list_all_departments()
     {
-        $admin = User::factory()->create(['role' => 'Admin']);
+        $admin                = User::factory()->create(['role' => Role::ADMIN]);
+        $departmentManagerOne = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+        $departmentManagerTwo = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
 
-        $departmentManagerOne = User::factory()->create(['role' => 'Department Manager']);
-        $departmentManagerTwo = User::factory()->create(['role' => 'Department Manager']);
+        /** @var Department $departmentOne */
+        $departmentOne = Department::factory()->create();
+        $departmentOne->managers()->attach($departmentManagerOne->id);
 
-        $departmentOne = Department::factory()->create([
-            'department_manager_id' => $departmentManagerOne->id,
-        ]);
-
-        $departmentTwo = Department::factory()->create([
-            'department_manager_id' => $departmentManagerTwo->id,
-        ]);
-
-        $departmentManagerOne->department_id = $departmentOne->id;
-        $departmentManagerOne->save();
-
-        $departmentManagerTwo->department_id = $departmentTwo->id;
-        $departmentManagerTwo->save();
+        /** @var Department $departmentTwo */
+        $departmentTwo = Department::factory()->create();
+        $departmentTwo->managers()->attach($departmentManagerTwo->id);
 
         $this
             ->actingAs($admin)
@@ -54,11 +48,11 @@ class GetDepartmentTest extends TestCase
     /** @test */
     public function it_should_block_access_to_department()
     {
-        $departmentManager = User::factory()->create(['role' => 'Department Manager']);
-        $regionManager     = User::factory()->create(['role' => 'Region Manager']);
-        $officeManager     = User::factory()->create(['role' => 'Office Manager']);
-        $setter            = User::factory()->create(['role' => 'Setter']);
-        $salesRep          = User::factory()->create(['role' => 'Sales Rep']);
+        $departmentManager = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+        $regionManager     = User::factory()->create(['role' => Role::REGION_MANAGER]);
+        $officeManager     = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
+        $setter            = User::factory()->create(['role' => Role::SETTER]);
+        $salesRep          = User::factory()->create(['role' => Role::SALES_REP]);
 
         $this->actingAs($departmentManager)
             ->get(route('castle.departments.index'))
@@ -84,8 +78,8 @@ class GetDepartmentTest extends TestCase
     /** @test */
     public function it_should_allow_access_to_department()
     {
-        $owner = User::factory()->create(['role' => 'Owner']);
-        $admin = User::factory()->create(['role' => 'Admin']);
+        $owner = User::factory()->create(['role' => Role::OWNER]);
+        $admin = User::factory()->create(['role' => Role::ADMIN]);
 
         $this->actingAs($owner)
             ->get(route('castle.departments.index'))

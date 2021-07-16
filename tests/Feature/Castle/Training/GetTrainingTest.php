@@ -18,8 +18,12 @@ class GetTrainingTest extends TestCase
     public function it_should_show_section_index()
     {
         $departmentManager = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
-        $department        = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $section           = TrainingPageSection::factory()->create(['department_id' => $department->id]);
+
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($departmentManager->id);
+
+        $section = TrainingPageSection::factory()->create(['department_id' => $department->id]);
 
         $departmentManager->update(['department_id' => $department->id]);
 
@@ -32,7 +36,11 @@ class GetTrainingTest extends TestCase
     /** @test */
     public function it_should_redirect_department_manager_to_home_if_the_user_dont_have_department_id()
     {
-        $departmentManager = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+        [$departmentManager, $department] = $this->createVP();
+
+        $departmentManager->update(['department_id' => null]);
+
+        TrainingPageSection::factory()->create(['department_id' => $department->id]);
 
         $this
             ->actingAs($departmentManager)
@@ -44,8 +52,12 @@ class GetTrainingTest extends TestCase
     /** @test */
     public function it_should_show_sections()
     {
-        $master       = User::factory()->create(['role' => Role::ADMIN]);
-        $department   = Department::factory()->create(['department_manager_id' => $master->id]);
+        $master = User::factory()->create(['role' => Role::ADMIN]);
+
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($master);
+
         $section      = (new TrainingSectionBuilder)->save()->get();
         $sectionOne   = TrainingPageSection::factory()->create([
             'parent_id'     => $section->id,
@@ -85,17 +97,16 @@ class GetTrainingTest extends TestCase
     /** @test */
     public function it_shouldnt_show_if_user_doesnt_belongs_to_departments()
     {
+        /** @var Department $departmentOne */
         $departmentOne = Department::factory()->create();
+        /** @var Department $departmentTwo */
         $departmentTwo = Department::factory()->create();
 
         $departmentManagerOne = User::factory()->create(['department_id' => $departmentOne->id]);
         $departmentManagerTwo = User::factory()->create(['department_id' => $departmentTwo->id]);
 
-        $departmentOne->department_manager_id = $departmentManagerOne->id;
-        $departmentTwo->department_manager_id = $departmentManagerTwo->id;
-
-        $departmentOne->save();
-        $departmentTwo->save();
+        $departmentOne->managers()->attach($departmentManagerOne->id);
+        $departmentTwo->managers()->attach($departmentManagerTwo->id);
 
         $salesRepOne = User::factory()->create([
             'department_id' => $departmentOne->id,

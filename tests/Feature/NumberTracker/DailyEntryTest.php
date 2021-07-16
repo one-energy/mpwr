@@ -35,7 +35,7 @@ class DailyEntryTest extends TestCase
 
     private DailyNumber $officeManagerEntry;
 
-    private DailyNumber $johnManagerEntry;
+    private DailyNumber $johnEntry;
 
     protected function setUp(): void
     {
@@ -45,21 +45,18 @@ class DailyEntryTest extends TestCase
         $this->regionManager = User::factory()->create(['role' => Role::REGION_MANAGER]);
         $this->officeManager = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
 
-        $this->department = Department::factory()->create([
-            'department_manager_id' => $this->dptManager->id,
-        ]);
+        $this->department = Department::factory()->create();
+        $this->department->managers()->attach($this->dptManager->id);
 
-        $this->region = Region::factory()->create([
-            'department_id'     => $this->department->id,
-            'region_manager_id' => $this->regionManager->id,
-        ]);
+        $this->region = Region::factory()->create(['department_id' => $this->department->id]);
+        $this->region->managers()->attach($this->regionManager->id);
 
-        $this->office = Office::factory()->create([
-            'region_id'         => $this->region->id,
-            'office_manager_id' => $this->officeManager->id,
-        ]);
+        $this->office = Office::factory()->create(['region_id' => $this->region->id]);
+        $this->office->managers()->attach($this->officeManager->id);
 
         $this->john = User::factory()->create([
+            'first_name'    => 'John',
+            'last_name'     => 'Doe',
             'role'          => Role::SALES_REP,
             'department_id' => $this->department->id,
             'office_id'     => $this->office->id,
@@ -86,7 +83,8 @@ class DailyEntryTest extends TestCase
             'date'      => Carbon::now(),
             'doors'     => 15,
         ]);
-        $this->johnEntry          = DailyNumber::factory()->create([
+
+        $this->johnEntry = DailyNumber::factory()->create([
             'user_id'   => $this->john->id,
             'office_id' => $this->office->id,
             'date'      => Carbon::now(),
@@ -99,7 +97,7 @@ class DailyEntryTest extends TestCase
     {
         Livewire::test(DailyEntry::class)
             ->set('officeSelected', $this->office->id)
-            ->assertSee($this->john->first_name)
+            ->assertSee($this->john->full_name)
             ->assertSee(15);
     }
 
@@ -175,10 +173,10 @@ class DailyEntryTest extends TestCase
     public function it_should_get_offices_that_not_have_entries()
     {
         $missingOffices = [$this->office];
-        $someOffice     = Office::factory()->create([
-            'region_id'         => $this->region->id,
-            'office_manager_id' => $this->officeManager->id,
-        ]);
+
+        /** @var Office $someOffice */
+        $someOffice = Office::factory()->create(['region_id' => $this->region->id]);
+        $someOffice->managers()->attach($this->officeManager->id);
 
         $missingOffices[] = $someOffice;
 

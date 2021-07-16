@@ -35,8 +35,13 @@ class FolderTest extends TestCase
     /** @test */
     public function a_department_managed_should_be_able_to_see_folder_actions()
     {
-        $john             = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
-        $department       = Department::factory()->create(['department_manager_id' => $john->id]);
+        /** @var User $john */
+        $john = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($john->id);
+
         $rootSection      = TrainingPageSection::factory()->create(['department_id' => $department->id]);
         $childrenSections = TrainingPageSection::factory()->times(2)->create(['parent_id' => $rootSection->id]);
 

@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Castle\Office;
 
-use App\Models\Department;
+use App\Enum\Role;
 use App\Models\Office;
 use App\Models\Region;
 use App\Models\User;
@@ -13,6 +13,8 @@ use Tests\TestCase;
 class GetOfficeTest extends TestCase
 {
     use RefreshDatabase;
+
+    private User $user;
 
     protected function setUp(): void
     {
@@ -26,26 +28,23 @@ class GetOfficeTest extends TestCase
     /** @test */
     public function it_should_list_all_offices()
     {
-        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
-        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
+        [$departmentManager, $department] = $this->createVP();
 
         $regionManager = User::factory()->create([
             'department_id' => $department->id,
-            'role'          => 'Region Manager',
+            'role'          => Role::REGION_MANAGER,
         ]);
 
-        $region        = Region::factory()->create([
-            'region_manager_id' => $regionManager->id,
-            'department_id'     => $department->id,
-        ]);
-        $officeManager = User::factory()->create(['role' => 'Office Manager']);
+        /** @var Region $region */
+        $region = Region::factory()->create(['department_id' => $department->id]);
+        $region->managers()->attach(($regionManager->id));
 
-        $offices = Office::factory()->count(6)->create([
-            'region_id'         => $region->id,
-            'office_manager_id' => $officeManager->id,
-        ]);
+        $officeManager = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
+
+        $offices = Office::factory()
+            ->count(6)
+            ->create(['region_id' => $region->id])
+        ->each(fn (Office $office) => $office->managers()->attach($officeManager->id));
 
         $response = $this
             ->actingAs($departmentManager)

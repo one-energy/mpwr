@@ -25,8 +25,85 @@ class StoreUserTest extends TestCase
 
         $this->admin = User::factory()->create([
             'role'  => Role::ADMIN,
-            'email' => 'devsquad@mail.com'
+            'email' => 'devsquad@mail.com',
         ]);
+    }
+
+    /** @test */
+    public function it_should_require_last_name()
+    {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+        $data = array_merge(User::factory()->raw(), ['last_name' => null]);
+
+        $this->actingAs($john)
+            ->post(route('castle.users.store'), $data)
+            ->assertSessionHasErrors('last_name');
+    }
+
+    /** @test */
+    public function it_should_require_an_email()
+    {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+        $data = array_merge(User::factory()->raw(), ['email' => null]);
+
+        $this->actingAs($john)
+            ->post(route('castle.users.store'), $data)
+            ->assertSessionHasErrors('email');
+    }
+
+    /** @test */
+    public function it_should_prevent_first_name_greater_than_255()
+    {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+        $data = array_merge(User::factory()->raw(), ['first_name' => Str::random(256)]);
+
+        $this->actingAs($john)
+            ->post(route('castle.users.store'), $data)
+            ->assertSessionHasErrors('first_name');
+    }
+
+    /** @test */
+    public function it_should_prevent_last_name_greater_than_255()
+    {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+        $data = array_merge(User::factory()->raw(), ['last_name' => Str::random(256)]);
+
+        $this->actingAs($john)
+            ->post(route('castle.users.store'), $data)
+            ->assertSessionHasErrors('last_name');
+    }
+
+    /** @test */
+    public function it_should_prevent_an_invalid_role()
+    {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+        $data = array_merge(User::factory()->raw(), ['role' => Str::random(10)]);
+
+        $this->actingAs($john)
+            ->post(route('castle.users.store'), $data)
+            ->assertSessionHasErrors('role');
+    }
+
+    /** @test */
+    public function it_should_prevent_an_invalid_office_id()
+    {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+        $data = array_merge(User::factory()->raw(), ['office_id' => 999]);
+
+        $this->actingAs($john)
+            ->post(route('castle.users.store'), $data)
+            ->assertSessionHasErrors('office_id');
+    }
+
+    /** @test */
+    public function it_should_prevent_an_invalid_department_id()
+    {
+        $john = User::factory()->create(['role' => Role::ADMIN]);
+        $data = array_merge(User::factory()->raw(), ['department_id' => 999]);
+
+        $this->actingAs($john)
+            ->post(route('castle.users.store'), $data)
+            ->assertSessionHasErrors('department_id');
     }
 
     /** @test */
@@ -56,7 +133,7 @@ class StoreUserTest extends TestCase
         $dummy = $this->makeUser([
             'role'          => Role::DEPARTMENT_MANAGER,
             'department_id' => null,
-            'office_id'     => null
+            'office_id'     => null,
         ]);
 
         $this->createUser($dummy);
@@ -73,7 +150,7 @@ class StoreUserTest extends TestCase
             'email'         => 'sample@mail.com',
             'role'          => Role::DEPARTMENT_MANAGER,
             'department_id' => null,
-            'office_id'     => null
+            'office_id'     => null,
         ]);
 
         $this->createUser($dummy);
@@ -89,69 +166,6 @@ class StoreUserTest extends TestCase
         $invitation->notify(new UserInvitation());
 
         Notification::assertSentTo($invitation, UserInvitation::class);
-    }
-
-    /** @test */
-    public function it_should_set_office_id_to_null_if_the_provided_value_is_none()
-    {
-        Notification::fake();
-
-        $dummy = $this->makeUser([
-            'role'          => Role::DEPARTMENT_MANAGER,
-            'department_id' => null,
-            'office_id'     => 'None'
-        ]);
-
-        $this->createUser($dummy);
-
-        $dummy->refresh();
-
-        $this->assertDatabaseHas('users', [
-            'email'     => $dummy->email,
-            'office_id' => null
-        ]);
-    }
-
-    /** @test */
-    public function it_should_set_department_id_to_null_if_the_provided_value_is_none()
-    {
-        Notification::fake();
-
-        $dummy = $this->makeUser([
-            'role'          => Role::DEPARTMENT_MANAGER,
-            'department_id' => 'None',
-            'office_id'     => null
-        ]);
-
-        $this->createUser($dummy);
-
-        $dummy->refresh();
-
-        $this->assertDatabaseHas('users', [
-            'email'         => $dummy->email,
-            'department_id' => null
-        ]);
-    }
-
-    /** @test */
-    public function it_should_set_department_id_to_null_if_the_provided_role_is_admin_or_owner()
-    {
-        Notification::fake();
-
-        $dummy = $this->makeUser([
-            'role'          => Role::ADMIN,
-            'department_id' => 1,
-            'office_id'     => null
-        ]);
-
-        $this->createUser($dummy);
-
-        $dummy->refresh();
-
-        $this->assertDatabaseHas('users', [
-            'email'         => $dummy->email,
-            'department_id' => null
-        ]);
     }
 
     /** @test */

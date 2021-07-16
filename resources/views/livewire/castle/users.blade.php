@@ -42,10 +42,10 @@
                                         </x-table.th-searchable>
                                         <x-table.th-searchable by="role" :sortedBy="$sortBy" :direction="$sortDirection">
                                             @lang('Office')
-                                        </x-table.th>
-                                        <x-table.th-searchable by="role" :sortedBy="$sortBy" :direction="$sortDirection">
-                                            @lang('Pay')
-                                        </x-table.th-searchable>
+                                            </x-table.th>
+                                            <x-table.th-searchable by="role" :sortedBy="$sortBy" :direction="$sortDirection">
+                                                @lang('Pay')
+                                            </x-table.th-searchable>
                                     </tr>
                                 </x-slot>
                                 <x-slot name="body">
@@ -61,18 +61,7 @@
                                                     <div class="flex items-center">
                                                         @if ($this->canSeeOffices($user))
                                                             <div class="hidden md:block">
-                                                                <div
-                                                                    class="bg-gray-200 rounded shadow-xl w-48 h-auto p-4"
-                                                                    style="position: absolute; left: -177px; top: 20px;"
-                                                                    x-transition:enter="transition ease-out duration-300"
-                                                                    x-transition:enter-start="opacity-0 transform scale-90"
-                                                                    x-transition:enter-end="opacity-100 transform scale-100"
-                                                                    x-transition:leave="transition ease-in duration-300"
-                                                                    x-transition:leave-start="opacity-100 transform scale-100"
-                                                                    x-transition:leave-end="opacity-0 transform scale-90"
-                                                                    x-show="open"
-                                                                    x-cloak
-                                                                >
+                                                                <x-popover left :ref="$loop->index">
                                                                     @if ($user->hasRole('Office Manager'))
                                                                         @foreach($user->managedOffices as $office)
                                                                             <p>{{ $office->name }}</p>
@@ -82,10 +71,11 @@
                                                                     @if ($user->hasAnyRole(['Region Manager', 'Department Manager']))
                                                                         <p>{{ $user->office?->name }}</p>
                                                                     @endif
-                                                                </div>
+                                                                </x-popover>
                                                                 <x-icon
-                                                                    @mouseenter="open = true"
-                                                                    @mouseleave="open = false"
+                                                                    x-data=""
+                                                                    x-on:mouseenter="$dispatch('open-popover', {ref: '{{ $loop->index }}'})"
+                                                                    x-on:mouseleave="$dispatch('close-popover', {ref: '{{ $loop->index }}'})"
                                                                     icon="user"
                                                                     class="w-3.5 h-auto mr-2.5"
                                                                 />

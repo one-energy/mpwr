@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Customer;
 
+use App\Enum\Role;
 use App\Http\Livewire\Customer\Create;
 use App\Models\Customer;
 use App\Models\Department;
@@ -30,12 +31,12 @@ class CustomerTest extends TestCase
     {
         parent::setUp();
 
+        $this->user      = User::factory()->create(['role' => Role::ADMIN]);
         $this->financing = Financing::factory()->create();
         $this->financer  = Financer::factory()->create();
-        $this->regionMng = User::factory()->create(['role' => 'Region Manager']);
-        $this->officeMng = User::factory()->create(['role' => 'Office Manager']);
+        $this->regionMng = User::factory()->create(['role' => Role::REGION_MANAGER]);
+        $this->officeMng = User::factory()->create(['role' => Role::OFFICE_MANAGER]);
 
-        $this->user = User::factory()->create(['role' => 'Admin']);
         Department::factory()->count(6)->create();
 
         MultiplierOfYear::factory()->create(['year' => now()->year]);
@@ -61,14 +62,12 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_filter_by_active_customers()
     {
-        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
-        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $departmentManager->department_id = $department->id;
+        [$departmentManager, $department] = $this->createVP();
+
         Financing::factory()->create();
         Financer::factory()->create();
         Term::factory()->create();
         Rates::factory()->create();
-        $departmentManager->save();
 
         $setter = User::factory()->create([
             'role'          => 'Setter',
@@ -100,10 +99,7 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_filter_by_inactive_customers()
     {
-        $departmentManager                = User::factory()->create(['role' => 'Department Manager']);
-        $department                       = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $departmentManager->department_id = $department->id;
-        $departmentManager->save();
+        [$departmentManager, $department] = $this->createVP();
 
         $setter            = User::factory()->create([
             'role'          => 'Setter',
@@ -145,9 +141,9 @@ class CustomerTest extends TestCase
     /** @test */
     public function it_should_save_user_overrides_on_customer()
     {
-        $user      = User::factory()->create(['role' => 'Department Manager']);
-        $userOne   = User::factory()->create(['role' => 'Setter']);
-        $userTwo   = User::factory()->create([
+        $user    = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
+        $userOne = User::factory()->create(['role' => Role::SETTER]);
+        $userTwo = User::factory()->create([
             'recruiter_id'                => $userOne->id,
             'referral_override'           => 10,
             'office_manager_id'           => $this->officeMng->id,
@@ -179,9 +175,6 @@ class CustomerTest extends TestCase
             ->set('customer.sales_rep_id', $userTwo->id)
             ->set('customer.sales_rep_fee', 20)
             ->set('customer.sales_rep_comission', 0)
-            ->set('customer.sales_rep_comission', 0)
-            ->set('stockPoints', 0)
-            ->set('grossRepComission', 0)
             ->set('customer.margin', 0)
             ->call('store');
 

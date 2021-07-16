@@ -21,17 +21,15 @@ class RegionsSeeder extends Seeder
             ->times(3)
             ->create([
                 'role'          => Role::REGION_MANAGER,
-                'department_id' => $department->id
+                'department_id' => $department->id,
             ])
             ->each(fn(User $user) => $this->createRegion($department, $user));
     }
 
     private function createRegion(Department $department, User $user)
     {
-        Region::factory()
-            ->create([
-                'department_id'     => $department->id,
-                'region_manager_id' => $user->id,
-            ]);
+        /** @var Region $region */
+        $region = Region::factory()->create(['department_id' => $department->id]);
+        $region->managers()->attach($user->id);
     }
 }

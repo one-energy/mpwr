@@ -32,13 +32,12 @@ class Department extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'department_manager_id',
         'name',
     ];
 
-    public function departmentAdmin()
+    public function managers()
     {
-        return $this->belongsTo(User::class, 'department_manager_id');
+        return $this->belongsToMany(User::class, 'user_managed_departments')->withTimestamps();
     }
 
     public function regions()

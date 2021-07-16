@@ -67,7 +67,7 @@ class Create extends Component
 
     public function mount()
     {
-        if (user()->role != 'Admin' && user()->role != 'Owner') {
+        if (user()->notHaveRoles([Role::ADMIN, Role::OWNER])) {
             $this->departmentId = user()->department_id;
         } else {
             $this->departmentId = Department::first()->id;
@@ -182,7 +182,7 @@ class Create extends Component
 
     public function getSetterFee()
     {
-        return Rates::whereRole('Setter')->first();
+        return Rates::whereRole(Role::SETTER)->first();
     }
 
     public function getSalesRepRate($userId)
@@ -197,11 +197,12 @@ class Create extends Component
 
     public function getUserRate($userId)
     {
+        /** @var User $user */
         $user = User::whereId($userId)->first();
 
         if ($user) {
             $rate = Rates::whereRole($user->role);
-            $rate->when($user->role == 'Sales Rep', function ($query) use ($user) {
+            $rate->when($user->hasRole(Role::SALES_REP), function ($query) use ($user) {
                 $query->where('time', '<=', $user->installs)->orderBy('time', 'desc');
             });
 

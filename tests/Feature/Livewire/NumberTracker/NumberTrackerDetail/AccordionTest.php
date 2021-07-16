@@ -53,39 +53,36 @@ class AccordionTest extends TestCase
     /** @test */
     public function it_should_just_show_all_regions_of_department()
     {
-        $regionManaged = Region::factory()->create([
-            'region_manager_id' => $this->regionManager,
-            'department_id'     => $this->department
-        ]);
+        /** @var Region $regionManaged */
+        $regionManaged = Region::factory()->create(['department_id' => $this->department]);
+        $regionManaged->managers()->attach($this->regionManager->id);
 
-        $regioneNotManaged = Region::factory()->create([
-            'region_manager_id' => User::factory()->create(['role' => Role::REGION_MANAGER]),
-            'department_id'     => $this->department
-        ]);
+        /** @var Region $regionNotManaged */
+        $regionNotManaged = Region::factory()->create(['department_id' => $this->department]);
+        $regionNotManaged->managers()->attach(User::factory()->create(['role' => Role::REGION_MANAGER])->id);
+
 
         $this->actingAs($this->regionManager);
 
         Livewire::test(NumberTrackerDetailAccordionTable::class, $this->buildProps())
             ->assertSee($regionManaged->name)
-            ->assertSee($regioneNotManaged->name);
+            ->assertSee($regionNotManaged->name);
     }
 
     /** @test */
     public function it_should_just_show_region_of_office_managed_by_user()
     {
-        $regionOfOffice = Region::factory()->create([
-            'region_manager_id' => $this->regionManager,
-            'department_id'     => $this->department
-        ]);
+        /** @var Region $regionOfOffice */
+        $regionOfOffice = Region::factory()->create(['department_id' => $this->department]);
+        $regionOfOffice->managers()->attach($this->regionManager->id);
 
-        $regionAny = Region::factory()->create([
-            'region_manager_id' => User::factory()->create(['role' => Role::REGION_MANAGER]),
-        ]);
+        /** @var Region $regionAny */
+        $regionAny = Region::factory()->create();
+        $regionAny->managers()->attach(User::factory()->create(['role' => Role::REGION_MANAGER])->id);
 
-        Office::factory()->create([
-            'office_manager_id' => $this->officeManager,
-            'region_id'         => $regionOfOffice
-        ]);
+        /** @var Office $office */
+        $office = Office::factory()->create(['region_id' => $regionOfOffice]);
+        $office->managers()->attach($this->officeManager->id);
 
         $this->actingAs($this->officeManager);
 
@@ -97,25 +94,21 @@ class AccordionTest extends TestCase
     /** @test */
     public function it_should_just_show_region_of_office_of_setter_or_sales_rep()
     {
-        $regionOfOffice = Region::factory()->create([
-            'region_manager_id' => $this->regionManager,
-            'department_id'     => $this->department
-        ]);
+        /** @var Region $regionOfOffice */
+        $regionOfOffice = Region::factory()->create(['department_id' => $this->department]);
+        $regionOfOffice->managers()->attach($this->regionManager->id);
 
-        $regionAny = Region::factory()->create([
-            'region_manager_id' => User::factory()->create(['role' => Role::REGION_MANAGER]),
-        ]);
+        /** @var Region $regionAny */
+        $regionAny = Region::factory()->create();
+        $regionAny->managers()->attach(User::factory()->create(['role' => Role::REGION_MANAGER])->id);
 
-        $office = Office::factory()->create([
-            'office_manager_id' => $this->officeManager,
-            'region_id'         => $regionOfOffice
-        ]);
 
-        $this->setter->office_id = $office->id;
-        $this->setter->save();
+        /** @var Office $office */
+        $office = Office::factory()->create(['region_id' => $regionOfOffice]);
+        $office->managers()->attach($this->officeManager->id);
 
-        $this->salesRep->office_id = $office->id;
-        $this->salesRep->save();
+        $this->setter->update(['office_id' => $office->id]);
+        $this->salesRep->update(['office_id' => $office->id]);
 
         $this->actingAs($this->setter);
 

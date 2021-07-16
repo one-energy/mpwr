@@ -45,10 +45,10 @@ class UsersController extends Controller
             'role'          => ['nullable', 'string', 'max:255', 'in:' . implode(',', Role::getValues())],
             'office_id'     => ['nullable'],
             'pay'           => ['nullable'],
-            'department_id' => ['nullable'],
+            'department_id' => ['nullable', 'exists:departments,id'],
             'email'         => [
                 'required',
-                'email',
+                'email:rfc,filter',
                 'unique:invitations',
                 new MasterEmailUnique,
                 new MasterEmailYourSelf,
@@ -162,6 +162,7 @@ class UsersController extends Controller
     {
         return User::create(array_merge($data, [
             'master'    => $invitation->master,
+            'password'  => bcrypt(Str::random(8)),
             'photo_url' => asset('storage/profiles/profile.png'),
         ]));
     }
@@ -222,8 +223,8 @@ class UsersController extends Controller
     public function getRegionsManager($departmentId)
     {
         return User::query()
-            ->where('department_id', $departmentId)
-            ->where('role', Role::REGION_MANAGER)
+            ->whereRole(Role::REGION_MANAGER)
+            ->whereDepartmentId($departmentId)
             ->orderBy('first_name', 'ASC')
             ->orderBy('last_name', 'ASC')
             ->get();
@@ -231,10 +232,9 @@ class UsersController extends Controller
 
     public function getOfficesManager(Region $region)
     {
-        $usersQuery = User::query()->select('users.*');
-
-        return $usersQuery->whereRole('Office Manager')
-            ->whereDepartmentId($region->department_id)
+        return User::query()
+            ->whereRole(Role::OFFICE_MANAGER)
+            ->whereDepartmentId($region?->department_id)
             ->orderBy('first_name', 'ASC')
             ->orderBy('last_name', 'ASC')
             ->get();

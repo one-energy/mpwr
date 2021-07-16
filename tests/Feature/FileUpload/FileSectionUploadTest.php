@@ -32,12 +32,8 @@ class FileSectionUploadTest extends TestCase
 
         $this->department = Department::factory()->create();
         $this->user       = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
-
-        $this->section = TrainingPageSection::factory()->create([
-            'department_id' => $this->department->id
-        ]);
-
-        $this->files = collect([]);
+        $this->section    = TrainingPageSection::factory()->create(['department_id' => $this->department->id]);
+        $this->files      = collect([]);
 
         $this->actingAs($this->user);
     }
@@ -49,9 +45,7 @@ class FileSectionUploadTest extends TestCase
 
         $this->files->push(UploadedFile::fake()->create('avatar.pdf'));
 
-        $this->uploadFile()
-            ->assertSuccessful()
-            ->assertOk();
+        $this->uploadFile()->assertSuccessful()->assertOk();
 
         Storage::disk('local')->assertExists($this->getFilePath($this->files->first()->hashName()));
     }
@@ -64,9 +58,7 @@ class FileSectionUploadTest extends TestCase
         $this->files->push(UploadedFile::fake()->create('first.pdf'));
         $this->files->push(UploadedFile::fake()->create('last.pdf'));
 
-        $this->uploadFile()
-            ->assertSuccessful()
-            ->assertOk();
+        $this->uploadFile()->assertSuccessful()->assertOk();
 
         Storage::disk('local')->assertExists($this->getFilePath($this->files->first()->hashName()));
         Storage::disk('local')->assertExists($this->getFilePath($this->files->last()->hashName()));
@@ -79,9 +71,7 @@ class FileSectionUploadTest extends TestCase
 
         $this->files->push(UploadedFile::fake()->create('avatar.pdf'));
 
-        $this->uploadFile()
-            ->assertSuccessful()
-            ->assertOk();
+        $this->uploadFile()->assertSuccessful()->assertOk();
 
         $this->assertDatabaseHas('section_files', [
             'original_name' => 'avatar',
@@ -156,12 +146,11 @@ class FileSectionUploadTest extends TestCase
     {
         $regionManager = User::factory()->create(['role' => Role::REGION_MANAGER]);
 
-        $region = Region::factory()->create([
-            'department_id'     => $this->department->id,
-            'region_manager_id' => $regionManager->id
-        ]);
+        /** @var Region $region */
+        $region = Region::factory()->create(['department_id' => $this->department->id]);
+        $region->managers()->attach($regionManager->id);
 
-        $this->regionSection = TrainingPageSection::factory()->create([
+        $regionSection = TrainingPageSection::factory()->create([
             'department_id'     => $this->department->id,
             'region_id'         => $region->id,
             'department_folder' => false,
@@ -170,7 +159,7 @@ class FileSectionUploadTest extends TestCase
         $this->files->push(UploadedFile::fake()->create('avatar.pdf'));
 
         $this->actingAs($regionManager)
-            ->uploadFile($this->regionSection)
+            ->uploadFile($regionSection)
             ->assertSuccessful()
             ->assertOk();
     }
@@ -181,12 +170,11 @@ class FileSectionUploadTest extends TestCase
         $regionManagerOfSection = User::factory()->create(['role' => Role::REGION_MANAGER]);
         $regionManager          = User::factory()->create(['role' => Role::REGION_MANAGER]);
 
-        $region = Region::factory()->create([
-            'department_id'     => $this->department->id,
-            'region_manager_id' => $regionManagerOfSection->id
-        ]);
+        /** @var Region $region */
+        $region = Region::factory()->create(['department_id' => $this->department->id]);
+        $region->managers()->attach($regionManagerOfSection->id);
 
-        $this->regionSection = TrainingPageSection::factory()->create([
+        $regionSection = TrainingPageSection::factory()->create([
             'department_id'     => $this->department->id,
             'region_id'         => $region->id,
             'department_folder' => false,
@@ -195,7 +183,7 @@ class FileSectionUploadTest extends TestCase
         $this->files->push(UploadedFile::fake()->create('avatar.pdf'));
 
         $this->actingAs($regionManager)
-            ->uploadFile($this->regionSection)
+            ->uploadFile($regionSection)
             ->assertForbidden();
     }
 
@@ -204,11 +192,11 @@ class FileSectionUploadTest extends TestCase
     {
         Storage::fake('local');
 
-        $this->files->push(UploadedFile::fake()->create('avatar.pptx', 100, 'application/vnd.ms-powerpoint'));
+        $this->files->push(
+            UploadedFile::fake()->create('avatar.pptx', 100, 'application/vnd.ms-powerpoint')
+        );
 
-        $this->uploadFile()
-            ->assertSuccessful()
-            ->assertOk();
+        $this->uploadFile()->assertSuccessful()->assertOk();
 
         Storage::disk('local')->assertExists($this->getFilePath($this->files->last()->hashName()));
     }

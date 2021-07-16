@@ -38,12 +38,13 @@ class GetRegionTest extends TestCase
     /** @test */
     public function it_should_return_all_regions_when_auth_user_has_admin_role()
     {
-        $department = Department::factory()->create(['department_manager_id' => $this->departmentManager->id]);
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($this->departmentManager->id);
+
         /** @var Collection $regions */
-        $regions = Region::factory()->times(10)->create([
-            'department_id'     => $department->id,
-            'region_manager_id' => $this->regionManager->id
-        ]);
+        $regions = Region::factory()->times(10)->create(['department_id' => $department->id]);
+        $regions->each(fn(Region $region) => $region->managers()->attach($this->regionManager->id));
 
         $response = $this->actingAs($this->admin)
             ->getJson(route('getRegions', ['department' => $department]))
@@ -60,22 +61,19 @@ class GetRegionTest extends TestCase
     /** @test */
     public function it_should_return_all_regions_by_department_id_when_auth_user_has_department_manager_role()
     {
-        $department01 = Department::factory()->create(['department_manager_id' => $this->departmentManager->id]);
-        $department02 = Department::factory()->create(['department_manager_id' => $this->departmentManager->id]);
+        $departments = Department::factory()->times(2)->create();
+        $departments->each(fn(Department $department) => $department->managers()->attach($this->departmentManager->id));
 
         /** @var Collection $regions */
-        $regions = Region::factory()->times(10)->create([
-            'department_id'     => $department01->id,
-            'region_manager_id' => $this->regionManager->id
-        ]);
+        $regions = Region::factory()->times(10)->create(['department_id' => $departments->first()->id]);
+        $regions->each(fn(Region $region) => $region->managers()->attach($this->regionManager->id));
 
-        Region::factory()->times(2)->create([
-            'department_id'     => $department02->id,
-            'region_manager_id' => $this->regionManager->id
-        ]);
+        Region::factory()
+            ->times(2)->create(['department_id' => $departments->last()->id])
+            ->each(fn(Region $region) => $region->managers()->attach($this->regionManager->id));
 
         $response = $this->actingAs($this->departmentManager)
-            ->getJson(route('getRegions', ['department' => $department01]))
+            ->getJson(route('getRegions', ['department' => $departments->first()]))
             ->assertSuccessful()
             ->assertOk();
 
@@ -91,18 +89,21 @@ class GetRegionTest extends TestCase
     /** @test */
     public function it_should_return_all_regions_by_region_manager_id_when_auth_user_has_region_manager_role()
     {
-        $manager    = User::factory()->create(['role' => Role::REGION_MANAGER]);
-        $department = Department::factory()->create(['department_manager_id' => $this->departmentManager->id]);
+        /** @var User $manager */
+        $manager = User::factory()->create(['role' => Role::REGION_MANAGER]);
 
-        Region::factory()->times(10)->create([
-            'department_id'     => $department->id,
-            'region_manager_id' => $this->regionManager->id
-        ]);
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($manager->id);
+
+        Region::factory()
+            ->times(10)
+            ->create(['department_id' => $department->id])
+            ->each(fn(Region $region) => $region->managers()->attach($this->regionManager->id));
+
         /** @var Collection $regions */
-        $regions = Region::factory()->times(2)->create([
-            'department_id'     => $department->id,
-            'region_manager_id' => $manager->id
-        ]);
+        $regions = Region::factory()->times(2)->create(['department_id' => $department->id]);
+        $regions->each(fn(Region $region) => $region->managers()->attach($manager->id));
 
         $response = $this->actingAs($manager)
             ->getJson(route('getRegions', ['department' => $department]))
@@ -121,16 +122,17 @@ class GetRegionTest extends TestCase
     /** @test */
     public function it_should_return_region_by_region_id_when_auth_user_has_office_manager_role()
     {
-        $department = Department::factory()->create(['department_manager_id' => $this->departmentManager->id]);
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($this->departmentManager->id);
+
         /** @var Collection $regions */
-        $regions = Region::factory()->times(2)->create([
-            'department_id'     => $department->id,
-            'region_manager_id' => $this->regionManager->id,
-        ]);
-        $office  = Office::factory()->create([
-            'office_manager_id' => $this->officeManager->id,
-            'region_id'         => $regions->first()->id,
-        ]);
+        $regions = Region::factory()->times(2)->create(['department_id' => $department->id]);
+        $regions->each(fn(Region $region) => $region->managers()->attach($this->regionManager->id));
+
+        $office = Office::factory()->create(['region_id' => $regions->first()->id]);
+        $office->each(fn(Office $office) => $office->managers()->attach($this->officeManager->id));
+
 
         $this->officeManager->update(['office_id' => $office->id]);
 
@@ -148,23 +150,19 @@ class GetRegionTest extends TestCase
     /** @test */
     public function it_should_list_all_regions()
     {
-        $departmentManager = User::factory()->create(['role' => Role::DEPARTMENT_MANAGER]);
-        $department        = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-
-        $departmentManager->update(['department_id' => $department->id]);
+        [$departmentManager, $department] = $this->createVP();
 
         $regionManager = User::factory()->create([
             'role'          => Role::REGION_MANAGER,
             'department_id' => $department->id,
         ]);
 
-        $regions = Region::factory()->count(6)->create([
-            'region_manager_id' => $regionManager->id,
-            'department_id'     => $department->id,
-        ]);
+        /** @var Collection|Region[] $regions */
+        $regions = Region::factory()->count(6)->create(['department_id' => $department->id]);
+        $regions->each(fn(Region $region) => $region->managers()->attach($regionManager->id));
 
         $response = $this->actingAs($departmentManager)
-            ->get('castle/regions')
+            ->get(route('castle.regions.index'))
             ->assertStatus(Response::HTTP_OK)
             ->assertViewIs('castle.regions.index')
             ->assertViewHas('regions');

@@ -25,8 +25,11 @@ class SpreadsheetTest extends TestCase
         $regionManager     = UserBuilder::build(['role' => Role::REGION_MANAGER])->save()->get();
         $officeManager     = UserBuilder::build(['role' => Role::OFFICE_MANAGER])->save()->get();
 
-        $department = Department::factory()->create(['department_manager_id' => $departmentManager->id]);
-        $region     = RegionBuilder::build()->withManager($regionManager)->withDepartment($department)->save()->get();
+        /** @var Department $department */
+        $department = Department::factory()->create();
+        $department->managers()->attach($departmentManager->id);
+
+        $region = RegionBuilder::build()->withManager($regionManager)->withDepartment($department)->save()->get();
 
         OfficeBuilder::build()->withManager($officeManager)->region($region)->save()->get();
         OfficeBuilder::build()->withManager($officeManager)->region($region)->save()->get();

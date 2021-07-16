@@ -22,16 +22,6 @@ class StoreNumberTrackerTest extends TestCase
     }
 
     /** @test */
-    public function it_should_render_create_view()
-    {
-        $this->actingAs($this->admin)
-            ->get(route('number-tracking.create'))
-            ->assertViewIs('number-tracking.create')
-            ->assertSee('Back to Tracker Overview')
-            ->assertSee('Hours Worked');
-    }
-
-    /** @test */
     public function it_should_store_daily_numbers()
     {
         $mary = User::factory()->create(['role' => Role::SETTER]);
