@@ -5,6 +5,7 @@ namespace Tests\Feature\Livewire\NumberTracker\Spreadsheet;
 use App\Enum\Role;
 use App\Http\Livewire\NumberTracker\Spreadsheet;
 use App\Models\Department;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\Builders\OfficeBuilder;
@@ -17,7 +18,7 @@ class SpreadsheetTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function it_should_see_be_possible_see_the_day_of_the_start_week()
+    public function it_should_be_possible_see_the_day_of_the_start_week()
     {
         $john = UserBuilder::build(['role' => Role::ADMIN])->save()->get();
 
@@ -39,4 +40,23 @@ class SpreadsheetTest extends TestCase
             ->assertHasNoErrors()
             ->assertSee($firstDayOfWeekLabel);
     }
+
+    /** @test */
+    public function it_should_see_all_months_until_current_month()
+    {
+        $john = UserBuilder::build(['role' => Role::ADMIN])->save()->get();
+        
+        $months = [];
+
+        $this->actingAs($john);
+
+        for ($index = 1; $index <= Carbon::now()->month; $index++) {
+            $months[$index] = Carbon::create(month: $index)->monthName;    
+        }
+        
+        Livewire::test(Spreadsheet::class)
+            ->assertHasNoErrors()
+            ->assertSeeInOrder($months);
+    }
+
 }

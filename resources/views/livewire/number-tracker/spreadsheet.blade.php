@@ -61,27 +61,35 @@
             </a>
         </div>
 
-        @if ($this->offices->isNotEmpty())
+        <div class="flex space-x-3">
             <div class="flex my-6 md:justify-end md:mb-8 md:mt-5">
-                <x-select wire:model="selectedOffice" class="w-full md:w-auto" name="offices" label="Offices">
-                    @foreach($this->offices as $office)
-                        <option value="{{ $office->id }}">{{ $office->name }}</option>
-                    @endforeach
+                <x-select wire:model="selectedMonth" class="w-full md:w-auto" name="months" label="Months">
+                    @for($index = 1; $index <= $this->actualMonth; $index++)
+                        <option value="{{$this->monthByIndex($index)->month}}">{{ $this->monthByIndex($index)->monthName }}</option>
+                    @endfor
                 </x-select>
             </div>
-        @endif
-    </section>
-
-    <x-form :route="route('number-tracking.spreadsheet.updateOrCreate')">
-        <section class="flex justify-end mt-3 mb-2">
-            @if ($this->users->isNotEmpty())
-                <button class="py-2 px-4 focus:outline-none rounded shadow-md text-white bg-green-base" type="submit">
-                    Save
-                </button>
+    
+            @if ($this->offices->isNotEmpty())
+                <div class="flex my-6 md:justify-end md:mb-8 md:mt-5">
+                    <x-select wire:model="selectedOffice" class="w-full md:w-auto" name="offices" label="Offices">
+                        @foreach($this->offices as $office)
+                            <option value="{{ $office->id }}">{{ $office->name }}</option>
+                        @endforeach
+                    </x-select>
+                </div>
             @endif
-        </section>
-
-        @foreach($this->periodsLabel as $key => $label)
+        </div>
+    </section>
+    @foreach($this->periodsLabel as $key => $label)
+        <x-form :route="route('number-tracking.spreadsheet.updateOrCreate')" name="form-{{$key}}">
+            <section class="flex justify-end mt-3 mb-2">
+                @if ($this->users->isNotEmpty())
+                    <button class="py-2 px-4 focus:outline-none rounded shadow-md text-white bg-green-base" type="submit" id="submit-{{$key}}" for="form-{{$key}}">
+                        Save
+                    </button>
+                @endif
+            </section>
             <section class="mb-10">
                 <h3 class="font-bold text-center mb-3">{{ $label }}</h3>
                 <div class="overflow-x-auto">
@@ -99,8 +107,8 @@
                                                 <div
                                                     class="cursor-default relative text-center"
                                                     x-data=""
-                                                    @mouseenter="$dispatch('open-popover', {ref: '{{ $label . $loop->index }}'})"
-                                                    @mouseleave="$dispatch('close-popover', {ref: '{{ $label . $loop->index }}'})"
+                                                    x-on:mouseenter="$dispatch('open-popover', {ref: '{{ $label . $loop->index }}'})"
+                                                    x-on:mouseleave="$dispatch('close-popover', {ref: '{{ $label . $loop->index }}'})"
                                                 >
                                                     {{ $indicator['label'] }}
                                                     <x-popover position="bottom" ref="{{ $label . $loop->index }}">
@@ -132,7 +140,7 @@
                                     <x-table.td class="border-2">
                                         {{ $user->full_name }}
                                     </x-table.td>
-
+                                    
                                     {{-- Weekly Columns --}}
                                     @foreach($this->weeklyMonthLabels[$key] as $weeklyKey => $label)
                                         @if (isset($user->dailyNumbers[$label]))
@@ -199,7 +207,7 @@
                                                         </span>
                                                     </div>
                                                     <div class="relative" name="pipe">
-                                                         <span class="block text-center">
+                                                            <span class="block text-center">
                                                             <input
                                                                 type="text"
                                                                 class="text-center w-10 inline"
@@ -319,7 +327,7 @@
                                                         </span>
                                                     </div>
                                                     <div class="relative" name="pipe">
-                                                      <span class="block text-center">
+                                                        <span class="block text-center">
                                                             <input
                                                                 type="text" class="text-center w-9 inline"
                                                                 value=""
@@ -594,6 +602,6 @@
                     </x-table>
                 </div>
             </section>
-        @endforeach
-    </x-form>
+        </x-form>
+    @endforeach
 </div>
